@@ -16,7 +16,9 @@
   <li id="g-item-id-<?= $child->id ?>" class="g-item <?= $item_class ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
+      <? if ($child->has_thumb()): ?>
       <?= $child->thumb_img(array("class" => "g-thumbnail")) ?>
+      <? endif ?>
     </a>
     <?= $theme->thumb_bottom($child) ?>
     <?= $theme->context_menu($child, "#g-item-id-{$child->id} .g-thumbnail") ?>

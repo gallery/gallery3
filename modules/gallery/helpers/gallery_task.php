@@ -58,8 +58,7 @@ class gallery_task_Core {
     $tasks[] = Task_Definition::factory()
       ->callback("gallery_task::fix")
       ->name(t("Fix your Gallery"))
-      ->description(t("Fix a variety of problems that might cause your Gallery to act " .
-                      "strangely.  Requires maintenance mode."))
+      ->description(t("Fix a variety of problems that might cause your Gallery to act strangely.  Requires maintenance mode."))
       ->severity(log::SUCCESS);
 
     return $tasks;

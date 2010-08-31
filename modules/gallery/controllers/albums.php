@@ -68,7 +68,7 @@ class Albums_Controller extends Items_Controller {
     $template->set_global("item", $album);
     $template->set_global("children", $album->viewable()->children($page_size, $offset));
     $template->set_global("children_count", $children_count);
-    $template->set_global("parents", $album->parents());
+    $template->set_global("parents", $album->parents()->as_array()); // view calls empty() on this
     $template->content = new View("album.html");
 
     // We can't use math in ORM or the query builder, so do this by hand.  It's important

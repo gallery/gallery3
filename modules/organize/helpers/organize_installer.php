@@ -30,8 +30,7 @@ class organize_installer {
     if ($version == 1) {
       if (!module::is_active("rest")) {
         site_status::warning(
-          t("The Organize module requires the Rest module.  " .
-            "<a href=\"%url\">Activate the Rest module now</a>",
+          t("The Organize module requires the Rest module.  <a href=\"%url\">Activate the Rest module now</a>",
             array("url" => html::mark_clean(url::site("admin/modules")))),
           "organize_needs_rest");
       }

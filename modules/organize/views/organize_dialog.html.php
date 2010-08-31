@@ -130,8 +130,7 @@
   <h1 style="display:none"><?= t("Organize :: %name", array("name" => html::purify($album->title))) ?></h1>
   <div id="flashContent">
     <p>
-      <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version " .
-            "or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
+      <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
     </p>
     <a href="http://www.adobe.com/go/getflashplayer">
       <img src="<?= request::protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"

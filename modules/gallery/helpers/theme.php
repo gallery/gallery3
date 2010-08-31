@@ -77,39 +77,6 @@ class theme_Core {
     $config->set("core.modules", $modules);
   }
 
-  static function get_edit_form_admin() {
-    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
-    $group = $form->group("edit_theme")->label(t("Theme layout"));
-    $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
-      ->rules("required|valid_digit")
-      ->error_messages("required", t("You must enter a number"))
-      ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("gallery", "page_size"));
-    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
-      ->rules("required|valid_digit")
-      ->error_messages("required", t("You must enter a number"))
-      ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("gallery", "thumb_size"));
-    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
-      ->rules("required|valid_digit")
-      ->error_messages("required", t("You must enter a number"))
-      ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("gallery", "resize_size"));
-    $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
-      ->value(module::get_var("gallery", "header_text"));
-    $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")
-      ->value(module::get_var("gallery", "footer_text"));
-    $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
-      ->checked(module::get_var("gallery", "show_credits"));
-
-    module::event("theme_edit_form", $form);
-
-    $group = $form->group("buttons")
-      ->set_attr("style","border: none");
-    $group->submit("")->value(t("Save"));
-    return $form;
-  }
-
   static function get_info($theme_name) {
     $theme_name = preg_replace("/[^a-zA-Z0-9\._-]/", "", $theme_name);
     $file = THEMEPATH . "$theme_name/theme.info";

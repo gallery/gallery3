@@ -178,7 +178,17 @@ class g2_import_Core {
            "module", "rewrite", "modrewrite.embeddedLocation", $g2_embed_location));
       g2($gallery->getStorage()->checkPoint());
     }
-    self::$g2_base_url = $g2_embed_location;
+
+    if ($g2_embed_location) {
+      self::$g2_base_url = $g2_embed_location;
+    } else {
+      self::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
+        array(),
+        array("forceSessionId" => false,
+              "htmlEntities" => false,
+              "urlEncode" => false,
+              "useAuthToken" => false));
+    }
 
     return true;
   }
@@ -689,8 +699,7 @@ class g2_import_Core {
         $title = $g2_item->getTitle();
         $title or $title = $g2_item->getPathComponent();
         $messages[] =
-          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
-            "(imported as <a href=\"%g3_url\">%title</a>)",
+          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; (imported as <a href=\"%g3_url\">%title</a>)",
             array("g2_url" => $g2_item_url,
                   "g3_url" => $item->url(),
                   "title" => $title));
@@ -846,6 +855,11 @@ class g2_import_Core {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
+    if (self::map($g2_comment->getId())) {
+      // Already imported
+      return;
+    }
+
     $item_id = self::map($g2_comment->getParentId());
     if (empty($item_id)) {
       // Item was not mapped.
@@ -877,6 +891,8 @@ class g2_import_Core {
             array("id" => $g2_comment_id)),
           $e);
     }
+
+    self::set_map($g2_comment->getId(), $comment->id, "comment");
 
     // Backdate the creation date.  We can't do this at creation time because
     // Comment_Model::save() will override it.

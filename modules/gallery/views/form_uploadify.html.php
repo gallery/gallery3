@@ -21,12 +21,18 @@
         $("#g-upload-cancel-all")
           .addClass("ui-state-disabled")
           .attr("disabled", "disabled");
+        $("#g-upload-done")
+          .removeClass("ui-state-disabled")
+          .attr("disabled", null);
         return true;
       },
       onClearQueue: function(event) {
         $("#g-upload-cancel-all")
           .addClass("ui-state-disabled")
           .attr("disabled", "disabled");
+        $("#g-upload-done")
+          .removeClass("ui-state-disabled")
+          .attr("disabled", null);
         return true;
       },
       onComplete: function(event, queueID, fileObj, response, data) {
@@ -71,6 +77,9 @@
           $("#g-upload-cancel-all")
             .removeClass("ui-state-disabled")
             .attr("disabled", null);
+          $("#g-upload-done")
+            .addClass("ui-state-disabled")
+            .attr("disabled", "disabled");
         }
         return true;
       }

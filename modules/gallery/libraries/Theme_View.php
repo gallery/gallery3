@@ -236,6 +236,13 @@ class Theme_View_Core extends Gallery_View {
     case "thumb_bottom":
     case "thumb_info":
     case "thumb_top":
+      if ($function == "head") {
+        // Stash any CSS we have already; that came from the theme and we want theme CSS to
+        // override module CSs
+        $save_css = $this->css;
+        $this->css = array();
+      }
+
       $blocks = array();
       if (method_exists("gallery_theme", $function)) {
         switch (count($args)) {
@@ -275,6 +282,8 @@ class Theme_View_Core extends Gallery_View {
       }
 
       if ($function == "head") {
+        // Merge the theme CSS/JS at the end
+        $this->css = array_merge($this->css, $save_css);
         array_unshift($blocks, $this->combine_files($this->css, "css"));
         array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
       }

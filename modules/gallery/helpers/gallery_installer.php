@@ -301,7 +301,8 @@ class gallery_installer {
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
     module::set_var("gallery", "maintenance_mode", 0);
     module::set_var("gallery", "visible_title_length", 15);
-    module::set_version("gallery", 35);
+    module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
+    module::set_version("gallery", 36);
   }
 
   static function upgrade($version) {
@@ -589,6 +590,11 @@ class gallery_installer {
     if ($version == 34) {
       module::set_var("gallery", "visible_title_length", 15);
       module::set_version("gallery", $version = 35);
+    }
+
+    if ($version == 35) {
+      module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
+      module::set_version("gallery", $version = 36);
     }
   }
 

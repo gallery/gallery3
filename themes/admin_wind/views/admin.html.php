@@ -11,7 +11,7 @@
         <?= t("Admin dashboard") ?>
       <? endif ?>
     </title>
-    <link rel="shortcut icon" href="<?= url::file("lib/images/favicon.ico") ?>" type="image/x-icon" />
+    <link rel="shortcut icon" href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>" type="image/x-icon" />
 
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
