@@ -25,12 +25,14 @@ class gallery_Core {
    * down for maintenance" page.
    */
   static function maintenance_mode() {
-    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
-
-    if (Router::$controller != "login" && !empty($maintenance_mode) && !identity::active_user()->admin) {
-      Router::$controller = "maintenance";
-      Router::$controller_path = MODPATH . "gallery/controllers/maintenance.php";
-      Router::$method = "index";
+    if (Router::$controller != "login" &&
+        Router::$controller != "combined" &&
+        module::get_var("gallery", "maintenance_mode", 0) &&
+        !identity::active_user()->admin) {
+      Session::instance()->set("continue_url", url::abs_site("admin/maintenance"));
+      Router::$controller = "login";
+      Router::$controller_path = MODPATH . "gallery/controllers/login.php";
+      Router::$method = "html";
     }
   }
 
@@ -58,7 +60,7 @@ class gallery_Core {
    * @return string
    */
   static function date_time($timestamp) {
-    return date(module::get_var("gallery", "date_time_format", "Y-M-d H:i:s"), $timestamp);
+    return date(module::get_var("gallery", "date_time_format"), $timestamp);
   }
 
   /**
@@ -67,7 +69,7 @@ class gallery_Core {
    * @return string
    */
   static function date($timestamp) {
-    return date(module::get_var("gallery", "date_format", "Y-M-d"), $timestamp);
+    return date(module::get_var("gallery", "date_format"), $timestamp);
   }
 
   /**

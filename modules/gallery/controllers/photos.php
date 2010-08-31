@@ -41,7 +41,7 @@ class Photos_Controller extends Items_Controller {
     $template->set_global("item", $photo);
     $template->set_global("children", array());
     $template->set_global("children_count", 0);
-    $template->set_global("parents", $photo->parents());
+    $template->set_global("parents", $photo->parents()->as_array());
     $template->set_global("next_item", $next_item);
     $template->set_global("previous_item", $previous_item);
     $template->set_global("sibling_count", $photo->parent()->viewable()->children_count($where));

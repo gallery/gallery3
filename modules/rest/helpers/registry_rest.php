@@ -17,8 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Maintenance_Controller extends Controller {
-  function index() {
-    print new View("maintenance.html");
- }
+class registry_rest_Core {
+  static function get($request) {
+    $results = array();
+    foreach (module::active() as $module) {
+      foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
+        $results[] = str_replace("_rest.php", "", basename($filename));
+      }
+    }
+    return array_unique($results);
+  }
 }

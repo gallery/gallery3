@@ -1,10 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
 <style type="text/css" media="screen">
-  #flashContent {
-  //display:none;
-  }
-
   .g-organize {
     padding: 0;
     margins: 0;
@@ -21,10 +17,10 @@
 </style>
 
 <script type="text/javascript">
-      $("#g-dialog").bind("dialogclose", function(event, ui) {
-        // @todo do a call to organize/closing to end the batch
-        window.location.reload();
-      });
+  $("#g-dialog").bind("dialogclose", function(event, ui) {
+    // @todo do a call to organize/closing to end the batch
+    window.location.reload();
+  });
 
   function closeOrganizeDialog() {
     $("#g-dialog").dialog("close");
@@ -94,6 +90,7 @@
       sortOrder: "<?= $sort_order ?>",
       sortFields: "<?= $sort_fields ?>",
       albumId: "<?= $album->id ?>",
+      selectedId: "<?= $selected_id ?>",
       restUri: "<?= $rest_uri ?>",
       controllerUri: "<?= $controller_uri ?>"
     };
@@ -129,8 +126,7 @@
   <h1 style="display:none"><?= t("Organize :: %name", array("name" => html::purify($album->title))) ?></h1>
   <div id="flashContent">
     <p>
-      <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version " .
-            "or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
+      <?= t("Your browser must have Adobe Flash Player version %flash_minimum_version or greater installed to use this feature.", array("flash_minimum_version" => $flash_minimum_version)) ?>
     </p>
     <a href="http://www.adobe.com/go/getflashplayer">
       <img src="<?= request::protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"

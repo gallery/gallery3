@@ -74,10 +74,21 @@ class l10n_scanner_Core {
     unset($raw_tokens);
 
     if (!empty($func_token_list["t"])) {
-      l10n_scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
+      $errors = l10n_scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
+      foreach ($errors as $line => $error) {
+        Kohana_Log::add(
+          "error", "Translation scanner error.  " .
+          "file: " . substr($file, strlen(DOCROOT)) . ", line: $line, context: $error");
+      }
     }
+
     if (!empty($func_token_list["t2"])) {
-      l10n_scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
+      $errors = l10n_scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
+      foreach ($errors as $line => $error) {
+        Kohana_Log::add(
+          "error", "Translation scanner error.  " .
+          "file: " . substr($file, strlen(DOCROOT)) . ", line: $line, context: $error");
+      }
     }
   }
 
@@ -91,6 +102,7 @@ class l10n_scanner_Core {
   }
 
   private static function _parse_t_calls(&$tokens, &$call_list, &$cache) {
+    $errors = array();
     foreach ($call_list as $index) {
       $function_name = $tokens[$index++];
       $parens = $tokens[$index++];
@@ -103,14 +115,21 @@ class l10n_scanner_Core {
           $message = self::_escape_quoted_string($first_param[1]);
           l10n_scanner::process_message($message, $cache);
         } else {
-          // t() found, but inside is something which is not a string literal.
-          // @todo Call status callback with error filename/line.
+          if (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING)) {
+            // Malformed string literals; escalate this
+            $errors[$first_param[2]] =
+              var_export(array($function_name, $parens, $first_param, $next_token), 1);
+          } else {
+            // t() found, but inside is something which is not a string literal.  That's fine.
+          }
         }
       }
     }
+    return $errors;
   }
 
   private static function _parse_plural_calls(&$tokens, &$call_list, &$cache) {
+    $errors = array();
     foreach ($call_list as $index) {
       $function_name = $tokens[$index++];
       $parens = $tokens[$index++];
@@ -127,11 +146,17 @@ class l10n_scanner_Core {
           $plural = self::_escape_quoted_string($second_param[1]);
           l10n_scanner::process_message(array("one" => $singular, "other" => $plural), $cache);
         } else {
-          // t2() found, but inside is something which is not a string literal.
-          // @todo Call status callback with error filename/line.
+          if (is_array($first_param) && $first_param[0] == T_CONSTANT_ENCAPSED_STRING) {
+            $errors[$first_param[2]] = var_export(
+              array($function_name, $parens, $first_param,
+                    $first_separator, $second_param, $next_token), 1);
+          } else {
+            // t2() found, but inside is something which is not a string literal.  That's fine.
+          }
         }
       }
     }
+    return $errors;
   }
 
   /**

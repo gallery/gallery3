@@ -1,25 +1,27 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<h1> Welcome! </h1>
+<h1> Let's get going! </h1>
 <p>
-  Installing Gallery is very easy.  We just need to know how to talk
-  to your MySQL database, and we need a place to store your photos on
-  your web host.
+  Installing Gallery is easy.  We just need a place to put your photos
+  and info about your MySQL database.
 </p>
 
 
-<fieldset>
+<fieldset class="<?= installer::var_writable() ? 'success' : 'error' ?>">
   <legend>Photo Storage</legend>
   <?php if (!installer::var_writable()): ?>
-  <p class="error">
+  <p>
     We're having trouble creating a place for your photos.  Can you
-    help?  Please create a directory called "var" using <code>mkdir var</code> in your
-    gallery3 directory, then run <code>chmod 777 var</code>.  That
-    should fix it.
-    <br/><br/>
+    help?  We need you to create a directory called <em>var</em> in
+    your gallery3 directory.  This sample code works for most users.
+    Run it in the gallery3 directory:
+    <code>
+      mkdir var<br>
+      chmod 777 var
+    </code>
     <a href="index.php">Check again</a>
   </p>
   <?php else: ?>
-  <p class="success">
+  <p>
     We've found a place to store your photos:
     <code class="location"> <?= VARPATH ?> </code>
   </p>
@@ -31,14 +33,14 @@
   <fieldset>
     <legend>Database</legend>
     <p>
-      We've provided values that work for most common web hosts.  If
-      you have problems, contact your web host for help.
+      Gallery 3 needs a MySQL database.  The values provided work for
+      most setups, so if you're confused try clicking <i>continue</i>.
     </p>
     <br/>
     <table id="db_info">
       <tr>
         <td>
-          Database Name
+          Database name
         </td>
         <td>
           <input name="dbname" value="gallery3"/>
@@ -70,7 +72,7 @@
       </tr>
       <tr>
         <td>
-          Table Prefix
+          Table prefix <span class="subtext">(optional)</span>
         </td>
         <td>
           <input name="prefix" value=""/>

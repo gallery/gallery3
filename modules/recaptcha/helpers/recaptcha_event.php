@@ -18,21 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class recaptcha_event_Core {
-  static function user_profile_contact_form($form) {
+  static function captcha_protect_form($form) {
     if (module::get_var("recaptcha", "public_key")) {
-      $form->message->recaptcha("recaptcha")->label("")->id("g-recaptcha");
-    }
-  }
+      foreach ($form->inputs as $input) {
+        if ($input instanceof Form_Group) {
+          $input->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+          return;
+        }
+      }
 
-  static function comment_add_form($form) {
-    if (module::get_var("recaptcha", "public_key")) {
-      $form->add_comment->recaptcha("recaptcha")->label("")->id("g-recaptcha");
-    }
-  }
-
-  static function register_add_form($form) {
-    if (module::get_var("recaptcha", "public_key")) {
-      $form->register_user->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+      // If we haven't returned yet, then add the captcha at the end of the form
+      $form->recaptcha("recaptcha")->label("")->id("g-recaptcha");
     }
   }
 

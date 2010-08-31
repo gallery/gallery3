@@ -22,14 +22,14 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->page_title = t("Theme options");
     $view->content = new View("admin_theme_options.html");
-    $view->content->form = theme::get_edit_form_admin();
+    $view->content->form = $this->_get_edit_form_admin();
     print $view;
   }
 
   public function save() {
     access::verify_csrf();
 
-    $form = theme::get_edit_form_admin();
+    $form = $this->_get_edit_form_admin();
     if ($form->validate()) {
       module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);
 
@@ -58,6 +58,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
       module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
       module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
+      module::set_var("gallery", "favicon_url", $form->edit_theme->favicon_url->value);
 
       module::event("theme_edit_form_completed", $form);
 
@@ -69,6 +70,41 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       $view->content->form = $form;
       print $view;
     }
+  }
+
+  private function _get_edit_form_admin() {
+    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
+    $group = $form->group("edit_theme")->label(t("Theme layout"));
+    $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
+      ->rules("required|valid_digit")
+      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("valid_digit", t("You must enter a number"))
+      ->value(module::get_var("gallery", "page_size"));
+    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
+      ->rules("required|valid_digit")
+      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("valid_digit", t("You must enter a number"))
+      ->value(module::get_var("gallery", "thumb_size"));
+    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
+      ->rules("required|valid_digit")
+      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("valid_digit", t("You must enter a number"))
+      ->value(module::get_var("gallery", "resize_size"));
+    $group->input("favicon_url")->label(t("URL (or relative path) to your favicon.ico"))
+      ->id("g-favicon")
+      ->value(module::get_var("gallery", "favicon_url"));
+    $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
+      ->value(module::get_var("gallery", "header_text"));
+    $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")
+      ->value(module::get_var("gallery", "footer_text"));
+    $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
+      ->checked(module::get_var("gallery", "show_credits"));
+
+    module::event("theme_edit_form", $form);
+
+    $group = $form->group("buttons");
+    $group->submit("")->value(t("Save"));
+    return $form;
   }
 }
 

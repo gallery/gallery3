@@ -61,8 +61,7 @@ class IdentityProvider_Core {
    * Return a commen confirmation message
    */
   static function confirmation_message() {
-    return t("Are you sure you want to change your Identity Provider? " .
-             "Continuing will delete all existing users.");
+    return t("Are you sure you want to change your Identity Provider? Continuing will delete all existing users.");
   }
 
   static function change_provider($new_provider) {
@@ -113,8 +112,7 @@ class IdentityProvider_Core {
         }
           
         message::error(
-          t("Error attempting to enable \"%new_provider\" identity provider, " .
-            "reverted to \"%old_provider\" identity provider",
+          t("Error attempting to enable \"%new_provider\" identity provider, reverted to \"%old_provider\" identity provider",
             array("new_provider" => $new_provider, "old_provider" => $current_provider)));
         
         $restore_already_running = false;

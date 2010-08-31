@@ -22,12 +22,15 @@ class organize_installer {
     site_status::clear("organize_needs_rest");
   }
 
+  static function install() {
+    module::set_version("organize", $version = 2);
+  }
+
   static function upgrade($version) {
     if ($version == 1) {
       if (!module::is_active("rest")) {
         site_status::warning(
-          t("The Organize module requires the Rest module.  " .
-            "<a href=\"%url\">Activate the Rest module now</a>",
+          t("The Organize module requires the Rest module.  <a href=\"%url\">Activate the Rest module now</a>",
             array("url" => html::mark_clean(url::site("admin/modules")))),
           "organize_needs_rest");
       }

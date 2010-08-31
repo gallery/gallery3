@@ -46,9 +46,11 @@ class Theme_View_Core extends Gallery_View {
       $this->set_global("thumb_proportion", $this->thumb_proportion());
     }
 
-    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
-    if ($maintenance_mode) {
-      message::warning(t("This site is currently in maintenance mode"));
+    if (module::get_var("gallery", "maintenance_mode", 0)) {
+      if (identity::active_user()->admin) {
+        message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => url::site("admin/maintenance"))));
+    } else
+        message::warning(t("This site is currently in maintenance mode."));
     }
   }
 
@@ -234,6 +236,13 @@ class Theme_View_Core extends Gallery_View {
     case "thumb_bottom":
     case "thumb_info":
     case "thumb_top":
+      if ($function == "head") {
+        // Stash any CSS we have already; that came from the theme and we want theme CSS to
+        // override module CSs
+        $save_css = $this->css;
+        $this->css = array();
+      }
+
       $blocks = array();
       if (method_exists("gallery_theme", $function)) {
         switch (count($args)) {
@@ -273,6 +282,8 @@ class Theme_View_Core extends Gallery_View {
       }
 
       if ($function == "head") {
+        // Merge the theme CSS/JS at the end
+        $this->css = array_merge($this->css, $save_css);
         array_unshift($blocks, $this->combine_files($this->css, "css"));
         array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
       }

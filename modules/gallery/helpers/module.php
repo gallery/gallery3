@@ -166,6 +166,16 @@ class module_Core {
     } else {
       module::set_version($module_name, 1);
     }
+
+    // Set the weight of the new module, which controls the order in which the modules are
+    // loaded. By default, new modules are installed at the end of the priority list.  Since the
+    // id field is monotonically increasing, the easiest way to guarantee that is to set the weight
+    // the same as the id.  We don't know that until we save it for the first time
+    $module = ORM::factory("module")->where("name", "=", $module_name)->find();
+    if ($module->loaded()) {
+      $module->weight = $module->id;
+      $module->save();
+    }
     module::load_modules();
 
     // Now the module is installed but inactive, so don't leave it in the active path
@@ -314,7 +324,15 @@ class module_Core {
     self::$modules = array();
     self::$active = array();
     $kohana_modules = array();
-    foreach (ORM::factory("module")->find_all() as $module) {
+
+    // In version 32 we introduced a weight column so we can specify the module order
+    // If we try to use that blindly, we'll break earlier versions before they can even
+    // run the upgrader.
+    $modules = module::get_version("gallery") < 32 ?
+      ORM::factory("module")->find_all():
+      ORM::factory("module")->order_by("weight")->find_all();
+
+    foreach ($modules as $module) {
       self::$modules[$module->name] = $module;
       if (!$module->active) {
         continue;

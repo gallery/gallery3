@@ -32,13 +32,23 @@ class organize_event_Core {
   }
 
   static function context_menu($menu, $theme, $item) {
-    if ($item->is_album() && access::can("edit", $item)) {
-      $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("organize")
-                 ->label(t("Organize album"))
-                 ->css_class("ui-icon-folder-open g-organize-link")
-                 ->url(url::site("organize/dialog/{$item->id}")));
+    if (access::can("edit", $item)) {
+      if ($item->is_album()) {
+        $menu->get("options_menu")
+          ->append(Menu::factory("dialog")
+                   ->id("organize")
+                   ->label(t("Organize album"))
+                   ->css_class("ui-icon-folder-open g-organize-link")
+                   ->url(url::site("organize/dialog/{$item->id}")));
+      } else {
+        $parent = $item->parent();
+        $menu->get("options_menu")
+          ->append(Menu::factory("dialog")
+                   ->id("move")
+                   ->label(t("Move to another album"))
+                   ->css_class("ui-icon-folder-open g-organize-link")
+                   ->url(url::site("organize/dialog/{$parent->id}?selected_id={$item->id}")));
+      }
     }
   }
 
@@ -51,8 +61,7 @@ class organize_event_Core {
   static function module_change($changes) {
     if (!module::is_active("rest") || in_array("rest", $changes->deactivate)) {
       site_status::warning(
-        t("The Organize module requires the Rest module.  " .
-          "<a href=\"%url\">Activate the Rest module now</a>",
+        t("The Organize module requires the Rest module.  <a href=\"%url\">Activate the Rest module now</a>",
           array("url" => html::mark_clean(url::site("admin/modules")))),
         "organize_needs_rest");
     } else {

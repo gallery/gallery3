@@ -77,4 +77,16 @@ class photo_Core {
     }
     return sprintf($format, $new_width, $new_height);
   }
+
+  /**
+   * Return the width, height, mime_type and extension of the given image file.
+   */
+  static function get_file_metadata($file_path) {
+    $image_info = getimagesize($file_path);
+    $width = $image_info[0];
+    $height = $image_info[1];
+    $mime_type = $image_info["mime"];
+    $extension = image_type_to_extension($image_info[2], false);
+    return array($width, $height, $mime_type, $extension);
+  }
 }

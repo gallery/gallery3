@@ -116,6 +116,8 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    header("Content-Length: " . filesize($file));
+
     header("Pragma:");
     // Check that the content hasn't expired or it wasn't changed since cached
     expires::check(2592000, $item->updated);
@@ -127,7 +129,7 @@ class File_Proxy_Controller extends Controller {
 
     // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
     if ($item->is_movie() && $type != "albums") {
-      header("Content-type: image/jpeg");
+      header("Content-Type: image/jpeg");
     } else {
       header("Content-Type: $item->mime_type");
     }

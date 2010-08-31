@@ -14,7 +14,6 @@ modules/gallery/controllers/login.php                        auth_ajax          
 modules/gallery/controllers/login.php                        html                 DIRTY_AUTH
 modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
 modules/gallery/controllers/logout.php                       index                DIRTY_AUTH
-modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
 modules/gallery/controllers/quick.php                        form_edit            DIRTY_CSRF
 modules/gallery/controllers/upgrader.php                     index                DIRTY_AUTH
 modules/gallery/controllers/uploader.php                     start                DIRTY_AUTH
@@ -26,6 +25,8 @@ modules/gallery/controllers/welcome_message.php              index              
 modules/organize/controllers/organize.php                    dialog               DIRTY_CSRF
 modules/organize/controllers/organize.php                    add_album_fields     DIRTY_AUTH
 modules/rest/controllers/rest.php                            index                DIRTY_CSRF|DIRTY_AUTH
+modules/rest/controllers/rest.php                            reset_api_key_confirm DIRTY_AUTH
+modules/rest/controllers/rest.php                            reset_api_key        DIRTY_AUTH
 modules/rest/controllers/rest.php                            __call               DIRTY_CSRF|DIRTY_AUTH
 modules/rss/controllers/rss.php                              feed                 DIRTY_CSRF|DIRTY_AUTH
 modules/search/controllers/search.php                        index                DIRTY_CSRF|DIRTY_AUTH

@@ -35,19 +35,20 @@ class user_profile_Core {
     $group->input("reply_to")
       ->label(t("From:"))
       ->rules("required|length[1, 256]|valid_email")
-      ->error_messages("required", t("Field is required"))
-      ->error_messages("max_length", t("Field exceeds 256 bytes"))
-      ->error_messages("valid_email", t("Field is not a valid email address"));
+      ->error_messages("required", t("You must enter a valid email address"))
+      ->error_messages("max_length", t("Your email address is too long"))
+      ->error_messages("valid_email", t("You must enter a valid email address"));
     $group->input("subject")
       ->label(t("Subject:"))
       ->rules("required|length[1, 256]")
-      ->error_messages("required", t("Field is required"))
-      ->error_messages("max_length", t("Field exceeds 256 bytes"));
+      ->error_messages("required", t("Your message must have a subject"))
+      ->error_messages("max_length", t("Your subject is too long"));
     $group->textarea("message")
       ->label(t("Message:"))
       ->rules("required")
-      ->error_messages("required", t("Field is required"));
+      ->error_messages("required", t("You must enter a message"));
     module::event("user_profile_contact_form", $form);
+    module::event("captcha_protect_form", $form);
     $group->submit("")->value(t("Send"));
     return $form;
   }

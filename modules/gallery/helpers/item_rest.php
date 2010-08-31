@@ -126,6 +126,12 @@ class item_rest_Core {
         }
       }
     }
+
+    // Replace the data file, if required
+    if (($item->is_photo() || $item->is_movie()) && isset($request->file)) {
+      $item->set_data_file($request->file);
+    }
+
     $item->save();
 
     if (isset($request->params->members) && $item->sort_column == "weight") {

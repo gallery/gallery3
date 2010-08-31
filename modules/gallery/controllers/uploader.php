@@ -50,7 +50,8 @@ class Uploader_Controller extends Controller {
     // Uploadify adds its own field to the form, so validate that separately.
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
-      "Filedata", "upload::valid",  "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4,m4v]");
+      "Filedata", "upload::valid",  "upload::required",
+      "upload::type[gif,jpg,jpeg,png,flv,mp4,m4v]");
 
     if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
@@ -99,6 +100,14 @@ class Uploader_Controller extends Controller {
       header("HTTP/1.1 400 Bad Request");
       print "ERROR: " . t("Invalid upload");
     }
+  }
+
+  public function status($success_count, $error_count) {
+    // The "errors" won't be properly pluralized :-/
+    print t2("Uploaded %count photo (%error errors)",
+             "Uploaded %count photos (%error errors)",
+             $success_count,
+             array("error" => $error_count));
   }
 
   public function finish() {

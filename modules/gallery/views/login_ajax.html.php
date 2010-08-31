@@ -43,7 +43,7 @@
     <li id="g-login-form">
       <?= $form ?>
     </li>
-    <? if (identity::is_writable()): ?>
+    <? if (identity::is_writable() && !module::get_var("gallery", "maintenance_mode")): ?>
     <li>
       <a href="#" id="g-password-reset" class="g-right g-text-small"><?= t("Forgot your password?") ?></a>
     </li>

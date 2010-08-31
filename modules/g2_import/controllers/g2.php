@@ -35,12 +35,9 @@ class G2_Controller extends Controller {
     $id = $input->get("g2_itemId");
 
     if ($id) {
-      // Requests by id are either core.DownloadItem or
-      // core.ShowItem requests.
-      // Later versions of Gallery 2 don't specify g2_view if
-      // it's the default (core.ShowItem).
-      // And in some cases (bbcode, embedding) people are using
-      // the id style URLs although URL rewriting is enabled.
+      // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of
+      // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
+      // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
       $where = array(array("g2_id", "=", $id));
       $view = $input->get("g2_view");
       if ($view) {

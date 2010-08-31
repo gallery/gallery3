@@ -66,17 +66,20 @@ class identity_Core {
 
       // The installer cannot set a user into the session, so it just sets an id which we should
       // upconvert into a user.
-      // @todo set the user name into the session instead of 2 and then use it to get the user object
+      // @todo set the user name into the session instead of 2 and then use it to get the
+      //       user object
       if ($user === 2) {
         auth::login(IdentityProvider::instance()->admin_user());
       }
 
-      if (!$session->get("group_ids")) {
+      // Cache the group ids for a day to trade off performance for security updates.
+      if (!$session->get("group_ids") || $session->get("group_ids_timeout", 0) < time()) {
         $ids = array();
         foreach ($user->groups() as $group) {
           $ids[] = $group->id;
         }
         $session->set("group_ids", $ids);
+        $session->set("group_ids_timeout", time() + 86400);
       }
     } catch (Exception $e) {
       // Log it, so we at least have so notification that we swallowed the exception.

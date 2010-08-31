@@ -31,10 +31,11 @@ class Admin_Themes_Controller extends Admin_Controller {
   private function _get_themes() {
     $themes = array();
     foreach (scandir(THEMEPATH) as $theme_name) {
+      if ($theme_name[0] == ".") {
+        continue;
+      }
+      $theme_name = preg_replace("/[^a-zA-Z0-9\._-]/", "", $theme_name);
       if (file_exists(THEMEPATH . "$theme_name/theme.info")) {
-        if ($theme_name[0] == ".") {
-          continue;
-        }
 
         $themes[$theme_name] = theme::get_info($theme_name);
       }

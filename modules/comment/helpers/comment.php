@@ -45,6 +45,7 @@ class comment_Core {
       ->error_messages("required", t("You must enter a comment"));
     $group->hidden("item_id")->value($item->id);
     module::event("comment_add_form", $form);
+    module::event("captcha_protect_form", $form);
     $group->submit("")->value(t("Add"))->class("ui-state-default ui-corner-all");
 
     return $form;

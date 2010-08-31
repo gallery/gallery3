@@ -35,9 +35,9 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
   public function menu_labels() {
     $menu = $this->_menu($this->_counts());
     json::reply(array((string) $menu->get("unpublished")->label,
-		      (string) $menu->get("published")->label,
-		      (string) $menu->get("spam")->label,
-		      (string) $menu->get("deleted")->label));
+                      (string) $menu->get("published")->label,
+                      (string) $menu->get("spam")->label,
+                      (string) $menu->get("deleted")->label));
   }
 
   public function queue($state) {
@@ -51,8 +51,10 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
     $view->content->state = $state;
     $view->content->comments = ORM::factory("comment")
       ->order_by("created", "DESC")
+      ->order_by("id", "DESC")
       ->where("state", "=", $state)
-      ->limit(self::$items_per_page, ($page - 1) * self::$items_per_page)
+      ->limit(self::$items_per_page)
+      ->offset(($page - 1) * self::$items_per_page)
       ->find_all();
     $view->content->pager = new Pagination();
     $view->content->pager->initialize(

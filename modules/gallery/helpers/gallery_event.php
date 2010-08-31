@@ -124,6 +124,20 @@ class gallery_event_Core {
     }
   }
 
+  static function item_updated_data_file($item) {
+    graphics::generate($item);
+
+    // Update any places where this is the album cover
+    foreach (ORM::factory("item")
+             ->where("album_cover_item_id", "=", $item->id)
+             ->find_all() as $target) {
+      copy($item->thumb_path(), $target->thumb_path());
+      $target->thumb_width = $item->thumb_width;
+      $target->thumb_height = $item->thumb_height;
+      $target->save();
+    }
+  }
+
   static function batch_complete() {
     // Set the album covers for any items that where we probably deleted the album cover during
     // this batch.  The item may have been deleted, so don't count on it being around.  Choose the
@@ -433,7 +447,6 @@ class gallery_event_Core {
         break;
       }
       $cover_title = t("Choose as the album cover");
-      $move_title = t("Move to another album");
 
       $csrf = access::csrf_token();
 
@@ -462,17 +475,6 @@ class gallery_event_Core {
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
             ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
-      }
-
-      // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting
-      // after move
-      if ($theme->page_subtype() == "album") {
-        $options_menu
-          ->append(Menu::factory("dialog")
-                   ->id("move")
-                   ->label($move_title)
-                   ->css_class("ui-icon-folder-open")
-                   ->url(url::site("move/browse/$item->id")));
       }
 
       $parent = $item->parent();

@@ -37,10 +37,9 @@ $config['path'] = '/';
 $config['expire'] = 0;
 
 /**
- * Enable this option to only allow the cookie to be read when using the a
- * secure protocol.
+ * Set the secure bit on the cookie if we're using HTTPS.
  */
-$config['secure'] = false;
+$config['secure'] = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 
 /**
  * Enable this option to disable the cookie from being accessed when using a

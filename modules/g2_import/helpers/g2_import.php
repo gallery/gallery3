@@ -178,7 +178,17 @@ class g2_import_Core {
            "module", "rewrite", "modrewrite.embeddedLocation", $g2_embed_location));
       g2($gallery->getStorage()->checkPoint());
     }
-    self::$g2_base_url = $g2_embed_location;
+
+    if ($g2_embed_location) {
+      self::$g2_base_url = $g2_embed_location;
+    } else {
+      self::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
+        array(),
+        array("forceSessionId" => false,
+              "htmlEntities" => false,
+              "urlEncode" => false,
+              "useAuthToken" => false));
+    }
 
     return true;
   }
@@ -442,6 +452,7 @@ class g2_import_Core {
         "title" => "title",
         "viewCount" => "view_count");
       $direction_map = array(
+        1 => "asc",
         ORDER_ASCENDING => "asc",
         ORDER_DESCENDING => "desc");
       // Only consider G2's first sort order
@@ -587,6 +598,20 @@ class g2_import_Core {
         $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
         $item->owner_id = self::map($g2_item->getOwnerId());
         $item->save();
+
+        // If the item has a preferred derivative with a rotation, then rotate this image
+        // accordingly.  Should we obey scale rules as well?  I vote no because rotation is less
+        // destructive -- you lose too much data from scaling.
+        $g2_preferred = g2(GalleryCoreApi::fetchPreferredSource($g2_item));
+        if ($g2_preferred && $g2_preferred instanceof GalleryDerivative) {
+          if (preg_match("/rotate\|(-?\d+)/", $g2_preferred->getDerivativeOperations(), $matches)) {
+            $tmpfile = tempnam(TMPPATH, "rotate");
+            gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $matches[1]));
+            $item->set_data_file($tmpfile);
+            $item->save();
+            unlink($tmpfile);
+          }
+        }
       } catch (Exception $e) {
         $exception_info = (string) new G2_Import_Exception(
             t("Corrupt image '%path'", array("path" => $g2_path)),
@@ -674,8 +699,7 @@ class g2_import_Core {
         $title = $g2_item->getTitle();
         $title or $title = $g2_item->getPathComponent();
         $messages[] =
-          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
-            "(imported as <a href=\"%g3_url\">%title</a>)",
+          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; (imported as <a href=\"%g3_url\">%title</a>)",
             array("g2_url" => $g2_item_url,
                   "g3_url" => $item->url(),
                   "title" => $title));
@@ -831,17 +855,18 @@ class g2_import_Core {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
+    if (self::map($g2_comment->getId())) {
+      // Already imported
+      return;
+    }
+
     $item_id = self::map($g2_comment->getParentId());
     if (empty($item_id)) {
       // Item was not mapped.
       return;
     }
 
-    $text = $g2_comment->getSubject();
-    if ($text) {
-      $text .= " ";
-    }
-    $text .= $g2_comment->getComment();
+    $text = join("\n", array($g2_comment->getSubject(), $g2_comment->getComment()));
     $text = html_entity_decode($text);
 
     // Just import the fields we know about.  Do this outside of the comment API for now so that
@@ -858,7 +883,6 @@ class g2_import_Core {
     $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
-    $comment->created = $g2_comment->getDate();
     try {
       $comment->save();
     } catch (Exception $e) {
@@ -867,6 +891,16 @@ class g2_import_Core {
             array("id" => $g2_comment_id)),
           $e);
     }
+
+    self::set_map($g2_comment->getId(), $comment->id, "comment");
+
+    // Backdate the creation date.  We can't do this at creation time because
+    // Comment_Model::save() will override it.
+    db::update("comments")
+      ->set("created", $g2_comment->getDate())
+      ->set("updated", $g2_comment->getDate())
+      ->where("id", "=", $comment->id)
+      ->execute();
   }
 
   /**

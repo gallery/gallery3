@@ -384,4 +384,35 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
     $this->assert_same($photo->id, $album->album_cover_item_id);
   }
+
+  public function replace_data_file_test() {
+    // Random photo is modules/gallery/tests/test.jpg which is 1024x768 and 6232 bytes.
+    $photo = test::random_photo();
+    $this->assert_equal(1024, $photo->width);
+    $this->assert_equal(768, $photo->height);
+    $this->assert_equal(6232, filesize($photo->file_path()));
+
+    // Random photo is gallery/images/imagemagick.jpg is 114x118 and 20337 bytes
+    $photo->set_data_file(MODPATH . "gallery/images/imagemagick.jpg");
+    $photo->save();
+
+    $this->assert_equal(114, $photo->width);
+    $this->assert_equal(118, $photo->height);
+    $this->assert_equal(20337, filesize($photo->file_path()));
+  }
+
+  public function replacement_data_file_must_be_same_mime_type_test() {
+    // Random photo is modules/gallery/tests/test.jpg
+    $photo = test::random_photo();
+    $photo->set_data_file(MODPATH . "gallery/images/graphicsmagick.png");
+
+    try {
+      $photo->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "cant_change_mime_type"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+
+  }
 }

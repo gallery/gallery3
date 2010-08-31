@@ -8,10 +8,10 @@
     <ul>
       <li>
         <label for="q"><?= t("Search the gallery") ?></label>
-        <input name="q" id="q" type="text" value="<?= html::clean_attribute($q) ?>"/>
+        <input name="q" id="q" type="text" value="<?= html::clean_attribute($q) ?>" class="text" />
       </li>
       <li>
-        <input type="submit" value="<?= t("Search")->for_html_attr() ?>" />
+        <input type="submit" value="<?= t("Search")->for_html_attr() ?>" class="submit" />
       </li>
     </ul>
   </fieldset>

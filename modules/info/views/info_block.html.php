@@ -19,7 +19,7 @@
   <? if ($item->captured): ?>
   <li>
     <strong class="caption"><?= t("Captured:") ?></strong>
-    <?= date("M j, Y H:i:s", $item->captured)?>
+    <?= gallery::date_time($item->captured)?>
   </li>
   <? endif ?>
   <? if ($item->owner): ?>

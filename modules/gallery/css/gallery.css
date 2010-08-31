@@ -78,36 +78,24 @@
   margin-bottom: 0
 }
 
+#g-add-photos-status-message {
+  float: right;
+}
+
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-edit-permissions-form {
-	clear: both;
+  clear: both;
 }
 
 #g-edit-permissions-form th {
   text-align: center;
 }
 
-#g-edit-permissions-form td {
-  background-image: none;
-}
-
-#g-edit-permissions-form fieldset {
-	border: 1px solid #ccc;
-}
-
 #g-permissions .g-denied,
 #g-permissions .g-allowed {
   text-align: center;
   vertical-align: middle;
-}
-
-#g-permissions .g-denied {
-  background-color: #fcc;
-}
-
-#g-permissions .g-allowed {
-  background-color: #cfc;
 }
 
 /* Move items ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

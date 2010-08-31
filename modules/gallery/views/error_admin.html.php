@@ -20,7 +20,20 @@
         margin: 20px auto;
       }
 
-      div#framework_error {
+      #framework_error {
+        height: 6em;
+      }
+
+      #framework_error .crashlogo {
+        position: relative;
+        top: .3em;
+        font-size: 6.0em;
+      }
+
+      #framework_error .title {
+        position: relative;
+        top: -2.5em;
+        padding: 0px;
         text-align: center;
       }
 
@@ -102,8 +115,12 @@
       .number {
         padding-right: 1em;
       }
+
+      #g-platform h2, #g-stats h2 {
+        font-size: 1.1em;
+      }
     </style>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title><?= t("Something went wrong!") ?></title>
 
     <script type="text/javascript">
@@ -133,17 +150,34 @@
   <body>
     <? try { $user = identity::active_user(); } catch (Exception $e) { } ?>
     <div class="big_box" id="framework_error">
-      <h1>
-        <?= t("Dang...  Something went wrong!") ?>
-      </h1>
-      <h2>
-        <?= t("We tried really hard, but it's broken.") ?>
-      </h2>
+      <div class="crashlogo">
+        :-(
+      </div>
+      <div class="title">
+        <h1>
+          <?= t("Dang...  Something went wrong!") ?>
+        </h1>
+        <h2>
+          <?= t("We tried really hard, but it's broken.") ?>
+        </h2>
+      </div>
     </div>
     <div class="big_box" id="error_details">
       <h2>
         <?= t("Hey wait, you're an admin!  We can tell you stuff.") ?>
       </h2>
+      <p>
+        There's an error message below and you can find more details
+        in gallery3/var/logs (look for the file with the most recent
+        date on it).  Stuck?  Stop by the <a href="http://gallery.menalto.com/forum/96">Gallery 3
+        Forums</a> and ask for help.  You can also look at our list
+        of <a href="http://sourceforge.net/apps/trac/gallery/roadmap">open
+        tickets</a> to see if the problem you're seeing has been
+        reported.  If you post a request, here's some useful
+        information to include:
+        <?=  @gallery_block::get("platform_info") ?>
+        <?=  @gallery_block::get("stats") ?>
+      </p>
       <div id="kohana_error">
         <h3>
           <span class="type">

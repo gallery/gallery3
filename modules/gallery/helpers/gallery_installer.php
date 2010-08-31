@@ -23,7 +23,8 @@ class gallery_installer {
     $db->query("CREATE TABLE {access_caches} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
-                 PRIMARY KEY (`id`))
+                 PRIMARY KEY (`id`),
+                 KEY (`item_id`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {access_intents} (
@@ -114,7 +115,8 @@ class gallery_installer {
                  KEY `parent_id` (`parent_id`),
                  KEY `type` (`type`),
                  KEY `random` (`rand_key`),
-                 KEY `weight` (`weight` DESC))
+                 KEY `weight` (`weight` DESC),
+                 KEY `left_ptr` (`left_ptr`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {logs} (
@@ -144,8 +146,10 @@ class gallery_installer {
                  `active` BOOLEAN default 0,
                  `name` varchar(64) default NULL,
                  `version` int(9) default NULL,
+                 `weight` int(9) default NULL,
                  PRIMARY KEY (`id`),
-                 UNIQUE KEY(`name`))
+                 UNIQUE KEY(`name`),
+                 KEY (`weight`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {outgoing_translations} (
@@ -295,7 +299,10 @@ class gallery_installer {
     module::set_var("gallery", "credits", (string) $powered_by_string);
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
-    module::set_version("gallery", 30);
+    module::set_var("gallery", "maintenance_mode", 0);
+    module::set_var("gallery", "visible_title_length", 15);
+    module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
+    module::set_version("gallery", 36);
   }
 
   static function upgrade($version) {
@@ -554,7 +561,41 @@ class gallery_installer {
     if ($version == 29) {
       $db->query("ALTER TABLE {caches} ADD KEY (`key`);");
       module::set_version("gallery", $version = 30);
-    }                
+    }
+
+    if ($version == 30) {
+      module::set_var("gallery", "maintenance_mode", 0);
+      module::set_version("gallery", $version = 31);
+    }
+
+    if ($version == 31) {
+      $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
+      $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
+      db::update("modules")
+        ->set("weight", new Database_Expression("`id`"))
+        ->execute();
+      module::set_version("gallery", $version = 32);
+    }
+
+    if ($version == 32) {
+      $db->query("ALTER TABLE {items} ADD KEY (`left_ptr`)");
+      module::set_version("gallery", $version = 33);
+    }
+
+    if ($version == 33) {
+      $db->query("ALTER TABLE {access_caches} ADD KEY (`item_id`)");
+      module::set_version("gallery", $version = 34);
+    }
+
+    if ($version == 34) {
+      module::set_var("gallery", "visible_title_length", 15);
+      module::set_version("gallery", $version = 35);
+    }
+
+    if ($version == 35) {
+      module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
+      module::set_version("gallery", $version = 36);
+    }
   }
 
   static function uninstall() {

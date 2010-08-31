@@ -41,7 +41,7 @@ class Users_Controller extends Controller {
       // Translate ORM validation errors into form error messages
       foreach ($e->validation->errors() as $key => $error) {
         $form->edit_user->inputs[$key]->add_error($error, 1);
-     }
+      }
       $valid = false;
     }
 
@@ -55,7 +55,7 @@ class Users_Controller extends Controller {
       module::event("user_edit_form_completed", $user, $form);
       message::success(t("User information updated"));
       json::reply(array("result" => "success",
-			"resource" => url::site("users/{$user->id}")));
+                        "resource" => url::site("users/{$user->id}")));
     } else {
       json::reply(array("result" => "error", "html" => (string)$form));
     }
@@ -87,7 +87,7 @@ class Users_Controller extends Controller {
       module::event("user_auth", $user);
       module::event("user_password_change", $user);
       json::reply(array("result" => "success",
-			"resource" => url::site("users/{$user->id}")));
+                        "resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
@@ -121,7 +121,7 @@ class Users_Controller extends Controller {
       message::success(t("Email address changed"));
       module::event("user_auth", $user);
       json::reply(array("result" => "success",
-			"resource" => url::site("users/{$user->id}")));
+                        "resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
@@ -189,7 +189,7 @@ class Users_Controller extends Controller {
     $group->password("password")->label(t("Current password"))->id("g-password")
       ->callback("auth::validate_too_many_failed_auth_attempts")
       ->callback("user::valid_password")
-      ->error_messages("invalid", t("Incorrect password"))
+      ->error_messages("invalid_password", t("Incorrect password"))
       ->error_messages(
         "too_many_failed_auth_attempts",
         t("Too many incorrect passwords.  Try again later"));

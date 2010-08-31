@@ -37,22 +37,22 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
 
   public function sanitize_for_dump_match_key_test() {
     $this->assert_equal("removed for display",
-        Kohana_Exception::_sanitize_for_dump("original value", "password"));
+        Kohana_Exception::_sanitize_for_dump("original value", "password", 5));
     $this->assert_equal("original value",
-        Kohana_Exception::_sanitize_for_dump("original value", "meow"));
+        Kohana_Exception::_sanitize_for_dump("original value", "meow", 5));
   }
 
   public function sanitize_for_dump_match_key_loosely_test() {
     $this->assert_equal("removed for display",
-        Kohana_Exception::_sanitize_for_dump("original value", "this secret key"));
+        Kohana_Exception::_sanitize_for_dump("original value", "this secret key", 5));
   }
 
   public function sanitize_for_dump_match_value_test() {
     // Looks like a hash / secret value.
     $this->assert_equal("removed for display",
-        Kohana_Exception::_sanitize_for_dump("p$2a178b841c6391d6368f131", "meow"));
+        Kohana_Exception::_sanitize_for_dump("p$2a178b841c6391d6368f131", "meow", 5));
     $this->assert_equal("original value",
-        Kohana_Exception::_sanitize_for_dump("original value", "meow"));
+        Kohana_Exception::_sanitize_for_dump("original value", "meow", 5));
   }
 
   public function sanitize_for_dump_array_test() {
@@ -64,7 +64,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
                       "three" => "removed for display");
 
     $this->assert_equal($expected,
-        Kohana_Exception::_sanitize_for_dump($var, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($var, "ignored", 5));
   }
 
   public function sanitize_for_dump_nested_array_test() {
@@ -73,7 +73,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
     $expected = array("safe" => "original value 1",
                       "safe 2" => array("some hash" => "removed for display"));
     $this->assert_equal($expected,
-        Kohana_Exception::_sanitize_for_dump($var, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($var, "ignored", 5));
   }
 
   public function sanitize_for_dump_user_test() {
@@ -83,7 +83,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
     $user->email = "value 2";
     $user->full_name = "value 3";
     $this->assert_equal('User_Model object for "john" - details omitted for display',
-        Kohana_Exception::_sanitize_for_dump($user, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($user, "ignored", 5));
   }
 
   public function sanitize_for_dump_database_test() {
@@ -91,7 +91,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
         array("connection" => array("user" => "john", "name" => "gallery_3"),
               "cache" => array()));
     $this->assert_equal("Kohana_Exception_Test_Database object - details omitted for display",
-        Kohana_Exception::_sanitize_for_dump($db, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($db, "ignored", 5));
   }
 
   public function sanitize_for_dump_nested_database_test() {
@@ -104,7 +104,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
         array("some" => "foo",
               "bar (type: Kohana_Exception_Test_Database)" =>
               "Kohana_Exception_Test_Database object - details omitted for display"),
-        Kohana_Exception::_sanitize_for_dump($var, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($var, "ignored", 5));
   }
 
   public function sanitize_for_dump_object_test() {
@@ -117,7 +117,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
                       "private: email_address" => "removed for display",
                       "password" => "removed for display");
     $this->assert_equal($expected,
-        Kohana_Exception::_sanitize_for_dump($obj, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($obj, "ignored", 5));
   }
 
   public function sanitize_for_dump_nested_object_test() {
@@ -142,7 +142,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
                       "foo" => array("bar (type: User_Model)" =>
                                      'User_Model object for "john" - details omitted for display'));
     $this->assert_equal($expected,
-        Kohana_Exception::_sanitize_for_dump($obj, "ignored"));
+        Kohana_Exception::_sanitize_for_dump($obj, "ignored", 5));
   }
 }
 
