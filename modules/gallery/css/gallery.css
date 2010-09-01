@@ -200,3 +200,7 @@
 .rtl #g-translations ol {
   margin: 0 2em 1em 0;
 }
+
+.rtl #g-add-photos-status-message {
+  float: left;
+}
