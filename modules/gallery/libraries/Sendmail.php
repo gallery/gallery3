@@ -35,10 +35,12 @@ class Sendmail_Core {
 
   public function __construct() {
     $this->headers = array();
-    $config = Kohana::config("sendmail");
-    foreach ($config as $key => $value) {
-      $this->$key($value);
-    }
+    $domain = Input::instance()->server("HTTP_HOST");
+    $this->from(module::get_var("gallery", "email_from", "admin@$domain"));
+    $this->reply_to(module::get_var("gallery", "email_reply_to", "public@$domain"));
+    $this->line_length(module::get_var("gallery", "email_line_length", 70));
+    $separator = module::get_var("gallery", "email_header_separator", null);
+    $this->header_separator(empty($separator) ? "\n" : deserialize($separator));
   }
 
   public function __get($key) {

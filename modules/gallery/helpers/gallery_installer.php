@@ -302,7 +302,15 @@ class gallery_installer {
     module::set_var("gallery", "maintenance_mode", 0);
     module::set_var("gallery", "visible_title_length", 15);
     module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
-    module::set_version("gallery", 36);
+
+    // Sendmail configuration
+    $domain = Input::instance()->server("HTTP_HOST");
+    module::set_var("gallery", "email_from", "admin@$domain");
+    module::set_var("gallery", "email_reply_to", "public@$domain");
+    module::set_var("gallery", "email_line_length", 70);
+    module::set_var("gallery", "email_header_separator", serialize("\n"));
+
+    module::set_version("gallery", 37);
   }
 
   static function upgrade($version) {
@@ -595,6 +603,15 @@ class gallery_installer {
     if ($version == 35) {
       module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
       module::set_version("gallery", $version = 36);
+    }
+
+    if ($version == 36) {
+      $domain = Input::instance()->server("HTTP_HOST");
+      module::set_var("gallery", "email_from", "admin@$domain");
+      module::set_var("gallery", "email_reply_to", "public@$domain");
+      module::set_var("gallery", "email_line_length", 70);
+      module::set_var("gallery", "email_header_separator", serialize("\n"));
+      module::set_version("gallery", $version = 37);
     }
   }
 

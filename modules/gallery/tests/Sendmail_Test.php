@@ -23,9 +23,10 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_test() {
+    $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
-                "Reply-To: public@gallery3.com\r\n" .
+                "Reply-To: public@$domain\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
     $result = Sendmail_For_Test::factory()
@@ -45,8 +46,9 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_reply_to_test() {
+    $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\n" .
+                "From: admin@$domain\n" .
                 "Reply-To: reply-to@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
@@ -61,9 +63,10 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_html_message_test() {
+    $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\n" .
-                "Reply-To: public@gallery3.com\n" .
+                "From: admin@$domain\n" .
+                "Reply-To: public@$domain\n" .
                 "MIME-Version: 1.0\n" .
                 "Content-Type: text/html; charset=UTF-8\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
@@ -80,9 +83,10 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_wrapped_message_test() {
+    $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\n" .
-                "Reply-To: public@gallery3.com\r\n" .
+                "From: admin@$domain\n" .
+                "Reply-To: public@$domain\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "This is a long message that needs to go\n" .
                 "over forty characters If we get lucky we\n" .
