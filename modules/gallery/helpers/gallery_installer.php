@@ -304,9 +304,8 @@ class gallery_installer {
     module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
 
     // Sendmail configuration
-    $domain = Input::instance()->server("HTTP_HOST");
-    module::set_var("gallery", "email_from", "admin@$domain");
-    module::set_var("gallery", "email_reply_to", "public@$domain");
+    module::set_var("gallery", "email_from", "admin@example.com");
+    module::set_var("gallery", "email_reply_to", "public@example.com");
     module::set_var("gallery", "email_line_length", 70);
     module::set_var("gallery", "email_header_separator", serialize("\n"));
 
@@ -606,9 +605,8 @@ class gallery_installer {
     }
 
     if ($version == 36) {
-      $domain = Input::instance()->server("HTTP_HOST");
-      module::set_var("gallery", "email_from", "admin@$domain");
-      module::set_var("gallery", "email_reply_to", "public@$domain");
+      module::set_var("gallery", "email_from", "admin@example.com");
+      module::set_var("gallery", "email_reply_to", "public@example.com");
       module::set_var("gallery", "email_line_length", 70);
       module::set_var("gallery", "email_header_separator", serialize("\n"));
       module::set_version("gallery", $version = 37);
