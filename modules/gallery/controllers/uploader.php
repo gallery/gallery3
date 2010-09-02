@@ -103,11 +103,14 @@ class Uploader_Controller extends Controller {
   }
 
   public function status($success_count, $error_count) {
-    // The "errors" won't be properly pluralized :-/
-    print t2("Uploaded %count photo (%error errors)",
-             "Uploaded %count photos (%error errors)",
-             $success_count,
-             array("error" => $error_count));
+    if ($error_count) {
+      // The "errors" won't be properly pluralized :-/
+      print t2("Uploaded %count photo (%error errors)",
+               "Uploaded %count photos (%error errors)",
+               $success_count,
+               array("error" => $error_count));
+    } else {
+      print t2("Uploaded %count photo", "Uploaded %count photos", $success_count);}
   }
 
   public function finish() {
