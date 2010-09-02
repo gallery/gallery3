@@ -550,7 +550,9 @@ class gallery_installer {
     }
 
     if ($version == 26) {
-      $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
+      if (in_array("failed_logins", Database::instance()->list_tables())) {
+        $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
+      }
       module::set_version("gallery", $version = 27);
     }
 
