@@ -60,7 +60,7 @@
           $("#g-add-photos-status ul").append(
             "<li id=\"q" + queueID + "\" class=\"g-success\">" + fileObj.name + " - " +
             <?= t("Completed")->for_js() ?> + "</li>");
-          setTimeout(function() { $("#q" + queueID).slideUp("slow") }, 5000);
+          setTimeout(function() { $("#q" + queueID).slideUp("slow").remove() }, 5000);
           success_count++;
           update_status();
           return true;
@@ -87,8 +87,8 @@
               .replace("__TYPE__", errorObj.type));
           }
           $("#g-add-photos-status ul").append(
-            "<li class=\"g-error\">" + fileObj.name + msg + "</li>");
-          $("#g-uploadify" + queueID).remove();
+            "<li id=\"q" + queueID + "\" class=\"g-error\">" + fileObj.name + msg + "</li>");
+          $("#g-uploadify").uploadifyCancel(queueID);
           error_count++;
           update_status();
         },

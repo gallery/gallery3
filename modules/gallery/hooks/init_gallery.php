@@ -38,6 +38,7 @@ Event::add("system.ready", array("module", "load_modules"));
 Event::add("system.ready", array("gallery", "ready"));
 Event::add("system.post_routing", array("url", "parse_url"));
 Event::add("system.post_routing", array("gallery", "maintenance_mode"));
+Event::add("system.post_routing", array("gallery", "private_gallery"));
 Event::add("system.shutdown", array("gallery", "shutdown"));
 
 // @todo once we convert to Kohana 2.4 this doesn't have to be here

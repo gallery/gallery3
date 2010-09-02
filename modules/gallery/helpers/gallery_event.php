@@ -63,6 +63,8 @@ class gallery_event_Core {
       ->update("logs")
       ->set("user_id", $admin->id)
       ->execute();
+    module::set_var("gallery", "email_from", $admin->email);
+    module::set_var("gallery", "email_reply_to", $admin->email);
   }
 
   static function group_created($group) {
@@ -546,5 +548,18 @@ class gallery_event_Core {
     }
     $data->content[] = (object) array("title" => t("User information"), "view" => $v);
 
+  }
+
+  static function user_updated($original_user, $updated_user) {
+    // If the default from/reply-to email address is set to the install time placeholder value
+    // of unknown@unknown.com then adopt the value from the first admin to set their own email
+    // address so that we at least have a valid address for the Gallery.
+    if ($updated_user->admin) {
+      $email = module::get_var("gallery", "email_from", "");
+      if ($email == "unknown@unknown.com") {
+        module::set_var("gallery", "email_from", $updated_user->email);
+        module::set_var("gallery", "email_reply_to", $updated_user->email);
+      }
+    }
   }
 }

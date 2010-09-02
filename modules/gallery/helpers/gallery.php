@@ -37,6 +37,22 @@ class gallery_Core {
   }
 
   /**
+   * If the gallery is only available to registered users and the user is not logged in, present
+   * the login page.
+   */
+  static function private_gallery() {
+    if (Router::$controller != "login" &&
+        Router::$controller != "combined" &&
+        identity::active_user()->guest &&
+        !access::user_can(identity::guest(), "view", item::root())) {
+      Session::instance()->set("continue_url", url::abs_current());
+      Router::$controller = "login";
+      Router::$controller_path = MODPATH . "gallery/controllers/login.php";
+      Router::$method = "html";
+    }
+  }
+
+  /**
    * This function is called when the Gallery is fully initialized.  We relay it to modules as the
    * "gallery_ready" event.  Any module that wants to perform an action at the start of every
    * request should implement the <module>_event::gallery_ready() handler.

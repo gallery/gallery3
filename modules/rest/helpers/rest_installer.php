@@ -35,7 +35,9 @@ class rest_installer {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
+      if (in_array("user_access_tokens", Database::instance()->list_tables())) {
+        $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
+      }
       module::set_version("rest", $version = 2);
     }
 
