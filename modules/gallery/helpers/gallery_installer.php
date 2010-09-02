@@ -304,12 +304,12 @@ class gallery_installer {
     module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
 
     // Sendmail configuration
-    module::set_var("gallery", "email_from", "admin@example.com");
-    module::set_var("gallery", "email_reply_to", "public@example.com");
+    module::set_var("gallery", "email_from", "");
+    module::set_var("gallery", "email_reply_to", "");
     module::set_var("gallery", "email_line_length", 70);
     module::set_var("gallery", "email_header_separator", serialize("\n"));
 
-    module::set_version("gallery", 37);
+    module::set_version("gallery", 38);
   }
 
   static function upgrade($version) {
@@ -610,6 +610,20 @@ class gallery_installer {
       module::set_var("gallery", "email_line_length", 70);
       module::set_var("gallery", "email_header_separator", serialize("\n"));
       module::set_version("gallery", $version = 37);
+    }
+
+    // Changed our minds and decided that the initial value should be empty
+    // But don't just reset it blindly, only do it if the value is version 37 default
+    if ($version == 37) {
+      $email = module::get_var("gallery", "email_from", "");
+      if ($email == "admin@example.com") {
+        module::set_var("gallery", "email_from", "");
+      }
+      $email = module::get_var("gallery", "email_reply_to", "");
+      if ($email == "admin@example.com") {
+        module::set_var("gallery", "email_reply_to", "");
+      }
+      module::set_version("gallery", $version = 38);
     }
   }
 

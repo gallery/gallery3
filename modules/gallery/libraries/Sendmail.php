@@ -35,12 +35,11 @@ class Sendmail_Core {
 
   public function __construct() {
     $this->headers = array();
-    $domain = Input::instance()->server("HTTP_HOST");
-    $this->from(module::get_var("gallery", "email_from", "admin@$domain"));
-    $this->reply_to(module::get_var("gallery", "email_reply_to", "public@$domain"));
+    $this->from(module::get_var("gallery", "email_from", ""));
+    $this->reply_to(module::get_var("gallery", "email_reply_to", ""));
     $this->line_length(module::get_var("gallery", "email_line_length", 70));
     $separator = module::get_var("gallery", "email_header_separator", null);
-    $this->header_separator(empty($separator) ? "\n" : deserialize($separator));
+    $this->header_separator(empty($separator) ? "\n" : unserialize($separator));
   }
 
   public function __get($key) {

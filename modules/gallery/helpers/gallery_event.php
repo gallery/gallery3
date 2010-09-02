@@ -550,10 +550,13 @@ class gallery_event_Core {
 
   }
 
-  static function user_change_email_form_completed($user, $form) {
-    if ($user->admin) {
-      module::set_var("gallery", "email_from", $user->email);
-      module::set_var("gallery", "email_reply_to", $user->email);
+  static function user_updated($original_user, $updated_user) {
+    if ($updated_user->admin) {
+      $email = module::get_var("gallery", "email_from", "");
+      if (empty($email)) {
+        module::set_var("gallery", "email_from", $updated_user->email);
+        module::set_var("gallery", "email_reply_to", $updated_user->email);
+      }
     }
   }
 }
