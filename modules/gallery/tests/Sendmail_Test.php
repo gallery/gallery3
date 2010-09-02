@@ -19,24 +19,18 @@
  */
 class Sendmail_Test extends Gallery_Unit_Test_Case {
   public function setup() {
-    Kohana_Config::instance()->set("sendmail.from", "from@gallery3.com");
+    module::set_var("gallery", "email_from", "from@gallery3.com");
+    module::set_var("gallery", "email_reply_to", "reply_to@gallery3.com");
   }
 
-  public function sendmail_test() {
-    $domain = Input::instance()->server("HTTP_HOST");
+  public function sendmail_basic_test() {
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
-                "Reply-To: public@$domain\r\n" .
+                "Reply-To: reply_to@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
     $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
-      /*
-       * @todo figure out why this test fails so badly, when the following
-       * line is not supplied. It doesn't seem to be set by setup method
-       * as you would expect.
-       */
-      ->from("from@gallery3.com")
       ->subject("Test Email Unit test")
       ->message("The mail message body")
       ->send()
@@ -46,16 +40,15 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_reply_to_test() {
-    $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: admin@$domain\n" .
-                "Reply-To: reply-to@gallery3.com\r\n" .
+                "From: from@gallery3.com\n" .
+                "Reply-To: reply_to@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
     $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
       ->subject("Test Email Unit test")
-      ->reply_to("reply-to@gallery3.com")
+      ->reply_to("reply_to@gallery3.com")
       ->message("The mail message body")
       ->send()
       ->send_text;
@@ -63,10 +56,9 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_html_message_test() {
-    $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: admin@$domain\n" .
-                "Reply-To: public@$domain\n" .
+                "From: from@gallery3.com\n" .
+                "Reply-To: reply_to@gallery3.com\n" .
                 "MIME-Version: 1.0\n" .
                 "Content-Type: text/html; charset=UTF-8\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
@@ -85,8 +77,8 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   public function sendmail_wrapped_message_test() {
     $domain = Input::instance()->server("HTTP_HOST");
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: admin@$domain\n" .
-                "Reply-To: public@$domain\r\n" .
+                "From: from@gallery3.com\n" .
+                "Reply-To: reply_to@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "This is a long message that needs to go\n" .
                 "over forty characters If we get lucky we\n" .
