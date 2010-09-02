@@ -551,11 +551,12 @@ class gallery_event_Core {
   }
 
   static function user_updated($original_user, $updated_user) {
-    // If no default from/reply-to email address is set, adopt the value from the first admin to
-    // set their own email address so that we at least have a valid address for the Gallery.
+    // If the default from/reply-to email address is set to the install time placeholder value
+    // of unknown@unknown.com then adopt the value from the first admin to set their own email
+    // address so that we at least have a valid address for the Gallery.
     if ($updated_user->admin) {
       $email = module::get_var("gallery", "email_from", "");
-      if (empty($email)) {
+      if ($email == "unknown@unknown.com") {
         module::set_var("gallery", "email_from", $updated_user->email);
         module::set_var("gallery", "email_reply_to", $updated_user->email);
       }
