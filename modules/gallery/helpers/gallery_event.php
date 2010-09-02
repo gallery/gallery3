@@ -63,6 +63,8 @@ class gallery_event_Core {
       ->update("logs")
       ->set("user_id", $admin->id)
       ->execute();
+    module::set_var("gallery", "email_from", $admin->email);
+    module::set_var("gallery", "email_reply_to", $admin->email);
   }
 
   static function group_created($group) {
@@ -546,5 +548,12 @@ class gallery_event_Core {
     }
     $data->content[] = (object) array("title" => t("User information"), "view" => $v);
 
+  }
+
+  static function user_change_email_form_completed($user, $form) {
+    if ($user->admin) {
+      module::set_var("gallery", "email_from", $user->email);
+      module::set_var("gallery", "email_reply_to", $user->email);
+    }
   }
 }
