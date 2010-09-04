@@ -40,7 +40,7 @@ class gallery_rss_Core {
         ->order_by("created", "DESC");
 
       $feed->max_pages = ceil($all_items->find_all()->count() / $limit);
-      $feed->title = t("Recent updates");
+      $feed->title = t("%site_title - Recent updates", array("site_title" => item::root()->title));
       $feed->description = t("Recent updates");
       return $feed;
 
@@ -53,7 +53,13 @@ class gallery_rss_Core {
         ->descendants($limit, $offset, array(array("type", "=", "photo")));
       $feed->max_pages = ceil(
         $item->viewable()->descendants_count(array(array("type", "=", "photo"))) / $limit);
-      $feed->title = html::purify($item->title);
+      if ($item->id == item::root()->id) {
+        $feed->title = html::purify($item->title);
+      } else {
+        $feed->title = t("%site_title - %item_title",
+                         array("site_title" => item::root()->title,
+                               "item_title" => $item->title));
+      }
       $feed->description = nl2br(html::purify($item->description));
 
       return $feed;
