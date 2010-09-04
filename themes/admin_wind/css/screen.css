@@ -191,7 +191,8 @@ th {
 
 .g-unavailable {
   border-color: #999;
-  opacity: 0.4;
+  color: black;
+  opacity: .6;
 }
 
 .g-info td {
