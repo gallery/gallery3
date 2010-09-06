@@ -448,7 +448,17 @@ class module_Core {
         $cache->module_name = "gallery";
         $cache->name = "_cache";
         $cache->value = serialize(self::$var_cache);
-        $cache->save();
+        try {
+          $cache->save();
+        } catch (Database_Exception $e) {
+          // There's a potential race condition here.  Don't fail if that happens because it's
+          // bound to be transient and not a huge deal, but at least put something in the logs.
+          if (stristr($e->getMessage(), "duplicate entry")) {
+            Kohana_Log::add("error", "Failed to cache vars");
+          } else {
+            throw $e;
+          }
+        }
       }
     }
 
