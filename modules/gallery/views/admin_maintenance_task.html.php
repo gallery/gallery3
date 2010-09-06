@@ -3,6 +3,7 @@
   var target_value;
   var animation = null;
   var delta = 1;
+  var consecutive_error_count = 0;
   animate_progress_bar = function() {
     var current_value = parseInt($(".g-progress-bar div").css("width").replace("%", ""));
     if (target_value > current_value) {
@@ -26,12 +27,15 @@
     $.fn.gallery_hover_init();
   }
 
+  var FAILED_MSG = <?= t("Something went wrong...sorry!  <a>Retry</a> or check the task log for details")->for_js() ?>;
+  var ERROR_MSG = <?= t("Something went wrong!  Trying again in a moment... (__COUNT__)")->for_js() ?>;
   update = function() {
     $.ajax({
       url: <?= html::js_string(url::site("admin/maintenance/run/$task->id?csrf=$csrf")) ?>,
       dataType: "json",
       success: function(data) {
         target_value = data.task.percent_complete;
+        consecutive_error_count = 0;
         if (!animation) {
           animate_progress_bar();
         }
@@ -41,6 +45,22 @@
           $("#g-done-button").show();
         } else {
           setTimeout(update, 100);
+        }
+      },
+      error: function(req, textStatus, errorThrown) {
+        if (textStatus == "timeout" || textStatus == "parsererror") {
+          consecutive_error_count++;
+          if (consecutive_error_count == 5) {
+            $("#g-status").html(FAILED_MSG);
+            $("#g-pause-button").hide();
+            $("#g-done-button").show();
+            consecutive_error_count = 0;  // in case of a manual retry
+            $("#g-status a").attr("href", "javascript:update()");
+          } else {
+            $("#g-status").html(ERROR_MSG.replace("__COUNT__", consecutive_error_count));
+            // Give a little time to back off before retrying
+            setTimeout(update, 1500 * consecutive_error_count);
+          }
         }
       }
     });
