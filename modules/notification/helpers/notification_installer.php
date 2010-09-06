@@ -39,6 +39,14 @@ class notification_installer {
     module::set_version("notification", 1);
   }
 
+  static function upgrade($version) {
+    $db = Database::instance();
+    if ($version == 1) {
+      $db->query("ALTER TABLE {pending_notifications} ADD COLUMN `locale` char(10) default NULL");
+      module::set_version("notification", $version = 2);
+    }
+  }
+
   static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {subscriptions};");
