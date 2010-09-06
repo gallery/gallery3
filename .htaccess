@@ -60,6 +60,7 @@
 # putting this block into your Apache config files.
 #
 # <IfModule mod_rewrite.c>
+#   Options +FollowSymLinks
 #   RewriteEngine On
 #   RewriteBase /
 #   RewriteCond %{REQUEST_FILENAME} !-f
