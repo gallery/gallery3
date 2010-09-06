@@ -109,16 +109,21 @@
             <?= html::clean($task->owner()->name) ?>
           </td>
           <td>
-            <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
-               class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
-              <?= t("cancel") ?>
-            </a>
             <? if ($task->state == "stalled"): ?>
             <a class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"
                href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
               <?= t("resume") ?>
             </a>
             <? endif ?>
+            <? if ($task->get_log()): ?>
+            <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button ui-state-default ui-corner-all">
+              <?= t("view log") ?>
+            </a>
+            <? endif ?>
+            <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
+               class="g-button ui-icon-left ui-state-default ui-corner-all">
+              <?= t("cancel") ?>
+            </a>
           </td>
         </tr>
         <? endforeach ?>
@@ -183,7 +188,7 @@
             </a>
             <? if ($task->get_log()): ?>
             <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button ui-state-default ui-corner-all">
-              <?= t("browse log") ?>
+              <?= t("view log") ?>
             </a>
             <? endif ?>
             <? else: ?>
