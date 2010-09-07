@@ -99,13 +99,12 @@
         <?= t("Once your migration is complete, put this block at the top of your gallery2/.htaccess file and all Gallery 2 urls will be redirected to Gallery 3") ?>
       </p>
 
-      <code>
-        &lt;IfModule mod_rewrite.c&gt;<br/>
-          RewriteEngine On<br/>
-          RewriteBase <?= html::clean(g2_import::$g2_base_url) ?><br/>
-          RewriteRule ^(.*)$ <?= url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]<br/>
-        &lt;/IfModule&gt;<br/>
-      </code>
+      <textarea rows="2">&lt;IfModule mod_rewrite.c&gt;
+  Options +FollowSymLinks
+  RewriteEngine On
+  RewriteBase <?= html::clean(g2_import::$g2_base_url) ?>
+  RewriteRule ^(.*)$ <?= url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
+&lt;/IfModule&gt;</textarea>
     </div>
     <? endif ?>
   </div>

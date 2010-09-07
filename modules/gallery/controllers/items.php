@@ -31,4 +31,13 @@ class Items_Controller extends Controller {
     access::required("view", $item);
     url::redirect($item->abs_url());
   }
+
+  // Return the width/height dimensinons for the given item
+  public function dimensions($id) {
+    $item = ORM::factory("item", $id);
+    access::required("view", $item);
+    json::reply(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
+                      "resize" => array((int)$item->resize_width, (int)$item->resize_height),
+                      "full" => array((int)$item->width, (int)$item->height)));
+  }
 }

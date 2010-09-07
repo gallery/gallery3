@@ -44,7 +44,7 @@ function t($message, $options=array()) {
  */
 function t2($singular, $plural, $count, $options=array()) {
   return Gallery_I18n::instance()->translate(array("one" => $singular, "other" => $plural),
-                                     array_merge($options, array("count" => $count)));
+                                             array_merge($options, array("count" => $count)));
 }
 
 class Gallery_I18n_Core {
@@ -175,7 +175,7 @@ class Gallery_I18n_Core {
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
-      
+
       // Override incoming with outgoing...
       foreach (db::build()
                ->select("key", "translation")
@@ -184,7 +184,7 @@ class Gallery_I18n_Core {
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
-      
+
       $cache->set($cache_key, $translations, array("translation"), 0);
     }
     return $translations;

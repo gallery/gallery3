@@ -116,17 +116,17 @@ interface IdentityProvider_Driver {
 
   /**
    * Add the user to the specified group
-   * @param User_Definition the user to add to the group
-   * @param int             the group_id
+   * @param User_Definition  the user to add
+   * @param Group_Definition the target group
    */
-  static function add_user_to_group($user, $group_id);
+  public function add_user_to_group($user, $group);
 
   /**
    * Remove the user to the specified group
-   * @param User_Definition the user to add to the group
-   * @param int             the group id
+   * @param User_Definition  the user to remove
+   * @param Group_Definition the owning group
    */
-  static function remove_user_from_group($user, $group_id);
+  public function remove_user_from_group($user, $group);
 } // End Identity Driver Definition
 
 interface Group_Definition {}

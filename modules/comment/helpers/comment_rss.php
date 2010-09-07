@@ -57,13 +57,19 @@ class comment_rss_Core {
               "thumb_height" => $item->thumb_height,
               "thumb_width" => $item->thumb_width,
               "item_uri" => url::abs_site("{$item->type}s/$item->id"),
-              "title" => html::purify($item->title),
+              "title" => (
+                ($item->id == item::root()->id) ?
+                html::purify($item->title) :
+                t("%site_title - %item_title",
+                  array("site_title" => item::root()->title,
+                        "item_title" => $item->title))),
               "author" => html::clean($comment->author_name())),
         ArrayObject::ARRAY_AS_PROPS);
     }
 
     $feed->max_pages = ceil($comments->count_all() / $limit);
-    $feed->title = htmlspecialchars(t("Recent Comments"));
+    $feed->title = html::purify(t("%site_title - Recent Comments",
+                                 array("site_title" => item::root()->title)));
     $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
     $feed->description = t("Recent comments");
 

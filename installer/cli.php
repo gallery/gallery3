@@ -32,7 +32,7 @@ if (installer::already_installed()) {
 
 $errors = installer::check_environment();
 if ($errors) {
-  oops(implode("errors", "\n"));
+  oops(implode($errors, "\n"));
 }
 
 $config = parse_cli_params();

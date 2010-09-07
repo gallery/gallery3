@@ -67,7 +67,7 @@ class notification {
   }
 
   static function get_subscribers($item) {
-   $subscriber_ids = array();
+    $subscriber_ids = array();
     foreach (ORM::factory("subscription")
              ->select("user_id")
              ->join("items", "subscriptions.item_id", "items.id")
@@ -86,88 +86,76 @@ class notification {
     $subscribers = array();
     foreach ($users as $user) {
       if (access::user_can($user, "view", $item) && !empty($user->email)) {
-        $subscribers[$user->email] = 1;
+        $subscribers[$user->email] = $user->locale;
       }
     }
-    return array_keys($subscribers);
+    return $subscribers;
   }
 
   static function send_item_updated($original, $item) {
-    $subscribers = self::get_subscribers($item);
-    if (!$subscribers) {
-      return;
+    foreach (self::get_subscribers($item) as $email => $locale) {
+      $v = new View("item_updated.html");
+      $v->original = $original;
+      $v->item = $item;
+      $v->subject = $item->is_album() ?
+        t("Album \"%title\" updated", array("title" => $original->title, "locale" => $locale)) :
+        ($item->is_photo() ?
+         t("Photo \"%title\" updated", array("title" => $original->title, "locale" => $locale))
+         : t("Movie \"%title\" updated", array("title" => $original->title, "locale" => $locale)));
+      self::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
-
-    $v = new View("item_updated.html");
-    $v->original = $original;
-    $v->item = $item;
-    $v->subject = $item->is_album() ?
-      t("Album \"%title\" updated", array("title" => $original->title)) :
-      ($item->is_photo() ?
-       t("Photo \"%title\" updated", array("title" => $original->title))
-       : t("Movie \"%title\" updated", array("title" => $original->title)));
-
-    self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
 
   static function send_item_add($item) {
-    $subscribers = self::get_subscribers($item);
-    if (!$subscribers) {
-      return;
-    }
-
     $parent = $item->parent();
-    $v = new View("item_added.html");
-    $v->item = $item;
-    $v->subject = $item->is_album() ?
-      t("Album \"%title\" added to \"%parent_title\"",
-        array("title" => $item->title, "parent_title" => $parent->title)) :
-      ($item->is_photo() ?
-       t("Photo \"%title\" added to \"%parent_title\"",
-         array("title" => $item->title, "parent_title" => $parent->title)) :
-       t("Movie \"%title\" added to \"%parent_title\"",
-           array("title" => $item->title, "parent_title" => $parent->title)));
-
-    self::_notify($subscribers, $item, $v->render(), $v->subject);
+    foreach (self::get_subscribers($item) as $email => $locale) {
+      $v = new View("item_added.html");
+      $v->item = $item;
+      $v->subject = $item->is_album() ?
+        t("Album \"%title\" added to \"%parent_title\"",
+          array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
+        ($item->is_photo() ?
+         t("Photo \"%title\" added to \"%parent_title\"",
+           array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
+         t("Movie \"%title\" added to \"%parent_title\"",
+           array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)));
+      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+    }
   }
 
   static function send_item_deleted($item) {
-    $subscribers = self::get_subscribers($item);
-    if (!$subscribers) {
-      return;
-    }
-
     $parent = $item->parent();
-    $v = new View("item_deleted.html");
-    $v->item = $item;
-    $v->subject = $item->is_album() ?
-      t("Album \"%title\" removed from \"%parent_title\"",
-        array("title" => $item->title, "parent_title" => $parent->title)) :
-      ($item->is_photo() ?
-       t("Photo \"%title\" removed from \"%parent_title\"",
-         array("title" => $item->title, "parent_title" => $parent->title))
-       : t("Movie \"%title\" removed from \"%parent_title\"",
-           array("title" => $item->title, "parent_title" => $parent->title)));
-
-    self::_notify($subscribers, $item, $v->render(), $v->subject);
+    foreach (self::get_subscribers($item) as $email => $locale) {
+      $v = new View("item_deleted.html");
+      $v->item = $item;
+      $v->subject = $item->is_album() ?
+        t("Album \"%title\" removed from \"%parent_title\"",
+          array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
+        ($item->is_photo() ?
+         t("Photo \"%title\" removed from \"%parent_title\"",
+           array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale))
+         : t("Movie \"%title\" removed from \"%parent_title\"",
+             array("title" => $item->title, "parent_title" => $parent->title,
+                   "locale" => $locale)));
+      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+    }
   }
 
   static function send_comment_published($comment) {
     $item = $comment->item();
-    $subscribers = self::get_subscribers($item);
-    if (!$subscribers) {
-      return;
-    }
-
-    $v = new View("comment_published.html");
-    $v->comment = $comment;
-    $v->subject = $item->is_album() ?
-      t("A new comment was published for album \"%title\"", array("title" => $item->title)) :
+    foreach (self::get_subscribers($item) as $email => $locale) {
+      $v = new View("comment_published.html");
+      $v->comment = $comment;
+      $v->subject = $item->is_album() ?
+        t("A new comment was published for album \"%title\"",
+          array("title" => $item->title, "locale" => $locale)) :
       ($item->is_photo() ?
-       t("A new comment was published for photo \"%title\"", array("title" => $item->title))
-       : t("A new comment was published for movie \"%title\"", array("title" => $item->title)));
-
-    self::_notify($subscribers, $item, $v->render(), $v->subject);
+       t("A new comment was published for photo \"%title\"",
+         array("title" => $item->title, "locale" => $locale))
+       : t("A new comment was published for movie \"%title\"",
+           array("title" => $item->title, "locale" => $locale)));
+      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+    }
   }
 
   static function send_pending_notifications() {
@@ -191,13 +179,16 @@ class notification {
         $pending->delete();
       } else {
         $text = "";
+        $locale = null;
         foreach ($result as $pending) {
           $text .= $pending->text;
+          $locale = $pending->locale;
           $pending->delete();
         }
         Sendmail::factory()
           ->to($email)
-          ->subject(t("Multiple events have occurred")) // @todo fix this terrible subject line
+          ->subject(t("New activity for %site_name",
+                      array("site_name" => item::root()->title, "locale" => $locale)))
           ->header("Mime-Version", "1.0")
           ->header("Content-Type", "text/html; charset=UTF-8")
           ->message($text)
@@ -206,25 +197,22 @@ class notification {
     }
   }
 
-  private static function _notify($subscribers, $item, $text, $subject) {
-    if (!empty($subscribers)) {
-      if (!batch::in_progress()) {
-        Sendmail::factory()
-          ->to($subscribers)
-          ->subject($subject)
-          ->header("Mime-Version", "1.0")
-          ->header("Content-Type", "text/html; charset=UTF-8")
-          ->message($text)
-          ->send();
-      } else {
-        foreach ($subscribers as $subscriber) {
-          $pending = ORM::factory("pending_notification");
-          $pending->subject = $subject;
-          $pending->text = $text;
-          $pending->email = $subscriber;
-          $pending->save();
-        }
-      }
+  private static function _notify($email, $locale, $item, $text, $subject) {
+    if (!batch::in_progress()) {
+      Sendmail::factory()
+        ->to($email)
+        ->subject($subject)
+        ->header("Mime-Version", "1.0")
+        ->header("Content-Type", "text/html; charset=UTF-8")
+        ->message($text)
+        ->send();
+    } else {
+      $pending = ORM::factory("pending_notification");
+      $pending->subject = $subject;
+      $pending->text = $text;
+      $pending->email = $email;
+      $pending->locale = $locale;
+      $pending->save();
     }
   }
 }
