@@ -977,23 +977,30 @@ class Item_Model extends ORM_MPTT {
 
     $data["web_url"] = $this->abs_url();
 
-    if (access::can("view_full", $this) && !$this->is_album()) {
-      $data["file_url"] = rest::url("data", $this, "full");
-    }
-    if (access::user_can(identity::guest(), "view_full", $this)) {
-      $data["file_url_public"] = $this->file_url(true);
+    if (!$this->is_album()) {
+      if (access::can("view_full", $this)) {
+        $data["file_url"] = rest::url("data", $this, "full");
+        $data["file_size"] = filesize($this->file_path());
+      }
+      if (access::user_can(identity::guest(), "view_full", $this)) {
+        $data["file_url_public"] = $this->file_url(true);
+      }
     }
 
     if ($this->is_photo()) {
       $data["resize_url"] = rest::url("data", $this, "resize");
+      $data["resize_size"] = filesize($this->resize_path());
       if (access::user_can(identity::guest(), "view", $this)) {
         $data["resize_url_public"] = $this->resize_url(true);
       }
     }
 
-    $data["thumb_url"] = rest::url("data", $this, "thumb");
-    if (access::user_can(identity::guest(), "view", $this)) {
-      $data["thumb_url_public"] = $this->thumb_url(true);
+    if ($this->has_thumb()) {
+      $data["thumb_url"] = rest::url("data", $this, "thumb");
+      $data["thumb_size"] = filesize($this->thumb_path());
+      if (access::user_can(identity::guest(), "view", $this)) {
+        $data["thumb_url_public"] = $this->thumb_url(true);
+      }
     }
 
     $data["can_edit"] = access::can("edit", $this);
