@@ -105,9 +105,9 @@
                // containing that photo.  For now, we just do it for
                // the immediate parent so that when you go back up a
                // level you're on the right page. ?>
-            <a href="<?= $parent->url($parent == $theme->item()->parent() ?
+            <a href="<?= $parent->url($parent->id == $theme->item()->parent_id ?
                      "show={$theme->item()->id}" : null) ?>">
-              <!-- limit the title length to something reasonable (defaults to 15) -->
+              <? // limit the title length to something reasonable (defaults to 15) ?>
               <?= html::purify(text::limit_chars($parent->title,
                     module::get_var("gallery", "visible_title_length"))) ?>
             </a>

@@ -975,6 +975,8 @@ class Item_Model extends ORM_MPTT {
     }
     unset($data["album_cover_item_id"]);
 
+    $data["web_url"] = $this->abs_url();
+
     if (access::can("view_full", $this) && !$this->is_album()) {
       $data["file_url"] = rest::url("data", $this, "full");
     }

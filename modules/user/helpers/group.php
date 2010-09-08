@@ -68,13 +68,13 @@ class group_Core {
    */
   private static function _lookup_by_field($field_name, $value) {
     try {
-      $user = model_cache::get("group", $value, $field_name);
-      if ($user->loaded()) {
-        return $user;
+      $group = model_cache::get("group", $value, $field_name);
+      if ($group->loaded()) {
+        return $group;
       }
     } catch (Exception $e) {
       if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
-       throw $e;
+        throw $e;
       }
     }
     return null;

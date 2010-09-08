@@ -210,7 +210,7 @@ class gallery_event_Core {
                       ->label($user->display_name()));
 
         if (Router::$controller == "admin") {
-          $continue_url = url::site("");
+          $continue_url = url::abs_site("");
         } else if (isset($theme->item)) {
           if (access::user_can(identity::guest(), "view", $theme->item)) {
             $continue_url = $theme->item->abs_url();

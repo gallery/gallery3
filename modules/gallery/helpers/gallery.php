@@ -45,10 +45,17 @@ class gallery_Core {
         Router::$controller != "combined" &&
         identity::active_user()->guest &&
         !access::user_can(identity::guest(), "view", item::root())) {
-      Session::instance()->set("continue_url", url::abs_current());
-      Router::$controller = "login";
-      Router::$controller_path = MODPATH . "gallery/controllers/login.php";
-      Router::$method = "html";
+      if (Router::$controller == "admin") {
+        // At this point we're in the admin theme and it doesn't have a themed login page, so
+        // we can't just swap in the login controller and have it work.  So redirect back to the
+        // root item where we'll run this code again with the site theme.
+        url::redirect(item::root()->abs_url());
+      } else {
+        Session::instance()->set("continue_url", url::abs_current());
+        Router::$controller = "login";
+        Router::$controller_path = MODPATH . "gallery/controllers/login.php";
+        Router::$method = "html";
+      }
     }
   }
 
