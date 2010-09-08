@@ -64,6 +64,7 @@
             <th><?= t("Full name") ?></th>
             <th><?= t("Email") ?></th>
             <th><?= t("Last login") ?></th>
+            <th><?= t("Albums/Photos") ?></th>
             <th><?= t("Actions") ?></th>
           </tr>
 
@@ -85,6 +86,9 @@
             </td>
             <td>
               <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>
+            </td>
+            <td>
+              <?= db::build()->from("items")->where("owner_id", "=", $user->id)->count_records() ?>
             </td>
             <td>
               <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"

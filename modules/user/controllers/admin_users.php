@@ -95,7 +95,10 @@ class Admin_Users_Controller extends Admin_Controller {
     if (empty($user)) {
       throw new Kohana_404_Exception();
     }
-    print $this->_get_user_delete_form_admin($user);
+    $v = new View("admin_users_delete_user.html");
+    $v->user = $user;
+    $v->form = $this->_get_user_delete_form_admin($user);
+    print $v;
   }
 
   public function edit_user($id) {
@@ -364,8 +367,8 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = new Forge("admin/users/delete_user/$user->id", "", "post",
                       array("id" => "g-delete-user-form"));
     $group = $form->group("delete_user")->label(
-      t("Are you sure you want to delete user %name?", array("name" => $user->name)));
-    $group->submit("")->value(t("Delete user %name", array("name" => $user->name)));
+      t("Delete user %name?", array("name" => $user->display_name())));
+    $group->submit("")->value(t("Delete"));
     return $form;
   }
 
