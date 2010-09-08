@@ -530,7 +530,7 @@ class Item_Model extends ORM_MPTT {
    * the first child in the album is at position 1.
    */
   public function get_position($child, $where=array()) {
-    if ($this->sort_order == "DESC") {
+    if (!strcasecmp($this->sort_order, "DESC")) {
       $comp = ">";
     } else {
       $comp = "<";
