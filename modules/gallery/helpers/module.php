@@ -139,7 +139,7 @@ class module_Core {
   }
 
   /**
-   * Allow modules to indicate the impact of deactivating the specifeid module
+   * Allow modules to indicate the impact of deactivating the specified module
    * @param string $module_name
    * @return array an array of warning or error messages to be displayed
    */
