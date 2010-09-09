@@ -8,8 +8,6 @@
   <div class="g-block-content">
     <div id="g-admin-g2-import-notes">
       <h2> <?= t("Notes") ?> </h2>
-      <p>
-        <?= t("The import process is a work in progress with some known issues:") ?>
       </p>
       <ul>
         <li>
@@ -22,7 +20,7 @@
           <?= t("Deactivating the <b>notification</b>, <b>search</b> and <b>exif</b> modules during your import will make it go faster.") ?>
         </li>
         <li>
-          <?= t("The eAccelerator PHP performance extension is known to cause issues.  If you're using eAccelerator and having problems, please disable it while you do your import.  One way to do that is to put <code>php_value eaccelerator.enable 0</code> in gallery3/.htaccess") ?>
+          <?= t("The eAccelerator and XCache PHP performance extensions are known to cause issues.  If you're using either of those and are having problems, please disable them while you do your import.  Add the following lines: <pre>%lines</pre> to gallery3/.htaccess and remove them when the import is done.", array("lines" => "\n\n  php_value eaccelerator.enable 0\n  php_value xcache.cacher off\n  php_value xcache.optimizer off\n\n")) ?>
         </li>
       </ul>
     </div>
