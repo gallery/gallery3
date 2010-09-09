@@ -36,31 +36,17 @@
         <? endif ?>
 
         <li class="g-info">
-          <?= t("Your Gallery 2 has the following importable data in it") ?>
-          <ul>
-            <li>
-              <?= t2("1 user", "%count users", $g2_stats["users"]) ?>
-            </li>
-            <li>
-              <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>
-            </li>
-            <li>
-              <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>
-            </li>
-            <li>
-              <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>
-            </li>
-            <li>
-              <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>
-            </li>
-            <li>
-              <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
-            </li>
-            <li>
-              <?= t2("1 tagged photo/movie/album",
-                  "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
-            </li>
-          </ul>
+          <?= t("Your Gallery 2 has the following importable data in it:") ?>
+          <p>
+            <?= t2("1 user", "%count users", $g2_stats["users"]) ?>,
+            <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>,
+            <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>,
+            <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>,
+            <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>,
+            <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>,
+            <?= t2("1 tagged photo/movie/album",
+                "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
+          </p>
         </li>
       </ul>
 
