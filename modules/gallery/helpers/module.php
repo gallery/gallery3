@@ -99,6 +99,10 @@ class module_Core {
         $m->code_version = $m->version;
         $m->version = self::get_version($module_name);
         $m->locked = false;
+
+        if ($m->active && $m->version != $m->code_version) {
+          site_status::warning(t("Some of your modules are out of date.  <a href=\"%upgrader_url\">Upgrade now!</a>", array("upgrader_url" => url::site("upgrader"))), "upgrade_now");
+        }
       }
 
       // Lock certain modules

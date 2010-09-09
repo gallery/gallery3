@@ -83,6 +83,9 @@ class Upgrader_Controller extends Controller {
       }
     }
 
+    // If the upgrade failed, this will get recreated
+    site_status::clear("upgrade_now");
+
     if (php_sapi_name() == "cli") {
       print "Upgrade complete\n";
     } else {

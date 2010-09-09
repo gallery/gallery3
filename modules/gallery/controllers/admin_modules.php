@@ -95,11 +95,16 @@ class Admin_Modules_Controller extends Admin_Controller {
           $activated_names[] = t($info->name);
         }
       } catch (Exception $e) {
+        message::warning(t("An error occurred while installing the <b>%module_name</b> module",
+                           array("module_name" => $info->name)));
         Kohana_Log::add("error", (string)$e);
       }
     }
 
     module::event("module_change", $changes);
+
+    // If modules need upgrading, this will get recreated
+    site_status::clear("upgrade_now");
 
     // @todo this type of collation is questionable from an i18n perspective
     if ($activated_names) {
