@@ -10,7 +10,7 @@
   </head>
   <body<? if (locales::is_rtl()) { echo ' class="rtl"'; } ?>>
     <div id="outer">
-      <img src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
+      <img id="logo" src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
       <div id="inner">
         <? if ($can_upgrade): ?>
         <div id="dialog" style="visibility: hidden">
@@ -31,6 +31,12 @@
                     array("url" => html::mark_clean(url::base()))) ?>
             </p>
           </div>
+          <div id="failed" style="display: none">
+            <h1> <?= t("Some modules failed to upgrade!") ?> </h1>
+            <p>
+              <?= t("Failed modules are <span class=\"failed\">highlighted</span>.  Try getting newer versions or <a href=\"%admin_modules\">deactivating those modules</a>.", array("admin_modules" => url::site("admin/modules"))) ?>
+            </p>
+          </div>
         </div>
         <script type="text/javascript">
           $(document).ready(function() {
@@ -40,6 +46,10 @@
 
             <? if ($done): ?>
             show_done();
+            <? endif ?>
+
+            <? if ($failed): ?>
+            show_failed();
             <? endif ?>
           });
 
@@ -55,10 +65,31 @@
             $("#done").show();
             $("#dialog_close_link").show();
           }
+
+          var show_failed = function() {
+            $("#dialog").css("visibility", "visible");
+            $("#failed").show();
+            $("#dialog_close_link").show();
+          }
         </script>
-        <p class="<?= $done ? "muted" : "" ?>">
-          <?= t("Welcome to the Gallery upgrader.  One click and you're done!") ?>
-        </p>
+        <div id="welcome_message">
+          <p class="<?= $done ? "muted" : "" ?>">
+            <?= t("Welcome to the Gallery upgrader.  One click and you're done!") ?>
+          </p>
+        </div>
+
+        <? if ($done): ?>
+        <div id="upgrade_button" class="button muted">
+          <?= t("Upgrade all") ?>
+        </div>
+        <? else: ?>
+        <div id="upgrade_button" class="button button-active">
+          <a id="upgrade_link" href="<?= url::site("upgrader/upgrade") ?>">
+            <?= t("Upgrade all") ?>
+          </a>
+        </div>
+        <? endif ?>
+
         <table>
           <tr class="<?= $done ? "muted" : "" ?>">
             <th class="name"> <?= t("Module name") ?> </th>
@@ -68,7 +99,7 @@
 
           <? foreach ($available as $id => $module): ?>
           <? if ($module->active): ?>
-          <tr class="<?= $module->version == $module->code_version ? "current" : "upgradeable" ?>" >
+          <tr class="<?= $module->version == $module->code_version ? "current" : "upgradeable" ?> <?= in_array($id, $failed) ? "failed" : "" ?>" >
             <td class="name <?= $id ?>">
               <?= t($module->name) ?>
             </td>
@@ -84,18 +115,6 @@
           <? endif ?>
           <? endforeach ?>
         </table>
-
-        <? if ($done): ?>
-        <div class="button muted">
-          <?= t("Upgrade all") ?>
-        </div>
-        <? else: ?>
-        <div class="button button-active">
-          <a id="upgrade_link" href="<?= url::site("upgrader/upgrade") ?>">
-            <?= t("Upgrade all") ?>
-          </a>
-        </div>
-        <? endif ?>
 
         <? if (@$inactive): ?>
         <p class="<?= $done ? "muted" : "" ?>">

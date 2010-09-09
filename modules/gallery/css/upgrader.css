@@ -58,6 +58,10 @@ tr.upgradeable td.gallery {
   color: #00d;
 }
 
+tr.failed td {
+  color: red;
+}
+
 p {
   font-size: .9em;
 }
@@ -120,10 +124,26 @@ div#dialog div {
   opacity: 0.5;
 }
 
+.failed {
+  color: red;
+}
+
 pre {
   display: inline;
   margin: 0px;
   padding: 0px;
+}
+
+div#upgrade_button {
+  margin-bottom: 20px;
+}
+
+div#welcome_message {
+  margin-left: 30px;
+}
+
+#logo {
+  margin-left: 14px;
 }
 
 .rtl {
@@ -152,4 +172,12 @@ pre {
 
 .rtl div#dialog a.close {
   float: left;
+}
+
+.rtl div#welcome_message {
+  padding-right: 30px;
+}
+
+.rtl #logo {
+  padding-right: 12px;
 }

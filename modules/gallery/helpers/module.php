@@ -214,10 +214,10 @@ class module_Core {
   static function upgrade($module_name) {
     $version_before = module::get_version($module_name);
     $installer_class = "{$module_name}_installer";
+    $available = module::available();
     if (method_exists($installer_class, "upgrade")) {
       call_user_func_array(array($installer_class, "upgrade"), array($version_before));
     } else {
-      $available = module::available();
       if (isset($available->$module_name->code_version)) {
         module::set_version($module_name, $available->$module_name->code_version);
       } else {
@@ -233,6 +233,10 @@ class module_Core {
                     array("module_name" => $module_name,
                           "version_before" => $version_before,
                           "version_after" => $version_after)));
+    }
+
+    if ($version_after != $available->$module_name->code_version) {
+      throw new Exception("@todo MODULE_FAILED_TO_UPGRADE");
     }
   }
 

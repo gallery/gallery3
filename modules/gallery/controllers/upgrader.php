@@ -39,10 +39,12 @@ class Upgrader_Controller extends Controller {
       }
     }
 
+    $failed = Input::instance()->get("failed");
     $view = new View("upgrader.html");
     $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
+    $view->failed = $failed ? explode(",", $failed) : array();
     $view->done = $available_upgrades == 0;
     print $view;
   }
@@ -65,20 +67,26 @@ class Upgrader_Controller extends Controller {
     }
 
     // Then upgrade the rest
+    $failed = array();
     foreach (module::available() as $id => $module) {
       if ($id == "gallery") {
         continue;
       }
 
       if ($module->active && $module->code_version != $module->version) {
-        module::upgrade($id);
+        try {
+          module::upgrade($id);
+        } catch (Exception $e) {
+          // @todo assume it's MODULE_FAILED_TO_UPGRADE for now
+          $failed[] = $id;
+        }
       }
     }
 
     if (php_sapi_name() == "cli") {
       print "Upgrade complete\n";
     } else {
-      url::redirect("upgrader");
+      url::redirect("upgrader?failed=" . join(",", $failed));
     }
   }
 }
