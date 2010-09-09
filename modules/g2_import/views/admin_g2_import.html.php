@@ -6,27 +6,10 @@
   </p>
 
   <div class="g-block-content">
-    <div id="g-admin-g2-import-notes">
-      <h2> <?= t("Notes") ?> </h2>
-      </p>
-      <ul>
-        <li>
-          <?= t("Gallery 3 does not support per-user / per-item permissions.  <b>Review permissions after your import is done.</b>") ?>
-        </li>
-        <li>
-          <?= t("The only supported file formats are JPG, PNG and GIF, FLV and MP4.  Other formats will be skipped.") ?>
-        </li>
-        <li>
-          <?= t("Deactivating the <b>notification</b>, <b>search</b> and <b>exif</b> modules during your import will make it go faster.") ?>
-        </li>
-        <li>
-          <?= t("The eAccelerator and XCache PHP performance extensions are known to cause issues.  If you're using either of those and are having problems, please disable them while you do your import.  Add the following lines: <pre>%lines</pre> to gallery3/.htaccess and remove them when the import is done.", array("lines" => "\n\n  php_value eaccelerator.enable 0\n  php_value xcache.cacher off\n  php_value xcache.optimizer off\n\n")) ?>
-        </li>
-      </ul>
-    </div>
-
     <?= $form ?>
+  </div>
 
+  <div class="g-block-content">
     <? if (g2_import::is_initialized()): ?>
     <div id="g-admin-g2-import-details">
       <h2> <?= t("Import") ?> </h2>
@@ -51,37 +34,35 @@
                     "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
         </li>
         <? endif ?>
-      </ul>
 
-      <div class="g-message-block g-info">
-        <p>
+        <li class="g-info">
           <?= t("Your Gallery 2 has the following importable data in it") ?>
-        </p>
-        <ul>
-          <li>
-            <?= t2("1 user", "%count users", $g2_stats["users"]) ?>
-          </li>
-          <li>
-            <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>
-          </li>
-          <li>
-            <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>
-          </li>
-          <li>
-            <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>
-          </li>
-          <li>
-            <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>
-          </li>
-          <li>
-            <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
-          </li>
-          <li>
-            <?= t2("1 tagged photo/movie/album",
-                "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
-          </li>
-        </ul>
-      </div>
+          <ul>
+            <li>
+              <?= t2("1 user", "%count users", $g2_stats["users"]) ?>
+            </li>
+            <li>
+              <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>
+            </li>
+            <li>
+              <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>
+            </li>
+            <li>
+              <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>
+            </li>
+            <li>
+              <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>
+            </li>
+            <li>
+              <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
+            </li>
+            <li>
+              <?= t2("1 tagged photo/movie/album",
+                  "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
+            </li>
+          </ul>
+        </li>
+      </ul>
 
       <p>
         <a class="g-button g-dialog-link ui-state-default ui-corner-all"
@@ -91,19 +72,41 @@
       </p>
     </div>
 
-    <div>
-      <h2> <?= t("Migrating from Gallery 2") ?> </h2>
-      <p>
-        <?= t("Once your migration is complete, put this block at the top of your gallery2/.htaccess file and all Gallery 2 urls will be redirected to Gallery 3") ?>
-      </p>
+    <div class="g-block-content">
+      <div id="g-admin-g2-import-notes">
+        <h2> <?= t("Notes") ?> </h2>
+        <ul class="enumeration">
+          <li>
+            <?= t("Gallery 3 does not support per-user / per-item permissions.  <b>Review permissions after your import is done.</b>") ?>
+          </li>
+          <li>
+            <?= t("The only supported file formats are JPG, PNG and GIF, FLV and MP4.  Other formats will be skipped.") ?>
+          </li>
+          <li>
+            <?= t("Deactivating the <b>notification</b>, <b>search</b> and <b>exif</b> modules during your import will make it go faster.") ?>
+          </li>
+          <li>
+            <?= t("The eAccelerator and XCache PHP performance extensions are known to cause issues.  If you're using either of those and are having problems, please disable them while you do your import.  Add the following lines: <pre>%lines</pre> to gallery3/.htaccess and remove them when the import is done.", array("lines" => "\n\n  php_value eaccelerator.enable 0\n  php_value xcache.cacher off\n  php_value xcache.optimizer off\n\n")) ?>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-      <textarea rows="2">&lt;IfModule mod_rewrite.c&gt;
+    <div class="g-block-content">
+      <div>
+        <h2> <?= t("Migrating from Gallery 2") ?> </h2>
+        <p>
+          <?= t("Once your migration is complete, put this block at the top of your gallery2/.htaccess file and all Gallery 2 urls will be redirected to Gallery 3") ?>
+        </p>
+
+        <textarea rows="4" cols="60">&lt;IfModule mod_rewrite.c&gt;
   Options +FollowSymLinks
   RewriteEngine On
   RewriteBase <?= html::clean(g2_import::$g2_base_url) ?>
   RewriteRule ^(.*)$ <?= url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
 &lt;/IfModule&gt;</textarea>
+      </div>
+      <? endif ?>
     </div>
-    <? endif ?>
   </div>
 </div>

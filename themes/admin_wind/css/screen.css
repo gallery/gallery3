@@ -222,6 +222,11 @@ th {
   background-color: #fff;
 }
 
+ul.enumeration li {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
 /*** ******************************************************************
  * 3) Page layout containers
  *********************************************************************/
