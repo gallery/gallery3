@@ -12,7 +12,7 @@
 
     // After the image is rotated or replaced we have to reload the image dimensions
     // so that the full size view isn't distorted.
-    gallery_image_replaced_hook = function(data, thumb) {
+    $("#g-photo").bind("gallery.change", function() {
       $.ajax({
         url: "<?= url::site("items/dimensions/" . $theme->item()->id) ?>",
         dataType: "json",
@@ -20,7 +20,7 @@
           full_dims = data.full;
         }
       });
-    }
+    });
   });
 </script>
 <? endif ?>
