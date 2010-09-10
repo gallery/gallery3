@@ -93,6 +93,11 @@ $(document).ready(function() {
         $("#g-place-holder").remove();
       }
     );
+
+    // Realign any thumbnails that change so that when we rotate a thumb it stays centered.
+    $(".g-item").bind("gallery.change", function() {
+      $(this).gallery_valign();
+    });
   }
 
   // Photo/Item item view
