@@ -124,7 +124,7 @@ class Tag_Model extends ORM {
    * @param string $query the query string (eg "page=3")
    */
   public function url($query=null) {
-    $url = url::site("tags/show/$this->id");
+    $url = url::site("tag/{$this->name}");
     if ($query) {
       $url .= "?$query";
     }
