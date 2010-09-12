@@ -357,26 +357,7 @@ class Item_Model extends ORM_MPTT {
           }
         }
 
-        // Randomize the name or slug if there's a conflict.  Preserve the extension.
-        // @todo Improve this.  Random numbers are not user friendly
-        $base_name = pathinfo($this->name, PATHINFO_FILENAME);
-        $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        $base_slug = $this->slug;
-        while (ORM::factory("item")
-               ->where("parent_id", "=", $this->parent_id)
-               ->and_open()
-               ->where("name", "=", $this->name)
-               ->or_where("slug", "=", $this->slug)
-               ->close()
-               ->find()->id) {
-          $rand = rand();
-          if ($base_ext) {
-            $this->name = "$base_name-$rand.$base_ext";
-          } else {
-            $this->name = "$base_name-$rand";
-          }
-          $this->slug = "$base_slug-$rand";
-        }
+        $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
 
@@ -426,6 +407,8 @@ class Item_Model extends ORM_MPTT {
           $this->relative_path_cache = null;
           $this->relative_url_cache = null;
         }
+
+        $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
 
@@ -502,6 +485,33 @@ class Item_Model extends ORM_MPTT {
     }
 
     return $this;
+  }
+
+  /**
+   * Check to see if there's another item that occupies the same name or slug that this item
+   * intends to use, and if so choose a new name/slug while preserving the extension.
+   * @todo Improve this.  Random numbers are not user friendly
+   */
+  private function _randomize_name_or_slug_on_conflict() {
+    $base_name = pathinfo($this->name, PATHINFO_FILENAME);
+    $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
+    $base_slug = $this->slug;
+    while (ORM::factory("item")
+           ->where("parent_id", "=", $this->parent_id)
+           ->where("id", "<>", $this->id)
+           ->and_open()
+           ->where("name", "=", $this->name)
+           ->or_where("slug", "=", $this->slug)
+           ->close()
+           ->find()->id) {
+      $rand = rand();
+      if ($base_ext) {
+        $this->name = "$base_name-$rand.$base_ext";
+      } else {
+        $this->name = "$base_name-$rand";
+      }
+      $this->slug = "$base_slug-$rand";
+    }
   }
 
   /**
