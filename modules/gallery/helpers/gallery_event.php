@@ -209,11 +209,12 @@ class gallery_event_Core {
                       ->url(user_profile::url($user->id))
                       ->label($user->display_name()));
 
+        $item = $theme->item();
         if (Router::$controller == "admin") {
           $continue_url = url::abs_site("");
-        } else if (isset($theme->item)) {
+        } else if ($item) {
           if (access::user_can(identity::guest(), "view", $theme->item)) {
-            $continue_url = $theme->item->abs_url();
+            $continue_url = $item->abs_url();
           } else {
             $continue_url = item::root()->abs_url();
           }
