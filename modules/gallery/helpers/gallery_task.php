@@ -596,7 +596,7 @@ class gallery_task_Core {
   static function find_dupe_slugs() {
     return db::build()
       ->select_distinct(
-        array("parent_slug" => new Database_Expression("CONCAT(`parent_id`, ':', `slug`)")))
+        array("parent_slug" => new Database_Expression("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -608,7 +608,7 @@ class gallery_task_Core {
   static function find_dupe_names() {
     return db::build()
       ->select_distinct(
-        array("parent_name" => new Database_Expression("CONCAT(`parent_id`, ':', `name`)")))
+        array("parent_name" => new Database_Expression("CONCAT(`parent_id`, ':', LOWER(`name`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
