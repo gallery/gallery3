@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Model extends ORM_MPTT {
+class Item_Model_Core extends ORM_MPTT {
   protected $children = "items";
   protected $sorting = array();
   protected $data_file = null;
