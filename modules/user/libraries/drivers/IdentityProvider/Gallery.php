@@ -32,7 +32,7 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::guest.
    */
   public function admin_user() {
-    return self::lookup_user(2);
+    return user::admin_user();
   }
 
   /**

@@ -136,20 +136,17 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(false, "Shouldn't get here");
   }
 
-  public function item_rename_fails_with_existing_name_test() {
+  public function item_rename_over_existing_name_gets_uniqified_test() {
     // Create a test photo
     $item = test::random_photo();
     $item2 = test::random_photo();
 
-    try {
-      $item->name = $item2->name;
-      $item->save();
-    } catch (ORM_Validation_Exception $e) {
-      $this->assert_true(in_array("conflict", $e->validation->errors()));
-      return;
-    }
+    $item->name = $item2->name;
+    $item->save();
 
-    $this->assert_false(true, "rename should conflict");
+    // foo.jpg should become foo-####.jpg
+    $this->assert_true(
+      preg_match("/" . str_replace(".jpg", "", $item2->name) . "-\d+\.jpg/", $item->name));
   }
 
   public function move_album_test() {
@@ -208,24 +205,21 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("file", file_get_contents($photo->file_path()));
   }
 
-  public function move_album_fails_conflicting_target_test() {
+  public function move_album_with_conflicting_target_gets_uniqified_test() {
     $album = test::random_album();
     $source = test::random_album_unsaved($album);
     $source->name = $album->name;
     $source->save();
 
     // $source and $album have the same name, so if we move $source into the root they should
-    // conflict.
+    // conflict and get randomized
 
-    try {
-      $source->parent_id = item::root()->id;
-      $source->save();
-    } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(
-        array("name" => "conflict", "slug" => "conflict"), $e->validation->errors());
-      return;
-    }
-    $this->assert_true(false, "Shouldn't get here");
+    $source->parent_id = item::root()->id;
+    $source->save();
+
+    // foo should become foo-####
+    $this->assert_true(preg_match("/{$album->name}-\d+/", $source->name));
+    $this->assert_true(preg_match("/{$album->slug}-\d+/", $source->slug));
   }
 
   public function move_album_fails_wrong_target_type_test() {
@@ -245,7 +239,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(false, "Shouldn't get here");
   }
 
-  public function move_photo_fails_conflicting_target_test() {
+  public function move_photo_with_conflicting_target_gets_uniqified_test() {
     $photo1 = test::random_photo();
     $album = test::random_album();
     $photo2 = test::random_photo_unsaved($album);
@@ -253,18 +247,17 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $photo2->save();
 
     // $photo1 and $photo2 have the same name, so if we move $photo1 into the root they should
-    // conflict.
+    // conflict and get uniqified.
 
-    try {
-      $photo2->parent_id = item::root()->id;
-      $photo2->save();
-    } catch (Exception $e) {
-      // pass
-      $this->assert_equal(
-        array("name" => "conflict", "slug" => "conflict"), $e->validation->errors());
-      return;
-    }
-    $this->assert_true(false, "Shouldn't get here");
+    $photo2->parent_id = item::root()->id;
+    $photo2->save();
+
+    // foo.jpg should become foo-####.jpg
+    $this->assert_true(
+      preg_match("/" . str_replace(".jpg", "", $photo1->name) . "-\d+\.jpg/", $photo2->name));
+
+    // foo should become foo
+    $this->assert_true(preg_match("/{$photo1->slug}/", $photo2->name));
   }
 
   public function move_album_inside_descendent_fails_test() {

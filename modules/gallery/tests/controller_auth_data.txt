@@ -15,7 +15,7 @@ modules/gallery/controllers/login.php                        html               
 modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
 modules/gallery/controllers/logout.php                       index                DIRTY_AUTH
 modules/gallery/controllers/quick.php                        form_edit            DIRTY_CSRF
-modules/gallery/controllers/upgrader.php                     index                DIRTY_AUTH
+modules/gallery/controllers/upgrader.php                     index                DIRTY_CSRF|DIRTY_AUTH
 modules/gallery/controllers/uploader.php                     start                DIRTY_AUTH
 modules/gallery/controllers/uploader.php                     status               DIRTY_AUTH
 modules/gallery/controllers/uploader.php                     finish               DIRTY_AUTH

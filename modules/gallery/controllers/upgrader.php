@@ -54,8 +54,16 @@ class Upgrader_Controller extends Controller {
       // @todo this may screw up some module installers, but we don't have a better answer at
       // this time.
       $_SERVER["HTTP_HOST"] = "example.com";
-    } else if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
-      access::forbidden();
+    } else {
+      if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
+        access::forbidden();
+      }
+
+      try {
+        access::verify_csrf();
+      } catch (Exception $e) {
+        url::redirect("upgrader");
+      }
     }
 
     $available = module::available();
@@ -87,7 +95,14 @@ class Upgrader_Controller extends Controller {
     site_status::clear("upgrade_now");
 
     if (php_sapi_name() == "cli") {
-      print "Upgrade complete\n";
+      if ($failed) {
+        print "Upgrade completed ** WITH FAILURES **\n";
+        print "The following modules were not successfully upgraded:\n";
+        print "  " . implode($failed, "\n  ") . "\n";
+        print "Try getting newer versions or deactivating those modules\n";
+      } else {
+        print "Upgrade complete\n";
+      }
     } else {
       url::redirect("upgrader?failed=" . join(",", $failed));
     }
