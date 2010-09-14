@@ -118,8 +118,8 @@ class gallery_event_Core {
         $batch_missing_album_cover[$parent->id] = 1;
         Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
       } else {
-        // Choose the first child as the new cover.
-        if ($child = $parent->children(1)->current()) {
+        // Choose the first viewable child as the new cover.
+        if ($child = $parent->viewable()->children(1)->current()) {
           item::make_album_cover($child);
         }
       }
