@@ -359,11 +359,13 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
     $public_album = test::random_album();
     $public_photo = test::random_photo($public_album);
     access::allow(identity::everybody(), "view", $public_album);
+    access::allow(identity::everybody(), "edit", $public_album);
 
     item::root()->reload();  // Account for MPTT changes
 
     $private_album = test::random_album();
     access::deny(identity::everybody(), "view", $private_album);
+    access::deny(identity::everybody(), "edit", $private_album);
     $private_photo = test::random_photo($private_album);
 
     // Make sure that we now have a public photo and private photo.
@@ -385,6 +387,8 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Make sure that the public_photo is now private, and the private_photo is now public.
     $this->assert_false(access::group_can(identity::everybody(), "view", $public_photo));
+    $this->assert_false(access::group_can(identity::everybody(), "edit", $public_photo));
     $this->assert_true(access::group_can(identity::everybody(), "view", $private_photo));
+    $this->assert_true(access::group_can(identity::everybody(), "edit", $private_photo));
   }
 }

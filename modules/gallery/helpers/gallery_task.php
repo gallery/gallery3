@@ -571,7 +571,7 @@ class gallery_task_Core {
           // The new cache rows are there, but they're incorrectly populated so we have to fix
           // them.  If this turns out to be too slow, we'll have to refactor
           // access::recalculate_permissions to allow us to do it in slices.
-          access::recalculate_permissions(item::root());
+          access::recalculate_album_permissions(item::root());
           $state = self::FIX_STATE_DONE;
         }
         break;

@@ -157,7 +157,11 @@ class gallery_event_Core {
   }
 
   static function item_moved($item, $old_parent) {
-    access::recalculate_permissions($item->parent());
+    if ($item->is_album()) {
+      access::recalculate_album_permissions($item->parent());
+    } else {
+      access::recalculate_photo_permissions($item);
+    }
 
     // If the new parent doesn't have an album cover, make this it.
     if (!$item->parent()->album_cover_item_id) {
