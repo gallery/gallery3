@@ -18,4 +18,7 @@
   <li>
     <?= t("Server load: %load_average", array("load_average" => $load_average)) ?>
   </li>
+  <li>
+    <?= t("Graphics toolkit: %toolkit", array("toolkit" => module::get_var("gallery", "graphics_toolkit"))) ?>
+  </li>
 </ul>
