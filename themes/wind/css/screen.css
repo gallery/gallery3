@@ -663,8 +663,8 @@ form .g-error {
 }
 
 .g-default {
-	background-color: #c5dbec;
-	font-weight: bold;
+  background-color: #c5dbec;
+  font-weight: bold;
 }
 
 .g-draggable {
