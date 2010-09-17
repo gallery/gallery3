@@ -307,8 +307,9 @@ class gallery_installer {
     module::set_var("gallery", "email_line_length", 70);
     module::set_var("gallery", "email_header_separator", serialize("\n"));
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
+    module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 39);
+    module::set_version("gallery", 40);
   }
 
   static function upgrade($version) {
@@ -630,6 +631,11 @@ class gallery_installer {
     if ($version == 38) {
       module::set_var("gallery", "show_user_profiles_to", "registered_users");
       module::set_version("gallery", $version = 39);
+    }
+
+    if ($version == 39) {
+      module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
+      module::set_version("gallery", $version = 40);
     }
   }
 
