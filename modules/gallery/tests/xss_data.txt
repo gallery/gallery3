@@ -58,9 +58,9 @@ modules/gallery/views/admin_block_photo_stream.html.php      6   DIRTY    photo:
 modules/gallery/views/admin_block_photo_stream.html.php      7   DIRTY_ATTR $photo->thumb_url()
 modules/gallery/views/admin_dashboard.html.php               5   DIRTY_JS $csrf
 modules/gallery/views/admin_dashboard.html.php               35  DIRTY    $blocks
-modules/gallery/views/admin_graphics.html.php                24  DIRTY    newView("admin_graphics_none.html")
-modules/gallery/views/admin_graphics.html.php                26  DIRTY    newView("admin_graphics_$active.html",array("tk"=>$tk->$active,"is_active"=>true))
-modules/gallery/views/admin_graphics.html.php                33  DIRTY    newView("admin_graphics_$id.html",array("tk"=>$tk->$id,"is_active"=>false))
+modules/gallery/views/admin_graphics.html.php                25  DIRTY    newView("admin_graphics_none.html")
+modules/gallery/views/admin_graphics.html.php                27  DIRTY    newView("admin_graphics_$active.html",array("tk"=>$tk->$active,"is_active"=>true))
+modules/gallery/views/admin_graphics.html.php                34  DIRTY    newView("admin_graphics_$id.html",array("tk"=>$tk->$id,"is_active"=>false))
 modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $is_active?" g-selected":""
 modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $tk->installed?" g-installed-toolkit":" g-unavailable"
 modules/gallery/views/admin_graphics_gd.html.php             19  DIRTY    $tk->error
@@ -274,19 +274,19 @@ modules/notification/views/item_updated.html.php             20  DIRTY_JS $item-
 modules/notification/views/item_updated.html.php             20  DIRTY    $item->abs_url()
 modules/notification/views/user_profile_notification.html.php 5   DIRTY_ATTR $subscription->id
 modules/notification/views/user_profile_notification.html.php 6   DIRTY_JS $subscription->url
-modules/organize/views/organize_dialog.html.php              90  DIRTY_JS $domain
-modules/organize/views/organize_dialog.html.php              91  DIRTY_JS $access_key
-modules/organize/views/organize_dialog.html.php              92  DIRTY_JS request::protocol()
-modules/organize/views/organize_dialog.html.php              93  DIRTY_JS $file_filter
-modules/organize/views/organize_dialog.html.php              94  DIRTY_JS $sort_order
-modules/organize/views/organize_dialog.html.php              95  DIRTY_JS $sort_fields
-modules/organize/views/organize_dialog.html.php              96  DIRTY_JS $album->id
-modules/organize/views/organize_dialog.html.php              97  DIRTY_JS $selected_id
-modules/organize/views/organize_dialog.html.php              98  DIRTY_JS $rest_uri
-modules/organize/views/organize_dialog.html.php              99  DIRTY_JS $controller_uri
-modules/organize/views/organize_dialog.html.php              105 DIRTY_JS $flash_minimum_version="10.0.0"
-modules/organize/views/organize_dialog.html.php              123 DIRTY_JS $swf_uri
-modules/organize/views/organize_dialog.html.php              136 DIRTY_ATTR request::protocol()
+modules/organize/views/organize_dialog.html.php              94  DIRTY_JS $domain
+modules/organize/views/organize_dialog.html.php              95  DIRTY_JS $access_key
+modules/organize/views/organize_dialog.html.php              96  DIRTY_JS request::protocol()
+modules/organize/views/organize_dialog.html.php              97  DIRTY_JS $file_filter
+modules/organize/views/organize_dialog.html.php              98  DIRTY_JS $sort_order
+modules/organize/views/organize_dialog.html.php              99  DIRTY_JS $sort_fields
+modules/organize/views/organize_dialog.html.php              100 DIRTY_JS $album->id
+modules/organize/views/organize_dialog.html.php              101 DIRTY_JS $selected_id
+modules/organize/views/organize_dialog.html.php              102 DIRTY_JS $rest_uri
+modules/organize/views/organize_dialog.html.php              103 DIRTY_JS $controller_uri
+modules/organize/views/organize_dialog.html.php              109 DIRTY_JS $flash_minimum_version="10.0.0"
+modules/organize/views/organize_dialog.html.php              127 DIRTY_JS $swf_uri
+modules/organize/views/organize_dialog.html.php              140 DIRTY_ATTR request::protocol()
 modules/recaptcha/views/admin_recaptcha.html.php             11  DIRTY    $form
 modules/recaptcha/views/admin_recaptcha.html.php             23  DIRTY_JS $public_key
 modules/recaptcha/views/form_recaptcha.html.php              7   DIRTY_JS $public_key
