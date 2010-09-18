@@ -62,7 +62,7 @@ class G2_Controller extends Controller {
       if (!$item->loaded()) {
         throw new Kohana_404_Exception();
       }
-      $resource_type = $g2_map->resource_type();
+      $resource_type = $g2_map->resource_type;
     } else {
       $item = item::root();
       $resource_type = "album";
