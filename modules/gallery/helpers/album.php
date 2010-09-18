@@ -114,6 +114,7 @@ class album_Core {
                  "captured" => t("Date captured"),
                  "created" => t("Date uploaded"),
                  "title" => t("Title"),
+                 "name" => t("File name"),
                  "updated" => t("Date modified"),
                  "view_count" => t("Number of views"),
                  "rand_key" => t("Random"));
