@@ -16,7 +16,6 @@
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
-    <?= $theme->css("gallery.common.css") ?>
     <?= $theme->css("screen.css") ?>
     <!--[if lt IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("fix-ie.css") ?>"
