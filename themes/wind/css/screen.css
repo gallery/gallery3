@@ -721,6 +721,7 @@ form .g-error {
 .g-odd {
   background-color: #eee;
 }
+
 /** *******************************************************************
  *  7) Navigation and menus
  *********************************************************************/
@@ -855,6 +856,7 @@ ul.sf-menu li li li.sfHover ul {
 .sf-menu li:hover {
   background-color: #dfe9ff;
 }
+
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
 .ui-widget-overlay {
