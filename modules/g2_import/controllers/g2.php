@@ -45,7 +45,7 @@ class G2_Controller extends Controller {
           $where[] = array("g2_url", "like", "%g2_view=$view%");
         } // else: Assuming that the first search hit is sufficiently good.
       } else if ($path) {
-        $where = array(array("g2_url", "=", $path));
+        $where = array(array("g2_url", "IN", array($path, str_replace(" ", "+", $path))));
       } else {
         throw new Kohana_404_Exception();
       }
