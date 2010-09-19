@@ -179,20 +179,6 @@ class Cache_Database_Driver extends Cache_Driver {
   }
 
   /**
-   * Deletes all cache files that are older than the current time.
-   */
-  public function delete_expired() {
-    // Delete all expired caches
-    $status = db::build()
-      ->delete("caches")
-      ->where("expiration", "<>", 0)
-      ->where("expiration", "<=", time())
-      ->execute();
-
-    return count($status) > 0;
-  }
-
-  /**
    * Empty the cache
    */
   public function delete_all() {
