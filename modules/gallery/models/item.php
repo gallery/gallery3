@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Model extends ORM_MPTT {
+class Item_Model_Core extends ORM_MPTT {
   protected $children = "items";
   protected $sorting = array();
   protected $data_file = null;
@@ -357,26 +357,7 @@ class Item_Model extends ORM_MPTT {
           }
         }
 
-        // Randomize the name or slug if there's a conflict.  Preserve the extension.
-        // @todo Improve this.  Random numbers are not user friendly
-        $base_name = pathinfo($this->name, PATHINFO_FILENAME);
-        $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        $base_slug = $this->slug;
-        while (ORM::factory("item")
-               ->where("parent_id", "=", $this->parent_id)
-               ->and_open()
-               ->where("name", "=", $this->name)
-               ->or_where("slug", "=", $this->slug)
-               ->close()
-               ->find()->id) {
-          $rand = rand();
-          if ($base_ext) {
-            $this->name = "$base_name-$rand.$base_ext";
-          } else {
-            $this->name = "$base_name-$rand";
-          }
-          $this->slug = "$base_slug-$rand";
-        }
+        $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
 
@@ -426,6 +407,8 @@ class Item_Model extends ORM_MPTT {
           $this->relative_path_cache = null;
           $this->relative_url_cache = null;
         }
+
+        $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
 
@@ -505,6 +488,33 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Check to see if there's another item that occupies the same name or slug that this item
+   * intends to use, and if so choose a new name/slug while preserving the extension.
+   * @todo Improve this.  Random numbers are not user friendly
+   */
+  private function _randomize_name_or_slug_on_conflict() {
+    $base_name = pathinfo($this->name, PATHINFO_FILENAME);
+    $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
+    $base_slug = $this->slug;
+    while (ORM::factory("item")
+           ->where("parent_id", "=", $this->parent_id)
+           ->where("id", "<>", $this->id)
+           ->and_open()
+           ->where("name", "=", $this->name)
+           ->or_where("slug", "=", $this->slug)
+           ->close()
+           ->find()->id) {
+      $rand = rand();
+      if ($base_ext) {
+        $this->name = "$base_name-$rand.$base_ext";
+      } else {
+        $this->name = "$base_name-$rand";
+      }
+      $this->slug = "$base_slug-$rand";
+    }
+  }
+
+  /**
    * Return the Item_Model representing the cover for this album.
    * @return Item_Model or null if there's no cover
    */
@@ -530,7 +540,7 @@ class Item_Model extends ORM_MPTT {
    * the first child in the album is at position 1.
    */
   public function get_position($child, $where=array()) {
-    if ($this->sort_order == "DESC") {
+    if (!strcasecmp($this->sort_order, "DESC")) {
       $comp = ">";
     } else {
       $comp = "<";
@@ -977,23 +987,30 @@ class Item_Model extends ORM_MPTT {
 
     $data["web_url"] = $this->abs_url();
 
-    if (access::can("view_full", $this) && !$this->is_album()) {
-      $data["file_url"] = rest::url("data", $this, "full");
-    }
-    if (access::user_can(identity::guest(), "view_full", $this)) {
-      $data["file_url_public"] = $this->file_url(true);
+    if (!$this->is_album()) {
+      if (access::can("view_full", $this)) {
+        $data["file_url"] = rest::url("data", $this, "full");
+        $data["file_size"] = filesize($this->file_path());
+      }
+      if (access::user_can(identity::guest(), "view_full", $this)) {
+        $data["file_url_public"] = $this->file_url(true);
+      }
     }
 
     if ($this->is_photo()) {
       $data["resize_url"] = rest::url("data", $this, "resize");
+      $data["resize_size"] = filesize($this->resize_path());
       if (access::user_can(identity::guest(), "view", $this)) {
         $data["resize_url_public"] = $this->resize_url(true);
       }
     }
 
-    $data["thumb_url"] = rest::url("data", $this, "thumb");
-    if (access::user_can(identity::guest(), "view", $this)) {
-      $data["thumb_url_public"] = $this->thumb_url(true);
+    if ($this->has_thumb()) {
+      $data["thumb_url"] = rest::url("data", $this, "thumb");
+      $data["thumb_size"] = filesize($this->thumb_path());
+      if (access::user_can(identity::guest(), "view", $this)) {
+        $data["thumb_url_public"] = $this->thumb_url(true);
+      }
     }
 
     $data["can_edit"] = access::can("edit", $this);

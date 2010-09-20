@@ -88,6 +88,10 @@ class User_Model extends ORM implements User_Definition {
    * @return ORM User_Model
    */
   public function save() {
+    if ($this->full_name === null) {
+      $this->full_name = "";
+    }
+
     if (!$this->loaded()) {
       // New user
       $this->add(group::everybody());

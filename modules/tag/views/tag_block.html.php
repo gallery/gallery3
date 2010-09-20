@@ -7,7 +7,8 @@
         max: 30,
         multiple: true,
         multipleSeparator: ',',
-        cacheLength: 1
+        cacheLength: 1,
+        selectFirst: false,
       }
     );
     $("#g-add-tag-form").ajaxForm({

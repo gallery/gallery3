@@ -90,9 +90,18 @@ $(document).ready(function() {
         $(this).css("top", 0).css("left", 0);
         // Remove the placeholder and hover class from the item
         $(this).removeClass("g-hover-item");
+	$(this).gallery_valign();
         $("#g-place-holder").remove();
       }
     );
+
+    // Realign any thumbnails that change so that when we rotate a thumb it stays centered.
+    $(".g-item").bind("gallery.change", function() {
+      $(".g-item").each(function() {
+	$(this).height($(this).find("img").height() + 2);
+      });
+      $(".g-item").equal_heights().gallery_valign();
+    });
   }
 
   // Photo/Item item view

@@ -34,38 +34,44 @@ class G2_Controller extends Controller {
     $path = $input->get("path");
     $id = $input->get("g2_itemId");
 
-    if ($id) {
-      // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of
-      // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
-      // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
-      $where = array(array("g2_id", "=", $id));
-      $view = $input->get("g2_view");
-      if ($view) {
-        $where[] = array("g2_url", "like", "%g2_view=$view%");
-      } // else: Assuming that the first search hit is sufficiently good.
-    } else if ($path) {
-      $where = array(array("g2_url", "=", $path));
+    if ($path || $id) {
+      if ($id) {
+        // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of
+        // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
+        // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
+        $where = array(array("g2_id", "=", $id));
+        $view = $input->get("g2_view");
+        if ($view) {
+          $where[] = array("g2_url", "like", "%g2_view=$view%");
+        } // else: Assuming that the first search hit is sufficiently good.
+      } else if ($path) {
+        $where = array(array("g2_url", "IN", array($path, str_replace(" ", "+", $path))));
+      } else {
+        throw new Kohana_404_Exception();
+      }
+
+      $g2_map = ORM::factory("g2_map")
+        ->merge_where($where)
+        ->find();
+
+      if (!$g2_map->loaded()) {
+        throw new Kohana_404_Exception();
+      }
+
+      $item = ORM::factory("item", $g2_map->g3_id);
+      if (!$item->loaded()) {
+        throw new Kohana_404_Exception();
+      }
+      $resource_type = $g2_map->resource_type;
     } else {
-      throw new Kohana_404_Exception();
-    }
-
-    $g2_map = ORM::factory("g2_map")
-      ->merge_where($where)
-      ->find();
-
-    if (!$g2_map->loaded()) {
-      throw new Kohana_404_Exception();
-    }
-
-    $item = ORM::factory("item", $g2_map->g3_id);
-    if (!$item->loaded()) {
-      throw new Kohana_404_Exception();
+      $item = item::root();
+      $resource_type = "album";
     }
     access::required("view", $item);
 
 
     // Redirect the user to the new url
-    switch ($g2_map->resource_type) {
+    switch ($resource_type) {
     case "thumbnail":
       url::redirect($item->thumb_url(true));
 

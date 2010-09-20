@@ -99,6 +99,10 @@ class module_Core {
         $m->code_version = $m->version;
         $m->version = self::get_version($module_name);
         $m->locked = false;
+
+        if ($m->active && $m->version != $m->code_version) {
+          site_status::warning(t("Some of your modules are out of date.  <a href=\"%upgrader_url\">Upgrade now!</a>", array("upgrader_url" => url::site("upgrader"))), "upgrade_now");
+        }
       }
 
       // Lock certain modules
@@ -139,7 +143,7 @@ class module_Core {
   }
 
   /**
-   * Allow modules to indicate the impact of deactivating the specifeid module
+   * Allow modules to indicate the impact of deactivating the specified module
    * @param string $module_name
    * @return array an array of warning or error messages to be displayed
    */
@@ -214,10 +218,10 @@ class module_Core {
   static function upgrade($module_name) {
     $version_before = module::get_version($module_name);
     $installer_class = "{$module_name}_installer";
+    $available = module::available();
     if (method_exists($installer_class, "upgrade")) {
       call_user_func_array(array($installer_class, "upgrade"), array($version_before));
     } else {
-      $available = module::available();
       if (isset($available->$module_name->code_version)) {
         module::set_version($module_name, $available->$module_name->code_version);
       } else {
@@ -233,6 +237,10 @@ class module_Core {
                     array("module_name" => $module_name,
                           "version_before" => $version_before,
                           "version_after" => $version_after)));
+    }
+
+    if ($version_after != $available->$module_name->code_version) {
+      throw new Exception("@todo MODULE_FAILED_TO_UPGRADE");
     }
   }
 

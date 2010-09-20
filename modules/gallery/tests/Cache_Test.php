@@ -85,26 +85,6 @@ class Cache_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(array($id3 => $value3), $data, "Expected id3");
   }
 
-  public function cache_delete_expired_test() {
-    $id1 = md5(rand());
-    $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), -84600);
-
-    $id2 = md5(rand());
-    $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), -846000);
-
-    $id3 = md5(rand());
-    $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), -84600);
-
-    $data = $this->_driver->delete_expired();
-
-    $this->assert_false($this->_driver->exists($id1), "$id1 should have been deleted");
-    $this->assert_false($this->_driver->exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_driver->exists($id3), "$id3 should have been deleted");
-  }
-
   public function cache_delete_id_test() {
     $id1 = md5(rand());
     $value1 = array("field1" => "value1", "field2" => "value2");

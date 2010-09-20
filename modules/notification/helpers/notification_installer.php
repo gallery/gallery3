@@ -30,13 +30,14 @@ class notification_installer {
                DEFAULT CHARSET=utf8;");
     $db->query("CREATE TABLE IF NOT EXISTS {pending_notifications} (
                `id` int(9) NOT NULL auto_increment,
+               `locale` char(10) default NULL,
                `email` varchar(128) NOT NULL,
                `subject` varchar(255) NOT NULL,
                `text` text,
                PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
-    module::set_version("notification", 1);
+    module::set_version("notification", 2);
   }
 
   static function upgrade($version) {

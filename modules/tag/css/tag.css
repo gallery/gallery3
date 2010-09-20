@@ -19,6 +19,12 @@
   display: none;
 }
 
+#g-tag-cloud ul li.size0 a {
+  color: #9cf;
+  font-size: 70%;
+  font-weight: 100;
+}
+
 #g-tag-cloud ul li.size1 a {
   color: #9cf;
   font-size: 80%;

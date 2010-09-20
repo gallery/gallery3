@@ -73,9 +73,12 @@ if (PHP_SAPI == "cli") {
     break;
 
   default:
-    print "To install:\n  php index.php install -d database -h host -u user -p password -x table_prefix \n\n\n";
-    print "To upgrade:\n  php index.php upgrade\n\n\n";
-    print "Developer-only features:\n  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
+    print "To install:\n";
+    print "  php index.php install -d database -h host -u user -p password -x table_prefix \n\n";
+    print "To upgrade:\n";
+    print "  php index.php upgrade\n\n";
+    print "Developer-only features:\n";
+    print "  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
     print "  php index.php package  # create new installer files\n";
     print "  php index.php test     # run unit tests\n";
     exit(1);

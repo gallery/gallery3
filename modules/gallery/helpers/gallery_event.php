@@ -118,8 +118,8 @@ class gallery_event_Core {
         $batch_missing_album_cover[$parent->id] = 1;
         Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
       } else {
-        // Choose the first child as the new cover.
-        if ($child = $parent->children(1)->current()) {
+        // Choose the first viewable child as the new cover.
+        if ($child = $parent->viewable()->children(1)->current()) {
           item::make_album_cover($child);
         }
       }
@@ -157,7 +157,11 @@ class gallery_event_Core {
   }
 
   static function item_moved($item, $old_parent) {
-    access::recalculate_permissions($item->parent());
+    if ($item->is_album()) {
+      access::recalculate_album_permissions($item->parent());
+    } else {
+      access::recalculate_photo_permissions($item);
+    }
 
     // If the new parent doesn't have an album cover, make this it.
     if (!$item->parent()->album_cover_item_id) {
@@ -211,9 +215,9 @@ class gallery_event_Core {
 
         if (Router::$controller == "admin") {
           $continue_url = url::abs_site("");
-        } else if (isset($theme->item)) {
+        } else if ($item = $theme->item()) {
           if (access::user_can(identity::guest(), "view", $theme->item)) {
-            $continue_url = $theme->item->abs_url();
+            $continue_url = $item->abs_url();
           } else {
             $continue_url = item::root()->abs_url();
           }

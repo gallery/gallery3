@@ -47,7 +47,7 @@ class search_task_Core {
                ->join("search_records", "items.id", "search_records.item_id", "left")
                ->where("search_records.item_id", "IS", null)
                ->or_where("search_records.dirty", "=", 1)
-               ->find_all() as $item) {
+               ->find_all(100) as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.
         if (!isset($start)) {
@@ -57,7 +57,7 @@ class search_task_Core {
         search::update($item);
         $completed++;
 
-        if (microtime(true) - $start > 1.5) {
+        if (microtime(true) - $start > .75) {
           break;
         }
       }

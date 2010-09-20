@@ -44,7 +44,8 @@ class gallery_Core {
     if (Router::$controller != "login" &&
         Router::$controller != "combined" &&
         identity::active_user()->guest &&
-        !access::user_can(identity::guest(), "view", item::root())) {
+        !access::user_can(identity::guest(), "view", item::root()) &&
+        php_sapi_name() != "cli") {
       if (Router::$controller == "admin") {
         // At this point we're in the admin theme and it doesn't have a themed login page, so
         // we can't just swap in the login controller and have it work.  So redirect back to the

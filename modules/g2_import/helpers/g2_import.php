@@ -452,9 +452,9 @@ class g2_import_Core {
         "title" => "title",
         "viewCount" => "view_count");
       $direction_map = array(
-        1 => "asc",
-        ORDER_ASCENDING => "asc",
-        ORDER_DESCENDING => "desc");
+        1 => "ASC",
+        ORDER_ASCENDING => "ASC",
+        ORDER_DESCENDING => "DESC");
       // Only consider G2's first sort order
       $g2_order = explode("|", $g2_album->getOrderBy() . "");
       $g2_order = $g2_order[0];

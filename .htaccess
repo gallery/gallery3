@@ -25,8 +25,14 @@
 # you'll get an "Internal Server Error".
 #
 # <FilesMatch "(\.(class|fla|inc|sql|txt|gitignore)|(README|LICENSE))$">
-#   Order allow,deny
+#   Order deny,allow
+#   Deny from all
 # </FilesMatch>
+# <FilesMatch "robots.txt">
+#   Order allow,deny
+#   Allow from all
+# </FilesMatch>
+
 
 # Improve performance by uncommenting this block.  It tells the
 # browser that your images don't change very often so it won't keep

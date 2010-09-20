@@ -45,6 +45,7 @@ class Comments_Controller extends Controller {
         switch ($key) {
         case "guest_name":  $key = "name";  break;
         case "guest_email": $key = "email"; break;
+        case "guest_url":   $key = "url";   break;
         }
         $form->add_comment->inputs[$key]->add_error($error, 1);
       }

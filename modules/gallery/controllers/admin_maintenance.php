@@ -48,6 +48,13 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->content->finished_tasks = ORM::factory("task")
       ->where("done", "=", 1)->order_by("updated", "DESC")->find_all();
     print $view;
+
+    // Do some maintenance while we're in here
+    db::build()
+      ->delete("caches")
+      ->where("expiration", "<>", 0)
+      ->where("expiration", "<=", time())
+      ->execute();
   }
 
   /**

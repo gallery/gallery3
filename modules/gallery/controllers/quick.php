@@ -36,7 +36,8 @@ class Quick_Controller extends Controller {
     }
 
     if ($degrees) {
-      $tmpfile = tempnam(TMPPATH, "rotate");
+      $tmpfile = tempnam(TMPPATH, "rotate") . "." .
+        pathinfo($item->file_path(), PATHINFO_EXTENSION);
       gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees));
       $item->set_data_file($tmpfile);
       $item->save();

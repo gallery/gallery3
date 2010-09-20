@@ -263,18 +263,40 @@ class access_Core {
   }
 
   /**
-   * Recalculate the permissions for a given item and its hierarchy.  $item must be an album.
+   * Recalculate the permissions for an album's hierarchy.
    */
-  static function recalculate_permissions($item) {
+  static function recalculate_album_permissions($album) {
     foreach (self::_get_all_groups() as $group) {
       foreach (ORM::factory("permission")->find_all() as $perm) {
         if ($perm->name == "view") {
-          self::_update_access_view_cache($group, $item);
+          self::_update_access_view_cache($group, $album);
         } else {
-          self::_update_access_non_view_cache($group, $perm->name, $item);
+          self::_update_access_non_view_cache($group, $perm->name, $album);
         }
       }
     }
+    model_cache::clear();
+  }
+
+  /**
+   * Recalculate the permissions for a single photo.
+   */
+  static function recalculate_photo_permissions($photo) {
+    $parent = $photo->parent();
+    $parent_access_cache = ORM::factory("access_cache")->where("item_id", "=", $parent->id)->find();
+    $photo_access_cache = ORM::factory("access_cache")->where("item_id", "=", $photo->id)->find();
+    foreach (self::_get_all_groups() as $group) {
+      foreach (ORM::factory("permission")->find_all() as $perm) {
+        $field = "{$perm->name}_{$group->id}";
+        if ($perm->name == "view") {
+          $photo->$field = $parent->$field;
+        } else {
+          $photo_access_cache->$field = $parent_access_cache->$field;
+        }
+      }
+    }
+    $photo_access_cache->save();
+    $photo->save();
     model_cache::clear();
   }
 

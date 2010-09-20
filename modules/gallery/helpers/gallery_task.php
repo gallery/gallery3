@@ -571,7 +571,7 @@ class gallery_task_Core {
           // The new cache rows are there, but they're incorrectly populated so we have to fix
           // them.  If this turns out to be too slow, we'll have to refactor
           // access::recalculate_permissions to allow us to do it in slices.
-          access::recalculate_permissions(item::root());
+          access::recalculate_album_permissions(item::root());
           $state = self::FIX_STATE_DONE;
         }
         break;
@@ -596,7 +596,7 @@ class gallery_task_Core {
   static function find_dupe_slugs() {
     return db::build()
       ->select_distinct(
-        array("parent_slug" => new Database_Expression("CONCAT(`parent_id`, ':', `slug`)")))
+        array("parent_slug" => new Database_Expression("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -608,7 +608,7 @@ class gallery_task_Core {
   static function find_dupe_names() {
     return db::build()
       ->select_distinct(
-        array("parent_name" => new Database_Expression("CONCAT(`parent_id`, ':', `name`)")))
+        array("parent_name" => new Database_Expression("CONCAT(`parent_id`, ':', LOWER(`name`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")

@@ -19,12 +19,19 @@
  */
 class Reauthenticate_Controller extends Controller {
   public function index() {
+    $is_ajax = Session::instance()->get_once("is_ajax_request", request::is_ajax());
     if (!identity::active_user()->admin) {
-      access::forbidden();
+      if ($is_ajax) {
+        // We should never be able to get here since Admin_Controller::_reauth_check() won't work
+        // for non-admins.
+        access::forbidden();
+      } else {
+        url::redirect(item::root()->abs_url());
+      }
     }
+
     // On redirects from the admin controller, the ajax request indicator is lost,
     // so we store it in the session.
-    $is_ajax = Session::instance()->get_once("is_ajax_request", request::is_ajax());
     if ($is_ajax) {
       $v = new View("reauthenticate.html");
       $v->form = self::_form();

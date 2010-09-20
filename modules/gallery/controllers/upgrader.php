@@ -39,10 +39,12 @@ class Upgrader_Controller extends Controller {
       }
     }
 
+    $failed = Input::instance()->get("failed");
     $view = new View("upgrader.html");
     $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
+    $view->failed = $failed ? explode(",", $failed) : array();
     $view->done = $available_upgrades == 0;
     print $view;
   }
@@ -52,8 +54,16 @@ class Upgrader_Controller extends Controller {
       // @todo this may screw up some module installers, but we don't have a better answer at
       // this time.
       $_SERVER["HTTP_HOST"] = "example.com";
-    } else if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
-      access::forbidden();
+    } else {
+      if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
+        access::forbidden();
+      }
+
+      try {
+        access::verify_csrf();
+      } catch (Exception $e) {
+        url::redirect("upgrader");
+      }
     }
 
     $available = module::available();
@@ -65,20 +75,36 @@ class Upgrader_Controller extends Controller {
     }
 
     // Then upgrade the rest
+    $failed = array();
     foreach (module::available() as $id => $module) {
       if ($id == "gallery") {
         continue;
       }
 
       if ($module->active && $module->code_version != $module->version) {
-        module::upgrade($id);
+        try {
+          module::upgrade($id);
+        } catch (Exception $e) {
+          // @todo assume it's MODULE_FAILED_TO_UPGRADE for now
+          $failed[] = $id;
+        }
       }
     }
 
+    // If the upgrade failed, this will get recreated
+    site_status::clear("upgrade_now");
+
     if (php_sapi_name() == "cli") {
-      print "Upgrade complete\n";
+      if ($failed) {
+        print "Upgrade completed ** WITH FAILURES **\n";
+        print "The following modules were not successfully upgraded:\n";
+        print "  " . implode($failed, "\n  ") . "\n";
+        print "Try getting newer versions or deactivating those modules\n";
+      } else {
+        print "Upgrade complete\n";
+      }
     } else {
-      url::redirect("upgrader");
+      url::redirect("upgrader?failed=" . join(",", $failed));
     }
   }
 }

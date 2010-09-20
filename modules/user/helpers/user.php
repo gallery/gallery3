@@ -36,6 +36,20 @@ class user_Core {
   }
 
   /**
+   * Return an admin user.  Prefer the currently logged in user, if possible.
+   *
+   * @return User_Model
+   */
+  static function admin_user() {
+    $active = identity::active_user();
+    if ($active->admin) {
+      return $active;
+    }
+
+    return ORM::factory("user")->where("admin", "=", 1)->order_by("id", "ASC")->find();
+  }
+
+  /**
    * Is the password provided correct?
    *
    * @param user User Model

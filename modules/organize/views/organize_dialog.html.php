@@ -19,11 +19,19 @@
 <script type="text/javascript">
   $("#g-dialog").bind("dialogclose", function(event, ui) {
     // @todo do a call to organize/closing to end the batch
-    window.location.reload();
+    if ($(this).data("reload.location")) {
+      window.location = $(this).data("reload.location");
+    } else {
+      window.location.reload();
+    }
   });
 
   function closeOrganizeDialog() {
     $("#g-dialog").dialog("close");
+  }
+
+  function setLocation(url) {
+    $("#g-dialog").data("reload.location", url);
   }
 
   function setTitle(title) {

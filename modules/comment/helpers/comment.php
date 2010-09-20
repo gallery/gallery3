@@ -38,7 +38,8 @@ class comment_Core {
       ->error_messages("invalid", t("You must enter a valid email address"));
     $group->input("url")
       ->label(t("Website (hidden)"))
-      ->id("g-url");
+      ->id("g-url")
+      ->error_messages("url", t("You must enter a valid url"));
     $group->textarea("text")
       ->label(t("Comment"))
       ->id("g-text")
