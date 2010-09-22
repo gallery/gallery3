@@ -1221,7 +1221,7 @@ div#g-action-status {
 .rtl .sf-sub-indicator {
 	left: .75em !important;
     right: auto;
-	background: url('lib/superfish/images/arrows-ffffff-rtl.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
+	background: url('../../../lib/superfish/images/arrows-ffffff-rtl.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
 }
 .rtl a > .sf-sub-indicator {  /* give all except IE6 the correct values */
 	top:			.8em;
@@ -1267,7 +1267,7 @@ div#g-action-status {
 
 /*** shadows for all but IE6 ***/
 .rtl .sf-shadow ul {
-	background:	url('lib/superfish/images/shadow.png') no-repeat bottom left;
+	background:	url('../../../lib/superfish/images/shadow.png') no-repeat bottom left;
 	padding: 0 0 9px 8px;
 	border-top-right-radius: 0;
 	border-bottom-left-radius: 0;
