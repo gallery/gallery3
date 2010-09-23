@@ -85,11 +85,10 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!($ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) || !file_exists($ffmpeg_path)) {
-      $graphics_path = module::get_var("gallery", "graphics_toolkit_path", null);
-      $extra_binary_paths = module::get_var("gallery", "extra_binary_paths", null);
-
-      putenv("PATH=" . getenv("PATH") . (empty($graphics_path) ? "" : ":$graphics_path") .
-             ":" . $extra_binary_paths);
+      gallery::set_path_env(
+        array(module::get_var("gallery", "graphics_toolkit_path"),
+              getenv("PATH"),
+              module::get_var("gallery", "extra_binary_paths")));
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }

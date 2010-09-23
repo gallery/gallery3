@@ -313,11 +313,10 @@ class graphics_Core {
       $toolkits->graphicsmagick->installed = false;
       $toolkits->graphicsmagick->error = t("GraphicsMagick requires the <b>exec</b> function");
     } else {
-      $graphics_path = module::get_var("gallery", "graphics_toolkit_path", null);
-      $extra_binary_paths = module::get_var("gallery", "extra_binary_paths", null);
-
-      putenv("PATH=" . getenv("PATH") . (empty($graphics_path) ? "" : ":$graphics_path") .
-             ":" . $extra_binary_paths);
+      gallery::set_path_env(
+        array(module::get_var("gallery", "graphics_toolkit_path"),
+              getenv("PATH"),
+              module::get_var("gallery", "extra_binary_paths")));
 
       // @todo: consider refactoring the two segments below into a loop since they are so
       // similar.

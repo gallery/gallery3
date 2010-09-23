@@ -140,4 +140,17 @@ class gallery_Core {
     return $file_name;
   }
 
+  /**
+   * Set the PATH environment variable to the paths specified.
+   * @param  array   Array of paths.  Each array entry can contain a colon separated list of paths.
+   */
+  static function set_path_env($paths) {
+    $path_env = array();
+    foreach ($paths as $path) {
+      if ($path) {
+        array_push($path_env, $path);
+      }
+    }
+    putenv("PATH=" .  implode(":", $path_env));
+  }
 }
