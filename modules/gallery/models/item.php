@@ -498,7 +498,7 @@ class Item_Model_Core extends ORM_MPTT {
     $base_slug = $this->slug;
     while (ORM::factory("item")
            ->where("parent_id", "=", $this->parent_id)
-           ->where("id", "<>", $this->id)
+           ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
            ->and_open()
            ->where("name", "=", $this->name)
            ->or_where("slug", "=", $this->slug)

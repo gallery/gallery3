@@ -41,7 +41,7 @@ class Group_Model extends ORM implements Group_Definition {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
       $this->rules = array(
-        "name" => array("rules" => array("required", "length[4,255]"),
+        "name" => array("rules" => array("required", "length[1,255]"),
                         "callbacks" => array(array($this, "valid_name"))));
     }
 

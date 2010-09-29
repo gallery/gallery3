@@ -759,7 +759,7 @@ form .g-error {
 }
 
 .g-loading-small {
-  background: #e8e8e8 url('../images/loading-small.gif') no-repeat center center !important;
+  background: #e8e8e8 url('..lib/images/loading-small.gif') no-repeat center center !important;
 }
 
 /** *******************************************************************
@@ -1112,7 +1112,7 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 .rtl .g-breadcrumbs li {
-  background: transparent url('../images/ico-separator-rtl.gif') no-repeat scroll right center;
+  background: transparent url('..images/ico-separator-rtl.gif') no-repeat scroll right center;
   padding: 1em 18px 1em 8px;
 }
 

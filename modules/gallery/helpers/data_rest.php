@@ -72,7 +72,12 @@ class data_rest_Core {
       header("Content-Type: {$item->mime_type}");
     }
     Kohana::close_buffers(false);
-    readfile($file);
+
+    if (isset($p->encoding) && $p->encoding == "base64") {
+      print base64_encode(file_get_contents($file));
+    } else {
+      readfile($file);
+    }
 
     // We must exit here to keep the regular REST framework reply code from adding more bytes on
     // at the end or tinkering with headers.

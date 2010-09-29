@@ -1036,6 +1036,11 @@ div#g-action-status {
   margin-left: 0;
 }
 
+/* Autocomplete  ~~~~~~~~~~ */
+.ac_loading {
+  background: white url('../images/loading-small.gif') right center no-repeat !important;
+}
+
 /** *******************************************************************
  *  9) Right to left language styles
  *********************************************************************/
