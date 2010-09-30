@@ -81,11 +81,6 @@ class Packager_Controller extends Controller {
     Database::instance()->query("TRUNCATE {caches}");
     Database::instance()->query("TRUNCATE {sessions}");
     Database::instance()->query("TRUNCATE {logs}");
-    db::build()
-      ->delete("vars")
-      ->where("module_name", "=", "gallery")
-      ->where("name", "=", "_cache")
-      ->execute();
     db::build()->update("users")
       ->set(array("password" => ""))
       ->where("id", "in", array(1, 2))

@@ -425,48 +425,21 @@ class module_Core {
    * @return the value
    */
   static function get_var($module_name, $name, $default_value=null) {
-    // We cache all vars in gallery._cache so that we can load all vars at once for
-    // performance.
+    // We cache vars so we can load them all at once for performance.
     if (empty(self::$var_cache)) {
-      $row = db::build()
-        ->select("value")
-        ->from("vars")
-        ->where("module_name", "=", "gallery")
-        ->where("name", "=", "_cache")
-        ->execute()
-        ->current();
-      if ($row) {
-        self::$var_cache = unserialize($row->value);
-      } else {
-        // gallery._cache doesn't exist.  Create it now.
+      self::$var_cache = Cache::instance()->get("var_cache");
+      if (empty(self::$var_cache)) {
+        // Cache doesn't exist, create it now.
         foreach (db::build()
                  ->select("module_name", "name", "value")
                  ->from("vars")
                  ->order_by("module_name")
                  ->order_by("name")
                  ->execute() as $row) {
-          if ($row->module_name == "gallery" && $row->name == "_cache") {
-            // This could happen if there's a race condition
-            continue;
-          }
           // Mute the "Creating default object from empty value" warning below
           @self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
         }
-        $cache = ORM::factory("var");
-        $cache->module_name = "gallery";
-        $cache->name = "_cache";
-        $cache->value = serialize(self::$var_cache);
-        try {
-          $cache->save();
-        } catch (Database_Exception $e) {
-          // There's a potential race condition here.  Don't fail if that happens because it's
-          // bound to be transient and not a huge deal, but at least put something in the logs.
-          if (stristr($e->getMessage(), "duplicate entry")) {
-            Kohana_Log::add("error", "Failed to cache vars");
-          } else {
-            throw $e;
-          }
-        }
+        Cache::instance()->set("var_cache", self::$var_cache, array("vars"));
       }
     }
 
@@ -495,11 +468,7 @@ class module_Core {
     $var->value = $value;
     $var->save();
 
-    db::build()
-      ->delete("vars")
-      ->where("module_name", "=", "gallery")
-      ->where("name", "=", "_cache")
-      ->execute();
+    Cache::instance()->delete("var_cache");
     self::$var_cache = null;
  }
 
@@ -524,11 +493,7 @@ class module_Core {
       ->where("name", "=", $name)
       ->execute();
 
-    db::build()
-      ->delete("vars")
-      ->where("module_name", "=", "gallery")
-      ->where("name", "=", "_cache")
-      ->execute();
+    Cache::instance()->delete("var_cache");
     self::$var_cache = null;
   }
 
@@ -546,11 +511,7 @@ class module_Core {
       $var->delete();
     }
 
-    db::build()
-      ->delete("vars")
-      ->where("module_name", "=", "gallery")
-      ->where("name", "=", "_cache")
-      ->execute();
+    Cache::instance()->delete("var_cache");
     self::$var_cache = null;
   }
 
