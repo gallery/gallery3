@@ -63,6 +63,9 @@ class remote extends remote_Core {
    * WebHelper_simple::_parseLocation logic.
    */
   static function do_request($url, $method='GET', $headers=array(), $body='') {
+    if (!array_key_exists("User-Agent", $headers)) {
+      $headers["User-Agent"] = "Gallery3";
+    }
     /* Convert illegal characters */
     $url = str_replace(' ', '%20', $url);
 
