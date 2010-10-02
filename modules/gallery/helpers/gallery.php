@@ -25,6 +25,10 @@ class gallery_Core {
    * down for maintenance" page.
    */
   static function maintenance_mode() {
+    // @todo: we need a mechanism here to identify controllers that are still legally accessible
+    // when the entire Gallery is in maintenance mode.  Perhaps a controller class function or
+    // method?
+    // https://sourceforge.net/apps/trac/gallery/ticket/1411
     if (Router::$controller != "login" &&
         Router::$controller != "combined" &&
         module::get_var("gallery", "maintenance_mode", 0) &&
@@ -41,8 +45,12 @@ class gallery_Core {
    * the login page.
    */
   static function private_gallery() {
+    // @todo: we need a mechanism here to identify controllers that are still legally accessible
+    // when the entire Gallery is private.  Perhaps a controller class function or method?
+    // https://sourceforge.net/apps/trac/gallery/ticket/1411
     if (Router::$controller != "login" &&
         Router::$controller != "combined" &&
+        Router::$controller != "digibug" &&
         identity::active_user()->guest &&
         !access::user_can(identity::guest(), "view", item::root()) &&
         php_sapi_name() != "cli") {
