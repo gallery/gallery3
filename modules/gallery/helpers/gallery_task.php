@@ -84,6 +84,13 @@ class gallery_task_Core {
       $ignored = $task->get("ignored", array());
 
       $i = 0;
+
+      // If there's no work left to do, skip to the end.  This can happen if we resume a task long
+      // after the work got done in some other task.
+      if (!$result->count()) {
+        $completed = $total_count;
+      }
+
       foreach ($result as $row) {
         if (array_key_exists($row->id, $ignored)) {
           continue;
