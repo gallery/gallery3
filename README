@@ -8,22 +8,19 @@ can easily create and share albums of photos via an intuitive
 interface.
 
 
-SECURITY (& INTENDED AUDIENCE):
-This is the second (and hopefully final) release candidate of Gallery
-3.0.  We're putting it out there so that we can find out if we
-overlooked any small things.  We expect the final version to be
-virtually identical.  You can install it on public websites and use it
-freely -- we recommend it!
+INTENDED AUDIENCE:
+This version is intended for anybody who has a website.  We stand
+ready to support the product and help you to make the most of it. We
+welcome theme and module developers to play with this release and
+start turning out slick new designs for our happy users.  If you have
+questions or problems, you can get help in the Gallery forums:
 
-Note:
- - We've contracted a professional security audit, received their results
-   and resolved all the issues they found.
- - You can upgrade from beta 1, but not from alpha releases.
+  http://gallery.menalto.com/forum/96
 
-This version is intended for broad distribution.  We stand ready to
-support the product and help you to make the most of it. We welcome
-theme and module developers to play with this release and start
-turning out slick new designs for our happy users.
+
+SECURITY:
+We've contracted a professional security audit, received their results
+and resolved all the issues they found.
 
 Did you find a security flaw?  Please email security@gallery.menalto.com
 with the details and we'll fix it ASAP!
@@ -35,6 +32,14 @@ SUPPORTED CONFIGURATION:
  - PHP 5.2.3 and newer (PHP's safe_mode must be disabled and simplexml,
    filter, and json must be installed).
  - Database: MySQL 5 and newer.
+
+
+INSTALLING AND UPGRADING INSTRUCTIONS:
+For comprehensive instructions, The online User Guide is your best resource:
+  http://codex.gallery2.org/Gallery3:User_guide
+
+There are also simple instructions below.  NOTE: You can upgrade from
+beta 1 and beyond, but not from alpha releases.
 
 
 INSTALLATION VIA THE WEB:
@@ -56,7 +61,7 @@ INSTALLATION FROM THE COMMAND LINE:
 BUGS?
 Go to http://apps.sourceforge.net/trac/gallery/ click the "login" link
 and log in with your SourceForge username and password, then click the
-"new ticket" button.  Mark any issues you find with the "3.0"
+"new ticket" button.  Mark any issues you find with the "3.1"
 milestone and we'll try to get 'em done for the next release.
 
 
