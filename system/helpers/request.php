@@ -123,6 +123,7 @@ class request_Core {
 
 		if ( ! is_array(request::$user_agent))
 		{
+			request::$user_agent = array();
 			request::$user_agent['agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '';
 
 			// Parse the user agent and extract basic information
