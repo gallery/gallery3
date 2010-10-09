@@ -74,6 +74,11 @@ class gallery_Core {
    * request should implement the <module>_event::gallery_ready() handler.
    */
   static function ready() {
+    // Don't keep a session for robots; it's a waste of database space.
+    if (request::user_agent("robot")) {
+      Session::instance()->abort_save();
+    }
+
     module::event("gallery_ready");
   }
 
