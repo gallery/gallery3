@@ -109,12 +109,14 @@ $config['mobile'] = array
  */
 $config['robot'] = array
 (
-	'googlebot'   => 'Googlebot',
-	'msnbot'      => 'MSNBot',
-	'slurp'       => 'Inktomi Slurp',
-	'yahoo'       => 'Yahoo',
-	'askjeeves'   => 'AskJeeves',
-	'fastcrawler' => 'FastCrawler',
-	'infoseek'    => 'InfoSeek Robot 1.0',
-	'lycos'       => 'Lycos',
+	'googlebot'     => 'Googlebot',
+	'msnbot'        => 'MSNBot',
+	'slurp'         => 'Inktomi Slurp',
+	'yahoo'         => 'Yahoo',
+	'askjeeves'     => 'AskJeeves',
+	'fastcrawler'   => 'FastCrawler',
+	'infoseek'      => 'InfoSeek Robot 1.0',
+	'lycos'         => 'Lycos',
+        'mj12bot'       => 'MJ12bot',
+        'speedy spider' => 'Speedy Spider',
 );
