@@ -51,6 +51,7 @@ class gallery_Core {
     if (Router::$controller != "login" &&
         Router::$controller != "combined" &&
         Router::$controller != "digibug" &&
+        Router::$controller != "rest" &&
         identity::active_user()->guest &&
         !access::user_can(identity::guest(), "view", item::root()) &&
         php_sapi_name() != "cli") {
