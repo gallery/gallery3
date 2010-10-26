@@ -17,5 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Exif_Key_Model extends ORM {
+class Exif_Key_Model_Core extends ORM {
 }
