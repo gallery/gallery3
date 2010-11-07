@@ -20,7 +20,7 @@
 class Item_Model_Core extends ORM_MPTT {
   protected $children = "items";
   protected $sorting = array();
-  protected $data_file = null;
+  public $data_file = null;
 
   public function __construct($id=null) {
     parent::__construct($id);
@@ -320,6 +320,7 @@ class Item_Model_Core extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded()) {
         // Create a new item.
+        module::event("item_before_create", $this);
 
         // Set a weight if it's missing.  We don't do this in the constructor because it's not a
         // simple assignment.
@@ -398,6 +399,7 @@ class Item_Model_Core extends ORM_MPTT {
         module::event("item_created", $this);
       } else {
         // Update an existing item
+        module::event("item_before_update", $item);
 
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
