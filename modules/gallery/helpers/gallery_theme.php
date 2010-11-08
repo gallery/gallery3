@@ -93,7 +93,7 @@ class gallery_theme_Core {
     }
 
     // Redirect to the root album when the admin session expires.
-    $admin_session_redirect_check = '<script type="text/javascript">
+    $content = '<script type="text/javascript">
       var adminReauthCheck = function() {
         $.ajax({url: "' . url::site("admin?reauth_check=1") . '",
                 dataType: "json",
@@ -105,11 +105,11 @@ class gallery_theme_Core {
       };
       setInterval("adminReauthCheck();", 60 * 1000);
       </script>';
-    print $admin_session_redirect_check;
 
     if ($session->get("l10n_mode", false)) {
-      return L10n_Client_Controller::l10n_form();
+      $content .= "\n" . L10n_Client_Controller::l10n_form();
     }
+    return $content;
   }
 
   static function credits() {
