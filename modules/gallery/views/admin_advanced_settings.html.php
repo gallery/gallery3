@@ -9,6 +9,7 @@
     <li class="g-warning"><?= t("Change these values at your own risk!") ?></li>
   </ul>
 
+  <?= t("Filter:") ?> <input id="g-admin-advanced-settings-filter" type="text"></input>
   <div class="g-block-content">
     <table>
       <tr>
@@ -17,7 +18,7 @@
         <th> <?= t("Value") ?></th>
       </tr>
       <? foreach ($vars as $var): ?>
-      <tr class="<?= text::alternate("g-odd", "g-even") ?>">
+      <tr class="setting-row <?= text::alternate("g-odd", "g-even") ?>">
         <td> <?= $var->module_name ?> </td>
         <td> <?= html::clean($var->name) ?> </td>
         <td>
@@ -35,4 +36,22 @@
       <? endforeach ?>
     </table>
   </div>
+
+  <script>
+    $(document).ready(function() {
+      $("#g-admin-advanced-settings-filter").keyup(function() {
+        var filter = $(this).attr("value");
+        if (filter) {
+          $("tr.setting-row").fadeOut("fast");
+          $("tr.setting-row td:contains(" + filter + "), tr.setting-row td a:contains(" + filter + ")").each(function() {
+            if ($(this).children().length < 1) {
+              $(this).closest("tr").stop().show();
+            }
+          });
+        } else {
+          $("tr.setting-row").show();
+        }
+      });
+    });
+  </script>
 </div>
