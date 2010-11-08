@@ -157,6 +157,7 @@ class g2_import_Core {
 
     $ret = GalleryEmbed::init();
     if ($ret) {
+      Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
       return false;
     }
 
