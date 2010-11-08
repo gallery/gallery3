@@ -92,6 +92,7 @@ class locales_Core {
     $l["ko_KR"] = "한국어";                    // Korean
     $l["lt_LT"] = "Lietuvių";                 // Lithuanian
     $l["lv_LV"] = "Latviešu";                 // Latvian
+    $l["ms_MY"] = "Bahasa Melayu";            // Malay
     $l["mk_MK"] = "Македонски јазик";         // Macedonian
     $l["nl_NL"] = "Nederlands";               // Dutch
     $l["no_NO"] = "Norsk bokmål";             // Norwegian
