@@ -503,13 +503,25 @@ class module_Core {
    * @param string $name
    */
   static function clear_var($module_name, $name) {
-    $var = ORM::factory("var")
+    db::build()
+      ->delete("vars")
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)
-      ->find();
-    if ($var->loaded()) {
-      $var->delete();
-    }
+      ->execute();
+
+    Cache::instance()->delete("var_cache");
+    self::$var_cache = null;
+  }
+
+ /**
+   * Remove all variables for this module.
+   * @param string $module_name
+   */
+  static function clear_all_vars($module_name) {
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", $module_name)
+      ->execute();
 
     Cache::instance()->delete("var_cache");
     self::$var_cache = null;
