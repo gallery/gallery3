@@ -57,8 +57,7 @@ class Tag_Model_Core extends ORM {
 
   /**
    * Overload ORM::save() to trigger an item_related_update event for all items that are related
-   * to this tag.  Since items can be added or removed as part of the save, we need to trigger an
-   * event for the union of all related items before and after the save.
+   * to this tag.
    */
   public function save() {
     $related_item_ids = array();
@@ -70,20 +69,16 @@ class Tag_Model_Core extends ORM {
       $related_item_ids[$row->item_id] = 1;
     }
 
-    $result = parent::save();
-
-    foreach (db::build()
-             ->select("item_id")
-             ->from("items_tags")
-             ->where("tag_id", "=", $this->id)
-             ->execute() as $row) {
-      $related_item_ids[$row->item_id] = 1;
+    if (isset($this->changed_relations["items"])) {
+      $changed = array_merge(
+        array_diff($this->changed_relations["items"], $this->object_relations["items"]),
+        array_diff($this->object_relations["items"], $this->changed_relations["items"]));
     }
 
-    if ($related_item_ids) {
-      foreach (ORM::factory("item")
-               ->where("id", "IN", array_keys($related_item_ids))
-               ->find_all() as $item) {
+    $result = parent::save();
+
+    if (!empty($changed)) {
+      foreach (ORM::factory("item")->where("id", "IN", $changed)->find_all() as $item) {
         module::event("item_related_update", $item);
       }
     }
@@ -93,7 +88,7 @@ class Tag_Model_Core extends ORM {
 
   /**
    * Overload ORM::delete() to trigger an item_related_update event for all items that are
-   * related to this tag.
+   * related to this tag, and delete all items_tags relationships.
    */
   public function delete($ignored_id=null) {
     $related_item_ids = array();
@@ -105,6 +100,7 @@ class Tag_Model_Core extends ORM {
       $related_item_ids[$row->item_id] = 1;
     }
 
+    db::build()->delete("items_tags")->where("tag_id", "=", $this->id)->execute();
     $result = parent::delete();
 
     if ($related_item_ids) {
