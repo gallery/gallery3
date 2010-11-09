@@ -218,7 +218,13 @@ class item_Core {
   }
 
   /**
-   * Return a query to get a random Item_Model, with optional filters
+   * Return a query to get a random Item_Model, with optional filters.
+   * Usage: item::random_query()->execute();
+   *
+   * Note: You can add your own ->where() clauses but if your Gallery is
+   * small or your where clauses are over-constrained you may wind up with
+   * no item.  You should try running this a few times in a loop if you
+   * don't get an item back.
    */
   static function random_query() {
     // Pick a random number and find the item that's got nearest smaller number.
