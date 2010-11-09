@@ -89,6 +89,7 @@
   Options +FollowSymLinks
   RewriteEngine On
   RewriteBase <?= html::clean(g2_import::$g2_base_url) ?>
+
   RewriteRule ^(.*)$ <?= url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
 &lt;/IfModule&gt;</textarea>
       </div>
