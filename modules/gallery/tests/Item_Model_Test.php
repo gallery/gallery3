@@ -406,6 +406,29 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
+  }
 
+  public function urls_test() {
+    $photo = test::random_photo();
+    $this->assert_true(
+      preg_match("|http://./var/resizes/name_\d+\.jpg\?m=\d+|", $photo->resize_url()),
+      $photo->resize_url() . " is malformed");
+    $this->assert_true(
+      preg_match("|http://./var/thumbs/name_\d+\.jpg\?m=\d+|", $photo->thumb_url()),
+      $photo->thumb_url() . " is malformed");
+    $this->assert_true(
+      preg_match("|http://./var/albums/name_\d+\.jpg\?m=\d+|", $photo->file_url()),
+      $photo->file_url() . " is malformed");
+
+    // Albums have special thumbnails.  Empty album has cachebuster of 0 since it has no thumbnail
+    $album = test::random_album();
+    $this->assert_true(
+      preg_match("|http://./var/thumbs/name_\d+/\.album\.jpg\?m=0|", $album->thumb_url()),
+      $album->thumb_url() . " is malformed");
+
+    $photo = test::random_photo($album);
+    $this->assert_true(
+      preg_match("|http://./var/thumbs/name_\d+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
+      $album->thumb_url() . " is malformed");
   }
 }
