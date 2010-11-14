@@ -126,7 +126,6 @@ class tag_Core {
       ->delete("items_tags")
       ->where("item_id", "=", $item->id)
       ->execute();
-    module::event("item_related_update", $item);
   }
 
   /**
