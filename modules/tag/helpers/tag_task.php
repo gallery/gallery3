@@ -51,7 +51,7 @@ class tag_task_Core {
         $completed = $task->get("completed");
         $total = $task->get("total");
         $last_tag_id = $task->get("last_tag_id");
-        $tags = ORM::factory("tag")->where("id", ">", $last_tag_id)->find_all();
+        $tags = ORM::factory("tag")->where("id", ">", $last_tag_id)->find_all(25);
         Kohana_Log::add("error",print_r(Database::instance()->last_query(),1));
         while ($current < $total && microtime(true) - $start < 1 && $tag = $tags->current()) {
           $last_tag_id = $tag->id;
