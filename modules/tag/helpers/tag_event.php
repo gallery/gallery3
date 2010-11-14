@@ -62,6 +62,12 @@ class tag_event_Core {
 
   static function item_deleted($item) {
     tag::clear_all($item);
+    if (!batch::in_progress()) {
+      tag::compact();
+    }
+  }
+
+  static function batch_complete() {
     tag::compact();
   }
 
@@ -88,6 +94,7 @@ class tag_event_Core {
         tag::add($item, trim($tag_name));
       }
     }
+    module::event("item_related_update", $item);
     tag::compact();
   }
 
@@ -109,7 +116,7 @@ class tag_event_Core {
     if (!isset($group->uploadify)) {
       return;
     }
-    
+
     $group = $form->add_photos;
     $group->input("tags")
       ->label(t("Add tags to all uploaded files"))
@@ -132,7 +139,7 @@ class tag_event_Core {
     if (!isset($group->uploadify)) {
       return;
     }
-    
+
     foreach (explode(",", $form->add_photos->tags->value) as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {
