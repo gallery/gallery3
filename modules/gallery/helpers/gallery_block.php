@@ -70,12 +70,7 @@ class gallery_block_Core {
       $block->css_id = "g-platform";
       $block->title = t("Platform information");
       $block->content = new View("admin_block_platform.html");
-      if (@is_readable("/proc/loadavg") && $first_line = current(@file("/proc/loadavg"))) {
-        $block->content->load_average =
-          join(" ", array_slice(explode(" ", $first_line), 0, 3));
-      } else {
-        $block->content->load_average = t("Unavailable");
-      }
+      $block->content->load_average = join(" ", sys_getloadavg());
       break;
 
     case "project_news":
