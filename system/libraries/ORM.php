@@ -1002,7 +1002,11 @@ class ORM_Core {
 	 */
 	public function reload()
 	{
-		return $this->find($this->object[$this->primary_key]);
+                if ($this->_loaded) {
+                        return $this->find($this->object[$this->primary_key]);
+                } else {
+                        return $this->clear();
+                }
 	}
 
 	/**
