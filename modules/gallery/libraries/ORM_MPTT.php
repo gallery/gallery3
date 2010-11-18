@@ -96,12 +96,16 @@ class ORM_MPTT_Core extends ORM {
         $item->reload()->delete();
       }
 
-      // Deleting children has affected this item
-      $this->reload();
+      // Deleting children has affected this item, but we'll reload it below.
     }
 
     $this->lock();
     $this->reload();  // Assume that the prior lock holder may have changed this entry
+    if (!$this->loaded()) {
+      // Concurrent deletes may result in this item already being gone.  Ignore it.
+      return;
+    }
+
     try {
       db::build()
         ->update($this->table_name)
