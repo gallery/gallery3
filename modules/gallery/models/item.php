@@ -71,6 +71,11 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   public function delete($ignored_id=null) {
+    if (!$this->loaded()) {
+      // Concurrent deletes may result in this item already being gone.  Ignore it.
+      return;
+    }
+
     if ($this->id == 1) {
       $v = new Validation(array("id"));
       $v->add_error("id", "cant_delete_root_album");
