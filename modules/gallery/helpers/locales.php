@@ -62,11 +62,14 @@ class locales_Core {
   }
 
   // @todo Might want to add a localizable language name as well.
+  // ref: http://cldr.unicode.org/
+  // ref: http://cldr.unicode.org/index/cldr-spec/picking-the-right-language-code
   private static function _init_language_data() {
     $l["af_ZA"] = "Afrikaans";                // Afrikaans
     $l["ar_SA"] = "العربية";                   // Arabic
     $l["be_BY"] = "Беларускі";           // Belarusian
     $l["bg_BG"] = "български";           // Bulgarian
+    $l["bn_BD"] = "বাংলা";               // Bengali
     $l["ca_ES"] = "Catalan";                  // Catalan
     $l["cs_CZ"] = "čeština";                  // Czech
     $l["da_DK"] = "Dansk";                    // Danish
