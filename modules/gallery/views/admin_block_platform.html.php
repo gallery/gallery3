@@ -16,7 +16,7 @@
     <?= t("MySQL: %mysql_version", array("mysql_version" => Database::instance()->query("SELECT version() as v")->current()->v)) ?>
   </li>
   <li>
-    <?= t("Server load: %load_average", array("load_average" => $load_average)) ?>
+    <?= t("Server load: %load_average", array("load_average" => join(" ", sys_getloadavg()))) ?>
   </li>
   <li>
     <?= t("Graphics toolkit: %toolkit", array("toolkit" => module::get_var("gallery", "graphics_toolkit"))) ?>

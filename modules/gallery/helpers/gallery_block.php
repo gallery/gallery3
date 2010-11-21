@@ -70,7 +70,6 @@ class gallery_block_Core {
       $block->css_id = "g-platform";
       $block->title = t("Platform information");
       $block->content = new View("admin_block_platform.html");
-      $block->content->load_average = join(" ", sys_getloadavg());
       break;
 
     case "project_news":
