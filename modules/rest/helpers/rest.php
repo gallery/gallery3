@@ -122,7 +122,12 @@ class rest_Core {
    * @return mixed  the corresponding object (usually a model of some kind)
    */
   static function resolve($url) {
-    $relative_url = substr($url, strlen(url::abs_site("rest")));
+    if ($suffix = Kohana::config('core.url_suffix')) {
+      $relative_url = substr($url, strlen(url::abs_site("rest")) - strlen($suffix));
+    } else {
+      $relative_url = substr($url, strlen(url::abs_site("rest")));
+    }
+
     $path = parse_url($relative_url, PHP_URL_PATH);
     $components = explode("/", $path, 3);
 
