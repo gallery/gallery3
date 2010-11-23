@@ -86,6 +86,9 @@ class Rest_Controller extends Controller {
       }
 
       $request->url = url::abs_current(true);
+      if ($suffix = Kohana::config('core.url_suffix')) {
+        $request->url = substr($request->url, 0, strlen($request->url) - strlen($suffix));
+      }
 
       rest::set_active_user($request->access_key);
 
