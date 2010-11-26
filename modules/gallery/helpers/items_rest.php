@@ -45,7 +45,7 @@ class items_rest_Core {
         if (access::can("view", $item)) {
           if (isset($types)) {
             if (in_array($item->type, $types)) {
-              $items[] = items_rest::_format_restful_item($item);
+              $items[] = items_rest::_format_restful_item($item, $types);
             }
           } else {
             $items[] = items_rest::_format_restful_item($item);
@@ -74,14 +74,16 @@ class items_rest_Core {
     return $item;
   }
 
-  private static function _format_restful_item($item) {
+  private static function _format_restful_item($item, $types = null) {
     $item_rest = array("url" => rest::url("item", $item),
                        "entity" => $item->as_restful_array(),
                        "relationships" => rest::relationships("item", $item));
     if ($item->type == "album") {
       $members = array();
       foreach ($item->viewable()->children() as $child) {
-        $members[] = rest::url("item", $child);
+      	if ($types == null || in_array($child->type, $types)) {
+	      $members[] = rest::url("item", $child);
+	    }
       }
       $item_rest["members"] = $members;
     }
