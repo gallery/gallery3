@@ -23,18 +23,19 @@ class item_rest_Core {
    * query the collection.  You can specify them in any combination.
    *
    *   scope=direct
-   *     only return items that are immediately under this one
+   *     Only return items that are immediately under this one
    *   scope=all
-   *     return items anywhere under this one
+   *     Return items anywhere under this one
    *
    *   name=<substring>
-   *     only return items where the name contains this substring
+   *     Only return items where the name contains this substring
    *
    *   random=true
-   *     return a single random item
+   *     Return a single random item
    *
    *   type=<comma separate list of photo, movie or album>
-   *     limit the type to types in this list.  eg, "type=photo,movie"
+   *     Limit the type to types in this list, eg: "type=photo,movie".
+   *     Also limits the types returned in the member collections (same behaviour as item_rest).
    */
   static function get($request) {
     $item = rest::resolve($request->url);
