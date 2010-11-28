@@ -33,11 +33,9 @@ class items_rest_Core {
    *
    *   type=<comma separate list of photo, movie or album>
    *     limit the type to types in this list.  eg, "type=photo,movie"
-   * 
-   *     also limits the types returned in the member collections (same 
-   *     behaviour as item_rest)
-   * 
-   *     ignored if ancestors_for is set.
+   *     Also limits the types returned in the member collections (same
+   *     behaviour as item_rest).
+   *     Ignored if ancestors_for is set.
    */
   static function get($request) {
     $items = array();
@@ -53,8 +51,8 @@ class items_rest_Core {
         if (!access::can("view", $item)) {
           continue;
         }
-        
-        if (empty($types) || in_array($item->type, $types)) {       
+
+        if (empty($types) || in_array($item->type, $types)) {
           $items[] = items_rest::_format_restful_item($item, $types);
         }
       }
