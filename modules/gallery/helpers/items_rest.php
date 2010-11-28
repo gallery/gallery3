@@ -25,7 +25,7 @@ class items_rest_Core {
    * filter the results based on the specified type.  Using the type parameter with the
    * ancestors_for parameter makes no sense and will be ignored.
    *
-   *   urls=url1,url2,url3
+   *   urls=["url1","url2","url3"]
    *     return items that match the specified urls.  Typically used to return the member detail
    *
    *   ancestors_for=url
@@ -33,23 +33,29 @@ class items_rest_Core {
    *
    *   type=<comma separate list of photo, movie or album>
    *     limit the type to types in this list.  eg, "type=photo,movie"
+   * 
+   *     also limits the types returned in the member collections (same 
+   *     behaviour as item_rest)
+   * 
+   *     ignored if ancestors_for is set.
    */
   static function get($request) {
     $items = array();
+    $types = array();
+
     if (isset($request->params->urls)) {
+      if (isset($request->params->type)) {
+        $types = explode(",", $request->params->type);
+      }
+
       foreach (json_decode($request->params->urls) as $url) {
-        if (isset($request->params->type)) {
-          $types = explode(",", $request->params->type);
-        }
         $item = rest::resolve($url);
-        if (access::can("view", $item)) {
-          if (isset($types)) {
-            if (in_array($item->type, $types)) {
-              $items[] = items_rest::_format_restful_item($item, $types);
-            }
-          } else {
-            $items[] = items_rest::_format_restful_item($item);
-          }
+        if (!access::can("view", $item)) {
+          continue;
+        }
+        
+        if (empty($types) || in_array($item->type, $types)) {       
+          $items[] = items_rest::_format_restful_item($item, $types);
         }
       }
     } else if (isset($request->params->ancestors_for)) {
@@ -57,9 +63,9 @@ class items_rest_Core {
       if (!access::can("view", $item)) {
         throw new Kohana_404_Exception();
       }
-      $items[] = items_rest::_format_restful_item($item);
+      $items[] = items_rest::_format_restful_item($item, $types);
       while (($item = $item->parent()) != null) {
-        array_unshift($items, items_rest::_format_restful_item($item));
+        array_unshift($items, items_rest::_format_restful_item($item, $types));
       };
     }
 
@@ -74,14 +80,14 @@ class items_rest_Core {
     return $item;
   }
 
-  private static function _format_restful_item($item, $types = null) {
+  private static function _format_restful_item($item, $types) {
     $item_rest = array("url" => rest::url("item", $item),
                        "entity" => $item->as_restful_array(),
                        "relationships" => rest::relationships("item", $item));
     if ($item->type == "album") {
       $members = array();
       foreach ($item->viewable()->children() as $child) {
-      	if ($types == null || in_array($child->type, $types)) {
+      	if (empty($types) || in_array($child->type, $types)) {
 	      $members[] = rest::url("item", $child);
 	    }
       }
