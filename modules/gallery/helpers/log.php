@@ -30,7 +30,7 @@ class log_Core {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function success($category, $message, $html="") {
-    self::_add($category, $message, $html, self::SUCCESS);
+    self::_add($category, $message, $html, log::SUCCESS);
   }
 
   /**
@@ -40,7 +40,7 @@ class log_Core {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function info($category, $message, $html="") {
-    self::_add($category, $message, $html, self::INFO);
+    self::_add($category, $message, $html, log::INFO);
   }
 
   /**
@@ -50,7 +50,7 @@ class log_Core {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function warning($category, $message, $html="") {
-    self::_add($category, $message, $html, self::WARNING);
+    self::_add($category, $message, $html, log::WARNING);
   }
 
   /**
@@ -60,7 +60,7 @@ class log_Core {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function error($category, $message, $html="") {
-    self::_add($category, $message, $html, self::ERROR);
+    self::_add($category, $message, $html, log::ERROR);
   }
 
   /**
@@ -92,16 +92,16 @@ class log_Core {
    */
   static function severity_class($severity) {
     switch($severity) {
-    case self::SUCCESS:
+    case log::SUCCESS:
       return "g-success";
 
-    case self::INFO:
+    case log::INFO:
       return "g-info";
 
-    case self::WARNING:
+    case log::WARNING:
       return "g-warning";
 
-    case self::ERROR:
+    case log::ERROR:
       return "g-error";
     }
   }
