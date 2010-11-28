@@ -24,7 +24,7 @@ class remote extends remote_Core {
 
     /* Read the web page into a buffer */
     list ($response_status, $response_headers, $response_body) =
-      self::do_request($url, 'POST', $extra_headers, $post_data_raw);
+      remote::do_request($url, 'POST', $extra_headers, $post_data_raw);
 
     return array($response_body, $response_status, $response_headers);
   }

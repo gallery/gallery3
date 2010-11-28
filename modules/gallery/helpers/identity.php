@@ -61,7 +61,7 @@ class identity_Core {
 
       $session = Session::instance();
       if (!($user = $session->get("user"))) {
-        self::set_active_user($user = self::guest());
+        identity::set_active_user($user = self::guest());
       }
 
       // The installer cannot set a user into the session, so it just sets an id which we should
@@ -127,7 +127,7 @@ class identity_Core {
     $session = Session::instance();
     $session->set("user", $user);
     $session->delete("group_ids");
-    self::load_user();
+    identity::load_user();
   }
 
   /**

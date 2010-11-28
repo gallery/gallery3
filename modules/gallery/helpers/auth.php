@@ -74,13 +74,13 @@ class auth_Core {
   }
 
   static function validate_too_many_failed_logins($name_input) {
-    if (self::too_many_failures($name_input->value)) {
+    if (auth::too_many_failures($name_input->value)) {
       $name_input->add_error("too_many_failed_logins", 1);
     }
   }
 
   static function validate_too_many_failed_auth_attempts($form_input) {
-    if (self::too_many_failures(identity::active_user()->name)) {
+    if (auth::too_many_failures(identity::active_user()->name)) {
       $form_input->add_error("too_many_failed_auth_attempts", 1);
     }
   }

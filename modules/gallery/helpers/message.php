@@ -28,7 +28,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   static function success($msg) {
-    self::_add($msg, self::SUCCESS);
+    self::_add($msg, message::SUCCESS);
   }
 
   /**
@@ -36,7 +36,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   static function info($msg) {
-    self::_add($msg, self::INFO);
+    self::_add($msg, message::INFO);
   }
 
   /**
@@ -44,7 +44,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   static function warning($msg) {
-    self::_add($msg, self::WARNING);
+    self::_add($msg, message::WARNING);
   }
 
   /**
@@ -52,7 +52,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   static function error($msg) {
-    self::_add($msg, self::ERROR);
+    self::_add($msg, message::ERROR);
   }
 
   /**
@@ -79,7 +79,7 @@ class message_Core {
     $messages = Session::instance()->get_once("messages", array());
     foreach ($messages as $msg) {
       $msg[0] = str_replace("__CSRF__", access::csrf_token(), $msg[0]);
-      $buf[] = "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
+      $buf[] = "<li class=\"" . message::severity_class($msg[1]) . "\">$msg[0]</li>";
     }
     if ($buf) {
       return "<ul id=\"g-action-status\" class=\"g-message-block\">" . implode("", $buf) . "</ul>";
@@ -93,16 +93,16 @@ class message_Core {
    */
   static function severity_class($severity) {
     switch($severity) {
-    case self::SUCCESS:
+    case message::SUCCESS:
       return "g-success";
 
-    case self::INFO:
+    case message::INFO:
       return "g-info";
 
-    case self::WARNING:
+    case message::WARNING:
       return "g-warning";
 
-    case self::ERROR:
+    case message::ERROR:
       return "g-error";
     }
   }

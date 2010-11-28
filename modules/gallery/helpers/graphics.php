@@ -50,7 +50,7 @@ class graphics_Core {
     $rule->active = true;
     $rule->save();
 
-    self::mark_dirty($target == "thumb", $target == "resize");
+    graphics::mark_dirty($target == "thumb", $target == "resize");
   }
 
   /**
@@ -67,7 +67,7 @@ class graphics_Core {
       ->where("operation", "=", $operation)
       ->execute();
 
-    self::mark_dirty($target == "thumb", $target == "resize");
+    graphics::mark_dirty($target == "thumb", $target == "resize");
   }
 
   /**
@@ -80,7 +80,7 @@ class graphics_Core {
       ->where("module_name", "=", $module_name)
       ->execute();
     if (count($status)) {
-      self::mark_dirty(true, true);
+      graphics::mark_dirty(true, true);
     }
   }
 
@@ -252,7 +252,7 @@ class graphics_Core {
       $db->execute();
     }
 
-    $count = self::find_dirty_images_query()->count_records();
+    $count = graphics::find_dirty_images_query()->count_records();
     if ($count) {
       site_status::warning(
           t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",

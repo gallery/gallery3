@@ -58,7 +58,7 @@ class movie_Core {
   }
 
   static function extract_frame($input_file, $output_file) {
-    $ffmpeg = self::find_ffmpeg();
+    $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
@@ -103,7 +103,7 @@ class movie_Core {
    * Return the width, height, mime_type and extension of the given movie file.
    */
   static function get_file_metadata($file_path) {
-    $ffmpeg = self::find_ffmpeg();
+    $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
