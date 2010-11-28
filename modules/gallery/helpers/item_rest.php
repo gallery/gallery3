@@ -79,7 +79,7 @@ class item_rest_Core {
     $orm->order_by($order_by);
 
     $result = array(
-      "url" => $request->url,
+      "url" => rest::url("item", $item),
       "entity" => $item->as_restful_array(),
       "relationships" => rest::relationships("item", $item));
     if ($item->is_album()) {
