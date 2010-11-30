@@ -19,6 +19,10 @@
  */
 class image_block_installer {
 
+  static function install() {
+    module::set_version("image_block", $version = 2);
+  }
+
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
