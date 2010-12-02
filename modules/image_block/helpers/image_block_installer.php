@@ -21,7 +21,7 @@ class image_block_installer {
 
   static function install() {
     module::set_var("image_block", "image_count", "1");
-    module::set_version("image_block", $version = 2);
+    module::set_version("image_block", $version = 3);
   }
 
   static function upgrade($version) {
@@ -29,6 +29,16 @@ class image_block_installer {
     if ($version == 1) {
       module::set_var("image_block", "image_count", "1");
       module::set_version("image_block", $version = 2);
+    }
+
+    // Oops, there was a bug in the installer for version 2 resulting
+    // in some folks not getting the image_count variable set.  Bump
+    // to version 3 and fix it.
+    if ($version == 2) {
+      if (module::get_var("image_block", "image_count", 0) === 0) {
+        module::set_var("image_block", "image_count", "1");
+      }
+      module::set_version("image_block", $version = 3);
     }
   }
 }
