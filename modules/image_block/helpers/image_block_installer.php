@@ -20,6 +20,7 @@
 class image_block_installer {
 
   static function install() {
+    module::set_var("image_block", "image_count", "1");
     module::set_version("image_block", $version = 2);
   }
 
