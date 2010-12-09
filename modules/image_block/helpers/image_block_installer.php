@@ -17,5 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Exif_Record_Model_Core extends ORM {
+class image_block_installer {
+
+  static function install() {
+    module::set_var("image_block", "image_count", "1");
+    module::set_version("image_block", $version = 2);
+  }
+
+  static function upgrade($version) {
+    $db = Database::instance();
+    if ($version == 1) {
+      module::set_var("image_block", "image_count", "1");
+      module::set_version("image_block", $version = 2);
+    }
+  }
 }

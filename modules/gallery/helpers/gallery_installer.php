@@ -309,7 +309,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 40);
+    module::set_version("gallery", 41);
   }
 
   static function upgrade($version) {
@@ -636,6 +636,11 @@ class gallery_installer {
     if ($version == 39) {
       module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
       module::set_version("gallery", $version = 40);
+    }
+
+    if ($version == 40) {
+      module::clear_var("gallery", "_cache");
+      module::set_version("gallery", $version = 41);
     }
   }
 

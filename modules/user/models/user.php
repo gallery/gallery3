@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class User_Model extends ORM implements User_Definition {
+class User_Model_Core extends ORM implements User_Definition {
   protected $has_and_belongs_to_many = array("groups");
   protected $password_length = null;
 

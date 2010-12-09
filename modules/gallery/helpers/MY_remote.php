@@ -24,7 +24,7 @@ class remote extends remote_Core {
 
     /* Read the web page into a buffer */
     list ($response_status, $response_headers, $response_body) =
-      self::do_request($url, 'POST', $extra_headers, $post_data_raw);
+      remote::do_request($url, 'POST', $extra_headers, $post_data_raw);
 
     return array($response_body, $response_status, $response_headers);
   }
@@ -63,6 +63,9 @@ class remote extends remote_Core {
    * WebHelper_simple::_parseLocation logic.
    */
   static function do_request($url, $method='GET', $headers=array(), $body='') {
+    if (!array_key_exists("User-Agent", $headers)) {
+      $headers["User-Agent"] = "Gallery3";
+    }
     /* Convert illegal characters */
     $url = str_replace(' ', '%20', $url);
 

@@ -229,6 +229,10 @@ class installer {
       $errors[] = "Gallery requires <a href=\"http://php.net/manual/en/ini.core.php\">short_open_tag</a> to be on.  Please enable it in your php.ini.";
     }
 
+    if (!function_exists("ctype_alpha")) {
+      $errors[] = "Gallery requires the <a href=\"http://php.net/manual/en/book.ctype.php\">PHP Ctype</a> extension.  Please install it.";
+    }
+
     return @$errors;
   }
 

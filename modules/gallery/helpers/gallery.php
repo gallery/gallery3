@@ -18,13 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_Core {
-  const VERSION = "3.0 RC2 (Santa Fe)";
+  const VERSION = "3.0+ (git)";
 
   /**
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
    * down for maintenance" page.
    */
   static function maintenance_mode() {
+    // @todo: we need a mechanism here to identify controllers that are still legally accessible
+    // when the entire Gallery is in maintenance mode.  Perhaps a controller class function or
+    // method?
+    // https://sourceforge.net/apps/trac/gallery/ticket/1411
     if (Router::$controller != "login" &&
         Router::$controller != "combined" &&
         module::get_var("gallery", "maintenance_mode", 0) &&
@@ -41,8 +45,13 @@ class gallery_Core {
    * the login page.
    */
   static function private_gallery() {
+    // @todo: we need a mechanism here to identify controllers that are still legally accessible
+    // when the entire Gallery is private.  Perhaps a controller class function or method?
+    // https://sourceforge.net/apps/trac/gallery/ticket/1411
     if (Router::$controller != "login" &&
         Router::$controller != "combined" &&
+        Router::$controller != "digibug" &&
+        Router::$controller != "rest" &&
         identity::active_user()->guest &&
         !access::user_can(identity::guest(), "view", item::root()) &&
         php_sapi_name() != "cli") {
@@ -66,6 +75,11 @@ class gallery_Core {
    * request should implement the <module>_event::gallery_ready() handler.
    */
   static function ready() {
+    // Don't keep a session for robots; it's a waste of database space.
+    if (request::user_agent("robot")) {
+      Session::instance()->abort_save();
+    }
+
     module::event("gallery_ready");
   }
 

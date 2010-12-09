@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Log_Model extends ORM {
+class Log_Model_Core extends ORM {
   /**
    * @see ORM::__get()
    */

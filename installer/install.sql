@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',40,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',41,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',2,4);
@@ -395,7 +395,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -405,29 +405,29 @@ INSERT INTO {vars} VALUES (NULL,'gallery','resize_size','640');
 INSERT INTO {vars} VALUES (NULL,'gallery','default_locale','en_US');
 INSERT INTO {vars} VALUES (NULL,'gallery','image_quality','75');
 INSERT INTO {vars} VALUES (NULL,'gallery','image_sharpen','15');
+INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
+INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_center','a:3:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}}');
+INSERT INTO {vars} VALUES (NULL,'gallery','choose_default_tookit','1');
+INSERT INTO {vars} VALUES (NULL,'gallery','date_format','Y-M-d');
+INSERT INTO {vars} VALUES (NULL,'gallery','date_time_format','Y-M-d H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','time_format','H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','show_credits','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','credits','Powered by <a href=\"%url\">%gallery_version</a>');
 INSERT INTO {vars} VALUES (NULL,'gallery','simultaneous_upload_limit','5');
 INSERT INTO {vars} VALUES (NULL,'gallery','admin_area_timeout','5400');
 INSERT INTO {vars} VALUES (NULL,'gallery','maintenance_mode','0');
-INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','visible_title_length','15');
-INSERT INTO {vars} VALUES (NULL,'gallery','date_time_format','Y-M-d H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','favicon_url','lib/images/favicon.ico');
-INSERT INTO {vars} VALUES (NULL,'gallery','date_format','Y-M-d');
-INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_center','a:3:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_from','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_reply_to','unknown@unknown.com');
-INSERT INTO {vars} VALUES (NULL,'gallery','choose_default_tookit','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_line_length','70');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_header_separator','s:1:\"\n\";');
 INSERT INTO {vars} VALUES (NULL,'gallery','show_user_profiles_to','registered_users');
 INSERT INTO {vars} VALUES (NULL,'gallery','extra_binary_paths','/usr/local/bin:/opt/local/bin:/opt/bin');
-INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
-INSERT INTO {vars} VALUES (NULL,'comment','access_permissions','everybody');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_site_sidebar','a:4:{i:9;a:2:{i:0;s:7:\"gallery\";i:1;s:8:\"language\";}i:10;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:11;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:12;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','mininum_password_length','5');
+INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (NULL,'comment','access_permissions','everybody');
 INSERT INTO {vars} VALUES (NULL,'rest','allow_guest_access','0');
 INSERT INTO {vars} VALUES (NULL,'slideshow','max_scale','0');

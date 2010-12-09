@@ -71,7 +71,12 @@ class gallery_task_Core {
   static function rebuild_dirty_images($task) {
     $errors = array();
     try {
-      $result = graphics::find_dirty_images_query()->select("id")->execute();
+      // Choose the dirty images in a random order so that if we run this task multiple times
+      // concurrently each task is rebuilding different images simultaneously.
+      $result = graphics::find_dirty_images_query()->select("id")
+        ->select(new Database_Expression("RAND() as r"))
+        ->order_by("r", "ASC")
+        ->execute();
       $total_count = $task->get("total_count", $result->count());
       $mode = $task->get("mode", "init");
       if ($mode == "init") {
@@ -84,6 +89,13 @@ class gallery_task_Core {
       $ignored = $task->get("ignored", array());
 
       $i = 0;
+
+      // If there's no work left to do, skip to the end.  This can happen if we resume a task long
+      // after the work got done in some other task.
+      if (!$result->count()) {
+        $completed = $total_count;
+      }
+
       foreach ($result as $row) {
         if (array_key_exists($row->id, $ignored)) {
           continue;

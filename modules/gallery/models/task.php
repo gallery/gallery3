@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Task_Model extends ORM {
+class Task_Model_Core extends ORM {
   public function get($key, $default=null) {
     $context = unserialize($this->context);
     if (array_key_exists($key, $context)) {

@@ -95,16 +95,11 @@ class Digibug_Controller extends Controller {
 
     if (!TEST_MODE) {
       // Dump out the image
-      header("Content-Type: $proxy->item->mime_type");
+      header("Content-Type: {$proxy->item->mime_type}");
       Kohana::close_buffers(false);
       $fd = fopen($file, "rb");
       fpassthru($fd);
       fclose($fd);
-
-      // If the request was for the image and not the thumb, then delete the proxy.
-      if ($type == "full") {
-        $proxy->delete();
-      }
     }
 
     $this->_clean_expired();

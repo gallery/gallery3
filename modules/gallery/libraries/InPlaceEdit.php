@@ -70,7 +70,7 @@ class InPlaceEdit_Core {
 
   public function render() {
     $v = new View("in_place_edit.html");
-    $v->action = url::site($this->action);
+    $v->action = $this->action;
     $v->form = $this->form;
     $v->errors = $this->errors;
     foreach ($v->errors as $key => $error) {
