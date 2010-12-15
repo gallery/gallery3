@@ -19,7 +19,7 @@
  */
 class test_Core {
   static function random_album_unsaved($parent=null) {
-    $rand = rand();
+    $rand = mt_rand();
 
     $album = ORM::factory("item");
     $album->type = "album";
@@ -34,7 +34,7 @@ class test_Core {
   }
 
   static function random_photo_unsaved($parent=null) {
-    $rand = rand();
+    $rand = mt_rand();
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->parent_id = $parent ? $parent->id : 1;
@@ -49,16 +49,16 @@ class test_Core {
   }
 
   static function random_user($password="password") {
-    $rand = "name_" . rand();
+    $rand = "name_" . mt_rand();
     return identity::create_user($rand, $rand, $password, "$rand@rand.com");
   }
 
   static function random_group() {
-    return identity::create_group((string)rand());
+    return identity::create_group((string)mt_rand());
   }
 
   static function random_name($item=null) {
-    $rand = "name_" . rand();
+    $rand = "name_" . mt_rand();
     if ($item && $item->is_photo()) {
       $rand .= ".jpg";
     }
@@ -77,7 +77,7 @@ class test_Core {
 
   static function random_tag() {
     $tag = ORM::factory("tag");
-    $tag->name = (string)rand();
+    $tag->name = (string)mt_rand();
 
     // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();

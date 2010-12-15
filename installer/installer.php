@@ -138,7 +138,7 @@ class installer {
       $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
       $salt .= chr($char);
     }
-    $password = substr(md5(time() * rand()), 0, 6);
+    $password = substr(md5(time() . mt_rand()), 0, 6);
     // Escape backslash in preparation for our UPDATE statement.
     $hashed_password = str_replace("\\", "\\\\", $salt . md5($salt . $password));
     $sql = self::prepend_prefix($config["prefix"],
@@ -152,7 +152,7 @@ class installer {
   }
 
   static function create_admin_session($config) {
-    $session_id = md5(time() * rand());
+    $session_id = md5(time() . mt_rand());
     $user_agent = $_SERVER["HTTP_USER_AGENT"];
     $user_agent_len = strlen($user_agent);
     $now = time();
