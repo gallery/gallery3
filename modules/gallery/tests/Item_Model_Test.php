@@ -431,4 +431,27 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       preg_match("|http://./var/thumbs/name_\d+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
   }
+
+  public function legal_extension_test() {
+    foreach (array("test.gif", "test.GIF", "test.Gif", "test.jpeg", "test.JPG") as $name) {
+      $photo = test::random_photo_unsaved(item::root());
+      $photo->name = $name;
+      $photo->save();
+    }
+  }
+
+  public function illegal_extension_test() {
+    foreach (array("test.php", "test.PHP", "test.php5", "test.php4", "test.pl") as $name) {
+      try {
+        $photo = test::random_photo_unsaved(item::root());
+        $photo->name = $name;
+        $photo->save();
+      } catch (ORM_Validation_Exception $e) {
+        $this->assert_equal(array("name" => "illegal_data_file_extension"),
+                            $e->validation->errors());
+        continue;
+      }
+      $this->assert_true(false, "Shouldn't get here");
+    }
+  }
 }
