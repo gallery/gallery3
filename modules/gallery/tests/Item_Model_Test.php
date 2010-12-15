@@ -278,10 +278,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function basic_validation_test() {
     $item = ORM::factory("item");
-    $item->album_cover_item_id = mt_rand();  // invalid
+    $item->album_cover_item_id = random::int();  // invalid
     $item->description = str_repeat("x", 70000);  // invalid
     $item->name = null;
-    $item->parent_id = mt_rand();
+    $item->parent_id = random::int();
     $item->slug = null;
     $item->sort_column = "bogus";
     $item->sort_order = "bogus";
@@ -411,24 +411,24 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function urls_test() {
     $photo = test::random_photo();
     $this->assert_true(
-      preg_match("|http://./var/resizes/name_\d+\.jpg\?m=\d+|", $photo->resize_url()),
+      preg_match("|http://./var/resizes/name_\w+\.jpg\?m=\d+|", $photo->resize_url()),
       $photo->resize_url() . " is malformed");
     $this->assert_true(
-      preg_match("|http://./var/thumbs/name_\d+\.jpg\?m=\d+|", $photo->thumb_url()),
+      preg_match("|http://./var/thumbs/name_\w+\.jpg\?m=\d+|", $photo->thumb_url()),
       $photo->thumb_url() . " is malformed");
     $this->assert_true(
-      preg_match("|http://./var/albums/name_\d+\.jpg\?m=\d+|", $photo->file_url()),
+      preg_match("|http://./var/albums/name_\w+\.jpg\?m=\d+|", $photo->file_url()),
       $photo->file_url() . " is malformed");
 
     // Albums have special thumbnails.  Empty album has cachebuster of 0 since it has no thumbnail
     $album = test::random_album();
     $this->assert_true(
-      preg_match("|http://./var/thumbs/name_\d+/\.album\.jpg\?m=0|", $album->thumb_url()),
+      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=0|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
 
     $photo = test::random_photo($album);
     $this->assert_true(
-      preg_match("|http://./var/thumbs/name_\d+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
+      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
   }
 

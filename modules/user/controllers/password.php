@@ -51,7 +51,7 @@ class Password_Controller extends Controller {
     $user_name = $form->reset->inputs["name"]->value;
     $user = user::lookup_by_name($user_name);
     if ($user && !empty($user->email)) {
-      $user->hash = md5(uniqid(mt_rand(), true));
+      $user->hash = random::hash();
       $user->save();
       $message = new View("reset_password.html");
       $message->confirm_url = url::abs_site("password/do_reset?key=$user->hash");
