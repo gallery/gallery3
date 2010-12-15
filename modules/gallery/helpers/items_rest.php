@@ -84,9 +84,9 @@ class items_rest_Core {
     if ($item->type == "album") {
       $members = array();
       foreach ($item->viewable()->children() as $child) {
-      	if (empty($types) || in_array($child->type, $types)) {
-	      $members[] = rest::url("item", $child);
-	    }
+        if (empty($types) || in_array($child->type, $types)) {
+          $members[] = rest::url("item", $child);
+        }
       }
       $item_rest["members"] = $members;
     }
