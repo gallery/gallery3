@@ -260,8 +260,8 @@ modules/gallery/views/upgrader.html.php                      123 DIRTY_ATTR $don
 modules/gallery/views/user_languages_block.html.php          2   DIRTY    form::dropdown("g-select-session-locale",$installed_locales,$selected)
 modules/gallery/views/user_profile.html.php                  34  DIRTY_ATTR $user->avatar_url(40,$theme->url(,true))
 modules/gallery/views/user_profile.html.php                  43  DIRTY    $info->view
-modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
-modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
+modules/image_block/views/image_block_block.html.php         4   DIRTY_JS $item->url()
+modules/image_block/views/image_block_block.html.php         5   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
 modules/info/views/info_block.html.php                       22  DIRTY    gallery::date_time($item->captured)
 modules/info/views/info_block.html.php                       29  DIRTY_JS $item->owner->url
 modules/notification/views/comment_published.html.php        28  DIRTY_JS $comment->item()->abs_url()
