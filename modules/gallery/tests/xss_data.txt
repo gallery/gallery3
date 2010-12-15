@@ -43,8 +43,8 @@ modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
 modules/g2_import/views/admin_g2_import.html.php             9   DIRTY    $form
-modules/gallery/views/admin_advanced_settings.html.php       20  DIRTY_ATTR text::alternate("g-odd","g-even")
-modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY    $var->module_name
+modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY_ATTR text::alternate("g-odd","g-even")
+modules/gallery/views/admin_advanced_settings.html.php       22  DIRTY    $var->module_name
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY_ATTR log::severity_class($entry->severity)
 modules/gallery/views/admin_block_log_entries.html.php       8   DIRTY_JS user_profile::url($entry->user->id)
 modules/gallery/views/admin_block_log_entries.html.php       10  DIRTY    gallery::date_time($entry->timestamp)
