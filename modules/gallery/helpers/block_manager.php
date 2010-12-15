@@ -28,7 +28,7 @@ class block_manager_Core {
 
   static function add($location, $module_name, $block_id) {
     $blocks = block_manager::get_active($location);
-    $blocks[rand()] = array($module_name, $block_id);
+    $blocks[mt_rand()] = array($module_name, $block_id);
 
     block_manager::set_active($location, $blocks);
   }

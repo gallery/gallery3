@@ -278,10 +278,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function basic_validation_test() {
     $item = ORM::factory("item");
-    $item->album_cover_item_id = rand();  // invalid
+    $item->album_cover_item_id = mt_rand();  // invalid
     $item->description = str_repeat("x", 70000);  // invalid
     $item->name = null;
-    $item->parent_id = rand();
+    $item->parent_id = mt_rand();
     $item->slug = null;
     $item->sort_column = "bogus";
     $item->sort_order = "bogus";

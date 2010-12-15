@@ -31,7 +31,7 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
     $album = test::random_album();
 
     // Randomize to avoid conflicts.
-    $new_name = "new_name_" . rand();
+    $new_name = "new_name_" . mt_rand();
 
     $_POST["name"] = $new_name;
     $_POST["title"] = "new title";

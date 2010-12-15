@@ -390,7 +390,7 @@ class Item_Model_Core extends ORM_MPTT {
           if (file_exists($this->resize_path()) ||
               file_exists($this->thumb_path())) {
             $pi = pathinfo($this->name);
-            $this->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
+            $this->name = $pi["filename"] . "-" . mt_rand() . "." . $pi["extension"];
             parent::save();
           }
 
@@ -512,7 +512,7 @@ class Item_Model_Core extends ORM_MPTT {
            ->or_where("slug", "=", $this->slug)
            ->close()
            ->find()->id) {
-      $rand = rand();
+      $rand = mt_rand();
       if ($base_ext) {
         $this->name = "$base_name-$rand.$base_ext";
       } else {
