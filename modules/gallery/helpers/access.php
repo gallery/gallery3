@@ -426,7 +426,7 @@ class access_Core {
     $session = Session::instance();
     $csrf = $session->get("csrf");
     if (empty($csrf)) {
-      $csrf = md5(time() . mt_rand());
+      $csrf = random::hash();
       $session->set("csrf", $csrf);
     }
     return $csrf;
