@@ -44,7 +44,7 @@ class User_Model_Core extends ORM implements User_Definition {
     module::event("user_before_delete", $this);
     parent::delete($id);
     module::event("user_deleted", $old);
-    unset($this->groups_cache);
+    $this->groups_cache = null;
   }
 
   /**
@@ -59,7 +59,7 @@ class User_Model_Core extends ORM implements User_Definition {
 
   public function groups() {
     if (!$this->groups_cache) {
-      $this->groups_cache = $this->groups->find_all();
+      $this->groups_cache = $this->groups->find_all()->as_array();
     }
     return $this->groups_cache;
   }
@@ -113,7 +113,7 @@ class User_Model_Core extends ORM implements User_Definition {
       module::event("user_updated", $original, $this);
     }
 
-    unset($this->groups_cache);
+    $this->groups_cache = null;
     return $this;
   }
 

@@ -29,12 +29,12 @@ class Group_Model_Core extends ORM implements Group_Definition {
     module::event("group_before_delete", $this);
     parent::delete($id);
     module::event("group_deleted", $old);
-    unset($this->users_cache);
+    $this->users_cache = null;
   }
 
   public function users() {
     if (!$this->users_cache) {
-      $this->users_cache = $this->users->find_all();
+      $this->users_cache = $this->users->find_all()->as_array();
     }
     return $this->users_cache;
   }
@@ -65,7 +65,7 @@ class Group_Model_Core extends ORM implements Group_Definition {
       module::event("group_updated", $original, $this);
     }
 
-    unset($this->users_cache);
+    $this->users_cache = null;
     return $this;
   }
 
