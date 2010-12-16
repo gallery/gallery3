@@ -233,7 +233,30 @@ class installer {
       $errors[] = "Gallery requires the <a href=\"http://php.net/manual/en/book.ctype.php\">PHP Ctype</a> extension.  Please install it.";
     }
 
+    if (self::ini_get_bool("safe_mode")) {
+      $errors[] = "Gallery cannot function when PHP is in <a href=\"http://php.net/manual/en/features.safe-mode.php\">Safe Mode</a>.  Please disable safe mode.";
+    }
+
     return @$errors;
+  }
+
+  /**
+   * Convert any possible boolean ini value to true/false.
+   *   On = on = 1 = true
+   *   Off = off = 0 = false
+   */
+  static function ini_get_bool($varname) {
+    $value = ini_get($varname);
+
+    if (!strcasecmp("on", $value) || $value == 1 || $value === true) {
+      return true;
+    }
+
+    if (!strcasecmp("off", $value) || $value == 0 || $value === false) {
+      return false;
+    }
+
+    return false;
   }
 
 }
