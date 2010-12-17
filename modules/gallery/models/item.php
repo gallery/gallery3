@@ -987,48 +987,88 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Same as ORM::as_array() but convert id fields into their RESTful form.
+   *
+   * @param array if specified, only return the named fields
    */
-  public function as_restful_array() {
-    // Convert item ids to rest URLs for consistency
-    $data = $this->as_array();
-    if ($tmp = $this->parent()) {
-      $data["parent"] = rest::url("item", $tmp);
+  public function as_restful_array($fields=array()) {
+    if ($fields) {
+      $data = array();
+      foreach ($fields as $field) {
+        if (isset($this->object[$field])) {
+          $data[$field] = $this->__get($field);
+        }
+      }
+      $fields = array_flip($fields);
+    } else {
+      $data = $this->as_array();
     }
-    unset($data["parent_id"]);
-    if ($tmp = $this->album_cover()) {
-      $data["album_cover"] = rest::url("item", $tmp);
-    }
-    unset($data["album_cover_item_id"]);
 
-    $data["web_url"] = $this->abs_url();
+    // Convert item ids to rest URLs for consistency
+    if (empty($fields) || isset($fields["parent"])) {
+      if ($tmp = $this->parent()) {
+        $data["parent"] = rest::url("item", $tmp);
+      }
+      unset($data["parent_id"]);
+    }
+
+    if (empty($fields) || isset($fields["album_cover"])) {
+      if ($tmp = $this->album_cover()) {
+        $data["album_cover"] = rest::url("item", $tmp);
+      }
+      unset($data["album_cover_item_id"]);
+    }
+
+    if (empty($fields) || isset($fields["web_url"])) {
+      $data["web_url"] = $this->abs_url();
+    }
 
     if (!$this->is_album()) {
       if (access::can("view_full", $this)) {
-        $data["file_url"] = rest::url("data", $this, "full");
-        $data["file_size"] = filesize($this->file_path());
-      }
-      if (access::user_can(identity::guest(), "view_full", $this)) {
-        $data["file_url_public"] = $this->file_url(true);
+        if (empty($fields) || isset($fields["file_url"])) {
+          $data["file_url"] = rest::url("data", $this, "full");
+        }
+        if (empty($fields) || isset($fields["file_size"])) {
+          $data["file_size"] = filesize($this->file_path());
+        }
+        if (access::user_can(identity::guest(), "view_full", $this)) {
+          if (empty($fields) || isset($fields["file_url_public"])) {
+            $data["file_url_public"] = $this->file_url(true);
+          }
+        }
       }
     }
 
     if ($this->is_photo()) {
-      $data["resize_url"] = rest::url("data", $this, "resize");
-      $data["resize_size"] = filesize($this->resize_path());
+      if (empty($fields) || isset($fields["resize_url"])) {
+        $data["resize_url"] = rest::url("data", $this, "resize");
+      }
+      if (empty($fields) || isset($fields["resize_size"])) {
+        $data["resize_size"] = filesize($this->resize_path());
+      }
       if (access::user_can(identity::guest(), "view", $this)) {
-        $data["resize_url_public"] = $this->resize_url(true);
+        if (empty($fields) || isset($fields["resize_url_public"])) {
+          $data["resize_url_public"] = $this->resize_url(true);
+        }
       }
     }
 
     if ($this->has_thumb()) {
-      $data["thumb_url"] = rest::url("data", $this, "thumb");
-      $data["thumb_size"] = filesize($this->thumb_path());
+      if (empty($fields) || isset($fields["thumb_url"])) {
+        $data["thumb_url"] = rest::url("data", $this, "thumb");
+      }
+      if (empty($fields) || isset($fields["thumb_size"])) {
+        $data["thumb_size"] = filesize($this->thumb_path());
+      }
       if (access::user_can(identity::guest(), "view", $this)) {
-        $data["thumb_url_public"] = $this->thumb_url(true);
+        if (empty($fields) || isset($fields["thumb_url_public"])) {
+          $data["thumb_url_public"] = $this->thumb_url(true);
+        }
       }
     }
 
-    $data["can_edit"] = access::can("edit", $this);
+    if (empty($fields) || isset($fields["can_edit"])) {
+      $data["can_edit"] = access::can("edit", $this);
+    }
 
     // Elide some internal-only data that is going to cause confusion in the client.
     foreach (array("relative_path_cache", "relative_url_cache", "left_ptr", "right_ptr",
