@@ -459,7 +459,7 @@ class gallery_installer {
         $blocks = block_manager::get_active($location);
         $new_blocks = array();
         foreach ($blocks as $block) {
-          $new_blocks[rand()] = $block;
+          $new_blocks[random::int()] = $block;
         }
         block_manager::set_active($location, $new_blocks);
       }
@@ -507,7 +507,7 @@ class gallery_installer {
                ->execute() as $row) {
         $new_slug = item::convert_filename_to_slug($row->slug);
         if (empty($new_slug)) {
-          $new_slug = rand();
+          $new_slug = random::int();
         }
         db::build()
           ->update("items")

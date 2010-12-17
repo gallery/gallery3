@@ -28,7 +28,7 @@ class Item_Model_Core extends ORM_MPTT {
     if (!$this->loaded()) {
       // Set reasonable defaults
       $this->created = time();
-      $this->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+      $this->rand_key = random::percent();
       $this->thumb_dirty = 1;
       $this->resize_dirty = 1;
       $this->sort_column = "created";
@@ -390,7 +390,7 @@ class Item_Model_Core extends ORM_MPTT {
           if (file_exists($this->resize_path()) ||
               file_exists($this->thumb_path())) {
             $pi = pathinfo($this->name);
-            $this->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
+            $this->name = $pi["filename"] . "-" . random::int() . "." . $pi["extension"];
             parent::save();
           }
 
@@ -512,7 +512,7 @@ class Item_Model_Core extends ORM_MPTT {
            ->or_where("slug", "=", $this->slug)
            ->close()
            ->find()->id) {
-      $rand = rand();
+      $rand = random::int();
       if ($base_ext) {
         $this->name = "$base_name-$rand.$base_ext";
       } else {
@@ -848,9 +848,16 @@ class Item_Model_Core extends ORM_MPTT {
         }
       } else {
         // New items must have an extension
-        if (!pathinfo($this->name, PATHINFO_EXTENSION)) {
+        $ext = pathinfo($this->name, PATHINFO_EXTENSION);
+        if (!$ext) {
           $v->add_error("name", "illegal_data_file_extension");
           return;
+        }
+
+        if ($this->is_movie() && !preg_match("/^(flv|mp4|m4v)$/i", $ext)) {
+          $v->add_error("name", "illegal_data_file_extension");
+        } else if ($this->is_photo() && !preg_match("/^(gif|jpg|jpeg|png)$/i", $ext)) {
+          $v->add_error("name", "illegal_data_file_extension");
         }
       }
     }

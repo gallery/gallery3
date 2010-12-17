@@ -132,7 +132,6 @@ class Gallery_Unit_Test_Controller extends Controller {
       graphics::choose_default_toolkit();
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
-      set_time_limit(300);
       print new Unit_Test($modules, $filter);
     } catch (ORM_Validation_Exception $e) {
       print "Validation Exception: {$e->getMessage()}\n";

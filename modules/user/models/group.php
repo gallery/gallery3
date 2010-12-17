@@ -19,6 +19,7 @@
  */
 class Group_Model_Core extends ORM implements Group_Definition {
   protected $has_and_belongs_to_many = array("users");
+  protected $users_cache = null;
 
   /**
    * @see ORM::delete()
@@ -28,10 +29,14 @@ class Group_Model_Core extends ORM implements Group_Definition {
     module::event("group_before_delete", $this);
     parent::delete($id);
     module::event("group_deleted", $old);
+    $this->users_cache = null;
   }
 
   public function users() {
-    return $this->users->find_all();
+    if (!$this->users_cache) {
+      $this->users_cache = $this->users->find_all()->as_array();
+    }
+    return $this->users_cache;
   }
 
   /**
@@ -60,6 +65,7 @@ class Group_Model_Core extends ORM implements Group_Definition {
       module::event("group_updated", $original, $this);
     }
 
+    $this->users_cache = null;
     return $this;
   }
 

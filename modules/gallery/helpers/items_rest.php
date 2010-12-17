@@ -26,18 +26,15 @@ class items_rest_Core {
    * ancestors_for parameter makes no sense and will be ignored.
    *
    *   urls=["url1","url2","url3"]
-   *     return items that match the specified urls.  Typically used to return the member detail
+   *     Return items that match the specified urls.  Typically used to return the member detail
    *
    *   ancestors_for=url
-   *     return the ancestors of the specified item
+   *     Return the ancestors of the specified item
    *
    *   type=<comma separate list of photo, movie or album>
-   *     limit the type to types in this list.  eg, "type=photo,movie"
-   * 
-   *     also limits the types returned in the member collections (same 
-   *     behaviour as item_rest)
-   * 
-   *     ignored if ancestors_for is set.
+   *     Limit the type to types in this list, eg: "type=photo,movie".
+   *     Also limits the types returned in the member collections (same behaviour as item_rest).
+   *     Ignored if ancestors_for is set.
    */
   static function get($request) {
     $items = array();
@@ -53,8 +50,8 @@ class items_rest_Core {
         if (!access::can("view", $item)) {
           continue;
         }
-        
-        if (empty($types) || in_array($item->type, $types)) {       
+
+        if (empty($types) || in_array($item->type, $types)) {
           $items[] = items_rest::_format_restful_item($item, $types);
         }
       }
@@ -87,9 +84,9 @@ class items_rest_Core {
     if ($item->type == "album") {
       $members = array();
       foreach ($item->viewable()->children() as $child) {
-      	if (empty($types) || in_array($child->type, $types)) {
-	      $members[] = rest::url("item", $child);
-	    }
+        if (empty($types) || in_array($child->type, $types)) {
+          $members[] = rest::url("item", $child);
+        }
       }
       $item_rest["members"] = $members;
     }

@@ -212,7 +212,7 @@ class locales_Core {
   }
 
   private static function _locale_match_score($requested_locale, $qvalue, $adjustment_factor) {
-    $installed = self::installed();
+    $installed = locales::installed();
     if (isset($installed[$requested_locale])) {
       return array($requested_locale, $qvalue);
     }
@@ -227,14 +227,14 @@ class locales_Core {
 
   static function set_request_locale() {
     // 1. Check the session specific preference (cookie)
-    $locale = self::cookie_locale();
+    $locale = locales::cookie_locale();
     // 2. Check the user's preference
     if (!$locale) {
       $locale = identity::active_user()->locale;
     }
     // 3. Check the browser's / OS' preference
     if (!$locale) {
-      $locale = self::locale_from_http_request();
+      $locale = locales::locale_from_http_request();
     }
     // If we have any preference, override the site's default locale
     if ($locale) {

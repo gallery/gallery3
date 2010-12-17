@@ -28,7 +28,7 @@ class Digibug_Controller extends Controller {
       $thumb_url = $item->thumb_url(true);
     } else {
       $proxy = ORM::factory("digibug_proxy");
-      $proxy->uuid =  md5(rand());
+      $proxy->uuid = random::hash();
       $proxy->item_id = $item->id;
       $proxy->save();
       $full_url = url::abs_site("digibug/print_proxy/full/$proxy->uuid");

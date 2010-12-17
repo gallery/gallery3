@@ -43,7 +43,7 @@ class rest_event {
   static function user_add_form_admin_completed($user, $form) {
     $key = ORM::factory("user_access_key");
     $key->user_id = $user->id;
-    $key->access_key = md5($user->name . rand());
+    $key->access_key = random::hash($user->name);
     $key->save();
   }
 
@@ -64,7 +64,7 @@ class rest_event {
 
     if (!$key->loaded()) {
       $key->user_id = $user->id;
-      $key->access_key = md5($user->name . rand());
+      $key->access_key = random::hash($user->name);
       $key->save();
     }
 
@@ -93,7 +93,7 @@ class rest_event {
 
     if (!$key->loaded()) {
       $key->user_id = $data->user->id;
-      $key->access_key = md5($data->user->name . rand());
+      $key->access_key = random::hash($data->user->name);
       $key->save();
     }
     $view->rest_key = $key->access_key;

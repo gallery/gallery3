@@ -232,7 +232,7 @@ class item_Core {
     // distributed so this is going to be more efficient with larger data sets.
     return ORM::factory("item")
       ->viewable()
-      ->where("rand_key", "<", ((float)mt_rand()) / (float)mt_getrandmax())
+      ->where("rand_key", "<", random::percent())
       ->order_by("rand_key", "DESC");
   }
 }

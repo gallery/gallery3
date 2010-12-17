@@ -104,7 +104,7 @@ class rest_Core {
 
     if (!$key->loaded()) {
       $key->user_id = identity::active_user()->id;
-      $key->access_key = md5(md5(uniqid(mt_rand(), true) . access::private_key()));
+      $key->access_key = md5(random::hash() . access::private_key());
       $key->save();
     }
 

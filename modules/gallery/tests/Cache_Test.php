@@ -27,7 +27,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   public function cache_exists_test() {
     $this->assert_false($this->_driver->exists("test_key"), "test_key should not be defined");
 
-    $id = md5(rand());
+    $id = random::hash();
     db::build()
       ->insert("caches")
       ->columns("key", "tags", "expiration", "cache")
@@ -38,7 +38,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_get_test() {
-    $id = md5(rand());
+    $id = random::hash();
 
     db::build()
       ->insert("caches")
@@ -54,7 +54,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_set_test() {
-    $id = md5(rand());
+    $id = random::hash();
     $original_data = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id => $original_data), array("tag1", "tag2"), 84600);
 
@@ -63,15 +63,15 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_get_tag_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 84600);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
@@ -86,15 +86,15 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_delete_id_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
@@ -106,15 +106,15 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_delete_tag_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
@@ -126,15 +126,15 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_delete_all_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 

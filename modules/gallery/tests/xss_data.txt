@@ -43,8 +43,8 @@ modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
 modules/g2_import/views/admin_g2_import.html.php             9   DIRTY    $form
-modules/gallery/views/admin_advanced_settings.html.php       20  DIRTY_ATTR text::alternate("g-odd","g-even")
-modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY    $var->module_name
+modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY_ATTR text::alternate("g-odd","g-even")
+modules/gallery/views/admin_advanced_settings.html.php       22  DIRTY    $var->module_name
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY_ATTR log::severity_class($entry->severity)
 modules/gallery/views/admin_block_log_entries.html.php       8   DIRTY_JS user_profile::url($entry->user->id)
 modules/gallery/views/admin_block_log_entries.html.php       10  DIRTY    gallery::date_time($entry->timestamp)
@@ -260,8 +260,8 @@ modules/gallery/views/upgrader.html.php                      123 DIRTY_ATTR $don
 modules/gallery/views/user_languages_block.html.php          2   DIRTY    form::dropdown("g-select-session-locale",$installed_locales,$selected)
 modules/gallery/views/user_profile.html.php                  34  DIRTY_ATTR $user->avatar_url(40,$theme->url(,true))
 modules/gallery/views/user_profile.html.php                  43  DIRTY    $info->view
-modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
-modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
+modules/image_block/views/image_block_block.html.php         4   DIRTY_JS $item->url()
+modules/image_block/views/image_block_block.html.php         5   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
 modules/info/views/info_block.html.php                       22  DIRTY    gallery::date_time($item->captured)
 modules/info/views/info_block.html.php                       29  DIRTY_JS $item->owner->url
 modules/notification/views/comment_published.html.php        28  DIRTY_JS $comment->item()->abs_url()

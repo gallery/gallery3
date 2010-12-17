@@ -79,7 +79,7 @@ class access_Core {
    * @return boolean
    */
   static function can($perm_name, $item) {
-    return self::user_can(identity::active_user(), $perm_name, $item);
+    return access::user_can(identity::active_user(), $perm_name, $item);
   }
 
   /**
@@ -98,19 +98,11 @@ class access_Core {
     if ($user->admin) {
       return true;
     }
-    
-    /*
-      We do this for cache reasons - if you check n photos in an album, it makes more sense
-      to check the album permissions once and let the cache deal with that, rather than check
-      every item individually and generate cache misses.
-    */
-    $id = ($item->type == 'album') ? $item->id : $item->parent_id;
-    
+
     $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $id, "item_id");
-      
+      $item : model_cache::get("access_cache", $item->id, "item_id");
     foreach ($user->groups() as $group) {
-      if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
+      if ($resource->__get("{$perm_name}_{$group->id}") === access::ALLOW) {
         return true;
       }
     }
@@ -125,12 +117,12 @@ class access_Core {
    * @return boolean
    */
   static function required($perm_name, $item) {
-    if (!self::can($perm_name, $item)) {
+    if (!access::can($perm_name, $item)) {
       if ($perm_name == "view") {
         // Treat as if the item didn't exist, don't leak any information.
         throw new Kohana_404_Exception();
       } else {
-        self::forbidden();
+        access::forbidden();
       }
     }
   }
@@ -144,17 +136,9 @@ class access_Core {
    * @return boolean
    */
   static function group_can($group, $perm_name, $item) {
-    /*
-      We do this for cache reasons - if you check n photos in an album, it makes more sense
-      to check the album permissions once and let the cache deal with that, rather than check
-      every item individually and generate cache misses.
-    */
-    $id = ($item->type == 'album') ? $item->id : $item->parent_id;
-    
     $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $id, "item_id");
-    
-    return $resource->__get("{$perm_name}_{$group->id}") === self::ALLOW;
+      $item : model_cache::get("access_cache", $item->id, "item_id");
+    return $resource->__get("{$perm_name}_{$group->id}") === access::ALLOW;
   }
 
   /**
@@ -184,14 +168,14 @@ class access_Core {
       return null;
     }
 
-    // For view permissions, if any parent is self::DENY, then those parents lock this one.
+    // For view permissions, if any parent is access::DENY, then those parents lock this one.
     // Return
     $lock = ORM::factory("item")
       ->where("left_ptr", "<=", $item->left_ptr)
       ->where("right_ptr", ">=", $item->right_ptr)
       ->where("items.id", "<>", $item->id)
       ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", "=", self::DENY)
+      ->where("access_intents.view_$group->id", "=", access::DENY)
       ->order_by("level", "DESC")
       ->limit(1)
       ->find();
@@ -238,7 +222,7 @@ class access_Core {
       self::_update_access_non_view_cache($group, $perm_name, $album);
     }
 
-    self::update_htaccess_files($album, $group, $perm_name, $value);
+    access::update_htaccess_files($album, $group, $perm_name, $value);
     model_cache::clear();
   }
 
@@ -430,7 +414,7 @@ class access_Core {
   static function verify_csrf() {
     $input = Input::instance();
     if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
-      self::forbidden();
+      access::forbidden();
     }
   }
 
@@ -442,7 +426,7 @@ class access_Core {
     $session = Session::instance();
     $csrf = $session->get("csrf");
     if (empty($csrf)) {
-      $csrf = md5(rand());
+      $csrf = random::hash();
       $session->set("csrf", $csrf);
     }
     return $csrf;
@@ -453,7 +437,7 @@ class access_Core {
    * @return string
    */
   static function csrf_form_field() {
-    return "<input type=\"hidden\" name=\"csrf\" value=\"" . self::csrf_token() . "\"/>";
+    return "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"/>";
   }
 
   /**
@@ -504,7 +488,7 @@ class access_Core {
       "ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
     db::build()
       ->update("access_intents")
-      ->set($field, self::DENY)
+      ->set($field, access::DENY)
       ->where("item_id", "=", 1)
       ->execute();
     model_cache::clear();
@@ -533,12 +517,12 @@ class access_Core {
     // DENY and this ALLOW cannot be obeyed.  So in that case, back up the tree and find any
     // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
     // item, then its safe to propagate from here.
-    if ($access->$field !== self::DENY) {
+    if ($access->$field !== access::DENY) {
       $tmp_item = ORM::factory("item")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
         ->join("access_intents", "access_intents.item_id", "items.id")
-        ->where("access_intents.$field", "=", self::DENY)
+        ->where("access_intents.$field", "=", access::DENY)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -553,7 +537,7 @@ class access_Core {
     // that we can tell which permissions have been changed, and which ones need to be updated.
     db::build()
       ->update("items")
-      ->set($field, self::UNKNOWN)
+      ->set($field, access::UNKNOWN)
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->execute();
@@ -564,20 +548,20 @@ class access_Core {
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where("type", "=", "album")
-      ->where("access_intents.$field", "IS NOT", self::INHERIT)
+      ->where("access_intents.$field", "IS NOT", access::INHERIT)
       ->order_by("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
-      if ($row->$field == self::ALLOW) {
+      if ($row->$field == access::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
         db::build()
           ->update("items")
           ->set($field, $row->$field)
-          ->where($field, "IS", self::UNKNOWN) // UNKNOWN is NULL so we have to use IS
+          ->where($field, "IS", access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
           ->where("left_ptr", ">=", $row->left_ptr)
           ->where("right_ptr", "<=", $row->right_ptr)
           ->execute();
-      } else if ($row->$field == self::DENY) {
+      } else if ($row->$field == access::DENY) {
         // DENY overwrites everything below it
         db::build()
           ->update("items")
@@ -593,8 +577,8 @@ class access_Core {
     // the hierarchy, and all of those are safe to change to ALLOW.
     db::build()
       ->update("items")
-      ->set($field, self::ALLOW)
-      ->where($field, "IS", self::UNKNOWN) // UNKNOWN is NULL so we have to use IS
+      ->set($field, access::ALLOW)
+      ->where($field, "IS", access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->execute();
@@ -621,12 +605,12 @@ class access_Core {
     //
     // @todo To optimize this, we wouldn't need to propagate from the parent, we could just
     //       propagate from here with the parent's intent.
-    if ($access->$field === self::INHERIT) {
+    if ($access->$field === access::INHERIT) {
       $tmp_item = ORM::factory("item")
         ->join("access_intents", "items.id", "access_intents.item_id")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
-        ->where($field, "IS NOT", self::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
+        ->where($field, "IS NOT", access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -642,11 +626,11 @@ class access_Core {
       ->join("items", "items.id", "access_intents.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
-      ->where($field, "IS NOT", self::INHERIT)
+      ->where($field, "IS NOT", access::INHERIT)
       ->order_by("level", "ASC")
       ->find_all();
     foreach ($query as $row) {
-      $value = ($row->$field === self::ALLOW) ? true : false;
+      $value = ($row->$field === access::ALLOW) ? true : false;
       db::build()
         ->update("access_caches")
         ->set($field, $value)
@@ -699,7 +683,7 @@ class access_Core {
     }
 
     foreach ($dirs as $dir) {
-      if ($value === self::DENY) {
+      if ($value === access::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");
         fwrite($fp, "<IfModule mod_rewrite.c>\n");
         fwrite($fp, "  RewriteEngine On\n");

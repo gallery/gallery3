@@ -185,6 +185,8 @@ class Unit_Test_Core {
 
                                                 $e = null;
 						try {
+							// Enforce a time limit
+							set_time_limit(30);
 
 							// Run the actual test
 							$object->$method_name();

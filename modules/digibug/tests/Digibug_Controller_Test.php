@@ -36,7 +36,7 @@ class Digibug_Controller_Test extends Gallery_Unit_Test_Case {
     access::deny(identity::registered_users(), "view_full", $album);
 
     $proxy = ORM::factory("digibug_proxy");
-    $proxy->uuid = md5(rand());
+    $proxy->uuid = random::hash();
     $proxy->item_id = $photo->id;
     return $proxy->save();
   }

@@ -92,7 +92,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_conflicts_result_in_a_rename_test() {
-    $rand = rand();
+    $rand = random::int();
     $photo1 = test::random_photo_unsaved(item::root());
     $photo1->name = "{$rand}.jpg";
     $photo1->slug = (string)$rand;

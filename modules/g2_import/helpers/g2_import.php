@@ -1200,6 +1200,11 @@ class g2_import_Core {
     $g2_map->g3_id = $g3_id;
     $g2_map->g2_id = $g2_id;
     $g2_map->resource_type = $resource_type;
+
+    if (strpos($g2_url, self::$g2_base_url) === 0) {
+      $g2_url = substr($g2_url, strlen(self::$g2_base_url));
+    }
+
     $g2_map->g2_url = $g2_url;
     $g2_map->save();
     self::$map[$g2_id] = $g3_id;
@@ -1212,13 +1217,12 @@ class g2_import_Core {
 
   static function g2_url($params) {
     global $gallery;
-    $url = $gallery->getUrlGenerator()->generateUrl(
+    return $gallery->getUrlGenerator()->generateUrl(
       $params,
       array("forceSessionId" => false,
             "htmlEntities" => false,
             "urlEncode" => false,
             "useAuthToken" => false));
-    return str_replace(self::$g2_base_url, "", $url);
   }
 
   static function lower_error_reporting() {

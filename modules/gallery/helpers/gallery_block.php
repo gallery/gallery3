@@ -82,7 +82,7 @@ class gallery_block_Core {
     case "block_adder":
       $block->css_id = "g-block-adder";
       $block->title = t("Dashboard content");
-      $block->content = self::get_add_block_form();
+      $block->content = gallery_block::get_add_block_form();
       break;
 
     case "language":

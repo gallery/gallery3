@@ -23,7 +23,7 @@ class Upgrader_Controller extends Controller {
 
     // Make sure we have an upgrade token
     if (!($upgrade_token = $session->get("upgrade_token", null))) {
-      $session->set("upgrade_token", $upgrade_token = md5(rand()));
+      $session->set("upgrade_token", $upgrade_token = random::hash());
     }
 
     // If the upgrade token exists, then bless this session
