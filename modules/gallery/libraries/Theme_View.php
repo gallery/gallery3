@@ -284,8 +284,8 @@ class Theme_View_Core extends Gallery_View {
       if ($function == "head") {
         // Merge the theme CSS/JS at the end
         $this->css = array_merge($this->css, $save_css);
-        array_unshift($blocks, $this->combine_files($this->css, "css"));
         array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
+        array_unshift($blocks, $this->combine_files($this->css, "css"));
       }
 
       if (Session::instance()->get("debug")) {
