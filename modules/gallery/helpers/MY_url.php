@@ -101,4 +101,18 @@ class url extends url_Core {
   static function current($qs=false, $suffix=false) {
     return htmlspecialchars(parent::current($qs, $suffix));
   }
+
+  /**
+   * Merge extra an query string onto a given url safely.
+   * @param string the original url
+   * @param array the query string data in key=value form
+   */
+  static function merge_querystring($url, $query_params) {
+    $qs = implode("&", $query_params);
+    if (strpos($url, "?") === false) {
+      return $url . "?$qs";
+    } else {
+      return $url . "&$qs";
+    }
+  }
 }
