@@ -59,7 +59,8 @@ class tree_rest_Core {
       $query_params[] = "fields={$p->fields}";
     }
 
-    $entity = array();
+    $entity = array(array("url" => rest::url("item", $item),
+                           "entity" => $item->as_restful_array($fields)));
     $members = array();
     foreach ($item->viewable()->descendants(null, null, $where) as $child) {
       $entity[] = array("url" => rest::url("item", $child),
