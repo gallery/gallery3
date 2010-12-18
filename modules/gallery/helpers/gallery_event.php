@@ -371,6 +371,9 @@ class gallery_event_Core {
                 ->id("admin_menu")
                 ->label(t("Admin")));
         module::event("admin_menu", $admin_menu, $theme);
+
+        $settings_menu = $admin_menu->get("settings_menu");
+        sort($settings_menu->elements);
       }
     }
   }
