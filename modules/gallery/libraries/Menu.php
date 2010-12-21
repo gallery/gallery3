@@ -223,12 +223,13 @@ class Menu_Core extends Menu_Element {
   /**
    * Retrieve a Menu_Element by id
    */
-  public function get($id) {
+  public function &get($id) {
     if (array_key_exists($id, $this->elements)) {
       return $this->elements[$id];
     }
 
-    return null;
+    $null = null;
+    return $null;
   }
 
   public function is_empty() {
