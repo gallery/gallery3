@@ -125,4 +125,52 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_same($photo2->id, $album->album_cover_item_id);
     $this->assert_same($photo2->id, $parent->album_cover_item_id);
   }
+
+  public function find_by_path_does_the_right_thing_test() {
+    $level1 = test::random_album();
+    $level2 = test::random_album($level1);    
+    $level3 = test::random_photo($level2);
+    $level3->name = 'same.jpg';
+    $level3->save();
+    
+    $level2b = test::random_album($level1);
+    $level3b = test::random_photo($level2b);
+    $level3b->name = 'same.jpg';
+    $level3b->save();
+    
+    // Item in album
+    $this->assert_same(
+      item::find_by_path('/' . $level1->name . '/' . $level2->name . '/' . $level3->name)->id,
+      $level3->id);
+    
+    // Album, ends with a slash
+    $this->assert_same(
+      item::find_by_path($level1->name . '/' . $level2->name . '/')->id,
+      $level2->id);
+    
+    // Album, ends without a slash
+    $this->assert_same(
+      item::find_by_path('/' . $level1->name . '/' . $level2->name)->id,
+      $level2->id);
+    
+    // Return root if '' is passed
+    $this->assert_same(
+      item::find_by_path('')->id,
+      "1");
+
+    // Verify that we don't get confused by the part names
+    $this->assert_same(
+      item::find_by_path($level1->name . '/' . $level2->name . '/' . $level3->name)->id,
+      $level3->id);
+
+    $this->assert_same(
+      item::find_by_path($level1->name . '/' . $level2b->name . '/' . $level3b->name)->id,
+      $level3b->id);
+    
+    // Verify that we don't get false positives
+    $this->assert_same(
+      item::find_by_path('foo/bar/baz'),
+      false);
+
+  }
 }
