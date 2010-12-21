@@ -208,20 +208,25 @@ class item_Core {
 
     return $model;
   }
-  
+
+  /**
+   * Return an item by path.
+   * @param string $path
+   * @return object item
+   */
   static function find_by_path($path) {
-    $path = trim($path, '/');
+    $path = trim($path, "/");
     
     // The root path name is NULL, not '', hence this workaround.
     if ($path == '') {
-      return ORM::factory("item", 1);
+      return ORM::factory("item", item::root());
     }
     
     $paths = explode("/", $path);
     $count = count($paths);
     foreach (ORM::factory("item")
-             ->where('name', '=', $paths[$count - 1])
-             ->where('level', '=', $count + 1)
+             ->where("name", "=", $paths[$count - 1])
+             ->where("level", "=", $count + 1)
              ->find_all() as $item) {
       if (urldecode($item->relative_path()) == $path) {
         return $item;
