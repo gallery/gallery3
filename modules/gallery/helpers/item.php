@@ -232,7 +232,7 @@ class item_Core {
       }
     }
 
-    return false;
+    return new Item_Model();
   }
 
 

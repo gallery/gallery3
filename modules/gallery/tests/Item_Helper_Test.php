@@ -166,8 +166,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
       item::find_by_path("{$level1->name}/{$level2b->name}/{$level3b->name}")->id);
 
     // Verify that we don't get false positives
-    $this->assert_same(
-      false,
-      item::find_by_path("foo/bar/baz"));
+    $this->assert_false(
+      item::find_by_path("foo/bar/baz")->loaded());
   }
 }
