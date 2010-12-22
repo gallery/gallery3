@@ -129,14 +129,21 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   public function find_by_path_test() {
     $level1 = test::random_album();
     $level2 = test::random_album($level1);
-    $level3 = test::random_photo($level2);
+    $level3 = test::random_photo_unsaved($level2);
     $level3->name = "same.jpg";
-    $level3->save();
+    $level3->save()->reload();
 
     $level2b = test::random_album($level1);
-    $level3b = test::random_photo($level2b);
+    $level3b = test::random_photo_unsaved($level2b);
     $level3b->name = "has spaces+plusses.jpg";
-    $level3b->save();
+    $level3b->save()->reload();
+
+    // Make sure that some of the calls below use the fallback code.
+    db::build()
+      ->update("items")
+      ->set(array("relative_url_cache" => null, "relative_path_cache" => null))
+      ->where("id", "IN", array($level3->id, $level3b->id))
+      ->execute();
 
     // Item in album
     $this->assert_same(
@@ -168,5 +175,10 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     // Verify that we don't get false positives
     $this->assert_false(
       item::find_by_path("foo/bar/baz")->loaded());
+
+    // Verify that the fallback code works
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_path("{$level1->name}/{$level2b->name}/{$level3b->name}")->id);
   }
 }

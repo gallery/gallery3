@@ -211,6 +211,7 @@ class item_Core {
 
   /**
    * Find an item by its path.  If there's no match, return an empty Item_Model.
+   * NOTE: the caller is responsible for performing security checks on the resulting item.
    * @param string $path
    * @return object Item_Model
    */
@@ -222,6 +223,21 @@ class item_Core {
       return item::root();
     }
 
+    // Check to see if there's an item in the database with a matching relative_path_cache value.
+    // Since that field is urlencoded, we must urlencoded the components of the path.
+    foreach (explode("/", $path) as $part) {
+      $encoded_array[] = rawurlencode($part);
+    }
+    $encoded_path = join("/", $encoded_array);
+    $item = ORM::factory("item")
+      ->where("relative_path_cache", "=", $encoded_path)
+      ->find();
+    if ($item->loaded()) {
+      return $item;
+    }
+
+    // Since the relative_path_cache field is a cache, it can be unavailable.  If we don't find
+    // anything, fall back to checking the path the hard way.
     $paths = explode("/", $path);
     foreach (ORM::factory("item")
              ->where("name", "=", end($paths))
