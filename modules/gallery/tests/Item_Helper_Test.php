@@ -128,22 +128,18 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function find_by_path_test() {
     $level1 = test::random_album();
-    $level2 = test::random_album($level1);
+    $level2 = test::random_album_unsaved($level1);
+    $level2->name = "plus + space";
+    $level2->save()->reload();
+
     $level3 = test::random_photo_unsaved($level2);
     $level3->name = "same.jpg";
     $level3->save()->reload();
 
     $level2b = test::random_album($level1);
     $level3b = test::random_photo_unsaved($level2b);
-    $level3b->name = "has spaces+plusses.jpg";
+    $level3b->name = "same.jpg";
     $level3b->save()->reload();
-
-    // Make sure that some of the calls below use the fallback code.
-    db::build()
-      ->update("items")
-      ->set(array("relative_url_cache" => null, "relative_path_cache" => null))
-      ->where("id", "IN", array($level3->id, $level3b->id))
-      ->execute();
 
     // Item in album
     $this->assert_same(
@@ -163,7 +159,12 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     // Return root if "" is passed
     $this->assert_same(item::root()->id, item::find_by_path("")->id);
 
-    // Verify that we don't get confused by the part names
+    // Verify that we don't get confused by the part names, using the fallback code.
+    db::build()
+      ->update("items")
+      ->set(array("relative_path_cache" => null))
+      ->where("id", "IN", array($level3->id, $level3b->id))
+      ->execute();
     $this->assert_same(
       $level3->id,
       item::find_by_path("{$level1->name}/{$level2->name}/{$level3->name}")->id);
@@ -180,5 +181,54 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_same(
       $level3b->id,
       item::find_by_path("{$level1->name}/{$level2b->name}/{$level3b->name}")->id);
+  }
+
+  public function find_by_relative_url_test() {
+    $level1 = test::random_album();
+    $level2 = test::random_album($level1);
+    $level3 = test::random_photo_unsaved($level2);
+    $level3->slug = "same";
+    $level3->save()->reload();
+
+    $level2b = test::random_album($level1);
+    $level3b = test::random_photo_unsaved($level2b);
+    $level3b->slug = "same";
+    $level3b->save()->reload();
+
+    // Item in album
+    $this->assert_same(
+      $level3->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2->slug}/{$level3->slug}")->id);
+
+    // Album, ends without a slash
+    $this->assert_same(
+      $level2->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2->slug}")->id);
+
+    // Return root if "" is passed
+    $this->assert_same(item::root()->id, item::find_by_relative_url("")->id);
+
+    // Verify that we don't get confused by the part slugs, using the fallback code.
+    db::build()
+      ->update("items")
+      ->set(array("relative_url_cache" => null))
+      ->where("id", "IN", array($level3->id, $level3b->id))
+      ->execute();
+    $this->assert_same(
+      $level3->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2->slug}/{$level3->slug}")->id);
+
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2b->slug}/{$level3b->slug}")->id);
+
+    // Verify that we don't get false positives
+    $this->assert_false(
+      item::find_by_relative_url("foo/bar/baz")->loaded());
+
+    // Verify that the fallback code works
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2b->slug}/{$level3b->slug}")->id);
   }
 }

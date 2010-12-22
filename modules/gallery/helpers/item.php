@@ -253,6 +253,32 @@ class item_Core {
 
 
   /**
+   * Locate an item using the URL.  We assume that the url is in the form /a/b/c where each
+   * component matches up with an item slug.  If there's no match, return an empty Item_Model
+   * NOTE: the caller is responsible for performing security checks on the resulting item.
+   * @param string $url the relative url fragment
+   * @return Item_Model
+   */
+  static function find_by_relative_url($relative_url) {
+    // In most cases, we'll have an exact match in the relative_url_cache item field.
+    // but failing that, walk down the tree until we find it.  The fallback code will fix caches
+    // as it goes, so it'll never be run frequently.
+    $item = ORM::factory("item")->where("relative_url_cache", "=", $relative_url)->find();
+    if (!$item->loaded()) {
+      $segments = explode("/", $relative_url);
+      foreach (ORM::factory("item")
+               ->where("slug", "=", end($segments))
+               ->where("level", "=", count($segments) + 1)
+               ->find_all() as $match) {
+        if ($match->relative_url() == $relative_url) {
+          $item = $match;
+        }
+      }
+    }
+    return $item;
+  }
+
+  /**
    * Return the root Item_Model
    * @return Item_Model
    */
