@@ -135,7 +135,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
 
     $level2b = test::random_album($level1);
     $level3b = test::random_photo($level2b);
-    $level3b->name = "same.jpg";
+    $level3b->name = "has spaces+plusses.jpg";
     $level3b->save();
 
     // Item in album

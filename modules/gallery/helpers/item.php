@@ -210,33 +210,32 @@ class item_Core {
   }
 
   /**
-   * Return an item by path.
+   * Find an item by its path.  If there's no match, return an empty Item_Model.
    * @param string $path
-   * @return object item
+   * @return object Item_Model
    */
   static function find_by_path($path) {
     $path = trim($path, "/");
-    
-    // The root path name is NULL, not '', hence this workaround.
-    if ($path == '') {
-      return ORM::factory("item", item::root());
+
+    // The root path name is NULL not "", hence this workaround.
+    if ($path == "") {
+      return item::root();
     }
-    
+
     $paths = explode("/", $path);
-    $count = count($paths);
     foreach (ORM::factory("item")
-             ->where("name", "=", $paths[$count - 1])
-             ->where("level", "=", $count + 1)
+             ->where("name", "=", end($paths))
+             ->where("level", "=", count($paths) + 1)
              ->find_all() as $item) {
       if (urldecode($item->relative_path()) == $path) {
         return $item;
       }
     }
-    
+
     return false;
   }
-  
-  
+
+
   /**
    * Return the root Item_Model
    * @return Item_Model
