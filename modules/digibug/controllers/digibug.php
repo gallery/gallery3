@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Digibug_Controller extends Controller {
+  const ALLOW_PRIVATE_GALLERY = true;
+
   public function print_photo($id) {
     access::verify_csrf();
     $item = ORM::factory("item", $id);

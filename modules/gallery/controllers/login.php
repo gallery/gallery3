@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Login_Controller extends Controller {
+  const ALLOW_MAINTENANCE_MODE = true;
+  const ALLOW_PRIVATE_GALLERY = true;
 
   public function ajax() {
     $view = new View("login_ajax.html");

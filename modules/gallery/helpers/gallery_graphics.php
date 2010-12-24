@@ -75,7 +75,7 @@ class gallery_graphics_Core {
   /**
    * Overlay an image on top of the input file.
    *
-   * Valid options are: file, mime_type, position, transparency_percent, padding
+   * Valid options are: file, position, transparency, padding
    *
    * Valid positions: northwest, north, northeast,
    *                  west, center, east,
