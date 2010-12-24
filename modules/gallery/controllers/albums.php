@@ -37,7 +37,7 @@ class Albums_Controller extends Items_Controller {
 
     if ($show) {
       $child = ORM::factory("item", $show);
-      $index = $album->get_position($child);
+      $index = $album->viewable()->get_position($child);
       if ($index) {
         $page = ceil($index / $page_size);
         if ($page == 1) {

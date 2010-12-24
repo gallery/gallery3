@@ -28,10 +28,10 @@ class Movies_Controller extends Items_Controller {
     access::required("view", $movie);
 
     $where = array(array("type", "!=", "album"));
-    $position = $movie->parent()->get_position($movie, $where);
+    $position = $movie->parent()->viewable()->get_position($movie, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =
-        $movie->parent()->children(3, $position - 2, $where);
+        $movie->parent()->viewable()->children(3, $position - 2, $where);
     } else {
       $previous_item = null;
       list ($next_item) = $movie->parent()->viewable()->children(1, $position, $where);
