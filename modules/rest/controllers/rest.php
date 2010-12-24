@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Controller extends Controller {
+  const ALLOW_PRIVATE_GALLERY = true;
+
   public function index() {
     $username = Input::instance()->post("user");
     $password = Input::instance()->post("password");
