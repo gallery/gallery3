@@ -546,6 +546,9 @@ class Item_Model_Core extends ORM_MPTT {
   /**
    * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
    * the first child in the album is at position 1.
+   *
+   * This method executes a query on the model, so the database builder is reset
+   * after a call.
    */
   public function get_position($child, $where=array()) {
     if (!strcasecmp($this->sort_order, "DESC")) {
@@ -553,10 +556,10 @@ class Item_Model_Core extends ORM_MPTT {
     } else {
       $comp = "<";
     }
-    $db = db::build();
 
     // If the comparison column has NULLs in it, we can't use comparators on it and will have to
     // deal with it the hard way.
+    $db = clone $this->db_builder;
     $count = $db->from("items")
       ->where("parent_id", "=", $this->id)
       ->where($this->sort_column, "IS", null)
@@ -567,6 +570,7 @@ class Item_Model_Core extends ORM_MPTT {
       // There are no NULLs in the sort column, so we can just use it directly.
       $sort_column = $this->sort_column;
 
+      $db = clone $this->db_builder;
       $position = $db->from("items")
         ->where("parent_id", "=", $this->id)
         ->where($sort_column, $comp, $child->$sort_column)
@@ -581,7 +585,7 @@ class Item_Model_Core extends ORM_MPTT {
       //
       // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
       // our base value.
-      foreach ($db
+      foreach ($this->db_builder
                ->select("id")
                ->from("items")
                ->where("parent_id", "=", $this->id)
@@ -609,7 +613,7 @@ class Item_Model_Core extends ORM_MPTT {
       }
 
       $position = 0;
-      foreach ($db->select("id")
+      foreach ($this->db_builder->select("id")
                ->from("items")
                ->where("parent_id", "=", $this->id)
                ->merge_where($where)
