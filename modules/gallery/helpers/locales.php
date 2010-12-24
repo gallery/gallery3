@@ -64,6 +64,7 @@ class locales_Core {
   // @todo Might want to add a localizable language name as well.
   // ref: http://cldr.unicode.org/
   // ref: http://cldr.unicode.org/index/cldr-spec/picking-the-right-language-code
+  // ref: http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/likely_subtags.html
   private static function _init_language_data() {
     $l["af_ZA"] = "Afrikaans";                // Afrikaans
     $l["ar_SA"] = "العربية";                   // Arabic
@@ -88,6 +89,7 @@ class locales_Core {
     $l["fr_FR"] = "Français";                 // French
     $l["ga_IE"] = "Gaeilge";                  // Irish
     $l["he_IL"] = "עברית";                    // Hebrew
+    $l["hr_HR"] = "hr̀vātskī";                 // Croatian
     $l["hu_HU"] = "Magyar";                   // Hungarian
     $l["is_IS"] = "Icelandic";                // Icelandic
     $l["it_IT"] = "Italiano";                 // Italian
