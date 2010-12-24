@@ -9,17 +9,11 @@
         <?= $page_title ?>
       <? else: ?>
         <? if ($theme->item()): ?>
-          <? if ($theme->item()->is_album()): ?>
-          <?= t("Browse Album :: %album_title", array("album_title" => $theme->item()->title)) ?>
-          <? elseif ($theme->item()->is_photo()): ?>
-          <?= t("Photo :: %photo_title", array("photo_title" => $theme->item()->title)) ?>
-          <? else: ?>
-          <?= t("Movie :: %movie_title", array("movie_title" => $theme->item()->title)) ?>
-          <? endif ?>
+          <?= $theme->item()->title ?>
         <? elseif ($theme->tag()): ?>
-          <?= t("Browse Tag :: %tag_title", array("tag_title" => $theme->tag()->name)) ?>
+          <?= t("Photos tagged with %tag_title", array("tag_title" => $theme->tag()->name)) ?>
         <? else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
-          <?= t("Gallery") ?>
+          <?= item::root()->title ?>
         <? endif ?>
       <? endif ?>
     </title>
