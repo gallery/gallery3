@@ -44,7 +44,7 @@ class image_block_block_Core {
       if ($items) {
         $block = new Block();
         $block->css_id = "g-image-block";
-        $block->title = t("Random image");
+        $block->title = t2("Random image", "Random Images", $image_count);
         $block->content = new View("image_block_block.html");
         $block->content->items = $items;
       }
