@@ -34,6 +34,7 @@ class Cache_Database_Driver extends Cache_Driver {
     $count = db::build()
       ->where("key", "=", $id)
       ->where("expiration", ">=", time())
+      ->limit("1")
       ->count_records("caches");
     return $count > 0;
   }
