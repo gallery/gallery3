@@ -43,7 +43,7 @@ CREATE TABLE {caches} (
   `expiration` int(9) NOT NULL,
   `cache` longblob,
   PRIMARY KEY (`id`),
-  KEY `key` (`key`),
+  UNIQUE KEY `key` (`key`),
   KEY `tags` (`tags`)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
