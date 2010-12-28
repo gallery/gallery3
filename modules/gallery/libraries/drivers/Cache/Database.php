@@ -45,15 +45,15 @@ class Cache_Database_Driver extends Cache_Driver {
       $lifetime += time();
     }
 
-	$db = Database::instance();
+    $db = Database::instance();
     $tags = $db->escape($tags);
     foreach ($items as $id => $data) {
       $id = $db->escape($id);
       $data = $db->escape(serialize($data));
-      $db->query("INSERT INTO {caches} (`key`, `tags`, `expiration`, `cache`) 
-                  VALUES ('$id', '$tags', $lifetime, '$data') 
-                  ON DUPLICATE KEY UPDATE 
-                   `tags`=VALUES(tags), `expiration`=VALUES(expiration), `cache`=VALUES(cache)");
+      $db->query("INSERT INTO {caches} (`key`, `tags`, `expiration`, `cache`)
+                  VALUES ('$id', '$tags', $lifetime, '$data')
+                  ON DUPLICATE KEY UPDATE `tags` = VALUES(tags), `expiration` = VALUES(expiration),
+                  `cache` = VALUES(cache)");
     }
 
     return true;
