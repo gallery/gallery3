@@ -644,6 +644,7 @@ class gallery_installer {
     }
 
     if ($version == 41) {
+      $db->query("TRUNCATE TABLE {caches}");
       $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
       module::set_version("gallery", $version = 42);
     }
