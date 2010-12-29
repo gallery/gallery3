@@ -362,11 +362,11 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function as_restful_array_with_edit_bit_test() {
-    $response = item::root()->as_restful_array(true);
+    $response = item::root()->as_restful_array();
     $this->assert_true($response["can_edit"]);
 
     identity::set_active_user(identity::guest());
-    $response = item::root()->as_restful_array(true);
+    $response = item::root()->as_restful_array();
     $this->assert_false($response["can_edit"]);
   }
 
