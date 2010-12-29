@@ -118,7 +118,7 @@ class tag_Core {
   static function clear_all($item) {
     db::build()
       ->update("tags")
-      ->set("count", new Database_Expression("`count` - 1"))
+      ->set("count", db::expr("`count` - 1"))
       ->where("count", ">", 0)
       ->where("id", "IN", db::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
       ->execute();

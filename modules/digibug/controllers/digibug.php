@@ -114,7 +114,7 @@ class Digibug_Controller extends Controller {
   private function _clean_expired() {
     db::build()
       ->delete("digibug_proxies")
-      ->where("request_date", "<=", new Database_Expression("(CURDATE() - INTERVAL 10 DAY)"))
+      ->where("request_date", "<=", db::expr("(CURDATE() - INTERVAL 10 DAY)"))
       ->limit(20)
       ->execute();
   }
