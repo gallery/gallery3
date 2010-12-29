@@ -8,7 +8,7 @@
         multiple: true,
         multipleSeparator: ',',
         cacheLength: 1,
-        selectFirst: false,
+        selectFirst: false
       }
     );
     $("#g-add-tag-form").ajaxForm({
