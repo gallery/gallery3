@@ -27,7 +27,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       ->set("state", "stalled")
       ->where("done", "=", 0)
       ->where("state", "<>", "stalled")
-      ->where(new Database_Expression("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
+      ->where(db::expr("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
       ->execute();
     $stalled_count = $query->count();
     if ($stalled_count) {

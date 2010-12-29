@@ -503,7 +503,7 @@ class gallery_installer {
       foreach (db::build()
                ->from("items")
                ->select("id", "slug")
-               ->where(new Database_Expression("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
+               ->where(db::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
                ->execute() as $row) {
         $new_slug = item::convert_filename_to_slug($row->slug);
         if (empty($new_slug)) {
@@ -540,7 +540,7 @@ class gallery_installer {
     if ($version == 25) {
       db::build()
         ->update("items")
-        ->set("title", new Database_Expression("`name`"))
+        ->set("title", db::expr("`name`"))
         ->and_open()
         ->where("title", "IS", null)
         ->or_where("title", "=", "")
@@ -581,7 +581,7 @@ class gallery_installer {
       $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
       $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
       db::update("modules")
-        ->set("weight", new Database_Expression("`id`"))
+        ->set("weight", db::expr("`id`"))
         ->execute();
       module::set_version("gallery", $version = 32);
     }

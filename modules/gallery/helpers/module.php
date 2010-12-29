@@ -488,7 +488,7 @@ class module_Core {
   static function incr_var($module_name, $name, $increment=1) {
     db::build()
       ->update("vars")
-      ->set("value", new Database_Expression("`value` + $increment"))
+      ->set("value", db::expr("`value` + $increment"))
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)
       ->execute();
