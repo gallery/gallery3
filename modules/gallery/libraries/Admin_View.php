@@ -46,7 +46,7 @@ class Admin_View_Core extends Gallery_View {
     module::event("admin_menu", $menu, $this);
 
     $settings_menu = $menu->get("settings_menu");
-    sort($settings_menu->elements);
+    uasort($settings_menu->elements, array("Menu", "title_comparator"));
 
     return $menu->render();
   }

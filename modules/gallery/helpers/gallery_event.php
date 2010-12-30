@@ -377,7 +377,7 @@ class gallery_event_Core {
         module::event("admin_menu", $admin_menu, $theme);
 
         $settings_menu = $admin_menu->get("settings_menu");
-        sort($settings_menu->elements);
+        uasort($settings_menu->elements, array("Menu", "title_comparator"));
       }
     }
   }
