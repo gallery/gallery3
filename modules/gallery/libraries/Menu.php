@@ -250,4 +250,8 @@ class Menu_Core extends Menu_Element {
     $view->menu = $this;
     return $view;
   }
+
+  static function title_comparator($a, $b) {
+    return strnatcasecmp((string)$a->label, (string)$b->label);
+  }
 }
