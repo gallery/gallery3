@@ -43,7 +43,7 @@ CREATE TABLE {caches} (
   `expiration` int(9) NOT NULL,
   `cache` longblob,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `key` (`key`),
+  KEY `key` (`key`),
   KEY `tags` (`tags`)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',41,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',42,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',2,4);
