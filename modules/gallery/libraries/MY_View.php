@@ -23,8 +23,14 @@ class View extends View_Core {
   /**
    * Reimplement Kohana 2.3's View::set_global() functionality.
    */
-  public function set_global($key, $value) {
-    View::$global_data[$key] = $value;
+  public function set_global($key, $value = NULL) {
+    if (is_array($key)) {
+      foreach ($key as $key2 => $value) {
+        View::$global_data[$key2] = $value;
+      }
+    } else {
+      View::$global_data[$key] = $value;
+    }
   }
 
   public function is_set($key=null) {
