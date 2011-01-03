@@ -38,14 +38,15 @@ class Movies_Controller extends Items_Controller {
     }
 
     $template = new Theme_View("page.html", "item", "movie");
-    $template->set_global("item", $movie);
-    $template->set_global("children", array());
-    $template->set_global("children_count", 0);
-    $template->set_global("parents", $movie->parents()->as_array());
-    $template->set_global("next_item", $next_item);
-    $template->set_global("previous_item", $previous_item);
-    $template->set_global("sibling_count", $movie->parent()->viewable()->children_count($where));
-    $template->set_global("position", $position);
+    $template->set_global(
+      array("item" => $movie,
+            "children" => array(),
+            "children_count" => 0,
+            "parents" => $movie->parents()->as_array(),
+            "next_item" => $next_item,
+            "previous_item" => $previous_item,
+            "sibling_count" => $movie->parent()->viewable()->children_count($where),
+            "position" => $position));
 
     $template->content = new View("movie.html");
 
