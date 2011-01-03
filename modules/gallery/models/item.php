@@ -1087,7 +1087,7 @@ class Item_Model_Core extends ORM_MPTT {
     db::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $this->id")
       ->execute();
   }
-  
+
   private function _cache_buster($path) {
     return "?m=" . (string)(file_exists($path) ? filemtime($path) : 0);
   }
