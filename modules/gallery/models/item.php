@@ -1078,6 +1078,16 @@ class Item_Model_Core extends ORM_MPTT {
     return $data;
   }
 
+  /**
+   * Increments the view counter of this item
+   * We can't use math in ORM or the query builder, so do this by hand.  It's important
+   * that we do this with math, otherwise concurrent accesses will damage accuracy.
+   */
+  public function increment_view_count() {
+    db::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $this->id")
+      ->execute();
+  }
+  
   private function _cache_buster($path) {
     return "?m=" . (string)(file_exists($path) ? filemtime($path) : 0);
   }

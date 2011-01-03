@@ -49,8 +49,7 @@ class Photos_Controller extends Items_Controller {
 
     $template->content = new View("photo.html");
 
-    $photo->view_count++;
-    $photo->save();
+    $photo->increment_view_count();
 
     print $template;
   }
