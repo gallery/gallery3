@@ -49,8 +49,7 @@ class Movies_Controller extends Items_Controller {
 
     $template->content = new View("movie.html");
 
-    $movie->view_count++;
-    $movie->save();
+    $movie->increment_view_count();
 
     print $template;
   }
