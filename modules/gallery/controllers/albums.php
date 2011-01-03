@@ -61,15 +61,15 @@ class Albums_Controller extends Items_Controller {
     }
 
     $template = new Theme_View("page.html", "collection", "album");
-    $template->set_global(array("page" => $page,
-                                "page_title" => null,
-                                "max_pages" => $max_pages,
-                                "page_size" => $page_size,
-                                "item" => $album,
-                                "children" => $album->viewable()->children($page_size, $offset),
-                                "children_count" => $children_count,
-                                "parents" => $album->parents()->as_array()));
-                                  // view calls empty() on this
+    $template->set_global(
+      array("page" => $page,
+            "page_title" => null,
+            "max_pages" => $max_pages,
+            "page_size" => $page_size,
+            "item" => $album,
+            "children" => $album->viewable()->children($page_size, $offset),
+            "parents" => $album->parents()->as_array(), // view calls empty() on this
+            "children_count" => $children_count));
     $template->content = new View("album.html");
 
     $album->increment_view_count();

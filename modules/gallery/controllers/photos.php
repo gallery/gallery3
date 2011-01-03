@@ -38,15 +38,15 @@ class Photos_Controller extends Items_Controller {
     }
 
     $template = new Theme_View("page.html", "item", "photo");
-    $template->set_global(array("item" => $photo,
-                                "children" => array(),
-                                "children_count" => 0,
-                                "parents" => $photo->parents()->as_array(),
-                                "next_item" => $next_item,
-                                "previous_item" => $previous_item,
-                                "sibling_count"
-                                  => $photo->parent()->viewable()->children_count($where),
-                                "position" => $position));
+    $template->set_global(
+      array("item" => $photo,
+            "children" => array(),
+            "children_count" => 0,
+            "parents" => $photo->parents()->as_array(),
+            "next_item" => $next_item,
+            "previous_item" => $previous_item,
+            "sibling_count" => $photo->parent()->viewable()->children_count($where),
+            "position" => $position));
 
     $template->content = new View("photo.html");
 
