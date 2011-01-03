@@ -309,7 +309,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 42);
+    module::set_version("gallery", 43);
   }
 
   static function upgrade($version) {
@@ -647,6 +647,11 @@ class gallery_installer {
       $db->query("TRUNCATE TABLE {caches}");
       $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
       module::set_version("gallery", $version = 42);
+    }
+
+    if ($version == 42) {
+      $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
+      module::set_version("gallery", $version = 43);
     }
   }
 
