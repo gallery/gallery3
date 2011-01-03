@@ -152,7 +152,7 @@ CREATE TABLE {items} (
   `album_cover_item_id` int(9) DEFAULT NULL,
   `captured` int(9) DEFAULT NULL,
   `created` int(9) DEFAULT NULL,
-  `description` varchar(2048) DEFAULT NULL,
+  `description` TEXT DEFAULT NULL,
   `height` int(9) DEFAULT NULL,
   `left_ptr` int(9) NOT NULL,
   `level` int(9) NOT NULL,
