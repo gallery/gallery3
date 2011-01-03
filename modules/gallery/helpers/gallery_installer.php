@@ -650,7 +650,7 @@ class gallery_installer {
     }
 
     if ($version == 42) {
-      $db->query("ALTER TABLE {items} CHANGE `description` `description` TEXT DEFAULT NULL");
+      $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
       module::set_version("gallery", $version = 43);
     }
   }
