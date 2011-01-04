@@ -20,13 +20,21 @@
      * Utility functions for loading data and making changes
      * ********************************************************************************
      */
+    var start_busy = function(msg) {
+      outer.el.mask(msg, "loading");
+    }
+
+    var stop_busy = function() {
+      outer.el.unmask();
+    }
+
     var current_album_id = null;
     var load_album_data = function(id) {
-      Ext.Msg.wait(<?= t("Loading...")->for_js() ?>);
+      start_busy(<?= t("Loading...")->for_js() ?>);
       Ext.Ajax.request({
         url: '<?= url::site("organize/album_info/__ID__") ?>'.replace("__ID__", id),
         success: function(xhr, opts) {
-          Ext.Msg.hide();
+          stop_busy();
           var album_info = Ext.util.JSON.decode(xhr.responseText);
           var store = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -41,7 +49,7 @@
           sort_order_combobox.setValue(album_info.sort_order);
         },
         failure: function() {
-          Ext.Msg.hide();
+          stop_busy();
           Ext.Msg.alert(
             <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
         }
@@ -55,17 +63,17 @@
     };
 
     var set_album_sort = function(params) {
-      Ext.Msg.wait(<?= t("Changing sort...")->for_js() ?>);
+      start_busy(<?= t("Changing sort...")->for_js() ?>);
       params['csrf'] = '<?= access::csrf_token() ?>';
       Ext.Ajax.request({
         url: '<?= url::site("organize/set_sort/__ID__") ?>'.replace("__ID__", current_album_id),
         method: "post",
         success: function() {
-          Ext.Msg.hide();
+          stop_busy();
           reload_album_data();
         },
         failure: function() {
-          Ext.Msg.hide();
+          stop_busy();
           Ext.Msg.alert(
             <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
         },
@@ -137,16 +145,16 @@
               for (var i = 0; i != nodes.length; i++) {
                 source_ids.push(Ext.fly(nodes[i]).getAttribute("rel"));
               }
-              Ext.Msg.wait(<?= t("Rearranging...")->for_js() ?>);
+              start_busy(<?= t("Rearranging...")->for_js() ?>);
               Ext.Ajax.request({
                 url: '<?= url::site("organize/move_before") ?>',
                 method: "post",
                 success: function() {
-                  Ext.Msg.hide();
+                  stop_busy();
                   reload_album_data();
                 },
                 failure: function() {
-                  Ext.Msg.hide();
+                  stop_busy();
                   Ext.Msg.alert(
                     <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
                 },
@@ -293,12 +301,12 @@
                 source_ids.push(node.getAttribute("rel"));
               }
               var target_id = target.getAttribute("ext:tree-node-id");
-              Ext.Msg.wait(<?= t("Moving...")->for_js() ?>);
+              start_busy(<?= t("Moving...")->for_js() ?>);
               Ext.Ajax.request({
                 url: '<?= url::site("organize/reparent") ?>',
                 method: "post",
                 success: function() {
-                  Ext.Msg.hide();
+                  stop_busy();
                   reload_album_data();
                   v.getNodeById(target_id).reload();
 
@@ -311,7 +319,7 @@
                   }
                 },
                 failure: function() {
-                  Ext.Msg.hide();
+                  stop_busy();
                   Ext.Msg.alert(
                     <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
                 },

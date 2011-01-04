@@ -58,3 +58,12 @@ div.multi-proxy div {
   font-size: 12px;
   line-height: 20px;
 }
+
+.loading div {
+  font-size: 1.1em;
+  padding-left: 24px;
+  background-color: white;
+  background-image: url(../vendor/ext/images/default/tree/loading.gif);
+  background-position: 4px 8px;
+  background-repeat: no-repeat;
+}
