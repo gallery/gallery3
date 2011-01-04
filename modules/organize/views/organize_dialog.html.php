@@ -178,6 +178,11 @@
      * Toolbar with sort column, sort order and a close button.
      * ********************************************************************************
      */
+
+    sort_order_data = [];
+    <? foreach (album::get_sort_order_options() as $key => $value): ?>
+    sort_order_data.push(["<?= $key ?>", <?= $value->for_js() ?>]);
+    <? endforeach ?>
     var sort_column_combobox = new Ext.form.ComboBox({
       mode: "local",
       editable: false,
@@ -187,11 +192,7 @@
       store: new Ext.data.ArrayStore({
         id: 0,
         fields: ["key", "value"],
-        data: [
-        <? foreach (album::get_sort_order_options() as $key => $value): ?>
-          ["<?= $key ?>", <?= $value->for_js() ?>],
-        <? endforeach ?>
-        ]
+        data: sort_order_data
       }),
       listeners: {
         "select": function(combo, record, index) {
@@ -234,7 +235,7 @@
       items: [sort_column_combobox, sort_order_combobox,
         {
           xtype: "spacer",
-          flex: 4,
+          flex: 4
         }, {
           xtype: "button",
           flex: 1,
@@ -244,7 +245,7 @@
               parent.done_organizing(current_album_id);
             }
           }
-        },
+        }
       ]
     });
 
@@ -264,7 +265,7 @@
     var tree_loader = new Ext.tree.TreeLoader({
       dataUrl: '<?= url::site("organize/tree/{$album->id}") ?>',
       nodeParameter: "root_id",
-      requestMethod: "post",
+      requestMethod: "post"
     });
 
     var tree_panel = new Ext.tree.TreePanel({
@@ -338,7 +339,7 @@
         text: "<?= item::root()->title ?>",
         draggable: false,
         id: "<?= item::root()->id ?>",
-        expanded: true,
+        expanded: true
       }
     });
 
