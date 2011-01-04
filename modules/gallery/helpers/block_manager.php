@@ -98,12 +98,16 @@ class block_manager_Core {
     return $blocks;
   }
 
-  static function get_html($location, $theme=null) {
+   static function get_html($location, $theme=null, $module_name=null) {
     $active = block_manager::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
+      $active_module_name=$desc[0];
+      if ( ! is_null($module_name) && strcmp($module_name, $active_module_name) != 0) {
+        continue;
+      }
       if (method_exists("$desc[0]_block", "get")) {
-        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1], $theme);
+        $block = call_user_func(array("{$active_module_name}_block", "get"), $desc[1], $theme);
         if (!empty($block)) {
           $block->id = $id;
           $result .= $block;
