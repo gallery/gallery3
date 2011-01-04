@@ -85,6 +85,7 @@
       listeners: {
         "render": function(v) {
           v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+            containerScroll: true,
             getDragData: function(e) {
               var target = e.getTarget(v.itemSelector, 10);
               if (target) {
@@ -248,23 +249,11 @@
     });
 
     var album_panel = new Ext.Panel({
-      layout: "border",
+      layout: "fit",
       region: "center",
-      items: [
-        {
-          xtype: "label",
-          region: "north",
-          text: <?= t("Drag and drop photos to re-order or move between albums")->for_js() ?>,
-          margins: "5 5 5 10",
-        },
-        {
-          xtype: "panel",
-          layout: "fit",
-          region: "center",
-          items: [thumb_data_view]
-        },
-        button_panel
-      ]
+      title: <?= t("Drag and drop photos to re-order or move between albums")->for_js() ?>,
+      items: [thumb_data_view],
+      bbar: button_panel
     });
 
     /*
@@ -339,8 +328,10 @@
       loader: tree_loader,
 
       region: "west",
-      width: 150,
       split: true,
+      minSize: 200,
+      maxSize: 350,
+      width: 200,
 
       root: {
         nodeType: "async",
@@ -362,7 +353,7 @@
     });
     tree_panel.getRootNode().expand();
 
-    new Ext.Viewport({
+    var outer = new Ext.Viewport({
       layout: "border",
       cls: "g-organize",
       items: [tree_panel, album_panel]
