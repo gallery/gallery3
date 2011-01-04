@@ -152,7 +152,7 @@ CREATE TABLE {items} (
   `album_cover_item_id` int(9) DEFAULT NULL,
   `captured` int(9) DEFAULT NULL,
   `created` int(9) DEFAULT NULL,
-  `description` varchar(2048) DEFAULT NULL,
+  `description` text,
   `height` int(9) DEFAULT NULL,
   `left_ptr` int(9) NOT NULL,
   `level` int(9) NOT NULL,
@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',41,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',43,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',2,4);

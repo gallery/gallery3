@@ -44,7 +44,7 @@ class gallery_installer {
                 `expiration` int(9) NOT NULL,
                 `cache` longblob,
                 PRIMARY KEY (`id`),
-                KEY (`key`),
+                UNIQUE KEY (`key`),
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
@@ -84,7 +84,7 @@ class gallery_installer {
                  `album_cover_item_id` int(9) default NULL,
                  `captured` int(9) default NULL,
                  `created` int(9) default NULL,
-                 `description` varchar(2048) default NULL,
+                 `description` text default NULL,
                  `height` int(9) default NULL,
                  `left_ptr` int(9) NOT NULL,
                  `level` int(9) NOT NULL,
@@ -309,7 +309,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 42);
+    module::set_version("gallery", 43);
   }
 
   static function upgrade($version) {
@@ -647,6 +647,11 @@ class gallery_installer {
       $db->query("TRUNCATE TABLE {caches}");
       $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
       module::set_version("gallery", $version = 42);
+    }
+
+    if ($version == 42) {
+      $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
+      module::set_version("gallery", $version = 43);
     }
   }
 
