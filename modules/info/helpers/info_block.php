@@ -31,6 +31,43 @@ class info_block_Core {
         $block->css_id = "g-metadata";
         $block->title = $theme->item()->is_album() ? t("Album info") : t("Photo info");
         $block->content = new View("info_block.html");
+
+        $info[] = array(
+                    'label' => t("Title:"),
+                    'value' => html::purify($theme->item->title)
+                  );
+        if ($theme->item->description) {
+          $info[] = array(
+                      'label' => t("Description:"),
+                      'value' => nl2br(html::purify($theme->item->description))
+                    );
+        }
+        if (!$theme->item->is_album()) {
+          $info[] = array(
+                      'label' => t("File name:"),
+                      'value' => html::clean($theme->item->name));
+        }
+        if ($theme->item->captured) {
+          $info[] = array(
+                      'label' => t("Captured:"),
+                      'value' => gallery::date_time($theme->item->captured)
+                    );
+        }
+        if ($theme->item->owner) {
+          $display_name = $theme->item->owner->display_name();
+          if ($theme->item->owner->url) {
+            $info[] = array(
+                      'label' => t("Owner:"),
+                      'value' => "<a href=\"{$theme->item->owner->url}\">" . html::clean($display_name) . "</a>"
+                    );
+          } else {
+            $info[] = array(
+                        'label' => t("Owner:"),
+                        'value' => html::clean($display_name)
+                      );
+          }
+        }
+        $block->content->metadata = $info;
       }
       break;
     }
