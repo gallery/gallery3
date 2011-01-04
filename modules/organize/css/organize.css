@@ -1,0 +1,60 @@
+.g-organize {
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.g-organize div.thumb {
+  padding: 8px;
+  margin: 8px;
+}
+
+.g-organize div.selected {
+  background: #C9D8EB;
+}
+
+.g-organize div.thumb img {
+  border: 4px solid white;
+}
+
+.g-organize div.thumb:hover {
+  border: 2px solid #eee;
+  margin: 6px;
+  cursor: pointer;
+}
+
+.g-organize div.thumb {
+  display: inline-block;
+}
+
+.g-organize div.thumb div.icon {
+  position: relative;
+  padding: 0px;
+  margin: 0px;
+  visibility: hidden;
+  width: 16px;
+  height: 16px;
+  top: -16px;
+  margin-bottom: -16px;
+  padding-bottom: -16px;
+}
+
+.g-organize div.thumb-album div.icon {
+  visibility: visible;
+}
+
+.g-organize div.drop-target {
+  background: #eee;
+}
+
+.g-organize div.active {
+  border-left: 4px solid #C9D8EB;
+  margin-left: 4px;
+}
+
+div.multi-proxy div {
+  display: inline-block;
+}
+
+.g-organize .x-tree-node-el {
+  font-size: 12px;
+  line-height: 20px;
+}
