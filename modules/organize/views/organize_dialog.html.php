@@ -103,7 +103,7 @@
                   div.className = "multi-proxy";
                   for (var i = 0; i != selected_nodes.length; i++) {
                     div.appendChild(selected_nodes[i].cloneNode(true));
-                    if ((i+1) % 3 == 0) {
+                    if ((i + 1) % 3 == 0) {
                       div.appendChild(document.createElement("br"));
                     }
                   }
