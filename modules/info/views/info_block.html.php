@@ -2,7 +2,7 @@
 <ul class="g-metadata">
   <? foreach($metadata as $k => $v): ?>
   <li>
-    <strong class="caption"><?= $v['label'] ?></strong> <?= $v['value'] ?>
+    <strong class="caption"><?= $v["label"] ?></strong> <?= $v["value"] ?>
   </li>
   <?  endforeach; ?>
 </ul>
