@@ -93,6 +93,7 @@
       listeners: {
         "render": function(v) {
           v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+            ddGroup: "organizeDD",
             containerScroll: true,
             getDragData: function(e) {
               var target = e.getTarget(v.itemSelector, 10);
@@ -283,55 +284,52 @@
       border: false,
       containerScroll: true,
       enableDD: true,
-      ddGroup: "organizeDD",
+      dropConfig: {
+        appendOnly: true,
+        ddGroup: "organizeDD",
+      },
       listeners: {
         "click": function(node) {
           load_album_data(node.id);
         },
-        "render": function(v) {
-          v.dropZone = new Ext.dd.DropZone(v.getEl(), {
-            getTargetFromEvent: function(e) {
-              return e.getTarget("div.x-tree-node-el", 10);
-            },
-            onNodeDrop: function(target, dd, e, data) {
-              var nodes = data.nodes;
-              source_ids = [];
-              for (var i = 0; i != nodes.length; i++) {
-                var node = Ext.fly(nodes[i]);
-                source_ids.push(node.getAttribute("rel"));
-              }
-              var target_id = target.getAttribute("ext:tree-node-id");
-              start_busy(<?= t("Moving...")->for_js() ?>);
-              Ext.Ajax.request({
-                url: '<?= url::site("organize/reparent") ?>',
-                method: "post",
-                success: function() {
-                  stop_busy();
-                  reload_album_data();
-                  v.getNodeById(target_id).reload();
-
-                  // If the target node contains the selected node, then the selected
-                  // node just got strafed by the target's reload and no longer exists,
-                  // so we can't reload it.
-                  var selected_node = v.getNodeById(current_album_id);
-                  if (selected_node) {
-                    selected_node.reload();
-                  }
-                },
-                failure: function() {
-                  stop_busy();
-                  Ext.Msg.alert(
-                    <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
-                },
-                params: {
-                  source_ids: source_ids.join(","),
-                  target_id: target_id,
-                  csrf: '<?= access::csrf_token() ?>'
-                }
-              });
-              return true;
+        "afterrender": function(v) {
+          v.dropZone.onNodeDrop = function(target, dd, e, data) {
+            var nodes = data.nodes;
+            source_ids = [];
+            for (var i = 0; i != nodes.length; i++) {
+              var node = Ext.fly(nodes[i]);
+              source_ids.push(node.getAttribute("rel"));
             }
-          })
+            start_busy(<?= t("Moving...")->for_js() ?>);
+            Ext.Ajax.request({
+              url: '<?= url::site("organize/reparent") ?>',
+              method: "post",
+              success: function() {
+                stop_busy();
+                reload_album_data();
+                target.node.reload();
+
+                // If the target node contains the selected node, then the selected
+                // node just got strafed by the target's reload and no longer exists,
+                // so we can't reload it.
+                var selected_node = v.getNodeById(current_album_id);
+                if (selected_node) {
+                  selected_node.reload();
+                }
+              },
+              failure: function() {
+                stop_busy();
+                Ext.Msg.alert(
+                  <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
+              },
+              params: {
+                source_ids: source_ids.join(","),
+                target_id: target.node.id,
+                csrf: '<?= access::csrf_token() ?>'
+              }
+            });
+            return true;
+          }
         }
       },
       loader: tree_loader,
@@ -343,6 +341,7 @@
       width: 200,
 
       root: {
+        allowDrop: Boolean(<?= access::can("edit", item::root()) ?>),
         nodeType: "async",
         text: "<?= item::root()->title ?>",
         draggable: false,
