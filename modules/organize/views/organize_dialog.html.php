@@ -7,7 +7,6 @@
     background-image: url(<?= url::file("modules/organize/vendor/ext/images/default/tree/folder.gif") ?>);
   }
 </style>
-
 <script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-base.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-all.js") ?>"></script>
 <script type="text/javascript">
@@ -64,7 +63,7 @@
 
     var set_album_sort = function(params) {
       start_busy(<?= t("Changing sort...")->for_js() ?>);
-      params['csrf'] = '<?= access::csrf_token() ?>';
+      params["csrf"] = '<?= access::csrf_token() ?>';
       Ext.Ajax.request({
         url: '<?= url::site("organize/set_sort/__ID__") ?>'.replace("__ID__", current_album_id),
         method: "post",
