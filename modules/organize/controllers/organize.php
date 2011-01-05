@@ -153,7 +153,8 @@ class Organize_Controller extends Controller {
       ->as_array();
     foreach ($children as $child) {
       $node = array(
-        "allowChildren" => true,
+        "allowDrag" => false,
+        "allowDrop" => access::can("edit", $child),
         "editable" => false,
         "expandable" => true,
         "id" => $child->id,
