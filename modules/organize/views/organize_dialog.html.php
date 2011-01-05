@@ -128,6 +128,7 @@
           });
 
           v.dropZone = new Ext.dd.DropZone(v.getEl(), {
+            ddGroup: "organizeDD",
             getTargetFromEvent: function(e) {
               return e.getTarget("div.thumb", 10);
             },
@@ -293,6 +294,22 @@
           load_album_data(node.id);
         },
         "afterrender": function(v) {
+          // Override Ext.tree.TreeDragZone.onNodeOver to change the
+          // x-tree-drop-ok-append CSS class to be x-dd-drop-ok since
+          // that connotes "ok" instead of "adding something new" and we're
+          // moving the item, not adding it.
+          //
+          // There's probably a better way of overriding the parent method, but
+          // my JavaScript-fu is weak.
+          v.dropZone.super_onNodeOver = v.dropZone.onNodeOver;
+          v.dropZone.onNodeOver = function(target, dd, e, data) {
+            var returnCls = this.super_onNodeOver(target, dd, e, data);
+            if (returnCls == "x-tree-drop-ok-append") {
+              return "x-dd-drop-ok";
+            }
+            return returnCls;
+          }
+
           v.dropZone.onNodeDrop = function(target, dd, e, data) {
             var nodes = data.nodes;
             source_ids = [];
