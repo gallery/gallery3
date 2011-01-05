@@ -69,7 +69,7 @@ class info_block_Core {
         }
         $block->content->metadata = $info;
 
-        module::event("info_block_metadata", $block, $theme->item->id);
+        module::event("info_block_metadata", $block, $theme->item);
       }
       break;
     }
