@@ -131,13 +131,22 @@
             getTargetFromEvent: function(e) {
               return e.getTarget("div.thumb", 10);
             },
-            onNodeEnter: function(target, dd, e, data) {
-              Ext.fly(target).addClass("active");
-            },
             onNodeOut: function(target, dd, e, data) {
-              Ext.fly(target).removeClass("active");
+              Ext.fly(target).removeClass("active-left");
+              Ext.fly(target).removeClass("active-right");
             },
             onNodeOver: function(target, dd, e, data) {
+              var target_x = Ext.lib.Dom.getX(target);
+              var target_center = target_x + (target.offsetWidth / 2);
+              if (Ext.lib.Event.getPageX(e) < target_center) {
+                Ext.fly(target).addClass("active-left");
+                Ext.fly(target).removeClass("active-right");
+                this.drop_side = "before";
+              } else {
+                Ext.fly(target).removeClass("active-left");
+                Ext.fly(target).addClass("active-right");
+                this.drop_side = "after";
+              }
               return Ext.dd.DropZone.prototype.dropAllowed;
             },
             onNodeDrop: function(target, dd, e, data) {
@@ -147,8 +156,9 @@
                 source_ids.push(Ext.fly(nodes[i]).getAttribute("rel"));
               }
               start_busy(<?= t("Rearranging...")->for_js() ?>);
+              target = Ext.fly(target);
               Ext.Ajax.request({
-                url: '<?= url::site("organize/move_before") ?>',
+                url: '<?= url::site("organize/rearrange") ?>',
                 method: "post",
                 success: function() {
                   stop_busy();
@@ -161,7 +171,8 @@
                 },
                 params: {
                   source_ids: source_ids.join(","),
-                  target_id: Ext.fly(target).getAttribute("rel"),
+                  target_id: target.getAttribute("rel"),
+                  relative: this.drop_side, // calculated in onNodeOver
                   csrf: '<?= access::csrf_token() ?>'
                 }
               });

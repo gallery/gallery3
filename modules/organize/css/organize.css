@@ -45,9 +45,14 @@
   background: #eee;
 }
 
-.g-organize div.active {
+.g-organize div.active-left {
   border-left: 4px solid #C9D8EB;
   margin-left: 4px;
+}
+
+.g-organize div.active-right {
+  border-right: 4px solid #C9D8EB;
+  margin-right: 4px;
 }
 
 div.multi-proxy div {

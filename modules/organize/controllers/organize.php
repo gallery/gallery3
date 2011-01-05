@@ -103,7 +103,7 @@ class Organize_Controller extends Controller {
     json::reply(null);
   }
 
-  function move_before() {
+  function rearrange() {
     access::verify_csrf();
 
     $input = Input::instance();
@@ -125,20 +125,25 @@ class Organize_Controller extends Controller {
     }
 
     $source_ids = explode(",", $input->post("source_ids"));
+    $base_weight = $target->weight;
+    if ($input->post("relative") == "after") {
+      $base_weight++;
+    }
+
     if ($source_ids) {
       // Make a hole the right size
       db::build()
         ->update("items")
         ->set("weight", db::expr("`weight` + " . count($source_ids)))
         ->where("parent_id", "=", $album->id)
-        ->where("weight", ">=", $target->weight)
+        ->where("weight", ">=", $base_weight)
         ->execute();
 
       // Move all the source items to the right spots.
       for ($i = 0; $i < count($source_ids); $i++) {
         $source = ORM::factory("item", $source_ids[$i]);
         if ($source->parent_id = $album->id) {
-          $source->weight = $target->weight + $i;
+          $source->weight = $base_weight + $i;
           $source->save();
         }
       }
