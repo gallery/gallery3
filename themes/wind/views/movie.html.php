@@ -1,5 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="g-item">
+  <a name="itemtop" />
   <?= $theme->photo_top() ?>
 
   <?= $theme->paginator() ?>
