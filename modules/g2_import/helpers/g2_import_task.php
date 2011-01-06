@@ -109,8 +109,8 @@ class g2_import_task_Core {
 
       case "users":
         if (empty($queue)) {
-          $task->set(
-            "queue", $queue = array_keys(g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY))));
+          $task->set("queue", $queue = g2_import::get_user_ids($task->get("last_id", 0)));
+          $task->set("last_id", end($queue));
         }
         $log_message = g2_import::import_user($queue);
         if ($log_message) {
