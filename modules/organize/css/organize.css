@@ -68,15 +68,6 @@
   margin-right: 4px;
 }
 
-.g-organize .x-tree-node-el {
-  font-size: 12px;
-  line-height: 20px;
-}
-
-.g-organize .x-tree-node-leaf .x-tree-node-icon{
-  background-image:url(../vendor/ext/images/default/tree/folder.gif);
-}
-
 .g-organize label.sort {
   font: 12px tahoma, arial;
   vertical-align: middle;
@@ -93,4 +84,14 @@
   background-image: url(../vendor/ext/images/default/tree/loading.gif);
   background-position: 4px 8px;
   background-repeat: no-repeat;
+}
+
+/* ExtJS overrides */
+.x-tree-node-el {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.x-tree-node-leaf .x-tree-node-icon{
+  background-image:url(../vendor/ext/images/default/tree/folder.gif);
 }

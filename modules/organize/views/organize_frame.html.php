@@ -21,11 +21,11 @@
      * ********************************************************************************
      */
     var start_busy = function(msg) {
-      outer.el.mask(msg, "loading");
+      thumb_data_view.el.mask(msg, "loading");
     }
 
     var stop_busy = function() {
-      outer.el.unmask();
+      thumb_data_view.el.unmask();
     }
 
     var show_generic_error = function() {
