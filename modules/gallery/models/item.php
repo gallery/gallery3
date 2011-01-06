@@ -653,13 +653,17 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Calculate the largest width/height that fits inside the given maximum, while preserving the
-   * aspect ratio.
+   * aspect ratio.  Don't upscale.
    * @param int $max Maximum size of the largest dimension
    * @return array
    */
   public function scale_dimensions($max) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
+
+    if ($width <= $max && $height <= $max) {
+        return array($height, $width);
+    }
 
     if ($height) {
       if (isset($max)) {
