@@ -43,7 +43,7 @@ CREATE TABLE {caches} (
   `expiration` int(9) NOT NULL,
   `cache` longblob,
   PRIMARY KEY (`id`),
-  KEY `key` (`key`),
+  UNIQUE KEY `key` (`key`),
   KEY `tags` (`tags`)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -152,7 +152,7 @@ CREATE TABLE {items} (
   `album_cover_item_id` int(9) DEFAULT NULL,
   `captured` int(9) DEFAULT NULL,
   `created` int(9) DEFAULT NULL,
-  `description` varchar(2048) DEFAULT NULL,
+  `description` text,
   `height` int(9) DEFAULT NULL,
   `left_ptr` int(9) NOT NULL,
   `level` int(9) NOT NULL,
