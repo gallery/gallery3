@@ -1152,7 +1152,7 @@ class g2_import_Core {
       "SELECT [GalleryComment::id] " .
       "FROM [GalleryComment] " .
       "WHERE [GalleryComment::publishStatus] = 0 " . // 0 == COMMENT_PUBLISH_STATUS_PUBLISHED
-      "AND   [GalleryComment::id] > ?",
+      "AND [GalleryComment::id] > ?",
       array($min_id),
       array("limit" => array("count" => 100))));
     while ($result = $results->nextResult()) {
@@ -1172,6 +1172,26 @@ class g2_import_Core {
     $results = g2($gallery->search(
       "SELECT DISTINCT([TagItemMap::itemId]) FROM [TagItemMap] " .
       "WHERE [TagItemMap::itemId] > ?",
+      array($min_id),
+      array("limit" => array("count" => 100))));
+    while ($result = $results->nextResult()) {
+      $ids[] = $result[0];
+    }
+    return $ids;
+  }
+
+  /**
+   * Get a set of user ids from Gallery 2 greater than $min_id.  We use this to get the
+   * next chunk of users to import.
+   */
+  static function get_user_ids($min_id) {
+    global $gallery;
+
+    $ids = array();
+    $results = g2($gallery->search(
+      "SELECT [GalleryUser::id] " .
+      "FROM [GalleryUser] " .
+      "WHERE [GalleryUser::id] > ?",
       array($min_id),
       array("limit" => array("count" => 100))));
     while ($result = $results->nextResult()) {
