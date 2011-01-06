@@ -329,7 +329,7 @@
           }
         },
         "afterrender": function(v) {
-          // Override Ext.tree.TreeDragZone.onNodeOver to change the
+          // Override Ext.tree.TreeDropZone.onNodeOver to change the
           // x-tree-drop-ok-append CSS class to be x-dd-drop-ok since
           // that connotes "ok" instead of "adding something new" and we're
           // moving the item, not adding it.
