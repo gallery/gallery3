@@ -109,7 +109,7 @@
                   var div = document.createElement("div");
                   div.className = "multi-proxy";
                   for (var i = 0; i != selected_nodes.length; i++) {
-                    div.appendChild(selected_nodes[i].cloneNode(true));
+                    div.appendChild(Ext.get(selected_nodes[i]).dom.firstChild.cloneNode(true));
                     if ((i + 1) % 3 == 0) {
                       div.appendChild(document.createElement("br"));
                     }
@@ -290,7 +290,7 @@
       enableDD: true,
       dropConfig: {
         appendOnly: true,
-        ddGroup: "organizeDD",
+        ddGroup: "organizeDD"
       },
       listeners: {
         "click": function(node) {
