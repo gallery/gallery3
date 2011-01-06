@@ -53,6 +53,11 @@
           thumb_data_view.bindStore(store);
           sort_column_combobox.setValue(album_info.sort_column);
           sort_order_combobox.setValue(album_info.sort_order);
+          if (album_info.editable) {
+            thumb_data_view.dragZone.unlock();
+          } else {
+            thumb_data_view.dragZone.lock();
+          }
         },
         failure: show_generic_error
       });
