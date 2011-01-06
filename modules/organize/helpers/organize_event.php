@@ -27,7 +27,7 @@ class organize_event_Core {
                  ->id("organize")
                  ->label(t("Organize album"))
                  ->css_id("g-menu-organize-link")
-                 ->url(url::site("organize/frame/{$item->id}")));
+                 ->url(url::site("organize/dialog/{$item->id}")));
     }
   }
 
@@ -39,7 +39,7 @@ class organize_event_Core {
                    ->id("organize")
                    ->label(t("Organize album"))
                    ->css_class("ui-icon-folder-open g-organize-link")
-                   ->url(url::site("organize/frame/{$item->id}")));
+                   ->url(url::site("organize/dialog/{$item->id}")));
       } else {
         $parent = $item->parent();
         $menu->get("options_menu")
@@ -47,7 +47,7 @@ class organize_event_Core {
                    ->id("move")
                    ->label(t("Move to another album"))
                    ->css_class("ui-icon-folder-open g-organize-link")
-                   ->url(url::site("organize/frame/{$parent->id}?selected_id={$item->id}")));
+                   ->url(url::site("organize/dialog/{$parent->id}?selected_id={$item->id}")));
       }
     }
   }
