@@ -92,6 +92,13 @@
         new Ext.DataView.DragSelector({dragSafe: true})
       ],
       listeners: {
+        "dblclick": function(v, index, node, e) {
+          node = Ext.get(node);
+          if (node.hasClass("thumb-album")) {
+            var id = node.getAttribute("rel");
+            tree_panel.fireEvent("click", tree_panel.getNodeById(id))
+          }
+        },
         "render": function(v) {
           v.dragZone = new Ext.dd.DragZone(v.getEl(), {
             ddGroup: "organizeDD",
@@ -307,6 +314,9 @@
       listeners: {
         "click": function(node) {
           load_album_data(node.id);
+          if (node.isExpandable() && !node.isExpanded()) {
+            node.expand();
+          }
         },
         "afterrender": function(v) {
           // Override Ext.tree.TreeDragZone.onNodeOver to change the
