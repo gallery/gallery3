@@ -169,7 +169,6 @@ class Organize_Controller extends Controller {
         "editable" => false,
         "expandable" => false,
         "id" => $child->id,
-        "leaf" => false,
         "text" => $child->title,
         "nodeType" => "async");
 
