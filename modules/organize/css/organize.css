@@ -77,6 +77,15 @@
   background-image:url(../vendor/ext/images/default/tree/folder.gif);
 }
 
+.g-organize label.sort {
+  font: 12px tahoma, arial;
+  vertical-align: middle;
+  font-weight: bold;
+  height: 22px;
+  text-align: center;
+  padding: 4px;
+}
+
 .loading div {
   font-size: 1.1em;
   padding-left: 24px;

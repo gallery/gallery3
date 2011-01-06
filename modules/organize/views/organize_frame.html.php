@@ -221,6 +221,7 @@
       allowBlank: false,
       forceSelection: true,
       triggerAction: "all",
+      flex: 2,
       store: new Ext.data.ArrayStore({
         id: 0,
         fields: ["key", "value"],
@@ -241,6 +242,7 @@
       allowBlank: false,
       forceSelection: true,
       triggerAction: "all",
+      flex: 2,
       store: new Ext.data.ArrayStore({
         id: 0,
         fields: ["key", "value"],
@@ -264,13 +266,21 @@
       layoutConfig: {
         align: "stretch"
       },
-      items: [sort_column_combobox, sort_order_combobox,
+      items: [
+        {
+          xtype: "label",
+          cls: "sort",
+          flex: 2,
+          text: <?= t("Sort order: ")->for_js() ?>
+        },
+        sort_column_combobox,
+        sort_order_combobox,
         {
           xtype: "spacer",
-          flex: 4
+          flex: 10
         }, {
           xtype: "button",
-          flex: 1,
+          flex: 2,
           text: <?= t("Close")->for_js() ?>,
           listeners: {
             "click": function() {
