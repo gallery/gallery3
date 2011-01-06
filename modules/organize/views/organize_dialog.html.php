@@ -27,6 +27,12 @@
       outer.el.unmask();
     }
 
+    var show_generic_error = function() {
+      stop_busy();
+      Ext.Msg.alert(
+        <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
+    }
+
     var current_album_id = null;
     var load_album_data = function(id) {
       start_busy(<?= t("Loading...")->for_js() ?>);
@@ -47,11 +53,7 @@
           sort_column_combobox.setValue(album_info.sort_column);
           sort_order_combobox.setValue(album_info.sort_order);
         },
-        failure: function() {
-          stop_busy();
-          Ext.Msg.alert(
-            <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
-        }
+        failure: show_generic_error
       });
     };
 
@@ -71,11 +73,7 @@
           stop_busy();
           reload_album_data();
         },
-        failure: function() {
-          stop_busy();
-          Ext.Msg.alert(
-            <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
-        },
+        failure: show_generic_error,
         params: params
       });
     }
@@ -85,7 +83,7 @@
      * JsonStore, DataView and Panel for viewing albums
      * ********************************************************************************
      */
-    thumb_data_view = new Ext.DataView({
+    var thumb_data_view = new Ext.DataView({
       autoScroll: true,
       enableDragDrop: true,
       itemSelector: "div.thumb",
@@ -164,11 +162,7 @@
                   stop_busy();
                   reload_album_data();
                 },
-                failure: function() {
-                  stop_busy();
-                  Ext.Msg.alert(
-                    <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
-                },
+                failure: show_generic_error,
                 params: {
                   source_ids: source_ids.join(","),
                   target_id: target.getAttribute("rel"),
@@ -181,7 +175,6 @@
           });
         }
       },
-      loadingText: <?= t("Loading...")->for_js() ?>,
       multiSelect: true,
       selectedClass: "selected",
       tpl: new Ext.XTemplate(
@@ -344,11 +337,7 @@
                   selected_node.reload();
                 }
               },
-              failure: function() {
-                stop_busy();
-                Ext.Msg.alert(
-                  <?= t("An error occurred.  Consult your system administrator.")->for_js() ?>);
-              },
+              failure: show_generic_error,
               params: {
                 source_ids: source_ids.join(","),
                 target_id: target.node.id,
@@ -383,6 +372,11 @@
         tree_panel.getNodeById(<?= $album->id ?>).select();
         load_album_data(<?= $album->id ?>);
         first_organize_load = false;
+
+        // This is a hack that allows us to reload tree nodes asynchronously
+        // even though they came with preloaded hierarchical data from the
+        // initial tree load.  Without this, any nodes that were preloaded
+        // initially won't refresh if you call node.reload() on them.
         tree_loader.doPreload = function() { return false; }
       }
     });
