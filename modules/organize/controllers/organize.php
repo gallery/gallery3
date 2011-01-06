@@ -81,6 +81,12 @@ class Organize_Controller extends Controller {
       $source = ORM::factory("item", $source_id);
       access::required("edit", $source->parent());
 
+      if ($source->contains($new_parent) || $source->id == $new_parent->id) {
+        // Can't move an item into its own hierarchy.  Silently skip this,
+        // since the UI shouldn't even allow this operation.
+        continue;
+      }
+
       $source->parent_id = $new_parent->id;
       $source->save();
     }
