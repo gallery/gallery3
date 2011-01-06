@@ -73,6 +73,10 @@
   line-height: 20px;
 }
 
+.g-organize .x-tree-node-leaf .x-tree-node-icon{
+  background-image:url(../vendor/ext/images/default/tree/folder.gif);
+}
+
 .loading div {
   font-size: 1.1em;
   padding-left: 24px;

@@ -161,9 +161,9 @@ class Organize_Controller extends Controller {
         "allowDrag" => false,
         "allowDrop" => access::can("edit", $child),
         "editable" => false,
-        "expandable" => true,
+        "expandable" => false,
         "id" => $child->id,
-        "leaf" => false,
+        "leaf" => $child->children_count(array(array("type", "=", "album"))) == 0,
         "text" => $child->title,
         "nodeType" => "async");
 
