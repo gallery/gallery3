@@ -42,6 +42,18 @@
   visibility: visible;
 }
 
+.g-organize div.drag-ghost {
+  width: 300px;
+  height: 180px;
+}
+
+.g-organize div.drag-ghost div {
+  width: 72px;
+  height: 72px;
+  vertical-align: baseline;
+  float: left;
+}
+
 .g-organize div.drop-target {
   background: #eee;
 }

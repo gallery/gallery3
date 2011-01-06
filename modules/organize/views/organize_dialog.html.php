@@ -9,6 +9,7 @@
 </style>
 <script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-base.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-all.js") ?>"></script>
+<script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/DataView-more.js") ?>"></script>
 <script type="text/javascript">
   Ext.BLANK_IMAGE_URL = "<?= url::file("modules/organize/vendor/ext/images/default/s.gif") ?>";
   Ext.Ajax.timeout = 1000000;  // something really large
@@ -87,6 +88,9 @@
       autoScroll: true,
       enableDragDrop: true,
       itemSelector: "div.thumb",
+      plugins: [
+        new Ext.DataView.DragSelector({dragSafe: true})
+      ],
       listeners: {
         "render": function(v) {
           v.dragZone = new Ext.dd.DragZone(v.getEl(), {
@@ -106,15 +110,23 @@
                 if (selected_nodes.length == 1) {
                   drag_data.ddel = target;
                 } else {
-                  var div = document.createElement("div");
-                  div.className = "multi-proxy";
+                  var drag_ghost = document.createElement("div");
+                  drag_ghost.className = "drag-ghost";
                   for (var i = 0; i != selected_nodes.length; i++) {
-                    div.appendChild(Ext.get(selected_nodes[i]).dom.firstChild.cloneNode(true));
-                    if ((i + 1) % 3 == 0) {
-                      div.appendChild(document.createElement("br"));
-                    }
+                    var inner = document.createElement("div");
+                    drag_ghost.appendChild(inner);
+
+                    var img = Ext.get(selected_nodes[i]).dom.firstChild;
+                    var child = inner.appendChild(img.cloneNode(true));
+                    Ext.get(child).setWidth(Ext.fly(img).getWidth() / 2);
+                    Ext.get(child).setHeight(Ext.fly(img).getHeight() / 2);
                   }
-                  drag_data.ddel = div;
+                  // The contents of the ghost float, and the ghost is wide enough for
+                  // 4 images across so make sure that the ghost is tall enough.  Thumbnails
+                  // are max 120px high max, and ghost thumbs are half of that, but leave some
+                  // padding because IE is unpredictable.
+                  drag_ghost.style.height = Math.ceil(i/4) * 72 + "px";
+                  drag_data.ddel = drag_ghost;
                 }
                 return drag_data;
               }
