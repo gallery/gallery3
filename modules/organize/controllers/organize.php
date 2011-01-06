@@ -169,17 +169,13 @@ class Organize_Controller extends Controller {
         "editable" => false,
         "expandable" => false,
         "id" => $child->id,
+        "leaf" => $child->children_count(array(array("type", "=", "album"))) == 0,
         "text" => $child->title,
         "nodeType" => "async");
 
       // If the child is in the selected path, open it now.  Else, mark it async.
       if ($child->contains($selected)) {
         $node["children"] = $this->_get_tree($child, $selected);
-        $node["expanded"] = true;
-      }
-
-      if ($child->children_count(array(array("type", "=", "album"))) == 0) {
-        $node["children"] = array();
         $node["expanded"] = true;
       }
       $tree[] = $node;

@@ -345,6 +345,13 @@
             return returnCls;
           }
 
+          // Override Ext.tree.TreeDropZone.getDropPoint so that it allows dropping
+          // on any node.  The standard function won't let you drop on leaves, but
+          // in our model we consider an album without sub-albums a leaf.
+          v.dropZone.getDropPoint = function(e, n, dd) {
+            return "append";
+          }
+
           v.dropZone.onNodeDrop = function(target, dd, e, data) {
             var nodes = data.nodes;
             source_ids = [];
