@@ -44,7 +44,7 @@ class gallery_installer {
                 `expiration` int(9) NOT NULL,
                 `cache` longblob,
                 PRIMARY KEY (`id`),
-                KEY (`key`),
+                UNIQUE KEY (`key`),
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
@@ -84,7 +84,7 @@ class gallery_installer {
                  `album_cover_item_id` int(9) default NULL,
                  `captured` int(9) default NULL,
                  `created` int(9) default NULL,
-                 `description` varchar(2048) default NULL,
+                 `description` text default NULL,
                  `height` int(9) default NULL,
                  `left_ptr` int(9) NOT NULL,
                  `level` int(9) NOT NULL,
