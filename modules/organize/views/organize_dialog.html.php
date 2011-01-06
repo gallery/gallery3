@@ -316,9 +316,11 @@
           v.dropZone.onNodeDrop = function(target, dd, e, data) {
             var nodes = data.nodes;
             source_ids = [];
+            var moving_albums = 0;
             for (var i = 0; i != nodes.length; i++) {
               var node = Ext.fly(nodes[i]);
               source_ids.push(node.getAttribute("rel"));
+              moving_albums |= node.hasClass("thumb-album");
             }
             start_busy(<?= t("Moving...")->for_js() ?>);
             Ext.Ajax.request({
@@ -327,14 +329,18 @@
               success: function() {
                 stop_busy();
                 reload_album_data();
-                target.node.reload();
 
-                // If the target node contains the selected node, then the selected
-                // node just got strafed by the target's reload and no longer exists,
-                // so we can't reload it.
-                var selected_node = v.getNodeById(current_album_id);
-                if (selected_node) {
-                  selected_node.reload();
+                // If we're moving albums around then we need to refresh the tree when we're done
+                if (moving_albums) {
+                  target.node.reload();
+
+                  // If the target node contains the selected node, then the selected
+                  // node just got strafed by the target's reload and no longer exists,
+                  // so we can't reload it.
+                  var selected_node = v.getNodeById(current_album_id);
+                  if (selected_node) {
+                    selected_node.reload();
+                  }
                 }
               },
               failure: show_generic_error,
