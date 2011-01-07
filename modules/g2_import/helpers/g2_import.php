@@ -499,6 +499,9 @@ class g2_import_Core {
   static function set_album_highlight(&$queue) {
     // Dequeue the current album and enqueue its children
     list($g2_album_id, $children) = each($queue);
+    if (empty($children)) {
+      return;
+    }
     unset($queue[$g2_album_id]);
     foreach ($children as $key => $value) {
       $queue[$key] = $value;
