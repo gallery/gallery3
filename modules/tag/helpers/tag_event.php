@@ -148,12 +148,12 @@ class tag_event_Core {
     }
   }
 
-  static function info_block_metadata($block, $item) {
+  static function info_block_get_metadata($block, $item) {
     $tags = array();
     foreach (tag::item_tags($item) as $tag) {
-      $tags[] = "<a href=\"" . url::site("/tag/{$tag->name}") . "\">$tag->name</a>";
+      $tags[] = "<a href=\"" . url::site("tag/{$tag->name}") . "\">{$tag->name}</a>";
     }
-    if (count($tags)) {
+    if ($tags) {
       $info = $block->content->metadata;
       $info["tags"] = array(
          "label" => t("Tags:"),
