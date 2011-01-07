@@ -31,29 +31,31 @@ class info_block_Core {
         $block->css_id = "g-metadata";
         $block->title = $theme->item()->is_album() ? t("Album info") : t("Photo info");
         $block->content = new View("info_block.html");
-        $info["title"] = array(
-          "label" => t("Title:"),
-          "value" => html::purify($theme->item->title)
-        );
-        if ($theme->item->description) {
+        if ($theme->item->title && module::get_var("info", "show_title")) {
+          $info["title"] = array(
+            "label" => t("Title:"),
+            "value" => html::purify($theme->item->title)
+          );
+        }
+        if ($theme->item->description && module::get_var("info", "show_description")) {
           $info["description"] = array(
             "label" => t("Description:"),
             "value" => nl2br(html::purify($theme->item->description))
           );
         }
-        if (!$theme->item->is_album()) {
+        if (!$theme->item->is_album() && module::get_var("info", "show_name")) {
           $info["file_name"] = array(
             "label" => t("File name:"),
             "value" => html::clean($theme->item->name)
           );
         }
-        if ($theme->item->captured) {
+        if ($theme->item->captured && module::get_var("info", "show_captured")) {
           $info["captured"] = array(
             "label" => t("Captured:"),
             "value" => gallery::date_time($theme->item->captured)
           );
         }
-        if ($theme->item->owner) {
+        if ($theme->item->owner && module::get_var("info", "show_owner")) {
           $display_name = $theme->item->owner->display_name();
           if ($theme->item->owner->url) {
             $info["owner"] = array(
