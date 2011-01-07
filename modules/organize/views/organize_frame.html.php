@@ -224,7 +224,7 @@
       allowBlank: false,
       forceSelection: true,
       triggerAction: "all",
-      flex: 2,
+      flex: 3,
       store: new Ext.data.ArrayStore({
         id: 0,
         fields: ["key", "value"],
