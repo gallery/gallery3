@@ -7,9 +7,7 @@
     background-image: url(<?= url::file("modules/organize/vendor/ext/images/default/tree/folder.gif") ?>);
   }
 </style>
-<script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-base.js") ?>"></script>
-<script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-all.js") ?>"></script>
-<script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/DataView-more.js") ?>"></script>
+<script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-organize-bundle.js") ?>"></script>
 <script type="text/javascript">
   Ext.BLANK_IMAGE_URL = "<?= url::file("modules/organize/vendor/ext/images/default/s.gif") ?>";
   Ext.Ajax.timeout = 1000000;  // something really large
