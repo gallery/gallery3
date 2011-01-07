@@ -4,11 +4,9 @@
 
 .g-organize div.thumb {
   padding: 8px;
-  margin: 8px;
-  width: 144px;
-  height: 149px;
+  width: 128px;
+  height: 128px;
   vertical-align: middle;
-  text-align: center;
   float: left;
 }
 
@@ -16,14 +14,13 @@
   background: #C9D8EB;
 }
 
-.g-organize div.thumb img {
+.g-organize div.thumb {
   border: 4px solid white;
-  margin: 0px;
 }
 
 .g-organize div.thumb:hover {
   border: 2px solid #eee;
-  margin: 6px;
+  margin: 2px;
   cursor: pointer;
 }
 
@@ -61,12 +58,10 @@
 
 .g-organize div.active-left {
   border-left: 4px solid #C9D8EB;
-  margin-left: 4px;
 }
 
 .g-organize div.active-right {
   border-right: 4px solid #C9D8EB;
-  margin-right: 4px;
 }
 
 .g-organize label.sort {
@@ -85,6 +80,12 @@
   background-image: url(../vendor/ext/images/default/tree/loading.gif);
   background-position: 4px 8px;
   background-repeat: no-repeat;
+}
+
+/* IE specific overrides */
+body.ext-ie div.thumb {
+  width: 150px;
+  height: 150px;
 }
 
 /* ExtJS overrides */
