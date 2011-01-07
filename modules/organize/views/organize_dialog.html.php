@@ -1,11 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<style>
-  #g-organize-frame {
-    border: 0px;
-    width: 100%;
-    height: 100%;
-  }
-</style>
+<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize_dialog.css") ?>" />
 <script type="text/javascript">
   var ORGANIZE_TITLE =
     <?= t("Organize :: %album_title", array("album_title" => "__TITLE__"))->for_js() ?>;
@@ -18,6 +12,12 @@
     $("#g-dialog").dialog("option", "title", ORGANIZE_TITLE.replace("__TITLE__", title));
   }
   set_title("<?= $album->title ?>");
+
+  var done_loading = function() {
+    $("#g-organize-app-loading").hide();
+  }
 </script>
+<div id="g-organize-app-loading">&nbsp;</div>
 <iframe id="g-organize-frame" src="<?= url::site("organize/frame/{$album->id}") ?>">
 </iframe>
+

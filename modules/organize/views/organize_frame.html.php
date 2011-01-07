@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/vendor/ext/css/ext-all.css") ?>" />
 <link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/vendor/ext/css/ux-all.css") ?>" />
-<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize_frame.css") ?>" />
 <style type="text/css">
   .g-organize div.thumb-album div.icon {
     background-image: url(<?= url::file("modules/organize/vendor/ext/images/default/tree/folder.gif") ?>);
@@ -26,6 +26,11 @@
       thumb_data_view.el.unmask();
     }
 
+    // Notify the parent dialog that the ExtJS app is loaded
+    if (parent.done_loading) {
+      parent.done_loading();
+    }
+
     var show_generic_error = function() {
       stop_busy();
       Ext.Msg.alert(
@@ -34,7 +39,11 @@
 
     var current_album_id = null;
     var load_album_data = function(id) {
-      start_busy(<?= t("Loading...")->for_js() ?>);
+      if (current_album_id) {
+        // Don't show the loading message on the initial load, it
+        // feels a little jarring.
+        start_busy(<?= t("Loading...")->for_js() ?>);
+      }
       Ext.Ajax.request({
         url: '<?= url::site("organize/album_info/__ID__") ?>'.replace("__ID__", id),
         success: function(xhr, opts) {
