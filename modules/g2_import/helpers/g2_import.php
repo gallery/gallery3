@@ -1155,7 +1155,7 @@ class g2_import_Core {
       "SELECT [GalleryComment::id] " .
       "FROM [GalleryComment] " .
       "WHERE [GalleryComment::publishStatus] = 0 " . // 0 == COMMENT_PUBLISH_STATUS_PUBLISHED
-      "AND [GalleryComment::id] > ?" .
+      "AND [GalleryComment::id] > ? " .
       "ORDER BY [GalleryComment::id] ASC",
       array($min_id),
       array("limit" => array("count" => 100))));
@@ -1175,7 +1175,7 @@ class g2_import_Core {
     $ids = array();
     $results = g2($gallery->search(
       "SELECT DISTINCT([TagItemMap::itemId]) FROM [TagItemMap] " .
-      "WHERE [TagItemMap::itemId] > ?" .
+      "WHERE [TagItemMap::itemId] > ? " .
       "ORDER BY [TagItemMap::itemId] ASC",
       array($min_id),
       array("limit" => array("count" => 100))));
@@ -1196,7 +1196,7 @@ class g2_import_Core {
     $results = g2($gallery->search(
       "SELECT [GalleryUser::id] " .
       "FROM [GalleryUser] " .
-      "WHERE [GalleryUser::id] > ?" .
+      "WHERE [GalleryUser::id] > ? " .
       "ORDER BY [GalleryUser::id] ASC",
       array($min_id),
       array("limit" => array("count" => 100))));
@@ -1217,7 +1217,7 @@ class g2_import_Core {
     $results = g2($gallery->search(
       "SELECT [GalleryGroup::id] " .
       "FROM [GalleryGroup] " .
-      "WHERE [GalleryGroup::id] > ?" .
+      "WHERE [GalleryGroup::id] > ? " .
       "ORDER BY [GalleryGroup::id] ASC",
       array($min_id),
       array("limit" => array("count" => 100))));
