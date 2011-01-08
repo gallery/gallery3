@@ -156,11 +156,10 @@ class tag_event_Core {
     if ($tags) {
       $info = $block->content->metadata;
       $info["tags"] = array(
-         "label" => t("Tags:"),
-         "value" => implode(", ", $tags)
+        "label" => t("Tags:"),
+        "value" => implode(", ", $tags)
       );
       $block->content->metadata = $info;
     }
   }
-  
 }

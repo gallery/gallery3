@@ -60,7 +60,8 @@ class info_block_Core {
           if ($theme->item->owner->url) {
             $info["owner"] = array(
               "label" => t("Owner:"),
-              "value" => "<a href=\"{$theme->item->owner->url}\">" . html::clean($display_name) . "</a>"
+              "value" => "<a href=\"{$theme->item->owner->url}\">" .
+                         html::clean($display_name) . "</a>"
             );
           } else {
             $info["owner"] = array(
