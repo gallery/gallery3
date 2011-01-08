@@ -325,7 +325,7 @@ class graphics_Core {
           "graphicsmagick" => array(
               "name" => "GraphicsMagick", "binary" => "gm", "version" => "gm version"));
       // Loop through the kits
-      foreach ( $magick_kits as $index => $settings ) {
+      foreach ($magick_kits as $index => $settings) {
         $path = exec("which " . $settings["binary"]);
         $toolkits->$index->name = $settings["name"];
         if ($path) {
