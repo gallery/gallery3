@@ -147,4 +147,20 @@ class tag_event_Core {
       }
     }
   }
+
+  static function info_block_get_metadata($block, $item) {
+    $tags = array();
+    foreach (tag::item_tags($item) as $tag) {
+      $tags[] = "<a href=\"" . url::site("tag/{$tag->name}") . "\">{$tag->name}</a>";
+    }
+    if ($tags) {
+      $info = $block->content->metadata;
+      $info["tags"] = array(
+         "label" => t("Tags:"),
+         "value" => implode(", ", $tags)
+      );
+      $block->content->metadata = $info;
+    }
+  }
+  
 }
