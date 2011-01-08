@@ -51,22 +51,4 @@ class organize_event_Core {
       }
     }
   }
-
-  static function pre_deactivate($data) {
-    if ($data->module == "rest") {
-      $data->messages["warn"][] = t("The Organize module requires the Rest module.");
-    }
-  }
-
-  static function module_change($changes) {
-    if (!module::is_active("rest") || in_array("rest", $changes->deactivate)) {
-      site_status::warning(
-        t("The Organize module requires the Rest module.  <a href=\"%url\">Activate the Rest module now</a>",
-          array("url" => html::mark_clean(url::site("admin/modules")))),
-        "organize_needs_rest");
-    } else {
-      site_status::clear("organize_needs_rest");
-    }
-  }
-
 }
