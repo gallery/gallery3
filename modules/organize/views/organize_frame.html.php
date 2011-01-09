@@ -283,13 +283,20 @@
       },
       items: [
         {
-          xtype: "label",
-          cls: "sort",
-          flex: 2,
-          text: <?= t("Sort order: ")->for_js() ?>
+          xtype: "panel",
+          layout: "hbox",
+          width: 300,
+          items: [
+            {
+              xtype: "label",
+              cls: "sort",
+              flex: 2,
+              text: <?= t("Sort order: ")->for_js() ?>
+            },
+            sort_column_combobox,
+            sort_order_combobox
+          ]
         },
-        sort_column_combobox,
-        sort_order_combobox,
         {
           xtype: "spacer",
           flex: 10
