@@ -153,8 +153,15 @@ class gallery_Core {
     if (is_string($file_name)) {
       // make relative to DOCROOT
       $parts = explode("/", $file_name);
+      $count = count($parts);
       foreach ($parts as $idx => $part) {
-        if (in_array($part, array("application", "modules", "themes", "lib"))) {
+        // If this part is "modules" or "themes" make sure that the part 2 after this
+        // is the target directory, and if it is then we're done.  This check makes
+        // sure that if Gallery is installed in a directory called "modules" or "themes"
+        // We don't parse the directory structure incorrectly.
+        if (in_array($part, array("modules", "themes")) &&
+            $idx + 2 < $count &&
+            $parts[$idx + 2] == $directory) {
           break;
         }
         unset($parts[$idx]);
