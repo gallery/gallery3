@@ -65,6 +65,9 @@
           } else {
             thumb_data_view.dragZone.lock();
           }
+          if (parent.set_title) {
+            parent.set_title(album_info.title);
+          }
         },
         failure: show_generic_error
       });
