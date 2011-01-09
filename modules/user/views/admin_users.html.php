@@ -88,7 +88,7 @@
               <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>
             </td>
             <td>
-              <?= db::build()->from("items")->where("owner_id", "=", $user->id)->count_records() ?>
+              <?= $user->item_count ?>
             </td>
             <td>
               <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
@@ -108,6 +108,35 @@
           </tr>
           <? endforeach ?>
         </table>
+
+        <div class="g-right">
+          <? if (isset($previous_page_url)): ?>
+            <a href="<?= $previous_page_url ?>"
+                class="g-button ui-icon-left ui-state-default ui-corner-all"
+                title="<?= t("Previous page")->for_html_attr() ?>">
+          <? else: ?>
+            <a class="g-button ui-icon-left ui-state-disabled ui-corner-all"
+                title="<?= t("Previous page")->for_html_attr() ?>">
+          <? endif ?>
+            <span class="ui-icon ui-icon-circle-plus"></span>
+            <?= t("Previous") ?>
+          </a>
+
+          <?= t("Page %current of %total", array("current"=>$page, "total"=>$max_pages)) ?>
+
+          <? if (isset($next_page_url)): ?>
+            <a href="<?= $next_page_url ?>"
+                class="g-button ui-icon-left ui-state-default ui-corner-all"
+                title="<?= t("Next page")->for_html_attr() ?>">
+          <? else: ?>
+            <a class="g-button ui-icon-left ui-state-disabled ui-corner-all"
+                title="<?= t("Next page")->for_html_attr() ?>">
+          <? endif ?>
+            <span class="ui-icon ui-icon-circle-plus"></span>
+            <?= t("Next") ?>
+          </a>
+        </div>
+
       </div>
     </div>
 
