@@ -168,7 +168,7 @@ class module_Core {
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     } else {
-      module::set_version($module_name, 1);
+      module::set_version($module_name, module::available()->$module_name->code_version);
     }
 
     // Set the weight of the new module, which controls the order in which the modules are
