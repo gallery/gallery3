@@ -11,6 +11,13 @@
 <script type="text/javascript">
   Ext.BLANK_IMAGE_URL = "<?= url::file("modules/organize/vendor/ext/images/default/s.gif") ?>";
   Ext.Ajax.timeout = 1000000;  // something really large
+  // I18N for dialog boxes.
+  Ext.Msg.buttonText = {
+    ok: <?= t("OK")->for_js() ?>,
+    cancel: <?= t("Cancel")->for_js() ?>,
+    yes: <?= t("Yes")->for_js() ?>,
+    no: <?= t("No")->for_js() ?>
+  };
 
   Ext.onReady(function() {
     /*
@@ -93,6 +100,29 @@
         params: params
       });
     }
+
+    var delete_items = function() {
+      var nodes = thumb_data_view.getSelectedNodes();
+      item_ids = [];
+      for (var i = 0; i != nodes.length; i++) {
+        var node = Ext.fly(nodes[i]);
+        item_ids.push(node.getAttribute("rel"));
+      }
+      start_busy(<?= t("Deleting...")->for_js() ?>);
+      Ext.Ajax.request({
+        url: '<?= url::site("organize/delete") ?>',
+        method: "post",
+        success: function() {
+          stop_busy();
+          reload_album_data();
+        },
+        failure: show_generic_error,
+        params: {
+          item_ids: item_ids.join(","),
+          csrf: '<?= access::csrf_token() ?>'
+        }
+      });
+    };
 
     /*
      * ********************************************************************************
@@ -222,7 +252,7 @@
 
     /*
      * ********************************************************************************
-     * Toolbar with sort column, sort order and a close button.
+     * Toolbar with sort column, sort order, delete and close buttons.
      * ********************************************************************************
      */
 
@@ -296,10 +326,27 @@
             sort_column_combobox,
             sort_order_combobox
           ]
-        },
-        {
+        }, {
           xtype: "spacer",
           flex: 10
+        }, {
+          xtype: "button",
+          flex: 2,
+          text: <?= t("Delete")->for_js() ?>,
+          listeners: {
+            "click": function() {
+              Ext.Msg.show({
+                title: <?= t("Are you sure you want to delete the selected items?")->for_js() ?>,
+                buttons: Ext.Msg.YESNO,
+                fn: function(buttonId) {
+                  if (buttonId == "yes") {
+                    delete_items();
+                  }
+                }
+              });
+              return true;
+            }
+          }
         }, {
           xtype: "button",
           flex: 2,
