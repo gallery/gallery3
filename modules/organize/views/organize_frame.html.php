@@ -101,7 +101,7 @@
       });
     }
 
-    var delete_items = function() {
+    var delete_selected_items = function() {
       var nodes = thumb_data_view.getSelectedNodes();
       item_ids = [];
       for (var i = 0; i != nodes.length; i++) {
@@ -348,7 +348,7 @@
                 buttons: Ext.Msg.YESNO,
                 fn: function(buttonId) {
                   if (buttonId == "yes") {
-                    delete_items();
+                    delete_selected_items();
                   }
                 }
               });
