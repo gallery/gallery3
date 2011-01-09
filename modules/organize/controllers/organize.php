@@ -159,6 +159,21 @@ class Organize_Controller extends Controller {
     json::reply(null);
   }
 
+  function delete() {
+    access::verify_csrf();
+
+    $input = Input::instance();
+
+    foreach (explode(",", $input->post("item_ids")) as $item_id) {
+      $item = ORM::factory("item", $item_id);
+      if (access::can("edit", $item)) {
+        $item->delete();
+      }
+    }
+
+    json::reply(null);
+  }
+
   private function _get_tree($item, $selected) {
     $tree = array();
     $children = $item->viewable()
