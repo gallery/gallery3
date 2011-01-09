@@ -56,6 +56,7 @@ class Organize_Controller extends Controller {
       "sort_column" => $album->sort_column,
       "sort_order" => $album->sort_order,
       "editable" => access::can("edit", $album),
+      "title" => $album->title,
       "children" => array());
 
     foreach ($album->viewable()->children() as $child) {
