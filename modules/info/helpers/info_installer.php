@@ -17,33 +17,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class organize_installer {
-  static function deactivate() {
-    site_status::clear("organize_needs_rest");
-  }
+class info_installer {
 
   static function install() {
-    module::set_version("organize", $version = 2);
+    module::set_var("info", "show_title", 1);
+    module::set_var("info", "show_description", 1);
+    module::set_var("info", "show_owner", 1);
+    module::set_var("info", "show_name", 1);
+    module::set_var("info", "show_captured", 1);
+    module::set_version("info", 2);
   }
 
   static function upgrade($version) {
     if ($version == 1) {
-      if (!module::is_active("rest")) {
-        site_status::warning(
-          t("The Organize module requires the Rest module.  <a href=\"%url\">Activate the Rest module now</a>",
-            array("url" => html::mark_clean(url::site("admin/modules")))),
-          "organize_needs_rest");
-      }
-
-      module::set_version("organize", $version = 2);
+      module::set_var("info", "show_title", 1);
+      module::set_var("info", "show_description", 1);
+      module::set_var("info", "show_owner", 1);
+      module::set_var("info", "show_name", 1);
+      module::set_var("info", "show_captured", 1);
+      module::set_version("info", $version = 2);
     }
-  }
-
-  static function can_activate() {
-    $messages = array();
-    if (!module::is_active("rest")) {
-      $messages["warn"][] = t("The Organize module requires the Rest module.");
-    }
-    return $messages;
   }
 }

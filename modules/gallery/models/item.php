@@ -653,13 +653,17 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Calculate the largest width/height that fits inside the given maximum, while preserving the
-   * aspect ratio.
+   * aspect ratio.  Don't upscale.
    * @param int $max Maximum size of the largest dimension
    * @return array
    */
   public function scale_dimensions($max) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
+
+    if ($width <= $max && $height <= $max) {
+        return array($height, $width);
+    }
 
     if ($height) {
       if (isset($max)) {
@@ -1076,6 +1080,16 @@ class Item_Model_Core extends ORM_MPTT {
       unset($data[$key]);
     }
     return $data;
+  }
+
+  /**
+   * Increments the view counter of this item
+   * We can't use math in ORM or the query builder, so do this by hand.  It's important
+   * that we do this with math, otherwise concurrent accesses will damage accuracy.
+   */
+  public function increment_view_count() {
+    db::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $this->id")
+      ->execute();
   }
 
   private function _cache_buster($path) {

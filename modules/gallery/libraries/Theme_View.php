@@ -37,11 +37,11 @@ class Theme_View_Core extends Gallery_View {
     }
     $this->item = null;
     $this->tag = null;
-    $this->set_global("theme", $this);
-    $this->set_global("user", identity::active_user());
-    $this->set_global("page_type", $page_type);
-    $this->set_global("page_subtype", $page_subtype);
-    $this->set_global("page_title", null);
+    $this->set_global(array("theme" => $this,
+                            "user" => identity::active_user(),
+                            "page_type" => $page_type,
+                            "page_subtype" => $page_subtype,
+                            "page_title" => null));
     if ($page_type == "collection") {
       $this->set_global("thumb_proportion", $this->thumb_proportion());
     }

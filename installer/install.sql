@@ -43,7 +43,7 @@ CREATE TABLE {caches} (
   `expiration` int(9) NOT NULL,
   `cache` longblob,
   PRIMARY KEY (`id`),
-  KEY `key` (`key`),
+  UNIQUE KEY `key` (`key`),
   KEY `tags` (`tags`)
 ) DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -152,7 +152,7 @@ CREATE TABLE {items} (
   `album_cover_item_id` int(9) DEFAULT NULL,
   `captured` int(9) DEFAULT NULL,
   `created` int(9) DEFAULT NULL,
-  `description` varchar(2048) DEFAULT NULL,
+  `description` text,
   `height` int(9) DEFAULT NULL,
   `left_ptr` int(9) NOT NULL,
   `level` int(9) NOT NULL,
@@ -242,18 +242,17 @@ CREATE TABLE {modules} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `weight` (`weight`)
-) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',42,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',43,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
-INSERT INTO {modules} VALUES (4,1,'organize',2,4);
-INSERT INTO {modules} VALUES (5,1,'info',1,5);
-INSERT INTO {modules} VALUES (6,1,'rest',3,6);
-INSERT INTO {modules} VALUES (7,1,'rss',1,7);
-INSERT INTO {modules} VALUES (8,1,'search',1,8);
-INSERT INTO {modules} VALUES (9,1,'slideshow',2,9);
-INSERT INTO {modules} VALUES (10,1,'tag',2,10);
+INSERT INTO {modules} VALUES (4,1,'organize',3,4);
+INSERT INTO {modules} VALUES (5,1,'info',2,5);
+INSERT INTO {modules} VALUES (6,1,'rss',1,6);
+INSERT INTO {modules} VALUES (7,1,'search',1,7);
+INSERT INTO {modules} VALUES (8,1,'slideshow',2,8);
+INSERT INTO {modules} VALUES (9,1,'tag',2,9);
 DROP TABLE IF EXISTS {outgoing_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -350,18 +349,6 @@ CREATE TABLE {themes} (
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {themes} VALUES (1,'wind',1);
 INSERT INTO {themes} VALUES (2,'admin_wind',1);
-DROP TABLE IF EXISTS {user_access_keys};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE {user_access_keys} (
-  `id` int(9) NOT NULL AUTO_INCREMENT,
-  `user_id` int(9) NOT NULL,
-  `access_key` char(32) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `access_key` (`access_key`),
-  UNIQUE KEY `user_id` (`user_id`)
-) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS {users};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -395,7 +382,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -429,5 +416,9 @@ INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','mininum_password_length','5');
 INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
 INSERT INTO {vars} VALUES (NULL,'comment','access_permissions','everybody');
-INSERT INTO {vars} VALUES (NULL,'rest','allow_guest_access','0');
+INSERT INTO {vars} VALUES (NULL,'info','show_title','1');
+INSERT INTO {vars} VALUES (NULL,'info','show_description','1');
+INSERT INTO {vars} VALUES (NULL,'info','show_owner','1');
+INSERT INTO {vars} VALUES (NULL,'info','show_name','1');
+INSERT INTO {vars} VALUES (NULL,'info','show_captured','1');
 INSERT INTO {vars} VALUES (NULL,'slideshow','max_scale','0');

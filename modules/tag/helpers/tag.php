@@ -36,11 +36,9 @@ class tag_Core {
     $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       $tag->name = $tag_name;
-      $tag->count = 0;
     }
 
     $tag->add($item);
-    $tag->count++;
     return $tag->save();
   }
 

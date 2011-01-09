@@ -34,11 +34,11 @@ class Admin_View_Core extends Gallery_View {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
     $this->sidebar = "";
-    $this->set_global("theme", $this);
-    $this->set_global("user", identity::active_user());
-    $this->set_global("page_type", "admin");
-    $this->set_global("page_subtype", $name);
-    $this->set_global("page_title", null);
+    $this->set_global(array("theme" => $this,
+                            "user" => identity::active_user(),
+                            "page_type" => "admin",
+                            "page_subtype" => $name,
+                            "page_title" => null));
   }
 
   public function admin_menu() {
