@@ -178,10 +178,6 @@ class gallery_event_Core {
     }
     Session::instance()->set("active_auth_timestamp", time());
     auth::clear_failed_attempts($user);
-
-    if ($user->admin && ini_get("session.use_trans_sid")) {
-      message::info(t("PHP is configured with <a href=\"url\">session.use_trans_sid</a> enabled which will cause random logouts.  Please disable this setting.", array("url" => "http://www.php.net/manual/en/session.configuration.php#ini.session.use-trans-sid")));
-    }
   }
 
   static function user_auth_failed($name) {
