@@ -342,12 +342,14 @@ class graphics_Core {
           } else {
             $toolkits->$index->installed = false;
             $toolkits->$index->error =
-              t($settings["name"] . " is installed, but PHP's open_basedir restriction prevents Gallery from using it.");
+              t("%toolkit_name is installed, but PHP's open_basedir restriction prevents Gallery from using it.",
+                array("toolkit_name" => $settings["name"]));
           }
         } else {
           $toolkits->$index->installed = false;
           $toolkits->$index->error =
-            t("We could not locate " . $settings["name"] . " on your system.");
+            t("We could not locate %toolkit_name on your system.",
+              array("toolkit_name" => $settings["name"]));
         }
       }
     }
