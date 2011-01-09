@@ -26,6 +26,11 @@ if (version_compare(PHP_VERSION, "5.2.3", "<")) {
   exit;
 }
 
+// Turn off session.use_trans_sid -- that feature attempts to inject session ids
+// into generated URLs and forms, but it doesn't interoperate will with Gallery's
+// Ajax code.
+ini_set("session.use_trans_sid", false);
+
 require(DOCROOT . "installer/installer.php");
 if (PHP_SAPI == "cli") {
   include("cli.php");

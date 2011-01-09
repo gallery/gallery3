@@ -35,6 +35,11 @@ error_reporting(0);
 // and logging. You can turn off Kohana errors in application/config/config.php
 ini_set("display_errors", false);
 
+// Turn off session.use_trans_sid -- that feature attempts to inject session ids
+// into generated URLs and forms, but it doesn't interoperate will with Gallery's
+// Ajax code.
+ini_set("session.use_trans_sid", false);
+
 define("EXT", ".php");
 define("DOCROOT", getcwd() . "/");
 define("KOHANA",  "index.php");
