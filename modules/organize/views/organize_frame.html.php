@@ -45,6 +45,7 @@
     }
 
     var current_album_id = null;
+    var current_album_editable = null;
     var load_album_data = function(id) {
       if (current_album_id) {
         // Don't show the loading message on the initial load, it
@@ -67,7 +68,9 @@
           thumb_data_view.bindStore(store);
           sort_column_combobox.setValue(album_info.sort_column);
           sort_order_combobox.setValue(album_info.sort_order);
-          if (album_info.editable) {
+
+          current_album_editable = album_info.editable;
+          if (current_album_editable) {
             thumb_data_view.dragZone.unlock();
           } else {
             thumb_data_view.dragZone.lock();
@@ -237,6 +240,9 @@
               return true;
             }
           });
+        },
+        "selectionchange": function(v, selections) {
+          delete_button.setDisabled(!selections.length || !current_album_editable);
         }
       },
       multiSelect: true,
@@ -312,6 +318,29 @@
       displayField: "value"
     });
 
+    var delete_button = new Ext.Button({
+      flex: 2,
+      text: <?= t("Delete")->for_js() ?>,
+      cls: "x-btn-text-icon",
+      iconCls: "delete",
+      id: "delete-button",
+      disabled: true,
+      listeners: {
+        "click": function() {
+          Ext.Msg.show({
+            title: <?= t("Are you sure you want to delete the selected items?")->for_js() ?>,
+            buttons: Ext.Msg.YESNO,
+            fn: function(buttonId) {
+              if (buttonId == "yes") {
+                delete_selected_items();
+              }
+            }
+          });
+          return true;
+        }
+      }
+    });
+
     var button_panel = new Ext.Panel({
       layout: "hbox",
       region: "south",
@@ -337,25 +366,9 @@
         }, {
           xtype: "spacer",
           flex: 10
-        }, {
-          xtype: "button",
-          flex: 2,
-          text: <?= t("Delete")->for_js() ?>,
-          listeners: {
-            "click": function() {
-              Ext.Msg.show({
-                title: <?= t("Are you sure you want to delete the selected items?")->for_js() ?>,
-                buttons: Ext.Msg.YESNO,
-                fn: function(buttonId) {
-                  if (buttonId == "yes") {
-                    delete_selected_items();
-                  }
-                }
-              });
-              return true;
-            }
-          }
-        }, {
+        },
+        delete_button,
+        {
           xtype: "button",
           flex: 2,
           text: <?= t("Close")->for_js() ?>,

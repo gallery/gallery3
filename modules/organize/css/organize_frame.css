@@ -95,6 +95,12 @@
   background-repeat: no-repeat;
 }
 
+button.delete {
+  background-image: url(../vendor/ext/images/fam/delete.gif);
+  background-position: 10px 8px;
+  background-repeat: no-repeat;
+}
+
 /* IE specific overrides */
 body.ext-ie div.thumb {
   width: 150px;
