@@ -63,7 +63,7 @@ class Organize_Controller extends Controller {
       $dims = $child->scale_dimensions(120);
       $data["children"][] = array(
         "id" => $child->id,
-        "thumb_url" => $child->thumb_url(),
+        "thumb_url" => $child->has_thumb() ? $child->thumb_url() : null,
         "width" => $dims[1],
         "height" => $dims[0],
         "type" => $child->type,
