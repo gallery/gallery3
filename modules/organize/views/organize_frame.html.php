@@ -243,10 +243,18 @@
       selectedClass: "selected",
       tpl: new Ext.XTemplate(
         '<tpl for=".">',
+        '<tpl if="thumb_url">',
         '<div class="thumb thumb-{type}" id="thumb-{id}" rel="{id}">',
         '<img src="{thumb_url}" width="{width}" height="{height}" title="{title}">',
         '<div class="icon"></div>',
         '</div>',
+        '</tpl>',
+        '<tpl if="!thumb_url">',
+        '<div class="thumb thumb-missing thumb-{type}" id="thumb-{id}" rel="{id}">',
+        '<span>' + <?= t("No thumbnail")->for_js() ?> + '</span>',
+        '<div class="icon"></div>',
+        '</div>',
+        '</tpl>',
         '</tpl>')
     });
 
