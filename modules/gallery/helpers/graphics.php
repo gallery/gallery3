@@ -318,55 +318,39 @@ class graphics_Core {
               getenv("PATH"),
               module::get_var("gallery", "extra_binary_paths")));
 
-      // @todo: consider refactoring the two segments below into a loop since they are so
-      // similar.
+      // ImageMagick & GraphicsMagick
+      $magick_kits = array(
+          "imagemagick" => array(
+              "name" => "ImageMagick", "binary" => "convert", "version" => "convert -v"),
+          "graphicsmagick" => array(
+              "name" => "GraphicsMagick", "binary" => "gm", "version" => "gm version"));
+      // Loop through the kits
+      foreach ($magick_kits as $index => $settings) {
+        $path = exec("which " . $settings["binary"]);
+        $toolkits->$index->name = $settings["name"];
+        if ($path) {
+          if (@is_file($path)) {
+            preg_match('/Version: \S+ (\S+)/', shell_exec($settings["version"]), $matches);
+            $version = $matches[1];
 
-      // ImageMagick
-      $path = exec("which convert");
-      $toolkits->imagemagick->name = "ImageMagick";
-      if ($path) {
-        if (@is_file($path)) {
-          preg_match('/Version: \S+ (\S+)/', `convert -v`, $matches);
-          $version = $matches[1];
-
-          $toolkits->imagemagick->installed = true;
-          $toolkits->imagemagick->version = $version;
-          $toolkits->imagemagick->binary = $path;
-          $toolkits->imagemagick->dir = dirname($path);
-          $toolkits->imagemagick->rotate = true;
-          $toolkits->imagemagick->sharpen = true;
+            $toolkits->$index->installed = true;
+            $toolkits->$index->version = $version;
+            $toolkits->$index->binary = $path;
+            $toolkits->$index->dir = dirname($path);
+            $toolkits->$index->rotate = true;
+            $toolkits->$index->sharpen = true;
+          } else {
+            $toolkits->$index->installed = false;
+            $toolkits->$index->error =
+              t("%toolkit_name is installed, but PHP's open_basedir restriction prevents Gallery from using it.",
+                array("toolkit_name" => $settings["name"]));
+          }
         } else {
-          $toolkits->imagemagick->installed = false;
-          $toolkits->imagemagick->error =
-            t("ImageMagick is installed, but PHP's open_basedir restriction prevents Gallery from using it.");
+          $toolkits->$index->installed = false;
+          $toolkits->$index->error =
+            t("We could not locate %toolkit_name on your system.",
+              array("toolkit_name" => $settings["name"]));
         }
-      } else {
-        $toolkits->imagemagick->installed = false;
-        $toolkits->imagemagick->error = t("We could not locate ImageMagick on your system.");
-      }
-
-      // GraphicsMagick
-      $path = exec("which gm");
-      $toolkits->graphicsmagick->name = "GraphicsMagick";
-      if ($path) {
-        if (@is_file($path)) {
-          preg_match('/\S+ (\S+)/', `gm version`, $matches);
-          $version = $matches[1];
-
-          $toolkits->graphicsmagick->installed = true;
-          $toolkits->graphicsmagick->version = $version;
-          $toolkits->graphicsmagick->binary = $path;
-          $toolkits->graphicsmagick->dir = dirname($path);
-          $toolkits->graphicsmagick->rotate = true;
-          $toolkits->graphicsmagick->sharpen = true;
-        } else {
-          $toolkits->graphicsmagick->installed = false;
-          $toolkits->graphicsmagick->error =
-            t("GraphicsMagick is installed, but PHP's open_basedir restriction prevents Gallery from using it.");
-        }
-      } else {
-        $toolkits->graphicsmagick->installed = false;
-        $toolkits->graphicsmagick->error = t("We could not locate GraphicsMagick on your system.");
       }
     }
 
