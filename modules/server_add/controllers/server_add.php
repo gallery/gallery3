@@ -156,7 +156,7 @@ class Server_Add_Controller extends Admin_Controller {
           $entry_id = null;
         }
 
-        $file = preg_quote($file);
+        $file = preg_replace("/(\*|\?|\[)/", "[$1]", $file);
         foreach (glob("$file/*") as $child) {
           if (is_dir($child)) {
             $queue[] = array($child, $entry_id);
