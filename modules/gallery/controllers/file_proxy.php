@@ -27,6 +27,7 @@
  * input is sanitized against the database before we perform any file I/O.
  */
 class File_Proxy_Controller extends Controller {
+  const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
     // request_uri: gallery3/var/trunk/albums/foo/bar.jpg
     $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
