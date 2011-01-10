@@ -167,8 +167,11 @@ class Server_Add_Controller extends Admin_Controller {
             $entry->delete();
           }
 
-          $path = preg_replace("/(\*|\?|\[)/", "[$1]", $entry->path);
-          foreach (glob("$path/*") as $child_path) {
+          $child_paths = glob(preg_quote($entry->path) . "/*");
+          if (!$child_paths) {
+            $child_paths = glob("$path/*");
+          }
+          foreach ($child_paths as $child_path) {
             if (!is_dir($child_path)) {
               $ext = strtolower(pathinfo($child_path, PATHINFO_EXTENSION));
               if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4", "m4v")) ||
@@ -189,8 +192,8 @@ class Server_Add_Controller extends Admin_Controller {
           // We've processed this entry, mark it as done.
           $entry->checked = 1;
           $entry->save();
+          $dirs_scanned++;
         }
-        $dirs_scanned++;
       }
 
       // We have no idea how long this can take because we have no idea how deep the tree
