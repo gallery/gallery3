@@ -313,11 +313,6 @@ class graphics_Core {
       $toolkits->graphicsmagick->installed = false;
       $toolkits->graphicsmagick->error = t("GraphicsMagick requires the <b>exec</b> function");
     } else {
-      gallery::set_path_env(
-        array(module::get_var("gallery", "graphics_toolkit_path"),
-              getenv("PATH"),
-              module::get_var("gallery", "extra_binary_paths")));
-
       // ImageMagick & GraphicsMagick
       $magick_kits = array(
           "imagemagick" => array(
@@ -328,7 +323,8 @@ class graphics_Core {
             "version_regex" => "/\S+ (\S+)/"));
       // Loop through the kits
       foreach ($magick_kits as $index => $settings) {
-        $path = exec("which " . $settings["binary"]);
+        $path = system::find_binary(
+          $settings["binary"], module::get_var("gallery", "graphics_toolkit_path"));
         $toolkits->$index->name = $settings["name"];
         if ($path) {
           if (@is_file($path) &&
