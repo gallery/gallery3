@@ -51,8 +51,7 @@ class Admin_Users_Controller extends Admin_Controller {
     if ($page < $max_pages) {
       $view->content->next_page_url = url::site(url::merge(array("page" => $page + 1)));
     }
-    if ( $page > 1 )
-    {
+    if ($page > 1) {
       $view->content->previous_page_url = url::site(url::merge(array("page" => $page - 1)));
     }
 
