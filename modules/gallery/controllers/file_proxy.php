@@ -44,11 +44,6 @@ class File_Proxy_Controller extends Controller {
 
     $file_uri = substr($request_uri, strlen($var_uri));
 
-    // Make sure that we don't leave the var dir
-    if (strpos($file_uri, "/../") !== false) {
-      throw new Kohana_404_Exception();
-    }
-
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       throw new Kohana_404_Exception();
