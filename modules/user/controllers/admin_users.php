@@ -28,32 +28,30 @@ class Admin_Users_Controller extends Admin_Controller {
     $page = Input::instance()->get("page", "1");
     $builder = db::build();
     $user_count = $builder->from("users")->count_records();
-    list($offset, $max_pages) = Controller::get_pager_params($page, $user_count, $page_size);
+
+    $view->content->pager = new Pagination();
+    $view->content->pager->initialize(
+      array("query_string" => "page",
+            "total_items" => $user_count,
+            "items_per_page" => $page_size,
+            "style" => "classic"));
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
       url::redirect(url::merge(array("page" => 1)));
-    } else if ($page > $max_pages) {
-      url::redirect(url::merge(array("page" => $max_pages)));
+    } else if ($page > $view->content->pager->total_pages) {
+      url::redirect(url::merge(array("page" => $view->content->pager->total_pages)));
     }
+
     $view->content->users = ORM::factory("user")
         ->select(array("users.id", "users.admin", "users.name", "users.email", "users.full_name",
                        "users.last_login", "users.guest", db::expr("COUNT(items.id) as item_count")))
         ->join("items", "items.owner_id", "users.id", "LEFT")
         ->group_by("users.id")
         ->order_by("users.name", "ASC")
-        ->find_all($page_size, $offset);
+        ->find_all($page_size, $view->content->pager->sql_offset);
 
     $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();
-    $view->content->page = $page;
-    $view->content->max_pages = $max_pages;
-
-    if ($page < $max_pages) {
-      $view->content->next_page_url = url::site(url::merge(array("page" => $page + 1)));
-    }
-    if ($page > 1) {
-      $view->content->previous_page_url = url::site(url::merge(array("page" => $page - 1)));
-    }
 
     print $view;
   }

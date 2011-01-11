@@ -109,32 +109,8 @@
           <? endforeach ?>
         </table>
 
-        <div class="g-right">
-          <? if (isset($previous_page_url)): ?>
-            <a href="<?= $previous_page_url ?>"
-                class="g-button ui-icon-left ui-state-default ui-corner-all"
-                title="<?= t("Previous page")->for_html_attr() ?>">
-          <? else: ?>
-            <a class="g-button ui-icon-left ui-state-disabled ui-corner-all"
-                title="<?= t("Previous page")->for_html_attr() ?>">
-          <? endif ?>
-            <span class="ui-icon ui-icon-circle-plus"></span>
-            <?= t("Previous") ?>
-          </a>
-
-          <?= t("Page %current of %total", array("current"=>$page, "total"=>$max_pages)) ?>
-
-          <? if (isset($next_page_url)): ?>
-            <a href="<?= $next_page_url ?>"
-                class="g-button ui-icon-left ui-state-default ui-corner-all"
-                title="<?= t("Next page")->for_html_attr() ?>">
-          <? else: ?>
-            <a class="g-button ui-icon-left ui-state-disabled ui-corner-all"
-                title="<?= t("Next page")->for_html_attr() ?>">
-          <? endif ?>
-            <span class="ui-icon ui-icon-circle-plus"></span>
-            <?= t("Next") ?>
-          </a>
+        <div class="g-paginator">
+          <?= $pager ?>
         </div>
 
       </div>
