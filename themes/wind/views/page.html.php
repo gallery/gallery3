@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <? $theme->start_combining("script,css") ?>
     <title>
       <? if ($page_title): ?>
         <?= $page_title ?>
@@ -17,28 +18,24 @@
         <? endif ?>
       <? endif ?>
     </title>
-    <link rel="shortcut icon" href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>" type="image/x-icon" />
-    <?= $theme->css("yui/reset-fonts-grids.css") ?>
-    <?= $theme->css("superfish/css/superfish.css") ?>
-    <?= $theme->css("themeroller/ui.base.css") ?>
-    <?= $theme->css("screen.css") ?>
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
-          media="screen,print,projection" />
-    <![endif]-->
+    <link rel="shortcut icon"
+          href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>"
+          type="image/x-icon" />
+
     <? if ($theme->page_type == "collection"): ?>
       <? if ($thumb_proportion != 1): ?>
         <? $new_width = round($thumb_proportion * 213) ?>
         <? $new_height = round($thumb_proportion * 240) ?>
-    <style type="text/css">
-    .g-view #g-content #g-album-grid .g-item {
-      width: <?= $new_width ?>px;
-      height: <?= $new_height ?>px;
-      /* <?= $thumb_proportion ?> */
-    }
-    </style>
+        <style type="text/css">
+        .g-view #g-content #g-album-grid .g-item {
+          width: <?= $new_width ?>px;
+          height: <?= $new_height ?>px;
+          /* <?= $thumb_proportion ?> */
+        }
+        </style>
       <? endif ?>
     <? endif ?>
+
     <?= $theme->script("json2-min.js") ?>
     <?= $theme->script("jquery.js") ?>
     <?= $theme->script("jquery.form.js") ?>
@@ -52,9 +49,8 @@
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>
     <?= $theme->script("jquery.localscroll.js") ?>
-    <?= $theme->script("ui.init.js") ?>
 
-    <? /* These are page specific, but if we put them before $theme->head() they get combined */ ?>
+    <? /* These are page specific but they get combined */ ?>
     <? if ($theme->page_subtype == "photo"): ?>
     <?= $theme->script("jquery.scrollTo.js") ?>
     <?= $theme->script("gallery.show_full_size.js") ?>
@@ -63,6 +59,23 @@
     <? endif ?>
 
     <?= $theme->head() ?>
+
+    <? /* Theme specific CSS/JS goes last so that it can override module CSS/JS */ ?>
+    <?= $theme->script("ui.init.js") ?>
+    <?= $theme->css("yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("superfish/css/superfish.css") ?>
+    <?= $theme->css("themeroller/ui.base.css") ?>
+    <?= $theme->css("screen.css") ?>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+          media="screen,print,projection" />
+    <![endif]-->
+
+    <!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->
+    <?= $theme->get_combined("script") ?>
+
+    <!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->
+    <?= $theme->get_combined("css") ?>
   </head>
 
   <body <?= $theme->body_attributes() ?>>
