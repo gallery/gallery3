@@ -60,10 +60,14 @@ class l10n_client_Core {
                   "client_token" => l10n_client::client_token(),
                   "signature" => $signature,
                   "uid" => l10n_client::server_uid($api_key)));
-    if (!remote::success($response_status)) {
-      return false;
+    if (!isset($response_data) && !isset($response_status)) {
+      return array(false, false);
     }
-    return true;
+
+    if (!remote::success($response_status)) {
+      return array(true, false);
+    }
+    return array(true, true);
   }
 
   /**
