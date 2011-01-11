@@ -56,7 +56,7 @@ class gallery_graphics_Core {
     }
 
     $dims = getimagesize($input_file);
-    if (max($dims[0], $dims[1]) < min($options["width"], $options["height"])) {
+    if (max($dims[0], $dims[1]) <= min($options["width"], $options["height"])) {
       // Image would get upscaled; do nothing
       copy($input_file, $output_file);
     } else {
