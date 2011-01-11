@@ -308,6 +308,9 @@ class item_Core {
   /**
    * Find the position of the given item in its parent album.  The resulting
    * value is 1-indexed, so the first child in the album is at position 1.
+   *
+   * @param Item_Model $item
+   * @param array      $where an array of arrays, each compatible with ORM::where()
    */
   static function get_position($item, $where=array()) {
     $album = $item->parent();
@@ -338,14 +341,14 @@ class item_Core {
         ->count_all();
 
       // We stopped short of our target value in the sort (notice that we're
-      // using a < comparator above) because it's possible that we have
+      // using a inequality comparator above) because it's possible that we have
       // duplicate values in the sort column.  An equality check would just
       // arbitrarily pick one of those multiple possible equivalent columns,
       // which would mean that if you choose a sort order that has duplicates,
       // it'd pick any one of them as the child's "position".
       //
       // Fix this by doing a 2nd query where we iterate over the equivalent
-      // columns and add them to our base value.
+      // columns and add them to our position count.
       foreach ($query_model->viewable()
                ->select("id")
                ->where("parent_id", "=", $album->id)
