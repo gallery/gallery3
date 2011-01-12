@@ -77,7 +77,7 @@ class Admin_Languages_Controller extends Admin_Controller {
     if ($new_key) {
       list($connected, $valid) = l10n_client::validate_api_key($new_key);
       if (!$valid) {
-        $form->sharing->api_key->add_error($connected ? "invalid" : "noconn", 1);
+        $form->sharing->api_key->add_error($connected ? "invalid" : "no_connection", 1);
       }
     } else {
       $valid = true;
@@ -122,7 +122,8 @@ class Admin_Languages_Controller extends Admin_Controller {
               : t("API key"))
       ->value($api_key)
       ->error_messages("invalid", t("The API key you provided is invalid."))
-      ->error_messages("noconn", t("Could not connect to remote server to validate the API key."));
+      ->error_messages(
+        "no_connection", t("Could not connect to remote server to validate the API key."));
     $group->submit("save")->value(t("Save settings"));
     if ($api_key && $this->_outgoing_translations_count()) {
       // TODO: UI improvement: hide API key / save button when API key is set.
