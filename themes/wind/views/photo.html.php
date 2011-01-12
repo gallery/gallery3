@@ -26,7 +26,7 @@
 <? endif ?>
 
 <div id="g-item">
-  <a name="itemtop" />
+  <a name="item-top"></a>
   <?= $theme->photo_top() ?>
 
   <?= $theme->paginator() ?>

@@ -30,7 +30,7 @@
   <li class="g-first">
   <? if ($page_type == "collection"): ?>
     <? if (isset($first_page_url)): ?>
-      <a href="<?= $first_page_url ?>#itemtop" class="g-button ui-icon-left ui-state-default ui-corner-all">
+      <a href="<?= $first_page_url ?>#item-top" class="g-button ui-icon-left ui-state-default ui-corner-all">
         <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>
     <? else: ?>
       <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
@@ -39,7 +39,7 @@
   <? endif ?>
 
   <? if (isset($previous_page_url)): ?>
-    <a href="<?= $previous_page_url ?>#itemtop" class="g-button ui-icon-left ui-state-default ui-corner-all">
+    <a href="<?= $previous_page_url ?>#item-top" class="g-button ui-icon-left ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-prev"></span><?= t("Previous") ?></a>
   <? else: ?>
     <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
@@ -67,7 +67,7 @@
 
   <li class="g-text-right">
   <? if (isset($next_page_url)): ?>
-    <a href="<?= $next_page_url ?>#itemtop" class="g-button ui-icon-right ui-state-default ui-corner-all">
+    <a href="<?= $next_page_url ?>#item-top" class="g-button ui-icon-right ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-next"></span><?= t("Next") ?></a>
   <? else: ?>
     <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
@@ -76,7 +76,7 @@
 
   <? if ($page_type == "collection"): ?>
     <? if (isset($last_page_url)): ?>
-      <a href="<?= $last_page_url ?>#itemtop" class="g-button ui-icon-right ui-state-default ui-corner-all">
+      <a href="<?= $last_page_url ?>#item-top" class="g-button ui-icon-right ui-state-default ui-corner-all">
         <span class="ui-icon ui-icon-seek-end"></span><?= t("Last") ?></a>
     <? else: ?>
       <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
