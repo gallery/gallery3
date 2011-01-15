@@ -19,12 +19,12 @@
  */
 class user_theme_Core {
   static function head($theme) {
-    $theme->css("user.css");
-    $theme->script("password_strength.js");
+    return $theme->css("user.css")
+      . $theme->script("password_strength.js");
   }
 
   static function admin_head($theme) {
-    $theme->css("user.css");
-    $theme->script("password_strength.js");
+    return $theme->css("user.css")
+      . $theme->script("password_strength.js");
   }
 }

@@ -19,13 +19,13 @@
  */
 class tag_theme_Core {
   static function head($theme) {
-    $theme->css("jquery.autocomplete.css");
-    $theme->script("jquery.autocomplete.js");
-    $theme->css("tag.css");
+    return $theme->css("jquery.autocomplete.css")
+      . $theme->script("jquery.autocomplete.js")
+      . $theme->css("tag.css");
   }
 
   static function admin_head($theme) {
-    $theme->css("tag.css");
-    $theme->script("gallery.in_place_edit.js");
+    return $theme->css("tag.css")
+      . $theme->script("gallery.in_place_edit.js");
   }
 }
