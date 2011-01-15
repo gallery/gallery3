@@ -160,7 +160,7 @@ CREATE TABLE {items} (
   `name` varchar(255) DEFAULT NULL,
   `owner_id` int(9) DEFAULT NULL,
   `parent_id` int(9) NOT NULL,
-  `rand_key` float DEFAULT NULL,
+  `rand_key` decimal(11,10) DEFAULT NULL,
   `relative_path_cache` varchar(255) DEFAULT NULL,
   `relative_url_cache` varchar(255) DEFAULT NULL,
   `resize_dirty` tinyint(1) DEFAULT '1',
@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',43,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',44,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',3,4);
