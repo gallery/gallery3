@@ -22,7 +22,7 @@ class search_theme_Core {
     if ($theme->page_subtype() != "login") {
       $view = new View("search_link.html");
       return $view->render();
-    }else {
+    } else {
       return "";
     }
   }
