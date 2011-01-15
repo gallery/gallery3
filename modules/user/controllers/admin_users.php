@@ -46,8 +46,8 @@ class Admin_Users_Controller extends Admin_Controller {
     // Join our users against the items table so that we can get a count of their items
     // in the same query.
     $view->content->users = ORM::factory("user")
-        ->order_by("users.name", "ASC")
-        ->find_all($page_size, $view->content->pager->sql_offset);
+      ->order_by("users.name", "ASC")
+      ->find_all($page_size, $view->content->pager->sql_offset);
     $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();
 
     print $view;
