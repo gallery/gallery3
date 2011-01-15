@@ -21,9 +21,9 @@ class gallery_theme_Core {
   static function head($theme) {
     $session = Session::instance();
     $buf = "";
-    $theme->css("gallery.css");
+    $buf .= $theme->css("gallery.css");
     if ($session->get("debug")) {
-      $theme->css("debug.css");
+      $buf .= $theme->css("debug.css");
     }
 
     if (module::is_active("rss")) {
@@ -40,32 +40,33 @@ class gallery_theme_Core {
 
     if (count(locales::installed())) {
       // Needed by the languages block
-      $theme->script("jquery.cookie.js");
+      $buf .= $theme->script("jquery.cookie.js");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("l10n_client.css");
-      $theme->script("jquery.cookie.js");
-      $theme->script("l10n_client.js");
+      $buf .= $theme->css("l10n_client.css")
+        . $theme->script("jquery.cookie.js")
+        . $theme->script("l10n_client.js");
     }
 
-    $theme->css("uploadify/uploadify.css");
+    $buf .= $theme->css("uploadify/uploadify.css");
     return $buf;
   }
 
   static function admin_head($theme) {
-    $theme->css("gallery.css");
-    $theme->script("gallery.panel.js");
+    $buf = $theme->css("gallery.css");
+    $buf .= $theme->script("gallery.panel.js");
     $session = Session::instance();
     if ($session->get("debug")) {
-      $theme->css("debug.css");
+      $buf .= $theme->css("debug.css");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("l10n_client.css");
-      $theme->script("jquery.cookie.js");
-      $theme->script("l10n_client.js");
+      $buf .= $theme->css("l10n_client.css");
+      $buf .= $theme->script("jquery.cookie.js");
+      $buf .=$theme->script("l10n_client.js");
     }
+    return $buf;
   }
 
   static function page_bottom($theme) {

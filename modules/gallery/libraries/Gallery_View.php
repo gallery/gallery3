@@ -22,6 +22,15 @@ class Gallery_View_Core extends View {
   protected $combine_queue = array();
 
   /**
+   * Provide a url to a resource within the current theme.  This allows us to refer to theme
+   * resources without naming the theme itself which makes themes easier to copy.
+   */
+  public function url($path, $absolute_url=false) {
+    $arg = "themes/{$this->theme_name}/$path";
+    return $absolute_url ? url::abs_file($arg) : url::file($arg);
+  }
+
+  /**
    * Begin gather up scripts or css files so that they can be combined into a single request.
    *
    * @param $types  a comma separated list of types to combine, eg "script,css"
@@ -51,15 +60,6 @@ class Gallery_View_Core extends View {
     } else {
       Kohana_Log::add("error", "Can't find script file: $file");
     }
-  }
-
-  /**
-   * Provide a url to a resource within the current theme.  This allows us to refer to theme
-   * resources without naming the theme itself which makes themes easier to copy.
-   */
-  public function url($path, $absolute_url=false) {
-    $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : url::file($arg);
   }
 
   /**

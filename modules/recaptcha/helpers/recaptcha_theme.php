@@ -19,10 +19,10 @@
  */
 class recaptcha_theme_Core {
   static function head($theme) {
-    $theme->css("recaptcha.css");
+    return $theme->css("recaptcha.css");
   }
 
   static function admin_head($theme) {
-    $theme->css("recaptcha.css");
+    return $theme->css("recaptcha.css");
   }
 }
