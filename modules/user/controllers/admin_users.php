@@ -43,14 +43,11 @@ class Admin_Users_Controller extends Admin_Controller {
       url::redirect(url::merge(array("page" => $view->content->pager->total_pages)));
     }
 
+    // Join our users against the items table so that we can get a count of their items
+    // in the same query.
     $view->content->users = ORM::factory("user")
-        ->select(array("users.id", "users.admin", "users.name", "users.email", "users.full_name",
-                       "users.last_login", "users.guest", db::expr("COUNT(items.id) as item_count")))
-        ->join("items", "items.owner_id", "users.id", "LEFT")
-        ->group_by("users.id")
         ->order_by("users.name", "ASC")
         ->find_all($page_size, $view->content->pager->sql_offset);
-
     $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();
 
     print $view;
