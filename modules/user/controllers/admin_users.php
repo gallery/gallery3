@@ -22,8 +22,37 @@ class Admin_Users_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->page_title = t("Users and groups");
     $view->content = new View("admin_users.html");
-    $view->content->users = ORM::factory("user")->order_by("name", "ASC")->find_all();
+
+    // @todo: add this as a config option
+    $page_size = module::get_var("user", "page_size", 10);
+    $page = Input::instance()->get("page", "1");
+    $builder = db::build();
+    $user_count = $builder->from("users")->count_records();
+
+    $view->content->pager = new Pagination();
+    $view->content->pager->initialize(
+      array("query_string" => "page",
+            "total_items" => $user_count,
+            "items_per_page" => $page_size,
+            "style" => "classic"));
+
+    // Make sure that the page references a valid offset
+    if ($page < 1) {
+      url::redirect(url::merge(array("page" => 1)));
+    } else if ($page > $view->content->pager->total_pages) {
+      url::redirect(url::merge(array("page" => $view->content->pager->total_pages)));
+    }
+
+    $view->content->users = ORM::factory("user")
+        ->select(array("users.id", "users.admin", "users.name", "users.email", "users.full_name",
+                       "users.last_login", "users.guest", db::expr("COUNT(items.id) as item_count")))
+        ->join("items", "items.owner_id", "users.id", "LEFT")
+        ->group_by("users.id")
+        ->order_by("users.name", "ASC")
+        ->find_all($page_size, $view->content->pager->sql_offset);
+
     $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();
+
     print $view;
   }
 
