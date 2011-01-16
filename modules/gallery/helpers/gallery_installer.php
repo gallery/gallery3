@@ -92,7 +92,7 @@ class gallery_installer {
                  `name` varchar(255) default NULL,
                  `owner_id` int(9) default NULL,
                  `parent_id` int(9) NOT NULL,
-                 `rand_key` float default NULL,
+                 `rand_key` decimal(11,10) default NULL,
                  `relative_path_cache` varchar(255) default NULL,
                  `relative_url_cache` varchar(255) default NULL,
                  `resize_dirty` boolean default 1,
@@ -309,7 +309,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 43);
+    module::set_version("gallery", 44);
   }
 
   static function upgrade($version) {
@@ -652,6 +652,11 @@ class gallery_installer {
     if ($version == 42) {
       $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
       module::set_version("gallery", $version = 43);
+    }
+
+    if ($version == 43) {
+      $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
+      module::set_version("gallery", $version = 44);
     }
   }
 
