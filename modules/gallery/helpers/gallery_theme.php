@@ -115,7 +115,7 @@ class gallery_theme_Core {
 
   static function credits() {
     $version_string = SafeString::of_safe_html(
-        '<bdo dir="ltr">Gallery ' . gallery::VERSION . '</bdo>');
+      '<bdo dir="ltr">Gallery ' . gallery::version_string() . '</bdo>');
     return "<li class=\"g-first\">" .
       t(module::get_var("gallery", "credits"),
         array("url" => "http://gallery.menalto.com",
