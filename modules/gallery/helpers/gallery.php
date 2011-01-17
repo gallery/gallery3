@@ -194,7 +194,8 @@ class gallery_Core {
   static function version_string() {
     if (gallery::RELEASE_CHANNEL == "git") {
       return sprintf(
-        "%s (branch %s build %s)", gallery::VERSION, gallery::RELEASE_BRANCH, gallery::build_number());
+        "%s (branch %s build %s)", gallery::VERSION, gallery::RELEASE_BRANCH,
+        gallery::build_number());
     } else {
       return sprintf("%s (%s)", gallery::VERSION, gallery::CODE_NAME);
     }
