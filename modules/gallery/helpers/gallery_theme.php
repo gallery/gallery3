@@ -76,13 +76,22 @@ class gallery_theme_Core {
       $profiler = new Profiler();
       $profiler->render();
     }
+    $content = "";
     if ($session->get("l10n_mode", false)) {
-      return L10n_Client_Controller::l10n_form();
+      $content .= L10n_Client_Controller::l10n_form();
     }
 
     if ($session->get_once("after_install")) {
-      return new View("welcome_message_loader.html");
+      $content .= new View("welcome_message_loader.html");
     }
+
+    if (identity::active_user()->admin && upgrade_checker::should_auto_check()) {
+      $content .= '<script type="text/javascript">
+        $.ajax({url: "' . url::site("admin/upgrade_checker/check_now?csrf=" .
+                                    access::csrf_token()) . '"});
+        </script>';
+    }
+    return $content;
   }
 
   static function admin_page_bottom($theme) {
@@ -106,6 +115,13 @@ class gallery_theme_Core {
       };
       setInterval("adminReauthCheck();", 60 * 1000);
       </script>';
+
+    if (upgrade_checker::should_auto_check()) {
+      $content .= '<script type="text/javascript">
+        $.ajax({url: "' . url::site("admin/upgrade_checker/check_now?csrf=" .
+                                    access::csrf_token()) . '"});
+        </script>';
+    }
 
     if ($session->get("l10n_mode", false)) {
       $content .= "\n" . L10n_Client_Controller::l10n_form();
