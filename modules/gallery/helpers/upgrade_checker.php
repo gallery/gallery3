@@ -19,15 +19,37 @@
  */
 class upgrade_checker_Core {
   const CHECK_URL = "http://gallery.menalto.com/versioncheck/gallery3";
+  const AUTO_CHECK_INTERVAL = 604800;  // 7 days in seconds
 
+  /**
+   * Return the last version info blob retrieved from the Gallery website or
+   * null if no checks have been performed.
+   */
   static function version_info() {
     return unserialize(Cache::instance()->get("upgrade_checker_version_info"));
   }
 
+  /**
+   * Return true if auto checking is enabled.
+   */
   static function auto_check_enabled() {
     return (bool)module::get_var("gallery", "upgrade_checker_auto_enabled");
   }
 
+  /**
+   * Return true if it's time to auto check.
+   */
+  static function should_auto_check() {
+    if (upgrade_checker::auto_check_enabled() && random::int(1, 100) == 1) {
+      $version_info = upgrade_checker::version_info();
+      return (!$version_info || (time() - $version_info->timestamp) > AUTO_CHECK_INTERVAL);
+    }
+    return false;
+  }
+
+  /**
+   * Fech version info from the Gallery website.
+   */
   static function fetch_version_info() {
     $result = new stdClass();
     try {
@@ -52,6 +74,9 @@ class upgrade_checker_Core {
     Cache::instance()->set("upgrade_checker_version_info", serialize($result), null, 86400 * 365);
   }
 
+  /**
+   * Check the latest version info blob to see if it's time for an upgrade.
+   */
   static function check_for_upgrade() {
     $version_info = upgrade_checker::version_info();
     $upgrade_available = false;

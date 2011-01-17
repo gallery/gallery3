@@ -42,9 +42,13 @@ class random_Core {
   }
 
   /**
-   * Return a random number between 0 and mt_getrandmax()
+   * Return a random number between $min and $max.  If $min and $max are not specified,
+   * return a random number between 0 and mt_getrandmax()
    */
-  static function int() {
+  static function int($min=null, $max=null) {
+    if ($min || $max) {
+      return mt_rand($min, $max);
+    }
     return mt_rand();
   }
 }

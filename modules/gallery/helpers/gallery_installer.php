@@ -677,6 +677,9 @@ class gallery_installer {
       module::set_var("gallery", "upgrade_checker_auto_enabled", true);
       module::set_version("gallery", $version = 46);
     }
+
+    // Clear any upgrade check strings, we are probably up to date.
+    site_status::clear("upgrade_check");
   }
 
   static function uninstall() {
