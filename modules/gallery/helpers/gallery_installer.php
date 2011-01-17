@@ -259,6 +259,7 @@ class gallery_installer {
     module::set_var("gallery", "default_locale", "en_US");
     module::set_var("gallery", "image_quality", 75);
     module::set_var("gallery", "image_sharpen", 15);
+    module::set_var("gallery", "upgrade_checker_auto_enabled", true);
 
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
@@ -285,6 +286,7 @@ class gallery_installer {
     block_manager::add("dashboard_sidebar", "gallery", "platform_info");
     block_manager::add("dashboard_sidebar", "gallery", "project_news");
     block_manager::add("dashboard_center", "gallery", "welcome");
+    block_manager::add("dashboard_center", "gallery", "upgrade_checker");
     block_manager::add("dashboard_center", "gallery", "photo_stream");
     block_manager::add("dashboard_center", "gallery", "log_entries");
 
@@ -309,7 +311,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 45);
+    module::set_version("gallery", 46);
   }
 
   static function upgrade($version) {
@@ -662,6 +664,18 @@ class gallery_installer {
     if ($version == 44) {
       $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
       module::set_version("gallery", $version = 45);
+    }
+
+    if ($version == 45) {
+      // Splice the upgrade_checker block into the admin dashboard at the top
+      // of the page, but under the welcome block if it's in the first position.
+      $blocks = block_manager::get_active("dashboard_center");
+      $index = count($blocks) && current($blocks) == array("gallery", "welcome") ? 1 : 0;
+      array_splice($blocks, $index, 0, array(random::int() => array("gallery", "upgrade_checker")));
+      block_manager::set_active("dashboard_center", $blocks);
+
+      module::set_var("gallery", "upgrade_checker_auto_enabled", true);
+      module::set_version("gallery", $version = 46);
     }
   }
 
