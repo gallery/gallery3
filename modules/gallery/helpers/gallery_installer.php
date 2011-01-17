@@ -136,7 +136,7 @@ class gallery_installer {
                  `id` int(9) NOT NULL auto_increment,
                  `key` varchar(255) default NULL,
                  `severity` varchar(32) default NULL,
-                 `value` varchar(255) default NULL,
+                 `value` text default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`key`))
                DEFAULT CHARSET=utf8;");
@@ -309,7 +309,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 44);
+    module::set_version("gallery", 45);
   }
 
   static function upgrade($version) {
@@ -657,6 +657,11 @@ class gallery_installer {
     if ($version == 43) {
       $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
       module::set_version("gallery", $version = 44);
+    }
+
+    if ($version == 44) {
+      $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
+      module::set_version("gallery", $version = 45);
     }
   }
 
