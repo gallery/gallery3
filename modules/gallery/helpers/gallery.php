@@ -205,7 +205,7 @@ class gallery_Core {
    * Return the contents of the BUILD_NUMBER file, which should be a single integer.
    */
   static function build_number() {
-    $lines = file(DOCROOT . "BUILD_NUMBER", FILE_IGNORE_NEW_LINES);
-    return $lines[0];
+    $result = parse_ini_file(DOCROOT . "BUILD_NUMBER");
+    return $result["build_number"];
   }
 }
