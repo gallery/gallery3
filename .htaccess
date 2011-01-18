@@ -29,7 +29,7 @@
 # in your Apache2 config file before you uncomment this block or
 # you'll get an "Internal Server Error".
 #
-# <FilesMatch "(\.(class|fla|gitignore|inc|ini|sql|txt)|(README|LICENSE|BUILD_NUMBER))$">
+# <FilesMatch "(\.(class|fla|gitignore|inc|ini|sql|txt)|(README|LICENSE|.build_number))$">
 #   Order deny,allow
 #   Deny from all
 # </FilesMatch>
