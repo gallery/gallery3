@@ -21,7 +21,14 @@ class Admin_Upgrade_Checker_Controller extends Admin_Controller {
   function check_now() {
     access::verify_csrf();
     upgrade_checker::fetch_version_info();
-    upgrade_checker::check_for_upgrade();
+    $message = upgrade_checker::get_upgrade_message();
+    if ($message) {
+      $message .= " <a href=" . url::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__")
+        . ">[x]</a>";
+      site_status::info($message, "upgrade_checker");
+    } else {
+      site_status::clear("upgrade_checker");
+    }
     url::redirect("admin/dashboard");
   }
 
