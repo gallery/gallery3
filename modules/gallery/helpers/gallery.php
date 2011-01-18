@@ -202,10 +202,10 @@ class gallery_Core {
   }
 
   /**
-   * Return the contents of the BUILD_NUMBER file, which should be a single integer.
+   * Return the contents of the .build_number file, which should be a single integer.
    */
   static function build_number() {
-    $result = parse_ini_file(DOCROOT . "BUILD_NUMBER");
+    $result = parse_ini_file(DOCROOT . ".build_number");
     return $result["build_number"];
   }
 }
