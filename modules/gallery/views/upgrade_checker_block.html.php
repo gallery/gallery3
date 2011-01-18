@@ -11,6 +11,14 @@
   <? endif ?>
 </p>
 
+<? if ($new_version): ?>
+<ul class="g-message-block">
+  <li class="g-message g-info">
+    <?= $new_version ?>
+  </li>
+</ul>
+<? endif ?>
+
 <p>
   <a class="g-button ui-state-default ui-corner-all"
      href="<?= url::site("admin/upgrade_checker/check_now?csrf=$csrf") ?>">

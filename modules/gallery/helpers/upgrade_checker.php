@@ -77,40 +77,27 @@ class upgrade_checker_Core {
   /**
    * Check the latest version info blob to see if it's time for an upgrade.
    */
-  static function check_for_upgrade() {
+  static function get_upgrade_message() {
     $version_info = upgrade_checker::version_info();
-    $upgrade_available = false;
     if ($version_info) {
       if (gallery::RELEASE_CHANNEL == "release") {
         if (version_compare($version_info->data["release_version"], gallery::VERSION, ">")) {
-          site_status::warning(
-            t("A newer version of Gallery is available! <a href=\"%upgrade-url\">Upgrade now</a> to version %version or <a href=\"%hide-url\">wait until later</a>.",
-              array("version" => $version_info->data["release_version"],
-                    "upgrade-url" => $version_info->data["release_upgrade_url"],
-                    "hide-url" => url::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__"))),
-            "upgrade_checker");
-          $upgrade_available = true;
+          return t("A newer version of Gallery is available! <a href=\"%upgrade-url\">Upgrade now</a> to version %version",
+                   array("version" => $version_info->data["release_version"],
+                         "upgrade-url" => $version_info->data["release_upgrade_url"]));
         }
       } else {
         $branch = gallery::RELEASE_BRANCH;
         if (isset($version_info->data["branch_{$branch}_build_number"]) &&
             version_compare($version_info->data["branch_{$branch}_build_number"],
                             gallery::build_number(), ">")) {
-          site_status::warning(
-            t("A newer version of Gallery is available! <a href=\"%upgrade-url\">Upgrade now</a> to version %version (build %build on branch %branch) or <a href=\"%hide-url\">wait until later</a>.",
-              array("version" => $version_info->data["branch_{$branch}_version"],
-                    "upgrade-url" => $version_info->data["branch_{$branch}_upgrade_url"],
-                    "build" => $version_info->data["branch_{$branch}_build_number"],
-                    "branch" => $branch,
-                    "hide-url" => url::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__"))),
-            "upgrade_checker");
-          $upgrade_available = true;
+          return t("A newer version of Gallery is available! <a href=\"%upgrade-url\">Upgrade now</a> to version %version (build %build on branch %branch)",
+                   array("version" => $version_info->data["branch_{$branch}_version"],
+                         "upgrade-url" => $version_info->data["branch_{$branch}_upgrade_url"],
+                         "build" => $version_info->data["branch_{$branch}_build_number"],
+                         "branch" => $branch));
         }
       }
-    }
-
-    if (!$upgrade_available) {
-      site_status::clear("upgrade_checker");
     }
   }
 }
