@@ -19,14 +19,12 @@
  */
 class comment_theme_Core {
   static function head($theme) {
-    $theme->css("comment.css");
-    $theme->script("comment.js");
-    return "";
+    return $theme->css("comment.css")
+      . $theme->script("comment.js");
   }
 
   static function admin_head($theme) {
-    $theme->css("comment.css");
-    return "";
+    return $theme->css("comment.css");
   }
 
   static function photo_bottom($theme) {

@@ -94,6 +94,9 @@ class Upgrader_Controller extends Controller {
     // If the upgrade failed, this will get recreated
     site_status::clear("upgrade_now");
 
+    // Clear any upgrade check strings, we are probably up to date.
+    site_status::clear("upgrade_checker");
+
     if (php_sapi_name() == "cli") {
       if ($failed) {
         print "Upgrade completed ** WITH FAILURES **\n";

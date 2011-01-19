@@ -21,9 +21,9 @@ class gallery_theme_Core {
   static function head($theme) {
     $session = Session::instance();
     $buf = "";
-    $theme->css("gallery.css");
+    $buf .= $theme->css("gallery.css");
     if ($session->get("debug")) {
-      $theme->css("debug.css");
+      $buf .= $theme->css("debug.css");
     }
 
     if (module::is_active("rss")) {
@@ -40,32 +40,33 @@ class gallery_theme_Core {
 
     if (count(locales::installed())) {
       // Needed by the languages block
-      $theme->script("jquery.cookie.js");
+      $buf .= $theme->script("jquery.cookie.js");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("l10n_client.css");
-      $theme->script("jquery.cookie.js");
-      $theme->script("l10n_client.js");
+      $buf .= $theme->css("l10n_client.css")
+        . $theme->script("jquery.cookie.js")
+        . $theme->script("l10n_client.js");
     }
 
-    $theme->css("uploadify/uploadify.css");
+    $buf .= $theme->css("uploadify/uploadify.css");
     return $buf;
   }
 
   static function admin_head($theme) {
-    $theme->css("gallery.css");
-    $theme->script("gallery.panel.js");
+    $buf = $theme->css("gallery.css");
+    $buf .= $theme->script("gallery.panel.js");
     $session = Session::instance();
     if ($session->get("debug")) {
-      $theme->css("debug.css");
+      $buf .= $theme->css("debug.css");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("l10n_client.css");
-      $theme->script("jquery.cookie.js");
-      $theme->script("l10n_client.js");
+      $buf .= $theme->css("l10n_client.css");
+      $buf .= $theme->script("jquery.cookie.js");
+      $buf .=$theme->script("l10n_client.js");
     }
+    return $buf;
   }
 
   static function page_bottom($theme) {
@@ -75,13 +76,22 @@ class gallery_theme_Core {
       $profiler = new Profiler();
       $profiler->render();
     }
+    $content = "";
     if ($session->get("l10n_mode", false)) {
-      return L10n_Client_Controller::l10n_form();
+      $content .= L10n_Client_Controller::l10n_form();
     }
 
     if ($session->get_once("after_install")) {
-      return new View("welcome_message_loader.html");
+      $content .= new View("welcome_message_loader.html");
     }
+
+    if (identity::active_user()->admin && upgrade_checker::should_auto_check()) {
+      $content .= '<script type="text/javascript">
+        $.ajax({url: "' . url::site("admin/upgrade_checker/check_now?csrf=" .
+                                    access::csrf_token()) . '"});
+        </script>';
+    }
+    return $content;
   }
 
   static function admin_page_bottom($theme) {
@@ -106,6 +116,13 @@ class gallery_theme_Core {
       setInterval("adminReauthCheck();", 60 * 1000);
       </script>';
 
+    if (upgrade_checker::should_auto_check()) {
+      $content .= '<script type="text/javascript">
+        $.ajax({url: "' . url::site("admin/upgrade_checker/check_now?csrf=" .
+                                    access::csrf_token()) . '"});
+        </script>';
+    }
+
     if ($session->get("l10n_mode", false)) {
       $content .= "\n" . L10n_Client_Controller::l10n_form();
     }
@@ -114,7 +131,7 @@ class gallery_theme_Core {
 
   static function credits() {
     $version_string = SafeString::of_safe_html(
-        '<bdo dir="ltr">Gallery ' . gallery::VERSION . '</bdo>');
+      '<bdo dir="ltr">Gallery ' . gallery::version_string() . '</bdo>');
     return "<li class=\"g-first\">" .
       t(module::get_var("gallery", "credits"),
         array("url" => "http://gallery.menalto.com",

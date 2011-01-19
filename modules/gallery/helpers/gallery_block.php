@@ -25,7 +25,9 @@ class gallery_block_Core {
       "log_entries" => t("Log entries"),
       "stats" => t("Gallery stats"),
       "platform_info" => t("Platform information"),
-      "project_news" => t("Gallery project news"));
+      "project_news" => t("Gallery project news"),
+      "upgrade_checker" => t("Check for Gallery upgrades")
+    );
   }
 
   static function get_site_list() {
@@ -101,6 +103,15 @@ class gallery_block_Core {
         $block = "";
       }
       break;
+
+    case "upgrade_checker":
+      $block = new Block();
+      $block->css_id = "g-upgrade-available-block";
+      $block->title = t("Check for Gallery upgrades");
+      $block->content = new View("upgrade_checker_block.html");
+      $block->content->version_info = upgrade_checker::version_info();
+      $block->content->auto_check_enabled = upgrade_checker::auto_check_enabled();
+      $block->content->new_version = upgrade_checker::get_upgrade_message();
     }
     return $block;
   }
