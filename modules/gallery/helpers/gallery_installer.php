@@ -311,11 +311,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-<<<<<<< HEAD:modules/gallery/helpers/gallery_installer.php
-    module::set_version("gallery", 44);
-=======
     module::set_version("gallery", 46);
->>>>>>> 265e39fb57537d73302da620c1be542f3246dfcc:modules/gallery/helpers/gallery_installer.php
   }
 
   static function upgrade($version) {
@@ -664,8 +660,6 @@ class gallery_installer {
       $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
       module::set_version("gallery", $version = 44);
     }
-<<<<<<< HEAD:modules/gallery/helpers/gallery_installer.php
-=======
 
     if ($version == 44) {
       $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
@@ -683,7 +677,6 @@ class gallery_installer {
       module::set_var("gallery", "upgrade_checker_auto_enabled", true);
       module::set_version("gallery", $version = 46);
     }
->>>>>>> 265e39fb57537d73302da620c1be542f3246dfcc:modules/gallery/helpers/gallery_installer.php
   }
 
   static function uninstall() {

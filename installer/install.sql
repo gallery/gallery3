@@ -244,11 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-<<<<<<< HEAD:installer/install.sql
-INSERT INTO {modules} VALUES (1,1,'gallery',44,1);
-=======
 INSERT INTO {modules} VALUES (1,1,'gallery',46,1);
->>>>>>> 265e39fb57537d73302da620c1be542f3246dfcc:installer/install.sql
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
