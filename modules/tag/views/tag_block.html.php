@@ -22,7 +22,7 @@
     });
   });
 </script>
-<div id="g-tag-cloud">
+<div id="g-tag-cloud" ref="<?= url::site("tags") ?>">
   <?= $cloud ?>
 </div>
 <?= $form ?>
