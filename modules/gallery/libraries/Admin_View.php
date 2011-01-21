@@ -86,6 +86,7 @@ class Admin_View_Core extends Gallery_View {
     case "admin_page_top":
     case "admin_head":
     case "body_attributes":
+    case "html_attributes":
       $blocks = array();
       foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";
