@@ -224,6 +224,7 @@ class Theme_View_Core extends Gallery_View {
     case "head":
     case "header_bottom":
     case "header_top":
+    case "html_attributes":
     case "page_bottom":
     case "page_top":
     case "photo_blocks":

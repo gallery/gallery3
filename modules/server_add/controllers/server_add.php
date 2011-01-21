@@ -162,14 +162,9 @@ class Server_Add_Controller extends Admin_Controller {
           ->find();
 
         if ($entry->loaded()) {
-          // Ignore the staging directories as directories to be imported.
-          if (!empty($paths[$entry->path])) {
-            $entry->delete();
-          }
-
           $child_paths = glob(preg_quote($entry->path) . "/*");
           if (!$child_paths) {
-            $child_paths = glob("$path/*");
+            $child_paths = glob("{$entry->path}/*");
           }
           foreach ($child_paths as $child_path) {
             if (!is_dir($child_path)) {
