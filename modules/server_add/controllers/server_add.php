@@ -95,7 +95,7 @@ class Server_Add_Controller extends Admin_Controller {
       if (server_add::is_valid_path($path)) {
         $entry = ORM::factory("server_add_entry");
         $entry->path = $path;
-        $entry->is_directory = intval(is_dir($path));
+        $entry->is_directory = 1;
         $entry->parent_id = null;
         $entry->task_id = $task->id;
         $entry->save();
