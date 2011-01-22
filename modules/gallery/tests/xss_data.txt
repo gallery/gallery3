@@ -248,6 +248,7 @@ modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $permi
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $item->id
 modules/gallery/views/quick_delete_confirm.html.php          11  DIRTY    $form
 modules/gallery/views/reauthenticate.html.php                9   DIRTY    $form
+modules/gallery/views/upgrade_checker_block.html.php         17  DIRTY    $new_version
 modules/gallery/views/upgrader.html.php                      76  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      94  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      102 DIRTY_ATTR $module->version==$module->code_version?"current":"upgradeable"
@@ -338,8 +339,8 @@ modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY_JS url::s
 modules/server_add/views/server_add_tree_dialog.html.php     21  DIRTY    $tree
 modules/tag/views/admin_tags.html.php                        45  DIRTY_ATTR $tag->id
 modules/tag/views/admin_tags.html.php                        46  DIRTY    $tag->count
-modules/tag/views/tag_block.html.php                         26  DIRTY    $cloud
-modules/tag/views/tag_block.html.php                         28  DIRTY    $form
+modules/tag/views/tag_block.html.php                         28  DIRTY    $cloud
+modules/tag/views/tag_block.html.php                         30  DIRTY    $form
 modules/tag/views/tag_cloud.html.php                         4   DIRTY_ATTR (int)(($tag->count/$max_count)*7)
 modules/tag/views/tag_cloud.html.php                         5   DIRTY    $tag->count
 modules/tag/views/tag_cloud.html.php                         6   DIRTY_JS $tag->url()
@@ -363,6 +364,7 @@ modules/user/views/admin_users_group.html.php                24  DIRTY_JS $group
 modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $width
 modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $height
 modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $url
+themes/admin_wind/views/admin.html.php                       4   DIRTY    $theme->html_attributes()
 themes/admin_wind/views/admin.html.php                       31  DIRTY    $theme->admin_head()
 themes/admin_wind/views/admin.html.php                       40  DIRTY_JS $theme->url()
 themes/admin_wind/views/admin.html.php                       45  DIRTY    $theme->get_combined("script")
@@ -408,6 +410,7 @@ themes/wind/views/dynamic.html.php                           17  DIRTY_ATTR $chi
 themes/wind/views/dynamic.html.php                           29  DIRTY    $theme->paginator()
 themes/wind/views/movie.html.php                             5   DIRTY    $theme->paginator()
 themes/wind/views/movie.html.php                             9   DIRTY    $item->movie_img(array("class"=>"g-movie","id"=>"g-item-id-{$item->id}"))
+themes/wind/views/page.html.php                              4   DIRTY    $theme->html_attributes()
 themes/wind/views/page.html.php                              10  DIRTY    $page_title
 themes/wind/views/page.html.php                              13  DIRTY    $theme->item()->title
 themes/wind/views/page.html.php                              17  DIRTY    item::root()->title
