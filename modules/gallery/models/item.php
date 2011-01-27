@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -546,83 +546,12 @@ class Item_Model_Core extends ORM_MPTT {
   /**
    * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
    * the first child in the album is at position 1.
+   *
+   * This method stands as a backward compatibility for gallery 3.0, and will
+   * be deprecated in version 3.1.
    */
   public function get_position($child, $where=array()) {
-    if (!strcasecmp($this->sort_order, "DESC")) {
-      $comp = ">";
-    } else {
-      $comp = "<";
-    }
-    $db = db::build();
-
-    // If the comparison column has NULLs in it, we can't use comparators on it and will have to
-    // deal with it the hard way.
-    $count = $db->from("items")
-      ->where("parent_id", "=", $this->id)
-      ->where($this->sort_column, "IS", null)
-      ->merge_where($where)
-      ->count_records();
-
-    if (empty($count)) {
-      // There are no NULLs in the sort column, so we can just use it directly.
-      $sort_column = $this->sort_column;
-
-      $position = $db->from("items")
-        ->where("parent_id", "=", $this->id)
-        ->where($sort_column, $comp, $child->$sort_column)
-        ->merge_where($where)
-        ->count_records();
-
-      // We stopped short of our target value in the sort (notice that we're using a < comparator
-      // above) because it's possible that we have duplicate values in the sort column.  An
-      // equality check would just arbitrarily pick one of those multiple possible equivalent
-      // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
-      // any one of them as the child's "position".
-      //
-      // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
-      // our base value.
-      foreach ($db
-               ->select("id")
-               ->from("items")
-               ->where("parent_id", "=", $this->id)
-               ->where($sort_column, "=", $child->$sort_column)
-               ->merge_where($where)
-               ->order_by(array("id" => "ASC"))
-               ->execute() as $row) {
-        $position++;
-        if ($row->id == $child->id) {
-          break;
-        }
-      }
-    } else {
-      // There are NULLs in the sort column, so we can't use MySQL comparators.  Fall back to
-      // iterating over every child row to get to the current one.  This can be wildly inefficient
-      // for really large albums, but it should be a rare case that the user is sorting an album
-      // with null values in the sort column.
-      //
-      // Reproduce the children() functionality here using Database directly to avoid loading the
-      // whole ORM for each row.
-      $order_by = array($this->sort_column => $this->sort_order);
-      // Use id as a tie breaker
-      if ($this->sort_column != "id") {
-        $order_by["id"] = "ASC";
-      }
-
-      $position = 0;
-      foreach ($db->select("id")
-               ->from("items")
-               ->where("parent_id", "=", $this->id)
-               ->merge_where($where)
-               ->order_by($order_by)
-               ->execute() as $row) {
-        $position++;
-        if ($row->id == $child->id) {
-          break;
-        }
-      }
-    }
-
-    return $position;
+    return item::get_position($child, $where);
   }
 
   /**
@@ -653,13 +582,17 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Calculate the largest width/height that fits inside the given maximum, while preserving the
-   * aspect ratio.
+   * aspect ratio.  Don't upscale.
    * @param int $max Maximum size of the largest dimension
    * @return array
    */
   public function scale_dimensions($max) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
+
+    if ($width <= $max && $height <= $max) {
+        return array($height, $width);
+    }
 
     if ($height) {
       if (isset($max)) {
@@ -1076,6 +1009,16 @@ class Item_Model_Core extends ORM_MPTT {
       unset($data[$key]);
     }
     return $data;
+  }
+
+  /**
+   * Increments the view counter of this item
+   * We can't use math in ORM or the query builder, so do this by hand.  It's important
+   * that we do this with math, otherwise concurrent accesses will damage accuracy.
+   */
+  public function increment_view_count() {
+    db::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $this->id")
+      ->execute();
   }
 
   private function _cache_buster($path) {

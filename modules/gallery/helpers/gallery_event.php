@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,10 +178,6 @@ class gallery_event_Core {
     }
     Session::instance()->set("active_auth_timestamp", time());
     auth::clear_failed_attempts($user);
-
-    if ($user->admin && ini_get("session.use_trans_sid")) {
-      message::info(t("PHP is configured with <a href=\"url\">session.use_trans_sid</a> enabled which will cause random logouts.  Please disable this setting.", array("url" => "http://www.php.net/manual/en/session.configuration.php#ini.session.use-trans-sid")));
-    }
   }
 
   static function user_auth_failed($name) {
@@ -377,7 +373,7 @@ class gallery_event_Core {
         module::event("admin_menu", $admin_menu, $theme);
 
         $settings_menu = $admin_menu->get("settings_menu");
-        sort($settings_menu->elements);
+        uasort($settings_menu->elements, array("Menu", "title_comparator"));
       }
     }
   }

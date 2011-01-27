@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,16 @@ class Cache_Test extends Gallery_Unit_Test_Case {
     $this->_driver = new Cache_Database_Driver();
   }
 
-  public function cache_exists_test() {
-    $this->assert_false($this->_driver->exists("test_key"), "test_key should not be defined");
+  private function _exists($id) {
+    return db::build()
+      ->where("key", "=", $id)
+      ->where("expiration", ">=", time())
+      ->limit("1")
+      ->count_records("caches") > 0;
+  }
+
+  public function cache_exists_test_helper_function_test() {
+    $this->assert_false($this->_exists("test_key"), "test_key should not be defined");
 
     $id = random::hash();
     db::build()
@@ -34,7 +42,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
 
-    $this->assert_true($this->_driver->exists($id), "test_key should be defined");
+    $this->assert_true($this->_exists($id), "test_key should be defined");
   }
 
   public function cache_get_test() {
@@ -100,9 +108,9 @@ class Cache_Test extends Gallery_Unit_Test_Case {
 
     $this->_driver->delete(array($id1));
 
-    $this->assert_false($this->_driver->exists($id1), "$id1 should have been deleted");
-    $this->assert_true($this->_driver->exists($id2), "$id2 should not have been deleted");
-    $this->assert_true($this->_driver->exists($id3), "$id3 should not have been deleted");
+    $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
+    $this->assert_true($this->_exists($id2), "$id2 should not have been deleted");
+    $this->assert_true($this->_exists($id3), "$id3 should not have been deleted");
   }
 
   public function cache_delete_tag_test() {
@@ -120,9 +128,9 @@ class Cache_Test extends Gallery_Unit_Test_Case {
 
     $data = $this->_driver->delete_tag(array("tag3"));
 
-    $this->assert_true($this->_driver->exists($id1), "$id1 should not have been deleted");
-    $this->assert_false($this->_driver->exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_driver->exists($id3), "$id3 should have been deleted");
+    $this->assert_true($this->_exists($id1), "$id1 should not have been deleted");
+    $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
+    $this->assert_false($this->_exists($id3), "$id3 should have been deleted");
   }
 
   public function cache_delete_all_test() {
@@ -140,8 +148,8 @@ class Cache_Test extends Gallery_Unit_Test_Case {
 
     $data = $this->_driver->delete(true);
 
-    $this->assert_false($this->_driver->exists($id1), "$id1 should have been deleted");
-    $this->assert_false($this->_driver->exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_driver->exists($id3), "$id3 should have been deleted");
+    $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
+    $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
+    $this->assert_false($this->_exists($id3), "$id3 should have been deleted");
   }
 }

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class gallery_graphics_Core {
     }
 
     $dims = getimagesize($input_file);
-    if (max($dims[0], $dims[1]) < min($options["width"], $options["height"])) {
+    if (max($dims[0], $dims[1]) <= min($options["width"], $options["height"])) {
       // Image would get upscaled; do nothing
       copy($input_file, $output_file);
     } else {
@@ -75,7 +75,7 @@ class gallery_graphics_Core {
   /**
    * Overlay an image on top of the input file.
    *
-   * Valid options are: file, mime_type, position, transparency_percent, padding
+   * Valid options are: file, position, transparency, padding
    *
    * Valid positions: northwest, north, northeast,
    *                  west, center, east,

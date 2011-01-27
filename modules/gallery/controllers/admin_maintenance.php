@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       ->set("state", "stalled")
       ->where("done", "=", 0)
       ->where("state", "<>", "stalled")
-      ->where(new Database_Expression("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
+      ->where(db::expr("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
       ->execute();
     $stalled_count = $query->count();
     if ($stalled_count) {

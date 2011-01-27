@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,29 +28,29 @@ class Movies_Controller extends Items_Controller {
     access::required("view", $movie);
 
     $where = array(array("type", "!=", "album"));
-    $position = $movie->parent()->get_position($movie, $where);
+    $position = item::get_position($movie, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =
-        $movie->parent()->children(3, $position - 2, $where);
+        $movie->parent()->viewable()->children(3, $position - 2, $where);
     } else {
       $previous_item = null;
       list ($next_item) = $movie->parent()->viewable()->children(1, $position, $where);
     }
 
     $template = new Theme_View("page.html", "item", "movie");
-    $template->set_global("item", $movie);
-    $template->set_global("children", array());
-    $template->set_global("children_count", 0);
-    $template->set_global("parents", $movie->parents()->as_array());
-    $template->set_global("next_item", $next_item);
-    $template->set_global("previous_item", $previous_item);
-    $template->set_global("sibling_count", $movie->parent()->viewable()->children_count($where));
-    $template->set_global("position", $position);
+    $template->set_global(
+      array("item" => $movie,
+            "children" => array(),
+            "children_count" => 0,
+            "parents" => $movie->parents()->as_array(),
+            "next_item" => $next_item,
+            "previous_item" => $previous_item,
+            "sibling_count" => $movie->parent()->viewable()->children_count($where),
+            "position" => $position));
 
     $template->content = new View("movie.html");
 
-    $movie->view_count++;
-    $movie->save();
+    $movie->increment_view_count();
 
     print $template;
   }

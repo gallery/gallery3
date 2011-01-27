@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,37 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_Core {
-  const VERSION = "3.0+ (git)";
+  const VERSION = "3.0+";
+  const CODE_NAME = "";
+  const RELEASE_CHANNEL = "git";
+  const RELEASE_BRANCH = "master";
 
   /**
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
    * down for maintenance" page.
    */
   static function maintenance_mode() {
-    // @todo: we need a mechanism here to identify controllers that are still legally accessible
-    // when the entire Gallery is in maintenance mode.  Perhaps a controller class function or
-    // method?
-    // https://sourceforge.net/apps/trac/gallery/ticket/1411
-    if (Router::$controller != "login" &&
-        Router::$controller != "combined" &&
-        module::get_var("gallery", "maintenance_mode", 0) &&
+    if (module::get_var("gallery", "maintenance_mode", 0) &&
         !identity::active_user()->admin) {
-      Session::instance()->set("continue_url", url::abs_site("admin/maintenance"));
-      Router::$controller = "login";
-      Router::$controller_path = MODPATH . "gallery/controllers/login.php";
-      Router::$method = "html";
+      try {
+        $class = new ReflectionClass(ucfirst(Router::$controller).'_Controller');
+        $allowed = $class->getConstant("ALLOW_MAINTENANCE_MODE") === true;
+      } catch (ReflectionClass $e) {
+        $allowed = false;
+      }
+      if (!$allowed) {
+        if (Router::$controller == "admin") {
+          // At this point we're in the admin theme and it doesn't have a themed login page, so
+          // we can't just swap in the login controller and have it work.  So redirect back to the
+          // root item where we'll run this code again with the site theme.
+          url::redirect(item::root()->abs_url());
+        } else {
+          Session::instance()->set("continue_url", url::abs_site("admin/maintenance"));
+          Router::$controller = "login";
+          Router::$controller_path = MODPATH . "gallery/controllers/login.php";
+          Router::$method = "html";
+        }
+      }
     }
   }
 
@@ -45,26 +57,27 @@ class gallery_Core {
    * the login page.
    */
   static function private_gallery() {
-    // @todo: we need a mechanism here to identify controllers that are still legally accessible
-    // when the entire Gallery is private.  Perhaps a controller class function or method?
-    // https://sourceforge.net/apps/trac/gallery/ticket/1411
-    if (Router::$controller != "login" &&
-        Router::$controller != "combined" &&
-        Router::$controller != "digibug" &&
-        Router::$controller != "rest" &&
-        identity::active_user()->guest &&
+    if (identity::active_user()->guest &&
         !access::user_can(identity::guest(), "view", item::root()) &&
         php_sapi_name() != "cli") {
-      if (Router::$controller == "admin") {
-        // At this point we're in the admin theme and it doesn't have a themed login page, so
-        // we can't just swap in the login controller and have it work.  So redirect back to the
-        // root item where we'll run this code again with the site theme.
-        url::redirect(item::root()->abs_url());
-      } else {
-        Session::instance()->set("continue_url", url::abs_current());
-        Router::$controller = "login";
-        Router::$controller_path = MODPATH . "gallery/controllers/login.php";
-        Router::$method = "html";
+      try {
+        $class = new ReflectionClass(ucfirst(Router::$controller).'_Controller');
+        $allowed = $class->getConstant("ALLOW_PRIVATE_GALLERY") === true;
+      } catch (ReflectionClass $e) {
+        $allowed = false;
+      }
+      if (!$allowed) {
+        if (Router::$controller == "admin") {
+          // At this point we're in the admin theme and it doesn't have a themed login page, so
+          // we can't just swap in the login controller and have it work.  So redirect back to the
+          // root item where we'll run this code again with the site theme.
+          url::redirect(item::root()->abs_url());
+        } else {
+          Session::instance()->set("continue_url", url::abs_current());
+          Router::$controller = "login";
+          Router::$controller_path = MODPATH . "gallery/controllers/login.php";
+          Router::$method = "html";
+        }
       }
     }
   }
@@ -143,8 +156,15 @@ class gallery_Core {
     if (is_string($file_name)) {
       // make relative to DOCROOT
       $parts = explode("/", $file_name);
+      $count = count($parts);
       foreach ($parts as $idx => $part) {
-        if (in_array($part, array("application", "modules", "themes", "lib"))) {
+        // If this part is "modules" or "themes" make sure that the part 2 after this
+        // is the target directory, and if it is then we're done.  This check makes
+        // sure that if Gallery is installed in a directory called "modules" or "themes"
+        // We don't parse the directory structure incorrectly.
+        if (in_array($part, array("modules", "themes")) &&
+            $idx + 2 < $count &&
+            $parts[$idx + 2] == $directory) {
           break;
         }
         unset($parts[$idx]);
@@ -166,5 +186,26 @@ class gallery_Core {
       }
     }
     putenv("PATH=" .  implode(":", $path_env));
+  }
+
+  /**
+   * Return a string describing this version of Gallery and the type of release.
+   */
+  static function version_string() {
+    if (gallery::RELEASE_CHANNEL == "git") {
+      return sprintf(
+        "%s (branch %s build %s)", gallery::VERSION, gallery::RELEASE_BRANCH,
+        gallery::build_number());
+    } else {
+      return sprintf("%s (%s)", gallery::VERSION, gallery::CODE_NAME);
+    }
+  }
+
+  /**
+   * Return the contents of the .build_number file, which should be a single integer.
+   */
+  static function build_number() {
+    $result = parse_ini_file(DOCROOT . ".build_number");
+    return $result["build_number"];
   }
 }

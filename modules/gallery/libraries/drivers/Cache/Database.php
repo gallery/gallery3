@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,20 +25,6 @@ class Cache_Database_Driver extends Cache_Driver {
   protected $db;
 
   /**
-   * Checks if a cache id is already set.
-   *
-   * @param  string   cache id
-   * @return boolean
-   */
-  public function exists($id) {
-    $count = db::build()
-      ->where("key", "=", $id)
-      ->where("expiration", ">=", time())
-      ->count_records("caches");
-    return $count > 0;
-  }
-
-  /**
    * Sets a cache item to the given data, tags, and lifetime.
    *
    * @param   array    assoc array of key => value pairs
@@ -59,22 +45,15 @@ class Cache_Database_Driver extends Cache_Driver {
       $lifetime += time();
     }
 
+    $db = Database::instance();
+    $tags = $db->escape($tags);
     foreach ($items as $id => $data) {
-      if ($this->exists($id)) {
-        $status = db::build()
-          ->update("caches")
-          ->set("tags", $tags)
-          ->set("expiration", $lifetime)
-          ->set("cache", serialize($data))
-          ->where("key", "=", $id)
-          ->execute();
-      } else {
-        $status = db::build()
-          ->insert("caches")
-          ->columns("key", "tags", "expiration", "cache")
-          ->values($id, $tags, $lifetime, serialize($data))
-          ->execute();
-      }
+      $id = $db->escape($id);
+      $data = $db->escape(serialize($data));
+      $db->query("INSERT INTO {caches} (`key`, `tags`, `expiration`, `cache`)
+                  VALUES ('$id', '$tags', $lifetime, '$data')
+                  ON DUPLICATE KEY UPDATE `tags` = VALUES(tags), `expiration` = VALUES(expiration),
+                  `cache` = VALUES(cache)");
     }
 
     return true;

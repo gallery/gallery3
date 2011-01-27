@@ -1,3 +1,8 @@
+# Set some reasonable defaults for PHP.  Most of these cannot be set
+# inside the script itself.  For hosts that don't have .htaccess
+# support but do support per-dir php.ini files, these settings are
+# mirrored in php.ini
+#
 <IfModule mod_php5.c>
   php_flag short_open_tag            On
   php_flag magic_quotes_gpc          Off
@@ -24,7 +29,7 @@
 # in your Apache2 config file before you uncomment this block or
 # you'll get an "Internal Server Error".
 #
-# <FilesMatch "(\.(class|fla|gitignore|inc|ini|sql|txt)|(README|LICENSE))$">
+# <FilesMatch "(\.(class|fla|gitignore|inc|ini|sql|txt)|(README|LICENSE|.build_number))$">
 #   Order deny,allow
 #   Deny from all
 # </FilesMatch>

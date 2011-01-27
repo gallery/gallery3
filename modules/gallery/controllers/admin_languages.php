@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,9 +74,11 @@ class Admin_Languages_Controller extends Admin_Controller {
 
   private function _save_api_key($form) {
     $new_key = $form->sharing->api_key->value;
-    if ($new_key && !l10n_client::validate_api_key($new_key)) {
-      $form->sharing->api_key->add_error("invalid", 1);
-      $valid = false;
+    if ($new_key) {
+      list($connected, $valid) = l10n_client::validate_api_key($new_key);
+      if (!$valid) {
+        $form->sharing->api_key->add_error($connected ? "invalid" : "no_connection", 1);
+      }
     } else {
       $valid = true;
     }
@@ -119,7 +121,9 @@ class Admin_Languages_Controller extends Admin_Controller {
                   array("server-link" => html::mark_clean(html::anchor($server_link))))
               : t("API key"))
       ->value($api_key)
-      ->error_messages("invalid", t("The API key you provided is invalid."));
+      ->error_messages("invalid", t("The API key you provided is invalid."))
+      ->error_messages(
+        "no_connection", t("Could not connect to remote server to validate the API key."));
     $group->submit("save")->value(t("Save settings"));
     if ($api_key && $this->_outgoing_translations_count()) {
       // TODO: UI improvement: hide API key / save button when API key is set.

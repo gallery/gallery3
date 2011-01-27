@@ -1,14 +1,14 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   $("#g-add-tag-form").ready(function() {
-    var url = $("#g-tag-cloud").attr("ref") + "/autocomplete";
+    var url = $("#g-tag-cloud-autocomplete-url").attr("href");
     $("#g-add-tag-form input:text").autocomplete(
       url, {
         max: 30,
         multiple: true,
         multipleSeparator: ',',
         cacheLength: 1,
-        selectFirst: false,
+        selectFirst: false
       }
     );
     $("#g-add-tag-form").ajaxForm({
@@ -22,7 +22,9 @@
     });
   });
 </script>
-<div id="g-tag-cloud" ref="<?= url::site("tags") ?>">
+<div id="g-tag-cloud">
+   <a id="g-tag-cloud-autocomplete-url" style="display: none"
+      href="<?= url::site("tags/autocomplete") ?>"></a>
   <?= $cloud ?>
 </div>
 <?= $form ?>

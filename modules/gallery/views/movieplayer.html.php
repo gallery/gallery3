@@ -9,6 +9,9 @@
       provider: "pseudostreaming"
     },
     {
+      clip: {
+        scaling: 'fit'
+      },
       plugins: {
         pseudostreaming: {
           url: "<?= url::abs_file("lib/flowplayer.pseudostreaming.swf") ?>"

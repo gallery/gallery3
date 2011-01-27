@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +42,13 @@ class random_Core {
   }
 
   /**
-   * Return a random number between 0 and mt_getrandmax()
+   * Return a random number between $min and $max.  If $min and $max are not specified,
+   * return a random number between 0 and mt_getrandmax()
    */
-  static function int() {
+  static function int($min=null, $max=null) {
+    if ($min || $max) {
+      return mt_rand($min, $max);
+    }
     return mt_rand();
   }
 }
