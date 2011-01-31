@@ -37,6 +37,11 @@ class exif_Core {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
             if (function_exists("mb_detect_encoding") &&
+                function_exists("mb_convert_encoding") &&
+                mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
+              $value = mb_convert_encoding($value, "UTF-8", mb_detect_encoding($value));
+            }
+            else if (function_exists("mb_detect_encoding") &&
                 mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
               $value = utf8_encode($value);
             }
@@ -61,6 +66,11 @@ class exif_Core {
           if (!empty($iptc[$iptc_key])) {
             $value = implode(" ", $iptc[$iptc_key]);
             if (function_exists("mb_detect_encoding") &&
+                function_exists("mb_convert_encoding") &&
+                mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
+              $value = mb_convert_encoding($value, "UTF-8", mb_detect_encoding($value));
+            }
+            else if (function_exists("mb_detect_encoding") &&
                 mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
               $value = utf8_encode($value);
             }
