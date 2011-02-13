@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,34 @@ class Admin_Users_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->page_title = t("Users and groups");
     $view->content = new View("admin_users.html");
-    $view->content->users = ORM::factory("user")->order_by("name", "ASC")->find_all();
+
+    // @todo: add this as a config option
+    $page_size = module::get_var("user", "page_size", 10);
+    $page = Input::instance()->get("page", "1");
+    $builder = db::build();
+    $user_count = $builder->from("users")->count_records();
+
+    $view->content->pager = new Pagination();
+    $view->content->pager->initialize(
+      array("query_string" => "page",
+            "total_items" => $user_count,
+            "items_per_page" => $page_size,
+            "style" => "classic"));
+
+    // Make sure that the page references a valid offset
+    if ($page < 1) {
+      url::redirect(url::merge(array("page" => 1)));
+    } else if ($page > $view->content->pager->total_pages) {
+      url::redirect(url::merge(array("page" => $view->content->pager->total_pages)));
+    }
+
+    // Join our users against the items table so that we can get a count of their items
+    // in the same query.
+    $view->content->users = ORM::factory("user")
+      ->order_by("users.name", "ASC")
+      ->find_all($page_size, $view->content->pager->sql_offset);
     $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();
+
     print $view;
   }
 

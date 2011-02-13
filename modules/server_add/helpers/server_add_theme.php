@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,24 +20,24 @@
 class server_add_theme_Core {
   static function head($theme) {
     if (identity::active_user()->admin) {
-      $theme->css("server_add.css");
-      $theme->script("server_add.js");
+      return $theme->css("server_add.css")
+        . $theme->script("server_add.js");
     }
   }
 
   static function admin_head($theme) {
-    $head = array();
+    $buf = "";
     if (strpos(Router::$current_uri, "admin/server_add") !== false) {
-      $theme->css("server_add.css");
-      $theme->css("jquery.autocomplete.css");
+      $buf .= $theme->css("server_add.css")
+        . $theme->css("jquery.autocomplete.css");
       $base = url::site("__ARGS__");
       $csrf = access::csrf_token();
-      $head[] = "<script type=\"text/javascript\"> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
+      $buf .= "<script type=\"text/javascript\"> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-      $theme->script("jquery.autocomplete.js");
-      $theme->script("admin.js");
+      $buf .= $theme->script("jquery.autocomplete.js")
+        . $theme->script("admin.js");
     }
 
-    return implode("\n", $head);
+    return $buf;
   }
 }

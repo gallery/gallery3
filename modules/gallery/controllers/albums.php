@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class Albums_Controller extends Items_Controller {
 
     if ($show) {
       $child = ORM::factory("item", $show);
-      $index = $album->get_position($child);
+      $index = item::get_position($child);
       if ($index) {
         $page = ceil($index / $page_size);
         if ($page == 1) {

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_Core {
-  const VERSION = "3.0+ (git)";
+  const VERSION = "3.0+";
+  const CODE_NAME = "";
+  const RELEASE_CHANNEL = "git";
+  const RELEASE_BRANCH = "master";
 
   /**
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
@@ -183,5 +186,26 @@ class gallery_Core {
       }
     }
     putenv("PATH=" .  implode(":", $path_env));
+  }
+
+  /**
+   * Return a string describing this version of Gallery and the type of release.
+   */
+  static function version_string() {
+    if (gallery::RELEASE_CHANNEL == "git") {
+      return sprintf(
+        "%s (branch %s build %s)", gallery::VERSION, gallery::RELEASE_BRANCH,
+        gallery::build_number());
+    } else {
+      return sprintf("%s (%s)", gallery::VERSION, gallery::CODE_NAME);
+    }
+  }
+
+  /**
+   * Return the contents of the .build_number file, which should be a single integer.
+   */
+  static function build_number() {
+    $result = parse_ini_file(DOCROOT . ".build_number");
+    return $result["build_number"];
   }
 }

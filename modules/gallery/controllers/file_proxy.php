@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,13 @@
  * input is sanitized against the database before we perform any file I/O.
  */
 class File_Proxy_Controller extends Controller {
+  const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
-    // request_uri: gallery3/var/trunk/albums/foo/bar.jpg
+    // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
     $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
 
+    // get rid of query parameters
+    // request_uri: gallery3/var/albums/foo/bar.jpg
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
     // var_uri: gallery3/var/
@@ -42,13 +45,11 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    // file_uri: albums/foo/bar.jpg
     $file_uri = substr($request_uri, strlen($var_uri));
 
-    // Make sure that we don't leave the var dir
-    if (strpos($file_uri, "..") !== false) {
-      throw new Kohana_404_Exception();
-    }
-
+    // type: albums
+    // path: foo/bar.jpg
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       throw new Kohana_404_Exception();

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,7 @@
  */
 class Gallery_View_Core extends View {
   protected $theme_name = null;
-  protected $scripts = array();
-  protected $css = array();
-
-  /**
-   * Add a script to the combined scripts list.
-   * @param $file  the file name or path of the script to include. If a path is specified then
-   *               it needs to be relative to DOCROOT. Just specifying a file name will result
-   *               in searching Kohana's cascading file system.
-   */
-  public function script($file) {
-    if (($path = gallery::find_file("js", $file, false))) {
-      $this->scripts[$path] = 1;
-    } else {
-      Kohana_Log::add("error", "Can't find script file: $file");
-    }
-  }
+  protected $combine_queue = array();
 
   /**
    * Provide a url to a resource within the current theme.  This allows us to refer to theme
@@ -46,14 +31,54 @@ class Gallery_View_Core extends View {
   }
 
   /**
-   * Add a css file to the combined css list.
+   * Begin gather up scripts or css files so that they can be combined into a single request.
+   *
+   * @param $types  a comma separated list of types to combine, eg "script,css"
+   */
+  public function start_combining($types) {
+    foreach (explode(",", $types) as $type) {
+      $this->combine_queue[$type] = array();
+    }
+  }
+
+  /**
+   * If script combining is enabled, add this script to the list of scripts that will be
+   * combined into a single script element.  When combined, the order of scripts is preserved.
+   *
    * @param $file  the file name or path of the script to include. If a path is specified then
    *               it needs to be relative to DOCROOT. Just specifying a file name will result
    *               in searching Kohana's cascading file system.
+   * @param $group the group of scripts to combine this with.  defaults to "core"
    */
-  public function css($file) {
+  public function script($file, $group="core") {
+    if (($path = gallery::find_file("js", $file, false))) {
+      if (isset($this->combine_queue["script"])) {
+        $this->combine_queue["script"][$group][$path] = 1;
+      } else {
+        return html::script($path);
+      }
+    } else {
+      Kohana_Log::add("error", "Can't find script file: $file");
+    }
+  }
+
+  /**
+   * If css combining is enabled, add this css to the list of css that will be
+   * combined into a single style element.  When combined, the order of style elements
+   * is preserved.
+   *
+   * @param $file  the file name or path of the css to include. If a path is specified then
+   *               it needs to be relative to DOCROOT. Just specifying a file name will result
+   *               in searching Kohana's cascading file system.
+   * @param $group the group of css to combine this with.  defaults to "core"
+   */
+  public function css($file, $group="core") {
     if (($path = gallery::find_file("css", $file, false))) {
-      $this->css[$path] = 1;
+      if (isset($this->combine_queue["css"])) {
+        $this->combine_queue["css"][$group][$path] = 1;
+      } else {
+        return html::stylesheet($path);
+      }
     } else {
       Kohana_Log::add("error", "Can't find css file: $file");
     }
@@ -61,11 +86,13 @@ class Gallery_View_Core extends View {
 
   /**
    * Combine a series of files into a single one and cache it in the database.
+   * @param $type  the data type (script or css)
+   * @param $group the group of scripts or css we want
    */
-  protected function combine_files($paths, $type) {
+  public function get_combined($type, $group="core") {
     $links = array();
 
-    if (empty($paths)) {
+    if (empty($this->combine_queue[$type][$group])) {
       return;
     }
 
@@ -73,7 +100,7 @@ class Gallery_View_Core extends View {
     // entries.
     $key = array(url::abs_file(""));
 
-    foreach (array_keys($paths) as $path) {
+    foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
       $stats = stat($path);
       // 7 == size, 9 == mtime, see http://php.net/stat
       $key[] = "$path $stats[7] $stats[9]";
@@ -85,7 +112,7 @@ class Gallery_View_Core extends View {
 
     if (empty($contents)) {
       $contents = "";
-      foreach (array_keys($paths) as $path) {
+      foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
         if ($type == "css") {
           $contents .= "/* $path */\n" . $this->process_css($path) . "\n";
         } else {
@@ -103,12 +130,12 @@ class Gallery_View_Core extends View {
       }
     }
 
+    unset($this->combine_queue[$type][$group]);
+
     if ($type == "css") {
-      return "<!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->\n" .
-        html::stylesheet("combined/css/$key", "screen,print,projection", true);
+      return html::stylesheet("combined/css/$key", "screen,print,projection", true);
     } else {
-      return "<!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->\n" .
-        html::script("combined/javascript/$key", true);
+      return html::script("combined/javascript/$key", true);
     }
   }
 

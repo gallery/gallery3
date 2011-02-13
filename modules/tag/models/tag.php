@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,12 +78,14 @@ class Tag_Model_Core extends ORM {
       $related_item_ids[$row->item_id] = 1;
     }
 
-    $added = array_diff($this->changed_relations["items"], $this->object_relations["items"]);
-    $removed = array_diff($this->object_relations["items"], $this->changed_relations["items"]);
-    if (isset($this->changed_relations["items"])) {
-      $changed = array_merge($added, $removed);
+    if (isset($this->object_relations["items"])) {
+      $added = array_diff($this->changed_relations["items"], $this->object_relations["items"]);
+      $removed = array_diff($this->object_relations["items"], $this->changed_relations["items"]);
+      if (isset($this->changed_relations["items"])) {
+        $changed = array_merge($added, $removed);
+      }
+      $this->count = count($this->object_relations["items"]) + count($added) - count($removed);
     }
-    $this->count = count($this->object_relations["items"]) + count($added) - count($removed);
 
     $result = parent::save();
 

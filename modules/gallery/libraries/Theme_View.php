@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,6 +224,7 @@ class Theme_View_Core extends Gallery_View {
     case "head":
     case "header_bottom":
     case "header_top":
+    case "html_attributes":
     case "page_bottom":
     case "page_top":
     case "photo_blocks":
@@ -236,13 +237,6 @@ class Theme_View_Core extends Gallery_View {
     case "thumb_bottom":
     case "thumb_info":
     case "thumb_top":
-      if ($function == "head") {
-        // Stash any CSS we have already; that came from the theme and we want theme CSS to
-        // override module CSs
-        $save_css = $this->css;
-        $this->css = array();
-      }
-
       $blocks = array();
       if (method_exists("gallery_theme", $function)) {
         switch (count($args)) {
@@ -279,13 +273,6 @@ class Theme_View_Core extends Gallery_View {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),
           array_merge(array($this), $args));
-      }
-
-      if ($function == "head") {
-        // Merge the theme CSS/JS at the end
-        $this->css = array_merge($this->css, $save_css);
-        array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
-        array_unshift($blocks, $this->combine_files($this->css, "css"));
       }
 
       if (Session::instance()->get("debug")) {

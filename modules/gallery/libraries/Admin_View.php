@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +86,7 @@ class Admin_View_Core extends Gallery_View {
     case "admin_page_top":
     case "admin_head":
     case "body_attributes":
+    case "html_attributes":
       $blocks = array();
       foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";
@@ -94,11 +95,6 @@ class Admin_View_Core extends Gallery_View {
             array($helper_class, $function),
             array_merge(array($this), $args));
         }
-      }
-
-      if ($function == "admin_head") {
-        array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
-        array_unshift($blocks, $this->combine_files($this->css, "css"));
       }
 
       if (Session::instance()->get("debug")) {

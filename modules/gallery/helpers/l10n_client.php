@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,15 +55,24 @@ class l10n_client_Core {
     $url = self::_server_url("status");
     $signature = self::_sign($version, $api_key);
 
-    list ($response_data, $response_status) = remote::post(
-      $url, array("version" => $version,
-                  "client_token" => l10n_client::client_token(),
-                  "signature" => $signature,
-                  "uid" => l10n_client::server_uid($api_key)));
-    if (!remote::success($response_status)) {
-      return false;
+    try {
+      list ($response_data, $response_status) = remote::post(
+        $url, array("version" => $version,
+                    "client_token" => l10n_client::client_token(),
+                    "signature" => $signature,
+                    "uid" => l10n_client::server_uid($api_key)));
+    } catch (ErrorException $e) {
+      // Log the error, but then return a "can't make connection" error
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
-    return true;
+    if (!isset($response_data) && !isset($response_status)) {
+      return array(false, false);
+    }
+
+    if (!remote::success($response_status)) {
+      return array(true, false);
+    }
+    return array(true, true);
   }
 
   /**

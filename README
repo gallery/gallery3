@@ -1,4 +1,4 @@
-Gallery 3.0 (code name "Santa Fe")
+Gallery 3.0+ (development version)
 
 ABOUT:
 Gallery 3 is a web based software product that lets you manage your
@@ -33,6 +33,9 @@ SUPPORTED CONFIGURATION:
    filter, and json must be installed).
  - Database: MySQL 5 and newer.
 
+For complete system requirements, please refer to:
+  http://codex.gallery2.org/Gallery3:Requirements
+
 
 INSTALLING AND UPGRADING INSTRUCTIONS:
 For comprehensive instructions, The online User Guide is your best resource:
@@ -61,8 +64,7 @@ INSTALLATION FROM THE COMMAND LINE:
 BUGS?
 Go to http://apps.sourceforge.net/trac/gallery/ click the "login" link
 and log in with your SourceForge username and password, then click the
-"new ticket" button.  Mark any issues you find with the "3.1"
-milestone and we'll try to get 'em done for the next release.
+"new ticket" button.
 
 
 QUESTIONS, PROBLEMS:
