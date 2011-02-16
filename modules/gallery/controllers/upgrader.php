@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ class Upgrader_Controller extends Controller {
 
     // Make sure we have an upgrade token
     if (!($upgrade_token = $session->get("upgrade_token", null))) {
-      $session->set("upgrade_token", $upgrade_token = md5(rand()));
+      $session->set("upgrade_token", $upgrade_token = random::hash());
     }
 
     // If the upgrade token exists, then bless this session
@@ -93,6 +93,9 @@ class Upgrader_Controller extends Controller {
 
     // If the upgrade failed, this will get recreated
     site_status::clear("upgrade_now");
+
+    // Clear any upgrade check strings, we are probably up to date.
+    site_status::clear("upgrade_checker");
 
     if (php_sapi_name() == "cli") {
       if ($failed) {

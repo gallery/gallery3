@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,8 +99,12 @@ class access_Core {
       return true;
     }
 
+    // Use the nearest parent album (including the current item) so that we take advantage
+    // of the cache when checking many items in a single album.
+    $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $item->id, "item_id");
+      $item : model_cache::get("access_cache", $id, "item_id");
+
     foreach ($user->groups() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === access::ALLOW) {
         return true;
@@ -136,8 +140,12 @@ class access_Core {
    * @return boolean
    */
   static function group_can($group, $perm_name, $item) {
+    // Use the nearest parent album (including the current item) so that we take advantage
+    // of the cache when checking many items in a single album.
+    $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $item->id, "item_id");
+      $item : model_cache::get("access_cache", $id, "item_id");
+
     return $resource->__get("{$perm_name}_{$group->id}") === access::ALLOW;
   }
 
@@ -426,7 +434,7 @@ class access_Core {
     $session = Session::instance();
     $csrf = $session->get("csrf");
     if (empty($csrf)) {
-      $csrf = md5(rand());
+      $csrf = random::hash();
       $session->set("csrf", $csrf);
     }
     return $csrf;

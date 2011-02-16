@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ class installer {
       $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
       $salt .= chr($char);
     }
-    $password = substr(md5(time() * rand()), 0, 6);
+    $password = substr(md5(time() . mt_rand()), 0, 6);
     // Escape backslash in preparation for our UPDATE statement.
     $hashed_password = str_replace("\\", "\\\\", $salt . md5($salt . $password));
     $sql = self::prepend_prefix($config["prefix"],
@@ -152,7 +152,7 @@ class installer {
   }
 
   static function create_admin_session($config) {
-    $session_id = md5(time() * rand());
+    $session_id = md5(time() . mt_rand());
     $user_agent = $_SERVER["HTTP_USER_AGENT"];
     $user_agent_len = strlen($user_agent);
     $now = time();
@@ -233,7 +233,30 @@ class installer {
       $errors[] = "Gallery requires the <a href=\"http://php.net/manual/en/book.ctype.php\">PHP Ctype</a> extension.  Please install it.";
     }
 
+    if (self::ini_get_bool("safe_mode")) {
+      $errors[] = "Gallery cannot function when PHP is in <a href=\"http://php.net/manual/en/features.safe-mode.php\">Safe Mode</a>.  Please disable safe mode.";
+    }
+
     return @$errors;
+  }
+
+  /**
+   * Convert any possible boolean ini value to true/false.
+   *   On = on = 1 = true
+   *   Off = off = 0 = false
+   */
+  static function ini_get_bool($varname) {
+    $value = ini_get($varname);
+
+    if (!strcasecmp("on", $value) || $value == 1 || $value === true) {
+      return true;
+    }
+
+    if (!strcasecmp("off", $value) || $value == 0 || $value === false) {
+      return false;
+    }
+
+    return false;
   }
 
 }

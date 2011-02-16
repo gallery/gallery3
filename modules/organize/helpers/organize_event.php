@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ class organize_event_Core {
         ->append(Menu::factory("dialog")
                  ->id("organize")
                  ->label(t("Organize album"))
-                 ->css_id("g-menu-organize-link")
+                 ->css_id("g-organize-link")
                  ->url(url::site("organize/dialog/{$item->id}")));
     }
   }
@@ -51,22 +51,4 @@ class organize_event_Core {
       }
     }
   }
-
-  static function pre_deactivate($data) {
-    if ($data->module == "rest") {
-      $data->messages["warn"][] = t("The Organize module requires the Rest module.");
-    }
-  }
-
-  static function module_change($changes) {
-    if (!module::is_active("rest") || in_array("rest", $changes->deactivate)) {
-      site_status::warning(
-        t("The Organize module requires the Rest module.  <a href=\"%url\">Activate the Rest module now</a>",
-          array("url" => html::mark_clean(url::site("admin/modules")))),
-        "organize_needs_rest");
-    } else {
-      site_status::clear("organize_needs_rest");
-    }
-  }
-
 }

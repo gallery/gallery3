@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,8 @@ class g2_import_task_Core {
       switch($modes[$mode]) {
       case "groups":
         if (empty($queue)) {
-          $task->set("queue", $queue = array_keys(g2(GalleryCoreApi::fetchGroupNames())));
+          $task->set("queue", $queue = g2_import::get_group_ids($task->get("last_id", 0)));
+          $task->set("last_id", end($queue));
         }
         $log_message = g2_import::import_group($queue);
         if ($log_message) {
@@ -109,8 +110,8 @@ class g2_import_task_Core {
 
       case "users":
         if (empty($queue)) {
-          $task->set(
-            "queue", $queue = array_keys(g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY))));
+          $task->set("queue", $queue = g2_import::get_user_ids($task->get("last_id", 0)));
+          $task->set("last_id", end($queue));
         }
         $log_message = g2_import::import_user($queue);
         if ($log_message) {
@@ -141,7 +142,6 @@ class g2_import_task_Core {
           $task->set("queue", $queue = g2_import::get_item_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-
         $log_message = g2_import::import_item($queue);
         if ($log_message) {
           $task->log($log_message);

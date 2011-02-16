@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,39 +31,13 @@ class url extends url_Core {
       return;
     }
 
-    $item = self::get_item_from_uri(Router::$current_uri);
+    $item = item::find_by_relative_url(html_entity_decode(Router::$current_uri, ENT_QUOTES));
     if ($item && $item->loaded()) {
       Router::$controller = "{$item->type}s";
       Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
       Router::$method = "show";
       Router::$arguments = array($item);
     }
-  }
-
-  /**
-   * Locate an item using the URI.  We assume that the uri is in the form /a/b/c where each
-   * component matches up with an item slug.
-   * @param string $uri the uri fragment
-   * @return Item_Model
-   */
-  static function get_item_from_uri($uri) {
-    $current_uri = html_entity_decode($uri, ENT_QUOTES);
-    // In most cases, we'll have an exact match in the relative_url_cache item field.
-    // but failing that, walk down the tree until we find it.  The fallback code will fix caches
-    // as it goes, so it'll never be run frequently.
-    $item = ORM::factory("item")->where("relative_url_cache", "=", $current_uri)->find();
-    if (!$item->loaded()) {
-      $count = count(Router::$segments);
-      foreach (ORM::factory("item")
-               ->where("slug", "=", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
-               ->where("level", "=", $count + 1)
-               ->find_all() as $match) {
-        if ($match->relative_url() == $current_uri) {
-          $item = $match;
-        }
-      }
-    }
-    return $item;
   }
 
   /**
@@ -100,5 +74,19 @@ class url extends url_Core {
    */
   static function current($qs=false, $suffix=false) {
     return htmlspecialchars(parent::current($qs, $suffix));
+  }
+
+  /**
+   * Merge extra an query string onto a given url safely.
+   * @param string the original url
+   * @param array the query string data in key=value form
+   */
+  static function merge_querystring($url, $query_params) {
+    $qs = implode("&", $query_params);
+    if (strpos($url, "?") === false) {
+      return $url . "?$qs";
+    } else {
+      return $url . "&$qs";
+    }
   }
 }

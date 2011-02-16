@@ -759,7 +759,7 @@ form .g-error {
 }
 
 .g-loading-small {
-  background: #e8e8e8 url('..lib/images/loading-small.gif') no-repeat center center !important;
+  background: #e8e8e8 url('../images/loading-small.gif') no-repeat center center !important;
 }
 
 /** *******************************************************************
@@ -888,10 +888,10 @@ button {
   background-position: .4em .3em;
   border: 1px solid #ccc;
   padding: 0;
+  margin-bottom: 1em;
 }
 
 #g-action-status {
-  margin-bottom: 1em;
 }
 
 #g-action-status li,

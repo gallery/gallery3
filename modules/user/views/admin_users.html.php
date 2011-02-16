@@ -108,6 +108,11 @@
           </tr>
           <? endforeach ?>
         </table>
+
+        <div class="g-paginator">
+          <?= $pager ?>
+        </div>
+
       </div>
     </div>
 

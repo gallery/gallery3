@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_conflicts_result_in_a_rename_test() {
-    $rand = rand();
+    $rand = random::int();
     $photo1 = test::random_photo_unsaved(item::root());
     $photo1->name = "{$rand}.jpg";
     $photo1->slug = (string)$rand;
@@ -124,5 +124,111 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
 
     $this->assert_same($photo2->id, $album->album_cover_item_id);
     $this->assert_same($photo2->id, $parent->album_cover_item_id);
+  }
+
+  public function find_by_path_test() {
+    $level1 = test::random_album();
+    $level2 = test::random_album_unsaved($level1);
+    $level2->name = "plus + space";
+    $level2->save()->reload();
+
+    $level3 = test::random_photo_unsaved($level2);
+    $level3->name = "same.jpg";
+    $level3->save()->reload();
+
+    $level2b = test::random_album($level1);
+    $level3b = test::random_photo_unsaved($level2b);
+    $level3b->name = "same.jpg";
+    $level3b->save()->reload();
+
+    // Item in album
+    $this->assert_same(
+      $level3->id,
+      item::find_by_path("/{$level1->name}/{$level2->name}/{$level3->name}")->id);
+
+    // Album, ends with a slash
+    $this->assert_same(
+      $level2->id,
+      item::find_by_path("{$level1->name}/{$level2->name}/")->id);
+
+    // Album, ends without a slash
+    $this->assert_same(
+      $level2->id,
+      item::find_by_path("/{$level1->name}/{$level2->name}")->id);
+
+    // Return root if "" is passed
+    $this->assert_same(item::root()->id, item::find_by_path("")->id);
+
+    // Verify that we don't get confused by the part names, using the fallback code.
+    db::build()
+      ->update("items")
+      ->set(array("relative_path_cache" => null))
+      ->where("id", "IN", array($level3->id, $level3b->id))
+      ->execute();
+    $this->assert_same(
+      $level3->id,
+      item::find_by_path("{$level1->name}/{$level2->name}/{$level3->name}")->id);
+
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_path("{$level1->name}/{$level2b->name}/{$level3b->name}")->id);
+
+    // Verify that we don't get false positives
+    $this->assert_false(
+      item::find_by_path("foo/bar/baz")->loaded());
+
+    // Verify that the fallback code works
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_path("{$level1->name}/{$level2b->name}/{$level3b->name}")->id);
+  }
+
+  public function find_by_relative_url_test() {
+    $level1 = test::random_album();
+    $level2 = test::random_album($level1);
+    $level3 = test::random_photo_unsaved($level2);
+    $level3->slug = "same";
+    $level3->save()->reload();
+
+    $level2b = test::random_album($level1);
+    $level3b = test::random_photo_unsaved($level2b);
+    $level3b->slug = "same";
+    $level3b->save()->reload();
+
+    // Item in album
+    $this->assert_same(
+      $level3->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2->slug}/{$level3->slug}")->id);
+
+    // Album, ends without a slash
+    $this->assert_same(
+      $level2->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2->slug}")->id);
+
+    // Return root if "" is passed
+    $this->assert_same(item::root()->id, item::find_by_relative_url("")->id);
+
+    // Verify that we don't get confused by the part slugs, using the fallback code.
+    db::build()
+      ->update("items")
+      ->set(array("relative_url_cache" => null))
+      ->where("id", "IN", array($level3->id, $level3b->id))
+      ->execute();
+    $this->assert_same(
+      $level3->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2->slug}/{$level3->slug}")->id);
+
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2b->slug}/{$level3b->slug}")->id);
+
+    // Verify that we don't get false positives
+    $this->assert_false(
+      item::find_by_relative_url("foo/bar/baz")->loaded());
+
+    // Verify that the fallback code works
+    $this->assert_same(
+      $level3b->id,
+      item::find_by_relative_url("{$level1->slug}/{$level2b->slug}/{$level3b->slug}")->id);
   }
 }

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 class User_Model_Core extends ORM implements User_Definition {
   protected $has_and_belongs_to_many = array("groups");
   protected $password_length = null;
+  protected $groups_cache = null;
 
   public function __set($column, $value) {
     switch ($column) {
@@ -43,6 +44,7 @@ class User_Model_Core extends ORM implements User_Definition {
     module::event("user_before_delete", $this);
     parent::delete($id);
     module::event("user_deleted", $old);
+    $this->groups_cache = null;
   }
 
   /**
@@ -56,7 +58,10 @@ class User_Model_Core extends ORM implements User_Definition {
   }
 
   public function groups() {
-    return $this->groups->find_all();
+    if (!$this->groups_cache) {
+      $this->groups_cache = $this->groups->find_all()->as_array();
+    }
+    return $this->groups_cache;
   }
 
   /**
@@ -108,6 +113,7 @@ class User_Model_Core extends ORM implements User_Definition {
       module::event("user_updated", $original, $this);
     }
 
+    $this->groups_cache = null;
     return $this;
   }
 

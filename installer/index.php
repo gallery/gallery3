@@ -1,7 +1,7 @@
 <?php
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,11 @@ if (version_compare(PHP_VERSION, "5.2.3", "<")) {
   print "Gallery 3 requires PHP 5.2.3 or newer.\n";
   exit;
 }
+
+// Turn off session.use_trans_sid -- that feature attempts to inject session ids
+// into generated URLs and forms, but it doesn't interoperate will with Gallery's
+// Ajax code.
+ini_set("session.use_trans_sid", false);
 
 require(DOCROOT . "installer/installer.php");
 if (PHP_SAPI == "cli") {

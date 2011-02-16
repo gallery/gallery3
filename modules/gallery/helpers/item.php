@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,6 +210,75 @@ class item_Core {
   }
 
   /**
+   * Find an item by its path.  If there's no match, return an empty Item_Model.
+   * NOTE: the caller is responsible for performing security checks on the resulting item.
+   * @param string $path
+   * @return object Item_Model
+   */
+  static function find_by_path($path) {
+    $path = trim($path, "/");
+
+    // The root path name is NULL not "", hence this workaround.
+    if ($path == "") {
+      return item::root();
+    }
+
+    // Check to see if there's an item in the database with a matching relative_path_cache value.
+    // Since that field is urlencoded, we must urlencoded the components of the path.
+    foreach (explode("/", $path) as $part) {
+      $encoded_array[] = rawurlencode($part);
+    }
+    $encoded_path = join("/", $encoded_array);
+    $item = ORM::factory("item")
+      ->where("relative_path_cache", "=", $encoded_path)
+      ->find();
+    if ($item->loaded()) {
+      return $item;
+    }
+
+    // Since the relative_path_cache field is a cache, it can be unavailable.  If we don't find
+    // anything, fall back to checking the path the hard way.
+    $paths = explode("/", $path);
+    foreach (ORM::factory("item")
+             ->where("name", "=", end($paths))
+             ->where("level", "=", count($paths) + 1)
+             ->find_all() as $item) {
+      if (urldecode($item->relative_path()) == $path) {
+        return $item;
+      }
+    }
+
+    return new Item_Model();
+  }
+
+
+  /**
+   * Locate an item using the URL.  We assume that the url is in the form /a/b/c where each
+   * component matches up with an item slug.  If there's no match, return an empty Item_Model
+   * NOTE: the caller is responsible for performing security checks on the resulting item.
+   * @param string $url the relative url fragment
+   * @return Item_Model
+   */
+  static function find_by_relative_url($relative_url) {
+    // In most cases, we'll have an exact match in the relative_url_cache item field.
+    // but failing that, walk down the tree until we find it.  The fallback code will fix caches
+    // as it goes, so it'll never be run frequently.
+    $item = ORM::factory("item")->where("relative_url_cache", "=", $relative_url)->find();
+    if (!$item->loaded()) {
+      $segments = explode("/", $relative_url);
+      foreach (ORM::factory("item")
+               ->where("slug", "=", end($segments))
+               ->where("level", "=", count($segments) + 1)
+               ->find_all() as $match) {
+        if ($match->relative_url() == $relative_url) {
+          $item = $match;
+        }
+      }
+    }
+    return $item;
+  }
+
+  /**
    * Return the root Item_Model
    * @return Item_Model
    */
@@ -232,7 +301,95 @@ class item_Core {
     // distributed so this is going to be more efficient with larger data sets.
     return ORM::factory("item")
       ->viewable()
-      ->where("rand_key", "<", ((float)mt_rand()) / (float)mt_getrandmax())
+      ->where("rand_key", "<", random::percent())
       ->order_by("rand_key", "DESC");
+  }
+
+  /**
+   * Find the position of the given item in its parent album.  The resulting
+   * value is 1-indexed, so the first child in the album is at position 1.
+   *
+   * @param Item_Model $item
+   * @param array      $where an array of arrays, each compatible with ORM::where()
+   */
+  static function get_position($item, $where=array()) {
+    $album = $item->parent();
+
+    if (!strcasecmp($album->sort_order, "DESC")) {
+      $comp = ">";
+    } else {
+      $comp = "<";
+    }
+    $query_model = ORM::factory("item");
+
+    // If the comparison column has NULLs in it, we can't use comparators on it
+    // and will have to deal with it the hard way.
+    $count = $query_model->viewable()
+      ->where("parent_id", "=", $album->id)
+      ->where($album->sort_column, "IS", null)
+      ->merge_where($where)
+      ->count_all();
+
+    if (empty($count)) {
+      // There are no NULLs in the sort column, so we can just use it directly.
+      $sort_column = $album->sort_column;
+
+      $position = $query_model->viewable()
+        ->where("parent_id", "=", $album->id)
+        ->where($sort_column, $comp, $item->$sort_column)
+        ->merge_where($where)
+        ->count_all();
+
+      // We stopped short of our target value in the sort (notice that we're
+      // using a inequality comparator above) because it's possible that we have
+      // duplicate values in the sort column.  An equality check would just
+      // arbitrarily pick one of those multiple possible equivalent columns,
+      // which would mean that if you choose a sort order that has duplicates,
+      // it'd pick any one of them as the child's "position".
+      //
+      // Fix this by doing a 2nd query where we iterate over the equivalent
+      // columns and add them to our position count.
+      foreach ($query_model->viewable()
+               ->select("id")
+               ->where("parent_id", "=", $album->id)
+               ->where($sort_column, "=", $item->$sort_column)
+               ->merge_where($where)
+               ->order_by(array("id" => "ASC"))
+               ->find_all() as $row) {
+        $position++;
+        if ($row->id == $item->id) {
+          break;
+        }
+      }
+    } else {
+      // There are NULLs in the sort column, so we can't use MySQL comparators.
+      // Fall back to iterating over every child row to get to the current one.
+      // This can be wildly inefficient for really large albums, but it should
+      // be a rare case that the user is sorting an album with null values in
+      // the sort column.
+      //
+      // Reproduce the children() functionality here using Database directly to
+      // avoid loading the whole ORM for each row.
+      $order_by = array($album->sort_column => $album->sort_order);
+      // Use id as a tie breaker
+      if ($album->sort_column != "id") {
+        $order_by["id"] = "ASC";
+      }
+
+      $position = 0;
+      foreach ($query_model->viewable()
+               ->select("id")
+               ->where("parent_id", "=", $album->id)
+               ->merge_where($where)
+               ->order_by($order_by)
+               ->find_all() as $row) {
+        $position++;
+        if ($row->id == $item->id) {
+          break;
+        }
+      }
+    }
+
+    return $position;
   }
 }

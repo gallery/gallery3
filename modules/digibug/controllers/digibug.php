@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Digibug_Controller extends Controller {
+  const ALLOW_PRIVATE_GALLERY = true;
+
   public function print_photo($id) {
     access::verify_csrf();
     $item = ORM::factory("item", $id);
@@ -28,7 +30,7 @@ class Digibug_Controller extends Controller {
       $thumb_url = $item->thumb_url(true);
     } else {
       $proxy = ORM::factory("digibug_proxy");
-      $proxy->uuid =  md5(rand());
+      $proxy->uuid = random::hash();
       $proxy->item_id = $item->id;
       $proxy->save();
       $full_url = url::abs_site("digibug/print_proxy/full/$proxy->uuid");
@@ -112,7 +114,7 @@ class Digibug_Controller extends Controller {
   private function _clean_expired() {
     db::build()
       ->delete("digibug_proxies")
-      ->where("request_date", "<=", new Database_Expression("(CURDATE() - INTERVAL 10 DAY)"))
+      ->where("request_date", "<=", db::expr("(CURDATE() - INTERVAL 10 DAY)"))
       ->limit(20)
       ->execute();
   }

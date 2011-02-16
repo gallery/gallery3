@@ -1,7 +1,7 @@
 <?php
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,11 @@ error_reporting(0);
 // Disabling display_errors will  effectively disable Kohana error display
 // and logging. You can turn off Kohana errors in application/config/config.php
 ini_set("display_errors", false);
+
+// Turn off session.use_trans_sid -- that feature attempts to inject session ids
+// into generated URLs and forms, but it doesn't interoperate will with Gallery's
+// Ajax code.
+ini_set("session.use_trans_sid", false);
 
 define("EXT", ".php");
 define("DOCROOT", getcwd() . "/");

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,16 +34,20 @@ class Admin_View_Core extends Gallery_View {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
     $this->sidebar = "";
-    $this->set_global("theme", $this);
-    $this->set_global("user", identity::active_user());
-    $this->set_global("page_type", "admin");
-    $this->set_global("page_subtype", $name);
-    $this->set_global("page_title", null);
+    $this->set_global(array("theme" => $this,
+                            "user" => identity::active_user(),
+                            "page_type" => "admin",
+                            "page_subtype" => $name,
+                            "page_title" => null));
   }
 
   public function admin_menu() {
     $menu = Menu::factory("root");
     module::event("admin_menu", $menu, $this);
+
+    $settings_menu = $menu->get("settings_menu");
+    uasort($settings_menu->elements, array("Menu", "title_comparator"));
+
     return $menu->render();
   }
 
@@ -82,6 +86,7 @@ class Admin_View_Core extends Gallery_View {
     case "admin_page_top":
     case "admin_head":
     case "body_attributes":
+    case "html_attributes":
       $blocks = array();
       foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";
@@ -90,11 +95,6 @@ class Admin_View_Core extends Gallery_View {
             array($helper_class, $function),
             array_merge(array($this), $args));
         }
-      }
-
-      if ($function == "admin_head") {
-        array_unshift($blocks, $this->combine_files($this->css, "css"));
-        array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
       }
 
       if (Session::instance()->get("debug")) {

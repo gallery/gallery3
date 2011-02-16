@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,13 @@
  * input is sanitized against the database before we perform any file I/O.
  */
 class File_Proxy_Controller extends Controller {
+  const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
-    // request_uri: gallery3/var/trunk/albums/foo/bar.jpg
+    // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
     $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
 
+    // get rid of query parameters
+    // request_uri: gallery3/var/albums/foo/bar.jpg
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
     // var_uri: gallery3/var/
@@ -42,13 +45,11 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    // file_uri: albums/foo/bar.jpg
     $file_uri = substr($request_uri, strlen($var_uri));
 
-    // Make sure that we don't leave the var dir
-    if (strpos($file_uri, "..") !== false) {
-      throw new Kohana_404_Exception();
-    }
-
+    // type: albums
+    // path: foo/bar.jpg
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       throw new Kohana_404_Exception();
@@ -56,28 +57,16 @@ class File_Proxy_Controller extends Controller {
 
     // If the last element is .album.jpg, pop that off since it's not a real item
     $path = preg_replace("|/.album.jpg$|", "", $path);
-    $encoded_path = array();
-    foreach (explode("/", $path) as $path_part) {
-      $encoded_path[] = rawurlencode($path_part);
-    }
-    $encoded_path = implode("/", $encoded_path);
-    // We now have the relative path to the item.  Search for it in the path cache
-    // The patch cache is urlencoded so re-encode the path. (it was decoded earlier to
-    // insure that the paths are normalized.
-    $item = ORM::factory("item")
-      ->where("relative_path_cache", "=", $encoded_path)->find();
-    if (!$item->loaded()) {
-      // We didn't turn it up.  It's possible that the relative_path_cache is out of date here.
-      // There was fallback code, but bharat deleted it in 8f1bca74.  If it turns out to be
-      // necessary, it's easily resurrected.
 
-      // If we're looking for a .jpg then it's it's possible that we're requesting the thumbnail
-      // for a movie.  In that case, the .flv, .mp4 or .m4v file would have been converted to a
-      // .jpg. So try some alternate types:
+    $item = item::find_by_path($path);
+    if (!$item->loaded()) {
+      // We didn't turn it up. If we're looking for a .jpg then it's it's possible that we're
+      // requesting the thumbnail for a movie.  In that case, the .flv, .mp4 or .m4v file would
+      // have been converted to a .jpg. So try some alternate types:
       if (preg_match('/.jpg$/', $path)) {
         foreach (array("flv", "mp4", "m4v") as $ext) {
-          $movie_path = preg_replace('/.jpg$/', ".$ext", $encoded_path);
-          $item = ORM::factory("item")->where("relative_path_cache", "=", $movie_path)->find();
+          $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
+          $item = item::find_by_path($movie_path);
           if ($item->loaded()) {
             break;
           }

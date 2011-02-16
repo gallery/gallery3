@@ -112,7 +112,7 @@
 </script>
 
 <div class="requires-flash">
-  <? if ($suhosin_session_encrypt || !$movies_allowed): ?>
+  <? if ($suhosin_session_encrypt || (identity::active_user()->admin && !$movies_allowed)): ?>
   <div class="g-message-block g-info">
     <? if ($suhosin_session_encrypt): ?>
     <p class="g-error">
@@ -122,7 +122,7 @@
     </p>
     <? endif ?>
 
-    <? if (!$movies_allowed): ?>
+    <? if (identity::active_user()->admin && !$movies_allowed): ?>
     <p class="g-warning">
       <?= t("Can't find <i>ffmpeg</i> on your system. Movie uploading disabled. <a href=\"%help_url\">Help!</a>", array("help_url" => "http://codex.gallery2.org/Gallery3:FAQ#Why_does_it_say_I.27m_missing_ffmpeg.3F")) ?>
     </p>

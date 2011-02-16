@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class rest_event {
   static function user_add_form_admin_completed($user, $form) {
     $key = ORM::factory("user_access_key");
     $key->user_id = $user->id;
-    $key->access_key = md5($user->name . rand());
+    $key->access_key = random::hash($user->name);
     $key->save();
   }
 
@@ -64,7 +64,7 @@ class rest_event {
 
     if (!$key->loaded()) {
       $key->user_id = $user->id;
-      $key->access_key = md5($user->name . rand());
+      $key->access_key = random::hash($user->name);
       $key->save();
     }
 
@@ -93,7 +93,7 @@ class rest_event {
 
     if (!$key->loaded()) {
       $key->user_id = $data->user->id;
-      $key->access_key = md5($data->user->name . rand());
+      $key->access_key = random::hash($data->user->name);
       $key->save();
     }
     $view->rest_key = $key->access_key;

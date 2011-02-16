@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class Password_Controller extends Controller {
     $user_name = $form->reset->inputs["name"]->value;
     $user = user::lookup_by_name($user_name);
     if ($user && !empty($user->email)) {
-      $user->hash = md5(uniqid(mt_rand(), true));
+      $user->hash = random::hash();
       $user->save();
       $message = new View("reset_password.html");
       $message->confirm_url = url::abs_site("password/do_reset?key=$user->hash");

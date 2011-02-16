@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class gallery_installer {
                 `expiration` int(9) NOT NULL,
                 `cache` longblob,
                 PRIMARY KEY (`id`),
-                KEY (`key`),
+                UNIQUE KEY (`key`),
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
@@ -84,7 +84,7 @@ class gallery_installer {
                  `album_cover_item_id` int(9) default NULL,
                  `captured` int(9) default NULL,
                  `created` int(9) default NULL,
-                 `description` varchar(2048) default NULL,
+                 `description` text default NULL,
                  `height` int(9) default NULL,
                  `left_ptr` int(9) NOT NULL,
                  `level` int(9) NOT NULL,
@@ -92,7 +92,7 @@ class gallery_installer {
                  `name` varchar(255) default NULL,
                  `owner_id` int(9) default NULL,
                  `parent_id` int(9) NOT NULL,
-                 `rand_key` float default NULL,
+                 `rand_key` decimal(11,10) default NULL,
                  `relative_path_cache` varchar(255) default NULL,
                  `relative_url_cache` varchar(255) default NULL,
                  `resize_dirty` boolean default 1,
@@ -136,7 +136,7 @@ class gallery_installer {
                  `id` int(9) NOT NULL auto_increment,
                  `key` varchar(255) default NULL,
                  `severity` varchar(32) default NULL,
-                 `value` varchar(255) default NULL,
+                 `value` text default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`key`))
                DEFAULT CHARSET=utf8;");
@@ -259,6 +259,7 @@ class gallery_installer {
     module::set_var("gallery", "default_locale", "en_US");
     module::set_var("gallery", "image_quality", 75);
     module::set_var("gallery", "image_sharpen", 15);
+    module::set_var("gallery", "upgrade_checker_auto_enabled", true);
 
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
@@ -285,6 +286,7 @@ class gallery_installer {
     block_manager::add("dashboard_sidebar", "gallery", "platform_info");
     block_manager::add("dashboard_sidebar", "gallery", "project_news");
     block_manager::add("dashboard_center", "gallery", "welcome");
+    block_manager::add("dashboard_center", "gallery", "upgrade_checker");
     block_manager::add("dashboard_center", "gallery", "photo_stream");
     block_manager::add("dashboard_center", "gallery", "log_entries");
 
@@ -309,7 +311,7 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
 
-    module::set_version("gallery", 41);
+    module::set_version("gallery", 46);
   }
 
   static function upgrade($version) {
@@ -459,7 +461,7 @@ class gallery_installer {
         $blocks = block_manager::get_active($location);
         $new_blocks = array();
         foreach ($blocks as $block) {
-          $new_blocks[rand()] = $block;
+          $new_blocks[random::int()] = $block;
         }
         block_manager::set_active($location, $new_blocks);
       }
@@ -503,11 +505,11 @@ class gallery_installer {
       foreach (db::build()
                ->from("items")
                ->select("id", "slug")
-               ->where(new Database_Expression("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
+               ->where(db::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
                ->execute() as $row) {
         $new_slug = item::convert_filename_to_slug($row->slug);
         if (empty($new_slug)) {
-          $new_slug = rand();
+          $new_slug = random::int();
         }
         db::build()
           ->update("items")
@@ -540,7 +542,7 @@ class gallery_installer {
     if ($version == 25) {
       db::build()
         ->update("items")
-        ->set("title", new Database_Expression("`name`"))
+        ->set("title", db::expr("`name`"))
         ->and_open()
         ->where("title", "IS", null)
         ->or_where("title", "=", "")
@@ -581,7 +583,7 @@ class gallery_installer {
       $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
       $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
       db::update("modules")
-        ->set("weight", new Database_Expression("`id`"))
+        ->set("weight", db::expr("`id`"))
         ->execute();
       module::set_version("gallery", $version = 32);
     }
@@ -641,6 +643,39 @@ class gallery_installer {
     if ($version == 40) {
       module::clear_var("gallery", "_cache");
       module::set_version("gallery", $version = 41);
+    }
+
+    if ($version == 41) {
+      $db->query("TRUNCATE TABLE {caches}");
+      $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
+      module::set_version("gallery", $version = 42);
+    }
+
+    if ($version == 42) {
+      $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
+      module::set_version("gallery", $version = 43);
+    }
+
+    if ($version == 43) {
+      $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
+      module::set_version("gallery", $version = 44);
+    }
+
+    if ($version == 44) {
+      $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
+      module::set_version("gallery", $version = 45);
+    }
+
+    if ($version == 45) {
+      // Splice the upgrade_checker block into the admin dashboard at the top
+      // of the page, but under the welcome block if it's in the first position.
+      $blocks = block_manager::get_active("dashboard_center");
+      $index = count($blocks) && current($blocks) == array("gallery", "welcome") ? 1 : 0;
+      array_splice($blocks, $index, 0, array(random::int() => array("gallery", "upgrade_checker")));
+      block_manager::set_active("dashboard_center", $blocks);
+
+      module::set_var("gallery", "upgrade_checker_auto_enabled", true);
+      module::set_version("gallery", $version = 46);
     }
   }
 

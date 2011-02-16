@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
  */
 class tag_theme_Core {
   static function head($theme) {
-    $theme->css("jquery.autocomplete.css");
-    $theme->script("jquery.autocomplete.js");
-    $theme->css("tag.css");
+    return $theme->css("jquery.autocomplete.css")
+      . $theme->script("jquery.autocomplete.js")
+      . $theme->css("tag.css");
   }
 
   static function admin_head($theme) {
-    $theme->css("tag.css");
-    $theme->script("gallery.in_place_edit.js");
+    return $theme->css("tag.css")
+      . $theme->script("gallery.in_place_edit.js");
   }
 }

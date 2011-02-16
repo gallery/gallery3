@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,9 @@ class tag_Core {
     $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       $tag->name = $tag_name;
-      $tag->count = 0;
     }
 
     $tag->add($item);
-    $tag->count++;
     return $tag->save();
   }
 
@@ -118,7 +116,7 @@ class tag_Core {
   static function clear_all($item) {
     db::build()
       ->update("tags")
-      ->set("count", new Database_Expression("`count` - 1"))
+      ->set("count", db::expr("`count` - 1"))
       ->where("count", ">", 0)
       ->where("id", "IN", db::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
       ->execute();

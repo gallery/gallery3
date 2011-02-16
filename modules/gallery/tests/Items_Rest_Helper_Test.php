@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,21 +65,21 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->urls = json_encode(array(
-      rest::url("item", $photo1),
-      rest::url("item", $album2)));
+      rest::url("item", $photo2),
+      rest::url("item", $album1)));
     $request->params->type = "album";
     $this->assert_equal_array(
       array(
-         array("url" => rest::url("item", $album2),
-               "entity" => $album2->as_restful_array(),
+         array("url" => rest::url("item", $album1),
+               "entity" => $album1->as_restful_array(),
                "relationships" => array(
                  "comments" => array(
-                   "url" => rest::url("item_comments", $album2)),
+                   "url" => rest::url("item_comments", $album1)),
                  "tags" => array(
-                   "url" => rest::url("item_tags", $album2),
+                   "url" => rest::url("item_tags", $album1),
                    "members" => array())),
                "members" => array(
-                 rest::url("item", $photo2)))),
+                 rest::url("item", $album2)))),
       items_rest::get($request));
   }
 

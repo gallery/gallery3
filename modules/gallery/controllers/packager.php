@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class Packager_Controller extends Controller {
     // numbers, keeping our install.sql file more stable.
     srand(0);
 
-    foreach (array("gallery", "user", "comment", "organize", "info", "rest",
+    foreach (array("gallery", "user", "comment", "organize", "info",
                    "rss", "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
       module::activate($module_name);

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,12 +223,13 @@ class Menu_Core extends Menu_Element {
   /**
    * Retrieve a Menu_Element by id
    */
-  public function get($id) {
+  public function &get($id) {
     if (array_key_exists($id, $this->elements)) {
       return $this->elements[$id];
     }
 
-    return null;
+    $null = null;
+    return $null;
   }
 
   public function is_empty() {
@@ -248,5 +249,9 @@ class Menu_Core extends Menu_Element {
     $view = new View(isset($this->view) ? $this->view : "menu.html");
     $view->menu = $this;
     return $view;
+  }
+
+  static function title_comparator($a, $b) {
+    return strnatcasecmp((string)$a->label, (string)$b->label);
   }
 }

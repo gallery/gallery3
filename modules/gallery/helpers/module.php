@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ class module_Core {
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     } else {
-      module::set_version($module_name, 1);
+      module::set_version($module_name, module::available()->$module_name->code_version);
     }
 
     // Set the weight of the new module, which controls the order in which the modules are
@@ -488,7 +488,7 @@ class module_Core {
   static function incr_var($module_name, $name, $increment=1) {
     db::build()
       ->update("vars")
-      ->set("value", new Database_Expression("`value` + $increment"))
+      ->set("value", db::expr("`value` + $increment"))
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)
       ->execute();

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,18 +29,18 @@ class Tag_Controller extends Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      url::redirect($album->abs_url());
+      url::redirect(url::merge(array("page" => 1)));
     } else if ($page > $max_pages) {
-      url::redirect($album->abs_url("page=$max_pages"));
+      url::redirect(url::merge(array("page" => $max_pages)));
     }
 
     $template = new Theme_View("page.html", "collection", "tag");
-    $template->set_global("page", $page);
-    $template->set_global("max_pages", $max_pages);
-    $template->set_global("page_size", $page_size);
-    $template->set_global("tag", $tag);
-    $template->set_global("children", $tag->items($page_size, $offset));
-    $template->set_global("children_count", $children_count);
+    $template->set_global(array("page" => $page,
+                                "max_pages" => $max_pages,
+                                "page_size" => $page_size,
+                                "tag" => $tag,
+                                "children" => $tag->items($page_size, $offset),
+                                "children_count" => $children_count));
     $template->content = new View("dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
 

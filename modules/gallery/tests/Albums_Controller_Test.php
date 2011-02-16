@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
     $album = test::random_album();
 
     // Randomize to avoid conflicts.
-    $new_name = "new_name_" . rand();
+    $new_name = "new_name_" . random::string(6);
 
     $_POST["name"] = $new_name;
     $_POST["title"] = "new title";

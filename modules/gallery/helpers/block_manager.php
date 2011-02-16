@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ class block_manager_Core {
 
   static function add($location, $module_name, $block_id) {
     $blocks = block_manager::get_active($location);
-    $blocks[rand()] = array($module_name, $block_id);
+    $blocks[random::int()] = array($module_name, $block_id);
 
     block_manager::set_active($location, $blocks);
   }

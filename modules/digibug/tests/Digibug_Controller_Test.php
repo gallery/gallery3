@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class Digibug_Controller_Test extends Gallery_Unit_Test_Case {
     access::deny(identity::registered_users(), "view_full", $album);
 
     $proxy = ORM::factory("digibug_proxy");
-    $proxy->uuid = md5(rand());
+    $proxy->uuid = random::hash();
     $proxy->item_id = $photo->id;
     return $proxy->save();
   }

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class Albums_Controller extends Items_Controller {
 
     if ($show) {
       $child = ORM::factory("item", $show);
-      $index = $album->get_position($child);
+      $index = item::get_position($child);
       if ($index) {
         $page = ceil($index / $page_size);
         if ($page == 1) {
@@ -61,20 +61,18 @@ class Albums_Controller extends Items_Controller {
     }
 
     $template = new Theme_View("page.html", "collection", "album");
-    $template->set_global("page", $page);
-    $template->set_global("page_title", null);
-    $template->set_global("max_pages", $max_pages);
-    $template->set_global("page_size", $page_size);
-    $template->set_global("item", $album);
-    $template->set_global("children", $album->viewable()->children($page_size, $offset));
-    $template->set_global("children_count", $children_count);
-    $template->set_global("parents", $album->parents()->as_array()); // view calls empty() on this
+    $template->set_global(
+      array("page" => $page,
+            "page_title" => null,
+            "max_pages" => $max_pages,
+            "page_size" => $page_size,
+            "item" => $album,
+            "children" => $album->viewable()->children($page_size, $offset),
+            "parents" => $album->parents()->as_array(), // view calls empty() on this
+            "children_count" => $children_count));
     $template->content = new View("album.html");
 
-    // We can't use math in ORM or the query builder, so do this by hand.  It's important
-    // that we do this with math, otherwise concurrent accesses will damage accuracy.
-    db::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $album->id")
-      ->execute();
+    $album->increment_view_count();
 
     print $template;
   }

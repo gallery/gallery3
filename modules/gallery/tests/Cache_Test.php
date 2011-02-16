@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2010 Bharat Mediratta
+ * Copyright (C) 2000-2011 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,29 @@ class Cache_Test extends Gallery_Unit_Test_Case {
     $this->_driver = new Cache_Database_Driver();
   }
 
-  public function cache_exists_test() {
-    $this->assert_false($this->_driver->exists("test_key"), "test_key should not be defined");
+  private function _exists($id) {
+    return db::build()
+      ->where("key", "=", $id)
+      ->where("expiration", ">=", time())
+      ->limit("1")
+      ->count_records("caches") > 0;
+  }
 
-    $id = md5(rand());
+  public function cache_exists_test_helper_function_test() {
+    $this->assert_false($this->_exists("test_key"), "test_key should not be defined");
+
+    $id = random::hash();
     db::build()
       ->insert("caches")
       ->columns("key", "tags", "expiration", "cache")
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
 
-    $this->assert_true($this->_driver->exists($id), "test_key should be defined");
+    $this->assert_true($this->_exists($id), "test_key should be defined");
   }
 
   public function cache_get_test() {
-    $id = md5(rand());
+    $id = random::hash();
 
     db::build()
       ->insert("caches")
@@ -54,7 +62,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_set_test() {
-    $id = md5(rand());
+    $id = random::hash();
     $original_data = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id => $original_data), array("tag1", "tag2"), 84600);
 
@@ -63,15 +71,15 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_get_tag_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 84600);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
@@ -86,62 +94,62 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_delete_id_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
     $this->_driver->delete(array($id1));
 
-    $this->assert_false($this->_driver->exists($id1), "$id1 should have been deleted");
-    $this->assert_true($this->_driver->exists($id2), "$id2 should not have been deleted");
-    $this->assert_true($this->_driver->exists($id3), "$id3 should not have been deleted");
+    $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
+    $this->assert_true($this->_exists($id2), "$id2 should not have been deleted");
+    $this->assert_true($this->_exists($id3), "$id3 should not have been deleted");
   }
 
   public function cache_delete_tag_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
     $data = $this->_driver->delete_tag(array("tag3"));
 
-    $this->assert_true($this->_driver->exists($id1), "$id1 should not have been deleted");
-    $this->assert_false($this->_driver->exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_driver->exists($id3), "$id3 should have been deleted");
+    $this->assert_true($this->_exists($id1), "$id1 should not have been deleted");
+    $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
+    $this->assert_false($this->_exists($id3), "$id3 should have been deleted");
   }
 
   public function cache_delete_all_test() {
-    $id1 = md5(rand());
+    $id1 = random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
 
-    $id2 = md5(rand());
+    $id2 = random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
     $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
 
-    $id3 = md5(rand());
+    $id3 = random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
     $data = $this->_driver->delete(true);
 
-    $this->assert_false($this->_driver->exists($id1), "$id1 should have been deleted");
-    $this->assert_false($this->_driver->exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_driver->exists($id3), "$id3 should have been deleted");
+    $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
+    $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
+    $this->assert_false($this->_exists($id3), "$id3 should have been deleted");
   }
 }
