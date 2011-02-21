@@ -46,10 +46,10 @@ class gallery_graphics_Core {
    * @param string     $output_file
    * @param array      $options
    */
-  static function resize($input_file, $output_file, $options) {
+  static function resize($input_file, $output_file, $options, $item) {
     graphics::init_toolkit();
 
-    module::event("graphics_resize", $input_file, $output_file, $options);
+    module::event("graphics_resize", $input_file, $output_file, $options, $item);
 
     if (@filesize($input_file) == 0) {
       throw new Exception("@todo EMPTY_INPUT_FILE");
@@ -69,7 +69,7 @@ class gallery_graphics_Core {
       $image->save($output_file);
     }
 
-    module::event("graphics_resize_completed", $input_file, $output_file, $options);
+    module::event("graphics_resize_completed", $input_file, $output_file, $options, $item);
   }
 
   /**
