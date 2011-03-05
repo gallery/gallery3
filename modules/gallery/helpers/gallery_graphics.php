@@ -24,8 +24,9 @@ class gallery_graphics_Core {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
+   * @param Item_Model $item (optional)
    */
-  static function rotate($input_file, $output_file, $options, $item) {
+  static function rotate($input_file, $output_file, $options, $item=null) {
     graphics::init_toolkit();
 
     module::event("graphics_rotate", $input_file, $output_file, $options, $item);
@@ -45,8 +46,9 @@ class gallery_graphics_Core {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
+   * @param Item_Model $item (optional)
    */
-  static function resize($input_file, $output_file, $options, $item) {
+  static function resize($input_file, $output_file, $options, $item=null) {
     graphics::init_toolkit();
 
     module::event("graphics_resize", $input_file, $output_file, $options, $item);
@@ -86,8 +88,9 @@ class gallery_graphics_Core {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
+   * @param Item_Model $item (optional)
    */
-  static function composite($input_file, $output_file, $options, $item) {
+  static function composite($input_file, $output_file, $options, $item=null) {
     try {
       graphics::init_toolkit();
 
