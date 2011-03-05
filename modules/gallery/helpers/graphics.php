@@ -169,7 +169,7 @@ class graphics_Core {
         }
 
         foreach (self::_get_rules($target) as $rule) {
-          $args = array($working_file, $output_file, unserialize($rule->args));
+          $args = array($working_file, $output_file, unserialize($rule->args), $item);
           call_user_func_array($rule->operation, $args);
           $working_file = $output_file;
         }

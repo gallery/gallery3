@@ -610,7 +610,7 @@ class g2_import_Core {
         if ($g2_preferred && $g2_preferred instanceof GalleryDerivative) {
           if (preg_match("/rotate\|(-?\d+)/", $g2_preferred->getDerivativeOperations(), $matches)) {
             $tmpfile = tempnam(TMPPATH, "rotate");
-            gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $matches[1]));
+            gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $matches[1]), $item);
             $item->set_data_file($tmpfile);
             $item->save();
             unlink($tmpfile);
