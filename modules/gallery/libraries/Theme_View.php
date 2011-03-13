@@ -42,9 +42,6 @@ class Theme_View_Core extends Gallery_View {
                             "page_type" => $page_type,
                             "page_subtype" => $page_subtype,
                             "page_title" => null));
-    if ($page_type == "collection") {
-      $this->set_global("thumb_proportion", $this->thumb_proportion());
-    }
 
     if (module::get_var("gallery", "maintenance_mode", 0)) {
       if (identity::active_user()->admin) {
@@ -54,14 +51,34 @@ class Theme_View_Core extends Gallery_View {
     }
   }
 
-  /**
-   * Proportion of the current thumb_size's to default
-   * @return int
-   */
-  public function thumb_proportion() {
-    // @TODO change the 200 to a theme supplied value when and if we come up with an
-    // API to allow the theme to set defaults.
-    return module::get_var("gallery", "thumb_size", 200) / 200;
+  public function render($print=false, $renderer=false, $modifier=false) {
+    if ($this->page_type == "collection") {
+      $thumb_size = 0;
+
+      // Check if any of the modules defined the function thumb_size, which can return a custom thumbnail size per album.
+      foreach (module::active() as $module) {
+        if ($module->name == "gallery") {
+          continue;
+        }
+        $helper_class = "{$module->name}_graphics";
+        if (method_exists($helper_class, "thumb_size")) {
+          $thumb_size = call_user_func_array(
+            array($helper_class, "thumb_size"),
+            array($this->item));
+        }
+      }
+
+      // If none of the modules overrode it, use the default gallery thumbnail size
+      if ($thumb_size == 0) {
+        $thumb_size = module::get_var("gallery", "thumb_size", 200);
+      }
+
+      // @TODO change the 200 to a theme supplied value when and if we come up with an
+      // API to allow the theme to set defaults.
+      $this->set_global("thumb_proportion", $thumb_size / 200);
+    }
+
+    return parent::render($print, $renderer, $modifier);
   }
 
   public function item() {
