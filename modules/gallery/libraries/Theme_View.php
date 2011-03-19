@@ -52,10 +52,14 @@ class Theme_View_Core extends Gallery_View {
   }
 
   public function render($print=false, $renderer=false, $modifier=false) {
+    // We override the render function so we have a point after the view is fully
+    // initialized to calculate the thumbnail size.  There is no actual rendering
+    // done here, that's just passed on to the parent.
     if ($this->page_type == "collection") {
       $thumb_size = 0;
 
-      // Check if any of the modules defined the function thumb_size, which can return a custom thumbnail size per album.
+      // Check if any of the modules defined the function thumb_size, which can
+      // return a custom thumbnail size per album.
       foreach (module::active() as $module) {
         if ($module->name == "gallery") {
           continue;
