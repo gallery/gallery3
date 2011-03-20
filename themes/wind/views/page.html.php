@@ -23,7 +23,7 @@
           type="image/x-icon" />
 
     <? if ($theme->page_type == "collection"): ?>
-      <? if ($thumb_proportion != 1): ?>
+    <? if (($thumb_proportion = $theme->thumb_proportion($theme->item())) != 1): ?>
         <? $new_width = round($thumb_proportion * 213) ?>
         <? $new_height = round($thumb_proportion * 240) ?>
         <style type="text/css">
