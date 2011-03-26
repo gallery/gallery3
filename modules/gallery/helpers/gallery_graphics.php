@@ -24,18 +24,19 @@ class gallery_graphics_Core {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
+   * @param Item_Model $item (optional)
    */
-  static function rotate($input_file, $output_file, $options) {
+  static function rotate($input_file, $output_file, $options, $item=null) {
     graphics::init_toolkit();
 
-    module::event("graphics_rotate", $input_file, $output_file, $options);
+    module::event("graphics_rotate", $input_file, $output_file, $options, $item);
 
     Image::factory($input_file)
       ->quality(module::get_var("gallery", "image_quality"))
       ->rotate($options["degrees"])
       ->save($output_file);
 
-    module::event("graphics_rotate_completed", $input_file, $output_file, $options);
+    module::event("graphics_rotate_completed", $input_file, $output_file, $options, $item);
   }
 
   /**
@@ -45,11 +46,12 @@ class gallery_graphics_Core {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
+   * @param Item_Model $item (optional)
    */
-  static function resize($input_file, $output_file, $options) {
+  static function resize($input_file, $output_file, $options, $item=null) {
     graphics::init_toolkit();
 
-    module::event("graphics_resize", $input_file, $output_file, $options);
+    module::event("graphics_resize", $input_file, $output_file, $options, $item);
 
     if (@filesize($input_file) == 0) {
       throw new Exception("@todo EMPTY_INPUT_FILE");
@@ -69,7 +71,7 @@ class gallery_graphics_Core {
       $image->save($output_file);
     }
 
-    module::event("graphics_resize_completed", $input_file, $output_file, $options);
+    module::event("graphics_resize_completed", $input_file, $output_file, $options, $item);
   }
 
   /**
@@ -86,12 +88,13 @@ class gallery_graphics_Core {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
+   * @param Item_Model $item (optional)
    */
-  static function composite($input_file, $output_file, $options) {
+  static function composite($input_file, $output_file, $options, $item=null) {
     try {
       graphics::init_toolkit();
 
-      module::event("graphics_composite", $input_file, $output_file, $options);
+      module::event("graphics_composite", $input_file, $output_file, $options, $item);
 
       list ($width, $height) = getimagesize($input_file);
       list ($w_width, $w_height) = getimagesize($options["file"]);
@@ -121,7 +124,7 @@ class gallery_graphics_Core {
         ->quality(module::get_var("gallery", "image_quality"))
         ->save($output_file);
 
-      module::event("graphics_composite_completed", $input_file, $output_file, $options);
+      module::event("graphics_composite_completed", $input_file, $output_file, $options, $item);
     } catch (ErrorException $e) {
       Kohana_Log::add("error", $e->get_message());
     }
