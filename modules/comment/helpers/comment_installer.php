@@ -64,15 +64,15 @@ class comment_installer {
     }
 
     if ($version == 3) {
-      /*
-        40 bytes for server_remote_addr is enough to swallow the longest
-        representation of an IPv6 addy.
-        
-        255 bytes for server_remote_host is enough to swallow the longest
-        legit DNS entry, with a few bytes to spare.
-      */ 
-      $db->query("ALTER TABLE {comments} CHANGE `server_remote_addr` `server_remote_addr` varchar(40)");
-      $db->query("ALTER TABLE {comments} CHANGE `server_remote_host` `server_remote_host` varchar(255)");
+      // 40 bytes for server_remote_addr is enough to swallow the longest
+      // representation of an IPv6 addy.
+      //
+      // 255 bytes for server_remote_host is enough to swallow the longest
+      // legit DNS entry, with a few bytes to spare.
+      $db->query(
+        "ALTER TABLE {comments} CHANGE `server_remote_addr` `server_remote_addr` varchar(40)");
+      $db->query(
+        "ALTER TABLE {comments} CHANGE `server_remote_host` `server_remote_host` varchar(255)");
       module::set_version("comment", $version = 4);
     }
   }
