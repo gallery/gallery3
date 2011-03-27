@@ -29,7 +29,8 @@ class Search_Controller extends Controller {
       $page = 1;
     }
 
-    list ($count, $result) = search::search($q, $page_size, $offset);
+    $q_with_more_terms = search::add_query_terms($q);
+    list ($count, $result) = search::search($q_with_more_terms, $page_size, $offset);
 
     $max_pages = max(ceil($count / $page_size), 1);
 

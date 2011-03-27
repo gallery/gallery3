@@ -18,6 +18,22 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class search_Core {
+  /**
+   * Add more terms to the query by wildcarding the stem value of the first
+   * few terms in the query.
+   */
+  static function add_query_terms($q) {
+    $MAX_TERMS = 5;
+    $terms = explode(" ", $q, $MAX_TERMS);
+    for ($i = 0; $i < min(count($terms), $MAX_TERMS - 1); $i++) {
+      // Don't wildcard quoted or already wildcarded terms
+      if ((substr($terms[$i], 0, 1) != '"') && (substr($terms[$i], -1, 1) != "*")) {
+        $terms[] = rtrim($terms[$i], "s") . "*";
+      }
+    }
+    return implode(" ", $terms);
+  }
+
   static function search($q, $limit, $offset) {
     $db = Database::instance();
     $q = $db->escape($q);
