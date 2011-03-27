@@ -36,10 +36,7 @@ class tag_event_Core {
             $tag = str_replace("\0",  "", $tag);
             foreach (explode(",", $tag) as $word) {
               $word = trim($word);
-              if (function_exists("mb_detect_encoding") &&
-                  mb_detect_encoding($word, "ISO-8859-1, UTF-8") != "UTF-8") {
-                $word = utf8_encode($word);
-              }
+              $word = encoding::convert_to_utf8($word);
               $tags[$word] = 1;
             }
           }

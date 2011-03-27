@@ -37,8 +37,8 @@ class comment_installer {
                  `server_http_referer` varchar(255) default NULL,
                  `server_http_user_agent` varchar(128) default NULL,
                  `server_query_string` varchar(64) default NULL,
-                 `server_remote_addr` varchar(32) default NULL,
-                 `server_remote_host` varchar(64) default NULL,
+                 `server_remote_addr` varchar(40) default NULL,
+                 `server_remote_host` varchar(255) default NULL,
                  `server_remote_port` varchar(16) default NULL,
                  `state` varchar(15) default 'unpublished',
                  `text` text,
@@ -48,7 +48,7 @@ class comment_installer {
 
     module::set_var("comment", "spam_caught", 0);
     module::set_var("comment", "access_permissions", "everybody");
-    module::set_version("comment", 3);
+    module::set_version("comment", 4);
   }
 
   static function upgrade($version) {
@@ -61,6 +61,19 @@ class comment_installer {
     if ($version == 2) {
       module::set_var("comment", "access_permissions", "everybody");
       module::set_version("comment", $version = 3);
+    }
+
+    if ($version == 3) {
+      // 40 bytes for server_remote_addr is enough to swallow the longest
+      // representation of an IPv6 addy.
+      //
+      // 255 bytes for server_remote_host is enough to swallow the longest
+      // legit DNS entry, with a few bytes to spare.
+      $db->query(
+        "ALTER TABLE {comments} CHANGE `server_remote_addr` `server_remote_addr` varchar(40)");
+      $db->query(
+        "ALTER TABLE {comments} CHANGE `server_remote_host` `server_remote_host` varchar(255)");
+      module::set_version("comment", $version = 4);
     }
   }
 
