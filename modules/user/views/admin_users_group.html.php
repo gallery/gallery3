@@ -17,7 +17,7 @@
 
 <? if ($group->users->count_all() > 0): ?>
 <ul class="g-member-list">
-  <? foreach ($group->users->find_all() as $i => $user): ?>
+  <? foreach ($group->users->order_by("name", "ASC")->find_all() as $i => $user): ?>
   <li class="g-user">
     <?= html::clean($user->name) ?>
     <? if (!$group->special): ?>
