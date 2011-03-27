@@ -539,9 +539,9 @@ class gallery_event_Core {
     $v = new View("user_profile_info.html");
 
     $fields = array("name" => t("Name"), "locale" => t("Language Preference"),
-                    "email" => t("Email"), "full_name" => t("Full name"), "url" => "Web site");
+                    "email" => t("Email"), "full_name" => t("Full name"), "url" => t("Web site"));
     if (!$data->user->guest) {
-      $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => "Web site");
+      $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => t("Web site"));
     }
     $v->user_profile_data = array();
     foreach ($fields as $field => $label) {
@@ -549,6 +549,8 @@ class gallery_event_Core {
         $value = $data->user->$field;
         if ($field == "locale") {
           $value = locales::display_name($value);
+        } elseif ($field == "url") {
+          $value = html::mark_clean(html::anchor($data->user->$field));
         }
         $v->user_profile_data[(string) $label] = $value;
       }

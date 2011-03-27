@@ -42,7 +42,8 @@ class upgrade_checker_Core {
   static function should_auto_check() {
     if (upgrade_checker::auto_check_enabled() && random::int(1, 100) == 1) {
       $version_info = upgrade_checker::version_info();
-      return (!$version_info || (time() - $version_info->timestamp) > AUTO_CHECK_INTERVAL);
+      return (!$version_info ||
+              (time() - $version_info->timestamp) > upgrade_checker::AUTO_CHECK_INTERVAL);
     }
     return false;
   }
