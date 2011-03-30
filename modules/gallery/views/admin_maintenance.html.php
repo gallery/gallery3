@@ -3,7 +3,9 @@
   <h1> <?= t("Maintenance") ?> </h1>
   <div class="g-block-content">
     <div id="g-maintenance-mode">
+      <p>
       <?= t("When you're performing maintenance on your Gallery, you can enable <b>maintenance mode</b> which prevents any non-admin from accessing your Gallery.  Some of the tasks below will automatically put your Gallery in maintenance mode for you.") ?>
+      </p>
       <ul id="g-action-status" class="g-message-block">
         <? if (module::get_var("gallery", "maintenance_mode")): ?>
         <li class="g-warning">
