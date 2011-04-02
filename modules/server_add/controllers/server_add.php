@@ -286,7 +286,7 @@ class Server_Add_Controller extends Admin_Controller {
           } catch (Exception $e) {
             // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
             $entry->item_id = 0;
-            $task->log("Skipping invalid file: {$entry->file}");
+            $task->log("Skipping invalid file: {$entry->path}");
           }
         }
 
