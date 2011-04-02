@@ -22,12 +22,13 @@ class Search_Controller extends Controller {
     $page_size = module::get_var("gallery", "page_size", 9);
     $q = Input::instance()->get("q");
     $page = Input::instance()->get("page", 1);
-    $offset = ($page - 1) * $page_size;
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
       $page = 1;
     }
+
+    $offset = ($page - 1) * $page_size;
 
     $q_with_more_terms = search::add_query_terms($q);
     list ($count, $result) = search::search($q_with_more_terms, $page_size, $offset);
