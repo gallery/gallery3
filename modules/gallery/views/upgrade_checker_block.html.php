@@ -6,8 +6,10 @@
 <p>
   <? if (gallery::RELEASE_CHANNEL == "release"): ?>
   <?= t("You are using the official Gallery %version release, code named <i>%code_name</i>.", array("version" => gallery::VERSION, "code_name" => gallery::CODE_NAME)) ?>
+  <? elseif (isset($build_number)): ?>
+  <?= t("You are using an experimental snapshot of Gallery %version (build %build_number on branch %branch).", array("version" => gallery::VERSION, "branch" => gallery::RELEASE_BRANCH, "build_number" => $build_number)) ?>
   <? else: ?>
-  <?= t("You are using an experimental snapshot of Gallery %version (build %build_number on branch %branch).", array("version" => gallery::VERSION, "branch" => gallery::RELEASE_BRANCH, "build_number" => gallery::build_number())) ?>
+  <?= t("You are using an experimental snapshot of Gallery %version (branch %branch) but your gallery3/.build_number file is missing so we don't know what build you have.  You should probably upgrade so that you have that file.", array("version" => gallery::VERSION, "branch" => gallery::RELEASE_BRANCH, "build_number" => $build_number)) ?>
   <? endif ?>
 </p>
 
