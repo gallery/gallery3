@@ -112,6 +112,7 @@ class gallery_block_Core {
       $block->content->version_info = upgrade_checker::version_info();
       $block->content->auto_check_enabled = upgrade_checker::auto_check_enabled();
       $block->content->new_version = upgrade_checker::get_upgrade_message();
+      $block->content->build_number = gallery::build_number();
     }
     return $block;
   }
