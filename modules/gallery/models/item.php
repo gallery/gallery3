@@ -787,9 +787,10 @@ class Item_Model_Core extends ORM_MPTT {
           return;
         }
 
-        if ($this->is_movie() && !preg_match("/^(flv|mp4|m4v)$/i", $ext)) {
-          $v->add_error("name", "illegal_data_file_extension");
-        } else if ($this->is_photo() && !preg_match("/^(gif|jpg|jpeg|png)$/i", $ext)) {
+        if (($this->is_movie() || $this->is_photo()) &&
+            !preg_match("/^(" .
+                        implode("|", array_map("preg_quote", upload::get_upload_extensions())) .
+                        ")\$/i", $ext)) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
@@ -881,7 +882,7 @@ class Item_Model_Core extends ORM_MPTT {
       if ($this->is_movie()) {
         $legal_values = array("video/flv", "video/x-flv", "video/mp4");
       } if ($this->is_photo()) {
-        $legal_values = array("image/jpeg", "image/gif", "image/png");
+        $legal_values = array("image/jpeg", "image/gif", "image/png", "image/tiff");
       }
       break;
 

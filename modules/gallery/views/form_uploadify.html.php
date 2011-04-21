@@ -28,7 +28,7 @@
         uploader: "<?= url::file("lib/uploadify/uploadify.swf") ?>",
         script: "<?= url::site("uploader/add_photo/{$album->id}") ?>",
         scriptData: <?= json_encode($script_data) ?>,
-        fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.GIF;*.JPG;*.JPEG;*.PNG<? if ($movies_allowed): ?>;*.flv;*.mp4;*.m4v;*.FLV;*.MP4;*.M4V<? endif ?>",
+        fileExt: "<?= implode(";", $extensions) ?>",
         fileDesc: <?= t("Photos and movies")->for_js() ?>,
         cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
         simUploadLimit: <?= $simultaneous_upload_limit ?>,
