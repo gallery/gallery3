@@ -50,9 +50,25 @@ class theme_Core {
 
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
     self::$site_theme_name = module::get_var("gallery", "active_site_theme");
+
+    // If the site theme doesn't exist, fall back to wind.
+    if (!file_exists(THEMEPATH . self::$site_theme_name . "/theme.info")) {
+      site_status::error(t("Theme '%name' is missing.  Falling back to the Wind theme.",
+                           array("name" => self::$site_theme_name)), "missing_site_theme");
+      module::set_var("gallery", "active_site_theme", self::$site_theme_name = "wind");
+    }
+
     if (self::$is_admin) {
       // Load the admin theme
       self::$admin_theme_name = module::get_var("gallery", "active_admin_theme");
+
+      // If the admin theme doesn't exist, fall back to admin_wind.
+      if (!file_exists(THEMEPATH . self::$admin_theme_name . "/theme.info")) {
+        site_status::error(t("Admin theme '%name' is missing!  Falling back to the Wind theme.",
+                             array("name" => self::$admin_theme_name)), "missing_admin_theme");
+        module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
+      }
+
       array_unshift($modules, THEMEPATH . self::$admin_theme_name);
 
       // If the site theme has an admin subdir, load that as a module so that
