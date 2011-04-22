@@ -22,7 +22,7 @@
           href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>"
           type="image/x-icon" />
     <link rel="apple-touch-icon-precomposed"
-          href="<?= url::file(module::get_var("gallery", "apple_touch_url")) ?>" />
+          href="<?= url::file(module::get_var("gallery", "apple_touch_icon_url")) ?>" />
     <? if ($theme->page_type == "collection"): ?>
       <? if ($thumb_proportion != 1): ?>
         <? $new_width = round($thumb_proportion * 213) ?>

@@ -16,7 +16,7 @@
           href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>"
           type="image/x-icon" />
     <link rel="apple-touch-icon-precomposed"
-          href="<?= url::file(module::get_var("gallery", "apple_touch_url")) ?>" />
+          href="<?= url::file(module::get_var("gallery", "apple_touch_icon_url")) ?>" />
 
     <?= $theme->script("jquery.js") ?>
     <?= $theme->script("jquery.form.js") ?>

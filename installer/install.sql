@@ -406,7 +406,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','admin_area_timeout','5400');
 INSERT INTO {vars} VALUES (NULL,'gallery','maintenance_mode','0');
 INSERT INTO {vars} VALUES (NULL,'gallery','visible_title_length','15');
 INSERT INTO {vars} VALUES (NULL,'gallery','favicon_url','lib/images/favicon.ico');
-INSERT INTO {vars} VALUES (NULL,'gallery','apple_touch_url','lib/images/apple-touch-icon.png');
+INSERT INTO {vars} VALUES (NULL,'gallery','apple_touch_icon_url','lib/images/apple-touch-icon.png');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_from','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_reply_to','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_line_length','70');
