@@ -60,9 +60,6 @@ class gallery_theme_Core {
     if ($session->get("debug")) {
       $buf .= $theme->css("debug.css");
     }
-    if (in_array(URI::instance()->segment(1), array("admin", "admin/dashboard"))) {
-      $buf .= $theme->script("jquery.jcarousel.min.js");
-    }
 
     if ($session->get("l10n_mode", false)) {
       $buf .= $theme->css("l10n_client.css");
