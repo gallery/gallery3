@@ -335,10 +335,6 @@ th {
   padding: 0;
 }
 
-#g-sidebar .g-block-content {
-  padding: 0;
-}
-
 #g-content .g-selected,
 #g-content .g-available .g-block {
   border: 1px solid #ccc;
@@ -1344,6 +1340,11 @@ ul.sf-menu li li li.sfHover ul {
   margin-left: 0;
   padding-left: 0;
   padding-right: 1.2em;
+}
+
+.rtl #g-sidebar .g-block-content {
+  padding-left: 0em;
+  padding-right: 1em;
 }
 
 .rtl .g-selected img,
