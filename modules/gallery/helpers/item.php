@@ -152,8 +152,18 @@ class item_Core {
    * @param string $filename
    */
   static function convert_filename_to_slug($filename) {
-    $result = pathinfo($filename, PATHINFO_FILENAME);
+    $result = str_replace("&", "-and-", $filename);
+    $result = str_replace(" ", "-", $result);
+
+    // It's not easy to extend the text helper since it's called by the Input class which is
+    // referenced in hooks/init_gallery, so it's
+    if (class_exists("transliterate")) {
+      $result = transliterate::utf8_to_ascii($result);
+    } else {
+      $result = text::transliterate_to_ascii($result);
+    }
     $result = preg_replace("/[^A-Za-z0-9-_]+/", "-", $result);
+    $result = preg_replace("/-+/", "-", $result);
     return trim($result, "-");
   }
 
