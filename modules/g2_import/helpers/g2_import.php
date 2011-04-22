@@ -219,7 +219,7 @@ class g2_import_Core {
    * Return a set of statistics about the number of users, groups, albums, photos, movies and
    * comments available for import from the Gallery 2 instance.
    */
-  static function stats() {
+  static function g2_stats() {
     global $gallery;
     $root_album_id = g2(GalleryCoreApi::getDefaultAlbumId());
     $stats["users"] = g2(GalleryCoreApi::fetchUserCount());
@@ -245,6 +245,25 @@ class g2_import_Core {
     }
 
     return $stats;
+  }
+
+  /**
+   * Return a set of statistics about the number of users, groups, albums, photos, movies and
+   * comments already imported into the Gallery 3 instance.
+   */
+  static function g3_stats() {
+    $g3_stats = array(
+      "album" => 0, "comment" => 0, "item" => 0, "user" => 0, "group" => 0, "tag" => 0);
+    foreach (db::build()
+             ->select("resource_type")
+             ->select(array("C" => 'COUNT("*")'))
+             ->from("g2_maps")
+             ->where("resource_type", "IN", array("album", "comment", "item", "user", "group"))
+             ->group_by("resource_type")
+             ->execute() as $row) {
+      $g3_stats[$row->resource_type] = $row->C;
+    }
+    return $g3_stats;
   }
 
   /**
