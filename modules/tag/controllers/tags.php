@@ -22,7 +22,8 @@ class Tags_Controller extends Controller {
     // Far from perfection, but at least require view permission for the root album
     $album = ORM::factory("item", 1);
     access::required("view", $album);
-    print tag::cloud(30);
+
+    print tag::cloud(module::get_var("tag", "tag_cloud_size", 30));
   }
 
   public function create($item_id) {

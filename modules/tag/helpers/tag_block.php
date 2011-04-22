@@ -30,7 +30,7 @@ class tag_block_Core {
       $block->css_id = "g-tag";
       $block->title = t("Popular tags");
       $block->content = new View("tag_block.html");
-      $block->content->cloud = tag::cloud(30);
+      $block->content->cloud = tag::cloud(module::get_var("tag", "tag_cloud_size", 30));
 
       if ($theme->item() && $theme->page_subtype() != "tag" && access::can("edit", $theme->item())) {
         $controller = new Tags_Controller();
