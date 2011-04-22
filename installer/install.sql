@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS {access_caches};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {access_caches} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `item_id` int(9) DEFAULT NULL,
@@ -13,11 +13,11 @@ CREATE TABLE {access_caches} (
   PRIMARY KEY (`id`),
   KEY `item_id` (`item_id`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {access_caches} VALUES (1,1,'1','0','0','1','0','0');
 DROP TABLE IF EXISTS {access_intents};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {access_intents} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `item_id` int(9) DEFAULT NULL,
@@ -31,11 +31,11 @@ CREATE TABLE {access_intents} (
   `add_2` binary(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {access_intents} VALUES (1,1,'1','1','0','0','1','1','0','0');
 DROP TABLE IF EXISTS {caches};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {caches} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL,
@@ -46,10 +46,10 @@ CREATE TABLE {caches} (
   UNIQUE KEY `key` (`key`),
   KEY `tags` (`tags`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {comments};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {comments} (
   `author_id` int(9) DEFAULT NULL,
   `created` int(9) NOT NULL,
@@ -75,10 +75,10 @@ CREATE TABLE {comments} (
   `updated` int(9) NOT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {failed_auths};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {failed_auths} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `count` int(9) NOT NULL,
@@ -86,10 +86,10 @@ CREATE TABLE {failed_auths} (
   `time` int(9) NOT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {graphics_rules};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {graphics_rules} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `active` tinyint(1) DEFAULT '0',
@@ -100,12 +100,12 @@ CREATE TABLE {graphics_rules} (
   `target` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'thumb');
 INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:640;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'resize');
 DROP TABLE IF EXISTS {groups};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {groups} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` char(64) DEFAULT NULL,
@@ -113,25 +113,25 @@ CREATE TABLE {groups} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {groups} VALUES (1,'Everybody',1);
 INSERT INTO {groups} VALUES (2,'Registered Users',1);
 DROP TABLE IF EXISTS {groups_users};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {groups_users} (
   `group_id` int(9) NOT NULL,
   `user_id` int(9) NOT NULL,
   PRIMARY KEY (`group_id`,`user_id`),
   UNIQUE KEY `user_id` (`user_id`,`group_id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {groups_users} VALUES (1,1);
 INSERT INTO {groups_users} VALUES (1,2);
 INSERT INTO {groups_users} VALUES (2,2);
 DROP TABLE IF EXISTS {incoming_translations};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {incoming_translations} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `key` char(32) NOT NULL,
@@ -143,10 +143,10 @@ CREATE TABLE {incoming_translations} (
   UNIQUE KEY `key` (`key`,`locale`),
   KEY `locale_key` (`locale`,`key`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {items};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {items} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `album_cover_item_id` int(9) DEFAULT NULL,
@@ -188,11 +188,11 @@ CREATE TABLE {items} (
   KEY `weight` (`weight`),
   KEY `left_ptr` (`left_ptr`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,2,0,NULL,'','',1,NULL,NULL,2,NULL,'weight','ASC',1,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
 DROP TABLE IF EXISTS {items_tags};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {items_tags} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `item_id` int(9) NOT NULL,
@@ -201,10 +201,10 @@ CREATE TABLE {items_tags} (
   KEY `tag_id` (`tag_id`,`id`),
   KEY `item_id` (`item_id`,`id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {logs};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {logs} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `category` varchar(64) DEFAULT NULL,
@@ -217,10 +217,10 @@ CREATE TABLE {logs} (
   `user_id` int(9) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {messages};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {messages} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) DEFAULT NULL,
@@ -229,10 +229,10 @@ CREATE TABLE {messages} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {modules};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {modules} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `active` tinyint(1) DEFAULT '0',
@@ -243,7 +243,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`),
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {modules} VALUES (1,1,'gallery',47,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',4,3);
@@ -252,10 +252,10 @@ INSERT INTO {modules} VALUES (5,1,'info',2,5);
 INSERT INTO {modules} VALUES (6,1,'rss',1,6);
 INSERT INTO {modules} VALUES (7,1,'search',1,7);
 INSERT INTO {modules} VALUES (8,1,'slideshow',2,8);
-INSERT INTO {modules} VALUES (9,1,'tag',2,9);
+INSERT INTO {modules} VALUES (9,1,'tag',3,9);
 DROP TABLE IF EXISTS {outgoing_translations};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {outgoing_translations} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `base_revision` int(9) DEFAULT NULL,
@@ -267,10 +267,10 @@ CREATE TABLE {outgoing_translations} (
   UNIQUE KEY `key` (`key`,`locale`),
   KEY `locale_key` (`locale`,`key`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {permissions};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {permissions} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `display_name` varchar(64) DEFAULT NULL,
@@ -278,14 +278,14 @@ CREATE TABLE {permissions} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {permissions} VALUES (1,'View','view');
 INSERT INTO {permissions} VALUES (2,'View full size','view_full');
 INSERT INTO {permissions} VALUES (3,'Edit','edit');
 INSERT INTO {permissions} VALUES (4,'Add','add');
 DROP TABLE IF EXISTS {search_records};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {search_records} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `item_id` int(9) DEFAULT NULL,
@@ -295,21 +295,21 @@ CREATE TABLE {search_records} (
   KEY `item_id` (`item_id`),
   FULLTEXT KEY `data` (`data`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {search_records} VALUES (1,1,0,'  Gallery');
 DROP TABLE IF EXISTS {sessions};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {sessions} (
   `session_id` varchar(127) NOT NULL,
   `data` text NOT NULL,
   `last_activity` int(10) unsigned NOT NULL,
   PRIMARY KEY (`session_id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {tags};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {tags} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
@@ -317,10 +317,10 @@ CREATE TABLE {tags} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {tasks};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {tasks} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `callback` varchar(128) DEFAULT NULL,
@@ -335,10 +335,10 @@ CREATE TABLE {tasks} (
   PRIMARY KEY (`id`),
   KEY `owner_id` (`owner_id`)
 ) DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {themes};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {themes} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) DEFAULT NULL,
@@ -346,12 +346,12 @@ CREATE TABLE {themes} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {themes} VALUES (1,'wind',1);
 INSERT INTO {themes} VALUES (2,'admin_wind',1);
 DROP TABLE IF EXISTS {users};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {users} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
@@ -369,12 +369,12 @@ CREATE TABLE {users} (
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `hash` (`hash`)
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {users} VALUES (1,'guest','Guest User','',0,0,NULL,0,1,NULL,NULL,NULL);
 INSERT INTO {users} VALUES (2,'admin','Gallery Administrator','',0,0,'unknown@unknown.com',1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS {vars};
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE {vars} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `module_name` varchar(64) NOT NULL,
@@ -382,8 +382,8 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','page_size','9');
@@ -424,3 +424,4 @@ INSERT INTO {vars} VALUES (NULL,'info','show_owner','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_name','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_captured','1');
 INSERT INTO {vars} VALUES (NULL,'slideshow','max_scale','0');
+INSERT INTO {vars} VALUES (NULL,'tag','tag_cloud_size','30');
