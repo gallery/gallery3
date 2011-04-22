@@ -336,9 +336,7 @@ class Item_Model_Core extends ORM_MPTT {
 
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
-          $tmp = pathinfo($this->name, PATHINFO_FILENAME);
-          $tmp = preg_replace("/[^A-Za-z0-9-_]+/", "-", $tmp);
-          $this->slug = trim($tmp, "-");
+          $this->slug = item::convert_filename_to_slug($this->name);
 
           // If the filename is all invalid characters, then the slug may be empty here.  Pick a
           // random value.
