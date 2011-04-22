@@ -132,7 +132,7 @@ class Tag_Model_Core extends ORM {
    * @param string $query the query string (eg "page=3")
    */
   public function url($query=null) {
-    $url = url::site("tag/{$this->id}/{$this->name}");
+    $url = url::site("tag/{$this->id}/" . urlencode($this->name));
     if ($query) {
       $url .= "?$query";
     }

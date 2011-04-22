@@ -6,7 +6,7 @@
       dataType: "json",
       success: function(data) {
         if (data.reload) {
-          window.location.reload();
+          window.location = "<? url::site("/admin/modules") ?>";
         } else {
           $("body").append('<div id="g-dialog">' + data.dialog + '</div>');
           $("#g-dialog").dialog({

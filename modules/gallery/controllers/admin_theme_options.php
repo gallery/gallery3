@@ -59,6 +59,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
       module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
       module::set_var("gallery", "favicon_url", $form->edit_theme->favicon_url->value);
+      module::set_var("gallery", "apple_touch_icon_url", $form->edit_theme->apple_touch_icon_url->value);
 
       module::event("theme_edit_form_completed", $form);
 
@@ -93,6 +94,9 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
     $group->input("favicon_url")->label(t("URL (or relative path) to your favicon.ico"))
       ->id("g-favicon")
       ->value(module::get_var("gallery", "favicon_url"));
+    $group->input("apple_touch_icon_url")->label(t("URL (or relative path) to your Apple Touch icon"))
+      ->id("g-apple-touch")
+      ->value(module::get_var("gallery", "apple_touch_icon_url"));
     $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
       ->value(module::get_var("gallery", "header_text"));
     $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")

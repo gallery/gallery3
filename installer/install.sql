@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',46,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',47,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',4,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
@@ -382,7 +382,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -406,6 +406,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','admin_area_timeout','5400');
 INSERT INTO {vars} VALUES (NULL,'gallery','maintenance_mode','0');
 INSERT INTO {vars} VALUES (NULL,'gallery','visible_title_length','15');
 INSERT INTO {vars} VALUES (NULL,'gallery','favicon_url','lib/images/favicon.ico');
+INSERT INTO {vars} VALUES (NULL,'gallery','apple_touch_icon_url','lib/images/apple-touch-icon.png');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_from','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_reply_to','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_line_length','70');
