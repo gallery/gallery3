@@ -29,14 +29,10 @@
 $config['language'] = array('en_US', 'English_United States');
 
 /**
- * Locale timezone. Defaults to use the server timezone.
+ * Locale timezone.  Set in 'Advanced' settings, falling back to the server's zone.
  * @see http://php.net/timezones
  */
-$config['timezone'] = ini_get('date.timezone');
-if (empty($config['timezone'])) {
-  // This is a required field.  Pick something as a default.
-  $config['timezone'] = "America/Los_Angeles";
-}
+$config['timezone'] = module::get_var("gallery", "timezone", date_default_timezone_get());
 
 // i18n settings
 
