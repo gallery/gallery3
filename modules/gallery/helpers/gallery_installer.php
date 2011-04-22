@@ -311,8 +311,9 @@ class gallery_installer {
     module::set_var("gallery", "email_header_separator", serialize("\n"));
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
+    module::set_var("gallery", "timezone", Kohana::config("locale.timezone"));
 
-    module::set_version("gallery", 47);
+    module::set_version("gallery", 48);
   }
 
   static function upgrade($version) {
@@ -687,7 +688,7 @@ class gallery_installer {
     if ($version == 47) {
       // Add configuration variable to set timezone.  Defaults to the currently
       // used timezone (from PHP configuration).
-      module::set_var("gallery", "timezone", Kohana::config('locale.timezone'));
+      module::set_var("gallery", "timezone", Kohana::config("locale.timezone"));
       module::set_version("gallery", $version = 48);
     }
   }
