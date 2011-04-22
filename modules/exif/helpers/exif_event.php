@@ -24,6 +24,12 @@ class exif_event_Core {
     }
   }
 
+  static function item_updated_data_file($item) {
+    if (!$item->is_album()) {
+      exif::extract($item);
+    }
+  }
+
   static function item_deleted($item) {
     db::build()
       ->delete("exif_records")
