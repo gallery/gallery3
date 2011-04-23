@@ -94,6 +94,18 @@ class Admin_g2_import_Controller extends Admin_Controller {
     print $view;
   }
 
+  public function autocomplete() {
+    $directories = array();
+    $path_prefix = Input::instance()->get("q");
+    foreach (glob("{$path_prefix}*") as $file) {
+      if (is_dir($file) && !is_link($file)) {
+        $directories[] = $file;
+      }
+    }
+
+    print implode("\n", $directories);
+  }
+
   private function _get_import_form() {
     $embed_path = module::get_var("g2_import", "embed_path", "");
     $form = new Forge(

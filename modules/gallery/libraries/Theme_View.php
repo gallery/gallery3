@@ -38,6 +38,7 @@ class Theme_View_Core extends Gallery_View {
     $this->item = null;
     $this->tag = null;
     $this->set_global(array("theme" => $this,
+                            "theme_info" => theme::get_info($this->theme_name),
                             "user" => identity::active_user(),
                             "page_type" => $page_type,
                             "page_subtype" => $page_subtype,
