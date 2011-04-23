@@ -69,13 +69,23 @@ class Tag_Model_Core extends ORM {
    * to this tag.
    */
   public function save() {
-    $related_item_ids = array();
-    foreach (db::build()
-             ->select("item_id")
-             ->from("items_tags")
-             ->where("tag_id", "=", $this->id)
-             ->execute() as $row) {
-      $related_item_ids[$row->item_id] = 1;
+    // Check to see if another tag exists with the same name
+    $duplicate_tag = ORM::factory("tag")
+      ->where("name", "=", $this->name)
+      ->where("id", "!=", $this->id)
+      ->find();
+    if ($duplicate_tag->loaded()) {
+      // If so, tag its items with this tag so as to merge it
+      $duplicate_tag_items = ORM::factory("item")
+        ->join("items_tags", "items.id", "items_tags.item_id")
+        ->where("items_tags.tag_id", "=", $duplicate_tag->id)
+        ->find_all();
+      foreach ($duplicate_tag_items as $item) {
+        $this->add($item);
+      }
+
+      // ... and remove the duplicate tag
+      $duplicate_tag->delete();
     }
 
     if (isset($this->object_relations["items"])) {
