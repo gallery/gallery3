@@ -32,6 +32,7 @@
         fileDesc: <?= t("Photos and movies")->for_js() ?>,
         cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
         simUploadLimit: <?= $simultaneous_upload_limit ?>,
+        sizeLimit: <?= $size_limit_bytes ?>,
         wmode: "transparent",
         hideButton: true, /* should be true */
         auto: true,
@@ -66,26 +67,30 @@
           return true;
         },
         onError: function(event, queueID, fileObj, errorObj) {
-          var msg = " - ";
           if (errorObj.type == "HTTP") {
             if (errorObj.info == "500") {
-              msg += <?= t("Unable to process this file")->for_js() ?>;
-              // Server error - check server logs
+              error_msg = <?= t("Unable to process this photo")->for_js() ?>;
             } else if (errorObj.info == "404") {
-              msg += <?= t("The upload script was not found.")->for_js() ?>;
-              // Server script not found
+              error_msg = <?= t("The upload script was not found")->for_js() ?>;
+            } else if (errorObj.info == "400") {
+              error_msg = <?= t("This photo is too large (max is %size bytes)",
+                                array("size" => $size_limit))->for_js() ?>;
             } else {
-              // Server Error: status: errorObj.info
-              msg += (<?= t("Server error: __INFO__")->for_js() ?>.replace("__INFO__", errorObj.info));
+              msg += (<?= t("Server error: __INFO__ (__TYPE__)")->for_js() ?>
+                .replace("__INFO__", errorObj.info)
+                .replace("__TYPE__", errorObj.type));
             }
           } else if (errorObj.type == "File Size") {
-            var sizelimit = $("#g-uploadify").uploadifySettings(sizeLimit);
-            msg += fileObj.name+' '+errorObj.type+' Limit: '+Math.round(d.sizeLimit/1024)+'KB';
+            error_msg = <?= t("This photo is too large (max is %size bytes)",
+                              array("size" => $size_limit))->for_js() ?>;
           } else {
-            msg += (<?= t("Server error: __INFO__ (__TYPE__)")->for_js() ?>
-              .replace("__INFO__", errorObj.info)
-              .replace("__TYPE__", errorObj.type));
+            error_msg = <?= t("Server error: __INFO__ (__TYPE__)")->for_js() ?>
+                        .replace("__INFO__", errorObj.info)
+                        .replace("__TYPE__", errorObj.type);
           }
+          msg = " - <a target=\"_blank\" href=\"http://codex.gallery2.org/Gallery3:Troubleshooting:Uploading\">" +
+            error_msg + "</a>";
+
           $("#g-add-photos-status ul").append(
             "<li id=\"q" + queueID + "\" class=\"g-error\">" + fileObj.name + msg + "</li>");
           $("#g-uploadify").uploadifyCancel(queueID);
@@ -131,10 +136,7 @@
   <? endif ?>
 
   <div>
-    <p>
-      <?= t("Photos will be uploaded to album: ") ?>
-    </p>
-    <ul class="g-breadcrumbs ui-helper-clearfix">
+    <ul class="g-breadcrumbs">
       <? foreach ($album->parents() as $i => $parent): ?>
       <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
       <? endforeach ?>
@@ -143,7 +145,7 @@
   </div>
 
   <div id="g-add-photos-canvas">
-    <button id="g-add-photos-button" class="g-button ui-state-default ui-corner-all" href="#"><?= t("Select photos...") ?></button>
+    <button id="g-add-photos-button" class="g-button ui-state-default ui-corner-all" href="#"><?= t("Select photos (%size max per file)...", array("size" => $size_limit)) ?></button>
     <span id="g-uploadify"></span>
   </div>
   <div id="g-add-photos-status">

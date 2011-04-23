@@ -423,4 +423,23 @@ class graphics_Core {
 
     return true;
   }
+
+  /**
+   * Return the max file size that this graphics toolkit can handle.
+   */
+  static function max_filesize() {
+    if (module::get_var("gallery", "graphics_toolkit") == "gd") {
+      $memory_limit = trim(ini_get("memory_limit"));
+      $memory_limit_bytes = num::convert_to_bytes($memory_limit);
+
+      // GD expands images in memory and uses 4 bytes of RAM for every byte
+      // in the file.
+      $max_filesize = $memory_limit_bytes / 4;
+      $max_filesize_human_readable = num::convert_to_human_readable($max_filesize);
+      return array($max_filesize, $max_filesize_human_readable);
+    }
+
+    // Some arbitrarily large size
+    return array(1000000000, "1G");
+  }
 }
