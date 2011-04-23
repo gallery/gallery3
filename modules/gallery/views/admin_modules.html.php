@@ -55,7 +55,7 @@
           <th style="width: 8em"> <?= t("Name") ?> </th>
           <th> <?= t("Version") ?> </th>
           <th> <?= t("Description") ?> </th>
-          <th> <?= t("Details") ?> </th>
+          <th style="width: 60px"> <?= t("Details") ?> </th>
         </tr>
         <? foreach ($available as $module_name => $module_info):  ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?>">
