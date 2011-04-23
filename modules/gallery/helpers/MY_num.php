@@ -37,4 +37,18 @@ class num extends num_Core {
 
     return $val;
   }
+
+  /**
+   * Convert a size value as accepted by PHP's shorthand to bytes.
+   * ref: http://us2.php.net/manual/en/function.ini-get.php
+   * ref: http://us2.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+   */
+  static function convert_to_human_readable($num) {
+    foreach (array("G" => 1e9, "M" => 1e6, "K" => 1e3) as $k => $v) {
+      if ($num > $v) {
+        $num = round($num / $v) . $k;
+      }
+    }
+    return $num;
+  }
 }
