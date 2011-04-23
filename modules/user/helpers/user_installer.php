@@ -23,8 +23,8 @@ class user_installer {
   }
 
   static function install() {
-    module::set_var("user", "minimum_password_length", 5);
     IdentityProvider::change_provider("user");
+    // Set the latest version in initialize() below
   }
 
   static function upgrade($version) {
@@ -137,7 +137,7 @@ class user_installer {
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
 
-    module::set_var("user", "mininum_password_length", 5);
-    module::set_version("user", 3);
+    module::set_var("user", "minimum_password_length", 5);
+    module::set_version("user", 4);
   }
 }
