@@ -2,7 +2,6 @@
 <?= $theme->css("server_add.css") ?>
 <?= $theme->css("jquery.autocomplete.css") ?>
 <?= $theme->script("jquery.autocomplete.js") ?>
-<?= $theme->script("admin.js") ?>
 <script type="text/javascript">
 $("document").ready(function() {
   $("#g-path").autocomplete(
