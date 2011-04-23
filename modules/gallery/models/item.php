@@ -432,6 +432,7 @@ class Item_Model_Core extends ORM_MPTT {
 
         if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
           // Move all of the items associated data files
+          $this->_build_relative_caches();
           @rename($original->file_path(), $this->file_path());
           if ($this->is_album()) {
             @rename(dirname($original->resize_path()), dirname($this->resize_path()));
