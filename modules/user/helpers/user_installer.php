@@ -23,6 +23,7 @@ class user_installer {
   }
 
   static function install() {
+    module::set_var("user", "minimum_password_length", 5);
     IdentityProvider::change_provider("user");
   }
 
@@ -43,6 +44,12 @@ class user_installer {
         ->close()
         ->execute();
       module::set_version("user", $version = 3);
+    }
+
+    if ($version == 3) {
+      module::set_var("user", "minimum_password_length", 5);
+      module::clear_var("user", "mininum_password_length");
+      module::set_version("user", $version = 4);
     }
   }
 

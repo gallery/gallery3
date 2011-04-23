@@ -105,7 +105,7 @@ class Password_Controller extends Controller {
     if (!empty($hash)) {
       $hidden->value($hash);
     }
-    $minimum_length = module::get_var("user", "mininum_password_length", 5);
+    $minimum_length = module::get_var("user", "minimum_password_length", 5);
     $input_password = $group->password("password")->label(t("Password"))->id("g-password")
       ->rules($minimum_length ? "required|length[$minimum_length, 40]" : "length[40]");
     $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
