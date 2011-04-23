@@ -3,5 +3,5 @@ description = "reCAPTCHA displays a graphical verification that protects the inp
 version = 1
 author_name = "Gallery Team"
 author_url = "http://codex.gallery2.org/Gallery:Team"
-info_url = "http://codex.gallery2.org/Gallery3:Module:recaptcha"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:recaptcha"
 discuss_url = "http://gallery.menalto.com/forum_module_recaptcha"
