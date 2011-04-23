@@ -97,11 +97,16 @@ a:hover,
   margin-left: 1em;
 }
 
-#g-content form ul li,
-#g-content #g-action-status li,
-#g-content #g-log-entries ul li {
-  list-style: none;
-  margin-left: 0;
+form ul li,
+#g-action-status li,
+#g-log-entries li,
+.g-buttonset li,
+.g-buttonset-vertical li,
+.g-paginator li,
+.ui-sortable li,
+.ui-widget-header li {
+  list-style: none !important;
+  margin-left: 0 !important;
 }
 
 
