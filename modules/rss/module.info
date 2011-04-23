@@ -1,3 +1,7 @@
 name = "RSS"
 description = "Provides RSS feeds"
 version = 1
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:rss"
+discuss_url = "http://gallery.menalto.com/forum_module_rss"

@@ -48,6 +48,20 @@ class Form_Uploadify_Core extends Form_Input {
     $v->simultaneous_upload_limit = module::get_var("gallery", "simultaneous_upload_limit");
     $v->movies_allowed = (bool) movie::find_ffmpeg();
     $v->suhosin_session_encrypt = (bool) ini_get("suhosin.session.encrypt");
+
+    list ($toolkit_max_filesize_bytes, $toolkit_max_filesize) = graphics::max_filesize();
+
+    $upload_max_filesize = trim(ini_get("upload_max_filesize"));
+    $upload_max_filesize_bytes = num::convert_to_bytes($upload_max_filesize);
+
+    if ($upload_max_filesize_bytes < $toolkit_max_filesize_bytes) {
+      $v->size_limit_bytes = $upload_max_filesize_bytes;
+      $v->size_limit = $upload_max_filesize;
+    } else {
+      $v->size_limit_bytes = $toolkit_max_filesize_bytes;
+      $v->size_limit = $toolkit_max_filesize;
+    }
+
     return $v;
   }
 

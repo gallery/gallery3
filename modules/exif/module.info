@@ -1,3 +1,7 @@
 name = "Exif Data"
 description = "Extract Exif data and display it on photo pages."
 version = 1
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:exif"
+discuss_url = "http://gallery.menalto.com/forum_module_exif"

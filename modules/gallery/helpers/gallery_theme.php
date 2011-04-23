@@ -64,7 +64,7 @@ class gallery_theme_Core {
     if ($session->get("l10n_mode", false)) {
       $buf .= $theme->css("l10n_client.css");
       $buf .= $theme->script("jquery.cookie.js");
-      $buf .=$theme->script("l10n_client.js");
+      $buf .= $theme->script("l10n_client.js");
     }
     return $buf;
   }

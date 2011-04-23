@@ -111,6 +111,8 @@ class Gallery_View_Core extends View {
     $contents = $cache->get($key);
 
     if (empty($contents)) {
+      module::event("before_combine", $type, $this->combine_queue[$type][$group]);
+
       $contents = "";
       foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
         if ($type == "css") {
@@ -120,6 +122,8 @@ class Gallery_View_Core extends View {
         }
       }
 
+      module::event("after_combine", $type, $contents);
+
       $cache->set($key, $contents, array($type), 30 * 84600);
 
       $use_gzip = function_exists("gzencode") &&
@@ -128,9 +132,13 @@ class Gallery_View_Core extends View {
         $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
                     array($type, "gzip"), 30 * 84600);
       }
+
     }
 
     unset($this->combine_queue[$type][$group]);
+    if (empty($this->combine_queue[$type])) {
+      unset($this->combine_queue[$type]);
+    }
 
     if ($type == "css") {
       return html::stylesheet("combined/css/$key", "screen,print,projection", true);
@@ -158,6 +166,7 @@ class Gallery_View_Core extends View {
           $replace[] = "url('" . url::abs_file($relative) . "')";
         } else {
           Kohana_Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+
         }
       }
       $replace = str_replace(DIRECTORY_SEPARATOR, "/", $replace);

@@ -43,7 +43,7 @@
   </script>
   <h1> <?= t("Gallery Modules") ?> </h1>
   <p>
-    <?= t("Power up your Gallery by adding more modules! Each module provides new cool features.") ?>
+    <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", array("url" => "http://codex.gallery2.org/Category:Gallery_3:Modules")) ?>
   </p>
 
   <div class="g-block-content">
@@ -55,6 +55,7 @@
           <th style="width: 8em"> <?= t("Name") ?> </th>
           <th> <?= t("Version") ?> </th>
           <th> <?= t("Description") ?> </th>
+          <th style="width: 60px"> <?= t("Details") ?> </th>
         </tr>
         <? foreach ($available as $module_name => $module_info):  ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?>">
@@ -64,6 +65,55 @@
           <td> <?= t($module_info->name) ?> </td>
           <td> <?= $module_info->version ?> </td>
           <td> <?= t($module_info->description) ?> </td>
+          <td style="white-space: nowrap">
+            <ul class="g-buttonset">
+              <li>
+                <a target="_blank"
+                   <? if (isset($module_info->author_url)): ?>
+                   class="ui-state-default ui-icon ui-icon-person ui-corner-left"
+                   href="<?= $module_info->author_url ?>"
+                   <? else: ?>
+                   class="ui-state-disabled ui-icon ui-icon-person ui-corner-left"
+                   href="#"
+                   <? endif ?>
+
+                   <? if (isset($module_info->author_name)): ?>
+                   title="<?= $module_info->author_name ?>"
+                   <? endif ?>
+                   >
+                   <? if (isset($module_info->author_name)): ?>
+                   <?= $module_info->author_name ?>
+                   <? endif ?>
+                </a>
+              </li>
+              <li>
+                <a target="_blank"
+                   <? if (isset($module_info->info_url)): ?>
+                   class="ui-state-default ui-icon ui-icon-info"
+                   href="<?= $module_info->info_url ?>"
+                   <? else: ?>
+                   class="ui-state-disabled ui-icon ui-icon-info"
+                   href="#"
+                   <? endif ?>
+                   >
+                  <?= t("info") ?>
+                </a>
+              </li>
+              <li>
+                <a target="_blank"
+                   <? if (isset($module_info->discuss_url)): ?>
+                   class="ui-state-default ui-icon ui-icon-comment ui-corner-right"
+                   href="<?= $module_info->discuss_url ?>"
+                   <? else: ?>
+                   class="ui-state-disabled ui-icon ui-icon-comment ui-corner-right"
+                   href="#"
+                   <? endif ?>
+                   >
+                  <?= t("discuss") ?>
+                </a>
+              </li>
+            </ul>
+          </td>
         </tr>
         <? endforeach ?>
       </table>
