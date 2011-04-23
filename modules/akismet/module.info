@@ -1,3 +1,7 @@
 name = "Akismet"
 description = "Filter comments through the Akismet web service to detect and eliminate spam (http://akismet.com).  You'll need a WordPress.com API key to use it."
 version = 1
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Module:akismet"
+discuss_url = "http://gallery.menalto.com/forum_module_akismet"

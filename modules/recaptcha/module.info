@@ -1,3 +1,7 @@
 name = "reCAPTCHA"
 description = "reCAPTCHA displays a graphical verification that protects the input form from abuse from 'bots,' or automated programs usually written to generate spam (http://recaptcha.net)."
 version = 1
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Module:recaptcha"
+discuss_url = "http://gallery.menalto.com/forum_module_recaptcha"

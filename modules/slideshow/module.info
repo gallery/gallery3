@@ -1,3 +1,7 @@
 name = "Slideshow"
 description = "Allows users to view a slideshow of photos"
 version = 2
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Module:slideshow"
+discuss_url = "http://gallery.menalto.com/forum_module_slideshow"
