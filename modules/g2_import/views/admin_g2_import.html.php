@@ -36,7 +36,7 @@
     </div>
     <div id="g-admin-g2-import-import">
       <? if (isset($g2_version)): ?>
-      <ul class="enumeration">
+      <ul>
         <li>
           <?= t("Gallery version %version detected", array("version" => $g2_version)) ?>
         </li>
