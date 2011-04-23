@@ -26,7 +26,10 @@ body, html {
   font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-p {
+p,
+#g-content ul,
+#g-content ol,
+#g-content dl {
   margin-bottom: 1em;
 }
 
@@ -86,6 +89,21 @@ a:hover,
 .g-menu a:hover {
   text-decoration: none;
 }
+
+/* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-content ul li {
+  list-style-type: disc;
+  margin-left: 1em;
+}
+
+#g-content form ul li,
+#g-content #g-action-status li,
+#g-content #g-log-entries ul li {
+  list-style: none;
+  margin-left: 0;
+}
+
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -395,11 +413,6 @@ th {
 .g-module-status.g-success,
 #g-log-entries .g-success {
   background-color: #fff;
-}
-
-ul.enumeration li {
-  list-style-type: disc;
-  margin-left: 20px;
 }
 
 /*** ******************************************************************
