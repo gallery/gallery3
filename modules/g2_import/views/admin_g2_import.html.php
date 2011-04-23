@@ -1,4 +1,17 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<?= $theme->css("jquery.autocomplete.css") ?>
+<?= $theme->script("jquery.autocomplete.js") ?>
+<script type="text/javascript">
+$("document").ready(function() {
+  $("form input[name=embed_path]").autocomplete(
+    "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
+    {
+      max: 256,
+      loadingClass: "g-loading-small",
+    });
+});
+</script>
+
 <div id="g-admin-g2-import" class="g-block">
   <h1> <?= t("Gallery 2 import") ?> </h1>
   <p>
