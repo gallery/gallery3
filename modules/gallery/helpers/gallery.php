@@ -19,7 +19,7 @@
  */
 class gallery_Core {
   const VERSION = "3.0.2";
-  const CODE_NAME = "Mountain View";
+  const CODE_NAME = "Coollanta";
   const RELEASE_CHANNEL = "git";
   const RELEASE_BRANCH = "3.0.x";
 
