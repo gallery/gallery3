@@ -410,6 +410,15 @@ class Item_Model_Core extends ORM_MPTT {
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
         $original = ORM::factory("item", $this->id);
+
+        // Preserve the extension of the data file.
+        if (isset($this->data_file)) {
+          $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
+          if (!empty($extension)) {
+            $this->name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
+          }
+        }
+
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
           $original->_build_relative_caches();
           $this->relative_path_cache = null;
@@ -463,8 +472,6 @@ class Item_Model_Core extends ORM_MPTT {
         }
 
         // Replace the data file, if requested.
-        // @todo: we don't handle the case where you swap in a file of a different mime type
-        //        should we prevent that in validation?  or in set_data_file()
         if ($this->data_file && ($this->is_photo() || $this->is_movie())) {
           copy($this->data_file, $this->file_path());
 
@@ -520,6 +527,8 @@ class Item_Model_Core extends ORM_MPTT {
         $this->name = "$base_name-$rand";
       }
       $this->slug = "$base_slug-$rand";
+      $this->relative_path_cache = null;
+      $this->relative_url_cache = null;
     }
   }
 
@@ -771,16 +780,7 @@ class Item_Model_Core extends ORM_MPTT {
     }
 
     if ($this->is_movie() || $this->is_photo()) {
-      if ($this->loaded()) {
-        // Existing items can't change their extension
-        $original = ORM::factory("item", $this->id);
-        $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        $old_ext = pathinfo($original->name, PATHINFO_EXTENSION);
-        if (strcasecmp($new_ext, $old_ext)) {
-          $v->add_error("name", "illegal_data_file_extension");
-          return;
-        }
-      } else {
+      if (!$this->loaded()) {
         // New items must have an extension
         $ext = pathinfo($this->name, PATHINFO_EXTENSION);
         if (!$ext) {
@@ -816,17 +816,6 @@ class Item_Model_Core extends ORM_MPTT {
       $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
       $v->add_error("name", "empty_data_file");
-    }
-
-    if ($this->loaded()) {
-      if ($this->is_photo()) {
-        list ($a, $b, $mime_type) = photo::get_file_metadata($this->data_file);
-      } else if ($this->is_movie()) {
-        list ($a, $b, $mime_type) = movie::get_file_metadata($this->data_file);
-      }
-      if ($mime_type != $this->mime_type) {
-        $v->add_error("name", "cant_change_mime_type");
-      }
     }
   }
 
