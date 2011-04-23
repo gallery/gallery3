@@ -48,6 +48,7 @@ class tag_Core {
    * @return ORM_Iterator of Tag_Model in descending tag count order
    */
   static function popular_tags($count) {
+    $count = $count >= 1 ? $count : 30;
     return ORM::factory("tag")
       ->order_by("count", "DESC")
       ->limit($count)
