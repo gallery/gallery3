@@ -24,20 +24,4 @@ class server_add_theme_Core {
         . $theme->script("server_add.js");
     }
   }
-
-  static function admin_head($theme) {
-    $buf = "";
-    if (strpos(Router::$current_uri, "admin/server_add") !== false) {
-      $buf .= $theme->css("server_add.css")
-        . $theme->css("jquery.autocomplete.css");
-      $base = url::site("__ARGS__");
-      $csrf = access::csrf_token();
-      $buf .= "<script type=\"text/javascript\"> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
-
-      $buf .= $theme->script("jquery.autocomplete.js")
-        . $theme->script("admin.js");
-    }
-
-    return $buf;
-  }
 }

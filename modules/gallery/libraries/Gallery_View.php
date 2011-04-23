@@ -136,6 +136,9 @@ class Gallery_View_Core extends View {
     }
 
     unset($this->combine_queue[$type][$group]);
+    if (empty($this->combine_queue[$type])) {
+      unset($this->combine_queue[$type]);
+    }
 
     if ($type == "css") {
       return html::stylesheet("combined/css/$key", "screen,print,projection", true);
