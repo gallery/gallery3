@@ -47,7 +47,8 @@ class user_installer {
     }
 
     if ($version == 3) {
-      module::set_var("user", "minimum_password_length", 5);
+      $password_length = module::get_var("user", "mininum_password_length", 5);
+      module::set_var("user", "minimum_password_length", $password_length);
       module::clear_var("user", "mininum_password_length");
       module::set_version("user", $version = 4);
     }
