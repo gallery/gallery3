@@ -85,11 +85,22 @@ class Admin_Tags_Controller extends Admin_Controller {
 
     if ($in_place_edit->validate()) {
       $old_name = $tag->name;
-      $tag->name = $in_place_edit->value();
+      $new_name_or_list = $in_place_edit->value();
+      $tag_list = explode(",", $new_name_or_list);
+      $tag_count = count($tag_list);
+
+      $tag->name = array_shift($tag_list);
       $tag->save();
 
-      $message = t("Renamed tag <b>%old_name</b> to <b>%new_name</b>",
-                   array("old_name" => $old_name, "new_name" => $tag->name));
+      if (!empty($tag_list)) {
+        $this->_copy_items_for_tags($tag, $tag_list);
+        $message = t("Split tag <i>%old_name</i> into <i>%tag_list</i>",
+                     array("old_name" => $old_name, "tag_list" => $new_name_or_list));
+      } else {
+        $message = t("Renamed tag <i>%old_name</i> to <i>%new_name</i>",
+                     array("old_name" => $old_name, "new_name" => $tag->name));
+      }
+
       message::success($message);
       log::success("tags", $message);
 
@@ -99,5 +110,11 @@ class Admin_Tags_Controller extends Admin_Controller {
     }
   }
 
+  private function _copy_items_for_tags($tag, $tag_list) {
+    foreach ($tag->items() as $item) {
+      foreach ($tag_list as $new_tag_name) {
+        tag::add($item, trim($new_tag_name));
+      }
+    }
+  }
 }
-
