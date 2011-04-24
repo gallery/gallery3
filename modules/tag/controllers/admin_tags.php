@@ -87,7 +87,6 @@ class Admin_Tags_Controller extends Admin_Controller {
       $old_name = $tag->name;
       $new_name_or_list = $in_place_edit->value();
       $tag_list = explode(",", $new_name_or_list);
-      $tag_count = count($tag_list);
 
       $tag->name = array_shift($tag_list);
       $tag->save();
