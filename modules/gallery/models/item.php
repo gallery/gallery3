@@ -414,8 +414,9 @@ class Item_Model_Core extends ORM_MPTT {
         // Preserve the extension of the data file.
         if (isset($this->data_file)) {
           $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
-          if (!empty($extension)) {
-            $this->name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
+          $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
+          if (!empty($extension) && strcmp($this->name, $new_name)) {
+            $this->name = $new_name;
           }
         }
 
