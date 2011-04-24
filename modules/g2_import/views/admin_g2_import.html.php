@@ -112,8 +112,8 @@ $("document").ready(function() {
       </p>
       <? endif ?>
     </div>
-    <div id="g-admin-g2-import-notes">
-      <ul class="enumeration">
+    <div id="g-admin-g2-import-notes" class="g-text">
+      <ul>
         <li>
           <?= t("Gallery 3 does not support per-user / per-item permissions.  <b>Review permissions!</b>") ?>
         </li>
