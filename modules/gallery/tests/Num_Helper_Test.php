@@ -17,29 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_block_Core {
-  static function get_site_list() {
-    return array("tag" => t("Popular tags"));
+class Num_Helper_Test extends Gallery_Unit_Test_Case {
+  public function convert_to_bytes_test() {
+    $this->assert_equal(5 * 1024, num::convert_to_bytes("5K"));
+    $this->assert_equal(3 * 1024*1024, num::convert_to_bytes("3M"));
+    $this->assert_equal(4 * 1024*1024*1024, num::convert_to_bytes("4G"));
   }
 
-  static function get($block_id, $theme) {
-    $block = "";
-    switch ($block_id) {
-    case "tag":
-      $block = new Block();
-      $block->css_id = "g-tag";
-      $block->title = t("Popular tags");
-      $block->content = new View("tag_block.html");
-      $block->content->cloud = tag::cloud(module::get_var("tag", "tag_cloud_size", 30));
-
-      if ($theme->item() && $theme->page_subtype() != "tag" && access::can("edit", $theme->item())) {
-        $controller = new Tags_Controller();
-        $block->content->form = tag::get_add_form($theme->item());
-      } else {
-        $block->content->form = "";
-      }
-      break;
-    }
-    return $block;
+  public function convert_to_human_readable_test() {
+    $this->assert_equal("6K", num::convert_to_human_readable(5615));
+    $this->assert_equal("1M", num::convert_to_human_readable(1205615));
+    $this->assert_equal("3G", num::convert_to_human_readable(3091205615));
   }
 }

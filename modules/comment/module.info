@@ -1,3 +1,7 @@
 name = "Comments"
 description = "Allows users and guests to leave comments on photos and albums."
 version = 4
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:comment"
+discuss_url = "http://gallery.menalto.com/forum_module_comment"

@@ -2,3 +2,7 @@ name = "REST API Module"
 description = "A REST-based API that allows desktop clients and other apps to interact with Gallery 3"
 
 version = 3
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:rest"
+discuss_url = "http://gallery.menalto.com/forum_module_rest"

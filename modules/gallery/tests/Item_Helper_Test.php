@@ -49,6 +49,10 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   public function convert_filename_to_slug_test() {
     $this->assert_equal("foo", item::convert_filename_to_slug("{[foo]}"));
     $this->assert_equal("foo-bar", item::convert_filename_to_slug("{[foo!@#!$@#^$@($!(@bar]}"));
+    $this->assert_equal("english-text", item::convert_filename_to_slug("english text"));
+    $this->assert_equal("new-line", item::convert_filename_to_slug("new \n line"));
+    $this->assert_equal("foo-and-bar", item::convert_filename_to_slug("foo&bar"));
+    $this->assert_equal("special", item::convert_filename_to_slug("šṗëçîąļ"));
   }
 
   public function move_test() {

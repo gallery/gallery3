@@ -56,8 +56,12 @@ class InPlaceEdit_Core {
   }
 
   public function validate() {
-    $post = Validation::factory($_POST)
-      ->add_callbacks("input", $this->callback);
+    $post = Validation::factory($_POST);
+
+    if (!empty($this->callback)) {
+      $post->add_callbacks("input", $this->callback);
+    }
+
     foreach ($this->rules as $rule) {
       $post->add_rules("input", $rule);
     }

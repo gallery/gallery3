@@ -56,7 +56,7 @@ class g2_import_task_Core {
     $mode = $task->get("mode");
     $queue = $task->get("queue");
     if (!isset($mode)) {
-      $stats = g2_import::stats();
+      $stats = g2_import::g2_stats();
       $stats["items"] = $stats["photos"] + $stats["movies"];
       unset($stats["photos"]);
       unset($stats["movies"]);
