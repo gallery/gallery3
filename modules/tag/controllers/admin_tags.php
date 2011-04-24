@@ -85,11 +85,23 @@ class Admin_Tags_Controller extends Admin_Controller {
 
     if ($in_place_edit->validate()) {
       $old_name = $tag->name;
-      $tag->name = $in_place_edit->value();
+      $tag_name = $in_place_edit->value();
+      Kohana_Log::add("error", $tag_name);
+      $tags = explode(",", $tag_name);
+      $tag_count = count($tags);
+
+      $tag->name = array_shift($tags);
       $tag->save();
 
-      $message = t("Renamed tag <b>%old_name</b> to <b>%new_name</b>",
-                   array("old_name" => $old_name, "new_name" => $tag->name));
+      if (!empty($tags)) {
+        $this->_copy_items_for_tags($tag, $tags);
+        $message = t("Split tag <i>%old_name</i> into <i>%new_tags</i>",
+                     array("old_name" => $old_name, "new_tags" => $tag_name));
+      } else {
+        $message = t("Renamed tag <i>%old_name</i> to <i>%new_name</i>",
+                     array("old_name" => $old_name, "new_name" => $tag->name));
+      }
+
       message::success($message);
       log::success("tags", $message);
 
@@ -99,5 +111,11 @@ class Admin_Tags_Controller extends Admin_Controller {
     }
   }
 
+  private function _copy_items_for_tags($tag, $tags) {
+    foreach ($tag->items() as $item) {
+      foreach ($tags as $idx => $new_tag) {
+        tag::add($item, trim($new_tag));
+      }
+    }
+  }
 }
-
