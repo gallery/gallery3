@@ -81,9 +81,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
     $in_place_edit = InPlaceEdit::factory($tag->name)
       ->action("admin/tags/rename/$tag->id")
-      ->rules(array("required", "length[1,64]"))
-      ->messages(array("in_use" => t("There is already a tag with that name")))
-      ->callback(array($this, "check_for_duplicate"));
+      ->rules(array("required", "length[1,64]"));
 
     if ($in_place_edit->validate()) {
       $old_name = $tag->name;
@@ -98,13 +96,6 @@ class Admin_Tags_Controller extends Admin_Controller {
       json::reply(array("result" => "success", "location" => url::site("admin/tags")));
     } else {
       json::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
-    }
-  }
-
-  public function check_for_duplicate(Validation $post_data, $field) {
-    $tag_exists = ORM::factory("tag")->where("name", "=", $post_data[$field])->count_all();
-    if ($tag_exists) {
-      $post_data->add_error($field, "in_use");
     }
   }
 

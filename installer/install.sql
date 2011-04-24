@@ -244,8 +244,8 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',48,1);
-INSERT INTO {modules} VALUES (2,1,'user',3,2);
+INSERT INTO {modules} VALUES (1,1,'gallery',49,1);
+INSERT INTO {modules} VALUES (2,1,'user',4,2);
 INSERT INTO {modules} VALUES (3,1,'comment',4,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
 INSERT INTO {modules} VALUES (5,1,'info',2,5);
@@ -413,10 +413,10 @@ INSERT INTO {vars} VALUES (NULL,'gallery','email_line_length','70');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_header_separator','s:1:\"\n\";');
 INSERT INTO {vars} VALUES (NULL,'gallery','show_user_profiles_to','registered_users');
 INSERT INTO {vars} VALUES (NULL,'gallery','extra_binary_paths','/usr/local/bin:/opt/local/bin:/opt/bin');
-INSERT INTO {vars} VALUES (NULL,'gallery','timezone','PST8PDT');
+INSERT INTO {vars} VALUES (NULL,'gallery','timezone',NULL);
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_site_sidebar','a:4:{i:10;a:2:{i:0;s:7:\"gallery\";i:1;s:8:\"language\";}i:11;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:12;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:13;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
-INSERT INTO {vars} VALUES (NULL,'user','mininum_password_length','5');
+INSERT INTO {vars} VALUES (NULL,'user','minimum_password_length','5');
 INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
 INSERT INTO {vars} VALUES (NULL,'comment','access_permissions','everybody');
 INSERT INTO {vars} VALUES (NULL,'info','show_title','1');

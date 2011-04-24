@@ -39,7 +39,7 @@
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("screen.css") ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
 

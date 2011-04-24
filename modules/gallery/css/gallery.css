@@ -29,12 +29,12 @@
 
 #g-add-photos-canvas object,
 #g-add-photos-button {
-  left: 93px;
+  left: 90px;
   margin: .5em 0;
   padding: .4em 1em;
   position: absolute;
   top: 0;
-  width: auto;
+  width: 300px;
 }
 
 #g-add-photos-canvas object {

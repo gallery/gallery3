@@ -316,10 +316,10 @@ class graphics_Core {
       // ImageMagick & GraphicsMagick
       $magick_kits = array(
           "imagemagick" => array(
-            "name" => "ImageMagick", "binary" => "convert", "version" => "convert -version",
+            "name" => "ImageMagick", "binary" => "convert", "version_arg" => "-v",
             "version_regex" => "/Version: \S+ (\S+)/"),
           "graphicsmagick" => array(
-            "name" => "GraphicsMagick", "binary" => "gm", "version" => "gm version",
+            "name" => "GraphicsMagick", "binary" => "gm", "version_arg" => "version",
             "version_regex" => "/\S+ (\S+)/"));
       // Loop through the kits
       foreach ($magick_kits as $index => $settings) {
@@ -328,7 +328,8 @@ class graphics_Core {
         $toolkits->$index->name = $settings["name"];
         if ($path) {
           if (@is_file($path) &&
-              preg_match($settings["version_regex"], shell_exec($settings["version"]), $matches)) {
+              preg_match(
+                $settings["version_regex"], shell_exec($path . " " . $settings["version_arg"]), $matches)) {
             $version = $matches[1];
 
             $toolkits->$index->installed = true;
