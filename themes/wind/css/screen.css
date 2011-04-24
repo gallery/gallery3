@@ -111,6 +111,23 @@ a:hover,
   padding-left: 32px;
 }
 
+/* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+ul.g-text li,
+.g-text ul li {
+  list-style-type: disc;
+}
+
+ol.g-text li,
+.g-text ol li {
+  list-style-type: decimal;
+}
+
+.g-text li,
+.g-text li {
+  margin-left: 1em;
+}
+
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 form {
