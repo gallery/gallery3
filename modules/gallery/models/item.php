@@ -442,7 +442,9 @@ class Item_Model_Core extends ORM_MPTT {
         if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
           // Move all of the items associated data files
           $this->_build_relative_caches();
-          @rename($original->file_path(), $this->file_path());
+          if (!isset($this->data_file)) {
+            @rename($original->file_path(), $this->file_path());
+          }
           if ($this->is_album()) {
             @rename(dirname($original->resize_path()), dirname($this->resize_path()));
             @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
@@ -491,6 +493,9 @@ class Item_Model_Core extends ORM_MPTT {
           // Null out the data file variable here, otherwise this event will trigger another
           // save() which will think that we're doing another file move.
           $this->data_file = null;
+          if ($original->file_path() != $this->file_path()) {
+            @unlink($original->file_path());
+          }
           module::event("item_updated_data_file", $this);
         }
       }
