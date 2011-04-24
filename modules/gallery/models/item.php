@@ -128,6 +128,15 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
+   * Get the path to the data file associated with this item.
+   * This data file field is only set until you call save().
+   * After that, you can get the path using get_file_path().
+   */
+  public function get_data_file() {
+    return $this->data_file;
+  }
+
+  /**
    * Return the server-relative url to this item, eg:
    *   /gallery3/index.php/BobsWedding?page=2
    *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
