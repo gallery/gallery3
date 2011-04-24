@@ -75,8 +75,12 @@ class Tag_Model_Core extends ORM {
       ->where("id", "!=", $this->id)
       ->find();
     if ($duplicate_tag->loaded()) {
-      // If so, tag its items with this tag so as to merge it.
-      foreach ($duplicate_tag->items() as $item) {
+      // If so, tag its items with this tag so as to merge it
+      $duplicate_tag_items = ORM::factory("item")
+        ->join("items_tags", "items.id", "items_tags.item_id")
+        ->where("items_tags.tag_id", "=", $duplicate_tag->id)
+        ->find_all();
+      foreach ($duplicate_tag_items as $item) {
         $this->add($item);
       }
 
@@ -84,7 +88,6 @@ class Tag_Model_Core extends ORM {
       $duplicate_tag->delete();
     }
 
-    // Figure out what items have changed in this tag for our item_related_update event below
     if (isset($this->object_relations["items"])) {
       $added = array_diff($this->changed_relations["items"], $this->object_relations["items"]);
       $removed = array_diff($this->object_relations["items"], $this->changed_relations["items"]);
