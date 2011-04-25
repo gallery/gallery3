@@ -475,9 +475,10 @@ class g2_import_Core {
         1 => "ASC",
         ORDER_ASCENDING => "ASC",
         ORDER_DESCENDING => "DESC");
-      // Only consider G2's first sort order
+      // G2 sorts can either be <sort> or <presort>|<sort>.  Right now we can't
+      // map presorts so ignore them.
       $g2_order = explode("|", $g2_album->getOrderBy() . "");
-      $g2_order = $g2_order[0];
+      $g2_order = end($g2_order);
       if (empty($g2_order)) {
         $g2_order = g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy'));
       }
