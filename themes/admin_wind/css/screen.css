@@ -92,24 +92,20 @@ a:hover,
 
 /* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-content ul li {
+ul.g-text li,
+.g-text ul li {
   list-style-type: disc;
+}
+
+ol.g-text li,
+.g-text ol li {
+  list-style-type: decimal;
+}
+
+.g-text li,
+.g-text li {
   margin-left: 1em;
 }
-
-form ul li,
-#g-action-status li,
-#g-log-entries li,
-#g-tag-admin li,
-.g-buttonset li,
-.g-buttonset-vertical li,
-.g-paginator li,
-.ui-sortable li,
-.ui-widget-header li {
-  list-style: none !important;
-  margin-left: 0 !important;
-}
-
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -900,7 +896,7 @@ button {
 .g-progress-bar {
   height: 1em;
   width: 100%;
-  margin-top: .5em;
+  margin: .5em 0;
   display: inline-block;
 }
 
