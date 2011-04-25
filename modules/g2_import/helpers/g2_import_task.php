@@ -127,6 +127,12 @@ class g2_import_task_Core {
           $g2_root_id = g2(GalleryCoreApi::getDefaultAlbumId());
           $tree = g2(GalleryCoreApi::fetchAlbumTree());
           $task->set("queue", $queue = array($g2_root_id => $tree));
+
+          // Update the root album to reflect the Gallery2 root album.
+          $root_album = item::root();
+          g2_import::set_album_values(
+            $root_album, g2(GalleryCoreApi::loadEntitiesById($g2_root_id)));
+          $root_album->save();
         }
         $log_message = g2_import::import_album($queue);
         if ($log_message) {

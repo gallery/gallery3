@@ -448,50 +448,8 @@ class g2_import_Core {
       $album = ORM::factory("item");
       $album->type = "album";
       $album->parent_id = self::map($g2_album->getParentId());
-      $album->name = $g2_album->getPathComponent();
-      $album->title = self::_decode_html_special_chars($g2_album->getTitle());
-      $album->title or $album->title = $album->name;
-      $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
-      $album->owner_id = self::map($g2_album->getOwnerId());
-      try {
-        $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
-      } catch (Exception $e) {
-        // @todo log
-        $album->view_count = 0;
-      }
-      $album->created = $g2_album->getCreationTimestamp();
 
-      $order_map = array(
-        "originationTimestamp" => "captured",
-        "creationTimestamp" => "created",
-        "description" => "description",
-        "modificationTimestamp" => "updated",
-        "orderWeight" => "weight",
-        "pathComponent" => "name",
-        "summary" => "description",
-        "title" => "title",
-        "viewCount" => "view_count");
-      $direction_map = array(
-        1 => "ASC",
-        ORDER_ASCENDING => "ASC",
-        ORDER_DESCENDING => "DESC");
-      // G2 sorts can either be <sort> or <presort>|<sort>.  Right now we can't
-      // map presorts so ignore them.
-      $g2_order = explode("|", $g2_album->getOrderBy() . "");
-      $g2_order = end($g2_order);
-      if (empty($g2_order)) {
-        $g2_order = g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy'));
-      }
-      $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
-      $g2_order_direction = $g2_order_direction[0];
-      if (empty($g2_order_direction)) {
-        $g2_order_direction =
-          g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection'));
-      }
-      if (array_key_exists($g2_order, $order_map)) {
-        $album->sort_column = $order_map[$g2_order];
-        $album->sort_order = $direction_map[$g2_order_direction];
-      }
+      g2_import::set_album_values($album, $g2_album);
 
       try {
         $album->save();
@@ -511,6 +469,56 @@ class g2_import_Core {
       self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_album->getId())));
 
     self::_import_permissions($g2_album, $album);
+  }
+
+  /**
+   * Transfer over all the values from a G2 album to a G3 album.
+   */
+  static function set_album_values($album, $g2_album) {
+    $album->name = $g2_album->getPathComponent();
+    $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+    $album->title or $album->title = $album->name;
+    $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
+    $album->owner_id = self::map($g2_album->getOwnerId());
+    try {
+      $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+    } catch (Exception $e) {
+      // @todo log
+      $album->view_count = 0;
+    }
+    $album->created = $g2_album->getCreationTimestamp();
+
+    $order_map = array(
+      "originationTimestamp" => "captured",
+      "creationTimestamp" => "created",
+      "description" => "description",
+      "modificationTimestamp" => "updated",
+      "orderWeight" => "weight",
+      "pathComponent" => "name",
+      "summary" => "description",
+      "title" => "title",
+      "viewCount" => "view_count");
+    $direction_map = array(
+      1 => "ASC",
+      ORDER_ASCENDING => "ASC",
+      ORDER_DESCENDING => "DESC");
+    // G2 sorts can either be <sort> or <presort>|<sort>.  Right now we can't
+    // map presorts so ignore them.
+    $g2_order = explode("|", $g2_album->getOrderBy() . "");
+    $g2_order = end($g2_order);
+    if (empty($g2_order)) {
+      $g2_order = g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy'));
+    }
+    $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
+    $g2_order_direction = $g2_order_direction[0];
+    if (empty($g2_order_direction)) {
+      $g2_order_direction =
+        g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection'));
+    }
+    if (array_key_exists($g2_order, $order_map)) {
+      $album->sort_column = $order_map[$g2_order];
+      $album->sort_order = $direction_map[$g2_order_direction];
+    }
   }
 
   /**
