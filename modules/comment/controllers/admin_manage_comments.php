@@ -45,6 +45,8 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->page_title = t("Manage comments");
+    $view->page_type = "collection";
+    $view->page_subtype = "admin_comments";
     $view->content = new View("admin_manage_comments.html");
     $view->content->counts = $this->_counts();
     $view->content->menu = $this->_menu($view->content->counts);
@@ -56,13 +58,12 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
       ->limit(self::$items_per_page)
       ->offset(($page - 1) * self::$items_per_page)
       ->find_all();
-    $view->content->pager = new Pagination();
-    $view->content->pager->initialize(
-      array("query_string" => "page",
-            "total_items" => $view->content->counts->$state,
-            "items_per_page" => self::$items_per_page,
-            "style" => "classic"));
 
+    // Pagination info
+    $view->page = $page;
+    $view->page_size = self::$items_per_page;
+    $view->children_count = $this->_counts()->$state;
+    $view->max_pages = ceil($view->children_count / $view->page_size);
     print $view;
   }
 
