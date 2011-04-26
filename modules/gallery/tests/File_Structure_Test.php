@@ -101,6 +101,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       $expected_4 = array("<?php defined('SYSPATH') or die('No direct script access.');\n");
     } else if (strpos($path, MODPATH . "forge") === 0 ||
                strpos($path, MODPATH . "exif/lib") === 0 ||
+               strpos($path, MODPATH . "gallery_unit_test/vendor") === 0 ||
                strpos($path, MODPATH . "gallery/lib/HTMLPurifier") === 0 ||
                $path == MODPATH . "user/lib/PasswordHash.php" ||
                $path == DOCROOT . "var/database.php") {
