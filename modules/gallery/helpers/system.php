@@ -40,4 +40,29 @@ class system_Core {
     }
     return null;
   }
+
+  /**
+   * Create a file with a unique file name.
+   * This helper is similar to the built-in tempnam, except that it supports an optional postfix.
+   */
+  static function tempnam($dir = TMPPATH, $prefix = "", $postfix = "") {
+    return self::_tempnam($dir, $prefix, $postfix, "tempnam");
+  }
+
+  // This helper provides a dependency-injected implementation of tempnam.
+  static function _tempnam($dir, $prefix, $postfix, $builtin) {
+    $success = false;
+    do {
+      $basename = call_user_func($builtin, $dir, $prefix);
+      if (!$basename) {
+        return false;
+      }
+      $filename = $basename . $postfix;
+      $success = !file_exists($filename) && @rename($basename, $filename);
+      if (!$success) {
+        @unlink($basename);
+      }
+    } while (!$success);
+    return $filename;
+  }
 }
