@@ -28,8 +28,10 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
       ->where("updated", "<", db::expr("UNIX_TIMESTAMP() - 86400 * 7"))
       ->execute();
 
-    // Redirect to the appropriate queue
-    url::redirect("admin/manage_comments/queue/unpublished");
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_manage_comments.html");
+    $view->content->menu = $this->_menu($this->_counts());
+    print $view;
   }
 
   public function menu_labels() {
@@ -43,15 +45,11 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
   public function queue($state) {
     $page = max(Input::instance()->get("page"), 1);
 
-    $view = new Admin_View("admin.html");
-    $view->page_title = t("Manage comments");
-    $view->page_type = "collection";
-    $view->page_subtype = "admin_comments";
-    $view->content = new View("admin_manage_comments.html");
-    $view->content->counts = $this->_counts();
-    $view->content->menu = $this->_menu($view->content->counts);
-    $view->content->state = $state;
-    $view->content->comments = ORM::factory("comment")
+    $view = new Gallery_View("admin_manage_comments_queue.html");
+    $view->counts = $this->_counts();
+    $view->menu = $this->_menu($view->counts);
+    $view->state = $state;
+    $view->comments = ORM::factory("comment")
       ->order_by("created", "DESC")
       ->order_by("id", "DESC")
       ->where("state", "=", $state)
@@ -59,11 +57,21 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
       ->offset(($page - 1) * self::$items_per_page)
       ->find_all();
 
-    // Pagination info
+    // This view is not themed so we can't use $theme->url() in the view and have to
+    // reproduce Gallery_View::url() logic here.
+    $atn = theme::$admin_theme_name;
+    $view->fallback_avatar_url = url::abs_file("themes/$atn/images/avatar.jpg");
+
     $view->page = $page;
+    $view->page_type = "collection";
+    $view->page_subtype = "admin_comments";
     $view->page_size = self::$items_per_page;
     $view->children_count = $this->_counts()->$state;
     $view->max_pages = ceil($view->children_count / $view->page_size);
+
+    // Also we want to use $theme->paginator() so we need a dummy theme
+    $view->theme = $view;
+
     print $view;
   }
 
