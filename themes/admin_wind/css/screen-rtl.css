@@ -23,6 +23,15 @@
   text-align: left;
 }
 
+/* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-text li,
+.g-text li {
+  margin-right: 1em;
+}
+
+/* Messages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 .rtl .g-error,
 .rtl .g-info,
 .rtl .g-success,
