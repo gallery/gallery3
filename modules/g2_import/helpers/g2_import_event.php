@@ -34,7 +34,7 @@ class g2_import_event_Core {
       ->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("g2_import")
-               ->label(t("Gallery 2 Import"))
+               ->label(t("Gallery 2 import"))
                ->url(url::site("admin/g2_import")));
   }
 }

@@ -100,6 +100,11 @@ class Admin_g2_import_Controller extends Admin_Controller {
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
         $directories[] = $file;
+
+        // If we find an embed.php, include it as well
+        if (file_exists("$file/embed.php")) {
+          $directories[] = "$file/embed.php";
+        }
       }
     }
 

@@ -69,24 +69,13 @@ class Tag_Model_Core extends ORM {
    * to this tag.
    */
   public function save() {
-    // Figure out what items have changed in this tag for our item_related_update event below
-    if (isset($this->object_relations["items"])) {
-      $added = array_diff($this->changed_relations["items"], $this->object_relations["items"]);
-      $removed = array_diff($this->object_relations["items"], $this->changed_relations["items"]);
-      if (isset($this->changed_relations["items"])) {
-        $changed = array_merge($added, $removed);
-      }
-      $this->count = count($this->object_relations["items"]) + count($added) - count($removed);
-    }
-
     // Check to see if another tag exists with the same name
     $duplicate_tag = ORM::factory("tag")
       ->where("name", "=", $this->name)
       ->where("id", "!=", $this->id)
       ->find();
     if ($duplicate_tag->loaded()) {
-      // If so, tag its items with this tag so as to merge it.  Do this after we figure out what's
-      // changed so that we don't notify on this change to keep churn down.
+      // If so, tag its items with this tag so as to merge it
       $duplicate_tag_items = ORM::factory("item")
         ->join("items_tags", "items.id", "items_tags.item_id")
         ->where("items_tags.tag_id", "=", $duplicate_tag->id)
@@ -97,6 +86,15 @@ class Tag_Model_Core extends ORM {
 
       // ... and remove the duplicate tag
       $duplicate_tag->delete();
+    }
+
+    if (isset($this->object_relations["items"])) {
+      $added = array_diff($this->changed_relations["items"], $this->object_relations["items"]);
+      $removed = array_diff($this->object_relations["items"], $this->changed_relations["items"]);
+      if (isset($this->changed_relations["items"])) {
+        $changed = array_merge($added, $removed);
+      }
+      $this->count = count($this->object_relations["items"]) + count($added) - count($removed);
     }
 
     $result = parent::save();

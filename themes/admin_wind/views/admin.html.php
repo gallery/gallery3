@@ -29,6 +29,7 @@
     <?= $theme->script("gallery.ajax.js") ?>
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>
+    <?= $theme->script("jquery.scrollTo.js") ?>
 
     <?= $theme->admin_head() ?>
 
@@ -38,8 +39,11 @@
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("screen.css") ?>
+    <? if (locales::is_rtl()): ?>
+    <?= $theme->css("screen-rtl.css") ?>
+    <? endif; ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
 
