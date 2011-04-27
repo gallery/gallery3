@@ -27,6 +27,7 @@
 //
 ?>
 
+<? if ($total): ?>
 <ul class="g-paginator ui-helper-clearfix">
   <li class="g-first">
   <? if ($page_type == "collection"): ?>
@@ -61,8 +62,6 @@
       <? else: ?>
         <?= t("%position of %total", array("position" => $position, "total" => $total)) ?>
       <? endif ?>
-    <? else: ?>
-      <?= t("No photos") ?>
     <? endif ?>
   </li>
 
@@ -86,3 +85,4 @@
   <? endif ?>
   </li>
 </ul>
+<? endif ?>
