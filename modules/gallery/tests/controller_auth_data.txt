@@ -1,6 +1,7 @@
 modules/comment/controllers/admin_manage_comments.php        queue                DIRTY_CSRF
 modules/comment/helpers/comment_rss.php                      feed                 DIRTY_AUTH
 modules/digibug/controllers/digibug.php                      print_proxy          DIRTY_CSRF|DIRTY_AUTH
+modules/g2_import/controllers/admin_g2_import.php            autocomplete         DIRTY_CSRF
 modules/g2_import/controllers/g2.php                         map                  DIRTY_CSRF
 modules/gallery/controllers/admin.php                        __call               DIRTY_AUTH
 modules/gallery/controllers/albums.php                       index                DIRTY_AUTH

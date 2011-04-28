@@ -19,7 +19,7 @@
  */
 class test_Core {
   static function random_album_unsaved($parent=null) {
-    $rand = random::string(6);
+    $rand = test::random_string(6);
 
     $album = ORM::factory("item");
     $album->type = "album";
@@ -34,7 +34,7 @@ class test_Core {
   }
 
   static function random_photo_unsaved($parent=null) {
-    $rand = random::string(6);
+    $rand = test::random_string(6);
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->parent_id = $parent ? $parent->id : 1;
@@ -49,16 +49,16 @@ class test_Core {
   }
 
   static function random_user($password="password") {
-    $rand = "name_" . random::string(6);
+    $rand = "name_" . test::random_string(6);
     return identity::create_user($rand, $rand, $password, "$rand@rand.com");
   }
 
   static function random_group() {
-    return identity::create_group(random::string(6));
+    return identity::create_group(test::random_string(6));
   }
 
   static function random_name($item=null) {
-    $rand = "name_" . random::string(6);
+    $rand = "name_" . test::random_string(6);
     if ($item && $item->is_photo()) {
       $rand .= ".jpg";
     }
@@ -77,7 +77,7 @@ class test_Core {
 
   static function random_tag() {
     $tag = ORM::factory("tag");
-    $tag->name = random::string(6);
+    $tag->name = test::lorem_ipsum(rand(2, 4));
 
     // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();
@@ -87,5 +87,23 @@ class test_Core {
     fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
     fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
     return `diff $a_name $b_name`;
+  }
+
+  static function random_string($length) {
+    $buf = "";
+    do {
+      $buf .= random::hash();
+    } while (strlen($buf) < $length);
+    return substr($buf, 0, $length);
+  }
+
+  static function lorem_ipsum($num) {
+    static $lorem_ipsum = null;
+    if (!$lorem_ipsum) {
+      require_once(MODPATH . "gallery_unit_test/vendor/LoremIpsum.class.php");
+      $lorem_ipsum = new LoremIpsumGenerator();
+    }
+    // skip past initial 'lorem ipsum'
+    return substr($lorem_ipsum->getContent($num + 2, "txt"), 13);
   }
 }

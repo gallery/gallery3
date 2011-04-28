@@ -31,6 +31,52 @@ class Gallery_View_Core extends View {
   }
 
   /**
+   * Set up the data and render a pager.
+   *
+   * See themes/wind/views/pager.html for documentation on the variables generated here.
+   */
+  public function paginator() {
+    $v = new View("paginator.html");
+    $v->page_type = $this->page_type;
+    $v->page_subtype = $this->page_subtype;
+    $v->first_page_url = null;
+    $v->previous_page_url = null;
+    $v->next_page_url = null;
+    $v->last_page_url = null;
+
+    if ($this->page_type == "collection") {
+      $v->page = $this->page;
+      $v->max_pages = $this->max_pages;
+      $v->total = $this->children_count;
+
+      if ($this->page != 1) {
+        $v->first_page_url = url::site(url::merge(array("page" => 1)));
+        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
+      }
+
+      if ($this->page != $this->max_pages) {
+        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
+        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
+      }
+
+      $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
+      $v->last_visible_position = min($this->page * $this->page_size, $v->total);
+    } else if ($this->page_type == "item") {
+      $v->position = $this->position;
+      $v->total = $this->sibling_count;
+      if ($this->previous_item) {
+        $v->previous_page_url = $this->previous_item->url();
+      }
+
+      if ($this->next_item) {
+        $v->next_page_url = $this->next_item->url();
+      }
+    }
+
+    return $v;
+  }
+
+  /**
    * Begin gather up scripts or css files so that they can be combined into a single request.
    *
    * @param $types  a comma separated list of types to combine, eg "script,css"

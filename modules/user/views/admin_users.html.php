@@ -110,7 +110,7 @@
         </table>
 
         <div class="g-paginator">
-          <?= $pager ?>
+          <?= $theme->paginator() ?>
         </div>
 
       </div>
