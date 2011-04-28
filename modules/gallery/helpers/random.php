@@ -19,19 +19,11 @@
  */
 class random_Core {
   /**
-   * Return a random 32 bit hash value.
+   * Return a random 32 byte hash value.
    * @param string extra entropy data
    */
   static function hash($entropy="") {
     return md5($entropy . uniqid(mt_rand(), true));
-  }
-
-  /**
-   * Return a random hexadecimal string of the given length.
-   * @param int the desired length of the string
-   */
-  static function string($length) {
-    return substr(random::hash(), 0, $length);
   }
 
   /**

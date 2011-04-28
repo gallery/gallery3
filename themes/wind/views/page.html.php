@@ -67,6 +67,9 @@
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("screen.css") ?>
+    <? if (locales::is_rtl()): ?>
+    <?= $theme->css("screen-rtl.css") ?>
+    <? endif; ?>
     <!--[if lte IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />

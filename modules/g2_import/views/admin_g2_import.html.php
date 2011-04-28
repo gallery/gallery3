@@ -30,9 +30,13 @@ $("document").ready(function() {
       .tabs("select", 1)
       <? endif ?>
       ;
+
+      // Show the tabs after the page has loaded to prevent Firefox from rendering the
+      // unstyled page and then flashing.
+      $("#g-admin-g2-import-tabs").show();
     });
   </script>
-  <div id="g-admin-g2-import-tabs" class="g-block-content">
+  <div id="g-admin-g2-import-tabs" class="g-block-content" style="display: none">
     <ul>
       <li>
         <a href="#g-admin-g2-import-configure"><?= t("1. Configure Gallery2 path") ?></a>
@@ -112,8 +116,8 @@ $("document").ready(function() {
       </p>
       <? endif ?>
     </div>
-    <div id="g-admin-g2-import-notes">
-      <ul class="enumeration">
+    <div id="g-admin-g2-import-notes" class="g-text">
+      <ul>
         <li>
           <?= t("Gallery 3 does not support per-user / per-item permissions.  <b>Review permissions!</b>") ?>
         </li>
