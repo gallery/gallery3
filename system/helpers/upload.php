@@ -154,24 +154,4 @@ class upload_Core {
 		return ($file['size'] <= $size);
 	}
 
-
-  static function get_upload_extensions() {
-    // Create a default list of allowed extensions and then let modules modify it.
-    $extensions_wrapper = new stdClass();
-    $extensions_wrapper->extensions = array("gif", "jpg", "jpeg", "png");
-    if (movie::find_ffmpeg()) {
-      array_push($extensions_wrapper->extensions, "flv", "mp4", "m4v");
-    }
-    module::event("upload_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
-  }
-
-  static function get_upload_filters() {
-    $filters = array();
-    foreach (upload::get_upload_extensions() as $extension) {
-      array_push($filters, "*." . $extension, "*." . strtoupper($extension));
-    }
-    return $filters;
-  }
-
 } // End upload

@@ -51,7 +51,7 @@ class Uploader_Controller extends Controller {
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
       "Filedata", "upload::valid",  "upload::required",
-      "upload::type[" . implode(",", upload::get_upload_extensions()) . "]");
+      "upload::type[" . implode(",", extensions::get_upload_extensions()) . "]");
 
     if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
