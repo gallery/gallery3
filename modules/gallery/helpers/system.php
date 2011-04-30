@@ -43,15 +43,18 @@ class system_Core {
 
   /**
    * Create a file with a unique file name.
-   * This helper is similar to the built-in tempnam, except that it supports an optional postfix.
+   * This helper is similar to the built-in tempnam.
+   * It allows the caller to specify a prefix and an extension.
+   * It always places the file in TMPPATH.
    */
-  static function tempnam($dir = TMPPATH, $prefix = "", $postfix = "") {
-    return self::_tempnam($dir, $prefix, $postfix, "tempnam");
+  static function temp_filename($prefix = "", $extension = "") {
+    return self::_tempnam(TMPPATH, $prefix, ".$extension", "tempnam");
   }
 
-  // This helper provides a dependency-injected implementation of tempnam.
+  /**
+   * This helper provides a dependency-injected implementation of tempnam.
+   */
   static function _tempnam($dir, $prefix, $postfix, $builtin) {
-    $success = false;
     do {
       $basename = call_user_func($builtin, $dir, $prefix);
       if (!$basename) {
