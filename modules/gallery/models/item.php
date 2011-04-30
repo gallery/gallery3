@@ -804,7 +804,7 @@ class Item_Model_Core extends ORM_MPTT {
         if (($this->is_movie() || $this->is_photo()) &&
             !preg_match("/^(" .
                         implode("|", array_map("preg_quote",
-                                               extensions::get_upload_extensions())) .
+                                               legal_file::get_extensions())) .
                         ")\$/i", $ext)) {
           $v->add_error("name", "illegal_data_file_extension");
         }
