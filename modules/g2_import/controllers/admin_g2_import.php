@@ -78,12 +78,12 @@ class Admin_g2_import_Controller extends Admin_Controller {
         $embed_path = "$embed_path/embed.php";
       }
 
-      if (g2_import::is_valid_embed_path($embed_path)) {
+      if (($g2_init_error = g2_import::is_valid_embed_path($embed_path)) == "ok") {
         message::success(t("Gallery 2 path saved"));
         module::set_var("g2_import", "embed_path", $embed_path);
         url::redirect("admin/g2_import");
       } else {
-        $form->configure_g2_import->embed_path->add_error("invalid", 1);
+        $form->configure_g2_import->embed_path->add_error($g2_init_error, 1);
       }
     }
 
@@ -120,6 +120,10 @@ class Admin_g2_import_Controller extends Admin_Controller {
       ->value($embed_path);
     $group->embed_path->error_messages(
       "invalid", t("The path you entered is not a Gallery 2 installation."));
+    $group->embed_path->error_messages(
+      "broken", t("Your Gallery 2 install isn't working properly.  Please verify it!"));
+    $group->embed_path->error_messages(
+      "missing", t("The path you entered does not exist."));
     $group->submit("")->value($embed_path ? t("Change") : t("Continue"));
     return $form;
   }
