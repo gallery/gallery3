@@ -18,10 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class System_Helper_Test extends Gallery_Unit_Test_Case {
-  public function tempnam_random_test() {
-    $filename = system::tempnam(TMPPATH, "file", ".ext");
+  public function temp_filename_random_test() {
+    $filename = system::temp_filename("file", "ext");
     $this->assert_true(file_exists($filename), "File not created");
     unlink($filename);
+    $this->assert_pattern($filename, "|/file.*\\.ext$|");
   }
 
   public function tempnam_collision_test() {

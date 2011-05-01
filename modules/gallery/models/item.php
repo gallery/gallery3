@@ -418,7 +418,11 @@ class Item_Model_Core extends ORM_MPTT {
         // keep it around.
         $original = ORM::factory("item", $this->id);
 
-        // Preserve the extension of the data file.
+        // Preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
+        // the MIME type from the extension. So when we adopt the new data file, it's important
+        // to adopt the new extension. That ensures that the item's extension is always
+        // appropriate for its data. We don't try to preserve the name of the data file, though,
+        // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
           $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
           $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
@@ -448,11 +452,19 @@ class Item_Model_Core extends ORM_MPTT {
         }
 
         if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
-          // Move all of the items associated data files
           $this->_build_relative_caches();
+          // If there is a data file, then we want to preserve both the old data and the new data.
+          // (Third-party event handlers would like access to both). The old data file will be
+          // accessible via the $original item, and the new one via $this item. But in that case,
+          // we don't want to rename the original as below, because the old data would end up being
+          // clobbered by the new data file. Also, the rename isn't necessary, because the new item
+          // data is coming from the data file anyway. So we only perform the rename if there isn't
+          // a data file. Another way to solve this would be to copy the original file rather than
+          // conditionally rename it, but a copy would cost far more than the rename.
           if (!isset($this->data_file)) {
             @rename($original->file_path(), $this->file_path());
           }
+          // Move all of the items associated data files
           if ($this->is_album()) {
             @rename(dirname($original->resize_path()), dirname($this->resize_path()));
             @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
@@ -804,7 +816,7 @@ class Item_Model_Core extends ORM_MPTT {
         if (($this->is_movie() || $this->is_photo()) &&
             !preg_match("/^(" .
                         implode("|", array_map("preg_quote",
-                                               extensions::get_upload_extensions())) .
+                                               legal_file::get_extensions())) .
                         ")\$/i", $ext)) {
           $v->add_error("name", "illegal_data_file_extension");
         }
