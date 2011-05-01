@@ -443,11 +443,19 @@ class Item_Model_Core extends ORM_MPTT {
         }
 
         if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
-          // Move all of the items associated data files
           $this->_build_relative_caches();
+          // If there is a data file, then we want to preserve both the old data and the new data.
+          // (Third-party event handlers would like access to both). The old data file will be
+          // accessible via the $original item, and the new one via $this item. But in that case,
+          // we don't want to rename the original as below, because the old data would end up being
+          // clobbered by the new data file. Also, the rename isn't necessary, because the new item
+          // data is coming from the data file anyway. So we only perform the rename if there isn't
+          // a data file. Another way to solve this would be to copy the original file rather than
+          // conditionally rename it, but a copy would cost far more than the rename.
           if (!isset($this->data_file)) {
             @rename($original->file_path(), $this->file_path());
           }
+          // Move all of the items associated data files
           if ($this->is_album()) {
             @rename(dirname($original->resize_path()), dirname($this->resize_path()));
             @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
