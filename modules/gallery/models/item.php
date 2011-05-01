@@ -409,7 +409,11 @@ class Item_Model_Core extends ORM_MPTT {
         // keep it around.
         $original = ORM::factory("item", $this->id);
 
-        // Preserve the extension of the data file.
+        // Preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
+        // the MIME type from the extension. So when we adopt the new data file, it's important
+        // to adopt the new extension. That ensures that the item's extension is always
+        // appropriate for its data. We don't try to preserve the name of the data file, though,
+        // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
           $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
           $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
