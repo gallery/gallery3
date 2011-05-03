@@ -41,7 +41,9 @@ class G2_Controller extends Controller {
         // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
         $where = array(array("g2_id", "=", $id));
         $view = $input->get("g2_view");
-        if ($view) {
+        if ($view == "core.DownloadItem") {
+          $where[] = array("resource_type", "IN", array("file", "resize", "thumbnail", "full"));
+        } else if ($view) {
           $where[] = array("g2_url", "like", "%g2_view=$view%");
         } // else: Assuming that the first search hit is sufficiently good.
       } else if ($path) {
