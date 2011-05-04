@@ -31,7 +31,7 @@ class legal_file_Core {
 
   static function get_filters() {
     $filters = array();
-    foreach (self::get_extensions() as $extension) {
+    foreach (legal_file::get_extensions() as $extension) {
       array_push($filters, "*." . $extension, "*." . strtoupper($extension));
     }
     return $filters;
