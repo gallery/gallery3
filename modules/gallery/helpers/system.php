@@ -47,20 +47,13 @@ class system_Core {
    * It allows the caller to specify a prefix and an extension.
    * It always places the file in TMPPATH.
    */
-  static function temp_filename($prefix = "", $extension = "") {
-    return self::_tempnam(TMPPATH, $prefix, ".$extension", "tempnam");
-  }
-
-  /**
-   * This helper provides a dependency-injected implementation of tempnam.
-   */
-  static function _tempnam($dir, $prefix, $postfix, $builtin) {
+  static function temp_filename($prefix="", $extension="") {
     do {
-      $basename = call_user_func($builtin, $dir, $prefix);
+      $basename = tempnam(TMPPATH, $prefix);
       if (!$basename) {
         return false;
       }
-      $filename = $basename . $postfix;
+      $filename = "$basename.$extension";
       $success = !file_exists($filename) && @rename($basename, $filename);
       if (!$success) {
         @unlink($basename);
