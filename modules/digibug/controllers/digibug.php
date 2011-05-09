@@ -33,8 +33,8 @@ class Digibug_Controller extends Controller {
       $proxy->uuid = random::hash();
       $proxy->item_id = $item->id;
       $proxy->save();
-      $full_url = url::abs_site("digibug/print_proxy/full/$proxy->uuid");
-      $thumb_url = url::abs_site("digibug/print_proxy/thumb/$proxy->uuid");
+      $full_url = url::abs_site("digibug/print_proxy/full/$proxy->uuid/$item->id");
+      $thumb_url = url::abs_site("digibug/print_proxy/thumb/$proxy->uuid/$item->id");
     }
 
     $v = new View("digibug_form.html");
@@ -114,7 +114,7 @@ class Digibug_Controller extends Controller {
   private function _clean_expired() {
     db::build()
       ->delete("digibug_proxies")
-      ->where("request_date", "<=", db::expr("(CURDATE() - INTERVAL 10 DAY)"))
+      ->where("request_date", "<=", db::expr("(CURDATE() - INTERVAL 90 DAY)"))
       ->limit(20)
       ->execute();
   }
