@@ -32,7 +32,12 @@ $config['language'] = array('en_US', 'English_United States');
  * Locale timezone.  Set in 'Advanced' settings, falling back to the server's zone.
  * @see http://php.net/timezones
  */
-$config['timezone'] = module::get_var("gallery", "timezone", date_default_timezone_get());
+if (file_exists(VARPATH . "database.php")) {
+  $config['timezone'] = module::get_var("gallery", "timezone", date_default_timezone_get());
+} else {
+  // Gallery3 is not installed yet -- don't make module::get_var() calls.
+  $config['timezone'] = date_default_timezone_get();
+}
 
 // i18n settings
 

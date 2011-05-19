@@ -560,7 +560,7 @@ class g2_import_Core {
     $table = g2(GalleryCoreApi::fetchThumbnailsByItemIds(array($g2_album_id)));
     if (isset($table[$g2_album_id])) {
       // Backtrack the source id to an item
-      $g2_source = $table[$g2_album_id];
+      $orig_g2_source = $g2_source = $table[$g2_album_id];
       while (GalleryUtilities::isA($g2_source, "GalleryDerivative")) {
         $g2_source = g2(GalleryCoreApi::loadEntitiesById($g2_source->getDerivativeSourceId()));
       }
@@ -584,6 +584,11 @@ class g2_import_Core {
                 array("name" => $g3_album->name)),
               $e);
         }
+
+        self::set_map(
+          $orig_g2_source->getId(), $g3_album->id,
+          "thumbnail",
+          self::g2_url(array("view" => "core.DownloadItem", "itemId" => $orig_g2_source->getId())));
       }
     }
   }
