@@ -37,7 +37,7 @@ class legal_file_Core {
   static function get_extensions() {
     $extensions = legal_file::get_photo_extensions();
     if (movie::find_ffmpeg()) {
-      array_push($extensions, legal_file::get_movie_extensions());
+      $extensions = array_merge($extensions, legal_file::get_movie_extensions());
     }
     return $extensions;
   }
@@ -53,8 +53,9 @@ class legal_file_Core {
   static function get_photo_types() {
     // Create a default list of allowed types and then let modules modify it.
     $types_wrapper = new stdClass();
-    module::event("legal_photo_types", $types_wrapper);
     $types_wrapper->types = array("image/jpeg", "image/gif", "image/png");
+    module::event("legal_photo_types", $types_wrapper);
+    return $types_wrapper->types;
   }
 
   static function get_movie_types() {
