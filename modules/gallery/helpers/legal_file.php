@@ -18,15 +18,28 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class legal_file_Core {
-  static function get_extensions() {
+  static function get_photo_extensions() {
     // Create a default list of allowed extensions and then let modules modify it.
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array("gif", "jpg", "jpeg", "png");
-    if (movie::find_ffmpeg()) {
-      array_push($extensions_wrapper->extensions, "flv", "mp4", "m4v");
-    }
-    module::event("legal_file_extensions", $extensions_wrapper);
+    module::event("legal_photo_extensions", $extensions_wrapper);
     return $extensions_wrapper->extensions;
+  }
+
+  static function get_movie_extensions() {
+    // Create a default list of allowed extensions and then let modules modify it.
+    $extensions_wrapper = new stdClass();
+    $extensions_wrapper->extensions = array("flv", "mp4", "m4v");
+    module::event("legal_movie_extensions", $extensions_wrapper);
+    return $extensions_wrapper->extensions;
+  }
+
+  static function get_extensions() {
+    $extensions = legal_file::get_photo_extensions();
+    if (movie::find_ffmpeg()) {
+      array_push($extensions, legal_file::get_movie_extensions());
+    }
+    return $extensions;
   }
 
   static function get_filters() {
@@ -35,5 +48,20 @@ class legal_file_Core {
       array_push($filters, "*." . $extension, "*." . strtoupper($extension));
     }
     return $filters;
+  }
+
+  static function get_photo_types() {
+    // Create a default list of allowed types and then let modules modify it.
+    $types_wrapper = new stdClass();
+    module::event("legal_photo_types", $types_wrapper);
+    $types_wrapper->types = array("image/jpeg", "image/gif", "image/png");
+  }
+
+  static function get_movie_types() {
+    // Create a default list of allowed types and then let modules modify it.
+    $types_wrapper = new stdClass();
+    $types_wrapper->types = array("video/flv", "video/x-flv", "video/mp4");
+    module::event("legal_movie_types", $types_wrapper);
+    return $types_wrapper->types;
   }
 }
