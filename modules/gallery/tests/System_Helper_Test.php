@@ -18,12 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class System_Helper_Test extends Gallery_Unit_Test_Case {
+<<<<<<< HEAD
   public function temp_filename_random_test() {
+=======
+  public function temp_filename_test() {
+>>>>>>> db734130c5fe10408040b2326b28b102f3131271
     $filename = system::temp_filename("file", "ext");
     $this->assert_true(file_exists($filename), "File not created");
     unlink($filename);
     $this->assert_pattern($filename, "|/file.*\\.ext$|");
   }
+<<<<<<< HEAD
 
   public function tempnam_collision_test() {
     require_once('Mock_Built_In.php');
@@ -47,4 +52,6 @@ class System_Helper_Test extends Gallery_Unit_Test_Case {
     }
     $this->assert_false($filename, "Operation not aborted");
   }
+=======
+>>>>>>> db734130c5fe10408040b2326b28b102f3131271
 }

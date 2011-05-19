@@ -889,7 +889,7 @@ class Item_Model_Core extends ORM_MPTT {
       if ($this->is_movie()) {
         $legal_values = array("video/flv", "video/x-flv", "video/mp4");
       } if ($this->is_photo()) {
-        $legal_values = array("image/jpeg", "image/gif", "image/png", "image/tiff");
+        $legal_values = array("image/jpeg", "image/gif", "image/png");
       }
       break;
 
