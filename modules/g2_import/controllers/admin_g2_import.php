@@ -60,6 +60,11 @@ class Admin_g2_import_Controller extends Admin_Controller {
               array("url" => url::site("admin/modules"), "module_id" => $module_id)));
         }
       }
+      if (module::is_active("akismet")) {
+        message::warning(
+          t("The Akismet module may mark some or all of your imported comments as spam.  <a href=\"%url\">Deactivate</a> it to avoid that outcome.",
+            array("url" => url::site("admin/modules"))));
+      }
     } else if (g2_import::is_configured()) {
       $view->content->form->configure_g2_import->embed_path->add_error("invalid", 1);
     }
