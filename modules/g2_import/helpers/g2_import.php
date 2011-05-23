@@ -915,7 +915,6 @@ class g2_import_Core {
       }
       // This comment was already imported, but now it no longer exists.  Import it again, per
       // ticket #1736.
-      self::clear_map($g2_comment_id);
     }
 
     $item_id = self::map($g2_comment->getParentId());
@@ -1298,6 +1297,7 @@ class g2_import_Core {
    * Associate a Gallery 2 id with a Gallery 3 item id.
    */
   static function set_map($g2_id, $g3_id, $resource_type, $g2_url=null) {
+    self::clear_map($g2_id, $resource_type);
     $g2_map = ORM::factory("g2_map");
     $g2_map->g3_id = $g3_id;
     $g2_map->g2_id = $g2_id;
@@ -1315,10 +1315,11 @@ class g2_import_Core {
   /**
    * Remove all map entries associated with the given Gallery 2 id.
    */
-  static function clear_map($g2_id) {
+  static function clear_map($g2_id, $resource_type) {
     db::build()
       ->delete("g2_maps")
       ->where("g2_id", "=", $g2_id)
+      ->where("resource_type", "=", $resource_type)
       ->execute();
   }
 
