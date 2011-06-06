@@ -19,13 +19,16 @@
  */
 class encoding_Core {
   static function convert_to_utf8($value) {
-    if (function_exists("mb_detect_encoding") &&
-        function_exists("mb_convert_encoding") &&
-        mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
-      $value = mb_convert_encoding($value, "UTF-8", mb_detect_encoding($value));
-    } else if (function_exists("mb_detect_encoding") &&
-               mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
-      $value = utf8_encode($value);
+    if (function_exists("mb_detect_encoding")) {
+      // Rely on mb_detect_encoding()'s strict mode
+      $src_encoding = mb_detect_encoding($value, mb_detect_order(), true);
+      if ($src_encoding != "UTF-8") {
+        if (function_exists("mb_convert_encoding") && $src_encoding) {
+          $value = mb_convert_encoding($value, "UTF-8", $src_encoding);
+        } else {
+          $value = utf8_encode($value);
+        }
+      }
     }
     return $value;
   }
