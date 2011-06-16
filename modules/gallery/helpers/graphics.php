@@ -174,8 +174,8 @@ class graphics_Core {
             call_user_func_array($rule->operation, $args);
             $working_file = $output_file;
           } catch (Exception $e) {
-            // Ignore this filter and move on.
-            Kohana_Log::add("error", "Caught exception filtering image: {$item->title}\n" .
+            // Ignore this rule and move on.
+            Kohana_Log::add("error", "Caught exception processing image: {$item->title}\n" .
                             $e->getMessage() . "\n" . $e->getTraceAsString());
           }
         }
