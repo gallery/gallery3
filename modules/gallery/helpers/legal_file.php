@@ -18,22 +18,29 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class legal_file_Core {
+  /**
+   * Create a default list of allowed photo extensions and then let modules modify it.
+   */
   static function get_photo_extensions() {
-    // Create a default list of allowed extensions and then let modules modify it.
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array("gif", "jpg", "jpeg", "png");
     module::event("legal_photo_extensions", $extensions_wrapper);
     return $extensions_wrapper->extensions;
   }
 
+  /**
+   * Create a default list of allowed movie extensions and then let modules modify it.
+   */
   static function get_movie_extensions() {
-    // Create a default list of allowed extensions and then let modules modify it.
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array("flv", "mp4", "m4v");
     module::event("legal_movie_extensions", $extensions_wrapper);
     return $extensions_wrapper->extensions;
   }
 
+  /**
+   * Create a merged list of all allowed photo and movie extensions.
+   */
   static function get_extensions() {
     $extensions = legal_file::get_photo_extensions();
     if (movie::find_ffmpeg()) {
@@ -42,6 +49,10 @@ class legal_file_Core {
     return $extensions;
   }
 
+  /**
+   * Create a merged list of all photo and movie filename filters,
+   * (e.g. "*.gif"), based on allowed extensions.
+   */
   static function get_filters() {
     $filters = array();
     foreach (legal_file::get_extensions() as $extension) {
@@ -50,16 +61,20 @@ class legal_file_Core {
     return $filters;
   }
 
+  /**
+   * Create a default list of allowed photo MIME types and then let modules modify it.
+   */
   static function get_photo_types() {
-    // Create a default list of allowed types and then let modules modify it.
     $types_wrapper = new stdClass();
     $types_wrapper->types = array("image/jpeg", "image/gif", "image/png");
     module::event("legal_photo_types", $types_wrapper);
     return $types_wrapper->types;
   }
 
+  /**
+   * Create a default list of allowed movie MIME types and then let modules modify it.
+   */
   static function get_movie_types() {
-    // Create a default list of allowed types and then let modules modify it.
     $types_wrapper = new stdClass();
     $types_wrapper->types = array("video/flv", "video/x-flv", "video/mp4");
     module::event("legal_movie_types", $types_wrapper);
