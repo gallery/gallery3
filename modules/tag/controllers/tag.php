@@ -31,8 +31,8 @@ class Tag_Controller extends Controller {
       $index = tag::get_position($tag, $child);
       if ($index) {
         $page = ceil($index / $page_size);
-      } else {
-        $page = 1;
+        $uri = "tag/$tag_id/" . urlencode($tag->name);
+        url::redirect($uri . ($page == 1 ? "" : "?page=$page"));
       }
     } else {
       $page = (int) $input->get("page", "1");
