@@ -143,7 +143,7 @@ class tag_Core {
 
     $where = array(array("type", "!=", "album"));
 
-    $position = self::_get_position($tag, $item, $where);
+    $position = self::get_position($tag, $item, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) = $tag->items(3, $position - 2, $where);
     } else {
@@ -167,7 +167,7 @@ class tag_Core {
    * @param Item_Model $item
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
-  private static function _get_position($tag, $item, $where=array()) {
+  public static function get_position($tag, $item, $where=array()) {
 
     return ORM::factory("item")
       ->viewable()
