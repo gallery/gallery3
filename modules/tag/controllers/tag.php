@@ -34,9 +34,11 @@ class Tag_Controller extends Controller {
       url::redirect(url::merge(array("page" => $max_pages)));
     }
 
+    $title = t("Tag: %tag_name", array("tag_name" => $tag->name));
     Photo_Display_Context::factory()
       ->set_context_callback("tag::get_context")
-      ->set_context_data(array("tag" => $tag))
+      ->set_data(array("tag" => $tag,
+                       "title" => $title))
       ->save();
 
     $template = new Theme_View("page.html", "collection", "tag");
@@ -47,7 +49,7 @@ class Tag_Controller extends Controller {
                                 "children" => $tag->items($page_size, $offset),
                                 "children_count" => $children_count));
     $template->content = new View("dynamic.html");
-    $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
+    $template->content->title = $title;
 
     print $template;
   }

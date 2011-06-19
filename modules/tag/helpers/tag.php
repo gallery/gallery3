@@ -137,9 +137,11 @@ class tag_Core {
     db::build()->delete("tags")->where("count", "=", 0)->execute();
   }
 
-  static function get_context($item, $data) {
-    $where = array(array("type", "!=", "album"));
+  static function get_context($item, $context) {
+    $data = $context->data();
     $tag = $data["tag"];
+
+    $where = array(array("type", "!=", "album"));
 
     $position = self::_get_position($tag, $item, $where);
     if ($position > 1) {
@@ -147,13 +149,14 @@ class tag_Core {
     } else {
       $previous_item = null;
       list ($next_item) = $tag->items(1, $position, $where);
-   }
+    }
 
     return array("position" =>$position,
                  "previous_item" => $previous_item,
                  "next_item" =>$next_item,
                  "sibling_count" => $tag->items_count($where),
-                 "parents" => null); // TODO create a pseudo object to represent a breadcrumb
+                 "parents" => array(item::root(), $context->dynamic_item($data["title"],
+                                "tag/{$tag->id}/" . urlencode($tag->name) . "?show={$item->id}")));
   }
 
   /**
