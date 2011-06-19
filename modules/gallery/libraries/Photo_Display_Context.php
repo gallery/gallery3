@@ -27,7 +27,7 @@ class Dynamic_Item {
     if ($query) {
       $this->url .= "?$query";
     }
-    return $this->url;
+    return url::site($this->url);
   }
 }
 
