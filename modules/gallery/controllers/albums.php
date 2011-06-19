@@ -60,6 +60,10 @@ class Albums_Controller extends Items_Controller {
       url::redirect($album->abs_url("page=$max_pages"));
     }
 
+    Photo_Display_Context::factory()
+      ->set_context_callback("item::get_context")
+      ->save();
+
     $template = new Theme_View("page.html", "collection", "album");
     $template->set_global(
       array("page" => $page,

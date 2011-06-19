@@ -34,6 +34,11 @@ class Tag_Controller extends Controller {
       url::redirect(url::merge(array("page" => $max_pages)));
     }
 
+    Photo_Display_Context::factory()
+      ->set_context_callback("tag::get_context")
+      ->set_context_data(array("tag" => $tag))
+      ->save();
+
     $template = new Theme_View("page.html", "collection", "tag");
     $template->set_global(array("page" => $page,
                                 "max_pages" => $max_pages,

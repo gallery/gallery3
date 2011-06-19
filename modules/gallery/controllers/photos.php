@@ -27,26 +27,14 @@ class Photos_Controller extends Items_Controller {
 
     access::required("view", $photo);
 
-    $where = array(array("type", "!=", "album"));
-    $position = item::get_position($photo, $where);
-    if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) =
-        $photo->parent()->viewable()->children(3, $position - 2, $where);
-    } else {
-      $previous_item = null;
-      list ($next_item) = $photo->parent()->viewable()->children(1, $position, $where);
-    }
+    $context = Photo_Display_Context::factory()->get_context($photo);
 
     $template = new Theme_View("page.html", "item", "photo");
     $template->set_global(
-      array("item" => $photo,
-            "children" => array(),
-            "children_count" => 0,
-            "parents" => $photo->parents()->as_array(),
-            "next_item" => $next_item,
-            "previous_item" => $previous_item,
-            "sibling_count" => $photo->parent()->viewable()->children_count($where),
-            "position" => $position));
+      array_merge(array("item" => $photo,
+                        "children" => array(),
+                        "children_count" => 0),
+                  $context));
 
     $template->content = new View("photo.html");
 
