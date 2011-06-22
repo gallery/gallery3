@@ -316,3 +316,60 @@ li.g-group,
 .g-available .g-block img {
   margin: 0 0 1em 1em;
 }
+
+/* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-paginator .g-info {
+  width: 35%;
+}
+
+.g-paginator .g-text-right {
+  margin-left: 0;
+}
+
+.g-paginator .ui-icon-seek-end {
+  background-position: -80px -160px;
+}
+
+.g-paginator .ui-icon-seek-next {
+  background-position: -48px -160px;
+}
+
+.g-paginator .ui-icon-seek-prev {
+  background-position: -32px -160px;
+}
+
+.g-paginator .ui-icon-seek-first {
+  background-position: -64px -160px;
+}
+
+#g-header #g-login-menu,
+#g-header #g-quick-search-form {
+  clear: left;
+  float: left;
+}
+
+#g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
+}
+
+#g-site-menu {
+  left: auto;
+  right: 240px;
+}
+
+#g-view-menu #g-slideshow-link {
+  background-image: url('../images/ico-view-slideshow-rtl.png');
+}
+
+#g-sidebar .g-block-content {
+  padding-right: 1em;
+  padding-left: 0;
+}
+
+#g-footer #g-credits li {
+  padding-left: 1.2em !important;
+  padding-right: 0;
+}
