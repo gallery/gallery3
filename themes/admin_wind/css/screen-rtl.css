@@ -92,7 +92,11 @@ input[type=radio] {
   padding-right: 0;
 }
 
-input.checkbox {
+input.checkbox,
+input[type="checkbox"],
+input.radio,
+input[type="radio"] {
+  margin-right: 0;
   margin-left: .4em;
 }
 
@@ -107,6 +111,14 @@ input.checkbox {
 
 .ui-icon-right .ui-icon {
   margin-right: .2em;
+}
+
+.g-group h4 {
+  padding: .5em .5em .5em 0;
+}
+
+.g-group .g-user {
+  padding: .2em .5em 0 0;
 }
 
 /* RTL Corner radius ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -290,6 +302,11 @@ li.g-group,
   float: right;
 }
 
+#g-site-theme {
+  margin-right: 0;
+  margin-left: 1em;
+}
+
 #g-admin-graphics .g-available .g-block {
   float: right;
   margin-left: 1em;
@@ -319,6 +336,10 @@ li.g-group,
 .g-selected img,
 .g-available .g-block img {
   margin: 0 0 1em 1em;
+}
+
+.g-button {
+  margin: 0 0 0 4px;
 }
 
 /* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
