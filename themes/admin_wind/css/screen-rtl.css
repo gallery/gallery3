@@ -275,6 +275,10 @@ ul.sf-menu li li li.sfHover ul {
   right: auto;
 }
 
+.ui-tabs .ui-tabs-nav li {
+  float: right;	
+}
+
 #g-content #g-album-grid .g-item,
 #g-site-theme,
 #g-admin-theme,
