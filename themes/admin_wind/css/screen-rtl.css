@@ -92,7 +92,11 @@ input[type=radio] {
   padding-right: 0;
 }
 
-input.checkbox {
+input.checkbox,
+input[type="checkbox"],
+input.radio,
+input[type="radio"] {
+  margin-right: 0;
   margin-left: .4em;
 }
 
@@ -107,6 +111,14 @@ input.checkbox {
 
 .ui-icon-right .ui-icon {
   margin-right: .2em;
+}
+
+.g-group h4 {
+  padding: .5em .5em .5em 0;
+}
+
+.g-group .g-user {
+  padding: .2em .5em 0 0;
 }
 
 /* RTL Corner radius ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -275,6 +287,10 @@ ul.sf-menu li li li.sfHover ul {
   right: auto;
 }
 
+.ui-tabs .ui-tabs-nav li {
+  float: right;	
+}
+
 #g-content #g-album-grid .g-item,
 #g-site-theme,
 #g-admin-theme,
@@ -284,6 +300,11 @@ ul.sf-menu li li li.sfHover ul {
 li.g-group,
 #g-server-add-admin {
   float: right;
+}
+
+#g-site-theme {
+  margin-right: 0;
+  margin-left: 1em;
 }
 
 #g-admin-graphics .g-available .g-block {
@@ -315,4 +336,65 @@ li.g-group,
 .g-selected img,
 .g-available .g-block img {
   margin: 0 0 1em 1em;
+}
+
+.g-button {
+  margin: 0 0 0 4px;
+}
+
+/* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-paginator .g-info {
+  width: 35%;
+}
+
+.g-paginator .g-text-right {
+  margin-left: 0;
+}
+
+.g-paginator .ui-icon-seek-end {
+  background-position: -80px -160px;
+}
+
+.g-paginator .ui-icon-seek-next {
+  background-position: -48px -160px;
+}
+
+.g-paginator .ui-icon-seek-prev {
+  background-position: -32px -160px;
+}
+
+.g-paginator .ui-icon-seek-first {
+  background-position: -64px -160px;
+}
+
+#g-header #g-login-menu,
+#g-header #g-quick-search-form {
+  clear: left;
+  float: left;
+}
+
+#g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
+}
+
+#g-site-menu {
+  left: auto;
+  right: 240px;
+}
+
+#g-view-menu #g-slideshow-link {
+  background-image: url('../images/ico-view-slideshow-rtl.png');
+}
+
+#g-sidebar .g-block-content {
+  padding-right: 1em;
+  padding-left: 0;
+}
+
+#g-footer #g-credits li {
+  padding-left: 1.2em !important;
+  padding-right: 0;
 }
