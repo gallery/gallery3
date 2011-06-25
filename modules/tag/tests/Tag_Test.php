@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Test extends Gallery_Unit_Test_Case {
-  public function teardown() {
+  public function setup() {
     ORM::factory("tag")->delete_all();
   }
 

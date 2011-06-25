@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Password_Controller extends Controller {
+  const ALLOW_MAINTENANCE_MODE = true;
+  const ALLOW_PRIVATE_GALLERY = true;
+
   public function reset() {
     $form = self::_reset_form();
     if (request::method() == "post") {
