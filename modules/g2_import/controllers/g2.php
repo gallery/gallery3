@@ -34,7 +34,7 @@ class G2_Controller extends Controller {
     $path = $input->get("path");
     $id = $input->get("g2_itemId");
 
-    if ($path || $id) {
+    if (($path && $path != 'index.php' && $path != 'main.php') || $id) {
       if ($id) {
         // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of
         // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
