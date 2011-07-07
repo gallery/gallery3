@@ -18,19 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class Dynamic_Item {
-  var $url;
-  var $title;
-  var $id = 0;
-
-  public function url($query=null) {
-    if ($query) {
-      $this->url .= "?$query";
-    }
-    return url::site($this->url);
-  }
-}
-
 class Display_Context_Core {
   static $context = null;
 
@@ -38,7 +25,7 @@ class Display_Context_Core {
   private $_data;
 
   static function factory() {
-    self::$context = Session::instance()->get("photoContext", null);
+    self::$context = Session::instance()->get("display_context", null);
 
     if (empty(self::$context)) {
       self::$context = new Display_Context();
@@ -80,7 +67,22 @@ class Display_Context_Core {
   }
 
   function save() {
-    Session::instance()->set("photoContext", serialize(self::$context));
+    Session::instance()->set("display_context", serialize(self::$context));
     return $this;
   }
 }
+
+class Dynamic_Item {
+  var $url;
+  var $title;
+  var $id = 0;
+
+  public function url($query=null) {
+    if ($query) {
+      $this->url .= "?$query";
+    }
+    return url::site($this->url);
+  }
+}
+
+
