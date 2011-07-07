@@ -31,7 +31,7 @@ class Dynamic_Item {
   }
 }
 
-class Photo_Display_Context_Core {
+class Display_Context_Core {
   static $context = null;
 
   private $_callback;
@@ -41,7 +41,7 @@ class Photo_Display_Context_Core {
     self::$context = Session::instance()->get("photoContext", null);
 
     if (empty(self::$context)) {
-      self::$context = new Photo_Display_Context();
+      self::$context = new Display_Context();
     } else {
       self::$context = unserialize(self::$context);
      }
@@ -52,7 +52,7 @@ class Photo_Display_Context_Core {
   function get_context($item) {
     if (empty($this->_callback)) {
       // safety net for backwards compatibility
-      $this->_callback = "item::get_context";
+      $this->_callback = "item::get_display_context";
     }
     return call_user_func($this->_callback, $item, $this);
   }

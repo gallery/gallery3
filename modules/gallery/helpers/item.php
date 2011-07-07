@@ -315,7 +315,7 @@ class item_Core {
       ->order_by("rand_key", "DESC");
   }
 
-  static function get_context($item) {
+  static function get_display_context($item) {
     $where = array(array("type", "!=", "album"));
     $position = item::get_position($item, $where);
     if ($position > 1) {

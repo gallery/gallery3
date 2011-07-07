@@ -27,7 +27,7 @@ class Photos_Controller extends Items_Controller {
 
     access::required("view", $photo);
 
-    $context = Photo_Display_Context::factory()->get_context($photo);
+    $context = Display_Context::factory()->get_context($photo);
 
     $template = new Theme_View("page.html", "item", "photo");
     $template->set_global(

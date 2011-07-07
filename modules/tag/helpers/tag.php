@@ -137,7 +137,7 @@ class tag_Core {
     db::build()->delete("tags")->where("count", "=", 0)->execute();
   }
 
-  static function get_context($item, $context) {
+  static function get_display_context($item, $context) {
     $data = $context->data();
     $tag = $data["tag"];
 

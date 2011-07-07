@@ -50,8 +50,8 @@ class Tag_Controller extends Controller {
     }
 
     $title = t("Tag: %tag_name", array("tag_name" => $tag->name));
-    Photo_Display_Context::factory()
-      ->set_context_callback("tag::get_context")
+    Display_Context::factory()
+      ->set_context_callback("tag::get_display_context")
       ->set_data(array("tag" => $tag,
                        "title" => $title))
       ->save();
