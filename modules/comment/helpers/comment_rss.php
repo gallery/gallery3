@@ -20,8 +20,16 @@
 
 class comment_rss_Core {
   static function available_feeds($item, $tag) {
-    $feeds["comment/newest"] = t("All new comments");
-    if ($item) {
+    $avail = module::get_var("comment", "rss_available");
+    if($avail == "none") {
+      return array();
+    }
+
+    if($avail == "both" || $avail == "newest") {
+      $feeds["comment/newest"] = t("All new comments");
+    }
+
+    if ($item && ($avail == "both" || $avail == "onitem")) {
       $feeds["comment/item/$item->id"] =
         t("Comments on %title", array("title" => html::purify($item->title)));
     }
