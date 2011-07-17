@@ -27,14 +27,12 @@ class Movies_Controller extends Items_Controller {
 
     access::required("view", $movie);
 
-    $context = Display_Context::factory()->get_context($movie);
-
     $template = new Theme_View("page.html", "item", "movie");
     $template->set_global(
       array_merge(array("item" => $movie,
                         "children" => array(),
                         "children_count" => 0),
-            $context));
+            Display_Context::factory()->display_context($movie)));
 
     $template->content = new View("movie.html");
 

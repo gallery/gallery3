@@ -50,10 +50,8 @@ class Tag_Controller extends Controller {
     }
 
     $title = t("Tag: %tag_name", array("tag_name" => $tag->name));
-    Display_Context::factory()
-      ->set_context_callback("tag::get_display_context")
-      ->set_data(array("tag" => $tag,
-                       "title" => $title))
+    Display_Context::factory("tag")
+      ->set(array("tag" => $tag, "title" => $title))
       ->save();
 
     $template = new Theme_View("page.html", "collection", "tag");

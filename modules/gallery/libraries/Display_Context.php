@@ -18,58 +18,67 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class Display_Context_Core {
-  static $context = null;
-
-  private $_callback;
+abstract class Display_Context_Core {
+  private $_display_context_name;
   private $_data;
 
-  static function factory() {
-    self::$context = Session::instance()->get("display_context", null);
-
-    if (empty(self::$context)) {
-      self::$context = new Display_Context();
+  static function factory($display_context_name=null) {
+    if (empty($display_context_name)) {
+      $context = Session::instance()->get("display_context", new Item_Display_Context());
+      $context = unserialize($context);
     } else {
-      self::$context = unserialize(self::$context);
-     }
-
-    return self::$context;
-  }
-
-  function get_context($item) {
-    if (empty($this->_callback)) {
-      // safety net for backwards compatibility
-      $this->_callback = "item::get_display_context";
+      $class_prefix = ucfirst(strtolower($display_context_name));
+      $class_name = "{$class_prefix}_Display_Context";
+      $context = new $class_name();
     }
-    return call_user_func($this->_callback, $item, $this);
+
+    return $context;
   }
 
-  // @param $item
-  function set_context_callback($callback) {
-    $this->_callback = $callback;
+  protected function __construct($display_context_name) {
+    // $this->reset($display_context_name);
+    $this->_data = array();
+    $this->_display_context_name = $display_context_name;
+  }
+
+  final function get($key) {
+    return empty($this->_data[$key]) ? null : $this->_data[$key];
+  }
+
+  final function set($key, $value=null) {
+    if (is_array($key)) {
+      if ((array)$key == $key) {
+        $this->_data = array_merge($this->_data, $key);
+      } else {
+        $this->_data = array_merge($this->_data, array_fill_keys($key, $value));
+      }
+    } else {
+      $this->_data[$key] = $value;
+    }
     return $this;
   }
 
-  function set_data($data) {
-    $this->_data = $data;
-    return $this;
-  }
-
-  function data() {
-    return $this->_data;
-  }
-
-  function dynamic_item($title, $url) {
-    $dynamicItem = new Dynamic_Item();
-    $dynamicItem->title = $title;
-    $dynamicItem->url = $url;
+  final protected function dynamic_item($title, $url) {
+    $dynamicItem = (object) array("title" => $title, "url" => $url);
+    //$dynamicItem = new Dynamic_Item();
+    //$dynamicItem->title = $title;
+    //$dynamicItem->url = $url;
+    $dynamicItem->url = new function($query=null) {
+      if ($query) {
+        $this->url .= "?$query";
+      }
+      return url::site($this->url);
+    };
     return $dynamicItem;
   }
 
-  function save() {
-    Session::instance()->set("display_context", serialize(self::$context));
+  final function save() {
+    Session::instance()->set("display_context", serialize($this));
     return $this;
   }
+
+  abstract function display_context($item);
+  abstract function bread_crumb($item);
 }
 
 class Dynamic_Item {

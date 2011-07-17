@@ -27,14 +27,12 @@ class Photos_Controller extends Items_Controller {
 
     access::required("view", $photo);
 
-    $context = Display_Context::factory()->get_context($photo);
-
     $template = new Theme_View("page.html", "item", "photo");
     $template->set_global(
       array_merge(array("item" => $photo,
                         "children" => array(),
                         "children_count" => 0),
-                  $context));
+                  Display_Context::factory()->display_context($photo)));
 
     $template->content = new View("photo.html");
 

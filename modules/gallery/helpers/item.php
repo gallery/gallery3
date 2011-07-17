@@ -315,24 +315,6 @@ class item_Core {
       ->order_by("rand_key", "DESC");
   }
 
-  static function get_display_context($item) {
-    $where = array(array("type", "!=", "album"));
-    $position = item::get_position($item, $where);
-    if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) =
-        $item->parent()->viewable()->children(3, $position - 2, $where);
-    } else {
-      $previous_item = null;
-      list ($next_item) = $item->parent()->viewable()->children(1, $position, $where);
-   }
-
-    return array("position" =>$position,
-                 "previous_item" => $previous_item,
-                 "next_item" =>$next_item,
-                 "sibling_count" => $item->parent()->viewable()->children_count($where),
-                 "parents" => $item->parents()->as_array());
-  }
-
   /**
    * Find the position of the given item in its parent album.  The resulting
    * value is 1-indexed, so the first child in the album is at position 1.

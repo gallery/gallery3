@@ -54,7 +54,7 @@ class search_Core {
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
       $access_sql .
       "ORDER BY `score` DESC " .
-      "LIMIT $limit OFFSET $offset";
+      "LIMIT $limit OFFSET " . intval($offset);
     $data = $db->query($query);
     $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
 
@@ -104,49 +104,4 @@ class search_Core {
     return array($remaining, $total, $percent);
   }
 
-  static function get_display_context($item, $context) {
-    $context_data = $context->data();
-
-    $position = self::get_position($context_data, $item);
-
-    if ($position > 1) {
-      list ($count, $result_data) =
-         self::search($context_data["query_terms"], 3, $position - 2);
-      list ($previous_item, $ignore, $next_item) = $result_data;
-    } else {
-      $previous_item = null;
-      list ($count, $result_data) = self::search($context_data["query_terms"], 1, $position);
-      list ($next_item) = $result_data;
-    }
-
-    return array("position" =>$position,
-                 "previous_item" => $previous_item,
-                 "next_item" =>$next_item,
-                 "sibling_count" => $count,
-                 "parents" => array(item::root(), $context->dynamic_item($context_data["title"],
-                                "search?q=" . urlencode($context_data["q"]) . "&show={$item->id}")));
-  }
-
-  /**
-   * Find the position of the given item in the tag collection.  The resulting
-   * value is 1-indexed, so the first child in the album is at position 1.
-   *
-   * @param String  $query_terms
-   * @param Item_Model $item
-   * @param array      $where an array of arrays, each compatible with ORM::where()
-   */
-  public static function get_position($context_data, $item, $where=array()) {
-    list($count, $data) = self::search($context_data["query_terms"], $context_data["page_size"],
-                                       $context_data["offset"]);
-
-    $page_position = 1;
-    foreach ($data as $search_item) {
-      if ($item->id == $search_item->id) {
-        break;
-      }
-      $page_position++;
-    }
-
-    return  $context_data["offset"] + $page_position;
-  }
 }

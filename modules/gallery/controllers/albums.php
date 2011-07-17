@@ -60,8 +60,7 @@ class Albums_Controller extends Items_Controller {
       url::redirect($album->abs_url("page=$max_pages"));
     }
 
-    Display_Context::factory()
-      ->set_context_callback("item::get_display_context")
+    Display_Context::factory("item")
       ->save();
 
     $template = new Theme_View("page.html", "collection", "album");
