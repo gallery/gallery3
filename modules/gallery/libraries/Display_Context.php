@@ -59,16 +59,9 @@ abstract class Display_Context_Core {
   }
 
   final protected function dynamic_item($title, $url) {
-    $dynamicItem = (object) array("title" => $title, "url" => $url);
-    //$dynamicItem = new Dynamic_Item();
-    //$dynamicItem->title = $title;
-    //$dynamicItem->url = $url;
-    $dynamicItem->url = new function($query=null) {
-      if ($query) {
-        $this->url .= "?$query";
-      }
-      return url::site($this->url);
-    };
+    $dynamicItem = new Dynamic_Item();
+    $dynamicItem->title = $title;
+    $dynamicItem->url = $url;
     return $dynamicItem;
   }
 
