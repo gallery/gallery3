@@ -420,6 +420,13 @@ class Item_Model_Core extends ORM_MPTT {
           if (!empty($extension) && strcmp($this->name, $new_name)) {
             $this->name = $new_name;
           }
+          if ($this->is_photo()) {
+            list ($this->width, $this->height, $this->mime_type, $extension) =
+              photo::get_file_metadata($this->data_file);
+          } else if ($this->is_movie()) {
+            list ($this->width, $this->height, $this->mime_type, $extension) =
+              movie::get_file_metadata($this->data_file);
+          }
         }
 
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
