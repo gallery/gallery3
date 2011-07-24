@@ -21,6 +21,14 @@
 class gallery_rss_Core {
   static function available_feeds($item, $tag) {
     $feeds["gallery/latest"] = t("Latest photos and movies");
+
+    if ($item) {
+      $feed_item = $item -> is_album() ? $item : $item->parent();
+
+      $feeds["gallery/album/{$feed_item->id}"] =
+          t("%title photos and movies", array("title" => $feed_item->title));
+    }
+
     return $feeds;
   }
 

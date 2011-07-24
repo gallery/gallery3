@@ -176,17 +176,25 @@ class graphics_Core {
       }
 
       if (!empty($ops["thumb"])) {
+        if (file_exists($item->thumb_path())) {
+          $item->thumb_dirty = 0;
+        } else {
+          copy(MODPATH . "gallery/images/missing_photo.png", $item->thumb_path());
+        }
         $dims = getimagesize($item->thumb_path());
         $item->thumb_width = $dims[0];
         $item->thumb_height = $dims[1];
-        $item->thumb_dirty = 0;
       }
 
       if (!empty($ops["resize"]))  {
+        if (file_exists($item->resize_path())) {
+          $item->resize_dirty = 0;
+        } else {
+          copy(MODPATH . "gallery/images/missing_photo.png", $item->resize_path());
+        }
         $dims = getimagesize($item->resize_path());
         $item->resize_width = $dims[0];
         $item->resize_height = $dims[1];
-        $item->resize_dirty = 0;
       }
       $item->save();
     } catch (Exception $e) {

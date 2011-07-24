@@ -184,6 +184,7 @@ modules/gallery/views/form_uploadify.html.php                16  DIRTY_JS url::s
 modules/gallery/views/form_uploadify.html.php                24  DIRTY_JS $flash_minimum_version
 modules/gallery/views/form_uploadify.html.php                28  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
 modules/gallery/views/form_uploadify.html.php                29  DIRTY_JS url::site("uploader/add_photo/{$album->id}")
+modules/gallery/views/form_uploadify.html.php                31  DIRTY_JS implode(";",$extensions)
 modules/gallery/views/form_uploadify.html.php                33  DIRTY_JS url::file("lib/uploadify/cancel.png")
 modules/gallery/views/form_uploadify.html.php                34  DIRTY_JS $simultaneous_upload_limit
 modules/gallery/views/form_uploadify.html.php                35  DIRTY_JS $size_limit_bytes
