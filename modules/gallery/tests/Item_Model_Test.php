@@ -394,15 +394,34 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(20337, filesize($photo->file_path()));
   }
 
-  public function replacement_data_file_must_be_same_mime_type_test() {
+  public function replace_data_file_type_test() {
     // Random photo is modules/gallery/tests/test.jpg
     $photo = test::random_photo();
-    $photo->set_data_file(MODPATH . "gallery/images/graphicsmagick.png");
+    $this->assert_equal(1024, $photo->width);
+    $this->assert_equal(768, $photo->height);
+    $this->assert_equal(6232, filesize($photo->file_path()));
+    $this->assert_equal("image/jpeg", $photo->mime_type);
+    $orig_name = $photo->name;
 
+    // Random photo is gallery/images/graphicsmagick.png is 104x76 and 1486 bytes
+    $photo->set_data_file(MODPATH . "gallery/images/graphicsmagick.png");
+    $photo->save();
+
+    $this->assert_equal(104, $photo->width);
+    $this->assert_equal(76, $photo->height);
+    $this->assert_equal(1486, filesize($photo->file_path()));
+    $this->assert_equal("image/png", $photo->mime_type);
+    $this->assert_equal("png", pathinfo($photo->name, PATHINFO_EXTENSION));
+    $this->assert_equal(pathinfo($orig_name, PATHINFO_FILENAME), pathinfo($photo->name, PATHINFO_FILENAME));
+  }
+
+  public function unsafe_data_file_replacement_test() {
     try {
+      $photo = test::random_photo();
+      $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("name" => "cant_change_mime_type"), $e->validation->errors());
+      $this->assert_same(array("mime_type" => "invalid"), $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
