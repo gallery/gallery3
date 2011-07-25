@@ -170,14 +170,8 @@ class graphics_Core {
 
         foreach (self::_get_rules($target) as $rule) {
           $args = array($working_file, $output_file, unserialize($rule->args), $item);
-          try {
-            call_user_func_array($rule->operation, $args);
-            $working_file = $output_file;
-          } catch (Exception $e) {
-            // Ignore this rule and move on.
-            Kohana_Log::add("error", "Caught exception processing image: {$item->title}\n" .
-                            $e->getMessage() . "\n" . $e->getTraceAsString());
-          }
+          call_user_func_array($rule->operation, $args);
+          $working_file = $output_file;
         }
       }
 
