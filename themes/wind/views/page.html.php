@@ -110,24 +110,26 @@
         <? if (!empty($breadcrumbs)): ?>
         <ul class="g-breadcrumbs">
           <? $i = 0 ?>
+          <? $last = count($breadcrumbs) - 1 ?>
           <? foreach ($breadcrumbs as $breadcrumb): ?>
-          <li<? if ($i == 0) print " class=\"g-first\"" ?>>
+           <li<? if ($i == 0 || $i == $last): ?>
+              class="<? if ($i == 0) print "g-first " ?><? if ($i ==  $last) print "g-active" ?>"
+              <? endif ?>>
             <? /* Adding ?show=<id> causes Gallery3 to display the page
                   containing that photo.  For now, we just do it for
                   the immediate parent so that when you go back up a
                   level you're on the right page. */ ?>
-            <? $query =  $breadcrumb->is_item_parent($theme->item()) ? "show={$theme->item()->id}" : null ?>
-            <a href="<?= $breadcrumb->query($query)->url() ?>">
+            <? if ($i == $last): ?>
+            <?= html::purify(text::limit_chars($breadcrumb->title(), module::get_var("gallery", "visible_title_length"))) ?>
+            <? else: ?>
+            <a href="<?= $breadcrumb->url() ?>">
               <? /* limit the title length to something reasonable (defaults to 15) */ ?>
-              <?= $breadcrumb->title() ?>
+              <?= html::purify(text::limit_chars($breadcrumb->title(), module::get_var("gallery", "visible_title_length"))) ?>
             </a>
+            <? endif ?>
           </li>
           <? $i++ ?>
           <? endforeach ?>
-          <li class="g-active<? if ($i == 0) print " g-first" ?>">
-            <?= html::purify(text::limit_chars($theme->item()->title,
-                  module::get_var("gallery", "visible_title_length"))) ?>
-          </li>
         </ul>
         <? endif ?>
       </div>

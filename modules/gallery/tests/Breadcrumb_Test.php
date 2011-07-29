@@ -32,29 +32,20 @@ class Breadcrumb_Test extends Gallery_Unit_Test_Case {
     $this->item = null;
   }
 
-  public function build_breadcrumbs_from_parents_test() {
-    $breadcrumbs = Breadcrumbs::instance()
-      ->append_parents($this->item->parents())
-      ->as_array();
+  public function build_breadcrumbs_for_item_test() {
+    $breadcrumbs = Breadcrumb::for_item($this->item);
     $this->assert_equal("Gallery", $breadcrumbs[0]->title());
     $this->assert_equal($this->album->title, $breadcrumbs[1]->title());
+    $this->assert_equal($this->item->title, $breadcrumbs[2]->title());
   }
 
   public function build_breadcrumbs_from_items_test() {
-    $breadcrumbs = Breadcrumbs::instance()
-      ->append_item(item::root())
-      ->append_item($this->album)
-      ->as_array();
+    $breadcrumbs = Breadcrumb::build(
+      Breadcrumb::instance(item::root()->title, "/")->id(item::root()->id),
+      Breadcrumb::instance($this->album->title, $this->album->relative_path())->id($this->album->id),
+      Breadcrumb::instance($this->item->title, $this->item->relative_path())->id($this->item->id));
     $this->assert_equal("Gallery", $breadcrumbs[0]->title());
     $this->assert_equal($this->album->title, $breadcrumbs[1]->title());
-  }
-
-  public function build_dynamic_album_breadcrumbs_test() {
-    $breadcrumbs = Breadcrumbs::instance()
-      ->append_item(item::root())
-      ->append_item($this->album)
-      ->as_array();
-    $this->assert_equal("Gallery", $breadcrumbs[0]->title());
-    $this->assert_equal($this->album->title, $breadcrumbs[1]->title());
+    $this->assert_equal($this->item->title, $breadcrumbs[2]->title());
   }
 }
