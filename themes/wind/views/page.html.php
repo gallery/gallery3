@@ -109,27 +109,10 @@
 
         <? if (!empty($breadcrumbs)): ?>
         <ul class="g-breadcrumbs">
-          <? $i = 0 ?>
-          <? $last = count($breadcrumbs) - 1 ?>
-          <? foreach ($breadcrumbs as $breadcrumb): ?>
-           <li<? if ($i == 0 || $i == $last): ?>
-              class="<? if ($i == 0) print "g-first " ?><? if ($i ==  $last) print "g-active" ?>"
-              <? endif ?>>
-            <? /* Adding ?show=<id> causes Gallery3 to display the page
-                  containing that photo.  For now, we just do it for
-                  the immediate parent so that when you go back up a
-                  level you're on the right page. */ ?>
-            <? if ($i == $last): ?>
-            <?= html::purify(text::limit_chars($breadcrumb->title(), module::get_var("gallery", "visible_title_length"))) ?>
-            <? else: ?>
-            <a href="<?= $breadcrumb->url() ?>">
-              <? /* limit the title length to something reasonable (defaults to 15) */ ?>
-              <?= html::purify(text::limit_chars($breadcrumb->title(), module::get_var("gallery", "visible_title_length"))) ?>
-            </a>
-            <? endif ?>
-          </li>
-          <? $i++ ?>
-          <? endforeach ?>
+          <? $class = "g-first " ?>
+          <? while ($breadcrumb = array_shift($breadcrumbs)): ?>
+            <?= $breadcrumb ?>
+          <? endwhile ?>
         </ul>
         <? endif ?>
       </div>
