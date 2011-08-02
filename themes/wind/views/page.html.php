@@ -109,7 +109,6 @@
 
         <? if (!empty($breadcrumbs)): ?>
         <ul class="g-breadcrumbs">
-          <? $class = "g-first " ?>
           <? while ($breadcrumb = array_shift($breadcrumbs)): ?>
             <?= $breadcrumb ?>
           <? endwhile ?>
