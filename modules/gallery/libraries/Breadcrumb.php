@@ -18,25 +18,23 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Breadcrumb_Core {
-  private $_title;
-  private $_url;
-  private $_query = null;
-  private $_id = 0;
+  public $title;
+  public $url;
+  private $id = 0;
+  public $class;
 
-  static function for_item($item) {
+  static function build_from_item($item) {
     $breadcrumbs = array();
-    if ($item->id != 1) {
-      $breadcrumbs[] = Breadcrumb::instance($item->title, $item->relative_path())->id($item->id);
-      foreach (array_reverse($item->parents()->as_array()) as $parent) {
-        $breadcrumb = Breadcrumb::instance($parent->title, $parent->relative_path())->id($parent->id);
-        if (!empty($breadcrumbs)) {
-          $breadcrumb->query("show={$breadcrumbs[0]->_id}");
-        }
-        array_unshift($breadcrumbs, $breadcrumb);
+    if ($item->id != item::root()->id) {
+      $elements = $item->parents()->as_array();
+      $elements[] = $item;
+
+      foreach ($elements as $element) {
+        $breadcrumbs[] = new Breadcrumb($element->title, $element->url(), $element->id);
       }
     }
 
-    return (array)$breadcrumbs;
+    return self::prepare_for_render($breadcrumbs);
   }
 
   /**
@@ -44,50 +42,41 @@ class Breadcrumb_Core {
    * breadcrumb list.  Used to create a bredcrumb for dynamic albums. Will really be useful
    * for the display context change.
    */
-  static function build() {
-    $breadcrumbs = array();
-    foreach (array_reverse(func_get_args()) as $breadcrumb) {
-      if (!empty($breadcrumbs) && $breadcrumb->_id > 0) {
-        $breadcrumb->query("show={$breadcrumbs[0]->_id}");
+  static function build_from_list() {
+    return self::prepare_for_render(func_get_args());
+  }
+
+  private static function prepare_for_render($breadcrumbs) {
+    if (!empty($breadcrumbs)) {
+      $class = "g-active";
+
+      end($breadcrumbs);
+      while ($breadcrumb = current($breadcrumbs)) {
+        $breadcrumb->class = $class;
+        $class = "";
+        $breadcrumb->url =  $breadcrumb->url .
+          (isset($last_id) && $last_id > 0 ? "?show={$last_id}" : "");
+        $last_id = $breadcrumb->id;
+        $breadcrumb = prev($breadcrumbs);
       }
-      array_unshift($breadcrumbs, $breadcrumb);
+      $breadcrumbs[0]->class = "g-first";
     }
-    return (array)$breadcrumbs;
+    return $breadcrumbs;
   }
 
-  static function instance($title, $url) {
-    return new Breadcrumb($title, $url);
+  public function __construct($title, $url, $id=0) {
+    $this->title = $title;
+    $this->url = $url;
+    $this->id = $id;
   }
 
-  private function __construct($title, $url) {
-    $this->_title = $title;
-    $this->_url = $url;
+  public function render() {
+    $view = new View("breadcrumb_link.html");
+    $view->breadcrumb = $this;
+    return $view;
   }
 
-  public function is_item_parent($item) {
-    return !empty($item) && $item->parent_id == $this->_id;
-  }
-
-  public function id($id) {
-    $this->_id = $id;
-    return $this;
-  }
-
-  public function query($query) {
-    $this->_query = $query;
-    return $this;
-  }
-
-  public function url() {
-    $url = url::site($this->_url);
-    if (!empty($this->_query)) {
-      $url .= "?{$this->_query}";
-    }
-    return $url;
-  }
-
-  public function title() {
-    return $this->_title;
+  public function __toString() {
+    return (String)$this->render();
   }
 }
-

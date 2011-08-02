@@ -33,19 +33,19 @@ class Breadcrumb_Test extends Gallery_Unit_Test_Case {
   }
 
   public function build_breadcrumbs_for_item_test() {
-    $breadcrumbs = Breadcrumb::for_item($this->item);
-    $this->assert_equal("Gallery", $breadcrumbs[0]->title());
-    $this->assert_equal($this->album->title, $breadcrumbs[1]->title());
-    $this->assert_equal($this->item->title, $breadcrumbs[2]->title());
+    $breadcrumbs = Breadcrumb::build_from_item($this->item);
+    $this->assert_equal("Gallery", $breadcrumbs[0]->title);
+    $this->assert_equal($this->album->title, $breadcrumbs[1]->title);
+    $this->assert_equal($this->item->title, $breadcrumbs[2]->title);
   }
 
   public function build_breadcrumbs_from_items_test() {
-    $breadcrumbs = Breadcrumb::build(
-      Breadcrumb::instance(item::root()->title, "/")->id(item::root()->id),
-      Breadcrumb::instance($this->album->title, $this->album->relative_path())->id($this->album->id),
-      Breadcrumb::instance($this->item->title, $this->item->relative_path())->id($this->item->id));
-    $this->assert_equal("Gallery", $breadcrumbs[0]->title());
-    $this->assert_equal($this->album->title, $breadcrumbs[1]->title());
-    $this->assert_equal($this->item->title, $breadcrumbs[2]->title());
+    $breadcrumbs = Breadcrumb::build_from_list(
+      new Breadcrumb(item::root()->title, "/", item::root()->id),
+      new Breadcrumb($this->album->title, $this->album->relative_path(), $this->album->id),
+      new Breadcrumb($this->item->title, $this->item->relative_path(), $this->item->id));
+    $this->assert_equal("Gallery", $breadcrumbs[0]->title);
+    $this->assert_equal($this->album->title, $breadcrumbs[1]->title);
+    $this->assert_equal($this->item->title, $breadcrumbs[2]->title);
   }
 }

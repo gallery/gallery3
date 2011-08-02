@@ -69,7 +69,7 @@ class Albums_Controller extends Items_Controller {
             "item" => $album,
             "children" => $album->viewable()->children($page_size, $offset),
             "parents" => $album->parents()->as_array(), // view calls empty() on this
-            "breadcrumbs" => Breadcrumb::for_item($album),
+            "breadcrumbs" => Breadcrumb::build_from_item($album),
             "children_count" => $children_count));
     $template->content = new View("album.html");
 
