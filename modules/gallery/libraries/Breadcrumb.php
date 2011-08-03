@@ -21,7 +21,7 @@ class Breadcrumb_Core {
   public $title;
   public $url;
   private $id = 0;
-  public $class;
+  public $class = "";
 
   static function build_from_item($item) {
     $breadcrumbs = array();
@@ -48,12 +48,9 @@ class Breadcrumb_Core {
 
   private static function prepare_for_render($breadcrumbs) {
     if (!empty($breadcrumbs)) {
-      $class = "g-active";
 
-      end($breadcrumbs);
+      end($breadcrumbs)->class = "g-active";
       while ($breadcrumb = current($breadcrumbs)) {
-        $breadcrumb->class = $class;
-        $class = "";
         $breadcrumb->url =  $breadcrumb->url .
           (isset($last_id) && $last_id > 0 ? "?show={$last_id}" : "");
         $last_id = $breadcrumb->id;
@@ -61,6 +58,7 @@ class Breadcrumb_Core {
       }
       $breadcrumbs[0]->class = "g-first";
     }
+
     return $breadcrumbs;
   }
 
