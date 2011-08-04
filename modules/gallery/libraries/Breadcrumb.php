@@ -51,8 +51,10 @@ class Breadcrumb_Core {
 
       end($breadcrumbs)->last = true;;
       while ($breadcrumb = current($breadcrumbs)) {
-        $breadcrumb->url =  $breadcrumb->url .
-          (isset($last_id) && $last_id > 0 ? "?show={$last_id}" : "");
+        if (isset($last_id) && $last_id > 0) {
+          $query = parse_url($breadcrumb->url, PHP_URL_QUERY);
+          $breadcrumb->url =  $breadcrumb->url . ($query ? "&" : "?") . "show={$last_id}";
+        }
         $last_id = $breadcrumb->id;
         $breadcrumb = prev($breadcrumbs);
       }
