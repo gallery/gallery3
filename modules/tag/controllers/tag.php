@@ -35,7 +35,6 @@ class Tag_Controller extends Controller {
     }
 
     $template = new Theme_View("page.html", "collection", "tag");
-    $tag_url = url::abs_site("tag/$tag_id/{$tag->name}");
     $template->set_global(array("page" => $page,
                                 "max_pages" => $max_pages,
                                 "page_size" => $page_size,
@@ -43,7 +42,7 @@ class Tag_Controller extends Controller {
                                 "children" => $tag->items($page_size, $offset),
                                 "breadcrumbs" => Breadcrumb::build_from_list(
                                   new Breadcrumb(item::root()->title, "/", item::root()->id),
-                                  new Breadcrumb($tag->name, $tag_url)),
+                                  new Breadcrumb($tag->name, $tag->url())),
                                 "children_count" => $children_count));
     $template->content = new View("dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));

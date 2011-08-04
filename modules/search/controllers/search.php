@@ -37,7 +37,7 @@ class Search_Controller extends Controller {
 
     $template = new Theme_View("page.html", "collection", "search");
     $root = item::root();
-    $search_url = url::abs_site("search?q=$q");
+    $search_url = url::abs_site("search?q=" . urlencode($q));
     $template->set_global(array("page" => $page,
                                 "max_pages" => $max_pages,
                                 "page_size" => $page_size,
