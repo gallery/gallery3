@@ -28,6 +28,12 @@ class Group_Model_Core extends ORM implements Group_Definition {
     $old = clone $this;
     module::event("group_before_delete", $this);
     parent::delete($id);
+
+    db::build()
+      ->delete("groups_users")
+      ->where("group_id", "=", empty($id) ? $old->id : $id)
+      ->execute();
+
     module::event("group_deleted", $old);
     $this->users_cache = null;
   }
