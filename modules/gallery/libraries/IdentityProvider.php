@@ -110,11 +110,11 @@ class IdentityProvider_Core {
           Kohana_Log::add("error", "Error restoring original identity provider\n" .
                           $e2->getMessage() . "\n" . $e2->getTraceAsString());
         }
-          
+
         message::error(
           t("Error attempting to enable \"%new_provider\" identity provider, reverted to \"%old_provider\" identity provider",
             array("new_provider" => $new_provider, "old_provider" => $current_provider)));
-        
+
         $restore_already_running = false;
       }
       throw $e;
@@ -260,14 +260,14 @@ class IdentityProvider_Core {
   /**
    * @see IdentityProvider_Driver::add_user_to_group.
    */
-  public function add_user_to_group($user, $group_id) {
-    return $this->driver->add_user_to_group($user, $group_id);
+  public function add_user_to_group($user, $group) {
+    return $this->driver->add_user_to_group($user, $group);
   }
 
   /**
    * @see IdentityProvider_Driver::remove_user_to_group.
    */
-  public function remove_user_from_group($user, $group_id) {
-    return $this->driver->remove_user_from_group($user, $group_id);
+  public function remove_user_from_group($user, $group) {
+    return $this->driver->remove_user_from_group($user, $group);
   }
 } // End Identity
