@@ -36,9 +36,14 @@ class Search_Controller extends Controller {
     $max_pages = max(ceil($count / $page_size), 1);
 
     $template = new Theme_View("page.html", "collection", "search");
+    $root = item::root();
+    $search_url = url::abs_site("search?q=" . urlencode($q));
     $template->set_global(array("page" => $page,
                                 "max_pages" => $max_pages,
                                 "page_size" => $page_size,
+                                "breadcrumbs" => Breadcrumb::build_from_list(
+                                  new Breadcrumb(item::root()->title, "/", item::root()->id),
+                                  new Breadcrumb($q, $search_url)),
                                 "children_count" => $count));
 
     $template->content = new View("search.html");
