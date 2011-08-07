@@ -43,6 +43,7 @@ class Photos_Controller extends Items_Controller {
             "children" => array(),
             "children_count" => 0,
             "parents" => $photo->parents()->as_array(),
+            "breadcrumbs" => Breadcrumb::build_from_item($photo),
             "next_item" => $next_item,
             "previous_item" => $previous_item,
             "sibling_count" => $photo->parent()->viewable()->children_count($where),

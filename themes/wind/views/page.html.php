@@ -107,28 +107,15 @@
           <?= $theme->header_bottom() ?>
         </div>
 
-        <? if ($theme->item() && !empty($parents)): ?>
+        <? if (!empty($breadcrumbs)): ?>
         <ul class="g-breadcrumbs">
-          <? $i = 0 ?>
-          <? foreach ($parents as $parent): ?>
-          <li<? if ($i == 0) print " class=\"g-first\"" ?>>
-            <? // Adding ?show=<id> causes Gallery3 to display the page
-               // containing that photo.  For now, we just do it for
-               // the immediate parent so that when you go back up a
-               // level you're on the right page. ?>
-            <a href="<?= $parent->url($parent->id == $theme->item()->parent_id ?
-                     "show={$theme->item()->id}" : null) ?>">
-              <? // limit the title length to something reasonable (defaults to 15) ?>
-              <?= html::purify(text::limit_chars($parent->title,
-                    module::get_var("gallery", "visible_title_length"))) ?>
-            </a>
-          </li>
-          <? $i++ ?>
+          <? foreach ($breadcrumbs as $breadcrumb): ?>
+           <li class="<?= $breadcrumb->last ? "g-active" : "" ?>
+                      <?= $breadcrumb->first ? "g-first" : "" ?>">
+            <? if (!$breadcrumb->last): ?> <a href="<?= $breadcrumb->url ?>"><? endif ?>
+            <?= html::purify(text::limit_chars($breadcrumb->title, module::get_var("gallery", "visible_title_length"))) ?>
+            <? if (!$breadcrumb->last): ?></a><? endif ?>
           <? endforeach ?>
-          <li class="g-active<? if ($i == 0) print " g-first" ?>">
-            <?= html::purify(text::limit_chars($theme->item()->title,
-                  module::get_var("gallery", "visible_title_length"))) ?>
-          </li>
         </ul>
         <? endif ?>
       </div>
