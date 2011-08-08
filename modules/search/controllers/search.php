@@ -33,6 +33,15 @@ class Search_Controller extends Controller {
     $q_with_more_terms = search::add_query_terms($q);
     list ($count, $result) = search::search($q_with_more_terms, $page_size, $offset);
 
+    $title = t("Search: %q", array("q" => $q_with_more_terms));
+    Display_Context::factory("search")
+      ->set(array("title" => $title,
+                  "query_terms" => $q_with_more_terms,
+                  "q" => $q,
+                  "page_size" => $page_size,
+                  "offset" => $offset))
+      ->save();
+
     $max_pages = max(ceil($count / $page_size), 1);
 
     $template = new Theme_View("page.html", "collection", "search");

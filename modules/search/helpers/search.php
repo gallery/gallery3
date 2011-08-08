@@ -103,4 +103,5 @@ class search_Core {
 
     return array($remaining, $total, $percent);
   }
+
 }
