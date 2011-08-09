@@ -40,6 +40,9 @@ class Tag_Controller extends Controller {
                                 "page_size" => $page_size,
                                 "tag" => $tag,
                                 "children" => $tag->items($page_size, $offset),
+                                "breadcrumbs" => Breadcrumb::build_from_list(
+                                  new Breadcrumb(item::root()->title, "/", item::root()->id),
+                                  new Breadcrumb($tag->name, $tag->url())),
                                 "children_count" => $children_count));
     $template->content = new View("dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
