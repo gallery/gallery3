@@ -20,55 +20,51 @@
 class Breadcrumb_Core {
   public $title;
   public $url;
-  public $id;
   public $first;
   public $last;
 
-  static function build_from_item($item) {
-    $breadcrumbs = array();
-    foreach ($item->parents() as $element) {
-      $breadcrumbs[] = new Breadcrumb($element->title, $element->url(), $element->id);
-    }
+  static function instance($title, $url) {
+    return new Breadcrumb($title, $url);
+  }
 
-    if (!empty($breadcrumbs)) {
-      $breadcrumbs[] = new Breadcrumb($item->title, $item->url(), $item->id);
-    }
-
-    return self::generate_show_query_strings($breadcrumbs);
+  public function __construct($title, $url) {
+    $this->title = $title;
+    $this->url = $url;
+    $this->first = false;
+    $this->last = false;
   }
 
   /**
-   * This static function takes a list (variable arguments) of Breadcrumbs and builds a dynamic
-   * breadcrumb list.  Used to create a breadcrumb for dynamic albums. Will really be useful
-   * for the display context change.
+   * Return an array of Breadcrumb instances build from the parents of a given item.
+   * The first and last Breadcrumb instances will be marked first/last as appropriate.
+   * Each breadcrumb will have a ?show= query parameter that refers to the id of the next
+   * item in line.
+   *
+   * @return array Breadcrumb instances
    */
-  static function build_from_list() {
-    return self::generate_show_query_strings(func_get_args());
-  }
-
-  private static function generate_show_query_strings($breadcrumbs) {
-    if (!empty($breadcrumbs)) {
-
-      end($breadcrumbs)->last = true;;
-      while ($breadcrumb = current($breadcrumbs)) {
-        if (isset($last_id) && $last_id > 0) {
-          $query = parse_url($breadcrumb->url, PHP_URL_QUERY);
-          $breadcrumb->url =  $breadcrumb->url . ($query ? "&" : "?") . "show={$last_id}";
-        }
-        $last_id = $breadcrumb->id;
-        $breadcrumb = prev($breadcrumbs);
-      }
-      $breadcrumbs[0]->first = true;
+  static function array_from_item_parents($item) {
+    if ($item->id == item::root()->id) {
+      return array();
     }
 
-    return $breadcrumbs;
+    $bc = array_merge($item->parents()->as_array(), array($item));
+    for ($i = 0; $i < count($bc) - 1; $i++) {
+      $bc[$i] = new Breadcrumb($bc[$i]->title, $bc[$i]->url("show={$bc[$i+1]->id}"));
+    }
+    $bc[$i] = new Breadcrumb($item->title, $item->url());
+
+    $bc[0]->set_first();
+    end($bc)->set_last();
+    return $bc;
   }
 
-  public function __construct($title, $url, $id=0) {
-    $this->title = $title;
-    $this->url = $url;
-    $this->id = $id;
-    $this->first = false;
-    $this->last = false;
+  public function set_first() {
+    $this->first = true;
+    return $this;
+  }
+
+  public function set_last() {
+    $this->last = true;
+    return $this;
   }
 }
