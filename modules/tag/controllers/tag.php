@@ -34,16 +34,18 @@ class Tag_Controller extends Controller {
       url::redirect(url::merge(array("page" => $max_pages)));
     }
 
+    $root = item::root();
     $template = new Theme_View("page.html", "collection", "tag");
-    $template->set_global(array("page" => $page,
-                                "max_pages" => $max_pages,
-                                "page_size" => $page_size,
-                                "tag" => $tag,
-                                "children" => $tag->items($page_size, $offset),
-                                "breadcrumbs" => Breadcrumb::build_from_list(
-                                  new Breadcrumb(item::root()->title, "/", item::root()->id),
-                                  new Breadcrumb($tag->name, $tag->url())),
-                                "children_count" => $children_count));
+    $template->set_global(
+      array("page" => $page,
+            "max_pages" => $max_pages,
+            "page_size" => $page_size,
+            "tag" => $tag,
+            "children" => $tag->items($page_size, $offset),
+            "breadcrumbs" => array(
+              Breadcrumb::instance($root->title, $root->url())->set_first(),
+              Breadcrumb::instance($tag->name, $tag->url())->set_last()),
+            "children_count" => $children_count));
     $template->content = new View("dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
 

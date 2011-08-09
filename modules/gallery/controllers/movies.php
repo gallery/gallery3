@@ -43,7 +43,7 @@ class Movies_Controller extends Items_Controller {
             "children" => array(),
             "children_count" => 0,
             "parents" => $movie->parents()->as_array(),
-            "breadcrumbs" => Breadcrumb::build_from_item($movie),
+            "breadcrumbs" => Breadcrumb::array_from_item_parents($movie),
             "next_item" => $next_item,
             "previous_item" => $previous_item,
             "sibling_count" => $movie->parent()->viewable()->children_count($where),
