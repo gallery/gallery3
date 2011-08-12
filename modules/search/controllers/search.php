@@ -21,6 +21,18 @@ class Search_Controller extends Controller {
   public function index() {
     $page_size = module::get_var("gallery", "page_size", 9);
     $q = Input::instance()->get("q");
+    $q_with_more_terms = search::add_query_terms($q);
+    $show = Input::instance()->get("show");
+
+    if ($show) {
+      $child = ORM::factory("item", $show);
+      $index = search::get_position($child, $q_with_more_terms);
+      if ($index) {
+        $page = ceil($index / $page_size);
+        url::redirect( url::abs_site("search?q=" . urlencode($q) . ($page == 1 ? "" : "&page=$page")));
+      }
+    }
+
     $page = Input::instance()->get("page", 1);
 
     // Make sure that the page references a valid offset
@@ -30,10 +42,17 @@ class Search_Controller extends Controller {
 
     $offset = ($page - 1) * $page_size;
 
-    $q_with_more_terms = search::add_query_terms($q);
     list ($count, $result) = search::search($q_with_more_terms, $page_size, $offset);
 
+    $title = t("Search: %q", array("q" => $q_with_more_terms));
+
     $max_pages = max(ceil($count / $page_size), 1);
+
+    Display_Context::factory("search")
+      ->set(array("title" => $title,
+                  "query_terms" => $q_with_more_terms,
+                  "q" => $q))
+      ->save();
 
     $template = new Theme_View("page.html", "collection", "search");
     $root = item::root();

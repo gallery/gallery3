@@ -136,4 +136,23 @@ class tag_Core {
     // extremely rare case.
     db::build()->delete("tags")->where("count", "=", 0)->execute();
   }
+
+  /**
+   * Find the position of the given item in the tag collection.  The resulting
+   * value is 1-indexed, so the first child in the album is at position 1.
+   *
+   * @param Tag_Model  $tag
+   * @param Item_Model $item
+   * @param array      $where an array of arrays, each compatible with ORM::where()
+   */
+  static function get_position($tag, $item, $where=array()) {
+    return ORM::factory("item")
+      ->viewable()
+      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->where("items_tags.tag_id", "=", $tag->id)
+      ->where("items.id", "<=", $item->id)
+      ->merge_where($where)
+      ->order_by("items.id")
+      ->count_all();
+  }
 }

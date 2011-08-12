@@ -36,8 +36,19 @@ class search_Core {
 
   static function search($q, $limit, $offset) {
     $db = Database::instance();
-    $q = $db->escape($q);
 
+    $query = self::_build_query_base($q) .
+      "ORDER BY `score` DESC " .
+      "LIMIT $limit OFFSET " . (int)$offset;
+
+    $data = $db->query($query);
+    $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
+
+    return array($count, new ORM_Iterator(ORM::factory("item"), $data));
+  }
+
+  private static function _build_query_base($q, $where=array()) {
+    $q = Database::instance()->escape($q);
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
         $fields[] = "`view_$id` = TRUE"; // access::ALLOW
@@ -47,18 +58,13 @@ class search_Core {
       $access_sql = "";
     }
 
-    $query =
+    return
       "SELECT SQL_CALC_FOUND_ROWS {items}.*, " .
       "  MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
       "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
-      $access_sql .
-      "ORDER BY `score` DESC " .
-      "LIMIT $limit OFFSET " . (int)$offset;
-    $data = $db->query($query);
-    $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
-
-    return array($count, new ORM_Iterator(ORM::factory("item"), $data));
+      (empty($where) ? "" : " AND " . join(" AND ", $where)) .
+      $access_sql;
   }
 
   /**
@@ -102,5 +108,26 @@ class search_Core {
     $percent = round(100 * ($total - $remaining) / $total);
 
     return array($remaining, $total, $percent);
+  }
+
+  static function get_position($item, $q) {
+    $page_size = module::get_var("gallery", "page_size", 9);
+
+    $query = self::_build_query_base($q, array("{items}.id = " . $item->id));
+
+    $db = Database::instance();
+
+    // Truncate the score by two decimal places as this resolves the issues
+    // that arise due to in exact numeric conversions.
+    $score = $db->query($query)->current()->score;
+    $score = substr($score, 0, strlen($score) - 2);
+
+    $data = $db->query(self::_build_query_base($q) . "having `score` >= " . $score);
+
+    $data->seek($data->count() - 1);
+
+    while ($data->get("id") != $item->id && $data->prev()->valid());
+
+    return  $data->key() + 1;
   }
 }
