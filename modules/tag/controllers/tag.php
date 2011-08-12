@@ -22,7 +22,22 @@ class Tag_Controller extends Controller {
     $tag_id = $function;
     $tag = ORM::factory("tag")->where("id", "=", $tag_id)->find();
     $page_size = module::get_var("gallery", "page_size", 9);
-    $page = (int) Input::instance()->get("page", "1");
+
+    $input = Input::instance();
+    $show = $input->get("show");
+
+    if ($show) {
+      $child = ORM::factory("item", $show);
+      $index = tag::get_position($tag, $child);
+      if ($index) {
+        $page = ceil($index / $page_size);
+        $uri = "tag/$tag_id/" . urlencode($tag->name);
+        url::redirect($uri . ($page == 1 ? "" : "?page=$page"));
+      }
+    } else {
+      $page = (int) $input->get("page", "1");
+    }
+
     $children_count = $tag->items_count();
     $offset = ($page-1) * $page_size;
     $max_pages = max(ceil($children_count / $page_size), 1);
@@ -35,6 +50,10 @@ class Tag_Controller extends Controller {
     }
 
     $root = item::root();
+    Display_Context::factory("tag")
+      ->set(array("tag" => $tag))
+      ->save();
+
     $template = new Theme_View("page.html", "collection", "tag");
     $template->set_global(
       array("page" => $page,
