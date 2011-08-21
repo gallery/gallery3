@@ -36,10 +36,16 @@ class Search_Controller extends Controller {
     $max_pages = max(ceil($count / $page_size), 1);
 
     $template = new Theme_View("page.html", "collection", "search");
-    $template->set_global(array("page" => $page,
-                                "max_pages" => $max_pages,
-                                "page_size" => $page_size,
-                                "children_count" => $count));
+    $root = item::root();
+    $template->set_global(
+      array("page" => $page,
+            "max_pages" => $max_pages,
+            "page_size" => $page_size,
+            "breadcrumbs" => array(
+              Breadcrumb::instance($root->title, $root->url())->set_first(),
+              Breadcrumb::instance($q, url::abs_site("search?q=" . urlencode($q)))->set_last(),
+            ),
+            "children_count" => $count));
 
     $template->content = new View("search.html");
     $template->content->items = $result;

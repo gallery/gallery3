@@ -54,7 +54,7 @@ class search_Core {
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
       $access_sql .
       "ORDER BY `score` DESC " .
-      "LIMIT $limit OFFSET $offset";
+      "LIMIT $limit OFFSET " . (int)$offset;
     $data = $db->query($query);
     $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
 
