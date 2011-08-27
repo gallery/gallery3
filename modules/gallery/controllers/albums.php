@@ -60,9 +60,6 @@ class Albums_Controller extends Items_Controller {
       url::redirect($album->abs_url("page=$max_pages"));
     }
 
-    Display_Context::factory("item")
-      ->save();
-
     $template = new Theme_View("page.html", "collection", "album");
     $template->set_global(
       array("page" => $page,
@@ -75,10 +72,29 @@ class Albums_Controller extends Items_Controller {
             "breadcrumbs" => Breadcrumb::array_from_item_parents($album),
             "children_count" => $children_count));
     $template->content = new View("album.html");
-
     $album->increment_view_count();
 
     print $template;
+    item::set_display_context_callback("Albums_Controller::get_display_context");
+  }
+
+  static function get_display_context($item) {
+    $where = array(array("type", "!=", "album"));
+    $position = item::get_position($item, $where);
+    if ($position > 1) {
+      list ($previous_item, $ignore, $next_item) =
+        $item->parent()->viewable()->children(3, $position - 2, $where);
+    } else {
+      $previous_item = null;
+      list ($next_item) = $item->parent()->viewable()->children(1, $position, $where);
+    }
+
+    return array("position" => $position,
+                 "previous_item" => $previous_item,
+                 "next_item" => $next_item,
+                 "sibling_count" => $item->parent()->viewable()->children_count($where),
+                 "parents" => $item->parents()->as_array(),
+                 "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
   }
 
   public function create($parent_id) {
