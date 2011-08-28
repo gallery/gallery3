@@ -31,6 +31,52 @@ class Gallery_View_Core extends View {
   }
 
   /**
+   * Set up the data and render a pager.
+   *
+   * See themes/wind/views/pager.html for documentation on the variables generated here.
+   */
+  public function paginator() {
+    $v = new View("paginator.html");
+    $v->page_type = $this->page_type;
+    $v->page_subtype = $this->page_subtype;
+    $v->first_page_url = null;
+    $v->previous_page_url = null;
+    $v->next_page_url = null;
+    $v->last_page_url = null;
+
+    if ($this->page_type == "collection") {
+      $v->page = $this->page;
+      $v->max_pages = $this->max_pages;
+      $v->total = $this->children_count;
+
+      if ($this->page != 1) {
+        $v->first_page_url = url::site(url::merge(array("page" => 1)));
+        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
+      }
+
+      if ($this->page != $this->max_pages) {
+        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
+        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
+      }
+
+      $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
+      $v->last_visible_position = min($this->page * $this->page_size, $v->total);
+    } else if ($this->page_type == "item") {
+      $v->position = $this->position;
+      $v->total = $this->sibling_count;
+      if ($this->previous_item) {
+        $v->previous_page_url = $this->previous_item->url();
+      }
+
+      if ($this->next_item) {
+        $v->next_page_url = $this->next_item->url();
+      }
+    }
+
+    return $v;
+  }
+
+  /**
    * Begin gather up scripts or css files so that they can be combined into a single request.
    *
    * @param $types  a comma separated list of types to combine, eg "script,css"
@@ -111,6 +157,8 @@ class Gallery_View_Core extends View {
     $contents = $cache->get($key);
 
     if (empty($contents)) {
+      module::event("before_combine", $type, $this->combine_queue[$type][$group]);
+
       $contents = "";
       foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
         if ($type == "css") {
@@ -120,6 +168,8 @@ class Gallery_View_Core extends View {
         }
       }
 
+      module::event("after_combine", $type, $contents);
+
       $cache->set($key, $contents, array($type), 30 * 84600);
 
       $use_gzip = function_exists("gzencode") &&
@@ -128,9 +178,13 @@ class Gallery_View_Core extends View {
         $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
                     array($type, "gzip"), 30 * 84600);
       }
+
     }
 
     unset($this->combine_queue[$type][$group]);
+    if (empty($this->combine_queue[$type])) {
+      unset($this->combine_queue[$type]);
+    }
 
     if ($type == "css") {
       return html::stylesheet("combined/css/$key", "screen,print,projection", true);
@@ -158,6 +212,7 @@ class Gallery_View_Core extends View {
           $replace[] = "url('" . url::abs_file($relative) . "')";
         } else {
           Kohana_Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+
         }
       }
       $replace = str_replace(DIRECTORY_SEPARATOR, "/", $replace);

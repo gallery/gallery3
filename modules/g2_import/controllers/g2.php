@@ -34,14 +34,16 @@ class G2_Controller extends Controller {
     $path = $input->get("path");
     $id = $input->get("g2_itemId");
 
-    if ($path || $id) {
+    if (($path && $path != 'index.php' && $path != 'main.php') || $id) {
       if ($id) {
         // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of
         // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
         // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
         $where = array(array("g2_id", "=", $id));
         $view = $input->get("g2_view");
-        if ($view) {
+        if ($view == "core.DownloadItem") {
+          $where[] = array("resource_type", "IN", array("file", "resize", "thumbnail", "full"));
+        } else if ($view) {
           $where[] = array("g2_url", "like", "%g2_view=$view%");
         } // else: Assuming that the first search hit is sufficiently good.
       } else if ($path) {

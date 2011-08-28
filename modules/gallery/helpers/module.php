@@ -101,7 +101,7 @@ class module_Core {
         $m->locked = false;
 
         if ($m->active && $m->version != $m->code_version) {
-          site_status::warning(t("Some of your modules are out of date.  <a href=\"%upgrader_url\">Upgrade now!</a>", array("upgrader_url" => url::site("upgrader"))), "upgrade_now");
+          site_status::warning(t("Some of your modules are out of date.  <a href=\"%upgrader_url\">Upgrade now!</a>", array("upgrader_url" => url::abs_site("upgrader"))), "upgrade_now");
         }
       }
 

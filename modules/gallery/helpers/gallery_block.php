@@ -82,9 +82,13 @@ class gallery_block_Core {
       break;
 
     case "block_adder":
-      $block->css_id = "g-block-adder";
-      $block->title = t("Dashboard content");
-      $block->content = gallery_block::get_add_block_form();
+      if ($form = gallery_block::get_add_block_form()) {
+        $block->css_id = "g-block-adder";
+        $block->title = t("Dashboard content");
+        $block->content = $form;
+      } else {
+        $block = "";
+      }
       break;
 
     case "language":
@@ -112,16 +116,28 @@ class gallery_block_Core {
       $block->content->version_info = upgrade_checker::version_info();
       $block->content->auto_check_enabled = upgrade_checker::auto_check_enabled();
       $block->content->new_version = upgrade_checker::get_upgrade_message();
+      $block->content->build_number = gallery::build_number();
     }
     return $block;
   }
 
   static function get_add_block_form() {
+    $available_blocks = block_manager::get_available_admin_blocks();
+
+    $active = array();
+    foreach (array_merge(block_manager::get_active("dashboard_sidebar"),
+                         block_manager::get_active("dashboard_center")) as $b) {
+      unset($available_blocks[implode(":", $b)]);
+    }
+
+    if (!$available_blocks) {
+      return;
+    }
+
     $form = new Forge("admin/dashboard/add_block", "", "post",
                       array("id" => "g-add-dashboard-block-form"));
     $group = $form->group("add_block")->label(t("Add Block"));
-    $group->dropdown("id")->label(t("Available Blocks"))
-      ->options(block_manager::get_available_admin_blocks());
+    $group->dropdown("id")->label(t("Available blocks"))->options($available_blocks);
     $group->submit("center")->value(t("Add to center"));
     $group->submit("sidebar")->value(t("Add to sidebar"));
     return $form;

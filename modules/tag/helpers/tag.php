@@ -48,6 +48,7 @@ class tag_Core {
    * @return ORM_Iterator of Tag_Model in descending tag count order
    */
   static function popular_tags($count) {
+    $count = max($count, 1);
     return ORM::factory("tag")
       ->order_by("count", "DESC")
       ->limit($count)
@@ -134,5 +135,24 @@ class tag_Core {
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
     db::build()->delete("tags")->where("count", "=", 0)->execute();
+  }
+
+  /**
+   * Find the position of the given item in the tag collection.  The resulting
+   * value is 1-indexed, so the first child in the album is at position 1.
+   *
+   * @param Tag_Model  $tag
+   * @param Item_Model $item
+   * @param array      $where an array of arrays, each compatible with ORM::where()
+   */
+  static function get_position($tag, $item, $where=array()) {
+    return ORM::factory("item")
+      ->viewable()
+      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->where("items_tags.tag_id", "=", $tag->id)
+      ->where("items.id", "<=", $item->id)
+      ->merge_where($where)
+      ->order_by("items.id")
+      ->count_all();
   }
 }

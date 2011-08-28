@@ -25,6 +25,9 @@ class Admin_Themes_Controller extends Admin_Controller {
     $view->content->admin = module::get_var("gallery", "active_admin_theme");
     $view->content->site = module::get_var("gallery", "active_site_theme");
     $view->content->themes = $this->_get_themes();
+
+    site_status::clear("missing_site_theme");
+    site_status::clear("missing_admin_theme");
     print $view;
   }
 

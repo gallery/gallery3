@@ -2,7 +2,7 @@
 <p>
   <?= t("This is your administration dashboard and it provides a quick overview of status messages, recent updates, and frequently used options. Add or remove blocks and rearrange them to tailor to your needs. The admin menu provides quick access to all of Gallery 3's options and settings. Here are a few of the most used options to get you started.") ?>
 </p>
-<ul>
+<ul class="g-text">
   <li>
     <?= t("General Settings - choose your <a href=\"%graphics_url\">graphics</a> and <a href=\"%language_url\">language</a> settings.",
           array("graphics_url" => html::mark_clean(url::site("admin/graphics")),

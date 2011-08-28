@@ -191,8 +191,10 @@ class installer {
       $errors[] = "Gallery 3 requires a MySQL database, but PHP doesn't have either the <a href=\"http://php.net/mysql\">MySQL</a> or the  <a href=\"http://php.net/mysqli\">MySQLi</a> extension.";
     }
 
-    if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {
-      $errors[] = "PHP is missing <a href=\"http://php.net/pcre\">Perl-Compatible Regular Expression</a> support.";
+    if (!preg_match("/^.$/u", "ñ")) {
+      $errors[] = "PHP is missing <a href=\"http://php.net/pcre\">Perl-Compatible Regular Expression</a> with UTF-8 support.";
+    } else if (!preg_match("/^\pL$/u", "ñ")) {
+      $errors[] = "PHP is missing <a href=\"http://php.net/pcre\">Perl-Compatible Regular Expression</a> with Unicode support.";
     }
 
     if (!(function_exists("spl_autoload_register"))) {
@@ -209,6 +211,10 @@ class installer {
 
     if (!(extension_loaded("iconv"))) {
       $errors[] = "PHP is missing the <a href=\"http://php.net/iconv\">iconv extension</a>";
+    }
+
+    if (!(extension_loaded("xml"))) {
+      $errors[] = "PHP is missing the <a href=\"http://php.net/xml\">XML Parser extension</a>";
     }
 
     if (!(extension_loaded("simplexml"))) {

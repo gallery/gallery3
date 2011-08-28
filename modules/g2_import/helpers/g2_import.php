@@ -31,7 +31,7 @@ class g2_import_Core {
   }
 
   static function is_initialized() {
-    return g2_import::$init;
+    return g2_import::$init == "ok";
   }
 
   static function init() {
@@ -52,146 +52,163 @@ class g2_import_Core {
     if (file_exists($mod_path)) {
       dir::unlink($mod_path);
     }
-    return file_exists($embed_path) && g2_import::init_embed($embed_path);
+    return g2_import::init_embed($embed_path);
   }
 
   /**
    * Initialize the embedded Gallery 2 instance.  Call this before any other Gallery 2 calls.
+   *
+   * Return values:
+   *  "ok"      - the Gallery 2 install is fine
+   *  "missing" - the embed path does not exist
+   *  "invalid" - the install path is not a valid Gallery 2 code base
+   *  "broken"  - the embed path is correct, but the Gallery 2 install is broken
    */
   static function init_embed($embed_path) {
     if (!is_file($embed_path)) {
-      return false;
+      return "missing";
     }
 
-    // Gallery 2 defines a class called Gallery.  So does Gallery 3.  They don't get along.  So do
-    // a total hack here and copy over a few critical files (embed.php, main.php, bootstrap.inc
-    // and Gallery.class) and munge them so that we can rename the Gallery class to be
-    // G2_Gallery.   Is this retarded?  Why yes it is.
-    //
-    // Store the munged files in a directory that's the md5 hash of the embed path so that
-    // multiple import sources don't interfere with each other.
+    try {
+     // Gallery 2 defines a class called Gallery.  So does Gallery 3.  They don't get along.  So do
+     // a total hack here and copy over a few critical files (embed.php, main.php, bootstrap.inc
+     // and Gallery.class) and munge them so that we can rename the Gallery class to be
+     // G2_Gallery.   Is this retarded?  Why yes it is.
+     //
+     // Store the munged files in a directory that's the md5 hash of the embed path so that
+     // multiple import sources don't interfere with each other.
 
-    $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
-    if (!file_exists($mod_path) || !file_exists("$mod_path/embed.php")) {
-      @dir::unlink($mod_path);
-      mkdir($mod_path);
+     $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
+     if (!file_exists($mod_path) || !file_exists("$mod_path/embed.php")) {
+       @dir::unlink($mod_path);
+       mkdir($mod_path);
 
-      $config_dir = dirname($embed_path);
-      if (filesize($embed_path) > 200) {
-        // Regular install
-        $base_dir = $config_dir;
-      } else {
-        // Multisite install.  Line 2 of embed.php will be something like:
-        //   require('/usr/home/bharat/public_html/gallery2/embed.php');
-        $lines = file($embed_path);
-        preg_match("#require\('(.*)/embed.php'\);#", $lines[2], $matches);
-        $base_dir = $matches[1];
+       $config_dir = dirname($embed_path);
+       if (filesize($embed_path) > 200) {
+         // Regular install
+         $base_dir = $config_dir;
+       } else {
+         // Multisite install.  Line 2 of embed.php will be something like:
+         //   require('/usr/home/bharat/public_html/gallery2/embed.php');
+         $lines = file($embed_path);
+         preg_match("#require\('(.*)/embed.php'\);#", $lines[2], $matches);
+         $base_dir = $matches[1];
+       }
+
+       file_put_contents(
+         "$mod_path/embed.php",
+         str_replace(
+           array(
+             "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
+             "require(dirname(__FILE__) . '/modules/core/classes/GalleryEmbed.class');"),
+           array(
+             "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
+             "require('$base_dir/modules/core/classes/GalleryEmbed.class');"),
+           array_merge(
+             array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+             file("$base_dir/embed.php"))));
+
+       file_put_contents(
+         "$mod_path/main.php",
+         str_replace(
+           array(
+             "include(dirname(__FILE__) . '/bootstrap.inc');",
+             "require_once(dirname(__FILE__) . '/init.inc');"),
+           array(
+             "include(dirname(__FILE__) . '/bootstrap.inc');",
+             "require_once('$base_dir/init.inc');"),
+           array_merge(
+             array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+             file("$base_dir/main.php"))));
+
+       file_put_contents(
+         "$mod_path/bootstrap.inc",
+         str_replace(
+           array(
+             "require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');",
+             "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
+             "define('GALLERY_CONFIG_DIR', dirname(__FILE__));",
+             "\$gallery =& new Gallery();",
+             "\$GLOBALS['gallery'] =& new Gallery();",
+             "\$gallery = new Gallery();"),
+           array(
+             "require_once(dirname(__FILE__) . '/Gallery.class');",
+             "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
+             "define('GALLERY_CONFIG_DIR', '$config_dir');",
+             "\$gallery =& new G2_Gallery();",
+             "\$GLOBALS['gallery'] =& new G2_Gallery();",
+             "\$gallery = new G2_Gallery();"),
+           array_merge(
+             array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+             file("$base_dir/bootstrap.inc"))));
+
+       file_put_contents(
+         "$mod_path/Gallery.class",
+         str_replace(
+           array("class Gallery",
+                 "function Gallery"),
+           array("class G2_Gallery",
+                 "function G2_Gallery"),
+           array_merge(
+             array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+             file("$base_dir/modules/core/classes/Gallery.class"))));
+     } else {
+       // Ok, this is a good one.  If you're running a bytecode accelerator and you move your
+       // Gallery install, these files sometimes get cached with the wrong path and then fail to
+       // load properly.
+       // Documented in https://sourceforge.net/apps/trac/gallery/ticket/1253
+       touch("$mod_path/embed.php");
+       touch("$mod_path/main.php");
+       touch("$mod_path/bootstrap.inc");
+       touch("$mod_path/Gallery.class.inc");
+     }
+
+      require("$mod_path/embed.php");
+      if (!class_exists("GalleryEmbed")) {
+        return "invalid";
       }
 
-      file_put_contents(
-        "$mod_path/embed.php",
-        str_replace(
-          array(
-            "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
-            "require(dirname(__FILE__) . '/modules/core/classes/GalleryEmbed.class');"),
-          array(
-            "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
-            "require('$base_dir/modules/core/classes/GalleryEmbed.class');"),
-          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
-                      file("$base_dir/embed.php"))));
+      $ret = GalleryEmbed::init();
+      if ($ret) {
+        Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
+        return "broken";
+      }
 
-      file_put_contents(
-        "$mod_path/main.php",
-        str_replace(
-          array(
-            "include(dirname(__FILE__) . '/bootstrap.inc');",
-            "require_once(dirname(__FILE__) . '/init.inc');"),
-          array(
-            "include(dirname(__FILE__) . '/bootstrap.inc');",
-            "require_once('$base_dir/init.inc');"),
-          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
-                      file("$base_dir/main.php"))));
+      $admin_group_id = g2(GalleryCoreApi::getPluginParameter("module", "core", "id.adminGroup"));
+      $admins = g2(GalleryCoreApi::fetchUsersForGroup($admin_group_id, 1));
+      $admin_id = current(array_flip($admins));
+      $admin = g2(GalleryCoreApi::loadEntitiesById($admin_id));
+      $GLOBALS["gallery"]->setActiveUser($admin);
 
-      file_put_contents(
-        "$mod_path/bootstrap.inc",
-        str_replace(
-          array("require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');",
-                "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
-                "define('GALLERY_CONFIG_DIR', dirname(__FILE__));",
-                "\$gallery =& new Gallery();",
-                "\$GLOBALS['gallery'] =& new Gallery();",
-                "\$gallery = new Gallery();"),
-          array("require_once(dirname(__FILE__) . '/Gallery.class');",
-                "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
-                "define('GALLERY_CONFIG_DIR', '$config_dir');",
-                "\$gallery =& new G2_Gallery();",
-                "\$GLOBALS['gallery'] =& new G2_Gallery();",
-                "\$gallery = new G2_Gallery();"),
-          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
-                      file("$base_dir/bootstrap.inc"))));
-
-      file_put_contents(
-        "$mod_path/Gallery.class",
-        str_replace(
-          array("class Gallery",
-                "function Gallery"),
-          array("class G2_Gallery",
-                "function G2_Gallery"),
-          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
-                      file("$base_dir/modules/core/classes/Gallery.class"))));
-    } else {
-      // Ok, this is a good one.  If you're running a bytecode accelerator and you move your
-      // Gallery install, these files sometimes get cached with the wrong path and then fail to
-      // load properly.
-      // Documented in https://sourceforge.net/apps/trac/gallery/ticket/1253
-      touch("$mod_path/embed.php");
-      touch("$mod_path/main.php");
-      touch("$mod_path/bootstrap.inc");
-      touch("$mod_path/Gallery.class.inc");
-    }
-
-    require("$mod_path/embed.php");
-    if (!class_exists("GalleryEmbed")) {
-      return false;
-    }
-
-    $ret = GalleryEmbed::init();
-    if ($ret) {
-      Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
-      return false;
-    }
-
-    $admin_group_id = g2(GalleryCoreApi::getPluginParameter("module", "core", "id.adminGroup"));
-    $admins = g2(GalleryCoreApi::fetchUsersForGroup($admin_group_id, 1));
-    $admin_id = current(array_flip($admins));
-    $admin = g2(GalleryCoreApi::loadEntitiesById($admin_id));
-    $GLOBALS["gallery"]->setActiveUser($admin);
-
-    // Make sure we have an embed location so that embedded url generation comes out ok.  Without
-    // this, the Gallery2 ModRewrite code won't try to do url generation.
-    $g2_embed_location =
-      g2(GalleryCoreApi::getPluginParameter("module", "rewrite", "modrewrite.embeddedLocation"));
-
-    if (empty($g2_embed_location)) {
+      // Make sure we have an embed location so that embedded url generation comes out ok.  Without
+      // this, the Gallery2 ModRewrite code won't try to do url generation.
       $g2_embed_location =
-        g2(GalleryCoreApi::getPluginParameter("module", "rewrite", "modrewrite.galleryLocation"));
-      g2(GalleryCoreApi::setPluginParameter(
-           "module", "rewrite", "modrewrite.embeddedLocation", $g2_embed_location));
-      g2($gallery->getStorage()->checkPoint());
+        g2(GalleryCoreApi::getPluginParameter("module", "rewrite", "modrewrite.embeddedLocation"));
+
+      if (empty($g2_embed_location)) {
+        $g2_embed_location =
+          g2(GalleryCoreApi::getPluginParameter("module", "rewrite", "modrewrite.galleryLocation"));
+        g2(GalleryCoreApi::setPluginParameter("module", "rewrite", "modrewrite.embeddedLocation",
+                                              $g2_embed_location));
+        g2($gallery->getStorage()->checkPoint());
+      }
+
+      if ($g2_embed_location) {
+        self::$g2_base_url = $g2_embed_location;
+      } else {
+        self::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
+          array(),
+          array("forceSessionId" => false,
+                "htmlEntities" => false,
+                "urlEncode" => false,
+                "useAuthToken" => false));
+      }
+    } catch (ErrorException $e) {
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      return "broken";
     }
 
-    if ($g2_embed_location) {
-      self::$g2_base_url = $g2_embed_location;
-    } else {
-      self::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
-        array(),
-        array("forceSessionId" => false,
-              "htmlEntities" => false,
-              "urlEncode" => false,
-              "useAuthToken" => false));
-    }
-
-    return true;
+    return "ok";
   }
 
   /**
@@ -219,7 +236,7 @@ class g2_import_Core {
    * Return a set of statistics about the number of users, groups, albums, photos, movies and
    * comments available for import from the Gallery 2 instance.
    */
-  static function stats() {
+  static function g2_stats() {
     global $gallery;
     $root_album_id = g2(GalleryCoreApi::getDefaultAlbumId());
     $stats["users"] = g2(GalleryCoreApi::fetchUserCount());
@@ -245,6 +262,25 @@ class g2_import_Core {
     }
 
     return $stats;
+  }
+
+  /**
+   * Return a set of statistics about the number of users, groups, albums, photos, movies and
+   * comments already imported into the Gallery 3 instance.
+   */
+  static function g3_stats() {
+    $g3_stats = array(
+      "album" => 0, "comment" => 0, "item" => 0, "user" => 0, "group" => 0, "tag" => 0);
+    foreach (db::build()
+             ->select("resource_type")
+             ->select(array("C" => 'COUNT("*")'))
+             ->from("g2_maps")
+             ->where("resource_type", "IN", array("album", "comment", "item", "user", "group"))
+             ->group_by("resource_type")
+             ->execute() as $row) {
+      $g3_stats[$row->resource_type] = $row->C;
+    }
+    return $g3_stats;
   }
 
   /**
@@ -429,49 +465,8 @@ class g2_import_Core {
       $album = ORM::factory("item");
       $album->type = "album";
       $album->parent_id = self::map($g2_album->getParentId());
-      $album->name = $g2_album->getPathComponent();
-      $album->title = self::_decode_html_special_chars($g2_album->getTitle());
-      $album->title or $album->title = $album->name;
-      $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
-      $album->owner_id = self::map($g2_album->getOwnerId());
-      try {
-        $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
-      } catch (Exception $e) {
-        // @todo log
-        $album->view_count = 0;
-      }
-      $album->created = $g2_album->getCreationTimestamp();
 
-      $order_map = array(
-        "originationTimestamp" => "captured",
-        "creationTimestamp" => "created",
-        "description" => "description",
-        "modificationTimestamp" => "updated",
-        "orderWeight" => "weight",
-        "pathComponent" => "name",
-        "summary" => "description",
-        "title" => "title",
-        "viewCount" => "view_count");
-      $direction_map = array(
-        1 => "ASC",
-        ORDER_ASCENDING => "ASC",
-        ORDER_DESCENDING => "DESC");
-      // Only consider G2's first sort order
-      $g2_order = explode("|", $g2_album->getOrderBy() . "");
-      $g2_order = $g2_order[0];
-      if (empty($g2_order)) {
-        $g2_order = g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy'));
-      }
-      $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
-      $g2_order_direction = $g2_order_direction[0];
-      if (empty($g2_order_direction)) {
-        $g2_order_direction =
-          g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection'));
-      }
-      if (array_key_exists($g2_order, $order_map)) {
-        $album->sort_column = $order_map[$g2_order];
-        $album->sort_order = $direction_map[$g2_order_direction];
-      }
+      g2_import::set_album_values($album, $g2_album);
 
       try {
         $album->save();
@@ -494,17 +489,66 @@ class g2_import_Core {
   }
 
   /**
+   * Transfer over all the values from a G2 album to a G3 album.
+   */
+  static function set_album_values($album, $g2_album) {
+    $album->name = $g2_album->getPathComponent();
+    $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+    $album->title or $album->title = $album->name;
+    $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
+    $album->owner_id = self::map($g2_album->getOwnerId());
+    try {
+      $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+    } catch (Exception $e) {
+      // @todo log
+      $album->view_count = 0;
+    }
+    $album->created = $g2_album->getCreationTimestamp();
+
+    $order_map = array(
+      "originationTimestamp" => "captured",
+      "creationTimestamp" => "created",
+      "description" => "description",
+      "modificationTimestamp" => "updated",
+      "orderWeight" => "weight",
+      "pathComponent" => "name",
+      "summary" => "description",
+      "title" => "title",
+      "viewCount" => "view_count");
+    $direction_map = array(
+      1 => "ASC",
+      ORDER_ASCENDING => "ASC",
+      ORDER_DESCENDING => "DESC");
+    // G2 sorts can either be <sort> or <presort>|<sort>.  Right now we can't
+    // map presorts so ignore them.
+    $g2_order = explode("|", $g2_album->getOrderBy() . "");
+    $g2_order = end($g2_order);
+    if (empty($g2_order)) {
+      $g2_order = g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy'));
+    }
+    $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
+    $g2_order_direction = $g2_order_direction[0];
+    if (empty($g2_order_direction)) {
+      $g2_order_direction =
+        g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection'));
+    }
+    if (array_key_exists($g2_order, $order_map)) {
+      $album->sort_column = $order_map[$g2_order];
+      $album->sort_order = $direction_map[$g2_order_direction];
+    }
+  }
+
+  /**
    * Set the highlight properly for a single album
    */
   static function set_album_highlight(&$queue) {
     // Dequeue the current album and enqueue its children
     list($g2_album_id, $children) = each($queue);
-    if (empty($children)) {
-      return;
-    }
     unset($queue[$g2_album_id]);
-    foreach ($children as $key => $value) {
-      $queue[$key] = $value;
+    if (!empty($children)) {
+      foreach ($children as $key => $value) {
+        $queue[$key] = $value;
+      }
     }
 
     $messages = array();
@@ -516,7 +560,7 @@ class g2_import_Core {
     $table = g2(GalleryCoreApi::fetchThumbnailsByItemIds(array($g2_album_id)));
     if (isset($table[$g2_album_id])) {
       // Backtrack the source id to an item
-      $g2_source = $table[$g2_album_id];
+      $orig_g2_source = $g2_source = $table[$g2_album_id];
       while (GalleryUtilities::isA($g2_source, "GalleryDerivative")) {
         $g2_source = g2(GalleryCoreApi::loadEntitiesById($g2_source->getDerivativeSourceId()));
       }
@@ -540,6 +584,11 @@ class g2_import_Core {
                 array("name" => $g3_album->name)),
               $e);
         }
+
+        self::set_map(
+          $orig_g2_source->getId(), $g3_album->id,
+          "thumbnail",
+          self::g2_url(array("view" => "core.DownloadItem", "itemId" => $orig_g2_source->getId())));
       }
     }
   }
@@ -859,9 +908,13 @@ class g2_import_Core {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
-    if (self::map($g2_comment->getId())) {
-      // Already imported
-      return;
+    if ($id = self::map($g2_comment->getId())) {
+      if (ORM::factory("comment", $id)->loaded()) {
+        // Already imported and still exists
+        return;
+      }
+      // This comment was already imported, but now it no longer exists.  Import it again, per
+      // ticket #1736.
     }
 
     $item_id = self::map($g2_comment->getParentId());
@@ -899,10 +952,11 @@ class g2_import_Core {
     self::set_map($g2_comment->getId(), $comment->id, "comment");
 
     // Backdate the creation date.  We can't do this at creation time because
-    // Comment_Model::save() will override it.
+    // Comment_Model::save() will override it.  Leave the updated date alone
+    // so that if the comments get marked as spam, they don't immediately get
+    // flushed (see ticket #1736)
     db::update("comments")
       ->set("created", $g2_comment->getDate())
-      ->set("updated", $g2_comment->getDate())
       ->where("id", "=", $comment->id)
       ->execute();
   }
@@ -1243,6 +1297,7 @@ class g2_import_Core {
    * Associate a Gallery 2 id with a Gallery 3 item id.
    */
   static function set_map($g2_id, $g3_id, $resource_type, $g2_url=null) {
+    self::clear_map($g2_id, $resource_type);
     $g2_map = ORM::factory("g2_map");
     $g2_map->g3_id = $g3_id;
     $g2_map->g2_id = $g2_id;
@@ -1255,6 +1310,17 @@ class g2_import_Core {
     $g2_map->g2_url = $g2_url;
     $g2_map->save();
     self::$map[$g2_id] = $g3_id;
+  }
+
+  /**
+   * Remove all map entries associated with the given Gallery 2 id.
+   */
+  static function clear_map($g2_id, $resource_type) {
+    db::build()
+      ->delete("g2_maps")
+      ->where("g2_id", "=", $g2_id)
+      ->where("resource_type", "=", $resource_type)
+      ->execute();
   }
 
   static function log($msg) {

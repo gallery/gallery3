@@ -40,4 +40,25 @@ class system_Core {
     }
     return null;
   }
+
+  /**
+   * Create a file with a unique file name.
+   * This helper is similar to the built-in tempnam.
+   * It allows the caller to specify a prefix and an extension.
+   * It always places the file in TMPPATH.
+   */
+  static function temp_filename($prefix="", $extension="") {
+    do {
+      $basename = tempnam(TMPPATH, $prefix);
+      if (!$basename) {
+        return false;
+      }
+      $filename = "$basename.$extension";
+      $success = !file_exists($filename) && @rename($basename, $filename);
+      if (!$success) {
+        @unlink($basename);
+      }
+    } while (!$success);
+    return $filename;
+  }
 }

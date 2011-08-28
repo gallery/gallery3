@@ -1,3 +1,7 @@
 name = "Image Block"
 description = "Display a random image in the sidebar"
 version = 3
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:image_block"
+discuss_url = "http://gallery.menalto.com/forum_module_image_block"

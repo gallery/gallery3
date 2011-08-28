@@ -51,7 +51,7 @@
             <? foreach ($available_locales as $code => $display_name):  ?>
             <? if ($i == (int) (count($available_locales)/2)): ?>
           </table>
-          <table>
+          <table class="g-left">
             <tr>
               <th> <?= t("Installed") ?> </th>
               <th> <?= t("Language") ?> </th>

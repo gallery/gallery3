@@ -36,10 +36,7 @@ class exif_Core {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
-            if (function_exists("mb_detect_encoding") &&
-                mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
-              $value = utf8_encode($value);
-            }
+            $value = encoding::convert_to_utf8($value);
             $keys[$field] = Input::clean($value);
 
             if ($field == "DateTime") {
@@ -60,10 +57,7 @@ class exif_Core {
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
             $value = implode(" ", $iptc[$iptc_key]);
-            if (function_exists("mb_detect_encoding") &&
-                mb_detect_encoding($value, "ISO-8859-1, UTF-8") != "UTF-8") {
-              $value = utf8_encode($value);
-            }
+            $value = encoding::convert_to_utf8($value);
             $keys[$keyword] = Input::clean($value);
 
             if ($keyword == "Caption" && !$item->description) {

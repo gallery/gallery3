@@ -42,8 +42,9 @@ class Login_Controller extends Controller {
 
   public function html() {
     $view = new Theme_View("page.html", "other", "login");
-    $view->page_title = t("Login");
-    $view->content = auth::get_login_form("login/auth_html");
+    $view->page_title = t("Log in to Gallery");
+    $view->content = new View("login_ajax.html");
+    $view->content->form = auth::get_login_form("login/auth_html");
     print $view;
   }
 

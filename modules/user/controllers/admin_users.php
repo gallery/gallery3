@@ -21,6 +21,8 @@ class Admin_Users_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->page_title = t("Users and groups");
+    $view->page_type = "collection";
+    $view->page_subtype = "admin_users";
     $view->content = new View("admin_users.html");
 
     // @todo: add this as a config option
@@ -28,6 +30,12 @@ class Admin_Users_Controller extends Admin_Controller {
     $page = Input::instance()->get("page", "1");
     $builder = db::build();
     $user_count = $builder->from("users")->count_records();
+
+    // Pagination info
+    $view->page = $page;
+    $view->page_size = $page_size;
+    $view->children_count = $user_count;
+    $view->max_pages = ceil($view->children_count / $view->page_size);
 
     $view->content->pager = new Pagination();
     $view->content->pager->initialize(

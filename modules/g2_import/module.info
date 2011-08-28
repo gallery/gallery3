@@ -1,3 +1,7 @@
 name = "Gallery2 Import"
 description = "Import your Gallery 2 content into Gallery 3"
 version = 2
+author_name = "Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:g2_import"
+discuss_url = "http://gallery.menalto.com/forum_module_g2_import"

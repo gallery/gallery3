@@ -10,7 +10,7 @@
 <div class="g-block ui-helper-clearfix">
   <h1> <?= t("Theme choice") ?> </h1>
   <p>
-    <?= t("Gallery allows you to choose a theme for browsing your Gallery, as well as a special theme for the administration interface.  Click a theme to preview and activate it.") ?>
+    <?= t("Make your Gallery beautiful <a href=\"%url\">with a new theme</a>!  There are separate themes for the regular site and for the administration interface.  Click a theme below to preview and activate it.", array("url" => "http://codex.gallery2.org/Category:Gallery_3:Themes")) ?>
   </p>
 
   <div class="g-block-content">
@@ -23,6 +23,7 @@
         <p>
           <?= $themes[$site]->description ?>
         </p>
+        <? $v = new View("admin_themes_buttonset.html"); $v->info = $themes[$site]; print $v; ?>
       </div>
 
       <h2> <?= t("Available Gallery themes") ?> </h2>
@@ -40,13 +41,14 @@
               <?= $info->description ?>
             </p>
           </a>
+          <? $v = new View("admin_themes_buttonset.html"); $v->info = $info; print $v; ?>
         </div>
         <? $count++ ?>
         <? endforeach ?>
 
         <? if (!$count): ?>
         <p>
-          <?= t("There are no other site themes available.") ?>
+          <?= t("There are no other site themes available. <a href=\"%url\">Download one now!</a>", array("url" => "http://codex.gallery2.org/Category:Gallery_3:Themes")) ?>
         </p>
         <? endif ?>
       </div>
@@ -61,6 +63,7 @@
         <p>
           <?= $themes[$admin]->description ?>
         </p>
+        <? $v = new View("admin_themes_buttonset.html"); $v->info = $themes[$admin]; print $v; ?>
       </div>
 
       <h2> <?= t("Available admin themes") ?> </h2>
@@ -78,13 +81,14 @@
               <?= $info->description ?>
             </p>
           </a>
+          <? $v = new View("admin_themes_buttonset.html"); $v->info = $info; print $v; ?>
         </div>
         <? $count++ ?>
         <? endforeach ?>
 
         <? if (!$count): ?>
         <p>
-          <?= t("There are no other admin themes available.") ?>
+          <?= t("There are no other admin themes available. <a href=\"%url\">Download one now!</a>", array("url" => "http://codex.gallery2.org/Category:Gallery_3:Themes")) ?>
         </p>
         <? endif ?>
       </div>

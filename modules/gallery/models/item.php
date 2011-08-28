@@ -336,9 +336,7 @@ class Item_Model_Core extends ORM_MPTT {
 
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
-          $tmp = pathinfo($this->name, PATHINFO_FILENAME);
-          $tmp = preg_replace("/[^A-Za-z0-9-_]+/", "-", $tmp);
-          $this->slug = trim($tmp, "-");
+          $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
 
           // If the filename is all invalid characters, then the slug may be empty here.  Pick a
           // random value.
@@ -410,6 +408,27 @@ class Item_Model_Core extends ORM_MPTT {
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
         $original = ORM::factory("item", $this->id);
+
+        // Preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
+        // the MIME type from the extension. So when we adopt the new data file, it's important
+        // to adopt the new extension. That ensures that the item's extension is always
+        // appropriate for its data. We don't try to preserve the name of the data file, though,
+        // because the name is typically a temporary randomly-generated name.
+        if (isset($this->data_file)) {
+          $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
+          $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
+          if (!empty($extension) && strcmp($this->name, $new_name)) {
+            $this->name = $new_name;
+          }
+          if ($this->is_photo()) {
+            list ($this->width, $this->height, $this->mime_type, $extension) =
+              photo::get_file_metadata($this->data_file);
+          } else if ($this->is_movie()) {
+            list ($this->width, $this->height, $this->mime_type, $extension) =
+              movie::get_file_metadata($this->data_file);
+          }
+        }
+
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
           $original->_build_relative_caches();
           $this->relative_path_cache = null;
@@ -431,8 +450,19 @@ class Item_Model_Core extends ORM_MPTT {
         }
 
         if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
+          $this->_build_relative_caches();
+          // If there is a data file, then we want to preserve both the old data and the new data.
+          // (Third-party event handlers would like access to both). The old data file will be
+          // accessible via the $original item, and the new one via $this item. But in that case,
+          // we don't want to rename the original as below, because the old data would end up being
+          // clobbered by the new data file. Also, the rename isn't necessary, because the new item
+          // data is coming from the data file anyway. So we only perform the rename if there isn't
+          // a data file. Another way to solve this would be to copy the original file rather than
+          // conditionally rename it, but a copy would cost far more than the rename.
+          if (!isset($this->data_file)) {
+            @rename($original->file_path(), $this->file_path());
+          }
           // Move all of the items associated data files
-          @rename($original->file_path(), $this->file_path());
           if ($this->is_album()) {
             @rename(dirname($original->resize_path()), dirname($this->resize_path()));
             @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
@@ -462,8 +492,6 @@ class Item_Model_Core extends ORM_MPTT {
         }
 
         // Replace the data file, if requested.
-        // @todo: we don't handle the case where you swap in a file of a different mime type
-        //        should we prevent that in validation?  or in set_data_file()
         if ($this->data_file && ($this->is_photo() || $this->is_movie())) {
           copy($this->data_file, $this->file_path());
 
@@ -483,6 +511,9 @@ class Item_Model_Core extends ORM_MPTT {
           // Null out the data file variable here, otherwise this event will trigger another
           // save() which will think that we're doing another file move.
           $this->data_file = null;
+          if ($original->file_path() != $this->file_path()) {
+            @unlink($original->file_path());
+          }
           module::event("item_updated_data_file", $this);
         }
       }
@@ -519,6 +550,8 @@ class Item_Model_Core extends ORM_MPTT {
         $this->name = "$base_name-$rand";
       }
       $this->slug = "$base_slug-$rand";
+      $this->relative_path_cache = null;
+      $this->relative_url_cache = null;
     }
   }
 
@@ -770,16 +803,7 @@ class Item_Model_Core extends ORM_MPTT {
     }
 
     if ($this->is_movie() || $this->is_photo()) {
-      if ($this->loaded()) {
-        // Existing items can't change their extension
-        $original = ORM::factory("item", $this->id);
-        $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        $old_ext = pathinfo($original->name, PATHINFO_EXTENSION);
-        if (strcasecmp($new_ext, $old_ext)) {
-          $v->add_error("name", "illegal_data_file_extension");
-          return;
-        }
-      } else {
+      if (!$this->loaded()) {
         // New items must have an extension
         $ext = pathinfo($this->name, PATHINFO_EXTENSION);
         if (!$ext) {
@@ -787,9 +811,10 @@ class Item_Model_Core extends ORM_MPTT {
           return;
         }
 
-        if ($this->is_movie() && !preg_match("/^(flv|mp4|m4v)$/i", $ext)) {
-          $v->add_error("name", "illegal_data_file_extension");
-        } else if ($this->is_photo() && !preg_match("/^(gif|jpg|jpeg|png)$/i", $ext)) {
+        if ($this->is_photo() &&
+            !in_array(strtolower($ext), array_map("strtolower", legal_file::get_photo_extensions())) ||
+            $this->is_movie() &&
+            !in_array(strtolower($ext), array_map("strtolower", legal_file::get_movie_extensions()))) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
@@ -814,17 +839,6 @@ class Item_Model_Core extends ORM_MPTT {
       $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
       $v->add_error("name", "empty_data_file");
-    }
-
-    if ($this->loaded()) {
-      if ($this->is_photo()) {
-        list ($a, $b, $mime_type) = photo::get_file_metadata($this->data_file);
-      } else if ($this->is_movie()) {
-        list ($a, $b, $mime_type) = movie::get_file_metadata($this->data_file);
-      }
-      if ($mime_type != $this->mime_type) {
-        $v->add_error("name", "cant_change_mime_type");
-      }
     }
   }
 
@@ -879,9 +893,9 @@ class Item_Model_Core extends ORM_MPTT {
     switch($field) {
     case "mime_type":
       if ($this->is_movie()) {
-        $legal_values = array("video/flv", "video/x-flv", "video/mp4");
-      } if ($this->is_photo()) {
-        $legal_values = array("image/jpeg", "image/gif", "image/png");
+        $legal_values = legal_file::get_movie_types();
+      } else if ($this->is_photo()) {
+        $legal_values = legal_file::get_photo_types();
       }
       break;
 

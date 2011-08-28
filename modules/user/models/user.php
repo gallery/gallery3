@@ -43,6 +43,12 @@ class User_Model_Core extends ORM implements User_Definition {
     $old = clone $this;
     module::event("user_before_delete", $this);
     parent::delete($id);
+
+    db::build()
+      ->delete("groups_users")
+      ->where("user_id", "=", empty($id) ? $old->id : $id)
+      ->execute();
+
     module::event("user_deleted", $old);
     $this->groups_cache = null;
   }
@@ -147,7 +153,7 @@ class User_Model_Core extends ORM implements User_Definition {
     }
 
     if (!$this->loaded() || isset($this->password_length)) {
-      $minimum_length = module::get_var("user", "mininum_password_length", 5);
+      $minimum_length = module::get_var("user", "minimum_password_length", 5);
       if ($this->password_length < $minimum_length) {
         $v->add_error("password", "min_length");
       }

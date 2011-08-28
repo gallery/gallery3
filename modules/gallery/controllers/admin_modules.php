@@ -19,6 +19,9 @@
  */
 class Admin_Modules_Controller extends Admin_Controller {
   public function index() {
+    // If modules need upgrading, this will get recreated in module::available()
+    site_status::clear("upgrade_now");
+
     $view = new Admin_View("admin.html");
     $view->page_title = t("Modules");
     $view->content = new View("admin_modules.html");
@@ -102,9 +105,6 @@ class Admin_Modules_Controller extends Admin_Controller {
     }
 
     module::event("module_change", $changes);
-
-    // If modules need upgrading, this will get recreated
-    site_status::clear("upgrade_now");
 
     // @todo this type of collation is questionable from an i18n perspective
     if ($activated_names) {

@@ -38,6 +38,7 @@ class Theme_View_Core extends Gallery_View {
     $this->item = null;
     $this->tag = null;
     $this->set_global(array("theme" => $this,
+                            "theme_info" => theme::get_info($this->theme_name),
                             "user" => identity::active_user(),
                             "page_type" => $page_type,
                             "page_subtype" => $page_subtype,
@@ -139,52 +140,6 @@ class Theme_View_Core extends Gallery_View {
 
     module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
     return $menu->render();
-  }
-
-  /**
-   * Set up the data and render a pager.
-   *
-   * See themes/wind/views/pager.html for documentation on the variables generated here.
-   */
-  public function paginator() {
-    $v = new View("paginator.html");
-    $v->page_type = $this->page_type;
-    $v->page_subtype = $this->page_subtype;
-    $v->first_page_url = null;
-    $v->previous_page_url = null;
-    $v->next_page_url = null;
-    $v->last_page_url = null;
-
-    if ($this->page_type == "collection") {
-      $v->page = $this->page;
-      $v->max_pages = $this->max_pages;
-      $v->total = $this->children_count;
-
-      if ($this->page != 1) {
-        $v->first_page_url = url::site(url::merge(array("page" => 1)));
-        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
-      }
-
-      if ($this->page != $this->max_pages) {
-        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
-        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
-      }
-
-      $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
-      $v->last_visible_position = min($this->page * $this->page_size, $v->total);
-    } else if ($this->page_type == "item") {
-      $v->position = $this->position;
-      $v->total = $this->sibling_count;
-      if ($this->previous_item) {
-        $v->previous_page_url = $this->previous_item->url();
-      }
-
-      if ($this->next_item) {
-        $v->next_page_url = $this->next_item->url();
-      }
-    }
-
-    return $v;
   }
 
   /**
