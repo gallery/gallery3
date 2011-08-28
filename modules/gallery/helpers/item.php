@@ -402,4 +402,21 @@ class item_Core {
 
     return $position;
   }
+
+  /**
+   * Set the display context callback for any future item renders.
+   */
+  static function set_display_context_callback() {
+    Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), func_get_args());
+  }
+
+  /**
+   * Call the display context callback for the given item
+   */
+  static function get_display_context($item) {
+    $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
+    $callback = $args[0];
+    $args[0] = $item;
+    return call_user_func_array($callback, $args);
+  }
 }

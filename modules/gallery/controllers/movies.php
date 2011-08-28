@@ -27,28 +27,11 @@ class Movies_Controller extends Items_Controller {
 
     access::required("view", $movie);
 
-    $where = array(array("type", "!=", "album"));
-    $position = item::get_position($movie, $where);
-    if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) =
-        $movie->parent()->viewable()->children(3, $position - 2, $where);
-    } else {
-      $previous_item = null;
-      list ($next_item) = $movie->parent()->viewable()->children(1, $position, $where);
-    }
-
     $template = new Theme_View("page.html", "item", "movie");
-    $template->set_global(
-      array("item" => $movie,
-            "children" => array(),
-            "children_count" => 0,
-            "parents" => $movie->parents()->as_array(),
-            "breadcrumbs" => Breadcrumb::array_from_item_parents($movie),
-            "next_item" => $next_item,
-            "previous_item" => $previous_item,
-            "sibling_count" => $movie->parent()->viewable()->children_count($where),
-            "position" => $position));
-
+    $template->set_global(array("item" => $movie,
+                                "children" => array(),
+                                "children_count" => 0));
+    $template->set_global(item::get_display_context($movie));
     $template->content = new View("movie.html");
 
     $movie->increment_view_count();
