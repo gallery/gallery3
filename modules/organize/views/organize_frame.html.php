@@ -109,7 +109,7 @@
       item_ids = [];
       for (var i = 0; i != nodes.length; i++) {
         var node = Ext.fly(nodes[i]);
-        item_ids.push(node.getAttribute("rel"));
+        item_ids.push(get_id_from_node(node));
       }
       start_busy(<?= t("Deleting...")->for_js() ?>);
       Ext.Ajax.request({
@@ -127,6 +127,16 @@
       });
     };
 
+    var get_id_from_node = function(node) {
+      var id = node.getAttribute("rel");
+      if (!id) {
+        // IE9 has a bug which causes it to be unable to read the "rel" attr
+        // so hack it by extracting the id the CSS class id.  This is fragile.
+        // ref: https://sourceforge.net/apps/trac/gallery/ticket/1790
+        return node.getAttribute("id").replace("thumb-", "");
+      }
+    }
+
     /*
      * ********************************************************************************
      * JsonStore, DataView and Panel for viewing albums
@@ -143,7 +153,7 @@
         "dblclick": function(v, index, node, e) {
           node = Ext.get(node);
           if (node.hasClass("thumb-album")) {
-            var id = node.getAttribute("rel");
+            var id = get_id_from_node(node);
             tree_panel.fireEvent("click", tree_panel.getNodeById(id))
           }
         },
@@ -218,7 +228,7 @@
               var nodes = data.nodes;
               source_ids = [];
               for (var i = 0; i != nodes.length; i++) {
-                source_ids.push(Ext.fly(nodes[i]).getAttribute("rel"));
+                source_ids.push(get_id_from_node(Ext.fly(nodes[i])));
               }
               start_busy(<?= t("Rearranging...")->for_js() ?>);
               target = Ext.fly(target);
@@ -232,7 +242,7 @@
                 failure: show_generic_error,
                 params: {
                   source_ids: source_ids.join(","),
-                  target_id: target.getAttribute("rel"),
+                  target_id: get_id_from_node(target),
                   relative: this.drop_side, // calculated in onNodeOver
                   csrf: '<?= access::csrf_token() ?>'
                 }
@@ -448,7 +458,7 @@
             var moving_albums = 0;
             for (var i = 0; i != nodes.length; i++) {
               var node = Ext.fly(nodes[i]);
-              source_ids.push(node.getAttribute("rel"));
+              source_ids.push(get_id_from_node(node));
               moving_albums |= node.hasClass("thumb-album");
             }
             start_busy(<?= t("Moving...")->for_js() ?>);

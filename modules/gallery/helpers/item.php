@@ -407,7 +407,8 @@ class item_Core {
    * Set the display context callback for any future item renders.
    */
   static function set_display_context_callback() {
-    Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), func_get_args());
+    $args = func_get_args();
+    Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args);
   }
 
   /**
