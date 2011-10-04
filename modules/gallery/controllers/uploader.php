@@ -55,6 +55,7 @@ class Uploader_Controller extends Controller {
 
     if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
+      Event::add("system.shutdown", create_function("", "unlink(\"$temp_filename\");"));
       try {
         $item = ORM::factory("item");
         $item->name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
@@ -87,14 +88,10 @@ class Uploader_Controller extends Controller {
           Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
         }
 
-        if (file_exists($temp_filename)) {
-          unlink($temp_filename);
-        }
         header("HTTP/1.1 500 Internal Server Error");
         print "ERROR: " . $e->getMessage();
         return;
       }
-      unlink($temp_filename);
       print "FILEID: $item->id";
     } else {
       header("HTTP/1.1 400 Bad Request");

@@ -69,6 +69,7 @@ class Rest_Controller extends Controller {
         $request->params = (object) $input->post();
         if (isset($_FILES["file"])) {
           $request->file = upload::save("file");
+          Event::add("system.shutdown", create_function("", "unlink(\"{$request->file}\");"));
         }
         break;
       }
