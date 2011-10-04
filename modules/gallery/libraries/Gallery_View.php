@@ -157,7 +157,10 @@ class Gallery_View_Core extends View {
     $contents = $cache->get($key);
 
     if (empty($contents)) {
-      module::event("before_combine", $type, $this->combine_queue[$type][$group]);
+      $combine_data = new stdClass();
+      $combine_data->type = $type;
+      $combine_data->contents = $this->combine_queue[$type][$group];
+      module::event("before_combine", $combine_data);
 
       $contents = "";
       foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
@@ -168,14 +171,17 @@ class Gallery_View_Core extends View {
         }
       }
 
-      module::event("after_combine", $type, $contents);
+      $combine_data = new stdClass();
+      $combine_data->type = $type;
+      $combine_data->contents = $contents;
+      module::event("after_combine", $combine_data);
 
-      $cache->set($key, $contents, array($type), 30 * 84600);
+      $cache->set($key, $combine_data->contents, array($type), 30 * 84600);
 
       $use_gzip = function_exists("gzencode") &&
         (int) ini_get("zlib.output_compression") === 0;
       if ($use_gzip) {
-        $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
+        $cache->set("{$key}_gz", gzencode($combine_data->contents, 9, FORCE_GZIP),
                     array($type, "gzip"), 30 * 84600);
       }
 
