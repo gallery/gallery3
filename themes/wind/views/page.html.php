@@ -115,6 +115,7 @@
             <? if (!$breadcrumb->last): ?> <a href="<?= $breadcrumb->url ?>"><? endif ?>
             <?= html::purify(text::limit_chars($breadcrumb->title, module::get_var("gallery", "visible_title_length"))) ?>
             <? if (!$breadcrumb->last): ?></a><? endif ?>
+           </li>
           <? endforeach ?>
         </ul>
         <? endif ?>
