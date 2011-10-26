@@ -53,7 +53,7 @@ class search_Core {
       foreach (identity::group_ids_for_active_user() as $id) {
         $fields[] = "`view_$id` = TRUE"; // access::ALLOW
       }
-      $access_sql = "AND (" . join(" OR ", $fields) . ")";
+      $access_sql = " AND (" . join(" OR ", $fields) . ")";
     } else {
       $access_sql = "";
     }
@@ -122,7 +122,7 @@ class search_Core {
     $score = $db->query($query)->current()->score;
     $score = substr($score, 0, strlen($score) - 2);
 
-    $data = $db->query(self::_build_query_base($q) . "having `score` >= " . $score);
+    $data = $db->query(self::_build_query_base($q) . " HAVING `score` >= " . $score);
 
     $data->seek($data->count() - 1);
 
