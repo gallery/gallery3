@@ -235,6 +235,10 @@ class Gallery_View_Core extends View {
       }
       $css = str_replace($search, $replace, $css);
     }
+    /* remove comments */
+    $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
+    /* remove tabs, spaces, newlines, etc. */
+    $css = preg_replace('/\s+/', ' ', $css);
 
     return $css;
   }
