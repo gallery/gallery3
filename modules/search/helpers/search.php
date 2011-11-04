@@ -112,22 +112,22 @@ class search_Core {
 
   static function get_position($item, $q) {
     $page_size = module::get_var("gallery", "page_size", 9);
-
     $query = self::_build_query_base($q, array("{items}.id = " . $item->id));
-
     $db = Database::instance();
 
     // Truncate the score by two decimal places as this resolves the issues
     // that arise due to in exact numeric conversions.
     $score = $db->query($query)->current()->score;
-    $score = substr($score, 0, strlen($score) - 2);
+    if (strlen($score) > 7) {
+      $score = substr($score, 0, strlen($score) - 2);
+    }
 
     $data = $db->query(self::_build_query_base($q) . " HAVING `score` >= " . $score);
-
     $data->seek($data->count() - 1);
 
-    while ($data->get("id") != $item->id && $data->prev()->valid());
+    while ($data->get("id") != $item->id && $data->prev()->valid()) {
+    }
 
-    return  $data->key() + 1;
+    return $data->key() + 1;
   }
 }
