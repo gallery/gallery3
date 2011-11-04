@@ -229,7 +229,6 @@ class graphics_Core {
     return db::build()
       ->from("items")
       ->and_open()
-      ->and_open()
       ->where("thumb_dirty", "=", 1)
       ->and_open()
       ->where("type", "<>", "album")
@@ -239,8 +238,6 @@ class graphics_Core {
       ->where("resize_dirty", "=", 1)
       ->where("type", "=", "photo")
       ->close()
-      ->close()
-      ->where("id", "<>", 1)
       ->close();
   }
 
