@@ -67,6 +67,8 @@ class Combined_Controller extends Controller {
 
     if ($use_gzip && $content = $cache->get("{$key}_gz")) {
       header("Content-Encoding: gzip");
+      header("Content-Length: ".strlen($content));
+      header("Vary: Accept-Encoding");
     } else {
       // Fall back to non-gzipped if we have to
       $content = $cache->get($key);
