@@ -67,7 +67,6 @@ class Combined_Controller extends Controller {
 
     if ($use_gzip && $content = $cache->get("{$key}_gz")) {
       header("Content-Encoding: gzip");
-      header("Content-Length: ".strlen($content));
       header("Vary: Accept-Encoding");
     } else {
       // Fall back to non-gzipped if we have to
@@ -85,8 +84,9 @@ class Combined_Controller extends Controller {
     }
     header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
     header("Cache-Control: max-age=2678400");
-    header('Pragma: public');
+    header("Pragma: public");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
+    header("Content-Length: " . strlen($content));
 
     Kohana::close_buffers(false);
     print $content;
