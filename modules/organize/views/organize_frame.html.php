@@ -129,12 +129,14 @@
 
     var get_id_from_node = function(node) {
       var id = node.getAttribute("rel");
-      if (!id) {
-        // IE9 has a bug which causes it to be unable to read the "rel" attr
-        // so hack it by extracting the id the CSS class id.  This is fragile.
-        // ref: https://sourceforge.net/apps/trac/gallery/ticket/1790
-        return node.getAttribute("id").replace("thumb-", "");
+      if (id) {
+        return id;
       }
+
+      // IE9 has a bug which causes it to be unable to read the "rel" attr
+      // so hack it by extracting the id the CSS class id.  This is fragile.
+      // ref: https://sourceforge.net/apps/trac/gallery/ticket/1790
+      return node.getAttribute("id").replace("thumb-", "");
     }
 
     /*
