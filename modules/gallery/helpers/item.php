@@ -418,6 +418,9 @@ class item_Core {
     $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
     $callback = $args[0];
     $args[0] = $item;
+    if (!$callback) {
+      $callback = "Albums_Controller::get_display_context";
+    }
     return call_user_func_array($callback, $args);
   }
 }
