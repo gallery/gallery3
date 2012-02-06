@@ -20,3 +20,6 @@
 include(SYSPATH . "config/user_agents.php");
 $config["robot"]["mj12bot"] = "MJ12bot";
 $config["robot"]["speedy spider"] = "Speedy Spider";
+$config["robot"]["baidu"] = "Baiduspider";
+$config["robot"]["bing"] = "Ezooms";
+$config["robot"]["yandex"] = "YandexBot";
