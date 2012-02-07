@@ -407,20 +407,26 @@ class item_Core {
    * Set the display context callback for any future item renders.
    */
   static function set_display_context_callback() {
-    $args = func_get_args();
-    Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
-                           array("display_context"));
+    if (!request::user_agent("robot")) {
+      $args = func_get_args();
+      Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
+                             array("display_context"));
+    }
   }
 
   /**
    * Call the display context callback for the given item
    */
   static function get_display_context($item) {
-    $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
-    $callback = $args[0];
-    $args[0] = $item;
-    if (!$callback) {
+    if (!request::user_agent("robot")) {
+      $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
+      $callback = $args[0];
+      $args[0] = $item;
+    }
+
+    if (empty($callback)) {
       $callback = "Albums_Controller::get_display_context";
+      $args = array($item);
     }
     return call_user_func_array($callback, $args);
   }
