@@ -408,7 +408,8 @@ class item_Core {
    */
   static function set_display_context_callback() {
     $args = func_get_args();
-    Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args);
+    Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
+                           array("display_context"));
   }
 
   /**
