@@ -72,7 +72,8 @@ class upgrade_checker_Core {
                               $e->getLine(), $e->getTraceAsString()));
     }
     $result->timestamp = time();
-    Cache::instance()->set("upgrade_checker_version_info", serialize($result), null, 86400 * 365);
+    Cache::instance()->set("upgrade_checker_version_info", serialize($result),
+                           array("upgrade"), 86400 * 365);
   }
 
   /**
