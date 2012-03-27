@@ -36,5 +36,6 @@ $("document").ready(function() {
       </li>
       <? endforeach ?>
     </ul>
+    <?= $form_additional ?>
   </div>
 </div>

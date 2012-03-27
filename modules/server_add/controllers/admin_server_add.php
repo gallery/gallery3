@@ -23,6 +23,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $view->page_title = t("Add from server");
     $view->content = new View("admin_server_add.html");
     $view->content->form = $this->_get_admin_form();
+    $view->content->form_additional = $this->_get_admin_form_additional();
     $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     $view->content->paths = array_keys($paths);
 
@@ -54,6 +55,15 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $view->content->form = $form;
     $view->content->paths = array_keys($paths);
     print $view;
+  }
+
+  public function save_options() {
+    access::verify_csrf();
+    $form = $this->_get_admin_form_additional();
+    if($form->validate()) {
+      module::set_var("server_add", "skip_duplicates", $form->skip_duplicates_group->skip_duplicates->checked);
+    }
+    url::redirect("admin/server_add");
   }
 
   public function remove_path() {
@@ -90,6 +100,18 @@ class Admin_Server_Add_Controller extends Admin_Controller {
       ->error_messages("not_readable", t("This directory is not readable by the webserver"))
       ->error_messages("is_symlink", t("Symbolic links are not allowed"));
     $add_path->submit("add")->value(t("Add Path"));
+
+    return $form;
+  }
+
+  private function _get_admin_form_additional() {
+    $form = new Forge("admin/server_add/save_options", "", "post",
+                      array("id" => "g-server-add-admin-form"));
+
+    $group = $form->group("skip_duplicates_group")->label(t("Additional options"));
+    $group->checkbox("skip_duplicates")->label(t("Skip duplicates?"))->id("g-server-add-skip-duplicates")
+      ->checked(module::get_var("server_add", "skip_duplicates", false));
+    $group->submit("save")->value(t("Save"));
 
     return $form;
   }
