@@ -26,7 +26,7 @@ $("document").ready(function() {
       <? foreach ($paths as $id => $path): ?>
       <li>
         <?= html::clean($path) ?>
-        <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=<?= access::csrf_token() ?>") ?>"
+        <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=" . access::csrf_token()) ?>"
            id="icon_<?= $id ?>"
            class="g-remove-dir g-button">
           <span class="ui-icon ui-icon-trash">
