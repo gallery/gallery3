@@ -32,6 +32,8 @@ class Admin_Comments_Controller extends Admin_Controller {
     $form->validate();
     module::set_var("comment", "access_permissions",
                     $form->comment_settings->access_permissions->value);
+    module::set_var("comment", "rss_available",
+                    $form->comment_settings->rss_available->value);
     message::success(t("Comment settings updated"));
     url::redirect("admin/comments");
   }
@@ -45,6 +47,13 @@ class Admin_Comments_Controller extends Admin_Controller {
       ->options(array("everybody" => t("Everybody"),
                       "registered_users" => t("Only registered users")))
       ->selected(module::get_var("comment", "access_permissions"));
+    $comment_settings->dropdown("rss_available")
+      ->label(t("Which RSS feeds should be available?"))
+      ->options(array("both" => t("Both"),
+                      "newest" => t("Only All new comments"),
+                      "onitem" => t("Only Comments on item"),
+                      "none" => t("None")))
+      ->selected(module::get_var("comment", "rss_available"));
     $comment_settings->submit("save")->value(t("Save"));
     return $form;
   }
