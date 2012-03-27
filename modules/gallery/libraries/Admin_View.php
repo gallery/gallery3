@@ -115,8 +115,8 @@ class Admin_View_Core extends Gallery_View {
 }
 
 if (!function_exists('sys_getloadavg')) {
-	function sys_getloadavg()
-	{
-		return array(0,0,0);
-	}
+  function sys_getloadavg()
+  {
+    return array(0,0,0);
+  }
 }
