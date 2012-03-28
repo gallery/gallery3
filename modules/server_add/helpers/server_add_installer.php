@@ -28,9 +28,10 @@ class server_add_installer {
                   `parent_id` int(9),
                   `path` varchar(255) NOT NULL,
                   `task_id` int(9) NOT NULL,
+                  `md5` varchar(32) NOT NULL,
                   PRIMARY KEY (`id`))
                 DEFAULT CHARSET=utf8;");
-    module::set_version("server_add", 4);
+    module::set_version("server_add", 5);
     server_add::check_config();
   }
 
@@ -65,6 +66,11 @@ class server_add_installer {
                     PRIMARY KEY (`id`))
                   DEFAULT CHARSET=utf8;");
       module::set_version("server_add", $version = 4);
+    }
+
+    if ($version == 4) {
+      $db->query("ALTER TABLE {server_add_entries} ADD COLUMN `md5` varchar(32) NOT NULL");
+      module::set_version("server_add", $version = 5);
     }
   }
 

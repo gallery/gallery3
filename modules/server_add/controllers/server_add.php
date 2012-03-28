@@ -98,6 +98,7 @@ class Server_Add_Controller extends Admin_Controller {
         $entry->is_directory = intval(is_dir($path));
         $entry->parent_id = null;
         $entry->task_id = $task->id;
+        $entry->md5 = '';
         $entry->save();
       }
     }
@@ -181,6 +182,7 @@ class Server_Add_Controller extends Admin_Controller {
             $child_entry->path = $child_path;
             $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
             $child_entry->is_directory = is_dir($child_path);
+            $child_entry->md5 = is_dir($child_path) ? '' : md5($child_path);
             $child_entry->save();
           }
 
@@ -243,20 +245,44 @@ class Server_Add_Controller extends Admin_Controller {
         $name = basename($entry->path);
         $title = item::convert_filename_to_title($name);
         if ($entry->is_directory) {
-          $album = ORM::factory("item");
-          $album->type = "album";
-          $album->parent_id = $parent->id;
-          $album->name = $name;
-          $album->title = $title;
-          $album->owner_id = $owner_id;
-          $album->sort_order = $parent->sort_order;
-          $album->sort_column = $parent->sort_column;
-          $album->save();
-          $entry->item_id = $album->id;
+          if(module::get_var("server_add", "skip_duplicates")) {
+            $album_exists = ORM::factory("item")->where("type", "=", "album")
+              ->where("name", "=", $name)->find();
+          } else {
+            $album_exists = null;
+          }
+          if($album_exists && $album_exists->loaded()) {
+            // Skip adding of an album
+            $entry->item_id = $album_exists->id;
+          } else {
+            $album = ORM::factory("item");
+            $album->type = "album";
+            $album->parent_id = $parent->id;
+            $album->name = $name;
+            $album->title = $title;
+            $album->owner_id = $owner_id;
+            $album->sort_order = $parent->sort_order;
+            $album->sort_column = $parent->sort_column;
+            $album->save();
+            $entry->item_id = $album->id;
+          }
         } else {
           try {
             $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-            if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
+
+            $entry_exists = 0;
+            if(module::get_var("server_add", "skip_duplicates")) {
+              $entry_exists = ORM::factory("server_add_entry")
+                ->where("is_directory", "=", 0)
+                ->where("item_id", "IS NOT", null)
+                ->where("md5", "=", md5($entry->path))
+                ->find()->loaded();
+            }
+            if ($entry_exists) {
+              // skip adding an image
+              $entry->item_id = 0;
+              $task->log("Skipping existing item: {$entry->path}");
+            } elseif (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
               $photo = ORM::factory("item");
               $photo->type = "photo";
               $photo->parent_id = $parent->id;
@@ -297,7 +323,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->status = t("Adding photos / albums (%completed of %total)",
                         array("completed" => $completed_files,
                               "total" => $total_files));
-      $task->percent_complete = $total_files ? 10 + 100 * ($completed_files / $total_files) : 100;
+      $task->percent_complete = $total_files ? 10 + 90 * ($completed_files / $total_files) : 100;
       break;
 
     case "done":
@@ -305,9 +331,18 @@ class Server_Add_Controller extends Admin_Controller {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
-      ORM::factory("server_add_entry")
-        ->where("task_id", "=", $task->id)
-        ->delete_all();
+      if(module::get_var("server_add", "skip_duplicates")) {
+        db::build()
+          ->delete("server_add_entries")
+          ->where("task_id", "=", $task->id)
+          ->where("item_id", "=", 0)
+          ->execute();
+      } else {
+        db::build()
+          ->delete("server_add_entries")
+          ->where("task_id", "=", $task->id)
+          ->execute();
+      }
       message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos / albums",
                        $task->get("completed_files")));

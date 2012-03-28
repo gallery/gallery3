@@ -18,6 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class server_add_event_Core {
+  static function item_deleted($item) {
+    db::build()
+      ->delete("server_add_entries")
+      ->where("item_id", "=", $item->id)
+      ->execute();
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
