@@ -48,7 +48,8 @@ class comment_installer {
 
     module::set_var("comment", "spam_caught", 0);
     module::set_var("comment", "access_permissions", "everybody");
-    module::set_version("comment", 4);
+    module::set_var("comment", "rss_available", "both");
+    module::set_version("comment", 5);
   }
 
   static function upgrade($version) {
@@ -74,6 +75,11 @@ class comment_installer {
       $db->query(
         "ALTER TABLE {comments} CHANGE `server_remote_host` `server_remote_host` varchar(255)");
       module::set_version("comment", $version = 4);
+    }
+
+    if ($version == 4) {
+      module::set_var("comment", "rss_available", "both");
+      module::set_version("comment", $version = 5);
     }
   }
 
