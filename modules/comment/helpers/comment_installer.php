@@ -78,7 +78,7 @@ class comment_installer {
     }
 
     if ($version == 4) {
-      module::set_var("comment", "rss_available", "both");
+      module::set_var("comment", "rss_visible", "all");
       module::set_version("comment", $version = 5);
     }
   }
