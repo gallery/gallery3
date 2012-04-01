@@ -46,6 +46,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
       strpos($path_name, MODPATH . "user/lib/PasswordHash") !== false ||
       strpos($path_name, SYSPATH) !== false ||
       strpos($path_name, MODPATH . "gallery/libraries/HTMLPurifier") !== false ||
+      strpos($path_name, MODPATH . "gallery/vendor/joomla") !== false ||
       substr($path_name, -1, 1) == "~");
   }
 }
