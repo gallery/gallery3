@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class valid extends valid_Core {
-  public static function url($url) {
+  static function url($url) {
     return valid_Core::url($url) &&
       (!strncasecmp($url, "http://", strlen("http://")) ||
        !strncasecmp($url, "https://", strlen("https://")));
