@@ -43,9 +43,9 @@
         var filter = $(this).attr("value");
         if (filter) {
           $("tr.setting-row").fadeOut("fast");
-          $("tr.setting-row td:contains(" + filter + "), tr.setting-row td a:contains(" + filter + ")").each(function() {
-            if ($(this).children().length < 1) {
-              $(this).closest("tr").stop().show();
+          $("tr.setting-row").each(function() {
+            if ($(this).text().indexOf(filter) > 0) {
+              $(this).stop().show();
             }
           });
         } else {

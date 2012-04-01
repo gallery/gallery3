@@ -19,9 +19,23 @@
  */
 
 class comment_rss_Core {
+  static function feed_visible($feed_id) {
+    $visible = module::get_var("comment", "rss_visible");
+    if (!in_array($feed_id, array("newest", "per_item"))) {
+      return false;
+    }
+
+    return ($visible == "all" || $visible == $feed_id);
+  }
+
   static function available_feeds($item, $tag) {
-    $feeds["comment/newest"] = t("All new comments");
-    if ($item) {
+    $feeds = array();
+
+    if (comment_rss::feed_visible("newest")) {
+      $feeds["comment/newest"] = t("All new comments");
+    }
+
+    if ($item && comment_rss::feed_visible("per_item")) {
       $feeds["comment/item/$item->id"] =
         t("Comments on %title", array("title" => html::purify($item->title)));
     }
@@ -29,7 +43,7 @@ class comment_rss_Core {
   }
 
   static function feed($feed_id, $offset, $limit, $id) {
-    if ($feed_id != "newest" && $feed_id != "item") {
+    if (!comment_rss::feed_visible($feed_id)) {
       return;
     }
 
