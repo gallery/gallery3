@@ -17,13 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 class random_Core {
   /**
    * Return a random 32 byte hash value.
    * @param string extra entropy data
    */
-  static function hash($entropy="") {
-    return md5($entropy . uniqid(mt_rand(), true));
+  static function hash($length=32) {
+    require_once(MODPATH . "gallery/vendor/joomla/crypt.php");
+    return md5(JCrypt::genRandomBytes($length));
   }
 
   /**
