@@ -61,7 +61,8 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     access::verify_csrf();
     $form = $this->_get_admin_form_additional();
     if($form->validate()) {
-      module::set_var("server_add", "skip_duplicates", $form->skip_duplicates_group->skip_duplicates->checked);
+      module::set_var("server_add", "skip_duplicates", $form->addition_options->skip_duplicates->checked);
+      module::set_var("server_add", "process_updates", $form->addition_options->process_updates->checked);
     }
     url::redirect("admin/server_add");
   }
@@ -108,9 +109,11 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $form = new Forge("admin/server_add/save_options", "", "post",
                       array("id" => "g-server-add-admin-form"));
 
-    $group = $form->group("skip_duplicates_group")->label(t("Additional options"));
+    $group = $form->group("addition_options")->label(t("Additional options"));
     $group->checkbox("skip_duplicates")->label(t("Skip duplicates?"))->id("g-server-add-skip-duplicates")
       ->checked(module::get_var("server_add", "skip_duplicates", false));
+    $group->checkbox("process_updates")->label(t("Process updates?"))->id("g-server-add-process-updates")
+      ->checked(module::get_var("server_add", "process_updates", false));
     $group->submit("save")->value(t("Save"));
 
     return $form;
