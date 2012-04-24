@@ -17,32 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class Valid_Test extends Gallery_Unit_Test_Case {
+  public function url_test() {
+    $this->assert_true(valid::url("http://foo.bar.com"));
+    $this->assert_true(valid::url("https://foo.bar.com"));
 
-class random_Core {
-  /**
-   * Return a random 32 byte hash value.
-   * @param string extra entropy data
-   */
-  static function hash($length=32) {
-    require_once(MODPATH . "gallery/vendor/joomla/crypt.php");
-    return md5(JCrypt::genRandomBytes($length));
-  }
-
-  /**
-   * Return a random floating point number between 0 and 1
-   */
-  static function percent() {
-    return ((float)mt_rand()) / (float)mt_getrandmax();
-  }
-
-  /**
-   * Return a random number between $min and $max.  If $min and $max are not specified,
-   * return a random number between 0 and mt_getrandmax()
-   */
-  static function int($min=null, $max=null) {
-    if ($min || $max) {
-      return mt_rand($min, $max);
-    }
-    return mt_rand();
+    $this->assert_false(valid::url("mailto://bar"));
+    $this->assert_false(valid::url("ftp://bar"));
   }
 }

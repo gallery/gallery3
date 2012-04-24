@@ -17,32 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class random_Core {
-  /**
-   * Return a random 32 byte hash value.
-   * @param string extra entropy data
-   */
-  static function hash($length=32) {
-    require_once(MODPATH . "gallery/vendor/joomla/crypt.php");
-    return md5(JCrypt::genRandomBytes($length));
-  }
-
-  /**
-   * Return a random floating point number between 0 and 1
-   */
-  static function percent() {
-    return ((float)mt_rand()) / (float)mt_getrandmax();
-  }
-
-  /**
-   * Return a random number between $min and $max.  If $min and $max are not specified,
-   * return a random number between 0 and mt_getrandmax()
-   */
-  static function int($min=null, $max=null) {
-    if ($min || $max) {
-      return mt_rand($min, $max);
-    }
-    return mt_rand();
+class valid extends valid_Core {
+  static function url($url) {
+    return valid_Core::url($url) &&
+      (!strncasecmp($url, "http://", strlen("http://")) ||
+       !strncasecmp($url, "https://", strlen("https://")));
   }
 }

@@ -209,7 +209,8 @@ class Users_Controller extends Controller {
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name)
       ->error_messages("length", t("Your name is too long"));
     self::_add_locale_dropdown($group, $user);
-    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
+    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url)
+      ->error_messages("url", t("You must enter a valid url"));
 
     module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));
