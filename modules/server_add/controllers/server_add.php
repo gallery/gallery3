@@ -24,12 +24,6 @@ class Server_Add_Controller extends Admin_Controller {
       $files[] = $path;
     }
 
-    // Clean leftover task rows.  There really should be support for this in the task framework
-    db::build()
-      ->where("task_id", "NOT IN", db::build()->select("id")->from("tasks"))
-      ->delete("server_add_entries")
-      ->execute();
-
     $item = ORM::factory("item", $id);
     $view = new View("server_add_tree_dialog.html");
     $view->item = $item;
@@ -175,14 +169,26 @@ class Server_Add_Controller extends Admin_Controller {
                 // Not importable, skip it.
                 continue;
               }
+              // check if file was already imported
+              if(module::get_var("server_add", "skip_duplicates")) {
+                $entry_exists = ORM::factory("server_add_entry")
+                  ->where("is_directory", "=", 0)
+                  ->where("path", "=", $child_path)
+                  ->find()->loaded();
+                if(entry_exists) {
+                  if(!module::get_var("server_add", "process_updates")) {
+                    continue;
+                  }
+                }
+              }
             }
-
+            
             $child_entry = ORM::factory("server_add_entry");
             $child_entry->task_id = $task->id;
             $child_entry->path = $child_path;
             $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
             $child_entry->is_directory = is_dir($child_path);
-            $child_entry->md5 = is_dir($child_path) ? '' : md5($child_path);
+            $child_entry->md5 = is_dir($child_path) ? '' : md5_file($child_path);
             $child_entry->save();
           }
 
@@ -275,13 +281,27 @@ class Server_Add_Controller extends Admin_Controller {
               $entry_exists = ORM::factory("server_add_entry")
                 ->where("is_directory", "=", 0)
                 ->where("item_id", "IS NOT", null)
-                ->where("md5", "=", md5($entry->path))
-                ->find()->loaded();
+                ->where("path", "=", $entry->path)
+                ->find();
             }
-            if ($entry_exists) {
+            if ($entry_exists && $entry_exists->loaded()) {
               // skip adding an image
+              $task->log("Entry exists: {$entry->path}");
+              if(module::get_var("server_add", "process_updates")) {
+                $task->log("Entry exists, processing update {$entry_exists->item_id}: {$entry->path}");
+                if($entry_exists->md5 != $entry->md5) {
+                  $item = ORM::factory("item", $entry_exists->item_id);
+                  if($item->loaded()) {
+                    $task->log("Entry exists, set data file {$item->id}: {$entry->path} ");
+                    $item->set_data_file($entry->path);
+                    $item->save();
+                    $entry_exists->md5 = $entry->md5;
+                    $entry_exists->save();
+                  }
+                }
+              }
               $entry->item_id = 0;
-              $task->log("Skipping existing item: {$entry->path}");
+              //$task->log("Skipping existing item: {$entry->path}");
             } elseif (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
               $photo = ORM::factory("item");
               $photo->type = "photo";
@@ -312,7 +332,7 @@ class Server_Add_Controller extends Admin_Controller {
           } catch (Exception $e) {
             // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
             $entry->item_id = 0;
-            $task->log("Skipping invalid file: {$entry->path}");
+            $task->log("Skipping invalid file: {$entry->path}, $e");
           }
         }
 
