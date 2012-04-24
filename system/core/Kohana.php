@@ -525,8 +525,12 @@ abstract class Kohana_Core {
 				$close();
 			}
 
-			// Store the Kohana output buffer
-			ob_end_clean();
+			// Store the Kohana output buffer.  Apparently there was a change in PHP
+			// 5.4 such that if you call this you wind up with a blank page.
+			// Disabling it for now.  See ticket #1839
+			if (version_compare(PHP_VERSION, "5.4", "<")) {
+				ob_end_clean();
+			}
 		}
 	}
 
