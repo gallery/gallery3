@@ -24,15 +24,15 @@ class Items_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
-    // Redirect to the more specific resource type, since it will render
-    // differently.  We can't delegate here because we may have gotten to this
-    // page via /items/<id> which means that we don't have a type-specific controller.  Also, we
-    // want to drive a single canonical resource mapping where possible.
+    // Redirect to the more specific resource type, since it will render differently.  We can't
+    // delegate here because we may have gotten to this page via /items/<id> which means that we
+    // don't have a type-specific controller.  Also, we want to drive a single canonical resource
+    // mapping where possible.
     access::required("view", $item);
     url::redirect($item->abs_url());
   }
 
-  // Return the width/height dimensinons for the given item
+  // Return the width/height dimensions for the given item
   public function dimensions($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
