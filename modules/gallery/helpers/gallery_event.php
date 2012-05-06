@@ -549,8 +549,8 @@ class gallery_event_Core {
         $value = $data->user->$field;
         if ($field == "locale") {
           $value = locales::display_name($value);
-        } elseif ($field == "url") {
-          $value = html::mark_clean(html::anchor($data->user->$field));
+        } else if ($field == "url") {
+          $value = html::mark_clean(html::anchor(html::clean($data->user->$field)));
         }
         $v->user_profile_data[(string) $label] = $value;
       }
