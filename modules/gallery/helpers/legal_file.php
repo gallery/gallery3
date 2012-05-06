@@ -80,4 +80,16 @@ class legal_file_Core {
     module::event("legal_movie_types", $types_wrapper);
     return $types_wrapper->types;
   }
+
+  /**
+   * Convert the extension of a filename.  If the original filename has no
+   * extension, add the new one to the end.
+   */
+  static function change_extension($filename, $new_ext) {
+    if (strpos($filename, ".") === false) {
+      return "{$filename}.{$new_ext}";
+    } else {
+      return preg_replace("/\..*?$/", ".{$new_ext}", $filename);
+    }
+  }
 }

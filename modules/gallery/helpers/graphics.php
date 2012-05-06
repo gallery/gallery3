@@ -156,7 +156,7 @@ class graphics_Core {
       foreach ($ops as $target => $output_file) {
         if ($input_item->is_movie()) {
           // Convert the movie to a JPG first
-          $output_file = preg_replace("/...$/", "jpg", $output_file);
+          $output_file = legal_file::change_extension($output_file, "jpg");
           try {
             movie::extract_frame($input_file, $output_file);
           } catch (Exception $e) {

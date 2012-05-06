@@ -188,7 +188,7 @@ class Item_Model_Core extends ORM_MPTT {
       return $base . "/.album.jpg";
     } else if ($this->is_movie()) {
       // Replace the extension with jpg
-      return preg_replace("/...$/", "jpg", $base);
+      return legal_file::change_extension($base, "jpg");
     }
   }
 
@@ -213,7 +213,7 @@ class Item_Model_Core extends ORM_MPTT {
       return $base . "/.album.jpg" . $cache_buster;
     } else if ($this->is_movie()) {
       // Replace the extension with jpg
-      $base = preg_replace("/...$/", "jpg", $base);
+      $base = legal_file::change_extension($base, "jpg");
       return $base . $cache_buster;
     }
   }
