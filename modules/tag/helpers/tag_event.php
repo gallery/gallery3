@@ -149,7 +149,8 @@ class tag_event_Core {
   static function info_block_get_metadata($block, $item) {
     $tags = array();
     foreach (tag::item_tags($item) as $tag) {
-      $tags[] = "<a href=\"{$tag->url()}\">{$tag->name}</a>";
+      $tags[] = "<a href=\"{$tag->url()}\">" .
+        html::clean($tag->name) . "</a>";
     }
     if ($tags) {
       $info = $block->content->metadata;

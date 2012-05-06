@@ -56,7 +56,7 @@ class Organize_Controller extends Controller {
       "sort_column" => $album->sort_column,
       "sort_order" => $album->sort_order,
       "editable" => access::can("edit", $album),
-      "title" => $album->title,
+      "title" => (string)html::clean($album->title),
       "children" => array());
 
     foreach ($album->viewable()->children() as $child) {
@@ -67,7 +67,7 @@ class Organize_Controller extends Controller {
         "width" => $dims[1],
         "height" => $dims[0],
         "type" => $child->type,
-        "title" => $child->title);
+        "title" => (string)html::clean($child->title));
     }
     json::reply($data);
   }
@@ -81,6 +81,9 @@ class Organize_Controller extends Controller {
 
     foreach (explode(",", $input->post("source_ids")) as $source_id) {
       $source = ORM::factory("item", $source_id);
+      if (!$source->loaded()) {
+        continue;
+      }
       access::required("edit", $source->parent());
 
       if ($source->contains($new_parent) || $source->id == $new_parent->id) {
@@ -116,6 +119,11 @@ class Organize_Controller extends Controller {
 
     $input = Input::instance();
     $target = ORM::factory("item", $input->post("target_id"));
+    if (!$target->loaded()) {
+      json::reply(null);
+      return;
+    }
+
     $album = $target->parent();
     access::required("edit", $album);
 

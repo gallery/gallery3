@@ -184,7 +184,7 @@
             <?= $type?> [ <?= $code ?> ]:
           </span>
           <span class="message">
-            <?= $message?>
+            <?= html::purify($message) ?>
           </span>
         </h3>
         <div id="<?= $error_id ?>" class="content">
