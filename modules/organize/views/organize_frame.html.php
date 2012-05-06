@@ -506,7 +506,7 @@
       root: {
         allowDrop: Boolean(<?= access::can("edit", item::root()) ?>),
         nodeType: "async",
-        text: "<?= item::root()->title ?>",
+        text: "<?= html::clean(item::root()->title) ?>",
         draggable: false,
         id: "<?= item::root()->id ?>",
         expanded: true

@@ -56,7 +56,7 @@ class Organize_Controller extends Controller {
       "sort_column" => $album->sort_column,
       "sort_order" => $album->sort_order,
       "editable" => access::can("edit", $album),
-      "title" => $album->title,
+      "title" => (string)html::clean($album->title),
       "children" => array());
 
     foreach ($album->viewable()->children() as $child) {
@@ -67,8 +67,9 @@ class Organize_Controller extends Controller {
         "width" => $dims[1],
         "height" => $dims[0],
         "type" => $child->type,
-        "title" => $child->title);
+        "title" => (string)html::clean($child->title));
     }
+    Kohana_Log::add("error","".print_r($data,1));
     json::reply($data);
   }
 

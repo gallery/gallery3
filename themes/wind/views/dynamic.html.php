@@ -3,7 +3,7 @@
   <div id="g-album-header-buttons">
     <?= $theme->dynamic_top() ?>
   </div>
-  <h1><?= html::clean($title) ?></h1>
+  <h1><?= html::purify($title) ?></h1>
 </div>
 
 <ul id="g-album-grid" class="ui-helper-clearfix">
