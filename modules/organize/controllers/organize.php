@@ -69,7 +69,6 @@ class Organize_Controller extends Controller {
         "type" => $child->type,
         "title" => (string)html::clean($child->title));
     }
-    Kohana_Log::add("error","".print_r($data,1));
     json::reply($data);
   }
 
