@@ -195,7 +195,7 @@ class Organize_Controller extends Controller {
         "expandable" => false,
         "id" => $child->id,
         "leaf" => $child->children_count(array(array("type", "=", "album"))) == 0,
-        "text" => $child->title,
+        "text" => (string)html::clean($child->title),
         "nodeType" => "async");
 
       // If the child is in the selected path, open it now.  Else, mark it async.
