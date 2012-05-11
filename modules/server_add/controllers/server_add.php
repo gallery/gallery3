@@ -61,7 +61,7 @@ class Server_Add_Controller extends Admin_Controller {
         }
         if (!is_dir($file)) {
           $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-          if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4", "m4v"))) {
+          if (!in_array($ext, legal_file::get_extensions())) {
             continue;
           }
         }
@@ -169,8 +169,7 @@ class Server_Add_Controller extends Admin_Controller {
           foreach ($child_paths as $child_path) {
             if (!is_dir($child_path)) {
               $ext = strtolower(pathinfo($child_path, PATHINFO_EXTENSION));
-              if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4", "m4v")) ||
-                  !filesize($child_path)) {
+              if (!in_array($ext, legal_file::get_extensions()) || !filesize($child_path)) {
                 // Not importable, skip it.
                 continue;
               }
@@ -256,7 +255,7 @@ class Server_Add_Controller extends Admin_Controller {
         } else {
           try {
             $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-            if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
+            if (in_array($extension, legal_file::get_photo_extensions())) {
               $photo = ORM::factory("item");
               $photo->type = "photo";
               $photo->parent_id = $parent->id;
@@ -266,7 +265,7 @@ class Server_Add_Controller extends Admin_Controller {
               $photo->owner_id = $owner_id;
               $photo->save();
               $entry->item_id = $photo->id;
-            } else if (in_array($extension, array("flv", "mp4", "m4v"))) {
+            } else if (in_array($extension, legal_file::get_movie_extensions())) {
               $movie = ORM::factory("item");
               $movie->type = "movie";
               $movie->parent_id = $parent->id;

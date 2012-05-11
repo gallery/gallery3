@@ -85,6 +85,10 @@ class IdentityProvider_Core {
         call_user_func("{$new_provider}_installer::initialize");
       }
 
+      if (!$provider->admin_user()) {
+        throw new Exception("IdentityProvider $new_provider: Couldn't find the admin user!");
+      }
+
       module::event("identity_provider_changed", $current_provider, $new_provider);
 
       identity::set_active_user($provider->admin_user());
@@ -100,7 +104,12 @@ class IdentityProvider_Core {
         // Make sure new provider is not in the database
         try {
           module::uninstall($new_provider);
+        } catch (Exception $e2) {
+          Kohana_Log::add("error", "Error uninstalling failed new provider\n" .
+                          $e2->getMessage() . "\n" . $e2->getTraceAsString());
+        }
 
+        try {
           // Lets reset to the current provider so that the gallery installation is still
           // working.
           module::set_var("gallery", "identity_provider", null);

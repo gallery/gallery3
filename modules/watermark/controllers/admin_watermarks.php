@@ -106,6 +106,20 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         return;
       }
 
+      if (!in_array($pathinfo["extension"], legal_file::get_photo_extensions())) {
+        switch ($image_info[2]) {
+        case IMAGETYPE_GIF:
+          $name = legal_file::change_extension($name, "gif");
+          break;
+        case IMAGETYPE_JPEG:
+          $name = legal_file::change_extension($name, "jpg");
+          break;
+        case IMAGETYPE_PNG:
+          $name = legal_file::change_extension($name, "png");
+          break;
+        }
+      }
+
       rename($file, VARPATH . "modules/watermark/$name");
       module::set_var("watermark", "name", $name);
       module::set_var("watermark", "width", $image_info[0]);

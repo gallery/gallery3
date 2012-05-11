@@ -22,7 +22,7 @@ class user_installer {
     return array("warn" => array(IdentityProvider::confirmation_message()));
   }
 
-  static function install() {
+  static function activate() {
     IdentityProvider::change_provider("user");
     // Set the latest version in initialize() below
   }

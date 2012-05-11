@@ -161,7 +161,7 @@ class graphics_Core {
             movie::extract_frame($input_file, $output_file);
           } catch (Exception $e) {
             // Assuming this is MISSING_FFMPEG for now
-            copy(MODPATH . "gallery/images/missing_movie.png", $output_file);
+            copy(MODPATH . "gallery/images/missing_movie.jpg", $output_file);
           }
           $working_file = $output_file;
         } else {
