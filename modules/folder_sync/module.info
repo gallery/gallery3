@@ -1,0 +1,7 @@
+name = "Folder Sync"
+description = "Allows authorized users to load/update images directly from your web server"
+version = 1
+author_name = "SiburNY"
+author_url = "http://gallery.menalto.com/user/370367"
+info_url = "http://codex.gallery2.org/Gallery3:Modules:folder_sync"
+discuss_url = "http://gallery.menalto.com/forum_module_folder_sync"
