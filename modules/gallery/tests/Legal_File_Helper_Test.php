@@ -29,4 +29,10 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
   public function change_extension_with_no_extension_test() {
     $this->assert_equal("foo.flv", legal_file::change_extension("foo", "flv"));
   }
+
+  public function change_extension_path_containing_dots_test() {
+    $this->assert_equal(
+      "/website/foo.com/VID_20120513_105421.jpg",
+      legal_file::change_extension("/website/foo.com/VID_20120513_105421.mp4", "jpg"));
+  }
 }
