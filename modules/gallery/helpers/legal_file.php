@@ -89,7 +89,7 @@ class legal_file_Core {
     if (strpos($filename, ".") === false) {
       return "{$filename}.{$new_ext}";
     } else {
-      return preg_replace("/\..*?$/", ".{$new_ext}", $filename);
+      return preg_replace("/\.[^\.]*?$/", ".{$new_ext}", $filename);
     }
   }
 }

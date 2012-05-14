@@ -109,7 +109,11 @@ class module_Core {
       $modules->gallery->locked = true;
       $identity_module = module::get_var("gallery", "identity_provider", "user");
       $modules->$identity_module->locked = true;
-      $modules->ksort();
+
+      function natural_name_sort($a, $b) {
+        return strnatcasecmp($a->name, $b->name);
+      }
+      $modules->uasort('natural_name_sort');
       self::$available = $modules;
     }
 
