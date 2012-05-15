@@ -39,6 +39,13 @@ if (installer::already_installed()) {
                     "prefix" => $_POST["prefix"],
                     "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
     list ($config["host"], $config["port"]) = explode(":", $config["host"] . ":");
+    foreach ($config as $k => $v) {
+      if ($k == "password") {
+        $config[$k] = str_replace("'", "\\'", $v);
+      } else {
+        $config[$k] = strtr($v, "'`", "__");
+      }
+    }
 
     if (!installer::connect($config)) {
       $content = render("invalid_db_info.html.php");

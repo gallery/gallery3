@@ -183,7 +183,7 @@ class installer {
   }
 
   static function prepend_prefix($prefix, $sql) {
-    return  preg_replace("#{([a-zA-Z0-9_]+)}#", "{$prefix}$1", $sql);
+    return preg_replace("#{([a-zA-Z0-9_]+)}#", "`{$prefix}$1`", $sql);
   }
 
   static function check_environment() {
