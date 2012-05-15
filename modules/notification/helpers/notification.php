@@ -174,7 +174,7 @@ class notification {
           ->subject($pending->subject)
           ->header("Mime-Version", "1.0")
           ->header("Content-Type", "text/html; charset=UTF-8")
-          ->message($pending->body)
+          ->message($pending->text)
           ->send();
         $pending->delete();
       } else {

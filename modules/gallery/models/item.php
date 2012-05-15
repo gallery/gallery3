@@ -833,6 +833,11 @@ class Item_Model_Core extends ORM_MPTT {
       $v->add_error("name", "conflict");
       return;
     }
+
+    if ($this->parent_id == 1 && Kohana::auto_load("{$this->slug}_Controller")) {
+      $v->add_error("slug", "reserved");
+      return;
+    }
   }
 
   /**
