@@ -133,7 +133,7 @@ class Albums_Controller extends Items_Controller {
 
       json::reply(array("result" => "success", "location" => $album->url()));
     } else {
-      print $form;
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
