@@ -18,6 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ORM extends ORM_Core {
+
+  /**
+   * Make sure that we're only using integer ids.
+   */
+  static function factory($model, $id=null) {
+    if ($id && !is_int($id)) {
+      throw new Exception("@todo ORM::factory requires integer ids");
+    }
+    return ORM_Core::factory($model, $id);
+  }
+
   public function save() {
     model_cache::clear();
     return parent::save();

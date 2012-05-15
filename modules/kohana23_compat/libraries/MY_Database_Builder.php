@@ -25,9 +25,6 @@ class Database_Builder extends Database_Builder_Core {
   public function merge_where($tuples) {
     if ($tuples) {
       foreach ($tuples as $tuple) {
-        if (count($tuple) != 3) {
-          throw new Database_Exception("Column triplets require a column, op and value");
-        }
         $this->where($tuple[0], $tuple[1], $tuple[2]);
       }
     }
@@ -41,9 +38,6 @@ class Database_Builder extends Database_Builder_Core {
   public function merge_or_where($tuples) {
     if ($tuples) {
       foreach ($tuples as $tuple) {
-        if (count($tuple) != 3) {
-          throw new Database_Exception("Column triplets require a column, op and value");
-        }
         $this->or_where($tuple[0], $tuple[1], $tuple[2]);
       }
     }

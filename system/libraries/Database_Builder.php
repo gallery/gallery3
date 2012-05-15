@@ -190,8 +190,6 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-                                if (count($column) != 3)
-                                        throw new Database_Exception('Column triplets require a column, op and value');
 				$this->where[] = array('AND' => $column);
 			}
 		}
@@ -218,8 +216,6 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-                                if (count($column) != 3)
-                                        throw new Database_Exception('Column triplets require a column, op and value');
 				$this->where[] = array('OR' => $column);
 			}
 		}
@@ -426,8 +422,6 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-                                if (count($column) != 3)
-                                        throw new Database_Exception('Column triplets require a column, op and value');
 				$this->having[] = array('AND' => $column);
 			}
 		}
@@ -453,8 +447,6 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-                                if (count($column) != 3)
-                                        throw new Database_Exception('Column triplets require a column, op and value');
 				$this->having[] = array('OR' => $column);
 			}
 		}
