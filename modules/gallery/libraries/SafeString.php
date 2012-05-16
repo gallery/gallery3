@@ -31,7 +31,7 @@ class SafeString_Core {
       $this->_is_safe_html = $string->_is_safe_html;
       $string = $string->unescaped();
     }
-    $this->_raw_string = (string) $string;
+    $this->_raw_string = mb_convert_encoding((string) $string, 'UTF-8', 'UTF-7');
   }
 
   /**
