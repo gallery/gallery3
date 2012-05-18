@@ -63,6 +63,10 @@ class Uploader_Controller extends Controller {
         $item->parent_id = $album->id;
         $item->set_data_file($temp_filename);
 
+        // Remove double extensions from the filename - they'll be disallowed in the model but if
+        // we don't do it here then it'll result in a failed upload.
+        $item->name = legal_file::smash_extensions($item->name);
+
         $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4", "m4v"))) {

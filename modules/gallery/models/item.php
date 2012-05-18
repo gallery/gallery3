@@ -797,9 +797,17 @@ class Item_Model_Core extends ORM_MPTT {
     if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
       return;
-    } else if (rtrim($this->name, ".") !== $this->name) {
+    }
+
+    if (rtrim($this->name, ".") !== $this->name) {
       $v->add_error("name", "no_trailing_period");
       return;
+    }
+
+    // Do not accept files with double extensions, they can cause problems on some
+    // versions of Apache.
+    if (substr_count($this->name, ".") > 1) {
+      $v->add_error("name", "illegal_data_file_extension");
     }
 
     if ($this->is_movie() || $this->is_photo()) {

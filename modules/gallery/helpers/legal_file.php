@@ -92,4 +92,20 @@ class legal_file_Core {
       return preg_replace("/\.[^\.]*?$/", ".{$new_ext}", $filename);
     }
   }
+
+  /**
+   * Reduce the given file to having a single extension.
+   */
+  static function smash_extensions($filename) {
+    $parts = pathinfo($filename);
+    $result = "";
+    if ($parts["dirname"] != ".") {
+      $result .= $parts["dirname"] . "/";
+    }
+    $parts["filename"] = str_replace(".", "_", $parts["filename"]);
+    $parts["filename"] = preg_replace("/[_]+/", "_", $parts["filename"]);
+    $parts["filename"] = trim($parts["filename"], "_");
+    $result .= "{$parts['filename']}.{$parts['extension']}";
+    return $result;
+  }
 }

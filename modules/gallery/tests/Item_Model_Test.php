@@ -490,7 +490,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function illegal_extension_test() {
-    foreach (array("test.php", "test.PHP", "test.php5", "test.php4", "test.pl") as $name) {
+    foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
+                   "test.pl", "test.php.png") as $name) {
       try {
         $photo = test::random_photo_unsaved(item::root());
         $photo->name = $name;
