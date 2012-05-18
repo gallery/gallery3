@@ -98,6 +98,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $pathinfo = pathinfo($file);
       // Forge prefixes files with "uploadfile-xxxxxxx" for uniqueness
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
+      $name = legal_file::smash_extensions($name);
 
       if (!($image_info = getimagesize($file)) ||
           !in_array($image_info[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
