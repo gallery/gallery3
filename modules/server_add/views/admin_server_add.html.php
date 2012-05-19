@@ -4,7 +4,7 @@
 <?= $theme->script("jquery.autocomplete.js") ?>
 <script type="text/javascript">
 $("document").ready(function() {
-  $("#g-path").autocomplete(
+  $("#g-path").gallery_autocomplete(
     "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/server_add/autocomplete"),
     {
       max: 256,

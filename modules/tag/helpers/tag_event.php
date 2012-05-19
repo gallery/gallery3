@@ -72,7 +72,7 @@ class tag_event_Core {
     $url = url::site("tags/autocomplete");
     $form->script("")
       ->text("$('form input[name=tags]').ready(function() {
-                $('form input[name=tags]').autocomplete(
+                $('form input[name=tags]').gallery_autocomplete(
                   '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
               });");
 
@@ -123,7 +123,7 @@ class tag_event_Core {
     $autocomplete_url = url::site("tags/autocomplete");
     $group->script("")
       ->text("$('input[name=tags]')
-                .autocomplete(
+                .gallery_autocomplete(
                   '$autocomplete_url',
                   {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1}
                 )
