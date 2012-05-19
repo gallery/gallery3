@@ -57,9 +57,9 @@ class Tags_Controller extends Controller {
       ->limit($limit)
       ->find_all();
     foreach ($tag_list as $tag) {
-      $tags[] = $tag->name;
+      $tags[] = html::clean($tag->name);
     }
 
-    print implode("\n", $tags);
+    ajax::response(implode("\n", $tags));
   }
 }

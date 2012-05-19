@@ -9,9 +9,12 @@
 <ul id="g-album-grid" class="ui-helper-clearfix">
 <? if (count($children)): ?>
   <? foreach ($children as $i => $child): ?>
-    <? $item_class = "g-photo"; ?>
     <? if ($child->is_album()): ?>
       <? $item_class = "g-album"; ?>
+    <? elseif ($child->is_movie()): ?>
+      <? $item_class = "g-movie"; ?>
+    <? else: ?>
+      <? $item_class = "g-photo"; ?>
     <? endif ?>
   <li id="g-item-id-<?= $child->id ?>" class="g-item <?= $item_class ?>">
     <?= $theme->thumb_top($child) ?>

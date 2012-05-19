@@ -4,28 +4,11 @@
 <?= $theme->script("jquery.autocomplete.js") ?>
 <script type="text/javascript">
 $("document").ready(function() {
-  $("#g-path").autocomplete(
+  $("#g-path").gallery_autocomplete(
     "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/server_add/autocomplete"),
     {
       max: 256,
       loadingClass: "g-loading-small",
-      parse: function(data) {
-        var parsed = [];
-        var rows = data.split("\n");
-        rows.shift();  // drop <META> tag
-        for (var i=0; i < rows.length; i++) {
-          var row = $.trim(rows[i]);
-          if (row) {
-            row = row.split("|");
-            parsed[parsed.length] = {
-              data: row,
-              value: row[0],
-              result: row[0]
-            };
-          }
-        }
-        return parsed;
-      }
     });
 });
 </script>

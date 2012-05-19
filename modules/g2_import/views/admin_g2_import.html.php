@@ -3,7 +3,7 @@
 <?= $theme->script("jquery.autocomplete.js") ?>
 <script type="text/javascript">
 $("document").ready(function() {
-  $("form input[name=embed_path]").autocomplete(
+  $("form input[name=embed_path]").gallery_autocomplete(
     "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
     {
       max: 256,
