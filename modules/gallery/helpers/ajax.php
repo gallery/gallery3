@@ -26,6 +26,6 @@ class ajax_Core {
   static function response($content) {
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
     print "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n";
-    print html::clean($content);
+    print $content;
   }
 }
