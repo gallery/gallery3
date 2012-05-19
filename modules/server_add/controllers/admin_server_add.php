@@ -71,13 +71,14 @@ class Admin_Server_Add_Controller extends Admin_Controller {
   }
 
   public function autocomplete() {
-    $directories = array('<meta http-equiv="content-type" content="text/html; charset=utf-8">');
+    $directories = array();
     $path_prefix = Input::instance()->get("q");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
         $directories[] = html::clean($file);
       }
     }
+
     print implode("\n", $directories);
   }
 
