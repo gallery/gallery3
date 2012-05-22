@@ -122,7 +122,15 @@ class File_Proxy_Controller extends Controller {
     } else {
       header("Content-Type: $item->mime_type");
     }
-    Kohana::close_buffers(false);
+
+    // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
+    // that Kohana started.  We want to close *all* buffers at this point because otherwise we're
+    // going to buffer up whatever file we're proxying (and it may be very large).  This may
+    // affect embedding or systems with PHP's output_buffering enabled.
+    while (ob_get_level()) {
+      ob_end_clean();
+    }
+
     readfile($file);
   }
 }

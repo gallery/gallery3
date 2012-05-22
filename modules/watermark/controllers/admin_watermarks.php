@@ -98,12 +98,27 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $pathinfo = pathinfo($file);
       // Forge prefixes files with "uploadfile-xxxxxxx" for uniqueness
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
+      $name = legal_file::smash_extensions($name);
 
       if (!($image_info = getimagesize($file)) ||
           !in_array($image_info[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
         message::error(t("Unable to identify this image file"));
         @unlink($file);
         return;
+      }
+
+      if (!in_array($pathinfo["extension"], legal_file::get_photo_extensions())) {
+        switch ($image_info[2]) {
+        case IMAGETYPE_GIF:
+          $name = legal_file::change_extension($name, "gif");
+          break;
+        case IMAGETYPE_JPEG:
+          $name = legal_file::change_extension($name, "jpg");
+          break;
+        case IMAGETYPE_PNG:
+          $name = legal_file::change_extension($name, "png");
+          break;
+        }
       }
 
       rename($file, VARPATH . "modules/watermark/$name");

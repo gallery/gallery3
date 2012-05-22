@@ -32,8 +32,8 @@ class Admin_Comments_Controller extends Admin_Controller {
     $form->validate();
     module::set_var("comment", "access_permissions",
                     $form->comment_settings->access_permissions->value);
-    module::set_var("comment", "rss_available",
-                    $form->comment_settings->rss_available->value);
+    module::set_var("comment", "rss_visible",
+                    $form->comment_settings->rss_visible->value);
     message::success(t("Comment settings updated"));
     url::redirect("admin/comments");
   }

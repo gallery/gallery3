@@ -72,7 +72,7 @@ class tag_event_Core {
     $url = url::site("tags/autocomplete");
     $form->script("")
       ->text("$('form input[name=tags]').ready(function() {
-                $('form input[name=tags]').autocomplete(
+                $('form input[name=tags]').gallery_autocomplete(
                   '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
               });");
 
@@ -123,7 +123,7 @@ class tag_event_Core {
     $autocomplete_url = url::site("tags/autocomplete");
     $group->script("")
       ->text("$('input[name=tags]')
-                .autocomplete(
+                .gallery_autocomplete(
                   '$autocomplete_url',
                   {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1}
                 )
@@ -149,7 +149,8 @@ class tag_event_Core {
   static function info_block_get_metadata($block, $item) {
     $tags = array();
     foreach (tag::item_tags($item) as $tag) {
-      $tags[] = "<a href=\"{$tag->url()}\">{$tag->name}</a>";
+      $tags[] = "<a href=\"{$tag->url()}\">" .
+        html::clean($tag->name) . "</a>";
     }
     if ($tags) {
       $info = $block->content->metadata;

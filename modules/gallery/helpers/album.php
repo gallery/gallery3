@@ -40,6 +40,8 @@ class album_Core {
       ->error_messages("conflict", t("There is already a movie, photo or album with this name"));
     $group->input("slug")->label(t("Internet Address"))
       ->error_messages(
+        "reserved", t("This address is reserved and can't be used."))
+      ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"))
       ->error_messages("required", t("You must provide an internet address"))
@@ -75,6 +77,8 @@ class album_Core {
       $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
         ->error_messages(
           "conflict", t("There is already a movie, photo or album with this internet address"))
+        ->error_messages(
+          "reserved", t("This address is reserved and can't be used."))
         ->error_messages(
           "not_url_safe",
           t("The internet address should contain only letters, numbers, hyphens and underscores"))

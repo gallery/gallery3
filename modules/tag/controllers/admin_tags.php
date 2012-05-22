@@ -58,7 +58,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
       json::reply(array("result" => "success", "location" => url::site("admin/tags")));
     } else {
-      print $form;
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 

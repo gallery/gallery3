@@ -25,7 +25,7 @@
       <title><?= html::purify($item->title) ?></title>
       <link><?= url::abs_site("{$item->type}s/{$item->id}") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("{$item->type}s/{$item->id}") ?></guid>
-      <pubDate><?= date("D, d M Y H:i:s T", $item->created); ?></pubDate>
+      <pubDate><?= date("D, d M Y H:i:s O", $item->created); ?></pubDate>
       <description><?= html::purify($item->description) ?></description>
       <content:encoded>
         <![CDATA[

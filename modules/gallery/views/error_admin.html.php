@@ -3,6 +3,7 @@
 <? if (!function_exists("t")) { function t($msg) { return $msg; } } ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <style type="text/css">
       body {
         background: #fff;
@@ -184,7 +185,7 @@
             <?= $type?> [ <?= $code ?> ]:
           </span>
           <span class="message">
-            <?= $message?>
+            <?= html::purify($message) ?>
           </span>
         </h3>
         <div id="<?= $error_id ?>" class="content">

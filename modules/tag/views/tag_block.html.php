@@ -2,7 +2,7 @@
 <script type="text/javascript">
   $("#g-add-tag-form").ready(function() {
     var url = $("#g-tag-cloud-autocomplete-url").attr("href");
-    $("#g-add-tag-form input:text").autocomplete(
+    $("#g-add-tag-form input:text").gallery_autocomplete(
       url, {
         max: 30,
         multiple: true,

@@ -23,6 +23,14 @@ class gallery_event_Core {
    * Initialization.
    */
   static function gallery_ready() {
+    if (!get_cfg_var("date.timezone")) {
+      if (!(rand() % 4)) {
+        Kohana_Log::add("error", "date.timezone setting not detected in " .
+                        get_cfg_var("cfg_file_path") . " falling back to UTC.  " .
+                        "Consult http://php.net/manual/function.get-cfg-var.php for help.");
+      }
+    }
+
     identity::load_user();
     theme::load_themes();
     locales::set_request_locale();
@@ -549,8 +557,8 @@ class gallery_event_Core {
         $value = $data->user->$field;
         if ($field == "locale") {
           $value = locales::display_name($value);
-        } elseif ($field == "url") {
-          $value = html::mark_clean(html::anchor($data->user->$field));
+        } else if ($field == "url") {
+          $value = html::mark_clean(html::anchor(html::clean($data->user->$field)));
         }
         $v->user_profile_data[(string) $label] = $value;
       }

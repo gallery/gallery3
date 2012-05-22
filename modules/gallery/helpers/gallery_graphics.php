@@ -126,7 +126,7 @@ class gallery_graphics_Core {
 
       module::event("graphics_composite_completed", $input_file, $output_file, $options, $item);
     } catch (ErrorException $e) {
-      Kohana_Log::add("error", $e->get_message());
+      Kohana_Log::add("error", $e->getMessage());
     }
   }
 }

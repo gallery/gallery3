@@ -188,7 +188,7 @@ class Item_Model_Core extends ORM_MPTT {
       return $base . "/.album.jpg";
     } else if ($this->is_movie()) {
       // Replace the extension with jpg
-      return preg_replace("/...$/", "jpg", $base);
+      return legal_file::change_extension($base, "jpg");
     }
   }
 
@@ -213,7 +213,7 @@ class Item_Model_Core extends ORM_MPTT {
       return $base . "/.album.jpg" . $cache_buster;
     } else if ($this->is_movie()) {
       // Replace the extension with jpg
-      $base = preg_replace("/...$/", "jpg", $base);
+      $base = legal_file::change_extension($base, "jpg");
       return $base . $cache_buster;
     }
   }
@@ -797,24 +797,36 @@ class Item_Model_Core extends ORM_MPTT {
     if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
       return;
-    } else if (rtrim($this->name, ".") !== $this->name) {
+    }
+
+    if (rtrim($this->name, ".") !== $this->name) {
       $v->add_error("name", "no_trailing_period");
       return;
     }
 
-    if ($this->is_movie() || $this->is_photo()) {
-      if (!$this->loaded()) {
-        // New items must have an extension
-        $ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        if (!$ext) {
-          $v->add_error("name", "illegal_data_file_extension");
-          return;
-        }
+    // Do not accept files with double extensions, they can cause problems on some
+    // versions of Apache.
+    if (substr_count($this->name, ".") > 1) {
+      $v->add_error("name", "illegal_data_file_extension");
+    }
 
-        if ($this->is_photo() &&
-            !in_array(strtolower($ext), array_map("strtolower", legal_file::get_photo_extensions())) ||
-            $this->is_movie() &&
-            !in_array(strtolower($ext), array_map("strtolower", legal_file::get_movie_extensions()))) {
+    if ($this->is_movie() || $this->is_photo()) {
+      $ext = pathinfo($this->name, PATHINFO_EXTENSION);
+
+      if (!$this->loaded() && !$ext) {
+        // New items must have an extension
+        $v->add_error("name", "illegal_data_file_extension");
+        return;
+      }
+
+      if ($this->is_photo()) {
+        if (!in_array(strtolower($ext), legal_file::get_photo_extensions())) {
+          $v->add_error("name", "illegal_data_file_extension");
+        }
+      }
+
+      if ($this->is_movie()) {
+        if (!in_array(strtolower($ext), legal_file::get_movie_extensions())) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
@@ -827,6 +839,11 @@ class Item_Model_Core extends ORM_MPTT {
         ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
         ->count_records()) {
       $v->add_error("name", "conflict");
+      return;
+    }
+
+    if ($this->parent_id == 1 && Kohana::auto_load("{$this->slug}_Controller")) {
+      $v->add_error("slug", "reserved");
       return;
     }
   }

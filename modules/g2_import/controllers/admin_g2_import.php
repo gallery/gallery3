@@ -113,7 +113,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
       }
     }
 
-    print implode("\n", $directories);
+    ajax::response(implode("\n", $directories));
   }
 
   private function _get_import_form() {

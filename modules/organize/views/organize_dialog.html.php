@@ -11,7 +11,7 @@
   var set_title = function(title) {
     $("#g-dialog").dialog("option", "title", ORGANIZE_TITLE.replace("__TITLE__", title));
   }
-  set_title("<?= $album->title ?>");
+  set_title("<?= html::clean($album->title) ?>");
 
   var done_loading = function() {
     $("#g-organize-app-loading").hide();

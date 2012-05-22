@@ -33,7 +33,12 @@ class Theme_View_Core extends Gallery_View {
 
     $this->theme_name = module::get_var("gallery", "active_site_theme");
     if (identity::active_user()->admin) {
-      $this->theme_name = Input::instance()->get("theme", $this->theme_name);
+      $theme_name = Input::instance()->get("theme");
+      if ($theme_name &&
+          file_exists(THEMEPATH . $theme_name) &&
+          strpos(realpath(THEMEPATH . $theme_name), THEMEPATH) == 0) {
+        $this->theme_name = $theme_name;
+      }
     }
     $this->item = null;
     $this->tag = null;

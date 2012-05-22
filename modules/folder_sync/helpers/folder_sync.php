@@ -46,4 +46,14 @@ class folder_sync_Core {
 
     return false;
   }
+
+  static function is_too_deep($path) {
+    $authorized_paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
+    foreach (array_keys($authorized_paths) as $valid_path) {
+      if ($path == $valid_path) {
+        return false;
+      }
+    }
+    return false;
+  }
 }

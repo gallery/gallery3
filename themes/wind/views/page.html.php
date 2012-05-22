@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<?php header("X-Frame-Options: SAMEORIGIN"); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" <?= $theme->html_attributes() ?> xml:lang="en" lang="en">
@@ -10,11 +11,11 @@
         <?= $page_title ?>
       <? else: ?>
         <? if ($theme->item()): ?>
-          <?= $theme->item()->title ?>
+          <?= html::purify($theme->item()->title) ?>
         <? elseif ($theme->tag()): ?>
           <?= t("Photos tagged with %tag_title", array("tag_title" => $theme->tag()->name)) ?>
         <? else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
-          <?= item::root()->title ?>
+          <?= html::purify(item::root()->title) ?>
         <? endif ?>
       <? endif ?>
     </title>

@@ -333,7 +333,36 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->mime_type = "video/x-flv";
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("type" => "read_only"), $e->validation->errors());
+      $this->assert_same(
+        array("name" => "illegal_data_file_extension", "type" => "read_only"),
+        $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+  }
+
+  public function photo_files_must_have_an_extension_test() {
+    try {
+      $photo = test::random_photo_unsaved();
+      $photo->mime_type = "image/jpeg";
+      $photo->name = "no_extension";
+      $photo->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "illegal_data_file_extension"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+  }
+
+  public function movie_files_must_have_an_extension_test() {
+    try {
+      $movie = test::random_photo_unsaved();
+      $movie->type = "movie";
+      $movie->mime_type = "video/x-flv";
+      $movie->name = "no_extension";
+      $movie->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "illegal_data_file_extension"), $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -421,7 +450,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("mime_type" => "invalid"), $e->validation->errors());
+      $this->assert_same(array("mime_type" => "invalid", "name" => "illegal_data_file_extension"),
+                         $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -460,9 +490,26 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function illegal_extension_test() {
-    foreach (array("test.php", "test.PHP", "test.php5", "test.php4", "test.pl") as $name) {
+    foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
+                   "test.pl", "test.php.png") as $name) {
       try {
         $photo = test::random_photo_unsaved(item::root());
+        $photo->name = $name;
+        $photo->save();
+      } catch (ORM_Validation_Exception $e) {
+        $this->assert_equal(array("name" => "illegal_data_file_extension"),
+                            $e->validation->errors());
+        continue;
+      }
+      $this->assert_true(false, "Shouldn't get here");
+    }
+  }
+
+  public function cant_rename_to_illegal_extension_test() {
+    foreach (array("test.php.test", "test.php", "test.PHP",
+                   "test.php5", "test.php4", "test.pl") as $name) {
+      try {
+        $photo = test::random_photo(item::root());
         $photo->name = $name;
         $photo->save();
       } catch (ORM_Validation_Exception $e) {

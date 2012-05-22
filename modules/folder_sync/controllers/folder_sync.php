@@ -44,12 +44,15 @@ class Folder_Sync_Controller extends Admin_Controller {
     // current path.
     if (folder_sync::is_valid_path($path)) {
       $tree->parents[] = $path;
-      while (folder_sync::is_valid_path(dirname($tree->parents[0]))) {
-        array_unshift($tree->parents, dirname($tree->parents[0]));
+      while (folder_sync::is_valid_path(dirname($tree->parents[0])."/")) {
+        array_unshift($tree->parents, dirname($tree->parents[0])."/");
       }
+      
+      if(folder_sync::is_too_deep($path))
+        continue;
 
       $glob_path = str_replace(array("{", "}", "[", "]"), array("\{", "\}", "\[", "\]"), $path);
-      foreach (glob("$glob_path/*") as $file) {
+      foreach (glob("$glob_path*") as $file) {
         if (!is_readable($file)) {
           continue;
         }
@@ -59,6 +62,8 @@ class Folder_Sync_Controller extends Admin_Controller {
             continue;
           }
         }
+        else
+          $file .= "/";
 
         $tree->files[] = $file;
       }
@@ -366,6 +371,205 @@ class Folder_Sync_Controller extends Admin_Controller {
       message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos / albums",
                        $task->get("completed_files")));
+    }
+  }
+  
+  function cron()
+  {
+    $owner_id = 2;
+    
+    // Login as Admin
+    $session = Session::instance();
+    $session->delete("user");
+    auth::login(IdentityProvider::instance()->admin_user());
+ 
+    // Add all folders
+    $paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
+    foreach (array_keys($paths) as $path) {
+      $files = glob($path."*");
+      foreach($files as $path) {
+        if (folder_sync::is_valid_path($path)) {
+          $entry = ORM::factory("folder_sync_entry");
+          $entry->path = $path;
+          $entry->is_directory = intval(is_dir($path));
+          $entry->parent_id = null;
+          $entry->task_id = -1;
+          $entry->md5 = '';
+          $entry->save();
+        }
+      }
+    }
+    
+    // Scan and add files
+    $done = false;
+    while(!$done) {
+      $entry = ORM::factory("folder_sync_entry")
+        ->where("task_id", "=", -1)
+        ->where("is_directory", "=", 1)
+        ->where("checked", "=", 0)
+        ->order_by("id", "ASC")
+        ->find();
+
+      if ($entry->loaded()) {
+        $child_paths = glob(preg_quote($entry->path) . "/*");
+        if (!$child_paths) {
+          $child_paths = glob("{$entry->path}/*");
+        }
+        foreach ($child_paths as $child_path) {
+          if (!is_dir($child_path)) {
+            $ext = strtolower(pathinfo($child_path, PATHINFO_EXTENSION));
+            if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4", "m4v")) ||
+                !filesize($child_path)) {
+              // Not importable, skip it.
+              continue;
+            }
+            // check if file was already imported
+            if(module::get_var("folder_sync", "skip_duplicates")) {
+              $entry_exists = ORM::factory("folder_sync_entry")
+                ->where("is_directory", "=", 0)
+                ->where("path", "=", $child_path)
+                ->find()->loaded();
+              if($entry_exists) {
+                if(!module::get_var("folder_sync", "process_updates")) {
+                  continue;
+                }
+              }
+            }
+          }
+          
+          $child_entry = ORM::factory("folder_sync_entry");
+          $child_entry->task_id = -1;
+          $child_entry->path = $child_path;
+          $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
+          $child_entry->is_directory = is_dir($child_path);
+          $child_entry->md5 = is_dir($child_path) ? '' : md5_file($child_path);
+          $child_entry->save();
+        }
+
+        // We've processed this entry, mark it as done.
+        $entry->checked = 1;
+        $entry->save();
+      } else {
+        $done = true;
+      }
+    }
+
+    $done = false;
+    while(!$done) {
+      $entries = ORM::factory("folder_sync_entry")
+        ->where("task_id", "=", -1)
+        ->where("item_id", "IS", null)
+        ->order_by("id", "ASC")
+        ->limit(10)
+        ->find_all();
+      if ($entries->count() == 0) {
+        $done = true;
+      }
+
+      foreach ($entries as $entry) {
+        $parent_entry = ORM::factory("folder_sync_entry", $entry->parent_id);
+        if (!$parent_entry->loaded()) {
+          $parent = ORM::factory("item", 1);
+        } else {
+          $parent = ORM::factory("item", $parent_entry->item_id);
+        }
+
+        $name = basename($entry->path);
+        $title = item::convert_filename_to_title($name);
+        if ($entry->is_directory) {
+          if(module::get_var("folder_sync", "skip_duplicates")) {
+            $album_exists = ORM::factory("item")->where("type", "=", "album")
+              ->where("name", "=", $name)->find();
+          } else {
+            $album_exists = null;
+          }
+          if($album_exists && $album_exists->loaded()) {
+            // Skip adding of an album
+            $entry->item_id = $album_exists->id;
+          } else {
+            $album = ORM::factory("item");
+            $album->type = "album";
+            $album->parent_id = $parent->id;
+            $album->name = $name;
+            $album->title = $title;
+            $album->owner_id = $owner_id;
+            $album->sort_order = $parent->sort_order;
+            $album->sort_column = $parent->sort_column;
+            $album->save();
+            $entry->item_id = $album->id;
+          }
+        } else {
+          try {
+            $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+            $entry_exists = 0;
+            if(module::get_var("folder_sync", "skip_duplicates")) {
+              $entry_exists = ORM::factory("folder_sync_entry")
+                ->where("is_directory", "=", 0)
+                ->where("item_id", "IS NOT", null)
+                ->where("path", "=", $entry->path)
+                ->find();
+            }
+            if ($entry_exists && $entry_exists->loaded()) {
+              // skip adding an image
+              if(module::get_var("folder_sync", "process_updates")) {
+                if($entry_exists->md5 != $entry->md5) {
+                  $item = ORM::factory("item", $entry_exists->item_id);
+                  if($item->loaded()) {
+                    $item->set_data_file($entry->path);
+                    $item->save();
+                    $entry_exists->md5 = $entry->md5;
+                    $entry_exists->save();
+                  }
+                }
+              }
+              $entry->item_id = 0;
+            } elseif (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
+              $photo = ORM::factory("item");
+              $photo->type = "photo";
+              $photo->parent_id = $parent->id;
+              $photo->set_data_file($entry->path);
+              $photo->name = $name;
+              $photo->title = $title;
+              $photo->owner_id = $owner_id;
+              $photo->save();
+              $entry->item_id = $photo->id;
+            } else if (in_array($extension, array("flv", "mp4", "m4v"))) {
+              $movie = ORM::factory("item");
+              $movie->type = "movie";
+              $movie->parent_id = $parent->id;
+              $movie->set_data_file($entry->path);
+              $movie->name = $name;
+              $movie->title = $title;
+              $movie->owner_id = $owner_id;
+              $movie->save();
+              $entry->item_id = $movie->id;
+            } else {
+              // This should never happen, because we don't add stuff to the list that we can't
+              // process.  But just in, case.. set this to a non-null value so that we skip this
+              // entry.
+              $entry->item_id = 0;
+            }
+          } catch (Exception $e) {
+            // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
+            $entry->item_id = 0;
+          }
+        }
+        $entry->save();
+      }
+
+      if(module::get_var("folder_sync", "skip_duplicates")) {
+        db::build()
+          ->delete("folder_sync_entries")
+          ->where("task_id", "=", -1)
+          ->where("item_id", "=", 0)
+          ->execute();
+      } else {
+        db::build()
+          ->delete("folder_sync_entries")
+          ->where("task_id", "=", -1)
+          ->execute();
+      }
     }
   }
 }
