@@ -1,0 +1,3 @@
+name = Google Analytics
+description = Renders the Google Analytics Code at the end of the page.
+version = 3
