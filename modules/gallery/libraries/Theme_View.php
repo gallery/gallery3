@@ -117,6 +117,12 @@ class Theme_View_Core extends Gallery_View {
     return $menu->render();
   }
 
+  public function search_menu() {
+    $menu = Menu::factory("root");
+    module::event("search_menu", $menu, $this);
+    return $menu->render();
+  }
+
   public function photo_menu() {
     $menu = Menu::factory("root");
     if (access::can("view_full", $this->item())) {
