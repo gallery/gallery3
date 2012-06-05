@@ -37,10 +37,13 @@
  * So dirname doesn't work.  So we do a tricky workaround where we look up the SCRIPT_FILENAME (in
  * this case it'd be "index.php" and we delete from that part onwards.  If you work at 1and1 and
  * you're reading this, please fix this bug!
+ *
+ * Rawurlencode each of the elements to avoid breaking the page layout.
  */
 $config["site_domain"] =
-  substr($_SERVER["SCRIPT_NAME"], 0,
-         strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"])));
+  implode("/", array_map("rawurlencode", explode("/",
+      substr($_SERVER["SCRIPT_NAME"], 0,
+             strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"]))))));
 
 /**
  * Force a default protocol to be used by the site. If no site_protocol is
