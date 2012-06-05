@@ -66,6 +66,15 @@ class slideshow_event_Core {
                         "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
                   ->css_id("g-slideshow-link"));
   }
+  static function search_menu($menu, $theme) {
+    $max_scale = module::get_var("slideshow", "max_scale");
+    $menu->append(Menu::factory("link")
+                  ->id("slideshow")
+                  ->label(t("View slideshow"))
+                  ->url("javascript:cooliris.embed.show(" .
+                        "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
+                  ->css_id("g-slideshow-link"));
+  }
 
   private static function _feed_url($theme) {
     if ($item = $theme->item()) {
@@ -73,6 +82,8 @@ class slideshow_event_Core {
         $item = $item->parent();
       }
       return rss::url("gallery/album/{$item->id}");
+    } elseif($theme->page_subtype == "search") {
+      return rss::url("search/search/{$item->content->q}");
     } else {
       return rss::url("tag/tag/{$theme->tag()->id}");
     }

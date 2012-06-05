@@ -35,7 +35,9 @@ class gallery_theme_Core {
         }
       } else if ($tag = $theme->tag()) {
         $buf .= rss::feed_link("tag/tag/{$tag->id}");
-      }
+      } else if ($theme->page_subtype == "search") {
+        $buf .= rss::feed_link("search/search/{$item->content->q}");
+      } 
     }
 
     if (count(locales::installed())) {
