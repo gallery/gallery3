@@ -29,6 +29,12 @@
 class File_Proxy_Controller extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
+    
+    // Force Turn off the compress as most image file already compressed.
+    // And the compress will slow down the response.
+    if(ini_get('zlib.output_compression'))
+      ini_set('zlib.output_compression', 'Off');
+    
     // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
     $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
 
