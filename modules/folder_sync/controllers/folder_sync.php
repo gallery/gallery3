@@ -415,6 +415,7 @@ class Folder_Sync_Controller extends Admin_Controller {
         if (!$child_paths) {
           $child_paths = glob("{$entry->path}/*");
         }
+        $folders = array();
         foreach ($child_paths as $child_path) {
           if (!is_dir($child_path)) {
             $ext = strtolower(pathinfo($child_path, PATHINFO_EXTENSION));
@@ -435,14 +436,28 @@ class Folder_Sync_Controller extends Admin_Controller {
                 }
               }
             }
+            $child_entry = ORM::factory("folder_sync_entry");
+            $child_entry->task_id = -1;
+            $child_entry->path = $child_path;
+            $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
+            $child_entry->is_directory = 0;
+            $child_entry->md5 = md5_file($child_path);
+            $child_entry->save();
+          } else {
+            $folders[] = $child_path;
           }
-          
+        }
+        // Reverse sort if needed
+        if(module::get_var("folder_sync", "reverse_sort", false)) {
+          rsort($folders);
+        }
+        foreach($folders as $child_path) {
           $child_entry = ORM::factory("folder_sync_entry");
           $child_entry->task_id = -1;
           $child_entry->path = $child_path;
-          $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
-          $child_entry->is_directory = is_dir($child_path);
-          $child_entry->md5 = is_dir($child_path) ? '' : md5_file($child_path);
+          $child_entry->parent_id = $entry->id;
+          $child_entry->is_directory = 1;
+          $child_entry->md5 = "";
           $child_entry->save();
         }
 
@@ -479,7 +494,9 @@ class Folder_Sync_Controller extends Admin_Controller {
         if ($entry->is_directory) {
           if(module::get_var("folder_sync", "skip_duplicates")) {
             $album_exists = ORM::factory("item")->where("type", "=", "album")
-              ->where("name", "=", $name)->find();
+              ->where("name", "=", $name)
+              ->where("parent_id", "=", $parent->id)
+              ->find();
           } else {
             $album_exists = null;
           }
