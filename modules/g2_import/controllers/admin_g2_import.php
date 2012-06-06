@@ -104,6 +104,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $path_prefix = Input::instance()->get("q");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
+        $file = html::clean($file);
         $directories[] = $file;
 
         // If we find an embed.php, include it as well
