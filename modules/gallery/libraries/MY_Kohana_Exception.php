@@ -23,7 +23,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
    */
   public static function text($e) {
     if ($e instanceof Kohana_404_Exception) {
-      return "File not found: " . Router::$complete_uri;
+      return "File not found: " . rawurlencode(Router::$complete_uri);
     } else {
       return sprintf(
         "%s [ %s ]: %s\n%s [ %s ]\n%s",
