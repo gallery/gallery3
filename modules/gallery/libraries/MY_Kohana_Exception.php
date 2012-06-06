@@ -94,4 +94,8 @@ class Kohana_Exception extends Kohana_Exception_Core {
     }
     return $result;
   }
+
+  public static function debug_path($file) {
+    return html::clean(parent::debug_path($file));
+  }
 }
