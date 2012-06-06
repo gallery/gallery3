@@ -23,7 +23,7 @@
   <?php else: ?>
   <p>
     We've found a place to store your photos:
-    <code class="location"> <?= VARPATH ?> </code>
+    <code class="location"> <?= htmlspecialchars(VARPATH, ENT_QUOTES, 'UTF-8', true) ?> </code>
   </p>
   <?php endif ?>
 </fieldset>

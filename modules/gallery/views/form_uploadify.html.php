@@ -59,8 +59,9 @@
           var re = /^error: (.*)$/i;
           var msg = re.exec(response);
           $("#g-add-photos-status ul").append(
-            "<li id=\"q" + queueID + "\" class=\"g-success\">" + fileObj.name + " - " +
+            "<li id=\"q" + queueID + "\" class=\"g-success\"><span></span> - " +
             <?= t("Completed")->for_js() ?> + "</li>");
+          $("#g-add-photos-status li#q" + queueID + " span").text(fileObj.name);
           setTimeout(function() { $("#q" + queueID).slideUp("slow").remove() }, 5000);
           success_count++;
           update_status();
@@ -92,7 +93,8 @@
             error_msg + "</a>";
 
           $("#g-add-photos-status ul").append(
-            "<li id=\"q" + queueID + "\" class=\"g-error\">" + fileObj.name + msg + "</li>");
+            "<li id=\"q" + queueID + "\" class=\"g-error\"><span></span>" + msg + "</li>");
+          $("#g-add-photos-status li#q" + queueID + " span").text(fileObj.name);
           $("#g-uploadify").uploadifyCancel(queueID);
           error_count++;
           update_status();

@@ -26,11 +26,12 @@
     <? $item_class = $item->is_album() ? "g-album" : "g-photo" ?>
     <li class="g-item <?= $item_class ?>">
       <a href="<?= $item->url() ?>">
-        <?= $item->thumb_img() ?>
+        <?= $item->thumb_img(array("class" => "g-thumbnail")) ?>
         <p>
+          <span class="<?= $item_class ?>"></span>
           <?= html::purify(text::limit_chars($item->title, 32, "…")) ?>
-         </p>
-         <div>
+        </p>
+        <div>
           <?= nl2br(html::purify(text::limit_chars($item->description, 64, "…"))) ?>
         </div>
       </a>

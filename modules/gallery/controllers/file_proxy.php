@@ -29,6 +29,13 @@
 class File_Proxy_Controller extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
+
+    // Force zlib compression off.  Image and movie files are already compressed and
+    // recompressing them is CPU intensive.
+    if (ini_get("zlib.output_compression")) {
+      ini_set("zlib.output_compression", "Off");
+    }
+
     // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
     $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
 
