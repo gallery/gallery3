@@ -29,6 +29,13 @@
 class File_Proxy_Controller extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
+
+    // Force zlib compression off.  Image and movie files are already compressed and
+    // recompressing them is CPU intensive.
+    if (ini_get("zlib.output_compression")) {
+      ini_set("zlib.output_compression", "Off");
+    }
+
     // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
     $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
 
@@ -128,7 +135,12 @@ class File_Proxy_Controller extends Controller {
     // going to buffer up whatever file we're proxying (and it may be very large).  This may
     // affect embedding or systems with PHP's output_buffering enabled.
     while (ob_get_level()) {
-      ob_end_clean();
+      Kohana_Log::add("error","".print_r(ob_get_level(),1));
+      if (!@ob_end_clean()) {
+        // ob_end_clean() can return false if the buffer can't be removed for some reason
+        // (zlib output compression buffers sometimes cause problems).
+        break;
+      }
     }
 
     readfile($file);
