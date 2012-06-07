@@ -402,7 +402,8 @@ class Folder_Sync_Controller extends Admin_Controller {
     
     // Scan and add files
     $done = false;
-    while(!$done) {
+    $limit = 500;
+    while(!$done && $limit > 0) {
       $entry = ORM::factory("folder_sync_entry")
         ->where("task_id", "=", -1)
         ->where("is_directory", "=", 1)
@@ -443,9 +444,12 @@ class Folder_Sync_Controller extends Admin_Controller {
             $child_entry->is_directory = 0;
             $child_entry->md5 = md5_file($child_path);
             $child_entry->save();
+            $limit--;
           } else {
             $folders[] = $child_path;
           }
+          if($limit <= 0)
+            break;
         }
         // Reverse sort if needed
         if(module::get_var("folder_sync", "reverse_sort", false)) {
