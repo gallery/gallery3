@@ -106,7 +106,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8");
-    $expected = "CREATE TABLE IF NOT EXISTS g_test (
+    $expected = "CREATE TABLE IF NOT EXISTS `g_test` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(32) NOT NULL,
                    PRIMARY KEY (`id`),
@@ -121,9 +121,9 @@ class Database_Test extends Gallery_Unit_Test_Case {
         "  AND `right_ptr` <= 6)";
     $sql = $db->add_table_prefixes($sql);
 
-    $expected = "UPDATE g_test SET `name` = '{test string}' " .
+    $expected = "UPDATE `g_test` SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM g_test " .
+        "  (SELECT `id` FROM `g_test` " .
         "  WHERE `left_ptr` >= 1 " .
         "  AND `right_ptr` <= 6)";
 
@@ -133,7 +133,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   function prefix_replacement_for_rename_table_test() {
     $db = Database::instance("mock");
     $this->assert_same(
-      "RENAME TABLE g_test TO g_new_test",
+      "RENAME TABLE `g_test` TO `g_new_test`",
       $db->add_table_prefixes("RENAME TABLE {test} TO {new_test}"));
   }
 
