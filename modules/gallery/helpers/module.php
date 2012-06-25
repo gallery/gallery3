@@ -110,14 +110,18 @@ class module_Core {
       $identity_module = module::get_var("gallery", "identity_provider", "user");
       $modules->$identity_module->locked = true;
 
-      function natural_name_sort($a, $b) {
-        return strnatcasecmp($a->name, $b->name);
-      }
-      $modules->uasort('natural_name_sort');
+      $modules->uasort(array("module", "module_comparator"));
       self::$available = $modules;
     }
 
     return self::$available;
+  }
+
+  /**
+   * Natural name sort comparator
+   */
+  static function module_comparator($a, $b) {
+    return strnatcasecmp($a->name, $b->name);
   }
 
   /**
