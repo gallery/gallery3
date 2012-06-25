@@ -142,7 +142,9 @@ class item_Core {
    */
   static function convert_filename_to_title($filename) {
     $title = strtr($filename, "_", " ");
-    $title = preg_replace("/\..{3,4}$/", "", $title);
+    $exts = legal_file::get_extensions();
+    foreach($exts as $ext)
+      $title = preg_replace("/\.".$ext."$/", "", $title);
     $title = preg_replace("/ +/", " ", $title);
     return $title;
   }
