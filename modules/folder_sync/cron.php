@@ -1,4 +1,12 @@
 <?php
+
+// Acquire lock
+$fp = fopen(sys_get_temp_dir().DIRECTORY_SEPARATOR."gallery.lock", "w+");
+if (!flock($fp, LOCK_EX | LOCK_NB)) {
+  echo "Couldn't get the lock!";
+  exit;
+}
+
 set_time_limit(3600);
 error_reporting(E_ALL);
 ini_set("display_errors", "on");
@@ -53,3 +61,7 @@ Kohana::setup();
 Event::run('system.ready');
 
 Folder_Sync_Controller::cron();
+
+// Release lock
+flock($fp, LOCK_UN);
+fclose($fp);
