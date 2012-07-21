@@ -562,7 +562,7 @@ class gallery_task_Core {
 
       case self::FIX_STATE_START_MISSING_ACCESS_CACHES:
         $stack = array();
-        foreach (self::find_missing_access_caches() as $row) {
+        foreach (self::find_missing_access_caches_limited(500) as $row) {
           $stack[] = $row->id;
         }
         if ($stack) {
@@ -582,11 +582,20 @@ class gallery_task_Core {
         $task->set("stack", implode(" ", $stack));
         $completed++;
         if (empty($stack)) {
-          // The new cache rows are there, but they're incorrectly populated so we have to fix
-          // them.  If this turns out to be too slow, we'll have to refactor
-          // access::recalculate_permissions to allow us to do it in slices.
-          access::recalculate_album_permissions(item::root());
-          $state = self::FIX_STATE_DONE;
+          // Refill the stack
+          foreach (self::find_missing_access_caches_limited(500) as $row) {
+            $stack[] = $row->id;
+          }
+
+          if (empty($stack)) {
+            // The new cache rows are there, but they're incorrectly populated so we have to fix
+            // them.  If this turns out to be too slow, we'll have to refactor
+            // access::recalculate_permissions to allow us to do it in slices.
+            access::recalculate_album_permissions(item::root());
+            $state = self::FIX_STATE_DONE;
+          } else {
+            $task->set("stack", implode(" ", $stack));
+          }
         }
         break;
       }
@@ -633,11 +642,16 @@ class gallery_task_Core {
   }
 
   static function find_missing_access_caches() {
+    return self::find_missing_access_caches_limited(1 << 16);
+  }
+
+  static function find_missing_access_caches_limited($limit) {
     return db::build()
       ->select("items.id")
       ->from("items")
       ->join("access_caches", "items.id", "access_caches.item_id", "left")
       ->where("access_caches.id", "is", null)
+      ->limit($limit)
       ->execute();
   }
 }
