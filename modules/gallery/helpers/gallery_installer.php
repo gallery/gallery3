@@ -313,7 +313,7 @@ class gallery_installer {
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
     module::set_var("gallery", "timezone", null);
 
-    module::set_version("gallery", 49);
+    module::set_version("gallery", 50);
   }
 
   static function upgrade($version) {
@@ -405,7 +405,7 @@ class gallery_installer {
       // for now because we don't want a lengthy operation here.
       $db->query("UPDATE {items} SET `slug` = `name`");
 
-      // Flush all path caches becuase we're going to start urlencoding them.
+      // Flush all path caches because we're going to start urlencoding them.
       $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       module::set_version("gallery", $version = 12);
     }
@@ -691,6 +691,27 @@ class gallery_installer {
       // setting this value incorrectly, so we're going to stomp this value for v49.
       module::set_var("gallery", "timezone", null);
       module::set_version("gallery", $version = 49);
+    }
+
+    if ($version == 49) {
+      // In v49 we changed the Item_Model validation code to disallow files with two dots in them,
+      // but we didn't rename any files which fail to validate, so as soon as you do anything to
+      // change those files (eg. as a side effect of getting the url or file path) it fails to
+      // validate.  Fix those here.  This might be slow, but if it times out it can just pick up
+      // where it left off.
+      foreach (db::build()
+               ->from("items")
+               ->select("id")
+               ->where("type", "<>", "album")
+               ->where(db::expr("`name` REGEXP '\\\\..*\\\\.'"), "=", 1)
+               ->order_by("id", "asc")
+               ->execute() as $row) {
+        set_time_limit(30);
+        $item = ORM::factory("item", $row->id);
+        $item->name = legal_file::smash_extensions($item->name);
+        $item->save();
+      }
+      module::set_version("gallery", $version = 50);
     }
   }
 

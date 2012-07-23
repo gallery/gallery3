@@ -19,7 +19,7 @@
       </tr>
       <? foreach ($vars as $var): ?>
       <tr class="setting-row <?= text::alternate("g-odd", "g-even") ?>">
-        <td> <?= $var->module_name ?> </td>
+        <td> <?= html::clean($var->module_name) ?> </td>
         <td> <?= html::clean($var->name) ?> </td>
         <td>
           <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . html::clean($var->name)) ?>"

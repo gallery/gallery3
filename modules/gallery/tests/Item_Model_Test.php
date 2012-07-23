@@ -520,4 +520,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $this->assert_true(false, "Shouldn't get here");
     }
   }
+
+  public function albums_can_have_two_dots_in_name_test() {
+    $album = test::random_album_unsaved(item::root());
+    $album->name = $album->name . ".foo.bar";
+    $album->save();
+  }
 }
