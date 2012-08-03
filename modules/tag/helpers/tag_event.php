@@ -126,7 +126,8 @@ class tag_event_Core {
                 .gallery_autocomplete(
                   '$autocomplete_url',
                   {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1}
-                )
+                );
+              $('input[name=tags]')
                 .change(function (event) {
                   $('#g-uploadify').uploadifySettings('scriptData', {'tags': $(this).val()});
                 });");

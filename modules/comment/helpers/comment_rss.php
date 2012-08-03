@@ -36,7 +36,7 @@ class comment_rss_Core {
     }
 
     if ($item && comment_rss::feed_visible("per_item")) {
-      $feeds["comment/item/$item->id"] =
+      $feeds["comment/per_item/$item->id"] =
         t("Comments on %title", array("title" => html::purify($item->title)));
     }
     return $feeds;

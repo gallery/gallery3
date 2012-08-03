@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',49,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',50,1);
 INSERT INTO {modules} VALUES (2,1,'user',4,2);
 INSERT INTO {modules} VALUES (3,1,'comment',6,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);

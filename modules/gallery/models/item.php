@@ -806,9 +806,9 @@ class Item_Model_Core extends ORM_MPTT {
 
     // Do not accept files with double extensions, they can cause problems on some
     // versions of Apache.
-    //if (substr_count($this->name, ".") > 1) {
-    //  $v->add_error("name", "illegal_data_file_extension");
-    //}
+    if (!$this->is_album() && substr_count($this->name, ".") > 1) {
+      $v->add_error("name", "illegal_data_file_extension");
+    }
 
     if ($this->is_movie() || $this->is_photo()) {
       $ext = pathinfo($this->name, PATHINFO_EXTENSION);

@@ -14,7 +14,7 @@
       },
       plugins: {
         pseudostreaming: {
-          url: "<?= url::abs_file("lib/flowplayer.pseudostreaming.swf") ?>"
+          url: "<?= url::abs_file("lib/flowplayer.pseudostreaming-byterange.swf") ?>"
         },
         controls: {
           autoHide: 'always',

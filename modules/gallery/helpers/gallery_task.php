@@ -26,9 +26,11 @@ class gallery_task_Core {
   const FIX_STATE_RUN_DUPE_SLUGS = 5;
   const FIX_STATE_START_DUPE_NAMES = 6;
   const FIX_STATE_RUN_DUPE_NAMES = 7;
-  const FIX_STATE_START_MISSING_ACCESS_CACHES = 8;
-  const FIX_STATE_RUN_MISSING_ACCESS_CACHES = 9;
-  const FIX_STATE_DONE = 10;
+  const FIX_STATE_START_REBUILD_ITEM_CACHES = 8;
+  const FIX_STATE_RUN_REBUILD_ITEM_CACHES = 9;
+  const FIX_STATE_START_MISSING_ACCESS_CACHES = 10;
+  const FIX_STATE_RUN_MISSING_ACCESS_CACHES = 11;
+  const FIX_STATE_DONE = 12;
 
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count_records();
@@ -337,16 +339,24 @@ class gallery_task_Core {
 
     $total = $task->get("total");
     if (empty($total)) {
+      $item_count = db::build()->count_records("items");
+      $total = 0;
+
       // mptt: 2 operations for every item
-      $total = 2 * db::build()->count_records("items");
+      $total += 2 * $item_count;
+
       // album audit (permissions and bogus album covers): 1 operation for every album
       $total += db::build()->where("type", "=", "album")->count_records("items");
+
       // one operation for each missing slug, name and access cache
       foreach (array("find_dupe_slugs", "find_dupe_names", "find_missing_access_caches") as $func) {
         foreach (self::$func() as $row) {
           $total++;
         }
       }
+
+      // one operation to rebuild path and url caches;
+      $total += 1 * $item_count;
 
       $task->set("total", $total);
       $task->set("state", $state = self::FIX_STATE_START_MPTT);
@@ -556,37 +566,76 @@ class gallery_task_Core {
         $completed++;
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_MISSING_ACCESS_CACHES;
+          $state = self::FIX_STATE_START_REBUILD_ITEM_CACHES;
+        }
+        break;
+
+      case self::FIX_STATE_START_REBUILD_ITEM_CACHES:
+        $stack = array();
+        foreach (self::find_empty_item_caches(500) as $row) {
+          $stack[] = $row->id;
+        }
+        $task->set("stack", implode(" ", $stack));
+        $state = self::FIX_STATE_RUN_REBUILD_ITEM_CACHES;
+        break;
+
+      case self::FIX_STATE_RUN_REBUILD_ITEM_CACHES:
+        $stack = explode(" ", $task->get("stack"));
+        if (!empty($stack)) {
+          $id = array_pop($stack);
+          $item = ORM::factory("item", $id);
+          $item->relative_path();  // this rebuilds the cache and saves the item as a side-effect
+          $task->set("stack", implode(" ", $stack));
+          $completed++;
+        }
+
+        if (empty($stack)) {
+          // Try refilling the stack
+          foreach (self::find_empty_item_caches(500) as $row) {
+            $stack[] = $row->id;
+          }
+          $task->set("stack", implode(" ", $stack));
+
+          if (empty($stack)) {
+            $state = self::FIX_STATE_START_MISSING_ACCESS_CACHES;
+          }
         }
         break;
 
       case self::FIX_STATE_START_MISSING_ACCESS_CACHES:
         $stack = array();
-        foreach (self::find_missing_access_caches() as $row) {
+        foreach (self::find_missing_access_caches_limited(500) as $row) {
           $stack[] = $row->id;
         }
-        if ($stack) {
-          $task->set("stack", implode(" ", $stack));
-          $state = self::FIX_STATE_RUN_MISSING_ACCESS_CACHES;
-        } else {
-          $state = self::FIX_STATE_DONE;
-        }
+        $task->set("stack", implode(" ", $stack));
+        $state = self::FIX_STATE_RUN_MISSING_ACCESS_CACHES;
         break;
 
       case self::FIX_STATE_RUN_MISSING_ACCESS_CACHES:
         $stack = explode(" ", $task->get("stack"));
-        $id = array_pop($stack);
-        $access_cache = ORM::factory("access_cache");
-        $access_cache->item_id = $id;
-        $access_cache->save();
-        $task->set("stack", implode(" ", $stack));
-        $completed++;
+        if (!empty($stack)) {
+          $id = array_pop($stack);
+          $access_cache = ORM::factory("access_cache");
+          $access_cache->item_id = $id;
+          $access_cache->save();
+          $task->set("stack", implode(" ", $stack));
+          $completed++;
+        }
+
         if (empty($stack)) {
-          // The new cache rows are there, but they're incorrectly populated so we have to fix
-          // them.  If this turns out to be too slow, we'll have to refactor
-          // access::recalculate_permissions to allow us to do it in slices.
-          access::recalculate_album_permissions(item::root());
-          $state = self::FIX_STATE_DONE;
+          // Try refilling the stack
+          foreach (self::find_missing_access_caches_limited(500) as $row) {
+            $stack[] = $row->id;
+          }
+          $task->set("stack", implode(" ", $stack));
+
+          if (empty($stack)) {
+            // The new cache rows are there, but they're incorrectly populated so we have to fix
+            // them.  If this turns out to be too slow, we'll have to refactor
+            // access::recalculate_permissions to allow us to do it in slices.
+            access::recalculate_album_permissions(item::root());
+            $state = self::FIX_STATE_DONE;
+          }
         }
         break;
       }
@@ -632,12 +681,27 @@ class gallery_task_Core {
       ->execute();
   }
 
+  static function find_empty_item_caches($limit) {
+    return db::build()
+      ->select("items.id")
+      ->from("items")
+      ->where("relative_path_cache", "is", null)
+      ->or_where("relative_url_cache", "is", null)
+      ->limit($limit)
+      ->execute();
+  }
+
   static function find_missing_access_caches() {
+    return self::find_missing_access_caches_limited(1 << 16);
+  }
+
+  static function find_missing_access_caches_limited($limit) {
     return db::build()
       ->select("items.id")
       ->from("items")
       ->join("access_caches", "items.id", "access_caches.item_id", "left")
       ->where("access_caches.id", "is", null)
+      ->limit($limit)
       ->execute();
   }
 }
