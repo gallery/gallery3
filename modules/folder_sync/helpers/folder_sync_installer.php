@@ -29,15 +29,18 @@ class folder_sync_installer {
                   `path` varchar(255) NOT NULL,
                   `task_id` int(9) NOT NULL,
                   `md5` varchar(32) NOT NULL,
+                  `added` int NULL DEFAULT NULL,
                   PRIMARY KEY (`id`))
                 DEFAULT CHARSET=utf8;");
-    module::set_version("folder_sync", 1);
+    module::set_version("folder_sync", 2);
     folder_sync::check_config();
   }
 
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
+      $db->query("ALTER TABLE {folder_sync_entries} ADD COLUMN `added` int NULL DEFAULT NULL AFTER `md5`");
+      module::set_version("folder_sync", 2);
     }
   }
 

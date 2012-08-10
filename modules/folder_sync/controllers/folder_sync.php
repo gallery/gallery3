@@ -431,10 +431,15 @@ class Folder_Sync_Controller extends Admin_Controller {
                 ->where("is_directory", "=", 0)
                 ->where("path", "=", $child_path)
                 ->find()->loaded();
+              $md5 = '';
               if($entry_exists) {
                 if(!module::get_var("folder_sync", "process_updates")) {
                   continue;
                 }
+              }
+              else
+              {
+                $md5 = md5_file($child_path);
               }
             }
             $child_entry = ORM::factory("folder_sync_entry");
@@ -442,7 +447,8 @@ class Folder_Sync_Controller extends Admin_Controller {
             $child_entry->path = $child_path;
             $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
             $child_entry->is_directory = 0;
-            $child_entry->md5 = md5_file($child_path);
+            $child_entry->md5 = $md5;
+            $child_entry->added = filemtime($child_path);
             $child_entry->save();
             $limit--;
           } else {
@@ -534,13 +540,18 @@ class Folder_Sync_Controller extends Admin_Controller {
             if ($entry_exists && $entry_exists->loaded()) {
               // skip adding an image
               if(module::get_var("folder_sync", "process_updates")) {
-                if($entry_exists->md5 != $entry->md5) {
-                  $item = ORM::factory("item", $entry_exists->item_id);
-                  if($item->loaded()) {
-                    $item->set_data_file($entry->path);
-                    $item->save();
-                    $entry_exists->md5 = $entry->md5;
-                    $entry_exists->save();
+                if(empty($entry_exists->md5) || empty($entry_exists->added) || $entry_exists->added != filemtime($entry->path))
+                {
+                  $md5 = md5_file($entry->path);
+                  if(empty($entry_exists->md5) || empty($entry_exists->added) || $entry_exists->md5 != $md5) {
+                    $item = ORM::factory("item", $entry_exists->item_id);
+                    if($item->loaded()) {
+                      $item->set_data_file($entry->path);
+                      $item->save();
+                      $entry_exists->md5 = $md5;
+                      $entry_exists->added = filemtime($entry->path);
+                      $entry_exists->save();
+                    }
                   }
                 }
               }
