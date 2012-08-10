@@ -383,23 +383,36 @@ class Folder_Sync_Controller extends Admin_Controller {
     $session->delete("user");
     auth::login(IdentityProvider::instance()->admin_user());
  
-    // Add all folders
-    $paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
-    foreach (array_keys($paths) as $path) {
-      $files = glob($path."*");
-      foreach($files as $path) {
-        if (folder_sync::is_valid_path($path)) {
-          $entry = ORM::factory("folder_sync_entry");
-          $entry->path = $path;
-          $entry->is_directory = intval(is_dir($path));
-          $entry->parent_id = null;
-          $entry->task_id = -1;
-          $entry->md5 = '';
-          $entry->save();
+    // check if some folders are still unprocessed from previous run
+    $entry = ORM::factory("folder_sync_entry")
+      ->where("task_id", "=", -1)
+      ->where("is_directory", "=", 1)
+      ->where("checked", "=", 0)
+      ->order_by("id", "ASC")
+      ->find();
+    if ($entry->loaded())
+    {
+    }
+    else
+    {
+      // Add all folders
+      $paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
+      foreach (array_keys($paths) as $path) {
+        $files = glob($path."*");
+        foreach($files as $path) {
+          if (folder_sync::is_valid_path($path)) {
+            $entry = ORM::factory("folder_sync_entry");
+            $entry->path = $path;
+            $entry->is_directory = intval(is_dir($path));
+            $entry->parent_id = null;
+            $entry->task_id = -1;
+            $entry->md5 = '';
+            $entry->save();
+          }
         }
       }
     }
-    
+
     // Scan and add files
     $done = false;
     $limit = 500;
@@ -439,6 +452,7 @@ class Folder_Sync_Controller extends Admin_Controller {
               }
               else
               {
+                $limit--;
                 $md5 = md5_file($child_path);
               }
             }
@@ -450,7 +464,6 @@ class Folder_Sync_Controller extends Admin_Controller {
             $child_entry->md5 = $md5;
             $child_entry->added = filemtime($child_path);
             $child_entry->save();
-            $limit--;
           } else {
             $folders[] = $child_path;
           }
@@ -471,9 +484,12 @@ class Folder_Sync_Controller extends Admin_Controller {
           $child_entry->save();
         }
 
-        // We've processed this entry, mark it as done.
-        $entry->checked = 1;
-        $entry->save();
+        // We've processed this entry unless we reached a limit.
+        if($limit > 0)
+        {
+          $entry->checked = 1;
+          $entry->save();
+        }
       } else {
         $done = true;
       }
