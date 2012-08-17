@@ -94,13 +94,13 @@ class Folder_Sync_Controller extends Admin_Controller {
       ->find();
     if (!$entry->loaded())
     {
-      print "Starting from scratch\n";
+      //print "Starting from scratch\n";
       // Add all folders
       $paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
       foreach (array_keys($paths) as $path) {
         if (folder_sync::is_valid_path($path)) {
           $path = rtrim($path, "/");
-          print "Adding start folder: $path\n";
+          //print "Adding start folder: $path\n";
 
           $entry = ORM::factory("folder_sync_entry")
             ->where("is_directory", "=", 1)
@@ -111,11 +111,11 @@ class Folder_Sync_Controller extends Admin_Controller {
           {
             $entry->checked = 0;
             $entry->save();
-            print "Reusing entry\n";
+            //print "Reusing entry\n";
           }
           else
           {
-            print "Adding new entry\n";
+            //print "Adding new entry\n";
             $entry = ORM::factory("folder_sync_entry");
             $entry->path = $path;
             $entry->is_directory = 1;
@@ -129,7 +129,7 @@ class Folder_Sync_Controller extends Admin_Controller {
     }
     else
     {
-      print "Continue where left off\n";
+      //print "Continue where left off\n";
     }
 
     // Scan and add files
@@ -151,12 +151,12 @@ class Folder_Sync_Controller extends Admin_Controller {
           $child_paths = glob("{$entry->path}/*");
         }
         foreach ($child_paths as $child_path) {
-          print "Checking $child_path\n";
+          //print "Checking $child_path\n";
           $name = basename($child_path);
           $title = item::convert_filename_to_title($name);
 
           if (is_dir($child_path)) {
-            print "It's directory\n";
+            //print "It's directory\n";
 
             // check if album imported
             $entry_exists = ORM::factory("folder_sync_entry")
@@ -170,16 +170,16 @@ class Folder_Sync_Controller extends Admin_Controller {
               //  ->find();
             //$album_exists = null;
 
-            print "check if we already imported ...";
+            //print "check if we already imported ...";
             if($entry_exists && $entry_exists->loaded()) {
-              print "yes\n";
-              print "Rechecking {$entry_exists->path}\n";
+              //print "yes\n";
+              //print "Rechecking {$entry_exists->path}\n";
               $entry_exists->checked = 0;
               $entry_exists->save();
             } else {
-              print "no\n";
+              //print "no\n";
 
-              print "Added ITEM entry\n";
+              //print "Added ITEM entry\n";
               $album = ORM::factory("item");
               $album->type = "album";
               $album->parent_id = $parent->id;
@@ -190,7 +190,7 @@ class Folder_Sync_Controller extends Admin_Controller {
               $album->sort_column = $parent->sort_column;
               $album->save();
 
-              print "Added FOLDER_SYNC_ENTRY entry\n";
+              //print "Added FOLDER_SYNC_ENTRY entry\n";
               $child_entry = ORM::factory("folder_sync_entry");
               $child_entry->path = $child_path;
               $child_entry->parent_id = $entry->id;
@@ -215,17 +215,17 @@ class Folder_Sync_Controller extends Admin_Controller {
 
             if($entry_exists && $entry_exists->loaded())
             {
-              print "Found image record ... ";
+              //print "Found image record ... ";
               if(empty($entry_exists->added) || empty($entry_exists->md5) || $entry_exists->added != filemtime($child_path) || $entry_exists->md5 != md5_file($child_path))
               {
-                print "updating\n";
+                //print "updating\n";
                 $item = ORM::factory("item", $entry_exists->item_id);
                 $item->set_data_file($child_path);
                 $item->save();
               }
               else
               {
-                print "NOT updating\n";
+                //print "NOT updating\n";
               }
             }
             else
@@ -269,21 +269,21 @@ class Folder_Sync_Controller extends Admin_Controller {
         // We've processed this entry unless we reached a limit.
         if($limit > 0)
         {
-          print "Limit is NOT hit\n";
+          //print "Limit is NOT hit\n";
           $entry->checked = 1;
           $entry->save();
         }
         else
         {
-          print "Limit is HIT\n";
+          //print "Limit is HIT\n";
         }
       } else {
-        print "Nothing found ...\n";
+        //print "Nothing found ...\n";
         $done = true;
       }
-      print "\nNext cycle ...\n\n";
+      //print "\nNext cycle ...\n\n";
     }
-    print "Done!!!";
+    //print "Done!!!";
     exit;
 
     /*$done = false;
