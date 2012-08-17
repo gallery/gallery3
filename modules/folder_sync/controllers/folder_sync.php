@@ -134,7 +134,7 @@ class Folder_Sync_Controller extends Admin_Controller {
 
     // Scan and add files
     $done = false;
-    $limit = 2;
+    $limit = 500;
     while(!$done && $limit > 0) {
       $entry = ORM::factory("folder_sync_entry")
         ->where("is_directory", "=", 1)
@@ -227,6 +227,7 @@ class Folder_Sync_Controller extends Admin_Controller {
               {
                 //print "NOT updating\n";
               }
+              $limit-=0.25;
             }
             else
             {
