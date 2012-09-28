@@ -110,6 +110,7 @@ class locales_Core {
     $l["sl_SI"] = "Slovenščina";              // Slovenian
     $l["sr_CS"] = "Srpski";                   // Serbian
     $l["sv_SE"] = "Svenska";                  // Swedish
+    $l["th_TH"] = "ภาษาไทย";                     // Thai
     $l["tn_ZA"] = "Setswana";                 // Setswana
     $l["tr_TR"] = "Türkçe";                   // Turkish
     $l["uk_UA"] = "українська";         // Ukrainian
