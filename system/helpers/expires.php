@@ -31,7 +31,7 @@ class expires_Core {
 		header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
 
 		// HTTP 1.1
-		header('Cache-Control: max-age='.$seconds);
+		header('Cache-Control: public,max-age='.$seconds);
 
 		return $expires;
 	}
@@ -94,7 +94,7 @@ class expires_Core {
 				header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
 
 				// HTTP 1.1
-				header('Cache-Control: max-age='.$seconds);
+				header('Cache-Control: public,max-age='.$seconds);
 
 				// Clear any output
 				Event::add('system.display', create_function('', 'Kohana::$output = "";'));
