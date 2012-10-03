@@ -61,8 +61,9 @@ class Admin_Folder_Sync_Controller extends Admin_Controller {
     access::verify_csrf();
     $form = $this->_get_admin_form_additional();
     if($form->validate()) {
-      module::set_var("folder_sync", "skip_duplicates", $form->addition_options->skip_duplicates->checked);
-      module::set_var("folder_sync", "process_updates", $form->addition_options->process_updates->checked);
+      // TODO: clean up
+      //module::set_var("folder_sync", "skip_duplicates", $form->addition_options->skip_duplicates->checked);
+      module::set_var("folder_sync", "process_deletes", $form->addition_options->process_deletes->checked);
     }
     url::redirect("admin/folder_sync");
   }
@@ -110,10 +111,11 @@ class Admin_Folder_Sync_Controller extends Admin_Controller {
                       array("id" => "g-server-add-admin-form"));
 
     $group = $form->group("addition_options")->label(t("Additional options"));
-    $group->checkbox("skip_duplicates")->label(t("Skip duplicates?"))->id("g-server-add-skip-duplicates")
-      ->checked(module::get_var("folder_sync", "skip_duplicates", false));
-    $group->checkbox("process_updates")->label(t("Process updates?"))->id("g-server-add-process-updates")
-      ->checked(module::get_var("folder_sync", "process_updates", false));
+    // TODO: clean up
+    /*$group->checkbox("skip_duplicates")->label(t("Skip duplicates?"))->id("g-server-add-skip-duplicates")
+      ->checked(module::get_var("folder_sync", "skip_duplicates", false));*/
+    $group->checkbox("process_deletes")->label(t("Process deleted item?"))->id("g-server-add-process-updates")
+      ->checked(module::get_var("folder_sync", "process_deletes", false));
     $group->submit("save")->value(t("Save"));
 
     return $form;
