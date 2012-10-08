@@ -37,7 +37,7 @@ class recaptcha_Core {
 
     $group->submit("")->value(t("Save"));
     $site_domain = urlencode(stripslashes($_SERVER["HTTP_HOST"]));
-    $form->get_key_url = "http://recaptcha.net/api/getkey?domain=$site_domain&app=Gallery3";
+    $form->get_key_url = "http://www.google.com/recaptcha/admin/create?domains=$site_domain&app=Gallery3";
     return $form;
   }
 
