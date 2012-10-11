@@ -23,8 +23,8 @@
 
     if (swfobject.hasFlashPlayerVersion("<?= $flash_minimum_version ?>")) {
       $("#g-uploadify").uploadify({
-        width: 150,
-        height: 33,
+        width: 298,
+        height: 32,
         uploader: "<?= url::file("lib/uploadify/uploadify.swf") ?>",
         script: "<?= url::site("uploader/add_photo/{$album->id}") ?>",
         scriptData: <?= json_encode($script_data) ?>,

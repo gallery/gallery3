@@ -48,8 +48,8 @@ class comment_installer {
 
     module::set_var("comment", "spam_caught", 0);
     module::set_var("comment", "access_permissions", "everybody");
-    module::set_var("comment", "rss_visible", "both");
-    module::set_version("comment", 6);
+    module::set_var("comment", "rss_visible", "all");
+    module::set_version("comment", 7);
   }
 
   static function upgrade($version) {
@@ -90,6 +90,15 @@ class comment_installer {
       }
       module::clear_var("comment", "rss_available");
       module::set_version("comment", $version = 6);
+    }
+
+    // In version 6 we accidentally left the install value of "rss_visible" to "both" when it
+    // should have been "all"
+    if ($version == 6) {
+      if (module::get_var("comment", "rss_visible") == "both") {
+        module::set_var("comment", "rss_visible", "all");
+      }
+      module::set_version("comment", $version = 7);
     }
   }
 
