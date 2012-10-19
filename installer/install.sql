@@ -246,7 +246,7 @@ CREATE TABLE {modules} (
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {modules} VALUES (1,1,'gallery',50,1);
 INSERT INTO {modules} VALUES (2,1,'user',4,2);
-INSERT INTO {modules} VALUES (3,1,'comment',6,3);
+INSERT INTO {modules} VALUES (3,1,'comment',7,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
 INSERT INTO {modules} VALUES (5,1,'info',2,5);
 INSERT INTO {modules} VALUES (6,1,'rss',1,6);
@@ -419,7 +419,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','minimum_password_length','5');
 INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
 INSERT INTO {vars} VALUES (NULL,'comment','access_permissions','everybody');
-INSERT INTO {vars} VALUES (NULL,'comment','rss_visible','both');
+INSERT INTO {vars} VALUES (NULL,'comment','rss_visible','all');
 INSERT INTO {vars} VALUES (NULL,'info','show_title','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_description','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_owner','1');
