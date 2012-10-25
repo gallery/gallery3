@@ -198,7 +198,7 @@ class Users_Controller extends Controller {
       ->error_messages("length", t("Your email address is too long"))
       ->error_messages("required", t("You must enter a valid email address"));
 
-    module::event("user_change_password_form", $user, $form);
+    module::event("user_change_email_form", $user, $form);
     $group->submit("")->value(t("Save"));
     return $form;
   }
