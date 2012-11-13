@@ -411,6 +411,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','email_from','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_reply_to','unknown@unknown.com');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_line_length','70');
 INSERT INTO {vars} VALUES (NULL,'gallery','email_header_separator','s:1:\"\n\";');
+INSERT INTO {vars} VALUES (NULL,'gallery','lock_timeout','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','show_user_profiles_to','registered_users');
 INSERT INTO {vars} VALUES (NULL,'gallery','extra_binary_paths','/usr/local/bin:/opt/local/bin:/opt/bin');
 INSERT INTO {vars} VALUES (NULL,'gallery','timezone',NULL);
