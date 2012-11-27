@@ -259,7 +259,7 @@ class Folder_Sync_Controller extends Admin_Controller {
         ->find_all();
       foreach($entries as $entry)
       {
-        if(!file_exists($entry->path))
+        if(!file_exists($entry->path) && $entry->id > 1)
         {
 					$item = ORM::factory("item", $entry->item_id);
 					if($item->loaded())
