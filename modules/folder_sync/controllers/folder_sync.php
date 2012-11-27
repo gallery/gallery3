@@ -78,7 +78,7 @@ class Folder_Sync_Controller extends Admin_Controller {
     print $tree;
   }*/
 
-  function cron()
+  static function cron()
   {
     $owner_id = 2;
     
