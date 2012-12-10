@@ -117,7 +117,14 @@ class search_Core {
 
     // Truncate the score by two decimal places as this resolves the issues
     // that arise due to in exact numeric conversions.
-    $score = $db->query($query)->current()->score;
+    $current = $db->query($query)->current();
+    if (!$current) {
+      // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
+      // the context and try again.
+      item::clear_display_context_callback();
+      url::redirect(url::current());
+    }
+    $score = $current->score();
     if (strlen($score) > 7) {
       $score = substr($score, 0, strlen($score) - 2);
     }
