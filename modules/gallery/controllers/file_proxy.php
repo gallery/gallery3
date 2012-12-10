@@ -68,10 +68,10 @@ class File_Proxy_Controller extends Controller {
     $item = item::find_by_path($path);
     if (!$item->loaded()) {
       // We didn't turn it up. If we're looking for a .jpg then it's it's possible that we're
-      // requesting the thumbnail for a movie.  In that case, the .flv, .mp4 or .m4v file would
+      // requesting the thumbnail for a movie.  In that case, the movie file would
       // have been converted to a .jpg. So try some alternate types:
       if (preg_match('/.jpg$/', $path)) {
-        foreach (array("flv", "mp4", "m4v") as $ext) {
+        foreach (legal_file::get_movie_extensions() as $ext) {
           $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
           $item = item::find_by_path($movie_path);
           if ($item->loaded()) {
