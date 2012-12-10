@@ -312,8 +312,9 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
     module::set_var("gallery", "timezone", null);
+    module::set_var("gallery", "lock_timeout", 1);
 
-    module::set_version("gallery", 50);
+    module::set_version("gallery", 51);
   }
 
   static function upgrade($version) {
@@ -712,6 +713,14 @@ class gallery_installer {
         $item->save();
       }
       module::set_version("gallery", $version = 50);
+    }
+
+    if ($version == 50) {
+      // In v50, a lock_timeout variable was added so that administrators could edit the time out
+      // from 1 second to a higher variable if their system runs concurrent parallel uploads for 
+      // instance.
+      module::set_var("gallery", "lock_timeout", 1);
+      module::set_version("gallery", $version = 51);
     }
   }
 

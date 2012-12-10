@@ -415,6 +415,13 @@ class item_Core {
   }
 
   /**
+   * Get rid of the display context callback
+   */
+  static function clear_display_context_callback() {
+    Cache::instance()->delete("display_context_" . $sid = Session::instance()->id());
+  }
+
+  /**
    * Call the display context callback for the given item
    */
   static function get_display_context($item) {

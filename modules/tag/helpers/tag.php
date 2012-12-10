@@ -90,6 +90,17 @@ class tag_Core {
       ->find_all();
   }
 
+  /**
+   * Return all the items for a given tag.
+   * @return array
+   */
+  static function tag_items($tag) {
+    return ORM::factory("item")
+      ->join("items_tags", "items_tags.item_id", "items.id", "left")
+      ->where("items_tags.tag_id", "=", $tag->id)
+      ->find_all();
+  }
+
   static function get_add_form($item) {
     $form = new Forge("tags/create/{$item->id}", "", "post", array("id" => "g-add-tag-form", "class" => "g-short-form"));
     $label = $item->is_album() ?
@@ -125,6 +136,18 @@ class tag_Core {
       ->delete("items_tags")
       ->where("item_id", "=", $item->id)
       ->execute();
+  }
+
+  /**
+   * Remove all items from a tag
+   */
+  static function remove_items($tag) {
+    db::build()
+      ->delete("items_tags")
+      ->where("tag_id", "=", $tag->id)
+      ->execute();
+    $tag->count = 0;
+    $tag->save();
   }
 
   /**

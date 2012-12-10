@@ -39,6 +39,7 @@
 
 #g-add-photos-canvas object {
   z-index: 100;
+  padding: 0em;
 }
 
 #g-add-photos-canvas .uploadifyQueue {

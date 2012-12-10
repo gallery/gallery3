@@ -50,10 +50,8 @@ class tag_items_rest_Core {
   }
 
   static function delete($request) {
-    list ($tag, $item) = rest::resolve($request->url);
-    access::required("edit", $item);
-    $tag->remove($item);
-    $tag->save();
+    $tag = rest::resolve($request->url);
+    $tag->remove_items();
   }
 
   static function resolve($id) {

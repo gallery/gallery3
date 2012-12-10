@@ -50,7 +50,7 @@ class Combined_Controller extends Controller {
     if ($input->server("HTTP_IF_MODIFIED_SINCE")) {
       header('HTTP/1.0 304 Not Modified');
       header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
-      header("Cache-Control: max-age=2678400");
+      header("Cache-Control: public,max-age=2678400");
       header('Pragma: public');
       Kohana::close_buffers(false);
       return "";
@@ -83,7 +83,7 @@ class Combined_Controller extends Controller {
       header("Content-Type: text/css; charset=UTF-8");
     }
     header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
-    header("Cache-Control: max-age=2678400");
+    header("Cache-Control: public,max-age=2678400");
     header("Pragma: public");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
     header("Content-Length: " . strlen($content));
