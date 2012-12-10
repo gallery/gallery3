@@ -63,20 +63,16 @@ class movie_Core {
       throw new Exception("@todo MISSING_FFMPEG");
     }
 
-    $metadata = movie::get_file_metadata($input_file);
-    
-    $cmd = escapeshellcmd($ffmpeg) . " -threads 1 -i " . escapeshellarg($input_file) .
+    $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
       " -an -ss 00:00:03 -an -r 1 -vframes 1" .
-      " -s " . $metadata[0] . "x" . $metadata[1] .
       " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
     exec($cmd);
 
     clearstatcache();  // use $filename parameter when PHP_version is 5.3+
     if (filesize($output_file) == 0) {
       // Maybe the movie is shorter, fall back to the first frame.
-      $cmd = escapeshellcmd($ffmpeg) . " -threads 1 -i " . escapeshellarg($input_file) .
+      $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
         " -an -an -r 1 -vframes 1" .
-        " -s " . $metadata[0] . "x" . $metadata[1] .
         " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
       exec($cmd);
 
@@ -110,12 +106,8 @@ class movie_Core {
 
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($file_path) . " 2>&1";
     $result = `$cmd`;
-    if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $res)) {
-      if (preg_match("/Stream.*?Video:.*? \[.*?DAR (\d+):(\d+).*?\]/", $result, $dar)) {
-        // DAR is defined - determine width based on height and DAR (should always be int, but adding round to be sure)
-        $res[1] = round($res[2] * $dar[1] / $dar[2]);
-      }
-      list ($width, $height) = array($res[1], $res[2]);
+    if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $regs)) {
+      list ($width, $height) = array($regs[1], $regs[2]);
     } else {
       list ($width, $height) = array(0, 0);
     }
