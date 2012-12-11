@@ -123,10 +123,10 @@ class movie_Core {
       list ($width, $height) = array(0, 0);
     }
 
-    $pi = pathinfo($file_path);
-    $extension = isset($pi["extension"]) ? $pi["extension"] : "flv"; // No extension?  Assume FLV.
-    $mime_type = in_array(strtolower($extension), array("mp4", "m4v")) ?
-      "video/mp4" : "video/x-flv";
+    $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+    $extension = $extension ? $extension : "flv"; // No extension?  Assume FLV.
+    $mime_type = legal_file::get_movie_types_by_extension($extension);
+    $mime_type = $mime_type ? $mime_type : "video/x-flv"; // No MIME found?  Assign video/x-flv to mimic behavior of v3.0.4 and older.
 
     if (preg_match("/Duration: (\d+):(\d+):(\d+\.\d+)/", $result, $regs)) {
       $duration = 3600 * $regs[1] + 60 * $regs[2] + $regs[3];
