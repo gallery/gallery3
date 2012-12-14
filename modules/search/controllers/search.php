@@ -24,12 +24,21 @@ class Search_Controller extends Controller {
     $q_with_more_terms = search::add_query_terms($q);
     $show = Input::instance()->get("show");
 
+    $album_id = Input::instance()->get("album", item::root()->id);
+    $album = ORM::factory("item", $album_id);
+    if (!access::can("view", $album) || !$album->is_album()) {
+      $album = item::root();
+    }
+
     if ($show) {
       $child = ORM::factory("item", $show);
-      $index = search::get_position($child, $q_with_more_terms);
+      $index = search::get_position_within_album($child, $q_with_more_terms, $album);
       if ($index) {
         $page = ceil($index / $page_size);
-        url::redirect(url::abs_site("search?q=" . urlencode($q) . ($page == 1 ? "" : "&page=$page")));
+        url::redirect(url::abs_site("search" .
+          "?q=" . urlencode($q) .
+          "&album=" . urlencode($album->id) .
+          ($page == 1 ? "" : "&page=$page")));
       }
     }
 
@@ -42,7 +51,8 @@ class Search_Controller extends Controller {
 
     $offset = ($page - 1) * $page_size;
 
-    list ($count, $result) = search::search($q_with_more_terms, $page_size, $offset);
+    list ($count, $result) =
+      search::search_within_album($q_with_more_terms, $album, $page_size, $offset);
 
     $title = t("Search: %q", array("q" => $q_with_more_terms));
 
@@ -61,28 +71,35 @@ class Search_Controller extends Controller {
             "children_count" => $count));
 
     $template->content = new View("search.html");
+    $template->content->album = $album;
     $template->content->items = $result;
     $template->content->q = $q;
 
     print $template;
 
     item::set_display_context_callback(
-      "Search_Controller::get_display_context", $title, $q_with_more_terms, $q);
+      "Search_Controller::get_display_context", $album->id, $title, $q_with_more_terms, $q);
   }
 
-  static function get_display_context($item, $title, $query_terms, $q) {
-    $position = search::get_position($item, $query_terms);
+  static function get_display_context($item, $album_id, $title, $query_terms, $q) {
+    $album = ORM::factory("item", $album_id);
+    $position = search::get_position_within_album($item, $query_terms, $album);
 
     if ($position > 1) {
-      list ($count, $result_data) = search::search($query_terms, 3, $position - 2);
+      list ($count, $result_data) =
+        search::search_within_album($query_terms, $album, 3, $position - 2);
       list ($previous_item, $ignore, $next_item) = $result_data;
     } else {
       $previous_item = null;
-      list ($count, $result_data) = search::search($query_terms, 1, $position);
+      list ($count, $result_data) =
+        search::search_within_album($query_terms, $album, 1, $position);
       list ($next_item) = $result_data;
     }
 
-    $search_url = url::abs_site("search?q=" . urlencode($q) . "&show={$item->id}");
+    $search_url = url::abs_site("search" .
+      "?q=" . urlencode($q) .
+      "&album=" . urlencode($album_id) .
+      "&show={$item->id}");
     $root = item::root();
 
     return array("position" => $position,

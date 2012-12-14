@@ -9,4 +9,11 @@
       <input type="submit" value="<?= t("Go")->for_html_attr() ?>" class="submit" />
     </li>
   </ul>
+  <? if (isset($item) && $item instanceof Item_Model_Core): ?>
+    <? if ($item->is_album ()): ?>
+      <input type="hidden" name="album" value="<?= $item->id ?>" />
+    <? else: ?>
+      <input type="hidden" name="album" value="<?= $item->parent_id ?>" />
+    <? endif; ?>
+  <? endif; ?>
 </form>
