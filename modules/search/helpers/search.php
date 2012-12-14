@@ -144,7 +144,7 @@ class search_Core {
       item::clear_display_context_callback();
       url::redirect(url::current());
     }
-    $score = $current->score();
+    $score = $current->score;
     if (strlen($score) > 7) {
       $score = substr($score, 0, strlen($score) - 2);
     }
