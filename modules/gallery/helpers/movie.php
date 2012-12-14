@@ -69,17 +69,18 @@ class movie_Core {
     $start_time_arg = ($duration > 4) ? " -ss 00:00:03" : "";
 
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
-      " -an" . $start_time_arg . " -an -r 1 -vframes 1" .
-      " -s " . $width . "x" . $height .
+      " -an $start_time_arg -an -r 1 -vframes 1" .
+      " -s {$width}x{$height}" .
       " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
     exec($cmd, $exec_output, $exec_return);
 
     clearstatcache();  // use $filename parameter when PHP_version is 5.3+
     if (filesize($output_file) == 0 || $exec_return) {
-      // Maybe the movie needs the "-threads 1" argument added (see http://sourceforge.net/apps/trac/gallery/ticket/1924)
+      // Maybe the movie needs the "-threads 1" argument added
+      // (see http://sourceforge.net/apps/trac/gallery/ticket/1924)
       $cmd = escapeshellcmd($ffmpeg) . " -threads 1 -i " . escapeshellarg($input_file) .
-        " -an" . $start_time_arg . " -an -r 1 -vframes 1" .
-        " -s " . $width . "x" . $height .
+        " -an $start_time_arg -an -r 1 -vframes 1" .
+        " -s {$width}x{$height}" .
         " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
       exec($cmd, $exec_output, $exec_return);
 
@@ -113,12 +114,14 @@ class movie_Core {
 
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($file_path) . " 2>&1";
     $result = `$cmd`;
-    if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $res)) {
-      if (preg_match("/Stream.*?Video:.*? \[.*?DAR (\d+):(\d+).*?\]/", $result, $dar)) {
-        // DAR is defined - determine width based on height and DAR (should always be int, but adding round to be sure)
-        $res[1] = round($res[2] * $dar[1] / $dar[2]);
+    if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $matches_res)) {
+      if (preg_match("/Stream.*?Video:.*? \[.*?DAR (\d+):(\d+).*?\]/", $result, $matches_dar) &&
+          $matches_dar[1] >= 1 && $matches_dar[2] >= 1) {
+        // DAR is defined - determine width based on height and DAR
+        // (should always be int, but adding round to be sure)
+        $matches_res[1] = round($matches_res[2] * $matches_dar[1] / $matches_dar[2]);
       }
-      list ($width, $height) = array($res[1], $res[2]);
+      list ($width, $height) = array($matches_res[1], $matches_res[2]);
     } else {
       list ($width, $height) = array(0, 0);
     }
@@ -126,12 +129,12 @@ class movie_Core {
     $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
     $extension = $extension ? $extension : "flv"; // No extension?  Assume FLV.
     $mime_type = legal_file::get_movie_types_by_extension($extension);
-    $mime_type = $mime_type ? $mime_type : "video/x-flv"; // No MIME found?  Assign video/x-flv to mimic behavior of v3.0.4 and older.
+    $mime_type = $mime_type ? $mime_type : "video/x-flv"; // No MIME found?  Default to video/x-flv.
 
-    if (preg_match("/Duration: (\d+):(\d+):(\d+\.\d+)/", $result, $regs)) {
-      $duration = 3600 * $regs[1] + 60 * $regs[2] + $regs[3];
-    } else if (preg_match("/duration.*?:.*?(\d+)/", $result, $regs)) {
-      $duration = $regs[1];
+    if (preg_match("/Duration: (\d+):(\d+):(\d+\.\d+)/", $result, $matches)) {
+      $duration = 3600 * $matches[1] + 60 * $matches[2] + $matches[3];
+    } else if (preg_match("/duration.*?:.*?(\d+)/", $result, $matches)) {
+      $duration = $matches[1];
     } else {
       $duration = 0;
     }

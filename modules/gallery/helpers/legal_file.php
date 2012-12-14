@@ -19,15 +19,16 @@
  */
 class legal_file_Core {
   /**
-   * Create a default list of allowed photo MIME types paired with their extensions and then let modules modify it.
-   * This is an ordered map, mapping extensions to their MIME types.
+   * Create a default list of allowed photo MIME types paired with their extensions and then let 
+   * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
    * Extensions cannot be duplicated, but MIMEs can (e.g. jpeg and jpg both map to image/jpeg).
    *
-   * @param string $extension (optional) - return MIME type of extension; if not given, return complete array
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_photo_types_by_extension($extension = NULL) {
+  static function get_photo_types_by_extension($extension=NULL) {
     $types_by_extension_wrapper = new stdClass();
-    $types_by_extension_wrapper->types_by_extension = array("jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+    $types_by_extension_wrapper->types_by_extension = array(
+      "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
@@ -39,15 +40,16 @@ class legal_file_Core {
   }
 
   /**
-   * Create a default list of allowed movie MIME types paired with their extensions and then let modules modify it.
-   * This is an ordered map, mapping extensions to their MIME types.
+   * Create a default list of allowed movie MIME types paired with their extensions and then let
+   * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
    * Extensions cannot be duplicated, but MIMEs can (e.g. jpeg and jpg both map to image/jpeg).
    *
-   * @param string $extension (optional) - return MIME type of extension; if not given, return complete array
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_movie_types_by_extension($extension = NULL) {
+  static function get_movie_types_by_extension($extension=NULL) {
     $types_by_extension_wrapper = new stdClass();
-    $types_by_extension_wrapper->types_by_extension = array("flv" => "video/x-flv", "mp4" => "video/mp4");
+    $types_by_extension_wrapper->types_by_extension = array(
+      "flv" => "video/x-flv", "mp4" => "video/mp4");
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
@@ -103,7 +105,8 @@ class legal_file_Core {
 
   /**
    * Create a default list of allowed photo MIME types and then let modules modify it.
-   * Can be used to add legal alternatives for default MIME types (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
+   * Can be used to add legal alternatives for default MIME types.
+   * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
   static function get_photo_types() {
     $types_wrapper = new stdClass();
@@ -114,7 +117,8 @@ class legal_file_Core {
 
   /**
    * Create a default list of allowed movie MIME types and then let modules modify it.
-   * Can be used to add legal alternatives for default MIME types (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
+   * Can be used to add legal alternatives for default MIME types.
+   * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
   static function get_movie_types() {
     $types_wrapper = new stdClass();
