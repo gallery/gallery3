@@ -19,11 +19,53 @@
  */
 class legal_file_Core {
   /**
+   * Create a default list of allowed photo MIME types paired with their extensions and then let 
+   * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
+   * Extensions cannot be duplicated, but MIMEs can (e.g. jpeg and jpg both map to image/jpeg).
+   *
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
+   */
+  static function get_photo_types_by_extension($extension=NULL) {
+    $types_by_extension_wrapper = new stdClass();
+    $types_by_extension_wrapper->types_by_extension = array(
+      "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+    module::event("photo_types_by_extension", $types_by_extension_wrapper);
+    if ($extension) {
+      // return matching MIME type
+      return $types_by_extension_wrapper->types_by_extension[$extension];
+    } else {
+      // return complete array
+      return $types_by_extension_wrapper->types_by_extension;
+    }
+  }
+
+  /**
+   * Create a default list of allowed movie MIME types paired with their extensions and then let
+   * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
+   * Extensions cannot be duplicated, but MIMEs can (e.g. jpeg and jpg both map to image/jpeg).
+   *
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
+   */
+  static function get_movie_types_by_extension($extension=NULL) {
+    $types_by_extension_wrapper = new stdClass();
+    $types_by_extension_wrapper->types_by_extension = array(
+      "flv" => "video/x-flv", "mp4" => "video/mp4");
+    module::event("movie_types_by_extension", $types_by_extension_wrapper);
+    if ($extension) {
+      // return matching MIME type
+      return $types_by_extension_wrapper->types_by_extension[$extension];
+    } else {
+      // return complete array
+      return $types_by_extension_wrapper->types_by_extension;
+    }
+  }
+
+  /**
    * Create a default list of allowed photo extensions and then let modules modify it.
    */
   static function get_photo_extensions() {
     $extensions_wrapper = new stdClass();
-    $extensions_wrapper->extensions = array("gif", "jpg", "jpeg", "png");
+    $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
     module::event("legal_photo_extensions", $extensions_wrapper);
     return $extensions_wrapper->extensions;
   }
@@ -33,7 +75,7 @@ class legal_file_Core {
    */
   static function get_movie_extensions() {
     $extensions_wrapper = new stdClass();
-    $extensions_wrapper->extensions = array("flv", "mp4", "m4v");
+    $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
     module::event("legal_movie_extensions", $extensions_wrapper);
     return $extensions_wrapper->extensions;
   }
@@ -63,20 +105,25 @@ class legal_file_Core {
 
   /**
    * Create a default list of allowed photo MIME types and then let modules modify it.
+   * Can be used to add legal alternatives for default MIME types.
+   * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
   static function get_photo_types() {
     $types_wrapper = new stdClass();
-    $types_wrapper->types = array("image/jpeg", "image/gif", "image/png");
+    $types_wrapper->types = array_values(legal_file::get_photo_types_by_extension());
     module::event("legal_photo_types", $types_wrapper);
     return $types_wrapper->types;
   }
 
   /**
    * Create a default list of allowed movie MIME types and then let modules modify it.
+   * Can be used to add legal alternatives for default MIME types.
+   * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
   static function get_movie_types() {
     $types_wrapper = new stdClass();
-    $types_wrapper->types = array("video/flv", "video/x-flv", "video/mp4");
+    $types_wrapper->types = array_values(legal_file::get_movie_types_by_extension());
+    $types_wrapper->types[] = "video/flv";
     module::event("legal_movie_types", $types_wrapper);
     return $types_wrapper->types;
   }
