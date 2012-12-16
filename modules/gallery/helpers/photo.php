@@ -83,10 +83,17 @@ class photo_Core {
    */
   static function get_file_metadata($file_path) {
     $image_info = getimagesize($file_path);
-    $width = $image_info[0];
-    $height = $image_info[1];
-    $mime_type = $image_info["mime"];
-    $extension = image_type_to_extension($image_info[2], false);
-    return array($width, $height, $mime_type, $extension);
+    if ($image_info) {
+      $width = $image_info[0];
+      $height = $image_info[1];
+      $mime_type = $image_info["mime"];
+      $extension = image_type_to_extension($image_info[2], false);
+      return array($width, $height, $mime_type, $extension);
+    } else {
+      // getimagesize failed - use legal_file mapping instead.
+      $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+      $mime_type = legal_file::get_photo_types_by_extension($extension);
+      return array(0, 0, $mime_type, $extension);
+    }
   }
 }
