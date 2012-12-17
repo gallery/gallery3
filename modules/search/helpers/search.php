@@ -35,9 +35,13 @@ class search_Core {
   }
 
   static function search($q, $limit, $offset) {
+    return search::search_within_album($q, item::root(), $limit, $offset);
+  }
+
+  static function search_within_album($q, $album, $limit, $offset) {
     $db = Database::instance();
 
-    $query = self::_build_query_base($q) .
+    $query = self::_build_query_base($q, $album) .
       "ORDER BY `score` DESC " .
       "LIMIT $limit OFFSET " . (int)$offset;
 
@@ -47,8 +51,10 @@ class search_Core {
     return array($count, new ORM_Iterator(ORM::factory("item"), $data));
   }
 
-  private static function _build_query_base($q, $where=array()) {
-    $q = Database::instance()->escape($q);
+  private static function _build_query_base($q, $album, $where=array()) {
+    $db = Database::instance();
+    $q = $db->escape($q);
+
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
         $fields[] = "`view_$id` = TRUE"; // access::ALLOW
@@ -58,13 +64,23 @@ class search_Core {
       $access_sql = "";
     }
 
+    if ($album->id == item::root()->id) {
+      $album_sql = "";
+    } else {
+      $album_sql =
+        " AND {items}.left_ptr > " .$db->escape($album->left_ptr) .
+        " AND {items}.right_ptr <= " . $db->escape($album->right_ptr);
+    }
+
     return
       "SELECT SQL_CALC_FOUND_ROWS {items}.*, " .
       "  MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
       "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
+      $album_sql .
       (empty($where) ? "" : " AND " . join(" AND ", $where)) .
-      $access_sql;
+      $access_sql .
+      " ";
   }
 
   /**
@@ -111,8 +127,12 @@ class search_Core {
   }
 
   static function get_position($item, $q) {
+    return search::get_position_within_album($item, $q, item::root());
+  }
+
+  static function get_position_within_album($item, $q, $album) {
     $page_size = module::get_var("gallery", "page_size", 9);
-    $query = self::_build_query_base($q, array("{items}.id = " . $item->id));
+    $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id));
     $db = Database::instance();
 
     // Truncate the score by two decimal places as this resolves the issues
@@ -124,12 +144,12 @@ class search_Core {
       item::clear_display_context_callback();
       url::redirect(url::current());
     }
-    $score = $current->score();
+    $score = $current->score;
     if (strlen($score) > 7) {
       $score = substr($score, 0, strlen($score) - 2);
     }
 
-    $data = $db->query(self::_build_query_base($q) . " HAVING `score` >= " . $score);
+    $data = $db->query(self::_build_query_base($q, $album) . " HAVING `score` >= " . $score);
     $data->seek($data->count() - 1);
 
     while ($data->get("id") != $item->id && $data->prev()->valid()) {
