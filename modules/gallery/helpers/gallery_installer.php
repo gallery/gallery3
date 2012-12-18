@@ -313,8 +313,9 @@ class gallery_installer {
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
     module::set_var("gallery", "timezone", null);
     module::set_var("gallery", "lock_timeout", 1);
+    module::set_var("gallery", "movie_extract_frame_time", 3);
 
-    module::set_version("gallery", 52);
+    module::set_version("gallery", 53);
   }
 
   static function upgrade($version) {
@@ -734,6 +735,13 @@ class gallery_installer {
         ->where("name", "REGEXP", "\.m4v$") // case insensitive since name column is utf8_general_ci
         ->execute();
       module::set_version("gallery", $version = 52);
+    }
+    
+    if ($version == 52) {
+      // In v53, we added the ability to change the default time used when extracting frames from
+      // movies.  Previously we hard-coded this at 3 seconds, so we use that as the default.
+      module::set_var("gallery", "movie_extract_frame_time", 3);
+      module::set_version("gallery", $version = 53);
     }
   }
 
