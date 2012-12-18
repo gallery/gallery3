@@ -150,7 +150,7 @@ class item_rest_Core {
 
   static function post($request) {
     $parent = rest::resolve($request->url);
-    access::required("edit", $parent);
+    access::required("add", $parent);
 
     $entity = $request->params->entity;
     $item = ORM::factory("item");
