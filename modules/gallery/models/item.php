@@ -664,7 +664,7 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return a view for movies.  By default this is a Flowplayer v3 <script> tag, but 
-   * get_movie_img events can override this and provide their own player/view.  If no player/view
+   * movie_img events can override this and provide their own player/view.  If no player/view
    * is found and the movie is unsupported by Flowplayer v3, this returns a simple download link.
    * @param array $extra_attrs
    * @return string
@@ -684,7 +684,7 @@ class Item_Model_Core extends ORM_MPTT {
     $attrs = array_merge(array("id" => "g-item-id-{$this->id}"), $extra_attrs,
                          array("class" => "g-movie"));
 
-    // Run get_movie_img events, which can either:
+    // Run movie_img events, which can either:
     //  - generate a view, which is used in place of the standard Flowplayer v3 player
     //    (use view variable)
     //  - alter the arguments sent to the standard player
@@ -698,28 +698,32 @@ class Item_Model_Core extends ORM_MPTT {
     $movie_img->fp_params = array(); // additional Flowplayer params values (will be json encoded)
     $movie_img->fp_config = array(); // additional Flowplayer config values (will be json encoded)
     $movie_img->view = array();
-    module::event("get_movie_img", $movie_img, $this);
+    module::event("movie_img", $movie_img, $this);
 
     if (count($movie_img->view) > 0) {
       // View generated - use it
       $view = implode("\n", $movie_img->view);
-    } elseif (in_array(strtolower(pathinfo($this->name, PATHINFO_EXTENSION)),
-                       array("flv", "mp4", "m4v", "mov", "f4v"))) {
-      // View NOT generated, filetype supported by Flowplayer v3 - use Flowplayer v3 (default)
-      $view = new View("movieplayer.html");
-      $view->max_size = $movie_img->max_size;
-      $view->width = $movie_img->width;
-      $view->height = $movie_img->height;
-      $view->attrs = $movie_img->attrs;
-      $view->url = $movie_img->url;
-      $view->fp_params = $movie_img->fp_params;
-      $view->fp_config = $movie_img->fp_config;
     } else {
-      // View NOT generated, filetype NOT supported by Flowplayer v3 - display download link
-      $attrs["style"] = "width: {$max_size}px;";
-      $attrs["download"] = $this->name; // forces download (HTML5 only - otherwise to browser)
-      $attrs["class"] .= " g-movie-download-link";
-      $view = html::anchor($this->file_url(true), t("Click here to download item."), $attrs);
+      if (in_array(strtolower(pathinfo($this->name, PATHINFO_EXTENSION)),
+                   array("flv", "mp4", "m4v", "mov", "f4v"))) {
+        // View NOT generated, filetype supported by Flowplayer v3 - use Flowplayer v3 (default)
+        // Note that the extension list above is hard-coded and doesn't use the legal_file helper
+        // since anything else simply will not work in Flowplayer v3.
+        $view = new View("movieplayer.html");
+        $view->max_size = $movie_img->max_size;
+        $view->width = $movie_img->width;
+        $view->height = $movie_img->height;
+        $view->attrs = $movie_img->attrs;
+        $view->url = $movie_img->url;
+        $view->fp_params = $movie_img->fp_params;
+        $view->fp_config = $movie_img->fp_config;
+      } else {
+        // View NOT generated, filetype NOT supported by Flowplayer v3 - display download link
+        $attrs = array_merge($attrs, array("style" => "width: {$max_size}px;",
+                                           "download" => $this->name, // forces download (HTML5 only)
+                                           "class" => "g-movie g-movie-download-link"));
+        $view = html::anchor($this->file_url(true), t("Click here to download item."), $attrs);
+      }
     }
     return $view;
   }
