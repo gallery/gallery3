@@ -57,7 +57,16 @@ class movie_Core {
     return $form;
   }
 
-  static function extract_frame($input_file, $output_file) {
+  /**
+   * Extract a frame from a movie file.  Valid movie_options are start_time (in seconds),
+   * input_args (extra ffmpeg input args) and output_args (extra ffmpeg output args).  Extra args
+   * are added at the end of the list, so they can override any prior args.
+   *
+   * @param string     $input_file
+   * @param string     $output_file
+   * @param array      $movie_options (optional)
+   */
+   static function extract_frame($input_file, $output_file, $movie_options=NULL) {
     $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
@@ -65,23 +74,32 @@ class movie_Core {
 
     list($width, $height, $mime_type, $extension, $duration) = movie::get_file_metadata($input_file);
 
-    // extract frame at 0:03, unless movie is shorter than 4 sec.
-    $start_time_arg = ($duration > 4) ? " -ss 00:00:03" : "";
+    if (is_numeric($movie_options["start_time"])) {
+      $start_time = max(0, $movie_options["start_time"]); // ensure it's non-negative
+    } else {
+      $start_time = module::get_var("gallery", "movie_extract_frame_time", 3); // use default
+    }
+    // extract frame at start_time, unless movie is too short
+    $start_time_arg = ($duration >= $start_time + 0.1) ?
+      "-ss " . date("H:i:s", mktime(0,0,$start_time,0,0,0,0)) : "";
+      
+    $input_args = $movie_options["input_args"] ? $movie_options["input_args"] : "";
+    $output_args = $movie_options["output_args"] ? $movie_options["output_args"] : "";
 
-    $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
+    $cmd = escapeshellcmd($ffmpeg) . " $input_args -i " . escapeshellarg($input_file) .
       " -an $start_time_arg -an -r 1 -vframes 1" .
       " -s {$width}x{$height}" .
-      " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
+      " -y -f mjpeg $output_args " . escapeshellarg($output_file) . " 2>&1";
     exec($cmd, $exec_output, $exec_return);
 
     clearstatcache();  // use $filename parameter when PHP_version is 5.3+
     if (filesize($output_file) == 0 || $exec_return) {
       // Maybe the movie needs the "-threads 1" argument added
       // (see http://sourceforge.net/apps/trac/gallery/ticket/1924)
-      $cmd = escapeshellcmd($ffmpeg) . " -threads 1 -i " . escapeshellarg($input_file) .
+      $cmd = escapeshellcmd($ffmpeg) . " -threads 1 $input_args -i " . escapeshellarg($input_file) .
         " -an $start_time_arg -an -r 1 -vframes 1" .
         " -s {$width}x{$height}" .
-        " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
+        " -y -f mjpeg $output_args " . escapeshellarg($output_file) . " 2>&1";
       exec($cmd, $exec_output, $exec_return);
 
       clearstatcache();
