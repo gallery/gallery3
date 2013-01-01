@@ -335,7 +335,7 @@ class graphics_Core {
       // ImageMagick & GraphicsMagick
       $magick_kits = array(
           "imagemagick" => array(
-            "name" => "ImageMagick", "binary" => "convert", "version_arg" => "-v",
+            "name" => "ImageMagick", "binary" => "convert", "version_arg" => "-version",
             "version_regex" => "/Version: \S+ (\S+)/"),
           "graphicsmagick" => array(
             "name" => "GraphicsMagick", "binary" => "gm", "version_arg" => "version",
