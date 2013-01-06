@@ -772,8 +772,8 @@ class gallery_installer {
       // While we're at it, set resize_dirty to 0 for movies.
       db::build()
         ->update("items")
-        ->set("resize_extension", db::expr("SUBSTRING_INDEX(`name`, '.', -1)")
-        ->set("thumb_extension", db::expr("SUBSTRING_INDEX(`name`, '.', -1)")
+        ->set("resize_extension", db::expr("SUBSTRING_INDEX(`name`, '.', -1)"))
+        ->set("thumb_extension", db::expr("SUBSTRING_INDEX(`name`, '.', -1)"))
         ->where("type", "=", "photo")
         ->execute();
       db::build()
@@ -796,7 +796,7 @@ class gallery_installer {
         ->where("type", "=", "album")
         ->execute();
       site_status::warning(
-        t("Your album thumbs need to be rebuilt. <a %attrs>Click here to fix it</a>",
+        t("Your album thumbs need to be rebuilt. <a %attrs>Click here to fix them</a>",
           array("attrs" => html::mark_clean(sprintf(
             'href="%s" class="g-dialog-link"',
             url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__"))))),

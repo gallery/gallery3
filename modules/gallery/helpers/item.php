@@ -240,7 +240,7 @@ class item_Core {
     // change the type and strip off the last entry of paths.
     if (strncmp(end($paths), ".album.", 7) && ($type == "thumb")) {
       $type = "album_thumb";
-      unset($paths(count($paths) - 1));
+      unset($paths[count($paths) - 1]);
     }
 
     // Check to see if there's an item in the database with a matching relative_path_cache value.

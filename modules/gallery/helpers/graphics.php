@@ -291,15 +291,15 @@ class graphics_Core {
   static function mark_dirty($thumbs, $resizes) {
     if ($thumbs) {
       $db = db::build()
-        ->update("items");
-        ->set("thumb_dirty", 1);
+        ->update("items")
+        ->set("thumb_dirty", 1)
         ->execute();
     }
     if ($resizes) {
       $db = db::build()
-        ->update("items");
-        ->set("resize_dirty", 1);
-        ->where("type", "=", "photo");
+        ->update("items")
+        ->set("resize_dirty", 1)
+        ->where("type", "=", "photo")
         ->execute();
     }
 

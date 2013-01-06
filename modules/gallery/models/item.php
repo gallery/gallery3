@@ -788,7 +788,7 @@ class Item_Model_Core extends ORM_MPTT {
       // View NOT generated - see if filetype supported by Flowplayer v3
       // Note that the extension list below is hard-coded and doesn't use the legal_file helper
       // since anything else will not work in Flowplayer v3.
-      if (in_array(strtolower($this->file_extension)),
+      if (in_array(strtolower($this->file_extension),
                    array("flv", "mp4", "m4v", "mov", "f4v"))) {
         // Filetype supported by Flowplayer v3 - use it (default)
         $view = new View("movieplayer.html");
@@ -882,9 +882,11 @@ class Item_Model_Core extends ORM_MPTT {
 
       // Conditional rules
       if ($this->id == 1) {
-        // We don't care about the name and slug for the root album.
+        // We don't care about the name, slug, thumb_extension, or resize_extension for the root album.
         $this->rules["name"] = array();
         $this->rules["slug"] = array();
+        $this->rules["resize_extension"] = array();
+        $this->rules["thumb_extension"] = array();
       }
       if (!$this->is_photo()) {
         // Only resizes of photos matter.
