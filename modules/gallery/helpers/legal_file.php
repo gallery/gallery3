@@ -32,7 +32,7 @@ class legal_file_Core {
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      return $types_by_extension_wrapper->types_by_extension[strtolower($extension)];
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -53,7 +53,7 @@ class legal_file_Core {
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      return $types_by_extension_wrapper->types_by_extension[strtolower($extension)];
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -61,23 +61,59 @@ class legal_file_Core {
   }
 
   /**
-   * Create a default list of allowed photo extensions and then let modules modify it.
+   * Create a merged list of all allowed photo and movie MIME types paired with their extensions.
+   *
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_photo_extensions() {
+  static function get_types_by_extension($extension=NULL) {
+    if ($extension) {
+      // return matching MIME type
+      if ($photo_mime = legal_file::get_photo_types_by_extension($extention)) {
+        return $photo_mime;
+      } else {
+        return legal_file::get_movie_types_by_extension($extention);
+      }
+    } else {
+      // return complete array
+      return array_merge(legal_file::get_photo_types_by_extension(),
+                         legal_file::get_movie_types_by_extension());
+    }
+  }
+
+   /**
+   * Create a default list of allowed photo extensions and then let modules modify it.
+   *
+   * @param string $extension (opt.) - return TRUE if allowed, FALSE if not
+   */
+  static function get_photo_extensions($extension=NULL) {
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
     module::event("legal_photo_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
+    if ($extension) {
+      // return TRUE if in array, FALSE if not
+      return in_array(strtolower($extension), $extensions_wrapper->extensions);
+    } else {
+      // return complete array
+      return $extensions_wrapper->extensions;
+    }
   }
 
   /**
    * Create a default list of allowed movie extensions and then let modules modify it.
+   *
+   * @param string $extension (opt.) - return TRUE if allowed, FALSE if not
    */
-  static function get_movie_extensions() {
+  static function get_movie_extensions($extension=NULL) {
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
     module::event("legal_movie_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
+    if ($extension) {
+      // return TRUE if in array, FALSE if not
+      return in_array(strtolower($extension), $extensions_wrapper->extensions);
+    } else {
+      // return complete array
+      return $extensions_wrapper->extensions;
+    }
   }
 
   /**
@@ -129,14 +165,20 @@ class legal_file_Core {
   }
 
   /**
-   * Convert the extension of a filename.  If the original filename has no
-   * extension, add the new one to the end.
+   * Change the extension of a filename.  If the original filename has no
+   * extension, add the new one to the end.  Filename can be a bare filename, a
+   * full path, or a URL provided it has no query.
    */
   static function change_extension($filename, $new_ext) {
-    if (strpos($filename, ".") === false) {
-      return "{$filename}.{$new_ext}";
+    $pi = pathinfo($filename);
+    if ($pi["filename"] && isset($pi["extension"])) {
+      // We have a defined extension (includes filenames that end in a dot) and a non-empty filename.
+      // Replace the old extension with the new.
+      return substr($filename, 0, -strlen($pi["extension"])) . $new_ext;
     } else {
-      return preg_replace("/\.[^\.]*?$/", ".{$new_ext}", $filename);
+      // We have either no extension or an empty filename (which can happen with filenames like
+      // ".jpg" or ".album").  Add the new extension.
+      return "{$filename}.{$new_ext}";
     }
   }
 

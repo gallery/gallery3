@@ -62,25 +62,10 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
-    // If the last element is .album.jpg, pop that off since it's not a real item
-    $path = preg_replace("|/.album.jpg$|", "", $path);
+    // Find our item by its path
+    $item = item::find_by_path($path, $type);
 
-    $item = item::find_by_path($path);
-    if (!$item->loaded()) {
-      // We didn't turn it up. If we're looking for a .jpg then it's it's possible that we're
-      // requesting the thumbnail for a movie.  In that case, the movie file would
-      // have been converted to a .jpg. So try some alternate types:
-      if (preg_match('/.jpg$/', $path)) {
-        foreach (legal_file::get_movie_extensions() as $ext) {
-          $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
-          $item = item::find_by_path($movie_path);
-          if ($item->loaded()) {
-            break;
-          }
-        }
-      }
-    }
-
+    // Make sure we found something
     if (!$item->loaded()) {
       throw new Kohana_404_Exception();
     }
@@ -96,22 +81,36 @@ class File_Proxy_Controller extends Controller {
     }
 
     // Don't try to load a directory
-    if ($type == "albums" && $item->is_album()) {
+    if ($type != "thumbs" && $item->is_album()) {
       throw new Kohana_404_Exception();
     }
 
-    if ($type == "albums") {
+    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
+    // see if you should make the same change there as well.
+
+    // Find the file path and mime type
+    switch ($type) {
+    case "albums":
       $file = $item->file_path();
-    } else if ($type == "resizes") {
+      $mime = $item->mime_type;
+      break;
+    case "resizes":
       $file = $item->resize_path();
-    } else {
+      $mime = legal_file::get_photo_types_by_extension($item->resize_extension);
+      break;
+    case "thumbs":
       $file = $item->thumb_path();
+      $mime = legal_file::get_photo_types_by_extension($item->thumb_extension);
+      break;
     }
 
-    if (!file_exists($file)) {
+    // Make sure the file exists and its mime is defined
+    if (!file_exists($file) || !$mime) {
       throw new Kohana_404_Exception();
     }
 
+    // We're all set - let's dump the image
+    
     header("Content-Length: " . filesize($file));
 
     header("Pragma:");
@@ -123,12 +122,8 @@ class File_Proxy_Controller extends Controller {
 
     expires::set(2592000, $item->updated);  // 30 days
 
-    // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
-    if ($item->is_movie() && $type != "albums") {
-      header("Content-Type: image/jpeg");
-    } else {
-      header("Content-Type: $item->mime_type");
-    }
+    // Dump out the image
+    header("Content-Type: $mime");
 
     // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
     // that Kohana started.  We want to close *all* buffers at this point because otherwise we're

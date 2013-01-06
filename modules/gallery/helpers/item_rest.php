@@ -101,9 +101,9 @@ class item_rest_Core {
       // Only change fields from a whitelist.
       foreach (array("album_cover", "captured", "description",
                      "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
-                     "resize_height", "resize_width", "slug", "sort_column", "sort_order",
-                     "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
-                     "width") as $key) {
+                     "resize_extension", "resize_height", "resize_width", "slug", "sort_column", 
+                     "sort_order", "thumb_dirty", "thumb_extension", "thumb_height", "thumb_width",
+                     "title", "view_count", "width") as $key) {
         switch ($key) {
         case "album_cover":
           if (property_exists($entity, "album_cover")) {

@@ -548,6 +548,10 @@ class gallery_task_Core {
           $album_cover_item = ORM::factory("item", $item->album_cover_item_id);
           if (!$album_cover_item->loaded()) {
             $item->album_cover_item_id = null;
+            $item->thumb_extension = null;
+            $item->thumb_width = 0;
+            $item->thumb_height = 0;
+            $item->thumb_dirty = 1;
             $item->save();
           }
         }

@@ -26,17 +26,7 @@ class item_Core {
 
     $parent = $source->parent();
     if ($parent->album_cover_item_id == $source->id) {
-      if ($parent->children_count() > 1) {
-        foreach ($parent->children(2) as $child) {
-          if ($child->id != $source->id) {
-            $new_cover_item = $child;
-            break;
-          }
-        }
-        item::make_album_cover($new_cover_item);
-      } else {
-        item::remove_album_cover($parent);
-      }
+      item::remove_album_cover($parent, true);
     }
 
     $source->parent_id = $target->id;
@@ -104,16 +94,11 @@ class item_Core {
     access::required("edit", $parent);
 
     model_cache::clear();
+    // This ensures that album_cover_item_id is a photo/movie and not an album
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
-    if ($item->thumb_dirty) {
-      $parent->thumb_dirty = 1;
-      graphics::generate($parent);
-    } else {
-      copy($item->thumb_path(), $parent->thumb_path());
-      $parent->thumb_width = $item->thumb_width;
-      $parent->thumb_height = $item->thumb_height;
-    }
+    $parent->thumb_dirty = 1;
     $parent->save();
+    graphics::generate($parent);
     $grand_parent = $parent->parent();
     if ($grand_parent && access::can("edit", $grand_parent) &&
         $grand_parent->album_cover_item_id == null)  {
@@ -121,18 +106,31 @@ class item_Core {
     }
   }
 
-  static function remove_album_cover($album) {
+  static function remove_album_cover($album, $auto_replace=false) {
     access::required("view", $album);
     access::required("edit", $album);
+    $parent = $album->parent();
+    if ($auto_replace && ($parent->children_count() > 1)) {
+      // Instead of removing the album cover entirely, give it a new one
+      foreach ($parent->children(2) as $child) {
+        if ($child->id != $source->id) {
+          $new_cover_item = $child;
+          break;
+        }
+      }
+      item::make_album_cover($new_cover_item);
+      return;
+    }
+    // Remove the album cover entirely
     @unlink($album->thumb_path());
 
     model_cache::clear();
     $album->album_cover_item_id = null;
+    $album->thumb_extension = null;
     $album->thumb_width = 0;
     $album->thumb_height = 0;
     $album->thumb_dirty = 1;
     $album->save();
-    graphics::generate($album);
   }
 
   /**
@@ -223,44 +221,101 @@ class item_Core {
    * Find an item by its path.  If there's no match, return an empty Item_Model.
    * NOTE: the caller is responsible for performing security checks on the resulting item.
    * @param string $path
+   * @param string $type - albums, thumbs, or resizes
    * @return object Item_Model
    */
-  static function find_by_path($path) {
+  static function find_by_path($path, $type="albums") {
     $path = trim($path, "/");
+    $type = rtrim($type, "s");
 
     // The root path name is NULL not "", hence this workaround.
     if ($path == "") {
       return item::root();
     }
 
+    $paths = explode("/", $path);
+    $extension = pathinfo(end($paths), PATHINFO_EXTENSION);
+
+    // See if we're looking for the thumb of an album (e.g. "/.album.jpg").  If so, 
+    // change the type and strip off the last entry of paths.
+    if (strncmp(end($paths), ".album.", 7) && ($type == "thumb")) {
+      $type = "album_thumb";
+      unset($paths(count($paths) - 1));
+    }
+
     // Check to see if there's an item in the database with a matching relative_path_cache value.
-    // Since that field is urlencoded, we must urlencoded the components of the path.
-    foreach (explode("/", $path) as $part) {
+    // Since that field is urlencoded, we must urlencode the components of the path.
+    foreach ($paths as $part) {
       $encoded_array[] = rawurlencode($part);
     }
     $encoded_path = join("/", $encoded_array);
-    $item = ORM::factory("item")
-      ->where("relative_path_cache", "=", $encoded_path)
-      ->find();
+    switch ($type) {
+      case "album":  // i.e. full-size images
+        $item = ORM::factory("item")
+          ->where("relative_path_cache", "=", $encoded_path)
+          ->find();
+        break;
+      case "album_thumb":
+        $item = ORM::factory("item")
+          ->where("relative_path_cache", "=", $encoded_path)
+          ->where("thumb_extension", "=", $extension)
+          ->find();
+        break;
+      case "resize":
+      case "thumb":
+        $encoded_path_base = legal_file::change_extension($encoded_path, "");
+        $item = ORM::factory("item")
+          ->where("relative_path_cache", "LIKE", addcslashes($encoded_path_base, "_%") . "%")
+          ->where("level", "=", count($paths) + 1)
+          ->where("{$type}_extension", "=", $extension)
+          ->find();
+        break;
+    }
     if ($item->loaded()) {
       return $item;
     }
 
     // Since the relative_path_cache field is a cache, it can be unavailable.  If we don't find
     // anything, fall back to checking the path the hard way.
-    $paths = explode("/", $path);
-    foreach (ORM::factory("item")
-             ->where("name", "=", end($paths))
-             ->where("level", "=", count($paths) + 1)
-             ->find_all() as $item) {
-      if (urldecode($item->relative_path()) == $path) {
-        return $item;
-      }
+    switch ($type) {
+      case "album":  // i.e. full-size images
+        foreach (ORM::factory("item")
+                 ->where("name", "=", end($paths))
+                 ->where("level", "=", count($paths) + 1)
+                 ->find_all() as $item) {
+          if (urldecode($item->relative_path()) == $path) {
+            return $item;
+          }
+        }
+        break;
+      case "album_thumb":
+        foreach (ORM::factory("item")
+                 ->where("name", "=", end($paths))
+                 ->where("level", "=", count($paths) + 1)
+                 ->where("thumb_extension", "=", $extension)
+                 ->find_all() as $item) {
+          if (urldecode($item->relative_path()) == $path) {
+            return $item;
+          }
+        }
+        break;
+      case "resize":
+      case "thumb":
+        $path_base = legal_file::change_extension(end($paths), "");
+        foreach (ORM::factory("item")
+                 ->where("name", "LIKE", addcslashes($path_base, "_%") . "%")
+                 ->where("level", "=", count($paths) + 1)
+                 ->where("{$type}_extension", "=", $extension)
+                 ->find_all() as $item) {
+          if (urldecode(legal_file::change_extension($item->relative_path(), "")) == $path_base) {
+            return $item;
+          }
+        }
+        break;
     }
-
+    // Nothing found - return an empty item model
     return new Item_Model();
   }
-
 
   /**
    * Locate an item using the URL.  We assume that the url is in the form /a/b/c where each

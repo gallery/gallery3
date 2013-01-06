@@ -141,10 +141,7 @@ class gallery_event_Core {
     foreach (ORM::factory("item")
              ->where("album_cover_item_id", "=", $item->id)
              ->find_all() as $target) {
-      copy($item->thumb_path(), $target->thumb_path());
-      $target->thumb_width = $item->thumb_width;
-      $target->thumb_height = $item->thumb_height;
-      $target->save();
+      graphics::generate($target);
     }
   }
 

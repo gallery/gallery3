@@ -116,6 +116,8 @@ class graphics_Core {
    */
   static function generate($item) {
     if ($item->is_album()) {
+      // It's an album.  We handle this a little differently than photos and movies, as the end
+      // goal is to copy the already-generated thumb from its corresponding cover item.
       if (!$cover = $item->album_cover()) {
         // This album has no cover; there's nothing to generate.  Because of an old bug, it's
         // possible that there's an album cover item id that points to an invalid item.  In that
@@ -127,22 +129,40 @@ class graphics_Core {
         //      http://gallery.menalto.com/node/96926
         if ($item->album_cover_item_id) {
           $item->album_cover_item_id = null;
-          $item->save();
+          $item->thumb_extension = null;
+          $item->thumb_width = 0;
+          $item->thumb_height = 0;
+          $item->thumb_dirty = 1;
         }
-        return;
+      } else if ($item->thumb_dirty) {
+        // Need to rebuild the album thumb.  First, regenerate the cover if needed.
+        if ($cover->thumb_dirty) {
+          graphics::generate($cover);
+        }
+        if (!$cover->thumb_dirty) {
+          // Cover is clean - copy it over.  If the cover is not clean, the album thumb stays dirty.
+          unlink($item->thumb_path());
+          $item->thumb_extension = $cover->thumb_extension;
+          copy($cover->thumb_path(), $item->thumb_path());
+          $item->thumb_width = $cover->thumb_width;
+          $item->thumb_height = $cover->thumb_height;
+          $item->thumb_dirty = 0;
+        }
       }
-      $input_file = $cover->file_path();
-      $input_item = $cover;
-    } else {
-      $input_file = $item->file_path();
-      $input_item = $item;
+      $item->resize_dirty = 0; // there are no resizes for albums
+      $item->save();
+      return;
     }
 
     if ($item->thumb_dirty) {
       $ops["thumb"] = $item->thumb_path();
     }
-    if ($item->resize_dirty && !$item->is_album() && !$item->is_movie()) {
-      $ops["resize"] = $item->resize_path();
+    if ($item->resize_dirty) {
+      if ($item->is_photo()) {
+        $ops["resize"] = $item->resize_path();
+      } else {
+        $item->resize_dirty = 0; // there are no resizes for movies
+      }
     }
 
     if (empty($ops)) {
@@ -152,11 +172,13 @@ class graphics_Core {
       return;
     }
 
+    $input_file = $item->file_path();
+    $input_item = $item;
+
     try {
       foreach ($ops as $target => $output_file) {
         if ($input_item->is_movie()) {
-          // Convert the movie filename to a JPG first, delete anything that might already be there
-          $output_file = legal_file::change_extension($output_file, "jpg");
+          // Delete anything that might already be there
           unlink($output_file);
           // Run movie_extract_frame events, which can either:
           //  - generate an output file, bypassing the ffmpeg-based movie::extract_frame
@@ -174,6 +196,9 @@ class graphics_Core {
               movie::extract_frame($input_file, $output_file, $movie_options_wrapper->movie_options);
             } catch (Exception $e) {
               // Didn't work, likely because of MISSING_FFMPEG - copy missing_movie instead
+              unlink($output_file);
+              $output_file = legal_file::change_extension($output_file, "jpg");
+              $item->thumb_extension = "jpg";
               copy(MODPATH . "gallery/images/missing_movie.jpg", $output_file);
             }
           }
@@ -182,6 +207,7 @@ class graphics_Core {
           $working_file = $input_file;
         }
 
+        // Run the graphics rules to rebuild the thumb and/or resize images
         foreach (self::_get_rules($target) as $rule) {
           $args = array($working_file, $output_file, unserialize($rule->args), $item);
           call_user_func_array($rule->operation, $args);
@@ -193,6 +219,8 @@ class graphics_Core {
         if (file_exists($item->thumb_path())) {
           $item->thumb_dirty = 0;
         } else {
+          unlink($item->thumb_path());
+          $item->thumb_extension = "png";
           copy(MODPATH . "gallery/images/missing_photo.png", $item->thumb_path());
         }
         $dims = getimagesize($item->thumb_path());
@@ -204,6 +232,8 @@ class graphics_Core {
         if (file_exists($item->resize_path())) {
           $item->resize_dirty = 0;
         } else {
+          unlink($item->resize_path());
+          $item->resize_extension = "png";
           copy(MODPATH . "gallery/images/missing_photo.png", $item->resize_path());
         }
         $dims = getimagesize($item->resize_path());
@@ -259,16 +289,18 @@ class graphics_Core {
    * Mark thumbnails and resizes as dirty.  They will have to be rebuilt.
    */
   static function mark_dirty($thumbs, $resizes) {
-    if ($thumbs || $resizes) {
+    if ($thumbs) {
       $db = db::build()
         ->update("items");
-      if ($thumbs) {
-        $db->set("thumb_dirty", 1);
-      }
-      if ($resizes) {
-        $db->set("resize_dirty", 1);
-      }
-      $db->execute();
+        ->set("thumb_dirty", 1);
+        ->execute();
+    }
+    if ($resizes) {
+      $db = db::build()
+        ->update("items");
+        ->set("resize_dirty", 1);
+        ->where("type", "=", "photo");
+        ->execute();
     }
 
     $count = graphics::find_dirty_images_query()->count_records();
