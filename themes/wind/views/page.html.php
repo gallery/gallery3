@@ -1,5 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?php header("X-Frame-Options: SAMEORIGIN"); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" <?= $theme->html_attributes() ?> xml:lang="en" lang="en">
@@ -131,7 +130,7 @@
           </div>
         </div>
         <div id="g-sidebar" class="yui-b">
-          <? if ($theme->page_subtype != "login"): ?>
+          <? if (!in_array($theme->page_subtype, array("login", "error"))): ?>
           <?= new View("sidebar.html") ?>
           <? endif ?>
         </div>

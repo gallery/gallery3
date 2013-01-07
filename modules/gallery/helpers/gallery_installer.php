@@ -312,8 +312,10 @@ class gallery_installer {
     module::set_var("gallery", "show_user_profiles_to", "registered_users");
     module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
     module::set_var("gallery", "timezone", null);
+    module::set_var("gallery", "lock_timeout", 1);
+    module::set_var("gallery", "movie_extract_frame_time", 3);
 
-    module::set_version("gallery", 50);
+    module::set_version("gallery", 53);
   }
 
   static function upgrade($version) {
@@ -687,7 +689,7 @@ class gallery_installer {
 
     if ($version == 47 || $version == 48) {
       // Add configuration variable to set timezone.  Defaults to the currently
-      // used timezone (from PHP configuration).  Note that in v48 we werew
+      // used timezone (from PHP configuration).  Note that in v48 we were
       // setting this value incorrectly, so we're going to stomp this value for v49.
       module::set_var("gallery", "timezone", null);
       module::set_version("gallery", $version = 49);
@@ -712,6 +714,34 @@ class gallery_installer {
         $item->save();
       }
       module::set_version("gallery", $version = 50);
+    }
+
+    if ($version == 50) {
+      // In v51, we added a lock_timeout variable so that administrators could edit the time out
+      // from 1 second to a higher variable if their system runs concurrent parallel uploads for 
+      // instance.
+      module::set_var("gallery", "lock_timeout", 1);
+      module::set_version("gallery", $version = 51);
+    }
+
+    if ($version == 51) {
+      // In v52, we added functions to the legal_file helper that map photo and movie file 
+      // extensions to their mime types (and allow extension of the list by other modules).  During
+      // this process, we correctly mapped m4v files to video/x-m4v, correcting a previous error
+      // where they were mapped to video/mp4.  This corrects the existing items.
+      db::build()
+        ->update("items")
+        ->set("mime_type", "video/x-m4v")
+        ->where("name", "REGEXP", "\.m4v$") // case insensitive since name column is utf8_general_ci
+        ->execute();
+      module::set_version("gallery", $version = 52);
+    }
+    
+    if ($version == 52) {
+      // In v53, we added the ability to change the default time used when extracting frames from
+      // movies.  Previously we hard-coded this at 3 seconds, so we use that as the default.
+      module::set_var("gallery", "movie_extract_frame_time", 3);
+      module::set_version("gallery", $version = 53);
     }
   }
 

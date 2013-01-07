@@ -57,27 +57,53 @@ class movie_Core {
     return $form;
   }
 
-  static function extract_frame($input_file, $output_file) {
+  /**
+   * Extract a frame from a movie file.  Valid movie_options are start_time (in seconds),
+   * input_args (extra ffmpeg input args) and output_args (extra ffmpeg output args).  Extra args
+   * are added at the end of the list, so they can override any prior args.
+   *
+   * @param string     $input_file
+   * @param string     $output_file
+   * @param array      $movie_options (optional)
+   */
+   static function extract_frame($input_file, $output_file, $movie_options=NULL) {
     $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
 
-    $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
-      " -an -ss 00:00:03 -an -r 1 -vframes 1" .
-      " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
-    exec($cmd);
+    list($width, $height, $mime_type, $extension, $duration) = movie::get_file_metadata($input_file);
+
+    if (is_numeric($movie_options["start_time"])) {
+      $start_time = max(0, $movie_options["start_time"]); // ensure it's non-negative
+    } else {
+      $start_time = module::get_var("gallery", "movie_extract_frame_time", 3); // use default
+    }
+    // extract frame at start_time, unless movie is too short
+    $start_time_arg = ($duration >= $start_time + 0.1) ?
+      "-ss " . date("H:i:s", mktime(0,0,$start_time,0,0,0,0)) : "";
+      
+    $input_args = $movie_options["input_args"] ? $movie_options["input_args"] : "";
+    $output_args = $movie_options["output_args"] ? $movie_options["output_args"] : "";
+
+    $cmd = escapeshellcmd($ffmpeg) . " $input_args -i " . escapeshellarg($input_file) .
+      " -an $start_time_arg -an -r 1 -vframes 1" .
+      " -s {$width}x{$height}" .
+      " -y -f mjpeg $output_args " . escapeshellarg($output_file) . " 2>&1";
+    exec($cmd, $exec_output, $exec_return);
 
     clearstatcache();  // use $filename parameter when PHP_version is 5.3+
-    if (filesize($output_file) == 0) {
-      // Maybe the movie is shorter, fall back to the first frame.
-      $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
-        " -an -an -r 1 -vframes 1" .
-        " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
-      exec($cmd);
+    if (filesize($output_file) == 0 || $exec_return) {
+      // Maybe the movie needs the "-threads 1" argument added
+      // (see http://sourceforge.net/apps/trac/gallery/ticket/1924)
+      $cmd = escapeshellcmd($ffmpeg) . " -threads 1 $input_args -i " . escapeshellarg($input_file) .
+        " -an $start_time_arg -an -r 1 -vframes 1" .
+        " -s {$width}x{$height}" .
+        " -y -f mjpeg $output_args " . escapeshellarg($output_file) . " 2>&1";
+      exec($cmd, $exec_output, $exec_return);
 
       clearstatcache();
-      if (filesize($output_file) == 0) {
+      if (filesize($output_file) == 0 || $exec_return) {
         throw new Exception("@todo FFMPEG_FAILED");
       }
     }
@@ -96,7 +122,7 @@ class movie_Core {
   }
 
   /**
-   * Return the width, height, mime_type and extension of the given movie file.
+   * Return the width, height, mime_type, extension and duration of the given movie file.
    */
   static function get_file_metadata($file_path) {
     $ffmpeg = movie::find_ffmpeg();
@@ -106,18 +132,32 @@ class movie_Core {
 
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($file_path) . " 2>&1";
     $result = `$cmd`;
-    if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $regs)) {
-      list ($width, $height) = array($regs[1], $regs[2]);
+    if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $matches_res)) {
+      if (preg_match("/Stream.*?Video:.*? \[.*?DAR (\d+):(\d+).*?\]/", $result, $matches_dar) &&
+          $matches_dar[1] >= 1 && $matches_dar[2] >= 1) {
+        // DAR is defined - determine width based on height and DAR
+        // (should always be int, but adding round to be sure)
+        $matches_res[1] = round($matches_res[2] * $matches_dar[1] / $matches_dar[2]);
+      }
+      list ($width, $height) = array($matches_res[1], $matches_res[2]);
     } else {
       list ($width, $height) = array(0, 0);
     }
 
-    $pi = pathinfo($file_path);
-    $extension = isset($pi["extension"]) ? $pi["extension"] : "flv"; // No extension?  Assume FLV.
-    $mime_type = in_array(strtolower($extension), array("mp4", "m4v")) ?
-      "video/mp4" : "video/x-flv";
+    $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+    $extension = $extension ? $extension : "flv"; // No extension?  Assume FLV.
+    $mime_type = legal_file::get_movie_types_by_extension($extension);
+    $mime_type = $mime_type ? $mime_type : "video/x-flv"; // No MIME found?  Default to video/x-flv.
 
-    return array($width, $height, $mime_type, $extension);
+    if (preg_match("/Duration: (\d+):(\d+):(\d+\.\d+)/", $result, $matches)) {
+      $duration = 3600 * $matches[1] + 60 * $matches[2] + $matches[3];
+    } else if (preg_match("/duration.*?:.*?(\d+)/", $result, $matches)) {
+      $duration = $matches[1];
+    } else {
+      $duration = 0;
+    }
+
+    return array($width, $height, $mime_type, $extension, $duration);
   }
 
 }
