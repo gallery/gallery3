@@ -191,7 +191,7 @@ class Item_Model_Core extends ORM_MPTT {
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
     if ($this->is_album()) {
-      return $base . "/.album." . $this->thumb_extension;
+      return $base . ".album." . $this->thumb_extension;
     } else {
       // Replace the full-size image extension with the thumb extension
       return legal_file::change_extension($base, $this->thumb_extension);
@@ -390,7 +390,7 @@ class Item_Model_Core extends ORM_MPTT {
 
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
-          $this->slug = item::convert_filename_to_slug($this->file_base);
+          $this->slug = item::convert_filename_to_slug($this->file_base());
 
           // If the filename is all invalid characters, then the slug may be empty here.  Pick a
           // random value.
@@ -406,17 +406,18 @@ class Item_Model_Core extends ORM_MPTT {
         if (empty($this->resize_extension) && $this->is_photo()) {
           $convert_extension = module::get_var("gallery", "convert_photo_resize");
           // If convert variable set, use it; if not, set to extension from get_file_metadata
-          $this->resize_extension = $convert_extension ? $convert_extension : $extension;
+          $this->resize_extension = $convert_extension ? $convert_extension : $this->file_extension();
         }
         if (empty($this->thumb_extension)) {
           if ($this->is_album()) {
-            $album_cover = $this->album_cover;
-            // If cover defined, use its thumb extension; if not, ensure it's set to null
-            $this->thumb_extension = $album_cover ? $album_cover->thumb_extension : null;
+            $album_cover = $this->album_cover();
+            // If cover defined, use its thumb extension; if not, set it to a default jpg to give
+            // the album thumb a valid path
+            $this->thumb_extension = $album_cover ? $album_cover->thumb_extension : "jpg";
           } else {
             $convert_extension = module::get_var("gallery", "convert_{$this->type}_thumb");
             // If convert variable set, use it; if not, set to extension from get_file_metadata
-            $this->thumb_extension = $convert_extension ? $convert_extension : $extension;
+            $this->thumb_extension = $convert_extension ? $convert_extension : $this->file_extension();
           }
         }
 
@@ -587,13 +588,13 @@ class Item_Model_Core extends ORM_MPTT {
         $this->relative_url_cache = null;
       }
     } else {
-      $base_name = $this->file_base;
-      $base_ext = $this->file_extension;
+      $base_name = $this->file_base();
+      $base_ext = $this->file_extension();
       while (ORM::factory("item")
              ->where("parent_id", "=", $this->parent_id)
              ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
              ->and_open()
-             ->where("name", "LIKE", addcslashes($this->file_base, "_%") . ".%")
+             ->where("name", "LIKE", addcslashes($this->file_base(), "_%") . ".%")
              ->or_where("slug", "=", $this->slug)
              ->close()
              ->find()->id) {
@@ -788,7 +789,7 @@ class Item_Model_Core extends ORM_MPTT {
       // View NOT generated - see if filetype supported by Flowplayer v3
       // Note that the extension list below is hard-coded and doesn't use the legal_file helper
       // since anything else will not work in Flowplayer v3.
-      if (in_array(strtolower($this->file_extension),
+      if (in_array(strtolower($this->file_extension()),
                    array("flv", "mp4", "m4v", "mov", "f4v"))) {
         // Filetype supported by Flowplayer v3 - use it (default)
         $view = new View("movieplayer.html");
@@ -882,11 +883,9 @@ class Item_Model_Core extends ORM_MPTT {
 
       // Conditional rules
       if ($this->id == 1) {
-        // We don't care about the name, slug, thumb_extension, or resize_extension for the root album.
+        // We don't care about the name and slug for the root album.
         $this->rules["name"] = array();
         $this->rules["slug"] = array();
-        $this->rules["resize_extension"] = array();
-        $this->rules["thumb_extension"] = array();
       }
       if (!$this->is_photo()) {
         // Only resizes of photos matter.
@@ -941,20 +940,20 @@ class Item_Model_Core extends ORM_MPTT {
     }
 
     if ($this->is_movie() || $this->is_photo()) {
-      if (!$this->loaded() && !$this->file_extension) {
+      if (!$this->loaded() && !$this->file_extension()) {
         // New items must have an extension
         $v->add_error("name", "illegal_data_file_extension");
         return;
       }
 
       if ($this->is_photo()) {
-        if (!legal_file::get_photo_extensions($this->file_extension)) {
+        if (!legal_file::get_photo_extensions($this->file_extension())) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
 
       if ($this->is_movie()) {
-        if (!legal_file::get_movie_extensions($this->file_extension)) {
+        if (!legal_file::get_movie_extensions($this->file_extension())) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
@@ -1047,7 +1046,7 @@ class Item_Model_Core extends ORM_MPTT {
 
     case "resize_extension":
     case "thumb_extension":
-      $legal_values = legal_file::get_photo_types();
+      $legal_values = legal_file::get_photo_extensions();
       break;
 
     case "sort_column":

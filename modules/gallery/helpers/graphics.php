@@ -141,7 +141,7 @@ class graphics_Core {
         }
         if (!$cover->thumb_dirty) {
           // Cover is clean - copy it over.  If the cover is not clean, the album thumb stays dirty.
-          unlink($item->thumb_path());
+          @unlink($item->thumb_path());
           $item->thumb_extension = $cover->thumb_extension;
           copy($cover->thumb_path(), $item->thumb_path());
           $item->thumb_width = $cover->thumb_width;
@@ -179,7 +179,7 @@ class graphics_Core {
       foreach ($ops as $target => $output_file) {
         if ($input_item->is_movie()) {
           // Delete anything that might already be there
-          unlink($output_file);
+          @unlink($output_file);
           // Run movie_extract_frame events, which can either:
           //  - generate an output file, bypassing the ffmpeg-based movie::extract_frame
           //  - add to the options sent to movie::extract_frame (e.g. change frame extract time,
@@ -196,7 +196,7 @@ class graphics_Core {
               movie::extract_frame($input_file, $output_file, $movie_options_wrapper->movie_options);
             } catch (Exception $e) {
               // Didn't work, likely because of MISSING_FFMPEG - copy missing_movie instead
-              unlink($output_file);
+              @unlink($output_file);
               $output_file = legal_file::change_extension($output_file, "jpg");
               $item->thumb_extension = "jpg";
               copy(MODPATH . "gallery/images/missing_movie.jpg", $output_file);
@@ -219,7 +219,6 @@ class graphics_Core {
         if (file_exists($item->thumb_path())) {
           $item->thumb_dirty = 0;
         } else {
-          unlink($item->thumb_path());
           $item->thumb_extension = "png";
           copy(MODPATH . "gallery/images/missing_photo.png", $item->thumb_path());
         }
@@ -232,7 +231,6 @@ class graphics_Core {
         if (file_exists($item->resize_path())) {
           $item->resize_dirty = 0;
         } else {
-          unlink($item->resize_path());
           $item->resize_extension = "png";
           copy(MODPATH . "gallery/images/missing_photo.png", $item->resize_path());
         }

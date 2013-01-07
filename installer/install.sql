@@ -191,7 +191,7 @@ CREATE TABLE {items} (
   KEY `left_ptr` (`left_ptr`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,2,0,NULL,'','',1,NULL,NULL,NULL,2,NULL,'weight','ASC',1,NULL,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
+INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,2,0,NULL,'','',1,NULL,NULL,NULL,2,NULL,'weight','ASC',1,'jpg',NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
 DROP TABLE IF EXISTS {items_tags};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;

@@ -245,6 +245,7 @@ class gallery_installer {
             "sort_column" => "weight",
             "sort_order" => "ASC",
             "thumb_dirty" => 1,
+            "thumb_extension" => "jpg",
             "title" => "Gallery",
             "type" => "album",
             "updated" => $now,

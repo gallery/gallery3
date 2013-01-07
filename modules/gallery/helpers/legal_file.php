@@ -68,10 +68,10 @@ class legal_file_Core {
   static function get_types_by_extension($extension=NULL) {
     if ($extension) {
       // return matching MIME type
-      if ($photo_mime = legal_file::get_photo_types_by_extension($extention)) {
+      if ($photo_mime = legal_file::get_photo_types_by_extension($extension)) {
         return $photo_mime;
       } else {
-        return legal_file::get_movie_types_by_extension($extention);
+        return legal_file::get_movie_types_by_extension($extension);
       }
     } else {
       // return complete array
