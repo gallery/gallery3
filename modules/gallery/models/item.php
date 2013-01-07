@@ -887,13 +887,13 @@ class Item_Model_Core extends ORM_MPTT {
         "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
         "rand_key"            => array("rule"      => array("decimal")),
         "resize_extension"    => array("rules"     => array("length[1,6]", "required"),
-                                       "callbacks" => array(array($this, "valid_photo_extension"))),
+                                       "callbacks" => array(array($this, "valid_field"))),
         "slug"                => array("rules"     => array("length[0,255]", "required"),
                                        "callbacks" => array(array($this, "valid_slug"))),
         "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
         "sort_order"          => array("callbacks" => array(array($this, "valid_field"))),
         "thumb_extension"     => array("rules"     => array("length[1,6]", "required"),
-                                       "callbacks" => array(array($this, "valid_photo_extension"))),
+                                       "callbacks" => array(array($this, "valid_field"))),
         "title"               => array("rules"     => array("length[0,255]", "required")),
         "type"                => array("callbacks" => array(array($this, "read_only"),
                                                             array($this, "valid_field"))),
@@ -906,7 +906,7 @@ class Item_Model_Core extends ORM_MPTT {
         $this->rules["slug"] = array();
       }
       if (!$this->is_photo()) {
-        // Only resizes of photos matter.
+        // We only care about resizes of photos.
         $this->rules["resize_extension"] = array();
       }
 
@@ -994,15 +994,6 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * Make sure the resize or thumb extension is legal.
-   */
-  public function valid_photo_extension(Validation $v, $field) {
-    if (!legal_file::get_photo_extensions($this->$field)) {
-      $v->add_error("name", "illegal_$field");
-    }
-  }
-
-  /**
    * Make sure that the data file is well formed (it exists and isn't empty).
    */
   public function valid_data_file(Validation $v, $field) {
@@ -1074,6 +1065,7 @@ class Item_Model_Core extends ORM_MPTT {
     case "resize_extension":
     case "thumb_extension":
       $legal_values = legal_file::get_photo_extensions();
+      $case_insensitive = true;
       break;
 
     case "sort_column":
@@ -1095,8 +1087,14 @@ class Item_Model_Core extends ORM_MPTT {
       break;
     }
 
-    if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
-      $v->add_error($field, "invalid");
+    if (empty($case_insensitive)) {
+      if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
+        $v->add_error($field, "invalid");
+      }
+    } else {
+      if (isset($legal_values) && !in_array(strtolower($this->$field), $legal_values)) {
+        $v->add_error($field, "invalid");
+      }
     }
   }
 
