@@ -174,7 +174,7 @@ class legal_file_Core {
     if ($pi["filename"] && isset($pi["extension"])) {
       // We have a defined extension (includes filenames that end in a dot) and a non-empty filename.
       // Replace the old extension with the new.
-      return substr($filename, 0, -strlen($pi["extension"])) . $new_ext;
+      return substr($filename, 0, -strlen($pi["extension"])-1) . ".{$new_ext}";
     } else {
       // We have either no extension or an empty filename (which can happen with filenames like
       // ".jpg" or ".album").  Add the new extension.

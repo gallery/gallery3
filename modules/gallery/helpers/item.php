@@ -113,7 +113,7 @@ class item_Core {
     if ($auto_replace && ($parent->children_count() > 1)) {
       // Instead of removing the album cover entirely, give it a new one
       foreach ($parent->children(2) as $child) {
-        if ($child->id != $source->id) {
+        if ($child->id != $album->album_cover()->id) {
           $new_cover_item = $child;
           break;
         }

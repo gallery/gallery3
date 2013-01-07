@@ -191,7 +191,7 @@ class Item_Model_Core extends ORM_MPTT {
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
     if ($this->is_album()) {
-      return $base . ".album." . $this->thumb_extension;
+      return $base . "/.album." . $this->thumb_extension;
     } else {
       // Replace the full-size image extension with the thumb extension
       return legal_file::change_extension($base, $this->thumb_extension);
@@ -228,14 +228,14 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/resizes/Bobs Wedding    (a directory, not a file!)
+   * album: /var/resizes/Bobs Wedding/.    (Not a file!  Trailing dot makes it safe for dirname().)
    * photo: /var/resizes/Bobs Wedding/Eating-Cake.jpg?m=123456789
    * movie: (does not exist)
    */
   public function resize_path() {
     $base = VARPATH . "resizes/" . urldecode($this->relative_path());
     if ($this->is_album()) {
-      return $base;
+      return $base . "/.";
     } else if ($this->is_photo()) {
       // Replace the full-size image extension with the resize extension
       return legal_file::change_extension($base, $this->resize_extension);
@@ -246,11 +246,11 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * $full_uri = true
-   *   album: http://example.com/gallery3/var/resizes/Bobs%20Wedding    (a directory, not a file!)
+   *   album: http://example.com/gallery3/var/resizes/Bobs%20Wedding    (Not a file!)
    *   photo: http://example.com/gallery3/var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
    *   movie: (does not exist)
    * $full_uri = false
-   *   album: /gallery3/var/resizes/Bobs%20Wedding    (a directory, not a file!)
+   *   album: /gallery3/var/resizes/Bobs%20Wedding    (Not a file!)
    *   photo: /gallery3/var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
    *   movie: (does not exist)
    */
@@ -403,24 +403,8 @@ class Item_Model_Core extends ORM_MPTT {
         $this->_get_and_check_metadata();
         
         // Set the resize and thumb extensions if not already set
-        if (empty($this->resize_extension) && $this->is_photo()) {
-          $convert_extension = module::get_var("gallery", "convert_photo_resize");
-          // If convert variable set, use it; if not, set to extension from get_file_metadata
-          $this->resize_extension = $convert_extension ? $convert_extension : $this->file_extension();
-        }
-        if (empty($this->thumb_extension)) {
-          if ($this->is_album()) {
-            $album_cover = $this->album_cover();
-            // If cover defined, use its thumb extension; if not, set it to a default jpg to give
-            // the album thumb a valid path
-            $this->thumb_extension = $album_cover ? $album_cover->thumb_extension : "jpg";
-          } else {
-            $convert_extension = module::get_var("gallery", "convert_{$this->type}_thumb");
-            // If convert variable set, use it; if not, set to extension from get_file_metadata
-            $this->thumb_extension = $convert_extension ? $convert_extension : $this->file_extension();
-          }
-        }
-
+        $this->_fill_resize_and_thumb_extensions();
+        
         $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
@@ -463,6 +447,9 @@ class Item_Model_Core extends ORM_MPTT {
           $this->relative_path_cache = null;
           $this->relative_url_cache = null;
         }
+
+        // Set the resize and thumb extensions if not already set
+        $this->_fill_resize_and_thumb_extensions();
 
         $this->_randomize_name_or_slug_on_conflict();
 
@@ -633,6 +620,27 @@ class Item_Model_Core extends ORM_MPTT {
           != $this->mime_type) {
         // Extension is incorrect or missing - change the item name
         $this->name = legal_file::change_extension($this->name, $extension);
+      }
+    }
+  }
+
+  /**
+   * Fill resize_extension and thumb_extension if not already set.  If not set for a photo or
+   * movie, use the convert variable if defined or the full-size extension if not.  If not set for
+   * an album thumb, use the extension of the cover item's thumb if defined or default jpg if not.
+   */
+  private function _fill_resize_and_thumb_extensions() {
+    if (empty($this->resize_extension) && $this->is_photo()) {
+      $convert_extension = module::get_var("gallery", "convert_photo_resize");
+      $this->resize_extension = $convert_extension ? $convert_extension : $this->file_extension();
+    }
+    if (empty($this->thumb_extension)) {
+      if ($this->is_album()) {
+        $album_cover = $this->album_cover();
+        $this->thumb_extension = $album_cover ? $album_cover->thumb_extension : "jpg";
+      } else {
+        $convert_extension = module::get_var("gallery", "convert_{$this->type}_thumb");
+        $this->thumb_extension = $convert_extension ? $convert_extension : $this->file_extension();
       }
     }
   }
