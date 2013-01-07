@@ -32,7 +32,7 @@ class legal_file_Core {
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[strtolower($extension)];
+      return @$types_by_extension_wrapper->types_by_extension[strtolower($extension)];
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -53,7 +53,7 @@ class legal_file_Core {
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[strtolower($extension)];
+      return @$types_by_extension_wrapper->types_by_extension[strtolower($extension)];
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;

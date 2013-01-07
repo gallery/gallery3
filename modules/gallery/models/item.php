@@ -886,14 +886,12 @@ class Item_Model_Core extends ORM_MPTT {
                                        "callbacks" => array(array($this, "valid_name"))),
         "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
         "rand_key"            => array("rule"      => array("decimal")),
-        "resize_extension"    => array("rules"     => array("length[1,6]", "required"),
-                                       "callbacks" => array(array($this, "valid_field"))),
+        "resize_extension"    => array("callbacks" => array(array($this, "valid_field"))),
         "slug"                => array("rules"     => array("length[0,255]", "required"),
                                        "callbacks" => array(array($this, "valid_slug"))),
         "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
         "sort_order"          => array("callbacks" => array(array($this, "valid_field"))),
-        "thumb_extension"     => array("rules"     => array("length[1,6]", "required"),
-                                       "callbacks" => array(array($this, "valid_field"))),
+        "thumb_extension"     => array("callbacks" => array(array($this, "valid_field"))),
         "title"               => array("rules"     => array("length[0,255]", "required")),
         "type"                => array("callbacks" => array(array($this, "read_only"),
                                                             array($this, "valid_field"))),
@@ -1064,8 +1062,11 @@ class Item_Model_Core extends ORM_MPTT {
 
     case "resize_extension":
     case "thumb_extension":
-      $legal_values = legal_file::get_photo_extensions();
-      $case_insensitive = true;
+      // If we're just validating without saving, these may not be defined.
+      if (isset($this->$field)) { 
+        $legal_values = legal_file::get_photo_extensions();
+        $case_insensitive = true;
+      }
       break;
 
     case "sort_column":
