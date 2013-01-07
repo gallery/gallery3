@@ -440,12 +440,22 @@ class Item_Model_Core extends ORM_MPTT {
         if (isset($this->data_file)) {
           // Get metadata from the data file and check/fix the item name extension
           $this->_get_and_check_metadata();
+          // Remove old resize and thumb extensions
+          $this->resize_extension = null;
+          $this->thumb_extension = null;
         }
 
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
           $original->_build_relative_caches();
           $this->relative_path_cache = null;
           $this->relative_url_cache = null;
+        }
+
+        if (array_intersect($this->changed, array("album_cover_item_id"))) {
+          $this->thumb_extension = null;
+          $this->thumb_dirty = 1;
+          $this->thumb_height = 0;
+          $this->thumb_width = 0;
         }
 
         // Set the resize and thumb extensions if not already set
@@ -877,13 +887,13 @@ class Item_Model_Core extends ORM_MPTT {
         "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
         "rand_key"            => array("rule"      => array("decimal")),
         "resize_extension"    => array("rules"     => array("length[1,6]", "required"),
-                                       "callbacks" => array(array($this, "valid_field"))),
+                                       "callbacks" => array(array($this, "valid_photo_extension"))),
         "slug"                => array("rules"     => array("length[0,255]", "required"),
                                        "callbacks" => array(array($this, "valid_slug"))),
         "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
         "sort_order"          => array("callbacks" => array(array($this, "valid_field"))),
         "thumb_extension"     => array("rules"     => array("length[1,6]", "required"),
-                                       "callbacks" => array(array($this, "valid_field"))),
+                                       "callbacks" => array(array($this, "valid_photo_extension"))),
         "title"               => array("rules"     => array("length[0,255]", "required")),
         "type"                => array("callbacks" => array(array($this, "read_only"),
                                                             array($this, "valid_field"))),
@@ -980,6 +990,15 @@ class Item_Model_Core extends ORM_MPTT {
     if ($this->parent_id == 1 && Kohana::auto_load("{$this->slug}_Controller")) {
       $v->add_error("slug", "reserved");
       return;
+    }
+  }
+
+  /**
+   * Make sure the resize or thumb extension is legal.
+   */
+  public function valid_photo_extension(Validation $v, $field) {
+    if (!legal_file::get_photo_extensions($this->$field)) {
+      $v->add_error("name", "illegal_$field");
     }
   }
 

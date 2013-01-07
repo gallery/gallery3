@@ -129,10 +129,6 @@ class graphics_Core {
         //      http://gallery.menalto.com/node/96926
         if ($item->album_cover_item_id) {
           $item->album_cover_item_id = null;
-          $item->thumb_extension = null;
-          $item->thumb_width = 0;
-          $item->thumb_height = 0;
-          $item->thumb_dirty = 1;
         }
       } else if ($item->thumb_dirty) {
         // Need to rebuild the album thumb.  First, regenerate the cover if needed.

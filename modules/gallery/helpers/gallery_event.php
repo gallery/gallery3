@@ -172,6 +172,11 @@ class gallery_event_Core {
     if (!$item->parent()->album_cover_item_id) {
       item::make_album_cover($item);
     }
+
+    // If the old parent used this as an album cover, remove it (and replace if possible).
+    if ($old_parent->album_cover_item_id == $item->id) {
+      item::remove_album_cover($old_parent, true);
+    }
   }
 
   static function user_login($user) {

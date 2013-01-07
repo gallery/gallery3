@@ -109,27 +109,32 @@ class item_Core {
   static function remove_album_cover($album, $auto_replace=false) {
     access::required("view", $album);
     access::required("edit", $album);
-    $parent = $album->parent();
-    if ($auto_replace && ($parent->children_count() > 1)) {
-      // Instead of removing the album cover entirely, give it a new one
-      foreach ($parent->children(2) as $child) {
-        if ($child->id != $album->album_cover()->id) {
-          $new_cover_item = $child;
-          break;
+    if ($auto_replace) {
+      // Instead of removing the album cover entirely, try to give it a new one
+      foreach ($album->children(2) as $child) {
+        if ($child->is_album()) {
+          if ($child->album_cover_item_id != $album->album_cover_item_id &&
+              $child_cover = $child->album_cover()) {
+            $new_cover_item = $child_cover;
+            break;
+          }
+        } else {
+          if ($child->id != $album->album_cover_item_id) {
+            $new_cover_item = $child;
+            break;
+          }
         }
       }
-      item::make_album_cover($new_cover_item);
-      return;
+      if (isset($new_cover_item)) {
+        item::make_album_cover($new_cover_item);
+        return;
+      }
     }
     // Remove the album cover entirely
     @unlink($album->thumb_path());
 
     model_cache::clear();
     $album->album_cover_item_id = null;
-    $album->thumb_extension = null;
-    $album->thumb_width = 0;
-    $album->thumb_height = 0;
-    $album->thumb_dirty = 1;
     $album->save();
   }
 
