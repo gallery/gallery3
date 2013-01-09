@@ -42,13 +42,13 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function change_extension_path_containing_dots_with_no_extension_test() {
     $this->assert_equal(
-      "/website/foo.com/VID_20120513_105421",
+      "/website/foo.com/VID_20120513_105421.jpg",
       legal_file::change_extension("/website/foo.com/VID_20120513_105421", "jpg"));
   }
   
   public function change_extension_path_containing_dots_with_trailing_dot_test() {
     $this->assert_equal(
-      "/website/foo.com/VID_20120513_105421",
+      "/website/foo.com/VID_20120513_105421.jpg",
       legal_file::change_extension("/website/foo.com/VID_20120513_105421.", "jpg"));
   }
   
