@@ -34,6 +34,11 @@ class G2_Controller extends Controller {
     $path = $input->get("path");
     $id = $input->get("g2_itemId");
 
+    /* Tags are handled specially, since there's no mapping for them */
+    if (($path && 0 === strpos($path, "tag/"))) {
+      url::redirect("tag_name/" . substr($path, 4));
+    }
+
     if (($path && $path != 'index.php' && $path != 'main.php') || $id) {
       if ($id) {
         // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of

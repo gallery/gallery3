@@ -141,12 +141,26 @@ class Tag_Model_Core extends ORM {
 
   /**
    * Return the server-relative url to this item, eg:
-   *   /gallery3/index.php/tags/35
+   *   /gallery3/index.php/tags/35/Bob
    *
    * @param string $query the query string (eg "page=3")
    */
   public function url($query=null) {
     $url = url::site("tag/{$this->id}/" . urlencode($this->name));
+    if ($query) {
+      $url .= "?$query";
+    }
+    return $url;
+  }
+
+  /**
+   * Return the full url to this item, eg:
+   *   http://example.com/gallery3/index.php/tags/35/Bob
+   *
+   * @param string $query the query string (eg "page=3")
+   */
+  public function abs_url($query=null) {
+    $url = url::abs_site("tag/{$this->id}/" . urlencode($this->name));
     if ($query) {
       $url .= "?$query";
     }
