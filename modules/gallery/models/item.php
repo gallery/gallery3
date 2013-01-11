@@ -859,13 +859,13 @@ class Item_Model_Core extends ORM_MPTT {
       }
 
       if ($this->is_photo()) {
-        if (!in_array(strtolower($ext), legal_file::get_photo_extensions())) {
+        if (!legal_file::get_photo_extensions($ext)) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
 
       if ($this->is_movie()) {
-        if (!in_array(strtolower($ext), legal_file::get_movie_extensions())) {
+        if (!legal_file::get_movie_extensions($ext)) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }

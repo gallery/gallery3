@@ -107,7 +107,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         return;
       }
 
-      if (!in_array($pathinfo["extension"], legal_file::get_photo_extensions())) {
+      if (!legal_file::get_photo_extensions($pathinfo["extension"])) {
         switch ($image_info[2]) {
         case IMAGETYPE_GIF:
           $name = legal_file::change_extension($name, "gif");
