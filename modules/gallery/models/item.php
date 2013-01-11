@@ -439,6 +439,11 @@ class Item_Model_Core extends ORM_MPTT {
           // Remove old resize and thumb extensions
           $this->resize_extension = null;
           $this->thumb_extension = null;
+        } else if (!$this->is_album() &&
+                   legal_file::get_types_by_extension($this->file_extension()) != $this->mime_type) {
+          // We don't have a data file, but we did change the name to something with an incorrect
+          // extension (likely because the user took it off) - Revert to what we used to have.
+          $this->name = legal_file::change_extension($this->name, $original->file_extension());
         }
 
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
