@@ -96,9 +96,12 @@ class File_Proxy_Controller extends Controller {
     }
 
     // Don't try to load a directory
-    if ($type == "albums" && $item->is_album()) {
+    if ($type != "thumbs" && $item->is_album()) {
       throw new Kohana_404_Exception();
     }
+
+    // Note: the code below is roughly duplicated in data_rest::get, so if you modify this,
+    // please look to see if you should make the same change there as well.
 
     if ($type == "albums") {
       $file = $item->file_path();
@@ -124,8 +127,10 @@ class File_Proxy_Controller extends Controller {
     expires::set(2592000, $item->updated);  // 30 days
 
     // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
-    if ($item->is_movie() && $type != "albums") {
+    if ($item->is_movie() && $type == "thumbs") {
       header("Content-Type: image/jpeg");
+    } else if ($item->is_album()) {
+      header("Content-Type: " . $item->album_cover()->mime_type);
     } else {
       header("Content-Type: $item->mime_type");
     }
