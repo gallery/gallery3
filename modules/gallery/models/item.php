@@ -85,11 +85,6 @@ class Item_Model_Core extends ORM_MPTT {
     $old = clone $this;
     module::event("item_before_delete", $this);
 
-    $parent = $this->parent();
-    if ($parent->album_cover_item_id == $this->id) {
-      item::remove_album_cover($parent, true);
-    }
-
     $path = $this->file_path();
     $resize_path = $this->resize_path();
     $thumb_path = $this->thumb_path();
@@ -380,6 +375,7 @@ class Item_Model_Core extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded()) {
         // Create a new item.
+        // @todo the create subroutine assumes we have data_file defined, and crashes if we don't.
         module::event("item_before_create", $this);
 
         // Set a weight if it's missing.  We don't do this in the constructor because it's not a
@@ -623,13 +619,19 @@ class Item_Model_Core extends ORM_MPTT {
           movie::get_file_metadata($this->data_file);
       }
 
-      // See if the metadata matches the data_file extension, and fix if incorrect or missing.
+      // See if the metadata matches the item's file extension, and change if incorrect or missing.
       // The checking is actually performed on the mimes to avoid renaming already-valid things
       // with extension synonyms (e.g. don't rename foo.jpeg to foo.jpg).
-      if (legal_file::get_types_by_extension(pathinfo($this->data_file, PATHINFO_EXTENSION))
-          != $this->mime_type) {
-        // Extension is incorrect or missing - change the item name
-        $this->name = legal_file::change_extension($this->name, $extension);
+      if (legal_file::get_types_by_extension($this->file_extension()) != $this->mime_type) {
+        // Extension is incorrect or missing - change the item name.
+        if (legal_file::get_types_by_extension(
+            $data_extension = pathinfo($this->data_file, PATHINFO_EXTENSION)) != $this->mime_type) {
+          // Data file extension matches mime - use it (avoids renaming foo.jpeg to foo.jpg)
+          $this->name = legal_file::change_extension($this->name, $data_extension);
+        } else {
+          // Data file extension doesn't match mime - use what metadata gave us
+          $this->name = legal_file::change_extension($this->name, $extension);
+        }
       }
     }
   }
