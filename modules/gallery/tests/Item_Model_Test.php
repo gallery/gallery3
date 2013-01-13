@@ -286,6 +286,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $item->sort_column = "bogus";
     $item->sort_order = "bogus";
     $item->title = null;
+    $item->thumb_extension = "bogus";
     $item->type = "bogus";
     try {
       $item->save();
@@ -297,6 +298,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
                                "parent_id" => "invalid",
                                "sort_column" => "invalid",
                                "sort_order" => "invalid",
+                               "thumb_extension" => "invalid",
                                "type" => "invalid"),
                          $e->validation->errors());
       return;
@@ -348,10 +350,11 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->name = "no_extension";
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("name" => "illegal_data_file_extension"), $e->validation->errors());
+      $this->assert_true(false, "Item_Model::save didn't assign extension based on data file's metadata");
       return;  // pass
     }
-    $this->assert_true(false, "Shouldn't get here");
+    // Item_Model::save should assign an extension based on the data file's metadata (test.jpg)
+    $this->assert_equal("jpeg", $photo->file_extension());
   }
 
   public function movie_files_must_have_an_extension_test() {
@@ -450,7 +453,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("mime_type" => "invalid", "name" => "illegal_data_file_extension"),
+      $this->assert_same(array("mime_type" => "invalid",
+                               "name" => "illegal_data_file_extension",
+                               "resize_extension" => "invalid",
+                               "thumb_extension" => "invalid"),
                          $e->validation->errors());
       return;  // pass
     }
@@ -489,9 +495,20 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     }
   }
 
-  public function illegal_extension_test() {
+  public function convert_invalid_extension_test() {
     foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
-                   "test.pl", "test.php.png") as $name) {
+                   "test.pl", "test", "test.") as $name) {
+      $photo = test::random_photo_unsaved(item::root());
+      $photo->name = $name;
+      $photo->save();
+      // Item_Model::save should assign an extension based on the data file's metadata (jpeg)
+      $this->assert_equal("jpeg", $photo->file_extension());
+    }
+  }
+
+  public function reject_invalid_multiple_extension_test() {
+    foreach (array("test.php.png", "test.PHP.JPG", "test.php5.jpeg",
+                   "test.php4.jpeg", "test.pl.pn", "test.php.") as $name) {
       try {
         $photo = test::random_photo_unsaved(item::root());
         $photo->name = $name;
@@ -505,9 +522,20 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     }
   }
 
-  public function cant_rename_to_illegal_extension_test() {
-    foreach (array("test.php.test", "test.php", "test.PHP",
-                   "test.php5", "test.php4", "test.pl") as $name) {
+  public function convert_rename_to_invalid_extension_test() {
+    foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
+                   "test.pl", "test", "test.") as $name) {
+      $photo = test::random_photo(item::root());
+      $photo->name = $name;
+      $photo->save();
+      // Item_Model::save should replace it with the original extension (jpg)
+      $this->assert_equal("jpg", $photo->file_extension());
+    }
+  }
+
+  public function reject_rename_to_invalid_multiple_extension_test() {
+    foreach (array("test.php.png", "test.PHP.JPG", "test.php5.jpeg",
+                   "test.php4.jpeg", "test.pl.pn", "test.php.") as $name) {
       try {
         $photo = test::random_photo(item::root());
         $photo->name = $name;
@@ -525,5 +553,67 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $album = test::random_album_unsaved(item::root());
     $album->name = $album->name . ".foo.bar";
     $album->save();
+  }
+  
+  public function illegal_thumb_extension_change_test() {
+    foreach (array("tif", "TIFF", "php", "html.jpg", "mp4") as $extension) {
+      try {
+        $photo = test::random_photo(item::root());
+        $photo->thumb_extension = $extension;
+        $photo->save();
+      } catch (ORM_Validation_Exception $e) {
+        $this->assert_equal(array("thumb_extension" => "invalid"),
+                            $e->validation->errors());
+        continue;
+      }
+      $this->assert_true(false, "Shouldn't get here");
+    }
+  }
+  
+  public function illegal_resize_extension_change_test() {
+    foreach (array("tif", "TIFF", "php", "html.jpg", "mp4") as $extension) {
+      try {
+        $photo = test::random_photo(item::root());
+        $photo->resize_extension = $extension;
+        $photo->save();
+      } catch (ORM_Validation_Exception $e) {
+        $this->assert_equal(array("resize_extension" => "invalid"),
+                            $e->validation->errors());
+        continue;
+      }
+      $this->assert_true(false, "Shouldn't get here");
+    }
+  }
+  
+  public function illegal_album_thumb_extension_change_test() {
+    // @todo Add this!
+  }
+  
+  public function legal_thumb_extension_change_test() {
+    foreach (array("png", "PNG", "gif", "") as $extension) {
+      $photo = test::random_photo(item::root());
+      $photo->thumb_extension = $extension;
+      $photo->save();
+      if ($extension) {
+        $this->assert_equal($extension, $photo->thumb_extension);
+      } else {
+        // was blank, so should be automatically filled in
+        $this->assert_equal("jpg", $photo->thumb_extension);
+      }
+    }
+  }
+
+  public function legal_resize_extension_change_test() {
+    foreach (array("png", "PNG", "gif", "") as $extension) {
+      $photo = test::random_photo(item::root());
+      $photo->resize_extension = $extension;
+      $photo->save();
+      if ($extension) {
+        $this->assert_equal($extension, $photo->resize_extension);
+      } else {
+        // was blank, so should be automatically filled in
+        $this->assert_equal("jpg", $photo->resize_extension);
+      }
+    }
   }
 }

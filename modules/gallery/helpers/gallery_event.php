@@ -141,10 +141,7 @@ class gallery_event_Core {
     foreach (ORM::factory("item")
              ->where("album_cover_item_id", "=", $item->id)
              ->find_all() as $target) {
-      copy($item->thumb_path(), $target->thumb_path());
-      $target->thumb_width = $item->thumb_width;
-      $target->thumb_height = $item->thumb_height;
-      $target->save();
+      graphics::generate($target);
     }
   }
 
@@ -174,6 +171,11 @@ class gallery_event_Core {
     // If the new parent doesn't have an album cover, make this it.
     if (!$item->parent()->album_cover_item_id) {
       item::make_album_cover($item);
+    }
+
+    // If the old parent used this as an album cover, remove it (and replace if possible).
+    if ($old_parent->album_cover_item_id == $item->id) {
+      item::remove_album_cover($old_parent, true);
     }
   }
 

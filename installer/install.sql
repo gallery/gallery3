@@ -164,6 +164,7 @@ CREATE TABLE {items} (
   `relative_path_cache` varchar(255) DEFAULT NULL,
   `relative_url_cache` varchar(255) DEFAULT NULL,
   `resize_dirty` tinyint(1) DEFAULT '1',
+  `resize_extension` varchar(6) DEFAULT NULL,
   `resize_height` int(9) DEFAULT NULL,
   `resize_width` int(9) DEFAULT NULL,
   `right_ptr` int(9) NOT NULL,
@@ -171,6 +172,7 @@ CREATE TABLE {items} (
   `sort_column` varchar(64) DEFAULT NULL,
   `sort_order` char(4) DEFAULT 'ASC',
   `thumb_dirty` tinyint(1) DEFAULT '1',
+  `thumb_extension` varchar(6) DEFAULT NULL,
   `thumb_height` int(9) DEFAULT NULL,
   `thumb_width` int(9) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
@@ -189,7 +191,7 @@ CREATE TABLE {items} (
   KEY `left_ptr` (`left_ptr`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,2,0,NULL,'','',1,NULL,NULL,2,NULL,'weight','ASC',1,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
+INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,2,0,NULL,'','',1,NULL,NULL,NULL,2,NULL,'weight','ASC',1,'jpg',NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
 DROP TABLE IF EXISTS {items_tags};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -244,7 +246,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',53,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',54,1);
 INSERT INTO {modules} VALUES (2,1,'user',4,2);
 INSERT INTO {modules} VALUES (3,1,'comment',7,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
@@ -382,7 +384,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -416,6 +418,9 @@ INSERT INTO {vars} VALUES (NULL,'gallery','extra_binary_paths','/usr/local/bin:/
 INSERT INTO {vars} VALUES (NULL,'gallery','timezone',NULL);
 INSERT INTO {vars} VALUES (NULL,'gallery','lock_timeout','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','movie_extract_frame_time','3');
+INSERT INTO {vars} VALUES (NULL,'gallery','convert_photo_resize','');
+INSERT INTO {vars} VALUES (NULL,'gallery','convert_photo_thumb','');
+INSERT INTO {vars} VALUES (NULL,'gallery','convert_movie_thumb','jpg');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_site_sidebar','a:4:{i:10;a:2:{i:0;s:7:\"gallery\";i:1;s:8:\"language\";}i:11;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:12;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:13;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','minimum_password_length','5');

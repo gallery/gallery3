@@ -85,11 +85,6 @@ class Item_Model_Core extends ORM_MPTT {
     $old = clone $this;
     module::event("item_before_delete", $this);
 
-    $parent = $this->parent();
-    if ($parent->album_cover_item_id == $this->id) {
-      item::remove_album_cover($parent);
-    }
-
     $path = $this->file_path();
     $resize_path = $this->resize_path();
     $thumb_path = $this->thumb_path();
@@ -129,8 +124,8 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return the server-relative url to this item, eg:
-   *   /gallery3/index.php/BobsWedding?page=2
-   *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *   /gallery3/index.php/Bobs%20Wedding?page=2
+   *   /gallery3/index.php/Bobs%20Wedding/Eating-Cake.jpg
    *
    * @param string $query the query string (eg "show=3")
    */
@@ -144,8 +139,8 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return the full url to this item, eg:
-   *   http://example.com/gallery3/index.php/BobsWedding?page=2
-   *   http://example.com/gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *   http://example.com/gallery3/index.php/Bobs%20Wedding?page=2
+   *   http://example.com/gallery3/index.php/Bobs%20Wedding/Eating-Cake.jpg
    *
    * @param string $query the query string (eg "show=3")
    */
@@ -158,16 +153,23 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/albums/album1/album2
-   * photo: /var/albums/album1/album2/photo.jpg
+   * album: /var/albums/Bobs Wedding
+   * photo: /var/albums/Bobs Wedding/Eating-Cake.jpg
+   * movie: /var/albums/Bobs Wedding/Making-Speech.mp4
    */
   public function file_path() {
     return VARPATH . "albums/" . urldecode($this->relative_path());
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/
-   * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
+   * $full_uri = true
+   *   album: http://example.com/gallery3/var/albums/Bobs%20Wedding?m=123456789
+   *   photo: http://example.com/gallery3/var/albums/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
+   *   movie: http://example.com/gallery3/var/albums/Bobs%20Wedding/Making-Speech.mp4?m=123456789
+   * $full_uri = false
+   *   album: /gallery3/var/albums/Bobs%20Wedding?m=123456789
+   *   photo: /gallery3/var/albums/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
+   *   movie: /gallery3/var/albums/Bobs%20Wedding/Making-Speech.mp4?m=123456789
    */
   public function file_url($full_uri=false) {
     $relative_path = "var/albums/" . $this->relative_path();
@@ -177,18 +179,17 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/resizes/album1/.thumb.jpg
-   * photo: /var/albums/album1/photo.thumb.jpg
+   * album: /var/thumbs/Bobs Wedding/.album.jpg
+   * photo: /var/thumbs/Bobs Wedding/Eating-Cake.jpg
+   * movie: /var/thumbs/Bobs Wedding/Making-Speech.jpg
    */
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
-    if ($this->is_photo()) {
-      return $base;
-    } else if ($this->is_album()) {
-      return $base . "/.album.jpg";
-    } else if ($this->is_movie()) {
-      // Replace the extension with jpg
-      return legal_file::change_extension($base, "jpg");
+    if ($this->is_album()) {
+      return $base . "/.album." . $this->thumb_extension;
+    } else {
+      // Replace the full-size image extension with the thumb extension
+      return legal_file::change_extension($base, $this->thumb_extension);
     }
   }
 
@@ -200,42 +201,66 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
-   * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
+   * $full_uri = true
+   *   album: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/.album.jpg?m=123456789
+   *   photo: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
+   *   movie: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/Making-Speech.mp4?m=123456789
+   * $full_uri = false
+   *   album: /gallery3/var/thumbs/Bobs%20Wedding/.album.jpg?m=123456789
+   *   photo: /gallery3/var/thumbs/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
+   *   movie: /gallery3/var/thumbs/Bobs%20Wedding/Making-Speech.jpg?m=123456789
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = $this->_cache_buster($this->thumb_path());
     $relative_path = "var/thumbs/" . $this->relative_path();
     $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
-    if ($this->is_photo()) {
-      return $base . $cache_buster;
-    } else if ($this->is_album()) {
-      return $base . "/.album.jpg" . $cache_buster;
-    } else if ($this->is_movie()) {
-      // Replace the extension with jpg
-      $base = legal_file::change_extension($base, "jpg");
-      return $base . $cache_buster;
+    if ($this->is_album()) {
+      return $base . "/.album." . $this->thumb_extension . $cache_buster;
+    } else {
+      // Replace the full-size image extension with the thumb extension
+      return legal_file::change_extension($base, $this->thumb_extension) . $cache_buster;
     }
   }
 
   /**
-   * album: /var/resizes/album1/.resize.jpg
-   * photo: /var/albums/album1/photo.resize.jpg
+   * album: /var/resizes/Bobs Wedding/.    (Not a file!  Trailing dot makes it safe for dirname().)
+   * photo: /var/resizes/Bobs Wedding/Eating-Cake.jpg?m=123456789
+   * movie: (does not exist)
    */
   public function resize_path() {
-    return VARPATH . "resizes/" . urldecode($this->relative_path()) .
-      ($this->is_album() ? "/.album.jpg" : "");
+    $base = VARPATH . "resizes/" . urldecode($this->relative_path());
+    if ($this->is_album()) {
+      return $base . "/.";
+    } else if ($this->is_photo()) {
+      // Replace the full-size image extension with the resize extension
+      return legal_file::change_extension($base, $this->resize_extension);
+    }
+    // Movies don't have a resize
+    return "";
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
-   * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
+   * $full_uri = true
+   *   album: http://example.com/gallery3/var/resizes/Bobs%20Wedding    (Not a file!)
+   *   photo: http://example.com/gallery3/var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
+   *   movie: (does not exist)
+   * $full_uri = false
+   *   album: /gallery3/var/resizes/Bobs%20Wedding    (Not a file!)
+   *   photo: /gallery3/var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=123456789
+   *   movie: (does not exist)
    */
   public function resize_url($full_uri=false) {
-    $relative_path = "var/resizes/" . $this->relative_path();
     $cache_buster = $this->_cache_buster($this->resize_path());
-    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
-      ($this->is_album() ? "/.album.jpg" : "") . $cache_buster;
+    $relative_path = "var/resizes/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
+    if ($this->is_album()) {
+      return $base . $cache_buster;
+    } else if ($this->is_photo()) {
+      // Replace the full-size image extension with the resize extension
+      return legal_file::change_extension($base, $this->resize_extension) . $cache_buster;
+    }
+    // Movies don't have a resize
+    return "";
   }
 
   /**
@@ -294,6 +319,30 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
+   * Return the extension to this item's file.  This can be uppercase or lowercase.
+   * @return string
+   */
+  public function file_extension() {
+    if ($this->is_album()) {
+      return "";
+    } else {
+      return pathinfo($this->name, PATHINFO_EXTENSION);
+    }
+  }
+
+  /**
+   * Return the base filename to this item's file (i.e. filename without its extension).
+   * @return string
+   */
+  public function file_base() {
+    if ($this->is_album()) {
+      return $this->name;
+    } else {
+      return pathinfo($this->name, PATHINFO_FILENAME);
+    }
+  }
+
+  /**
    * @see ORM::__get()
    */
   public function __get($column) {
@@ -326,6 +375,7 @@ class Item_Model_Core extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded()) {
         // Create a new item.
+        // @todo the create subroutine assumes we have data_file defined, and crashes if we don't.
         module::event("item_before_create", $this);
 
         // Set a weight if it's missing.  We don't do this in the constructor because it's not a
@@ -336,7 +386,7 @@ class Item_Model_Core extends ORM_MPTT {
 
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
-          $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
+          $this->slug = item::convert_filename_to_slug($this->file_base());
 
           // If the filename is all invalid characters, then the slug may be empty here.  Pick a
           // random value.
@@ -345,23 +395,12 @@ class Item_Model_Core extends ORM_MPTT {
           }
         }
 
-        // Get the width, height and mime type from our data file for photos and movies.
-        if ($this->is_photo() || $this->is_movie()) {
-          if ($this->is_photo()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              photo::get_file_metadata($this->data_file);
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              movie::get_file_metadata($this->data_file);
-          }
-
-          // Force an extension onto the name if necessary
-          $pi = pathinfo($this->data_file);
-          if (empty($pi["extension"])) {
-            $this->name = "{$this->name}.$extension";
-          }
-        }
-
+        // Get metadata from the data file and check/fix the item name extension
+        $this->_get_and_check_metadata();
+        
+        // Set the resize and thumb extensions if not already set
+        $this->_fill_resize_and_thumb_extensions();
+        
         $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
@@ -373,27 +412,12 @@ class Item_Model_Core extends ORM_MPTT {
         parent::save();
 
         // Take any actions that we can only do once all our paths are set correctly after saving.
-        switch ($this->type) {
-        case "album":
+        if ($this->is_album()) {
           mkdir($this->file_path());
           mkdir(dirname($this->thumb_path()));
           mkdir(dirname($this->resize_path()));
-          break;
-
-        case "photo":
-        case "movie":
-          // The thumb or resize may already exist in the case where a movie and a photo generate
-          // a thumbnail of the same name (eg, foo.flv movie and foo.jpg photo will generate
-          // foo.jpg thumbnail).  If that happens, randomize and save again.
-          if (file_exists($this->resize_path()) ||
-              file_exists($this->thumb_path())) {
-            $pi = pathinfo($this->name);
-            $this->name = $pi["filename"] . "-" . random::int() . "." . $pi["extension"];
-            parent::save();
-          }
-
+        } else {
           copy($this->data_file, $this->file_path());
-          break;
         }
 
         // This will almost definitely trigger another save, so put it at the end so that we're
@@ -409,24 +433,17 @@ class Item_Model_Core extends ORM_MPTT {
         // keep it around.
         $original = ORM::factory("item", $this->id);
 
-        // Preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
-        // the MIME type from the extension. So when we adopt the new data file, it's important
-        // to adopt the new extension. That ensures that the item's extension is always
-        // appropriate for its data. We don't try to preserve the name of the data file, though,
-        // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
-          $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
-          $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
-          if (!empty($extension) && strcmp($this->name, $new_name)) {
-            $this->name = $new_name;
-          }
-          if ($this->is_photo()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              photo::get_file_metadata($this->data_file);
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              movie::get_file_metadata($this->data_file);
-          }
+          // Get metadata from the data file and check/fix the item name extension
+          $this->_get_and_check_metadata();
+          // Remove old resize and thumb extensions
+          $this->resize_extension = null;
+          $this->thumb_extension = null;
+        } else if (!$this->is_album() &&
+                   legal_file::get_types_by_extension($this->file_extension()) != $this->mime_type) {
+          // We don't have a data file, but we did change the name to something with an incorrect
+          // extension (likely because the user took it off) - Revert to what we used to have.
+          $this->name = legal_file::change_extension($this->name, $original->file_extension());
         }
 
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
@@ -434,6 +451,16 @@ class Item_Model_Core extends ORM_MPTT {
           $this->relative_path_cache = null;
           $this->relative_url_cache = null;
         }
+
+        if (array_intersect($this->changed, array("album_cover_item_id"))) {
+          $this->thumb_extension = null;
+          $this->thumb_dirty = 1;
+          $this->thumb_height = 0;
+          $this->thumb_width = 0;
+        }
+
+        // Set the resize and thumb extensions if not already set
+        $this->_fill_resize_and_thumb_extensions();
 
         $this->_randomize_name_or_slug_on_conflict();
 
@@ -449,8 +476,21 @@ class Item_Model_Core extends ORM_MPTT {
           parent::move_to($this->parent());
         }
 
+        // Build path caches
+        $this->_build_relative_caches();
+
+        // If our resize or thumb extensions changed, delete the old ones and mark them as dirty
+        // *before* they could be potentially moved elsewhere with incorrect extensions
+        if ($original->resize_extension != $this->resize_extension) {
+          @unlink($original->resize_path());
+          $this->resize_dirty = 1;
+        }
+        if ($original->thumb_extension != $this->thumb_extension) {
+          @unlink($original->thumb_path());
+          $this->thumb_dirty = 1;
+        }
+
         if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
-          $this->_build_relative_caches();
           // If there is a data file, then we want to preserve both the old data and the new data.
           // (Third-party event handlers would like access to both). The old data file will be
           // accessible via the $original item, and the new one via $this item. But in that case,
@@ -494,13 +534,6 @@ class Item_Model_Core extends ORM_MPTT {
         // Replace the data file, if requested.
         if ($this->data_file && ($this->is_photo() || $this->is_movie())) {
           copy($this->data_file, $this->file_path());
-
-          // Get the width, height and mime type from our data file for photos and movies.
-          if ($this->is_photo()) {
-            list ($this->width, $this->height) = photo::get_file_metadata($this->file_path());
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height) = movie::get_file_metadata($this->file_path());
-          }
           $this->thumb_dirty = 1;
           $this->resize_dirty = 1;
         }
@@ -527,31 +560,105 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * Check to see if there's another item that occupies the same name or slug that this item
-   * intends to use, and if so choose a new name/slug while preserving the extension.
-   * @todo Improve this.  Random numbers are not user friendly
+   * Check to see if there's another item that occupies the same name (without extension) or slug
+   * that this item intends to use, and if so choose a new name/slug while preserving the 
+   * extension.  Since this checks the name without its extension, it covers possible collisions
+   * with thumbs and resizes as well (e.g. between the thumbs of movie foo.flv and photo foo.jpg)
    */
   private function _randomize_name_or_slug_on_conflict() {
-    $base_name = pathinfo($this->name, PATHINFO_FILENAME);
-    $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
     $base_slug = $this->slug;
-    while (ORM::factory("item")
-           ->where("parent_id", "=", $this->parent_id)
-           ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
-           ->and_open()
-           ->where("name", "=", $this->name)
-           ->or_where("slug", "=", $this->slug)
-           ->close()
-           ->find()->id) {
-      $rand = random::int();
-      if ($base_ext) {
-        $this->name = "$base_name-$rand.$base_ext";
-      } else {
-        $this->name = "$base_name-$rand";
+    $suffix_num = 0;
+    if ($this->is_album()) {
+      $base_name = $this->name;
+      while (ORM::factory("item")
+             ->where("parent_id", "=", $this->parent_id)
+             ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
+             ->and_open()
+             ->where("name", "=", $this->name)
+             ->or_where("slug", "=", $this->slug)
+             ->close()
+             ->find()->id) {
+        $suffix_num++;
+        $suffix = str_pad($suffix_num, 4, "0", STR_PAD_LEFT);
+        $this->name = "$base_name-$suffix";
+        $this->slug = "$base_slug-$suffix";
+        $this->relative_path_cache = null;
+        $this->relative_url_cache = null;
       }
-      $this->slug = "$base_slug-$rand";
-      $this->relative_path_cache = null;
-      $this->relative_url_cache = null;
+    } else {
+      $base_name = $this->file_base();
+      $base_ext = $this->file_extension();
+      while (ORM::factory("item")
+             ->where("parent_id", "=", $this->parent_id)
+             ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
+             ->and_open()
+             ->where("name", "LIKE", addcslashes($this->file_base(), "_%") . ".%")
+             ->or_where("slug", "=", $this->slug)
+             ->close()
+             ->find()->id) {
+        $suffix_num++;
+        $suffix = str_pad($suffix_num, 4, "0", STR_PAD_LEFT);
+        $this->name = "$base_name-$suffix.$base_ext";
+        $this->slug = "$base_slug-$suffix";
+        $this->relative_path_cache = null;
+        $this->relative_url_cache = null;
+      }
+    }
+  }
+
+  /**
+   * Get the metadata from the data file, then ensure that its extension matches its metadata.
+   * Many helpers, (e.g. ImageMagick), assume the MIME type from the extension.  So when we adopt
+   * the new data file, it's important to check that we have the right extension.  This ensures
+   * that the item's extension is always appropriate for its data. We don't try to preserve the name
+   * of the data file, though, because the name is typically a temporary randomly-generated name.
+   */
+  private function _get_and_check_metadata() {
+    if ($this->is_photo() || $this->is_movie()) {
+      // Get the width, height, mime type, and extension from our data file for photos and movies.
+      if ($this->is_photo()) {
+        list ($this->width, $this->height, $this->mime_type, $extension) =
+          photo::get_file_metadata($this->data_file);
+      } else if ($this->is_movie()) {
+        list ($this->width, $this->height, $this->mime_type, $extension) =
+          movie::get_file_metadata($this->data_file);
+      }
+
+      // See if the metadata matches the item's file extension, and change if incorrect or missing.
+      // The checking is actually performed on the mimes to avoid renaming already-valid things
+      // with extension synonyms (e.g. don't rename foo.jpeg to foo.jpg).
+      if (legal_file::get_types_by_extension($this->file_extension()) != $this->mime_type) {
+        // Extension is incorrect or missing - change the item name.
+        if (legal_file::get_types_by_extension(
+            $data_extension = pathinfo($this->data_file, PATHINFO_EXTENSION)) != $this->mime_type) {
+          // Data file extension matches mime - use it (avoids renaming foo.jpeg to foo.jpg)
+          $this->name = legal_file::change_extension($this->name, $data_extension);
+        } else {
+          // Data file extension doesn't match mime - use what metadata gave us
+          $this->name = legal_file::change_extension($this->name, $extension);
+        }
+      }
+    }
+  }
+
+  /**
+   * Fill resize_extension and thumb_extension if not already set.  If not set for a photo or
+   * movie, use the convert variable if defined or the full-size extension if not.  If not set for
+   * an album thumb, use the extension of the cover item's thumb if defined or default jpg if not.
+   */
+  private function _fill_resize_and_thumb_extensions() {
+    if (empty($this->resize_extension) && $this->is_photo()) {
+      $convert_extension = module::get_var("gallery", "convert_photo_resize");
+      $this->resize_extension = $convert_extension ? $convert_extension : $this->file_extension();
+    }
+    if (empty($this->thumb_extension)) {
+      if ($this->is_album()) {
+        $album_cover = $this->album_cover();
+        $this->thumb_extension = $album_cover ? $album_cover->thumb_extension : "jpg";
+      } else {
+        $convert_extension = module::get_var("gallery", "convert_{$this->type}_thumb");
+        $this->thumb_extension = $convert_extension ? $convert_extension : $this->file_extension();
+      }
     }
   }
 
@@ -707,7 +814,7 @@ class Item_Model_Core extends ORM_MPTT {
       // View NOT generated - see if filetype supported by Flowplayer v3
       // Note that the extension list below is hard-coded and doesn't use the legal_file helper
       // since anything else will not work in Flowplayer v3.
-      if (in_array(strtolower(pathinfo($this->name, PATHINFO_EXTENSION)),
+      if (in_array(strtolower($this->file_extension()),
                    array("flv", "mp4", "m4v", "mov", "f4v"))) {
         // Filetype supported by Flowplayer v3 - use it (default)
         $view = new View("movieplayer.html");
@@ -786,10 +893,12 @@ class Item_Model_Core extends ORM_MPTT {
                                        "callbacks" => array(array($this, "valid_name"))),
         "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
         "rand_key"            => array("rule"      => array("decimal")),
+        "resize_extension"    => array("callbacks" => array(array($this, "valid_field"))),
         "slug"                => array("rules"     => array("length[0,255]", "required"),
                                        "callbacks" => array(array($this, "valid_slug"))),
         "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
         "sort_order"          => array("callbacks" => array(array($this, "valid_field"))),
+        "thumb_extension"     => array("callbacks" => array(array($this, "valid_field"))),
         "title"               => array("rules"     => array("length[0,255]", "required")),
         "type"                => array("callbacks" => array(array($this, "read_only"),
                                                             array($this, "valid_field"))),
@@ -800,6 +909,10 @@ class Item_Model_Core extends ORM_MPTT {
         // We don't care about the name and slug for the root album.
         $this->rules["name"] = array();
         $this->rules["slug"] = array();
+      }
+      if (!$this->is_photo()) {
+        // We only care about resizes of photos.
+        $this->rules["resize_extension"] = array();
       }
 
       // Movies and photos must have data files.  Verify the data file on new items, or if it has
@@ -850,22 +963,20 @@ class Item_Model_Core extends ORM_MPTT {
     }
 
     if ($this->is_movie() || $this->is_photo()) {
-      $ext = pathinfo($this->name, PATHINFO_EXTENSION);
-
-      if (!$this->loaded() && !$ext) {
+      if (!$this->loaded() && !$this->file_extension()) {
         // New items must have an extension
         $v->add_error("name", "illegal_data_file_extension");
         return;
       }
 
       if ($this->is_photo()) {
-        if (!in_array(strtolower($ext), legal_file::get_photo_extensions())) {
+        if (!legal_file::get_photo_extensions($this->file_extension())) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
 
       if ($this->is_movie()) {
-        if (!in_array(strtolower($ext), legal_file::get_movie_extensions())) {
+        if (!legal_file::get_movie_extensions($this->file_extension())) {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
@@ -937,6 +1048,7 @@ class Item_Model_Core extends ORM_MPTT {
     if ($this->album_cover_item_id && db::build()
         ->from("items")
         ->where("id", "=", $this->album_cover_item_id)
+        ->where("type", "<>", "album")
         ->count_records() != 1) {
       $v->add_error("album_cover_item_id", "invalid_item");
     }
@@ -952,6 +1064,15 @@ class Item_Model_Core extends ORM_MPTT {
         $legal_values = legal_file::get_movie_types();
       } else if ($this->is_photo()) {
         $legal_values = legal_file::get_photo_types();
+      }
+      break;
+
+    case "resize_extension":
+    case "thumb_extension":
+      // If we're just validating without saving, these may not be defined.
+      if (isset($this->$field)) { 
+        $legal_values = legal_file::get_photo_extensions();
+        $case_insensitive = true;
       }
       break;
 
@@ -974,8 +1095,14 @@ class Item_Model_Core extends ORM_MPTT {
       break;
     }
 
-    if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
-      $v->add_error($field, "invalid");
+    if (empty($case_insensitive)) {
+      if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
+        $v->add_error($field, "invalid");
+      }
+    } else {
+      if (isset($legal_values) && !in_array(strtolower($this->$field), $legal_values)) {
+        $v->add_error($field, "invalid");
+      }
     }
   }
 
