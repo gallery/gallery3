@@ -32,7 +32,7 @@ class legal_file_Core {
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      return @$types_by_extension_wrapper->types_by_extension[strtolower($extension)];
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -53,7 +53,7 @@ class legal_file_Core {
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      return @$types_by_extension_wrapper->types_by_extension[strtolower($extension)];
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -61,34 +61,78 @@ class legal_file_Core {
   }
 
   /**
-   * Create a default list of allowed photo extensions and then let modules modify it.
+   * Create a merged list of all allowed photo and movie MIME types paired with their extensions.
+   *
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_photo_extensions() {
+  static function get_types_by_extension($extension=NULL) {
+    $types_by_extension = legal_file::get_photo_types_by_extension();
+    if (movie::find_ffmpeg()) {
+      $types_by_extension = array_merge($types_by_extension,
+                                        legal_file::get_movie_types_by_extension());
+    }
+    if ($extension) {
+      // return matching MIME type
+      return @$types_by_extension[strtolower($extension)];
+    } else {
+      // return complete array
+      return $types_by_extension;
+    }
+  }
+
+   /**
+   * Create a default list of allowed photo extensions and then let modules modify it.
+   *
+   * @param string $extension (opt.) - return TRUE if allowed; if not given, return complete array
+   */
+  static function get_photo_extensions($extension=NULL) {
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
     module::event("legal_photo_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
+    if ($extension) {
+      // return TRUE if in array, FALSE if not
+      return in_array(strtolower($extension), $extensions_wrapper->extensions);
+    } else {
+      // return complete array
+      return $extensions_wrapper->extensions;
+    }
   }
 
   /**
    * Create a default list of allowed movie extensions and then let modules modify it.
+   *
+   * @param string $extension (opt.) - return TRUE if allowed; if not given, return complete array
    */
-  static function get_movie_extensions() {
+  static function get_movie_extensions($extension=NULL) {
     $extensions_wrapper = new stdClass();
     $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
     module::event("legal_movie_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
+    if ($extension) {
+      // return TRUE if in array, FALSE if not
+      return in_array(strtolower($extension), $extensions_wrapper->extensions);
+    } else {
+      // return complete array
+      return $extensions_wrapper->extensions;
+    }
   }
 
   /**
    * Create a merged list of all allowed photo and movie extensions.
+   *
+   * @param string $extension (opt.) - return TRUE if allowed; if not given, return complete array
    */
-  static function get_extensions() {
+  static function get_extensions($extension=NULL) {
     $extensions = legal_file::get_photo_extensions();
     if (movie::find_ffmpeg()) {
       $extensions = array_merge($extensions, legal_file::get_movie_extensions());
     }
-    return $extensions;
+    if ($extension) {
+      // return TRUE if in array, FALSE if not
+      return in_array(strtolower($extension), $extensions);
+    } else {
+      // return complete array
+      return $extensions;
+    }
   }
 
   /**
@@ -129,14 +173,15 @@ class legal_file_Core {
   }
 
   /**
-   * Convert the extension of a filename.  If the original filename has no
-   * extension, add the new one to the end.
+   * Change the extension of a filename.  If the original filename has no
+   * extension, add the new one to the end.  Filename can be a bare filename, a
+   * full path, or a URL provided it has no query.
    */
   static function change_extension($filename, $new_ext) {
     if (strpos($filename, ".") === false) {
       return "{$filename}.{$new_ext}";
     } else {
-      return preg_replace("/\.[^\.]*?$/", ".{$new_ext}", $filename);
+      return preg_replace("/\.[A-Za-z0-9]*?$/", ".{$new_ext}", $filename);
     }
   }
 

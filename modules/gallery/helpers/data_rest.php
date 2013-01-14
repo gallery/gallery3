@@ -32,27 +32,21 @@ class data_rest_Core {
       throw new Rest_Exception("Bad Request", 400, array("errors" => array("size" => "invalid")));
     }
 
-    switch ($p->size) {
-    case "thumb":
-      $file = $item->thumb_path();
-      break;
+    // Note: the code below is roughly duplicated in file_proxy, so if you modify this,
+    // please look to see if you should make the same change there as well.
 
-    case "resize":
-      $file = $item->resize_path();
-      break;
-
-    case "full":
+    if ($p->size == "full") {
       $file = $item->file_path();
-      break;
+    } else if ($p->size == "resize") {
+      $file = $item->resize_path();
+    } else {
+      $file = $item->thumb_path();
     }
 
     if (!file_exists($file)) {
       throw new Kohana_404_Exception();
     }
 
-    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
-    // see if you should make the same change there as well.
-    //
     // We don't have a cache buster in the url, so don't set cache headers here.
     // We don't need to save the session for this request
     Session::instance()->abort_save();
@@ -69,7 +63,7 @@ class data_rest_Core {
     } else if ($item->is_album()) {
       header("Content-Type: " . $item->album_cover()->mime_type);
     } else {
-      header("Content-Type: {$item->mime_type}");
+      header("Content-Type: $item->mime_type");
     }
     Kohana::close_buffers(false);
 

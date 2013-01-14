@@ -74,17 +74,17 @@ class movie_Core {
 
     list($width, $height, $mime_type, $extension, $duration) = movie::get_file_metadata($input_file);
 
-    if (is_numeric($movie_options["start_time"])) {
+    if (@is_numeric($movie_options["start_time"])) {
       $start_time = max(0, $movie_options["start_time"]); // ensure it's non-negative
     } else {
       $start_time = module::get_var("gallery", "movie_extract_frame_time", 3); // use default
     }
     // extract frame at start_time, unless movie is too short
     $start_time_arg = ($duration >= $start_time + 0.1) ?
-      "-ss " . date("H:i:s", mktime(0,0,$start_time,0,0,0,0)) : "";
+      "-ss " . date("H:i:s", mktime(0,0,$start_time,0,0,0)) : "";
       
-    $input_args = $movie_options["input_args"] ? $movie_options["input_args"] : "";
-    $output_args = $movie_options["output_args"] ? $movie_options["output_args"] : "";
+    $input_args = isset($movie_options["input_args"]) ? $movie_options["input_args"] : "";
+    $output_args = isset($movie_options["output_args"]) ? $movie_options["output_args"] : "";
 
     $cmd = escapeshellcmd($ffmpeg) . " $input_args -i " . escapeshellarg($input_file) .
       " -an $start_time_arg -an -r 1 -vframes 1" .
