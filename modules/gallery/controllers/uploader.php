@@ -69,7 +69,7 @@ class Uploader_Controller extends Controller {
 
         $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
-            in_array(strtolower($path_info["extension"]), legal_file::get_movie_extensions())) {
+            legal_file::get_movie_extensions($path_info["extension"])) {
           $item->type = "movie";
           $item->save();
           log::success("content", t("Added a movie"),
