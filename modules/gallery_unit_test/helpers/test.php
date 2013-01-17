@@ -33,6 +33,21 @@ class test_Core {
     return test::random_album_unsaved($parent)->save()->reload();
   }
 
+  static function random_movie_unsaved($parent=null) {
+    $rand = test::random_string(6);
+    $photo = ORM::factory("item");
+    $photo->type = "movie";
+    $photo->parent_id = $parent ? $parent->id : 1;
+    $photo->set_data_file(MODPATH . "gallery/tests/test.flv");
+    $photo->name = "name_$rand.flv";
+    $photo->title = "title_$rand";
+    return $photo;
+  }
+
+  static function random_movie($parent=null) {
+    return test::random_movie_unsaved($parent)->save()->reload();
+  }
+
   static function random_photo_unsaved($parent=null) {
     $rand = test::random_string(6);
     $photo = ORM::factory("item");

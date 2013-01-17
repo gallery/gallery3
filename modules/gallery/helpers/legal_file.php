@@ -19,7 +19,7 @@
  */
 class legal_file_Core {
   /**
-   * Create a default list of allowed photo MIME types paired with their extensions and then let 
+   * Create a default list of allowed photo MIME types paired with their extensions and then let
    * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
    * Extensions cannot be duplicated, but MIMEs can (e.g. jpeg and jpg both map to image/jpeg).
    *
@@ -32,7 +32,11 @@ class legal_file_Core {
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
+        return $types_by_extension_wrapper->types_by_extension[$extension];
+      } else {
+        return null;
+      }
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -53,7 +57,11 @@ class legal_file_Core {
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
+        return $types_by_extension_wrapper->types_by_extension[$extension];
+      } else {
+        return null;
+      }
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;

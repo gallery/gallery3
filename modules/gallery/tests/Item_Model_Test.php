@@ -356,7 +356,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function movie_files_must_have_an_extension_test() {
     try {
-      $movie = test::random_photo_unsaved();
+      $movie = test::random_movie_unsaved();
       $movie->type = "movie";
       $movie->mime_type = "video/x-flv";
       $movie->name = "no_extension";
