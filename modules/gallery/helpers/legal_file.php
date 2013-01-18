@@ -137,15 +137,12 @@ class legal_file_Core {
   }
 
   /**
-   * Convert the extension of a filename.  If the original filename has no
+   * Change the extension of a filename.  If the original filename has no
    * extension, add the new one to the end.
    */
   static function change_extension($filename, $new_ext) {
-    if (strpos($filename, ".") === false) {
-      return "{$filename}.{$new_ext}";
-    } else {
-      return preg_replace("/\.[^\.]*?$/", ".{$new_ext}", $filename);
-    }
+    $filename_no_ext = preg_replace("/\.[^\.\/]*?$/", "", $filename);
+    return "{$filename_no_ext}.{$new_ext}";
   }
 
   /**
