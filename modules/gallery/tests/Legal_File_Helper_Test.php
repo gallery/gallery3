@@ -36,6 +36,24 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
       legal_file::change_extension("/website/foo.com/VID_20120513_105421.mp4", "jpg"));
   }
 
+  public function change_extension_path_containing_dots_and_no_extension_test() {
+    $this->assert_equal(
+      "/website/foo.com/VID_20120513_105421.jpg",
+      legal_file::change_extension("/website/foo.com/VID_20120513_105421", "jpg"));
+  }
+
+  public function change_extension_path_containing_dots_and_dot_extension_test() {
+    $this->assert_equal(
+      "/website/foo.com/VID_20120513_105421.jpg",
+      legal_file::change_extension("/website/foo.com/VID_20120513_105421.", "jpg"));
+  }
+
+  public function change_extension_path_containing_dots_and_non_standard_chars_test() {
+    $this->assert_equal(
+      "/j'écris@un#nom/bizarre(mais quand.même/ça_passe.jpg",
+      legal_file::change_extension("/j'écris@un#nom/bizarre(mais quand.même/ça_passe.\$ÇÀ@€#_", "jpg"));
+  }
+
   public function smash_extensions_test() {
     $this->assert_equal("foo_bar.jpg", legal_file::smash_extensions("foo.bar.jpg"));
     $this->assert_equal("foo_bar_baz.jpg", legal_file::smash_extensions("foo.bar.baz.jpg"));
