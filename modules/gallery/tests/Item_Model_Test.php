@@ -69,9 +69,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $item = test::random_photo();
     $original_name = $item->name;
 
-    file_put_contents($item->thumb_path(), "thumb");
-    file_put_contents($item->resize_path(), "resize");
-    file_put_contents($item->file_path(), "file");
+    $thumb_file = file_get_contents($item->thumb_path());
+    $resize_file = file_get_contents($item->resize_path());
+    $fullsize_file = file_get_contents($item->file_path());
 
     // Now rename it
     $item->name = ($new_name = test::random_name($item));
@@ -82,9 +82,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal($new_name, basename($item->file_path()));
     $this->assert_equal($new_name, basename($item->thumb_path()));
     $this->assert_equal($new_name, basename($item->resize_path()));
-    $this->assert_equal("thumb", file_get_contents($item->thumb_path()));
-    $this->assert_equal("resize", file_get_contents($item->resize_path()));
-    $this->assert_equal("file", file_get_contents($item->file_path()));
+    $this->assert_equal($thumb_file, file_get_contents($item->thumb_path()));
+    $this->assert_equal($resize_file, file_get_contents($item->resize_path()));
+    $this->assert_equal($fullsize_file, file_get_contents($item->file_path()));
   }
 
   public function rename_album_test() {
@@ -92,9 +92,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo($album);
     $album->reload();
 
-    file_put_contents($photo->thumb_path(), "thumb");
-    file_put_contents($photo->resize_path(), "resize");
-    file_put_contents($photo->file_path(), "file");
+    $thumb_file = file_get_contents($photo->thumb_path());
+    $resize_file = file_get_contents($photo->resize_path());
+    $fullsize_file = file_get_contents($photo->file_path());
 
     $original_album_name = $album->name;
     $original_photo_name = $photo->name;
@@ -119,9 +119,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album->thumb_path())));
     $this->assert_true(test::starts_with($photo->resize_path(), dirname($album->resize_path())));
 
-    $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
-    $this->assert_equal("resize", file_get_contents($photo->resize_path()));
-    $this->assert_equal("file", file_get_contents($photo->file_path()));
+    $this->assert_equal($thumb_file, file_get_contents($photo->thumb_path()));
+    $this->assert_equal($resize_file, file_get_contents($photo->resize_path()));
+    $this->assert_equal($fullsize_file, file_get_contents($photo->file_path()));
   }
 
   public function item_rename_wont_accept_slash_test() {
@@ -154,9 +154,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album($album2);
     $photo = test::random_photo($album1);
 
-    file_put_contents($photo->thumb_path(), "thumb");
-    file_put_contents($photo->resize_path(), "resize");
-    file_put_contents($photo->file_path(), "file");
+    $thumb_file = file_get_contents($photo->thumb_path());
+    $resize_file = file_get_contents($photo->resize_path());
+    $fullsize_file = file_get_contents($photo->file_path());
 
     // Now move the album
     $album1->parent_id = item::root()->id;
@@ -173,9 +173,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album1->thumb_path())));
     $this->assert_true(test::starts_with($photo->resize_path(), dirname($album1->resize_path())));
 
-    $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
-    $this->assert_equal("resize", file_get_contents($photo->resize_path()));
-    $this->assert_equal("file", file_get_contents($photo->file_path()));
+    $this->assert_equal($thumb_file, file_get_contents($photo->thumb_path()));
+    $this->assert_equal($resize_file, file_get_contents($photo->resize_path()));
+    $this->assert_equal($fullsize_file, file_get_contents($photo->file_path()));
   }
 
   public function move_photo_test() {
@@ -184,9 +184,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
     $album2 = test::random_album();
 
-    file_put_contents($photo->thumb_path(), "thumb");
-    file_put_contents($photo->resize_path(), "resize");
-    file_put_contents($photo->file_path(), "file");
+    $thumb_file = file_get_contents($photo->thumb_path());
+    $resize_file = file_get_contents($photo->resize_path());
+    $fullsize_file = file_get_contents($photo->file_path());
 
     // Now move the photo
     $photo->parent_id = $album2->id;
@@ -200,9 +200,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album2->thumb_path())));
     $this->assert_true(test::starts_with($photo->resize_path(), dirname($album2->resize_path())));
 
-    $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
-    $this->assert_equal("resize", file_get_contents($photo->resize_path()));
-    $this->assert_equal("file", file_get_contents($photo->file_path()));
+    $this->assert_equal($thumb_file, file_get_contents($photo->thumb_path()));
+    $this->assert_equal($resize_file, file_get_contents($photo->resize_path()));
+    $this->assert_equal($fullsize_file, file_get_contents($photo->file_path()));
   }
 
   public function move_album_with_conflicting_target_gets_uniqified_test() {
