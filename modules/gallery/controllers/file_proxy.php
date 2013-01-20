@@ -100,6 +100,9 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
+    // see if you should make the same change there as well.
+
     if ($type == "albums") {
       $file = $item->file_path();
     } else if ($type == "resizes") {
