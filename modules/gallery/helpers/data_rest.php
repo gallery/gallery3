@@ -57,13 +57,11 @@ class data_rest_Core {
       return;
     }
 
-    // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
-    if ($item->is_movie() && $p->size == "thumb") {
+    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
+    if (($item->is_movie() || $item->is_album()) && $p->size == "thumb") {
       header("Content-Type: image/jpeg");
-    } else if ($item->is_album()) {
-      header("Content-Type: " . $item->album_cover()->mime_type);
     } else {
-      header("Content-Type: {$item->mime_type}");
+      header("Content-Type: $item->mime_type");
     }
     Kohana::close_buffers(false);
 
