@@ -25,13 +25,14 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_photo_types_by_extension($extension=NULL) {
+  static function get_photo_types_by_extension($extension=null) {
     $types_by_extension_wrapper = new stdClass();
     $types_by_extension_wrapper->types_by_extension = array(
       "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
+      $extension = strtolower($extension);
       if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
         return $types_by_extension_wrapper->types_by_extension[$extension];
       } else {
@@ -50,13 +51,14 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_movie_types_by_extension($extension=NULL) {
+  static function get_movie_types_by_extension($extension=null) {
     $types_by_extension_wrapper = new stdClass();
     $types_by_extension_wrapper->types_by_extension = array(
       "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v");
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
+      $extension = strtolower($extension);
       if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
         return $types_by_extension_wrapper->types_by_extension[$extension];
       } else {
