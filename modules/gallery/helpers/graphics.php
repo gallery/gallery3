@@ -157,7 +157,7 @@ class graphics_Core {
         if ($input_item->is_movie()) {
           // Convert the movie filename to a JPG first, delete anything that might already be there
           $output_file = legal_file::change_extension($output_file, "jpg");
-          unlink($output_file);
+          @unlink($output_file);
           // Run movie_extract_frame events, which can either:
           //  - generate an output file, bypassing the ffmpeg-based movie::extract_frame
           //  - add to the options sent to movie::extract_frame (e.g. change frame extract time,
