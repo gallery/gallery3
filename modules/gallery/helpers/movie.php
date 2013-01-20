@@ -66,7 +66,7 @@ class movie_Core {
    * @param string     $output_file
    * @param array      $movie_options (optional)
    */
-   static function extract_frame($input_file, $output_file, $movie_options=NULL) {
+  static function extract_frame($input_file, $output_file, $movie_options=null) {
     $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
@@ -74,17 +74,17 @@ class movie_Core {
 
     list($width, $height, $mime_type, $extension, $duration) = movie::get_file_metadata($input_file);
 
-    if (is_numeric($movie_options["start_time"])) {
+    if (isset($movie_options["start_time"]) && is_numeric($movie_options["start_time"])) {
       $start_time = max(0, $movie_options["start_time"]); // ensure it's non-negative
     } else {
       $start_time = module::get_var("gallery", "movie_extract_frame_time", 3); // use default
     }
     // extract frame at start_time, unless movie is too short
     $start_time_arg = ($duration >= $start_time + 0.1) ?
-      "-ss " . date("H:i:s", mktime(0,0,$start_time,0,0,0,0)) : "";
+      "-ss " . movie::seconds_to_hhmmssdd($start_time) : "";
       
-    $input_args = $movie_options["input_args"] ? $movie_options["input_args"] : "";
-    $output_args = $movie_options["output_args"] ? $movie_options["output_args"] : "";
+    $input_args = isset($movie_options["input_args"]) ? $movie_options["input_args"] : "";
+    $output_args = isset($movie_options["output_args"]) ? $movie_options["output_args"] : "";
 
     $cmd = escapeshellcmd($ffmpeg) . " $input_args -i " . escapeshellarg($input_file) .
       " -an $start_time_arg -an -r 1 -vframes 1" .
@@ -149,8 +149,8 @@ class movie_Core {
     $mime_type = legal_file::get_movie_types_by_extension($extension);
     $mime_type = $mime_type ? $mime_type : "video/x-flv"; // No MIME found?  Default to video/x-flv.
 
-    if (preg_match("/Duration: (\d+):(\d+):(\d+\.\d+)/", $result, $matches)) {
-      $duration = 3600 * $matches[1] + 60 * $matches[2] + $matches[3];
+    if (preg_match("/Duration: (\d+:\d+:\d+\.\d+)/", $result, $matches)) {
+      $duration = movie::hhmmssdd_to_seconds($matches[1]);
     } else if (preg_match("/duration.*?:.*?(\d+)/", $result, $matches)) {
       $duration = $matches[1];
     } else {
@@ -160,4 +160,25 @@ class movie_Core {
     return array($width, $height, $mime_type, $extension, $duration);
   }
 
+  /**
+   * Return the time/duration formatted in hh:mm:ss.dd from a number of seconds.
+   * Useful for inputs to ffmpeg.
+   *
+   * Note that this is similar to date("H:i:s", mktime(0,0,$seconds,0,0,0,0)), but unlike this 
+   * approach avoids potential issues with time zone and DST mismatch and/or using deprecated
+   * features (the last argument of mkdate above, which disables DST, is deprecated as of PHP 5.3).
+   */
+  static function seconds_to_hhmmssdd($seconds) {
+    return sprintf("%02d:%02d:%05.2f", floor($seconds / 3600), floor(($seconds % 3600) / 60),
+                   floor(100 * $seconds % 6000) / 100);
+  }
+  
+  /**
+   * Return the number of seconds from a time/duration formatted in hh:mm:ss.dd.
+   * Useful for outputs from ffmpeg.
+   */
+  static function hhmmssdd_to_seconds($hhmmssdd) {
+    preg_match("/(\d+):(\d+):(\d+\.\d+)/", $hhmmssdd, $matches);
+    return 3600 * $matches[1] + 60 * $matches[2] + $matches[3];
+  }
 }
