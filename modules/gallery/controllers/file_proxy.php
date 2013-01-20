@@ -126,8 +126,8 @@ class File_Proxy_Controller extends Controller {
 
     expires::set(2592000, $item->updated);  // 30 days
 
-    // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
-    if ($item->is_movie() && $type != "albums") {
+    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
+    if (($item->is_movie() || $item->is_album()) && $type == "thumbs") {
       header("Content-Type: image/jpeg");
     } else {
       header("Content-Type: $item->mime_type");
