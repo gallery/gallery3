@@ -20,8 +20,9 @@
 class Controller_Auth_Test extends Gallery_Unit_Test_Case {
   public function find_missing_auth_test() {
     $found = array();
-    $controllers = explode("\n", `git ls-files '*/*/controllers/*.php'`);
-    $feeds = explode("\n", `git ls-files '*/*/helpers/*_rss.php'`);
+    $git_ignores = explode("\n", `git ls-files -o -i --exclude-standard`);
+    $controllers = array_diff(glob("*/*/controllers/*.php"), $git_ignores);
+    $feeds = array_diff(glob("*/*/helpers/*_rss.php"), $git_ignores);
     foreach (array_merge($controllers, $feeds) as $controller) {
       if (preg_match("{modules/(gallery_)?unit_test/}", $controller)) {
         continue;
