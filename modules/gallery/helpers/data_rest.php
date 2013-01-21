@@ -51,12 +51,6 @@ class data_rest_Core {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
-    if ($item->is_album() && !$item->album_cover_item_id) {
-      // No thumbnail.  Return nothing.
-      // @todo: what should we do here?
-      return;
-    }
-
     // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
     if (($item->is_movie() || $item->is_album()) && $p->size == "thumb") {
       header("Content-Type: image/jpeg");
@@ -68,7 +62,11 @@ class data_rest_Core {
     if (isset($p->encoding) && $p->encoding == "base64") {
       print base64_encode(file_get_contents($file));
     } else {
-      readfile($file);
+      if (TEST_MODE) {
+        return $file;
+      } else {
+        readfile($file);
+      }
     }
 
     // We must exit here to keep the regular REST framework reply code from adding more bytes on
