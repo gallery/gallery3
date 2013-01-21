@@ -49,7 +49,9 @@ class File_Proxy_Controller extends Controller {
     // Make sure that the request is for a file inside var
     $offset = strpos(rawurldecode($request_uri), $var_uri);
     if ($offset !== 0) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 1;
+      throw $e;
     }
 
     // file_uri: albums/foo/bar.jpg
@@ -59,7 +61,9 @@ class File_Proxy_Controller extends Controller {
     // path: foo/bar.jpg
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 2;
+      throw $e;
     }
 
     // If the last element is .album.jpg, pop that off since it's not a real item
@@ -82,22 +86,30 @@ class File_Proxy_Controller extends Controller {
     }
 
     if (!$item->loaded()) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 3;
+      throw $e;
     }
 
     // Make sure we have access to the item
     if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 4;
+      throw $e;
     }
 
     // Make sure we have view_full access to the original
     if ($type == "albums" && !access::can("view_full", $item)) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 5;
+      throw $e;
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 6;
+      throw $e;
     }
 
     // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
@@ -112,7 +124,9 @@ class File_Proxy_Controller extends Controller {
     }
 
     if (!file_exists($file)) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 7;
+      throw $e;
     }
 
     header("Content-Length: " . filesize($file));
@@ -146,6 +160,10 @@ class File_Proxy_Controller extends Controller {
       }
     }
 
-    readfile($file);
+    if (TEST_MODE) {
+      return $file;
+    } else {
+      readfile($file);
+    }
   }
 }
