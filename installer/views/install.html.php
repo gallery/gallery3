@@ -13,9 +13,9 @@
       <div id="footer">
         <p>
           <i>Did something go wrong? Try
-          the <a href="http://codex.gallery2.org/Gallery3:FAQ">FAQ</a>
+          the <a href="http://codex.galleryproject.org/Gallery3:FAQ">FAQ</a>
           or ask in
-          the <a href="http://gallery.menalto.com/forum">Gallery
+          the <a href="http://galleryproject.org/forum">Gallery
           forums</a>.</i>
         </p>
       </div>

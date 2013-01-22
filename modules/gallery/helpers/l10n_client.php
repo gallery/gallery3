@@ -21,7 +21,7 @@
 class l10n_client_Core {
 
   private static function _server_url($path) {
-    return "http://gallery.menalto.com/translations/$path";
+    return "http://galleryproject.org/translations/$path";
   }
 
   static function server_api_key_url() {

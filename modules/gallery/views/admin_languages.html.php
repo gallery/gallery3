@@ -80,7 +80,7 @@
       </p>
 
       <div class="g-block-content">
-        <a href="http://codex.gallery2.org/Gallery3:Localization" target="_blank"
+        <a href="http://codex.galleryproject.org/Gallery3:Localization" target="_blank"
             class="g-right ui-state-default ui-corner-all ui-icon ui-icon-help"
             title="<?= t("Localization documentation")->for_html_attr() ?>">
           <?= t("Localization documentation") ?>

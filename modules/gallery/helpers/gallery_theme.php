@@ -134,7 +134,7 @@ class gallery_theme_Core {
       '<bdo dir="ltr">Gallery ' . gallery::version_string() . '</bdo>');
     return "<li class=\"g-first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://gallery.menalto.com",
+        array("url" => "http://galleryproject.org",
               "gallery_version" => $version_string)) .
       "</li>";
   }

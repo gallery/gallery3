@@ -27,10 +27,10 @@
   </p>
 
   <p>
-    <?= t("Want to learn more? The <a href=\"%url\">Gallery website</a> has news and information about the Gallery project and community.", array("url" => "http://gallery.menalto.com")) ?>
+    <?= t("Want to learn more? The <a href=\"%url\">Gallery website</a> has news and information about the Gallery project and community.", array("url" => "http://galleryproject.org")) ?>
   </p>
 
   <p>
-    <?= t("Having problems? There's lots of information in our <a href=\"%codex_url\">documentation site</a> or you can <a href=\"%forum_url\">ask for help in the forums!</a>", array("codex_url" => "http://codex.gallery2.org/Main_Page", "forum_url" => "http://gallery.menalto.com/forum")) ?>
+    <?= t("Having problems? There's lots of information in our <a href=\"%codex_url\">documentation site</a> or you can <a href=\"%forum_url\">ask for help in the forums!</a>", array("codex_url" => "http://codex.galleryproject.org/Main_Page", "forum_url" => "http://galleryproject.org/forum")) ?>
   </p>
 </div>

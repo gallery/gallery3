@@ -39,7 +39,7 @@ if (!ini_get("date.timezone")) {
 !ini_get("short_open_tag") and exit("Gallery requires short_open_tag to be on.");
 
 // Suppress errors.  For information on how to debug Gallery 3, see:
-// http://codex.gallery2.org/Gallery3:FAQ#How_do_I_see_debug_information.3F
+// http://codex.galleryproject.org/Gallery3:FAQ#How_do_I_see_debug_information.3F
 error_reporting(0);
 
 // Disabling display_errors will  effectively disable Kohana error display

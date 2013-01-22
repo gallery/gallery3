@@ -15,14 +15,14 @@ welcome theme and module developers to play with this release and
 start turning out slick new designs for our happy users.  If you have
 questions or problems, you can get help in the Gallery forums:
 
-  http://gallery.menalto.com/forum/96
+  http://galleryproject.org/forum/96
 
 
 SECURITY:
 We've contracted a professional security audit, received their results
 and resolved all the issues they found.
 
-Did you find a security flaw?  Please email security@gallery.menalto.com
+Did you find a security flaw?  Please email security@galleryproject.org
 with the details and we'll fix it ASAP!
 
 
@@ -34,12 +34,12 @@ SUPPORTED CONFIGURATION:
  - Database: MySQL 5 and newer.
 
 For complete system requirements, please refer to:
-  http://codex.gallery2.org/Gallery3:Requirements
+  http://codex.galleryproject.org/Gallery3:Requirements
 
 
 INSTALLING AND UPGRADING INSTRUCTIONS:
 For comprehensive instructions, The online User Guide is your best resource:
-  http://codex.gallery2.org/Gallery3:User_guide
+  http://codex.galleryproject.org/Gallery3:User_guide
 
 There are also simple instructions below.  NOTE: You can upgrade from
 beta 1 and beyond, but not from alpha releases.
@@ -68,7 +68,7 @@ and log in with your SourceForge username and password, then click the
 
 
 QUESTIONS, PROBLEMS:
- - Check out the gallery3 FAQ http://codex.gallery2.org/Gallery3:FAQ
- - Post to the Gallery 3 forums: http://gallery.menalto.com/forum/96
+ - Check out the gallery3 FAQ http://codex.galleryproject.org/Gallery3:FAQ
+ - Post to the Gallery 3 forums: http://galleryproject.org/forum/96
  - Email gallery-devel@lists.sourceforge.net
 

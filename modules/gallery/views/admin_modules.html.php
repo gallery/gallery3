@@ -43,7 +43,7 @@
   </script>
   <h1> <?= t("Gallery Modules") ?> </h1>
   <p>
-    <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", array("url" => "http://codex.gallery2.org/Category:Gallery_3:Modules")) ?>
+    <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Modules")) ?>
   </p>
 
   <div class="g-block-content">

@@ -16,7 +16,7 @@
   <h1> <?= t("Graphics settings") ?> </h1>
   <p>
     <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
-    <?= t("Can't decide which toolkit to choose?  <a href=\"%url\">We can help!</a>", array("url" => "http://codex.gallery2.org/Gallery3:Choosing_A_Graphics_Toolkit")) ?>
+    <?= t("Can't decide which toolkit to choose?  <a href=\"%url\">We can help!</a>", array("url" => "http://codex.galleryproject.org/Gallery3:Choosing_A_Graphics_Toolkit")) ?>
   </p>
 
   <div class="g-block-content">

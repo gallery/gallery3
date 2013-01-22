@@ -78,7 +78,7 @@ class gallery_block_Core {
       $block->css_id = "g-project-news";
       $block->title = t("Gallery project news");
       $block->content = new View("admin_block_news.html");
-      $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);
+      $block->content->feed = feed::parse("http://galleryproject.org/node/feed", 3);
       break;
 
     case "block_adder":

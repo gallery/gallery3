@@ -124,7 +124,7 @@ class graphics_Core {
         // don't do this, the album may be permanently marked as "needs rebuilding"
         //
         // ref: http://sourceforge.net/apps/trac/gallery/ticket/1172
-        //      http://gallery.menalto.com/node/96926
+        //      http://galleryproject.org/node/96926
         if ($item->album_cover_item_id) {
           $item->album_cover_item_id = null;
           $item->save();
