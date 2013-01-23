@@ -147,22 +147,21 @@ class File_Proxy_Controller extends Controller {
       header("Content-Type: $item->mime_type");
     }
 
-    // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
-    // that Kohana started.  We want to close *all* buffers at this point because otherwise we're
-    // going to buffer up whatever file we're proxying (and it may be very large).  This may
-    // affect embedding or systems with PHP's output_buffering enabled.
-    while (ob_get_level()) {
-      Kohana_Log::add("error","".print_r(ob_get_level(),1));
-      if (!@ob_end_clean()) {
-        // ob_end_clean() can return false if the buffer can't be removed for some reason
-        // (zlib output compression buffers sometimes cause problems).
-        break;
-      }
-    }
-
     if (TEST_MODE) {
       return $file;
     } else {
+      // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
+      // that Kohana started.  We want to close *all* buffers at this point because otherwise we're
+      // going to buffer up whatever file we're proxying (and it may be very large).  This may
+      // affect embedding or systems with PHP's output_buffering enabled.
+      while (ob_get_level()) {
+        Kohana_Log::add("error","".print_r(ob_get_level(),1));
+        if (!@ob_end_clean()) {
+          // ob_end_clean() can return false if the buffer can't be removed for some reason
+          // (zlib output compression buffers sometimes cause problems).
+          break;
+        }
+      }
       readfile($file);
     }
   }

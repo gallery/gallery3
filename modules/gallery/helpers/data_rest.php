@@ -57,13 +57,14 @@ class data_rest_Core {
     } else {
       header("Content-Type: $item->mime_type");
     }
-    Kohana::close_buffers(false);
 
-    if (isset($p->encoding) && $p->encoding == "base64") {
-      print base64_encode(file_get_contents($file));
+    if (TEST_MODE) {
+      return $file;
     } else {
-      if (TEST_MODE) {
-        return $file;
+      Kohana::close_buffers(false);
+
+      if (isset($p->encoding) && $p->encoding == "base64") {
+        print base64_encode(file_get_contents($file));
       } else {
         readfile($file);
       }
