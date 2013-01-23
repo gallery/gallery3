@@ -35,7 +35,7 @@ if (!ini_get("date.timezone")) {
 
 // Suppress errors.  For information on how to debug Gallery 3, see:
 // http://codex.gallery2.org/Gallery3:FAQ#How_do_I_see_debug_information.3F
-error_reporting(0);
+// error_reporting(0);
 
 // Disabling display_errors will  effectively disable Kohana error display
 // and logging. You can turn off Kohana errors in application/config/config.php
