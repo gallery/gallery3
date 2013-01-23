@@ -54,7 +54,7 @@ class rest_Core {
         $html = t("Empty response");
       }
       print "<pre>$html</pre>";
-      if (Session::instance()->get("profiler", false)) {
+      if (gallery::show_profiler()) {
         Profiler::enable();
         $profiler = new Profiler();
         $profiler->render();

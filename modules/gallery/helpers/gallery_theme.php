@@ -71,7 +71,7 @@ class gallery_theme_Core {
 
   static function page_bottom($theme) {
     $session = Session::instance();
-    if ($session->get("profiler", false)) {
+    if (gallery::show_profiler()) {
       Profiler::enable();
       $profiler = new Profiler();
       $profiler->render();
@@ -96,7 +96,7 @@ class gallery_theme_Core {
 
   static function admin_page_bottom($theme) {
     $session = Session::instance();
-    if ($session->get("profiler", false)) {
+    if (gallery::show_profiler()) {
       Profiler::enable();
       $profiler = new Profiler();
       $profiler->render();

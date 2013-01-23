@@ -214,4 +214,12 @@ class gallery_Core {
     }
     return null;
   }
+
+  /**
+   * Return true if we should show the profiler at the bottom of the page.  Note that this
+   * function is called at database setup time so it cannot rely on the database.
+   */
+  static function show_profiler() {
+    return file_exists(VARPATH . "PROFILE");
+  }
 }
