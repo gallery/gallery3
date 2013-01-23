@@ -26,7 +26,7 @@ class PhpCodeFilterIterator extends FilterIterator {
 
 class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
-    // Skip anything that we didn"t write
+    // Skip anything that we didn't write
     $path_name = $this->getInnerIterator()->getPathName();
     $file_name = $this->getInnerIterator()->getFileName();
     return !(
