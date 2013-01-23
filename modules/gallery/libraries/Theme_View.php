@@ -63,6 +63,13 @@ class Theme_View_Core extends Gallery_View {
    * @return int
    */
   public function thumb_proportion($item=null) {
+    // If the item is an album with children, grab the first item in that album instead.  We're
+    // interested in the size of the thumbnails in this album, not the thumbnail of the
+    // album itself.
+    if ($item && $item->is_album() && $item->children_count()) {
+      $item = $item->children(1)->current();
+    }
+
     // By default we have a globally fixed thumbnail size In core code, we just return a fixed
     // proportion based on the global thumbnail size, but since modules can override that, we
     // return the actual proportions when we have them.
