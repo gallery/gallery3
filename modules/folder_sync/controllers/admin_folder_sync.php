@@ -61,9 +61,14 @@ class Admin_Folder_Sync_Controller extends Admin_Controller {
     access::verify_csrf();
     $form = $this->_get_admin_form_additional();
     if($form->validate()) {
-      // TODO: clean up
-      //module::set_var("folder_sync", "skip_duplicates", $form->addition_options->skip_duplicates->checked);
       module::set_var("folder_sync", "process_deletes", $form->addition_options->process_deletes->checked);
+      module::set_var("folder_sync", "destination_album_id", $form->addition_options->destination_album_id->value);
+			$item = ORM::factory("folder_sync_entry")->where("parent_id", "IS", NULL)->find();
+			if($item && $item->loaded())
+			{
+				$item->item_id = $form->addition_options->destination_album_id->value;
+				$item->save();
+			}
     }
     url::redirect("admin/folder_sync");
   }
@@ -111,12 +116,20 @@ class Admin_Folder_Sync_Controller extends Admin_Controller {
                       array("id" => "g-server-add-admin-form"));
 
     $group = $form->group("addition_options")->label(t("Additional options"));
-    // TODO: clean up
-    /*$group->checkbox("skip_duplicates")->label(t("Skip duplicates?"))->id("g-server-add-skip-duplicates")
-      ->checked(module::get_var("folder_sync", "skip_duplicates", false));*/
     $group->checkbox("process_deletes")->label(t("Process deleted item?"))->id("g-server-add-process-updates")
       ->checked(module::get_var("folder_sync", "process_deletes", false));
-    $group->submit("save")->value(t("Save"));
+		
+		$input = $group->input("destination_album_id")->label(t("Destination Album ID"))->id("g-destination-album-id")
+			->value(module::get_var("folder_sync", "destination_album_id", 1));
+		$count = ORM::factory("folder_sync_entry")
+			->count_all();
+		if($count > 1)
+		{
+			$input->readonly("readonly");
+			$group->input("hidden_text")->style("display:none;")->label(t("Once some images were imported through a cronjob, you can't change this setting any more."));
+		}
+			
+		$form->submit("save")->value(t("Save"));
 
     return $form;
   }

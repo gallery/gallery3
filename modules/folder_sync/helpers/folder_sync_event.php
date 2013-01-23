@@ -32,18 +32,4 @@ class folder_sync_event_Core {
                ->label(t("Folder Sync"))
                ->url(url::site("admin/folder_sync")));
   }
-
-  static function site_menu($menu, $theme) {
-    $item = $theme->item();
-    $paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
-
-    if ($item && identity::active_user()->admin && $item->is_album() && !empty($paths) &&
-        is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path())) {
-      $menu->get("add_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("folder_sync")
-                 ->label(t("Folder Sync"))
-                 ->url(url::site("folder_sync/browse/$item->id")));
-    }
-  }
 }

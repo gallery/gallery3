@@ -116,7 +116,7 @@ class Folder_Sync_Controller extends Admin_Controller {
             $entry->path = $path;
             $entry->is_directory = 1;
             $entry->parent_id = null;
-            $entry->item_id = 1;
+            $entry->item_id = module::get_var("folder_sync", "destination_album_id", 1);
             $entry->md5 = '';
             $entry->save();
           }
