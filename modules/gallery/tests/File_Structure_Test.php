@@ -283,4 +283,36 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       $this->assert_true(false, $errors);
     }
   }
+
+  public function all_public_functions_in_test_files_end_in_test() {
+    // Who tests the tests?  :-)
+    $dir = new PhpCodeFilterIterator(
+      new GalleryCodeFilterIterator(
+        new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(DOCROOT))));
+    foreach ($dir as $file) {
+      $scan = 0;
+      if (basename(dirname($file)) == "tests") {
+        foreach (file($file) as $line) {
+          if (!substr($file, -9, 9) == "_Test.php") {
+            continue;
+          }
+
+          if (preg_match("/class.*extends.*Gallery_Unit_Test_Case/", $line)) {
+            $scan = 1;
+          } else if (preg_match("/class.*extends/", $line)) {
+            $scan = 0;
+          }
+
+          if ($scan) {
+            if (preg_match("/^\s*public\s+function/", $line)) {
+              $this->assert_true(
+                preg_match("/^\s*public\s+function (setup|teardown|.*_test)\(\) {/", $line),
+                "public functions must end in _test:\n$file\n$line\n");
+            }
+          }
+        }
+      }
+    }
+  }
 }
