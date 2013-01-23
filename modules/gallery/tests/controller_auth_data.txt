@@ -25,6 +25,7 @@ modules/gallery/controllers/user_profile.php                 send               
 modules/gallery/controllers/welcome_message.php              index                DIRTY_AUTH
 modules/organize/controllers/organize.php                    tree                 DIRTY_CSRF
 modules/organize/controllers/organize.php                    delete               DIRTY_AUTH
+modules/organize/controllers/organize.php                    tag                  DIRTY_AUTH
 modules/rest/controllers/rest.php                            index                DIRTY_CSRF|DIRTY_AUTH
 modules/rest/controllers/rest.php                            reset_api_key_confirm DIRTY_AUTH
 modules/rest/controllers/rest.php                            reset_api_key        DIRTY_AUTH
