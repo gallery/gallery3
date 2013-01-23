@@ -399,7 +399,16 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_false($response["can_edit"]);
   }
 
-  public function first_photo_becomes_album_cover() {
+  public function as_restful_array_with_add_bit_test() {
+    $response = item::root()->as_restful_array();
+    $this->assert_true($response["can_add"]);
+
+    identity::set_active_user(identity::guest());
+    $response = item::root()->as_restful_array();
+    $this->assert_false($response["can_add"]);
+  }
+
+  public function first_photo_becomes_album_cover_test() {
     $album = test::random_album();
     $photo = test::random_photo($album);
     $album->reload();
