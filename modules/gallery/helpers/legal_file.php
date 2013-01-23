@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2012 Bharat Mediratta
+ * Copyright (C) 2000-2013 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,25 @@
  */
 class legal_file_Core {
   /**
-   * Create a default list of allowed photo MIME types paired with their extensions and then let 
+   * Create a default list of allowed photo MIME types paired with their extensions and then let
    * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
    * Extensions cannot be duplicated, but MIMEs can (e.g. jpeg and jpg both map to image/jpeg).
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_photo_types_by_extension($extension=NULL) {
+  static function get_photo_types_by_extension($extension=null) {
     $types_by_extension_wrapper = new stdClass();
     $types_by_extension_wrapper->types_by_extension = array(
       "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
     module::event("photo_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      $extension = strtolower($extension);
+      if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
+        return $types_by_extension_wrapper->types_by_extension[$extension];
+      } else {
+        return null;
+      }
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -46,14 +51,19 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_movie_types_by_extension($extension=NULL) {
+  static function get_movie_types_by_extension($extension=null) {
     $types_by_extension_wrapper = new stdClass();
     $types_by_extension_wrapper->types_by_extension = array(
       "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v");
     module::event("movie_types_by_extension", $types_by_extension_wrapper);
     if ($extension) {
       // return matching MIME type
-      return $types_by_extension_wrapper->types_by_extension[$extension];
+      $extension = strtolower($extension);
+      if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
+        return $types_by_extension_wrapper->types_by_extension[$extension];
+      } else {
+        return null;
+      }
     } else {
       // return complete array
       return $types_by_extension_wrapper->types_by_extension;
@@ -129,15 +139,12 @@ class legal_file_Core {
   }
 
   /**
-   * Convert the extension of a filename.  If the original filename has no
+   * Change the extension of a filename.  If the original filename has no
    * extension, add the new one to the end.
    */
   static function change_extension($filename, $new_ext) {
-    if (strpos($filename, ".") === false) {
-      return "{$filename}.{$new_ext}";
-    } else {
-      return preg_replace("/\.[^\.]*?$/", ".{$new_ext}", $filename);
-    }
+    $filename_no_ext = preg_replace("/\.[^\.\/]*?$/", "", $filename);
+    return "{$filename_no_ext}.{$new_ext}";
   }
 
   /**

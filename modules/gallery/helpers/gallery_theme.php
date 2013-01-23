@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2012 Bharat Mediratta
+ * Copyright (C) 2000-2013 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ class gallery_theme_Core {
       '<bdo dir="ltr">Gallery ' . gallery::version_string() . '</bdo>');
     return "<li class=\"g-first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://gallery.menalto.com",
+        array("url" => "http://galleryproject.org",
               "gallery_version" => $version_string)) .
       "</li>";
   }

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2012 Bharat Mediratta
+ * Copyright (C) 2000-2013 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,11 @@ class G2_Controller extends Controller {
     $input = Input::instance();
     $path = $input->get("path");
     $id = $input->get("g2_itemId");
+
+    /* Tags are handled specially, since there's no mapping for them */
+    if (($path && 0 === strpos($path, "tag/"))) {
+      url::redirect("tag_name/" . substr($path, 4));
+    }
 
     if (($path && $path != 'index.php' && $path != 'main.php') || $id) {
       if ($id) {

@@ -35,6 +35,7 @@ modules/server_add/controllers/admin_server_add.php          autocomplete       
 modules/server_add/controllers/server_add.php                children             DIRTY_CSRF
 modules/tag/controllers/admin_tags.php                       index                DIRTY_CSRF
 modules/tag/controllers/tag.php                              __call               DIRTY_CSRF|DIRTY_AUTH
+modules/tag/controllers/tag_name.php                         __call               DIRTY_AUTH
 modules/tag/controllers/tags.php                             autocomplete         DIRTY_CSRF|DIRTY_AUTH
 modules/user/controllers/admin_users.php                     index                DIRTY_CSRF
 modules/user/controllers/password.php                        reset                DIRTY_AUTH

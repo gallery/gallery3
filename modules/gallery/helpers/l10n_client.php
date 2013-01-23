@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2012 Bharat Mediratta
+ * Copyright (C) 2000-2013 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 class l10n_client_Core {
 
   private static function _server_url($path) {
-    return "http://gallery.menalto.com/translations/$path";
+    return "http://galleryproject.org/translations/$path";
   }
 
   static function server_api_key_url() {

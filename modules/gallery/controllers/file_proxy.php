@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2012 Bharat Mediratta
+ * Copyright (C) 2000-2013 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,9 @@ class File_Proxy_Controller extends Controller {
     // Make sure that the request is for a file inside var
     $offset = strpos(rawurldecode($request_uri), $var_uri);
     if ($offset !== 0) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 1;
+      throw $e;
     }
 
     // file_uri: albums/foo/bar.jpg
@@ -59,7 +61,9 @@ class File_Proxy_Controller extends Controller {
     // path: foo/bar.jpg
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 2;
+      throw $e;
     }
 
     // If the last element is .album.jpg, pop that off since it's not a real item
@@ -82,23 +86,34 @@ class File_Proxy_Controller extends Controller {
     }
 
     if (!$item->loaded()) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 3;
+      throw $e;
     }
 
     // Make sure we have access to the item
     if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 4;
+      throw $e;
     }
 
     // Make sure we have view_full access to the original
     if ($type == "albums" && !access::can("view_full", $item)) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 5;
+      throw $e;
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 6;
+      throw $e;
     }
+
+    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
+    // see if you should make the same change there as well.
 
     if ($type == "albums") {
       $file = $item->file_path();
@@ -109,7 +124,9 @@ class File_Proxy_Controller extends Controller {
     }
 
     if (!file_exists($file)) {
-      throw new Kohana_404_Exception();
+      $e = new Kohana_404_Exception();
+      $e->test_fail_code = 7;
+      throw $e;
     }
 
     header("Content-Length: " . filesize($file));
@@ -123,26 +140,29 @@ class File_Proxy_Controller extends Controller {
 
     expires::set(2592000, $item->updated);  // 30 days
 
-    // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
-    if ($item->is_movie() && $type != "albums") {
+    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
+    if (($item->is_movie() || $item->is_album()) && $type == "thumbs") {
       header("Content-Type: image/jpeg");
     } else {
       header("Content-Type: $item->mime_type");
     }
 
-    // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
-    // that Kohana started.  We want to close *all* buffers at this point because otherwise we're
-    // going to buffer up whatever file we're proxying (and it may be very large).  This may
-    // affect embedding or systems with PHP's output_buffering enabled.
-    while (ob_get_level()) {
-      Kohana_Log::add("error","".print_r(ob_get_level(),1));
-      if (!@ob_end_clean()) {
-        // ob_end_clean() can return false if the buffer can't be removed for some reason
-        // (zlib output compression buffers sometimes cause problems).
-        break;
+    if (TEST_MODE) {
+      return $file;
+    } else {
+      // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
+      // that Kohana started.  We want to close *all* buffers at this point because otherwise we're
+      // going to buffer up whatever file we're proxying (and it may be very large).  This may
+      // affect embedding or systems with PHP's output_buffering enabled.
+      while (ob_get_level()) {
+        Kohana_Log::add("error","".print_r(ob_get_level(),1));
+        if (!@ob_end_clean()) {
+          // ob_end_clean() can return false if the buffer can't be removed for some reason
+          // (zlib output compression buffers sometimes cause problems).
+          break;
+        }
       }
+      readfile($file);
     }
-
-    readfile($file);
   }
 }
