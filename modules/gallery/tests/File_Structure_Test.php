@@ -285,7 +285,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
   }
 
   public function all_public_functions_in_test_files_end_in_test() {
-    // Who tests the tests?  :-)
+    // Who tests the tests?  :-)   (ref: http://www.xkcd.com/1163)
     $dir = new PhpCodeFilterIterator(
       new GalleryCodeFilterIterator(
         new RecursiveIteratorIterator(
@@ -314,5 +314,21 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
         }
       }
     }
+  }
+
+  public function no_extra_spaces_at_end_of_line_test() {
+    $dir = new GalleryCodeFilterIterator(
+      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+    $errors = "";
+    foreach ($dir as $file) {
+      if (preg_match("/\.(php|css|html|js)$/", $file)) {
+        foreach (file($file) as $line_num => $line) {
+          if ((substr($line, -2) == " \n") || (substr($line, -1) == " ")) {
+            $errors .= "$file at line " . ($line_num + 1) . "\n";
+          }
+        }
+      }
+    }
+    $this->assert_true(empty($errors), "Extra spaces at end of line found at:\n$errors");
   }
 }

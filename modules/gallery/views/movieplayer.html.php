@@ -18,7 +18,7 @@
     $("#" + id).css({width: width, height: height});
   };
   // setup flowplayer
-  flowplayer(id, 
+  flowplayer(id,
     $.extend(true, {
       "src": "<?= url::abs_file("lib/flowplayer.swf") ?>",
       "wmode": "transparent",

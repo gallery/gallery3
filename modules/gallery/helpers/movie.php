@@ -82,7 +82,7 @@ class movie_Core {
     // extract frame at start_time, unless movie is too short
     $start_time_arg = ($duration >= $start_time + 0.1) ?
       "-ss " . movie::seconds_to_hhmmssdd($start_time) : "";
-      
+
     $input_args = isset($movie_options["input_args"]) ? $movie_options["input_args"] : "";
     $output_args = isset($movie_options["output_args"]) ? $movie_options["output_args"] : "";
 
@@ -164,7 +164,7 @@ class movie_Core {
    * Return the time/duration formatted in hh:mm:ss.dd from a number of seconds.
    * Useful for inputs to ffmpeg.
    *
-   * Note that this is similar to date("H:i:s", mktime(0,0,$seconds,0,0,0,0)), but unlike this 
+   * Note that this is similar to date("H:i:s", mktime(0,0,$seconds,0,0,0,0)), but unlike this
    * approach avoids potential issues with time zone and DST mismatch and/or using deprecated
    * features (the last argument of mkdate above, which disables DST, is deprecated as of PHP 5.3).
    */
@@ -172,7 +172,7 @@ class movie_Core {
     return sprintf("%02d:%02d:%05.2f", floor($seconds / 3600), floor(($seconds % 3600) / 60),
                    floor(100 * $seconds % 6000) / 100);
   }
-  
+
   /**
    * Return the number of seconds from a time/duration formatted in hh:mm:ss.dd.
    * Useful for outputs from ffmpeg.
