@@ -718,14 +718,14 @@ class gallery_installer {
 
     if ($version == 50) {
       // In v51, we added a lock_timeout variable so that administrators could edit the time out
-      // from 1 second to a higher variable if their system runs concurrent parallel uploads for 
+      // from 1 second to a higher variable if their system runs concurrent parallel uploads for
       // instance.
       module::set_var("gallery", "lock_timeout", 1);
       module::set_version("gallery", $version = 51);
     }
 
     if ($version == 51) {
-      // In v52, we added functions to the legal_file helper that map photo and movie file 
+      // In v52, we added functions to the legal_file helper that map photo and movie file
       // extensions to their mime types (and allow extension of the list by other modules).  During
       // this process, we correctly mapped m4v files to video/x-m4v, correcting a previous error
       // where they were mapped to video/mp4.  This corrects the existing items.
@@ -736,7 +736,7 @@ class gallery_installer {
         ->execute();
       module::set_version("gallery", $version = 52);
     }
-    
+
     if ($version == 52) {
       // In v53, we added the ability to change the default time used when extracting frames from
       // movies.  Previously we hard-coded this at 3 seconds, so we use that as the default.
