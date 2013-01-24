@@ -235,4 +235,19 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
       $level3b->id,
       item::find_by_relative_url("{$level1->slug}/{$level2b->slug}/{$level3b->slug}")->id);
   }
+
+  public function resequence_child_weights_test() {
+    $album = test::random_album();
+    $photo1 = test::random_photo($album);
+    $photo2 = test::random_photo($album);
+    $this->assert_true($photo2->weight > $photo1->weight);
+
+    $album->reload();
+    $album->sort_order = "DESC";
+    $album->save();
+    item::resequence_child_weights($album);
+
+    $this->assert_equal(2, $photo1->reload()->weight);
+    $this->assert_equal(1, $photo2->reload()->weight);
+  }
 }

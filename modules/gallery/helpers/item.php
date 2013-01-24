@@ -437,4 +437,16 @@ class item_Core {
     }
     return call_user_func_array($callback, $args);
   }
+
+  /**
+   * Reset all child weights of a given album to a monotonically increasing sequence based on the
+   * current sort order of the album.
+   */
+  static function resequence_child_weights($album) {
+    $weight = 0;
+    foreach ($album->children() as $child) {
+      $child->weight = ++$weight;
+      $child->save();
+    }
+  }
 }
