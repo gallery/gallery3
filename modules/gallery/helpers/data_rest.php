@@ -47,7 +47,16 @@ class data_rest_Core {
       throw new Kohana_404_Exception();
     }
 
-    // We don't have a cache buster in the url, so don't set cache headers here.
+    header("Content-Length: " . filesize($file));
+
+    if (isset($p->m)) {
+      header("Pragma:");
+      // Check that the content hasn't expired or it wasn't changed since cached
+      expires::check(2592000, $item->updated);
+
+      expires::set(2592000, $item->updated);  // 30 days
+    }
+
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
@@ -84,6 +93,18 @@ class data_rest_Core {
   }
 
   static function url($item, $size) {
-    return url::abs_site("rest/data/{$item->id}?size=$size");
+    if ($size == "full") {
+      $file = $item->file_path();
+    } else if ($size == "resize") {
+      $file = $item->resize_path();
+    } else {
+      $file = $item->thumb_path();
+    }
+    if (!file_exists($file)) {
+      throw new Kohana_404_Exception();
+    }
+
+    return url::abs_site("rest/data/{$item->id}?size=$size&m=" . filemtime($file));
   }
 }
+

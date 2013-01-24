@@ -129,12 +129,8 @@ class Organize_Controller extends Controller {
 
     if ($album->sort_column != "weight") {
       // Force all the weights into the current order before changing the order to manual
-      $weight = 0;
-      foreach ($album->children() as $child) {
-        $child->weight = ++$weight;
-        $child->save();
-      }
-
+      // @todo: consider making this a trigger in the Item_Model.
+      item::resequence_child_weights($album);
       $album->sort_column = "weight";
       $album->sort_order = "ASC";
       $album->save();

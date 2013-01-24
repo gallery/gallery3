@@ -365,7 +365,7 @@
         }
       }
     });
-    
+
     var tag_button = new Ext.Button({
       flex: 2,
         text: <?= t("Tag")->for_js() ?>,
@@ -425,11 +425,11 @@
             sort_column_combobox,
             sort_order_combobox
           ]
-        }, 
+        },
 <? if (module::is_active("tag")): ?>
         {
           xtype: "spacer",
-          flex: 3 
+          flex: 3
         },
         tag_textfield,
         tag_button,

@@ -66,7 +66,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function rename_photo_test() {
-    $item = test::random_photo();
+    $item = test::random_unique_photo();
     $original_name = $item->name;
 
     $thumb_file = file_get_contents($item->thumb_path());
@@ -89,7 +89,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function rename_album_test() {
     $album = test::random_album();
-    $photo = test::random_photo($album);
+    $photo = test::random_unique_photo($album);
     $album->reload();
 
     $thumb_file = file_get_contents($photo->thumb_path());
@@ -152,7 +152,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function move_album_test() {
     $album2 = test::random_album();
     $album1 = test::random_album($album2);
-    $photo = test::random_photo($album1);
+    $photo = test::random_unique_photo($album1);
 
     $thumb_file = file_get_contents($photo->thumb_path());
     $resize_file = file_get_contents($photo->resize_path());
@@ -180,7 +180,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function move_photo_test() {
     $album1 = test::random_album();
-    $photo  = test::random_photo($album1);
+    $photo  = test::random_unique_photo($album1);
 
     $album2 = test::random_album();
 
@@ -399,7 +399,16 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_false($response["can_edit"]);
   }
 
-  public function first_photo_becomes_album_cover() {
+  public function as_restful_array_with_add_bit_test() {
+    $response = item::root()->as_restful_array();
+    $this->assert_true($response["can_add"]);
+
+    identity::set_active_user(identity::guest());
+    $response = item::root()->as_restful_array();
+    $this->assert_false($response["can_add"]);
+  }
+
+  public function first_photo_becomes_album_cover_test() {
     $album = test::random_album();
     $photo = test::random_photo($album);
     $album->reload();

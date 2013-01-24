@@ -663,7 +663,7 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * Return a view for movies.  By default this is a Flowplayer v3 <script> tag, but 
+   * Return a view for movies.  By default this is a Flowplayer v3 <script> tag, but
    * movie_img events can override this and provide their own player/view.  If no player/view
    * is found and the movie is unsupported by Flowplayer v3, this returns a simple download link.
    * @param array $extra_attrs
@@ -675,12 +675,12 @@ class Item_Model_Core extends ORM_MPTT {
     $height = $this->height;
     if ($width == 0 || $height == 0) {
       // Not set correctly, likely because ffmpeg isn't available.  Making the window 0x0 causes the
-      // video to be effectively unviewable.  So, let's guess: set width to max_size and guess a 
-      // height (using 4:3 aspect ratio).  Once the video metadata is loaded, js in 
+      // video to be effectively unviewable.  So, let's guess: set width to max_size and guess a
+      // height (using 4:3 aspect ratio).  Once the video metadata is loaded, js in
       // movieplayer.html.php will correct these values.
       $width = $max_size;
       $height = ceil($width * 3/4);
-    } 
+    }
     $attrs = array_merge(array("id" => "g-item-id-{$this->id}"), $extra_attrs,
                          array("class" => "g-movie"));
 
@@ -1071,6 +1071,10 @@ class Item_Model_Core extends ORM_MPTT {
 
     if (empty($fields) || isset($fields["can_edit"])) {
       $data["can_edit"] = access::can("edit", $this);
+    }
+
+    if (empty($fields) || isset($fields["can_add"])) {
+      $data["can_add"] = access::can("add", $this);
     }
 
     // Elide some internal-only data that is going to cause confusion in the client.

@@ -99,4 +99,13 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       // pass
     }
   }
+
+  public function cache_buster_test() {
+    $photo = test::random_photo();
+
+    $this->assert_same(
+      url::abs_site("rest/data/{$photo->id}?size=thumb&m=" . filemtime($photo->thumb_path())),
+      data_rest::url($photo, "thumb"));
+  }
 }
+
