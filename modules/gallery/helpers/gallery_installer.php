@@ -315,7 +315,7 @@ class gallery_installer {
     module::set_var("gallery", "lock_timeout", 1);
     module::set_var("gallery", "movie_extract_frame_time", 3);
 
-    module::set_version("gallery", 53);
+    module::set_version("gallery", 54);
   }
 
   static function upgrade($version) {
@@ -742,6 +742,30 @@ class gallery_installer {
       // movies.  Previously we hard-coded this at 3 seconds, so we use that as the default.
       module::set_var("gallery", "movie_extract_frame_time", 3);
       module::set_version("gallery", $version = 53);
+    }
+
+    if ($version == 53) {
+      // In v54, we changed how we check for name and slug conflicts in Item_Model.  Previously,
+      // we checked the whole filename.  As a result, "foo.jpg" and "foo.png" were not considered
+      // conflicting if their slugs were different (a rare case in practice since server_add and
+      // uploader would give them both the same slug "foo").  Now, we check the filename without its
+      // extension.  This upgrade stanza fixes any conflicts where they were previously allowed.
+      
+      // For brevity, we can ignore one extension (e.g. jpg) and check all others.  Even at that,
+      // this might be slow, but if it times out it can just pick up where it left off.
+      foreach (db::build()
+               ->from("items")
+               ->select("id")
+               ->where("type", "<>", "album")
+               ->where("name", "NOT REGEXP", "\.jpg$") // case insensitive since name column is utf8_general_ci
+               ->order_by("id", "asc")
+               ->execute() as $row) {
+        set_time_limit(30);
+        $item = ORM::factory("item", $row->id);
+        $item->name = $item->name; // this will force Item_Model to check for conflicts on save
+        $item->save();
+      }
+      module::set_version("gallery", $version = 54);
     }
   }
 
