@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Folder_Sync_Controller extends Admin_Controller {
+class Folder_Sync_Controller extends Controller {
   // TODO Clean up
   /*public function browse($id) {
     $paths = unserialize(module::get_var("folder_sync", "authorized_paths"));
