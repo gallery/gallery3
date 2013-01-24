@@ -63,6 +63,34 @@ class test_Core {
     return test::random_photo_unsaved($parent)->save()->reload();
   }
 
+  // If a test compares photo file contents (i.e. file_get_contents), it's best to use this
+  // function to guarantee uniqueness.
+  static function random_unique_photo_unsaved($parent=null) {
+    $rand = test::random_string(6);
+    $photo = ORM::factory("item");
+    $photo->type = "photo";
+    $photo->parent_id = $parent ? $parent->id : 1;
+    if (function_exists("gd_info")) {
+      // Make image unique - color the black dot of test.jpg to the 6-digit hex code of rand.
+      $image = imagecreatefromjpeg(MODPATH . "gallery/tests/test.jpg");
+      imagefilter($image, IMG_FILTER_COLORIZE,
+        hexdec(substr($rand, 0, 2)), hexdec(substr($rand, 2, 2)), hexdec(substr($rand, 4, 2)));
+      imagejpeg($image, TMPPATH . "test_$rand.jpg");
+      imagedestroy($image);
+      $photo->set_data_file(TMPPATH . "test_$rand.jpg");
+    } else {
+      // Just use the black dot.
+      $photo->set_data_file(MODPATH . "gallery/tests/test.jpg");
+    }
+    $photo->name = "name_$rand.jpg";
+    $photo->title = "title_$rand";
+    return $photo;
+  }
+
+  static function random_unique_photo($parent=null) {
+    return test::random_unique_photo_unsaved($parent)->save()->reload();
+  }
+
   static function random_user($password="password") {
     $rand = "name_" . test::random_string(6);
     return identity::create_user($rand, $rand, $password, "$rand@rand.com");
