@@ -129,6 +129,13 @@ class File_Proxy_Controller extends Controller {
       throw $e;
     }
 
+    if (gallery::show_profiler()) {
+      Profiler::enable();
+      $profiler = new Profiler();
+      $profiler->render();
+      exit;
+    }
+
     header("Content-Length: " . filesize($file));
 
     header("Pragma:");
