@@ -62,7 +62,7 @@ class url_Core {
 			if ($site_domain === '' OR $site_domain[0] === '/')
 			{
 				// Guess the server name if the domain starts with slash
-				$base_url = $protocol.'://'.$_SERVER['HTTP_HOST'].$site_domain;
+				$base_url = $protocol.'://'.$_SERVER['SERVER_NAME'].$site_domain;
 			}
 			else
 			{
