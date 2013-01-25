@@ -31,6 +31,15 @@ class gallery_graphics_Core {
 
     module::event("graphics_rotate", $input_file, $output_file, $options, $item);
 
+    if (@filesize($input_file) == 0) {
+      throw new Exception("@todo EMPTY_INPUT_FILE");
+    }
+
+    if (!isset($options["degrees"])) {
+      $options["degrees"] = 0;
+    }
+
+    // Rotate the image.  This also implicitly converts its format if needed.
     Image::factory($input_file)
       ->quality(module::get_var("gallery", "image_quality"))
       ->rotate($options["degrees"])
@@ -57,11 +66,26 @@ class gallery_graphics_Core {
       throw new Exception("@todo EMPTY_INPUT_FILE");
     }
 
-    $dims = getimagesize($input_file);
-    if (max($dims[0], $dims[1]) <= min($options["width"], $options["height"])) {
-      // Image would get upscaled; do nothing
-      copy($input_file, $output_file);
+    list ($input_width, $input_height, $input_mime, $input_extension) =
+      photo::get_file_metadata($input_file);
+    if ($input_width && $input_height &&
+        (empty($options["width"]) || empty($options["height"]) || empty($options["master"]) ||
+        (max($input_width, $input_height) <= min($options["width"], $options["height"])))) {
+      // Photo dimensions well-defined, but options not well-defined or would upscale the image.
+      // Do not resize.  Check mimes to see if we can copy the file or if we need to convert it.
+      // (checking mimes avoids needlessly converting jpg to jpeg, etc.)
+      $output_mime = legal_file::get_photo_types_by_extension(pathinfo($output_file, PATHINFO_EXTENSION));
+      if ($input_mime && $output_mime && ($input_mime == $output_mime)) {
+        // Mimes well-defined and identical - copy input to output
+        copy($input_file, $output_file);
+      } else {
+        // Mimes not well-defined or not the same - convert input to output
+        $image = Image::factory($input_file)
+          ->quality(module::get_var("gallery", "image_quality"))
+          ->save($output_file);
+      }
     } else {
+      // Resize the image.  This also implicitly converts its format if needed.
       $image = Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
         ->quality(module::get_var("gallery", "image_quality"));
@@ -96,8 +120,8 @@ class gallery_graphics_Core {
 
       module::event("graphics_composite", $input_file, $output_file, $options, $item);
 
-      list ($width, $height) = getimagesize($input_file);
-      list ($w_width, $w_height) = getimagesize($options["file"]);
+      list ($width, $height) = photo::get_file_metadata($input_file);
+      list ($w_width, $w_height) = photo::get_file_metadata($options["file"]);
 
       $pad = isset($options["padding"]) ? $options["padding"] : 10;
       $top = $pad;
