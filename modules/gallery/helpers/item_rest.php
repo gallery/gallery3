@@ -64,7 +64,7 @@ class item_rest_Core {
     }
 
     if (isset($p->name)) {
-      $orm->where("name", "LIKE", "%{$p->name}%");
+      $orm->where("name", "LIKE", "%" . Database::escape_for_like($p->name) . "%");
     }
 
     if (isset($p->type)) {
