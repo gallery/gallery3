@@ -338,11 +338,10 @@ class Item_Model_Core extends ORM_MPTT {
         if (empty($this->slug)) {
           $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
 
-          // If the filename is all invalid characters, then the slug may be empty here.  We set a
-          // generic name ("photo", "movie", or "album") based on its type, then rely on
-          // check_and_fix_conflicts to ensure it doesn't conflict with another name.
+          // If the filename is all invalid characters, then the slug may be empty here.  Pick a
+          // random value.
           if (empty($this->slug)) {
-            $this->slug = $this->type;
+            $this->slug = (string)rand(1000, 9999);
           }
         }
 
@@ -363,7 +362,7 @@ class Item_Model_Core extends ORM_MPTT {
           }
         }
 
-        $this->_check_and_fix_conflicts();
+        $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
 
@@ -383,6 +382,16 @@ class Item_Model_Core extends ORM_MPTT {
 
         case "photo":
         case "movie":
+          // The thumb or resize may already exist in the case where a movie and a photo generate
+          // a thumbnail of the same name (eg, foo.flv movie and foo.jpg photo will generate
+          // foo.jpg thumbnail).  If that happens, randomize and save again.
+          if (file_exists($this->resize_path()) ||
+              file_exists($this->thumb_path())) {
+            $pi = pathinfo($this->name);
+            $this->name = $pi["filename"] . "-" . random::int() . "." . $pi["extension"];
+            parent::save();
+          }
+
           copy($this->data_file, $this->file_path());
           break;
         }
@@ -426,7 +435,7 @@ class Item_Model_Core extends ORM_MPTT {
           $this->relative_url_cache = null;
         }
 
-        $this->_check_and_fix_conflicts();
+        $this->_randomize_name_or_slug_on_conflict();
 
         parent::save();
 
@@ -519,60 +528,30 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Check to see if there's another item that occupies the same name or slug that this item
-   * intends to use, and if so choose a new name/slug while preserving the extension.  Since this
-   * checks the name without its extension, it covers possible collisions with thumbs and resizes
-   * as well (e.g. between the thumbs of movie "foo.flv" and photo "foo.jpg").
+   * intends to use, and if so choose a new name/slug while preserving the extension.
+   * @todo Improve this.  Random numbers are not user friendly
    */
-  private function _check_and_fix_conflicts() {
-    $suffix_num = 1;
-    $suffix = "";
-    if ($this->is_album()) {
-      while (db::build()
-             ->from("items")
-             ->where("parent_id", "=", $this->parent_id)
-             ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
-             ->and_open()
-             ->where("name", "=", "{$this->name}{$suffix}")
-             ->or_where("slug", "=", "{$this->slug}{$suffix}")
-             ->close()
-             ->count_records()) {
-        $suffix = "-" . (($suffix_num <= 99) ? sprintf("%02d", $suffix_num++) : random::int());
-      }
-      if ($suffix) {
-        $this->name = "{$this->name}{$suffix}";
-        $this->slug = "{$this->slug}{$suffix}";
-        $this->relative_path_cache = null;
-        $this->relative_url_cache = null;
-      }
-    } else {
-      // Split the filename into its base and extension.  This uses a regexp similar to
-      // legal_file::change_extension (which isn't always the same as pathinfo).
-      if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $this->name, $matches)) {
-        $base_name = $matches[1];
-        $extension = $matches[2]; // includes a leading dot
+  private function _randomize_name_or_slug_on_conflict() {
+    $base_name = pathinfo($this->name, PATHINFO_FILENAME);
+    $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
+    $base_slug = $this->slug;
+    while (ORM::factory("item")
+           ->where("parent_id", "=", $this->parent_id)
+           ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
+           ->and_open()
+           ->where("name", "=", $this->name)
+           ->or_where("slug", "=", $this->slug)
+           ->close()
+           ->find()->id) {
+      $rand = random::int();
+      if ($base_ext) {
+        $this->name = "$base_name-$rand.$base_ext";
       } else {
-        $base_name = $this->name;
-        $extension = "";
+        $this->name = "$base_name-$rand";
       }
-      $base_name_escaped = addcslashes($base_name, "_%");
-      // Note: below query uses LIKE with wildcard % at end, which is still sargable (i.e. quick)
-      while (db::build()
-             ->from("items")
-             ->where("parent_id", "=", $this->parent_id)
-             ->where("id", $this->id ? "<>" : "IS NOT", $this->id)
-             ->and_open()
-             ->where("name", "LIKE", "{$base_name_escaped}{$suffix}.%")
-             ->or_where("slug", "=", "{$this->slug}{$suffix}")
-             ->close()
-             ->count_records()) {
-        $suffix = "-" . (($suffix_num <= 99) ? sprintf("%02d", $suffix_num++) : random::int());
-      }
-      if ($suffix) {
-        $this->name = "{$base_name}{$suffix}{$extension}";
-        $this->slug = "{$this->slug}{$suffix}";
-        $this->relative_path_cache = null;
-        $this->relative_url_cache = null;
-      }
+      $this->slug = "$base_slug-$rand";
+      $this->relative_path_cache = null;
+      $this->relative_url_cache = null;
     }
   }
 

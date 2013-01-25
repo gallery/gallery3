@@ -136,6 +136,19 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(false, "Shouldn't get here");
   }
 
+  public function item_rename_over_existing_name_gets_uniqified_test() {
+    // Create a test photo
+    $item = test::random_photo();
+    $item2 = test::random_photo();
+
+    $item->name = $item2->name;
+    $item->save();
+
+    // foo.jpg should become foo-####.jpg
+    $this->assert_true(
+      preg_match("/" . str_replace(".jpg", "", $item2->name) . "-\d+\.jpg/", $item->name));
+  }
+
   public function move_album_test() {
     $album2 = test::random_album();
     $album1 = test::random_album($album2);
@@ -192,7 +205,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal($fullsize_file, file_get_contents($photo->file_path()));
   }
 
-  public function move_album_with_conflicting_target_gets_uniquified_test() {
+  public function move_album_with_conflicting_target_gets_uniqified_test() {
     $album = test::random_album();
     $source = test::random_album_unsaved($album);
     $source->name = $album->name;
@@ -204,9 +217,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $source->parent_id = item::root()->id;
     $source->save();
 
-    // foo should become foo-01
-    $this->assert_same("{$album->name}-01", $source->name);
-    $this->assert_same("{$album->slug}-01", $source->slug);
+    // foo should become foo-####
+    $this->assert_true(preg_match("/{$album->name}-\d+/", $source->name));
+    $this->assert_true(preg_match("/{$album->slug}-\d+/", $source->slug));
   }
 
   public function move_album_fails_wrong_target_type_test() {
@@ -226,7 +239,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(false, "Shouldn't get here");
   }
 
-  public function move_photo_with_conflicting_target_gets_uniquified_test() {
+  public function move_photo_with_conflicting_target_gets_uniqified_test() {
     $photo1 = test::random_photo();
     $album = test::random_album();
     $photo2 = test::random_photo_unsaved($album);
@@ -234,16 +247,17 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $photo2->save();
 
     // $photo1 and $photo2 have the same name, so if we move $photo1 into the root they should
-    // conflict and get uniquified.
+    // conflict and get uniqified.
 
     $photo2->parent_id = item::root()->id;
     $photo2->save();
 
-    // foo.jpg should become foo-01.jpg
-    $this->assert_same(substr($photo1->name, 0, -4) . "-01.jpg", $photo2->name);
+    // foo.jpg should become foo-####.jpg
+    $this->assert_true(
+      preg_match("/" . str_replace(".jpg", "", $photo1->name) . "-\d+\.jpg/", $photo2->name));
 
-    // foo should become foo-01
-    $this->assert_same("{$photo1->slug}-01", $photo2->slug);
+    // foo should become foo
+    $this->assert_true(preg_match("/{$photo1->slug}/", $photo2->name));
   }
 
   public function move_album_inside_descendent_fails_test() {
@@ -520,165 +534,5 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $album = test::random_album_unsaved(item::root());
     $album->name = $album->name . ".foo.bar";
     $album->save();
-  }
-
-  public function no_conflict_when_parents_different_test() {
-    $parent1 = test::random_album();
-    $parent2 = test::random_album();
-    $photo1 = test::random_photo($parent1);
-    $photo2 = test::random_photo($parent2);
-
-    $photo2->name = $photo1->name;
-    $photo2->slug = $photo1->slug;
-    $photo2->save();
-
-    // photo2 has same name and slug as photo1 but different parent - no conflict.
-    $this->assert_same($photo1->name, $photo2->name);
-    $this->assert_same($photo1->slug, $photo2->slug);
-  }
-
-  public function fix_conflict_when_names_identical_test() {
-    $parent = test::random_album();
-    $photo1 = test::random_photo($parent);
-    $photo2 = test::random_photo($parent);
-
-    $photo1_orig_base = substr($photo1->name, 0, -4); // strip off ".jpg"
-    $photo2_orig_slug = $photo2->slug;
-
-    $photo2->name = $photo1->name;
-    $photo2->save();
-
-    // photo2 has same name as photo1 - conflict resolved by renaming with -01.
-    $this->assert_same("{$photo1_orig_base}-01.jpg", $photo2->name);
-    $this->assert_same("{$photo2_orig_slug}-01", $photo2->slug);
-  }
-
-  public function fix_conflict_when_slugs_identical_test() {
-    $parent = test::random_album();
-    $photo1 = test::random_photo($parent);
-    $photo2 = test::random_photo($parent);
-
-    $photo2_orig_base = substr($photo2->name, 0, -4); // strip off ".jpg"
-
-    $photo2->slug = $photo1->slug;
-    $photo2->save();
-
-    // photo2 has same slug as photo1 - conflict resolved by renaming with -01.
-    $this->assert_same("{$photo2_orig_base}-01.jpg", $photo2->name);
-    $this->assert_same("{$photo1->slug}-01", $photo2->slug);
-  }
-
-  public function no_conflict_when_parents_different_for_albums_test() {
-    $parent1 = test::random_album();
-    $parent2 = test::random_album();
-    $album1 = test::random_album($parent1);
-    $album2 = test::random_album($parent2);
-
-    $album2->name = $album1->name;
-    $album2->slug = $album1->slug;
-    $album2->save();
-
-    // album2 has same name and slug as album1 but different parent - no conflict.
-    $this->assert_same($album1->name, $album2->name);
-    $this->assert_same($album1->slug, $album2->slug);
-  }
-
-  public function fix_conflict_when_names_identical_for_albums_test() {
-    $parent = test::random_album();
-    $album1 = test::random_album($parent);
-    $album2 = test::random_album($parent);
-
-    $album2_orig_slug = $album2->slug;
-
-    $album2->name = $album1->name;
-    $album2->save();
-
-    // album2 has same name as album1 - conflict resolved by renaming with -01.
-    $this->assert_same("{$album1->name}-01", $album2->name);
-    $this->assert_same("{$album2_orig_slug}-01", $album2->slug);
-  }
-
-  public function fix_conflict_when_slugs_identical_for_albums_test() {
-    $parent = test::random_album();
-    $album1 = test::random_album($parent);
-    $album2 = test::random_album($parent);
-
-    $album2_orig_name = $album2->name;
-
-    $album2->slug = $album1->slug;
-    $album2->save();
-
-    // album2 has same slug as album1 - conflict resolved by renaming with -01.
-    $this->assert_same("{$album2_orig_name}-01", $album2->name);
-    $this->assert_same("{$album1->slug}-01", $album2->slug);
-  }
-
-  public function no_conflict_when_base_names_identical_between_album_and_photo_test() {
-    $parent = test::random_album();
-    $album = test::random_album($parent);
-    $photo = test::random_photo($parent);
-
-    $photo_orig_slug = $photo->slug;
-
-    $photo->name = "{$album->name}.jpg";
-    $photo->save();
-
-    // photo has same base name as album - no conflict.
-    $this->assert_same("{$album->name}.jpg", $photo->name);
-    $this->assert_same($photo_orig_slug, $photo->slug);
-  }
-
-  public function fix_conflict_when_full_names_identical_between_album_and_photo_test() {
-    $parent = test::random_album();
-    $photo = test::random_photo($parent);
-    $album = test::random_album($parent);
-
-    $album_orig_slug = $album->slug;
-
-    $album->name = $photo->name;
-    $album->save();
-
-    // album has same full name as album - conflict resolved by renaming with -01.
-    $this->assert_same("{$photo->name}-01", $album->name);
-    $this->assert_same("{$album_orig_slug}-01", $album->slug);
-  }
-
-  public function fix_conflict_when_slugs_identical_between_album_and_photo_test() {
-    $parent = test::random_album();
-    $album = test::random_album($parent);
-    $photo = test::random_photo($parent);
-
-    $photo_orig_base = substr($photo->name, 0, -4); // strip off ".jpg"
-
-    $photo->slug = $album->slug;
-    $photo->save();
-
-    // photo has same slug as album - conflict resolved by renaming with -01.
-    $this->assert_same("{$photo_orig_base}-01.jpg", $photo->name);
-    $this->assert_same("{$album->slug}-01", $photo->slug);
-  }
-
-  public function fix_conflict_when_base_names_identical_between_jpg_png_flv_test() {
-    $parent = test::random_album();
-    $item1 = test::random_photo($parent);
-    $item2 = test::random_photo($parent);
-    $item3 = test::random_movie($parent);
-
-    $item1_orig_base = substr($item1->name, 0, -4); // strip off ".jpg"
-    $item2_orig_slug = $item2->slug;
-    $item3_orig_slug = $item3->slug;
-
-    $item2->set_data_file(MODPATH . "gallery/images/graphicsmagick.png");
-    $item2->name = "{$item1_orig_base}.png";
-    $item2->save();
-
-    $item3->name = "{$item1_orig_base}.flv";
-    $item3->save();
-
-    // item2 and item3 have same base name as item1 - conflict resolved by renaming with -01 and -02.
-    $this->assert_same("{$item1_orig_base}-01.png", $item2->name);
-    $this->assert_same("{$item2_orig_slug}-01", $item2->slug);
-    $this->assert_same("{$item1_orig_base}-02.flv", $item3->name);
-    $this->assert_same("{$item3_orig_slug}-02", $item3->slug);
   }
 }
