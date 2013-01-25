@@ -46,4 +46,36 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
       $this->assert_equal($seconds, movie::hhmmssdd_to_seconds($hhmmssdd));
     }
   }
+
+  public function get_file_metadata_test() {
+    $movie = test::random_movie();
+    $this->assert_equal(array(360, 288, "video/x-flv", "flv", 6.00),
+                        movie::get_file_metadata($movie->file_path()));
+  }
+
+  public function get_file_metadata_with_non_existent_file_test() {
+    try {
+      $metadata = movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (Exception $e) {
+      // pass
+    }
+  }
+
+  public function get_file_metadata_with_no_extension_test() {
+    copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_no_extension");
+    $this->assert_equal(array(360, 288, null, null, 6.00),
+                        movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension"));
+  }
+
+  public function get_file_metadata_with_illegal_extension_test() {
+    $this->assert_equal(array(0, 0, null, null, 0),
+                        movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php"));
+  }
+
+  public function get_file_metadata_with_illegal_extension_but_valid_file_contents_test() {
+    copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_php_extension.php");
+    $this->assert_equal(array(360, 288, null, null, 6.00),
+                        movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php"));
+  }
 }

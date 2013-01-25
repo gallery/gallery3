@@ -80,20 +80,61 @@ class photo_Core {
 
   /**
    * Return the width, height, mime_type and extension of the given image file.
+   * Metadata is first generated using getimagesize (or the legal_file mapping if it fails),
+   * then can be modified by other modules using photo_get_file_metadata events.
+   *
+   * This function and its use cases are symmetric to those of photo::get_file_metadata.
+   *
+   * @param  string $file_path
+   * @return array  array($width, $height, $mime_type, $extension)
+   *
+   * Use cases in detail:
+   *   Input is standard photo type (jpg/png/gif)
+   *     -> return metadata from getimagesize()
+   *   Input is *not* standard photo type that is supported by getimagesize (e.g. tif, bmp...)
+   *     -> return metadata from getimagesize()
+   *   Input is *not* standard photo type that is *not* supported by getimagesize but is legal
+   *     -> return zero width and height, mime type and extension according to legal_file
+   *   Input is *not* standard photo type that is *not* supported by getimagesize and is *not* legal
+   *     -> return zero width and height, null mime type and extension
+   *   Input is not readable or does not exist
+   *     -> throw exception
+   * Note: photo_get_file_metadata events can change any of the above cases (except the last one).
    */
   static function get_file_metadata($file_path) {
-    $image_info = getimagesize($file_path);
-    if ($image_info) {
-      $width = $image_info[0];
-      $height = $image_info[1];
-      $mime_type = $image_info["mime"];
-      $extension = image_type_to_extension($image_info[2], false);
-      return array($width, $height, $mime_type, $extension);
-    } else {
-      // getimagesize failed - use legal_file mapping instead.
-      $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
-      $mime_type = legal_file::get_photo_types_by_extension($extension);
-      return array(0, 0, $mime_type, $extension);
+    if (!is_readable($file_path)) {
+      throw new Exception("@todo UNREADABLE_FILE");
     }
+
+    $metadata = new stdClass();
+    if ($image_info = getimagesize($file_path)) {
+      // getimagesize worked - use its results.
+      $metadata->width = $image_info[0];
+      $metadata->height = $image_info[1];
+      $metadata->mime_type = $image_info["mime"];
+      $metadata->extension = image_type_to_extension($image_info[2], false);
+      // We prefer jpg instead of jpeg (which is returned by image_type_to_extension).
+      if ($metadata->extension == "jpeg") {
+        $metadata->extension = "jpg";
+      }
+    } else {
+      // getimagesize failed - try to use legal_file mapping instead.
+      $extension = pathinfo($file_path, PATHINFO_EXTENSION);
+      if (!$extension ||
+          (!$metadata->mime_type = legal_file::get_photo_types_by_extension($extension))) {
+        // Extension is empty or illegal.
+        $metadata->extension = null;
+        $metadata->mime_type = null;
+      } else {
+        // Extension is legal (and mime is already set above).
+        $metadata->extension = strtolower($extension);
+      }
+      $metadata->width = 0;
+      $metadata->height = 0;
+    }
+
+    // Run photo_get_file_metadata events which can modify the class, then return results.
+    module::event("photo_get_file_metadata", $file_path, $metadata);
+    return array($metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension);
   }
 }
