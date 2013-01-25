@@ -100,32 +100,24 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
       $name = legal_file::smash_extensions($name);
 
-      if (!($image_info = getimagesize($file)) ||
-          !in_array($image_info[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
-        message::error(t("Unable to identify this image file"));
+      list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
+      if (!legal_file::get_photo_extensions($extension)) {
+        message::error(t("Invalid or unidentifiable image file"));
         @unlink($file);
         return;
-      }
-
-      if (!in_array($pathinfo["extension"], legal_file::get_photo_extensions())) {
-        switch ($image_info[2]) {
-        case IMAGETYPE_GIF:
-          $name = legal_file::change_extension($name, "gif");
-          break;
-        case IMAGETYPE_JPEG:
-          $name = legal_file::change_extension($name, "jpg");
-          break;
-        case IMAGETYPE_PNG:
-          $name = legal_file::change_extension($name, "png");
-          break;
-        }
+      } else {
+        // Force correct, legal extension type on file, which will be of our canonical type
+        // (i.e. all lowercase, jpg instead of jpeg, etc.).  This renaming prevents the issues
+        // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
+        // php extension was previously accepted without changing its extension.
+        $name = legal_file::change_extension($name, $extension);
       }
 
       rename($file, VARPATH . "modules/watermark/$name");
       module::set_var("watermark", "name", $name);
-      module::set_var("watermark", "width", $image_info[0]);
-      module::set_var("watermark", "height", $image_info[1]);
-      module::set_var("watermark", "mime_type", $image_info["mime"]);
+      module::set_var("watermark", "width", $width);
+      module::set_var("watermark", "height", $height);
+      module::set_var("watermark", "mime_type", $mime_type);
       module::set_var("watermark", "position", $form->add_watermark->position->value);
       module::set_var("watermark", "transparency", $form->add_watermark->transparency->value);
       $this->_update_graphics_rules();
