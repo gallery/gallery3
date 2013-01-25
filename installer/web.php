@@ -41,9 +41,9 @@ if (installer::already_installed()) {
     list ($config["host"], $config["port"]) = explode(":", $config["host"] . ":");
     foreach ($config as $k => $v) {
       if ($k == "password") {
-        $config[$k] = str_replace("'", "\\'", $v);
+        $config[$k] = str_replace(array("'", "\\"), array("\\'", "\\\\"), $v);
       } else {
-        $config[$k] = strtr($v, "'`", "__");
+        $config[$k] = strtr($v, "'`\\", "___");
       }
     }
 
