@@ -154,7 +154,7 @@ class Organize_Controller extends Controller {
       // Move all the source items to the right spots.
       for ($i = 0; $i < count($source_ids); $i++) {
         $source = ORM::factory("item", $source_ids[$i]);
-        if ($source->parent_id = $album->id) {
+        if ($source->parent_id == $album->id) {
           $source->weight = $base_weight + $i;
           $source->save();
         }
