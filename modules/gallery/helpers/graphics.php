@@ -195,9 +195,8 @@ class graphics_Core {
         } else {
           copy(MODPATH . "gallery/images/missing_photo.png", $item->thumb_path());
         }
-        $dims = getimagesize($item->thumb_path());
-        $item->thumb_width = $dims[0];
-        $item->thumb_height = $dims[1];
+        list ($item->thumb_width, $item->thumb_height) =
+          photo::get_file_metadata($item->thumb_path());
       }
 
       if (!empty($ops["resize"]))  {
@@ -206,9 +205,8 @@ class graphics_Core {
         } else {
           copy(MODPATH . "gallery/images/missing_photo.png", $item->resize_path());
         }
-        $dims = getimagesize($item->resize_path());
-        $item->resize_width = $dims[0];
-        $item->resize_height = $dims[1];
+        list ($item->resize_width, $item->resize_height) =
+          photo::get_file_metadata($item->resize_path());
       }
       $item->save();
     } catch (Exception $e) {
