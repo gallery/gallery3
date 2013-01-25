@@ -52,7 +52,7 @@ class Tags_Controller extends Controller {
     $limit = Input::instance()->get("limit");
     $tag_part = ltrim(end($tag_parts));
     $tag_list = ORM::factory("tag")
-      ->where("name", "LIKE", "{$tag_part}%")
+      ->where("name", "LIKE", Database::escape_for_like($tag_part) . "%")
       ->order_by("name", "ASC")
       ->limit($limit)
       ->find_all();

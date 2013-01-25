@@ -88,4 +88,14 @@ abstract class Database extends Database_Core {
   static function set_default_instance($db) {
     self::$instances["default"] = $db;
   }
+
+  /**
+   * Escape LIKE queries, add wildcards.  In MySQL queries using LIKE, _ and % characters are
+   * treated as wildcards similar to ? and *, respectively.  Therefore, we need to escape _, %,
+   * and \ (the escape character itself).
+   */
+  static function escape_for_like($value) {
+    // backslash must go first to avoid double-escaping
+    return addcslashes($value, '\_%');
+  }
 }

@@ -49,7 +49,7 @@ class G2_Controller extends Controller {
         if ($view == "core.DownloadItem") {
           $where[] = array("resource_type", "IN", array("file", "resize", "thumbnail", "full"));
         } else if ($view) {
-          $where[] = array("g2_url", "like", "%g2_view=$view%");
+          $where[] = array("g2_url", "LIKE", "%" . Database::escape_for_like("g2_view=$view") . "%");
         } // else: Assuming that the first search hit is sufficiently good.
       } else if ($path) {
         $where = array(array("g2_url", "IN", array($path, str_replace(" ", "+", $path))));

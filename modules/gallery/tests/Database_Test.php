@@ -147,6 +147,12 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
   }
+
+  function escape_for_like_test() {
+    // Note: literal double backslash is written as \\\
+    $this->assert_same('basic\_test', Database::escape_for_like("basic_test"));
+    $this->assert_same('\\\100\%\_test/', Database::escape_for_like('\100%_test/'));
+  }
 }
 
 class Database_Mock extends Database {
