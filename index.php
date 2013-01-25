@@ -106,7 +106,7 @@ if (PHP_SAPI == "cli") {
   define("TEST_MODE", 0);
   define("VARPATH", realpath("var") . "/");
 }
-define("TMPPATH", VARPATH . "/tmp/");
+define("TMPPATH", VARPATH . "tmp/");
 
 if (file_exists("local.php")) {
   include("local.php");
