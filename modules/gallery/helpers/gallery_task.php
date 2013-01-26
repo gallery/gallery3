@@ -26,11 +26,13 @@ class gallery_task_Core {
   const FIX_STATE_RUN_DUPE_SLUGS = 5;
   const FIX_STATE_START_DUPE_NAMES = 6;
   const FIX_STATE_RUN_DUPE_NAMES = 7;
-  const FIX_STATE_START_REBUILD_ITEM_CACHES = 8;
-  const FIX_STATE_RUN_REBUILD_ITEM_CACHES = 9;
-  const FIX_STATE_START_MISSING_ACCESS_CACHES = 10;
-  const FIX_STATE_RUN_MISSING_ACCESS_CACHES = 11;
-  const FIX_STATE_DONE = 12;
+  const FIX_STATE_START_DUPE_BASE_NAMES = 8;
+  const FIX_STATE_RUN_DUPE_BASE_NAMES = 9;
+  const FIX_STATE_START_REBUILD_ITEM_CACHES = 10;
+  const FIX_STATE_RUN_REBUILD_ITEM_CACHES = 11;
+  const FIX_STATE_START_MISSING_ACCESS_CACHES = 12;
+  const FIX_STATE_RUN_MISSING_ACCESS_CACHES = 13;
+  const FIX_STATE_DONE = 14;
 
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count_records();
@@ -348,8 +350,9 @@ class gallery_task_Core {
       // album audit (permissions and bogus album covers): 1 operation for every album
       $total += db::build()->where("type", "=", "album")->count_records("items");
 
-      // one operation for each missing slug, name and access cache
-      foreach (array("find_dupe_slugs", "find_dupe_names", "find_missing_access_caches") as $func) {
+      // one operation for each dupe slug, dupe name, dupe base name, and missing access cache
+      foreach (array("find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
+                     "find_missing_access_caches") as $func) {
         foreach (self::$func() as $row) {
           $total++;
         }
@@ -489,11 +492,12 @@ class gallery_task_Core {
           $task->set("stack", implode(" ", $stack));
           $state = self::FIX_STATE_RUN_DUPE_NAMES;
         } else {
-          $state = self::FIX_STATE_START_ALBUMS;
+          $state = self::FIX_STATE_START_DUPE_BASE_NAMES;
         }
         break;
 
       case self::FIX_STATE_RUN_DUPE_NAMES:
+        // NOTE: This does *not* attempt to fix the file system!
         $stack = explode(" ", $task->get("stack"));
         list ($parent_id, $name) = explode(":", array_pop($stack));
 
@@ -505,9 +509,16 @@ class gallery_task_Core {
           ->find_all(1, 1);
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
+          if (!$conflict->is_album() && preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
+            $item_base_name = $matches[1];
+            $item_extension = $matches[2]; // includes a leading dot
+          } else {
+            $item_base_name = $conflict->name;
+            $item_extension = "";
+          }
           db::build()
             ->update("items")
-            ->set("name", $name . "-" . (string)rand(1000, 9999))
+            ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -516,6 +527,74 @@ class gallery_task_Core {
           // guarantees that we won't spend too long fixing one set of conflicts, and that we
           // won't stop before all are fixed.
           $stack[] = "$parent_id:$name";
+          break;
+        }
+        $task->set("stack", implode(" ", $stack));
+        $completed++;
+
+        if (empty($stack)) {
+          $state = self::FIX_STATE_START_DUPE_BASE_NAMES;
+        }
+        break;
+
+      case self::FIX_STATE_START_DUPE_BASE_NAMES:
+        $stack = array();
+        foreach (self::find_dupe_base_names() as $row) {
+          list ($parent_id, $base_name) = explode(":", $row->parent_base_name, 2);
+          $stack[] = join(":", array($parent_id, $base_name));
+        }
+        if ($stack) {
+          $task->set("stack", implode(" ", $stack));
+          $state = self::FIX_STATE_RUN_DUPE_BASE_NAMES;
+        } else {
+          $state = self::FIX_STATE_START_ALBUMS;
+        }
+        break;
+
+      case self::FIX_STATE_RUN_DUPE_BASE_NAMES:
+        // NOTE: This *does* attempt to fix the file system!  So, it must go *after* run_dupe_names.
+        $stack = explode(" ", $task->get("stack"));
+        list ($parent_id, $base_name) = explode(":", array_pop($stack));
+        $base_name_escaped = Database::escape_for_like($base_name);
+
+        $fixed = 0;
+        // We want to leave the first one alone and update all conflicts to be random values.
+        $conflicts = ORM::factory("item")
+          ->where("parent_id", "=", $parent_id)
+          ->where("name", "LIKE", "{$base_name_escaped}.%")
+          ->where("type", "<>", "album")
+          ->find_all(1, 1);
+        if ($conflicts->count() && $conflict = $conflicts->current()) {
+          $task->log("Fixing conflicting name for item id {$conflict->id}");
+          if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
+            $item_base_name = $matches[1]; // unlike $base_name, this always maintains capitalization
+            $item_extension = $matches[2]; // includes a leading dot
+          } else {
+            $item_base_name = $conflict->name;
+            $item_extension = "";
+          }
+          // Unlike conflicts found in run_dupe_names, these items are likely to have an intact
+          // file system.  Let's use the item save logic to rebuild the paths and rename the files
+          // if possible.
+          try {
+            $conflict->name = $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension;
+            $conflict->validate();
+            // If we get here, we're safe to proceed with save
+            $conflict->save();
+          } catch (Exception $e) {
+            // Didn't work.  Edit database directly without fixing file system.
+            db::build()
+              ->update("items")
+              ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
+              ->where("id", "=", $conflict->id)
+              ->execute();
+          }
+
+          // We fixed one conflict, but there might be more so put this parent back on the stack
+          // and try again.  We won't consider it completed when we don't fix a conflict.  This
+          // guarantees that we won't spend too long fixing one set of conflicts, and that we
+          // won't stop before all are fixed.
+          $stack[] = "$parent_id:$base_name";
           break;
         }
         $task->set("stack", implode(" ", $stack));
@@ -669,15 +748,29 @@ class gallery_task_Core {
   }
 
   static function find_dupe_names() {
+    // looking for photos, movies, and albums
     return db::build()
       ->select_distinct(
         array("parent_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
-      ->where("type", "<>", "album")
       ->having("C", ">", 1)
       ->group_by("parent_name")
+      ->execute();
+  }
+
+  static function find_dupe_base_names() {
+    // looking for photos or movies, not albums
+    return db::build()
+      ->select_distinct(
+        array("parent_base_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+      ->select("id")
+      ->select(array("C" => "COUNT(\"*\")"))
+      ->from("items")
+      ->where("type", "<>", "album")
+      ->having("C", ">", 1)
+      ->group_by("parent_base_name")
       ->execute();
   }
 
