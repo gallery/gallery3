@@ -691,7 +691,7 @@ class gallery_task_Core {
         break;
 
       case self::FIX_STATE_RUN_MISSING_ACCESS_CACHES:
-        $stack = explode(" ", $task->get("stack"));
+        $stack = array_filter(explode(" ", $task->get("stack"))); // filter removes empty/zero ids
         if (!empty($stack)) {
           $id = array_pop($stack);
           $access_cache = ORM::factory("access_cache");
