@@ -315,7 +315,7 @@ class gallery_installer {
     module::set_var("gallery", "lock_timeout", 1);
     module::set_var("gallery", "movie_extract_frame_time", 3);
 
-    module::set_version("gallery", 53);
+    module::set_version("gallery", 54);
   }
 
   static function upgrade($version) {
@@ -742,6 +742,47 @@ class gallery_installer {
       // movies.  Previously we hard-coded this at 3 seconds, so we use that as the default.
       module::set_var("gallery", "movie_extract_frame_time", 3);
       module::set_version("gallery", $version = 53);
+    }
+
+    if ($version == 53) {
+      // In v54, we changed how we check for name and slug conflicts in Item_Model.  Previously,
+      // we checked the whole filename.  As a result, "foo.jpg" and "foo.png" were not considered
+      // conflicting if their slugs were different (a rare case in practice since server_add and
+      // uploader would give them both the same slug "foo").  Now, we check the filename without its
+      // extension.  This upgrade stanza fixes any conflicts where they were previously allowed.
+
+      // This might be slow, but if it times out it can just pick up where it left off.
+
+      // Find and loop through each conflict (e.g. "foo.jpg", "foo.png", and "foo.flv" are one
+      // conflict; "bar.jpg", "bar.png", and "bar.flv" are another)
+      foreach (db::build()
+               ->select_distinct(array("parent_base_name" =>
+                 db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+               ->select(array("C" => "COUNT(\"*\")"))
+               ->from("items")
+               ->where("type", "<>", "album")
+               ->having("C", ">", 1)
+               ->group_by("parent_base_name")
+               ->execute() as $conflict) {
+        list ($parent_id, $base_name) = explode(":", $conflict->parent_base_name, 2);
+        $base_name_escaped = Database::escape_for_like($base_name);
+        // Loop through the items for each conflict
+        foreach (db::build()
+                 ->from("items")
+                 ->select("id")
+                 ->where("type", "<>", "album")
+                 ->where("parent_id", "=", $parent_id)
+                 ->where("name", "LIKE", "{$base_name_escaped}.%")
+                 ->limit(1000000)  // required to satisfy SQL syntax (no offset without limit)
+                 ->offset(1)       // skips the 0th item
+                 ->execute() as $row) {
+          set_time_limit(30);
+          $item = ORM::factory("item", $row->id);
+          $item->name = $item->name;  // this will force Item_Model to check for conflicts on save
+          $item->save();
+        }
+      }
+      module::set_version("gallery", $version = 54);
     }
   }
 
