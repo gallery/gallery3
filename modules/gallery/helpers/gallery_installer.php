@@ -116,7 +116,8 @@ class gallery_installer {
                  KEY `type` (`type`),
                  KEY `random` (`rand_key`),
                  KEY `weight` (`weight` DESC),
-                 KEY `left_ptr` (`left_ptr`))
+                 KEY `left_ptr` (`left_ptr`),
+                 KEY `relative_path_cache` (`relative_path_cache`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {logs} (
@@ -315,7 +316,7 @@ class gallery_installer {
     module::set_var("gallery", "lock_timeout", 1);
     module::set_var("gallery", "movie_extract_frame_time", 3);
 
-    module::set_version("gallery", 54);
+    module::set_version("gallery", 55);
   }
 
   static function upgrade($version) {
@@ -784,6 +785,12 @@ class gallery_installer {
       }
       module::set_version("gallery", $version = 54);
     }
+
+    if ($version == 54) {
+      $db->query("ALTER TABLE {items} ADD KEY `relative_path_cache` (`relative_path_cache`)");
+      module::set_version("gallery", $version = 55);
+    }
+
   }
 
   static function uninstall() {

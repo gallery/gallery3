@@ -186,7 +186,8 @@ CREATE TABLE {items} (
   KEY `type` (`type`),
   KEY `random` (`rand_key`),
   KEY `weight` (`weight`),
-  KEY `left_ptr` (`left_ptr`)
+  KEY `left_ptr` (`left_ptr`),
+  KEY `relative_path_cache` (`relative_path_cache`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,2,0,NULL,'','',1,NULL,NULL,2,NULL,'weight','ASC',1,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
@@ -244,7 +245,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',54,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',55,1);
 INSERT INTO {modules} VALUES (2,1,'user',4,2);
 INSERT INTO {modules} VALUES (3,1,'comment',7,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
