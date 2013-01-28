@@ -237,7 +237,10 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function resequence_child_weights_test() {
-    $album = test::random_album();
+    $album = test::random_album_unsaved();
+    $album->sort_column = "id";
+    $album->save();
+
     $photo1 = test::random_photo($album);
     $photo2 = test::random_photo($album);
     $this->assert_true($photo2->weight > $photo1->weight);
