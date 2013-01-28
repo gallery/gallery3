@@ -18,6 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class legal_file_Core {
+  private static $photo_types_by_extension;
+  private static $movie_types_by_extension;
+  private static $photo_extensions;
+  private static $movie_extensions;
+  private static $photo_types;
+  private static $movie_types;
+
   /**
    * Create a default list of allowed photo MIME types paired with their extensions and then let
    * modules modify it.  This is an ordered map, mapping extensions to their MIME types.
@@ -26,21 +33,24 @@ class legal_file_Core {
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
   static function get_photo_types_by_extension($extension=null) {
-    $types_by_extension_wrapper = new stdClass();
-    $types_by_extension_wrapper->types_by_extension = array(
-      "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
-    module::event("photo_types_by_extension", $types_by_extension_wrapper);
+    if (empty(self::$photo_types_by_extension)) {
+      $types_by_extension_wrapper = new stdClass();
+      $types_by_extension_wrapper->types_by_extension = array(
+        "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+      module::event("photo_types_by_extension", $types_by_extension_wrapper);
+      self::$photo_types_by_extension = $types_by_extension_wrapper->types_by_extension;
+    }
     if ($extension) {
       // return matching MIME type
       $extension = strtolower($extension);
-      if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
-        return $types_by_extension_wrapper->types_by_extension[$extension];
+      if (isset(self::$photo_types_by_extension[$extension])) {
+        return self::$photo_types_by_extension[$extension];
       } else {
         return null;
       }
     } else {
       // return complete array
-      return $types_by_extension_wrapper->types_by_extension;
+      return self::$photo_types_by_extension;
     }
   }
 
@@ -52,53 +62,111 @@ class legal_file_Core {
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
   static function get_movie_types_by_extension($extension=null) {
-    $types_by_extension_wrapper = new stdClass();
-    $types_by_extension_wrapper->types_by_extension = array(
-      "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v");
-    module::event("movie_types_by_extension", $types_by_extension_wrapper);
+    if (empty(self::$movie_types_by_extension)) {
+      $types_by_extension_wrapper = new stdClass();
+      $types_by_extension_wrapper->types_by_extension = array(
+        "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v");
+      module::event("movie_types_by_extension", $types_by_extension_wrapper);
+      self::$movie_types_by_extension = $types_by_extension_wrapper->types_by_extension;
+    }
     if ($extension) {
       // return matching MIME type
       $extension = strtolower($extension);
-      if (isset($types_by_extension_wrapper->types_by_extension[$extension])) {
-        return $types_by_extension_wrapper->types_by_extension[$extension];
+      if (isset(self::$movie_types_by_extension[$extension])) {
+        return self::$movie_types_by_extension[$extension];
       } else {
         return null;
       }
     } else {
       // return complete array
-      return $types_by_extension_wrapper->types_by_extension;
+      return self::$movie_types_by_extension;
+    }
+  }
+
+  /**
+   * Create a merged list of all allowed photo and movie MIME types paired with their extensions.
+   *
+   * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
+   */
+  static function get_types_by_extension($extension=null) {
+    $types_by_extension = legal_file::get_photo_types_by_extension();
+    if (movie::find_ffmpeg()) {
+      $types_by_extension = array_merge($types_by_extension,
+                                        legal_file::get_movie_types_by_extension());
+    }
+    if ($extension) {
+      // return matching MIME type
+      $extension = strtolower($extension);
+      if (isset($types_by_extension[$extension])) {
+        return $types_by_extension[$extension];
+      } else {
+        return null;
+      }
+    } else {
+      // return complete array
+      return $types_by_extension;
     }
   }
 
   /**
    * Create a default list of allowed photo extensions and then let modules modify it.
+   *
+   * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
-  static function get_photo_extensions() {
-    $extensions_wrapper = new stdClass();
-    $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
-    module::event("legal_photo_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
+  static function get_photo_extensions($extension=null) {
+    if (empty(self::$photo_extensions)) {
+      $extensions_wrapper = new stdClass();
+      $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
+      module::event("legal_photo_extensions", $extensions_wrapper);
+      self::$photo_extensions = $extensions_wrapper->extensions;
+    }
+    if ($extension) {
+      // return true if in array, false if not
+      return in_array(strtolower($extension), self::$photo_extensions);
+    } else {
+      // return complete array
+      return self::$photo_extensions;
+    }
   }
 
   /**
    * Create a default list of allowed movie extensions and then let modules modify it.
+   *
+   * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
-  static function get_movie_extensions() {
-    $extensions_wrapper = new stdClass();
-    $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
-    module::event("legal_movie_extensions", $extensions_wrapper);
-    return $extensions_wrapper->extensions;
+  static function get_movie_extensions($extension=null) {
+    if (empty(self::$movie_extensions)) {
+      $extensions_wrapper = new stdClass();
+      $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
+      module::event("legal_movie_extensions", $extensions_wrapper);
+      self::$movie_extensions = $extensions_wrapper->extensions;
+    }
+    if ($extension) {
+      // return true if in array, false if not
+      return in_array(strtolower($extension), self::$movie_extensions);
+    } else {
+      // return complete array
+      return self::$movie_extensions;
+    }
   }
 
   /**
    * Create a merged list of all allowed photo and movie extensions.
+   *
+   * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
-  static function get_extensions() {
+  static function get_extensions($extension=null) {
     $extensions = legal_file::get_photo_extensions();
     if (movie::find_ffmpeg()) {
       $extensions = array_merge($extensions, legal_file::get_movie_extensions());
     }
-    return $extensions;
+    if ($extension) {
+      // return true if in array, false if not
+      return in_array(strtolower($extension), $extensions);
+    } else {
+      // return complete array
+      return $extensions;
+    }
   }
 
   /**
@@ -119,10 +187,14 @@ class legal_file_Core {
    * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
   static function get_photo_types() {
-    $types_wrapper = new stdClass();
-    $types_wrapper->types = array_values(legal_file::get_photo_types_by_extension());
-    module::event("legal_photo_types", $types_wrapper);
-    return $types_wrapper->types;
+    if (empty(self::$photo_types)) {
+      $types_wrapper = new stdClass();
+      // Need array_unique since types_by_extension can be many-to-one (e.g. jpeg and jpg).
+      $types_wrapper->types = array_unique(array_values(legal_file::get_photo_types_by_extension()));
+      module::event("legal_photo_types", $types_wrapper);
+      self::$photo_types = $types_wrapper->types;
+    }
+    return self::$photo_types;
   }
 
   /**
@@ -131,11 +203,15 @@ class legal_file_Core {
    * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
   static function get_movie_types() {
-    $types_wrapper = new stdClass();
-    $types_wrapper->types = array_values(legal_file::get_movie_types_by_extension());
-    $types_wrapper->types[] = "video/flv";
-    module::event("legal_movie_types", $types_wrapper);
-    return $types_wrapper->types;
+    if (empty(self::$movie_types)) {
+      $types_wrapper = new stdClass();
+      // Need array_unique since types_by_extension can be many-to-one (e.g. jpeg and jpg).
+      $types_wrapper->types = array_unique(array_values(legal_file::get_movie_types_by_extension()));
+      $types_wrapper->types[] = "video/flv";
+      module::event("legal_movie_types", $types_wrapper);
+      self::$movie_types = $types_wrapper->types;
+    }
+    return self::$movie_types;
   }
 
   /**
