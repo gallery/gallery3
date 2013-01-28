@@ -33,10 +33,30 @@ class G2_Controller extends Controller {
     $input = Input::instance();
     $path = $input->get("path");
     $id = $input->get("g2_itemId");
+    $view = $input->get("g2_view");
 
-    /* Tags are handled specially, since there's no mapping for them */
-    if (($path && 0 === strpos($path, "tag/"))) {
-      url::redirect("tag_name/" . substr($path, 4));
+    // Tags did not have mappings created, so we need to catch them first. However, if a g2_itemId was
+    // passed, we'll want to show lookup the mapping anyway
+    if (($path && 0 === strpos($path, "tag/")) || $view = "tags.VirtualAlbum") {
+      if (0 === strpos($path, "tag/")) {
+        $tag_name = substr($path, 4);
+      }
+      if ($view == "tags.VirtualAlbum") {
+        $tag_name = $input->get("g2_tagName");
+      }
+
+      if (!$id) {
+        url::redirect("tag_name/$tag_name");
+      }
+
+      $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+      if ($tag->loaded()) {
+        item::set_display_context_callback("Tag_Controller::get_display_context", $tag->id);
+        // We want to show the item as part of the tag virtual album. Most of this code is below; we'll
+        // change $path and $view to let it fall through
+        $view = "";
+        $path = "";
+      }
     }
 
     if (($path && $path != 'index.php' && $path != 'main.php') || $id) {
@@ -45,7 +65,6 @@ class G2_Controller extends Controller {
         // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
         // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
         $where = array(array("g2_id", "=", $id));
-        $view = $input->get("g2_view");
         if ($view == "core.DownloadItem") {
           $where[] = array("resource_type", "IN", array("file", "resize", "thumbnail", "full"));
         } else if ($view) {
