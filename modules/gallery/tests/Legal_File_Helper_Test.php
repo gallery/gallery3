@@ -40,6 +40,63 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(3, count(legal_file::get_movie_types_by_extension()));
   }
 
+  public function get_types_by_extension_test() {
+    $this->assert_equal("image/jpeg", legal_file::get_types_by_extension("jpg"));  // photo
+    $this->assert_equal("video/x-flv", legal_file::get_types_by_extension("FLV")); // movie
+    $this->assert_equal(null, legal_file::get_types_by_extension("php"));          // invalid
+    $this->assert_equal(null, legal_file::get_types_by_extension("php.flv"));      // invalid w/ .
+
+    // No extension returns full array
+    $this->assert_equal(7, count(legal_file::get_types_by_extension()));
+  }
+
+  public function get_photo_extensions_test() {
+    $this->assert_equal(true, legal_file::get_photo_extensions("jpg"));      // regular
+    $this->assert_equal(true, legal_file::get_photo_extensions("JPG"));      // all caps
+    $this->assert_equal(true, legal_file::get_photo_extensions("Png"));      // some caps
+    $this->assert_equal(false, legal_file::get_photo_extensions("php"));     // invalid
+    $this->assert_equal(false, legal_file::get_photo_extensions("php.jpg")); // invalid w/ .
+
+    // No extension returns full array
+    $this->assert_equal(4, count(legal_file::get_photo_extensions()));
+  }
+
+  public function get_movie_extensions_test() {
+    $this->assert_equal(true, legal_file::get_movie_extensions("flv"));      // regular
+    $this->assert_equal(true, legal_file::get_movie_extensions("FLV"));      // all caps
+    $this->assert_equal(true, legal_file::get_movie_extensions("Mp4"));      // some caps
+    $this->assert_equal(false, legal_file::get_movie_extensions("php"));     // invalid
+    $this->assert_equal(false, legal_file::get_movie_extensions("php.jpg")); // invalid w/ .
+
+    // No extension returns full array
+    $this->assert_equal(3, count(legal_file::get_movie_extensions()));
+  }
+
+  public function get_extensions_test() {
+    $this->assert_equal(true, legal_file::get_extensions("jpg"));      // photo
+    $this->assert_equal(true, legal_file::get_extensions("FLV"));      // movie
+    $this->assert_equal(false, legal_file::get_extensions("php"));     // invalid
+    $this->assert_equal(false, legal_file::get_extensions("php.jpg")); // invalid w/ .
+
+    // No extension returns full array
+    $this->assert_equal(7, count(legal_file::get_extensions()));
+  }
+
+  public function get_filters_test() {
+    // All 7 extensions both uppercase and lowercase
+    $this->assert_equal(14, count(legal_file::get_filters()));
+  }
+
+  public function get_photo_types_test() {
+    // Note that this is one *less* than photo extensions since jpeg and jpg have the same mime.
+    $this->assert_equal(3, count(legal_file::get_photo_types()));
+  }
+
+  public function get_movie_types_test() {
+    // Note that this is one *more* than movie extensions since video/flv is added.
+    $this->assert_equal(4, count(legal_file::get_movie_types()));
+  }
+
   public function change_extension_test() {
     $this->assert_equal("foo.jpg", legal_file::change_extension("foo.png", "jpg"));
   }
