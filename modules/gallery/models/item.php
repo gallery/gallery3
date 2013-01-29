@@ -879,16 +879,9 @@ class Item_Model_Core extends ORM_MPTT {
         return;
       }
 
-      if ($this->is_photo()) {
-        if (!in_array(strtolower($ext), legal_file::get_photo_extensions())) {
-          $v->add_error("name", "illegal_data_file_extension");
-        }
-      }
-
-      if ($this->is_movie()) {
-        if (!in_array(strtolower($ext), legal_file::get_movie_extensions())) {
-          $v->add_error("name", "illegal_data_file_extension");
-        }
+      if ($this->is_photo() && !legal_file::get_photo_extensions($ext) ||
+          $this->is_movie() && !legal_file::get_movie_extensions($ext)) {
+        $v->add_error("name", "illegal_data_file_extension");
       }
     }
 
