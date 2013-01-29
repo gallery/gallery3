@@ -154,10 +154,9 @@ class graphics_Core {
 
     try {
       foreach ($ops as $target => $output_file) {
+        // Delete anything that might already be there
+        @unlink($output_file);
         if ($input_item->is_movie()) {
-          // Convert the movie filename to a JPG first, delete anything that might already be there
-          $output_file = legal_file::change_extension($output_file, "jpg");
-          @unlink($output_file);
           // Run movie_extract_frame events, which can either:
           //  - generate an output file, bypassing the ffmpeg-based movie::extract_frame
           //  - add to the options sent to movie::extract_frame (e.g. change frame extract time,
@@ -173,8 +172,8 @@ class graphics_Core {
             try {
               movie::extract_frame($input_file, $output_file, $movie_options_wrapper->movie_options);
             } catch (Exception $e) {
-              // Didn't work, likely because of MISSING_FFMPEG - copy missing_movie instead
-              copy(MODPATH . "gallery/images/missing_movie.jpg", $output_file);
+              // Didn't work, likely because of MISSING_FFMPEG - use placeholder
+              graphics::_replace_image_with_placeholder($item, $target);
             }
           }
           $working_file = $output_file;
@@ -193,28 +192,79 @@ class graphics_Core {
         if (file_exists($item->thumb_path())) {
           $item->thumb_dirty = 0;
         } else {
-          copy(MODPATH . "gallery/images/missing_photo.png", $item->thumb_path());
+          Kohana_Log::add("error", "Failed to rebuild thumb image: $item->title");
+          graphics::_replace_image_with_placeholder($item, "thumb");
         }
-        list ($item->thumb_width, $item->thumb_height) =
-          photo::get_file_metadata($item->thumb_path());
       }
 
       if (!empty($ops["resize"]))  {
         if (file_exists($item->resize_path())) {
           $item->resize_dirty = 0;
         } else {
-          copy(MODPATH . "gallery/images/missing_photo.png", $item->resize_path());
+          Kohana_Log::add("error", "Failed to rebuild resize image: $item->title");
+          graphics::_replace_image_with_placeholder($item, "resize");
         }
-        list ($item->resize_width, $item->resize_height) =
-          photo::get_file_metadata($item->resize_path());
       }
+      graphics::_update_item_dimensions($item);
       $item->save();
     } catch (Exception $e) {
-      // Something went wrong rebuilding the image.  Leave it dirty and move on.
-      // @todo we should handle this better.
-      Kohana_Log::add("error", "Caught exception rebuilding image: {$item->title}\n" .
+      // Something went wrong rebuilding the image.  Replace with the placeholder images,
+      // leave it dirty and move on.
+      Kohana_Log::add("error", "Caught exception rebuilding images: {$item->title}\n" .
                       $e->getMessage() . "\n" . $e->getTraceAsString());
+      if ($item->is_photo()) {
+        graphics::_replace_image_with_placeholder($item, "resize");
+      }
+      graphics::_replace_image_with_placeholder($item, "thumb");
+      graphics::_update_item_dimensions($item);
+      $item->save();
       throw $e;
+    }
+  }
+
+  private static function _update_item_dimensions($item) {
+    if ($item->is_photo()) {
+      list ($item->resize_width, $item->resize_height) =
+        photo::get_file_metadata($item->resize_path());
+    }
+    list ($item->thumb_width, $item->thumb_height) =
+      photo::get_file_metadata($item->thumb_path());
+  }
+
+  private static function _replace_image_with_placeholder($item, $target) {
+    if ($item->is_movie() || ($item->is_album() && $item->album_cover()->is_movie())) {
+      $input_path = MODPATH . "gallery/images/missing_movie.jpg";
+    } else {
+      $input_path = MODPATH . "gallery/images/missing_photo.jpg";
+    }
+
+    if ($target == "thumb") {
+      $output_path = $item->thumb_path();
+      $size = module::get_var("gallery", "thumb_size", 200);
+    } else {
+      $output_path = $item->resize_path();
+      $size = module::get_var("gallery", "resize_size", 640);
+    }
+    $options = array("width" => $size, "height" => $size, "master" => Image::AUTO);
+
+    try {
+      // Copy/convert/resize placeholder as needed.
+      gallery_graphics::resize($input_path, $output_path, $options, null);
+    } catch (Exception $e) {
+      // Copy/convert/resize didn't work.  Add to the log and copy the jpg version (which could have
+      // a non-jpg extension).  This is less than ideal, but it's better than putting nothing
+      // there and causing theme views to act strangely because a file is missing.
+      // @todo we should handle this better.
+      Kohana_Log::add("error", "Caught exception converting placeholder for missing image: " .
+                      $item->title . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
+      copy($input_path, $output_path);
+    }
+
+    if (!file_exists($output_path)) {
+      // Copy/convert/resize didn't throw an exception, but still didn't work - do the same as above.
+      // @todo we should handle this better.
+      Kohana_Log::add("error", "Failed to convert placeholder for missing image: $item->title");
+      copy($input_path, $output_path);
     }
   }
 
