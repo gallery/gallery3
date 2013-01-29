@@ -93,7 +93,9 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $form = watermark::get_add_form();
-    if ($form->validate()) {
+    // For TEST_MODE, we want to simulate a file upload.  Because this is not a true upload, Forge's
+    // validation logic will correctly reject it.  So, we skip validation when we're running tests.
+    if (TEST_MODE || $form->validate()) {
       $file = $_POST["file"];
       $pathinfo = pathinfo($file);
       // Forge prefixes files with "uploadfile-xxxxxxx" for uniqueness
@@ -101,7 +103,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $name = legal_file::smash_extensions($name);
 
       list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
-      if (!legal_file::get_photo_extensions($extension)) {
+      if (!$width || !$height || !$mime_type || !$extension ||
+          !in_array($extension, legal_file::get_photo_extensions())) {
         message::error(t("Invalid or unidentifiable image file"));
         @unlink($file);
         return;
