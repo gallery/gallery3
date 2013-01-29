@@ -509,9 +509,9 @@ class gallery_task_Core {
           ->find_all(1, 1);
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
-          if (!$conflict->is_album() && preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
-            $item_base_name = $matches[1];
-            $item_extension = $matches[2]; // includes a leading dot
+          if (!$conflict->is_album()) {
+            list ($item_base_name, $item_extension) =
+              legal_file::split_filename($conflict->name, true);
           } else {
             $item_base_name = $conflict->name;
             $item_extension = "";
@@ -566,13 +566,8 @@ class gallery_task_Core {
           ->find_all(1, 1);
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
-          if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
-            $item_base_name = $matches[1]; // unlike $base_name, this always maintains capitalization
-            $item_extension = $matches[2]; // includes a leading dot
-          } else {
-            $item_base_name = $conflict->name;
-            $item_extension = "";
-          }
+          list ($item_base_name, $item_extension) =
+            legal_file::split_filename($conflict->name, true);
           // Unlike conflicts found in run_dupe_names, these items are likely to have an intact
           // file system.  Let's use the item save logic to rebuild the paths and rename the files
           // if possible.

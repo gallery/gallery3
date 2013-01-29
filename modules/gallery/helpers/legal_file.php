@@ -224,6 +224,37 @@ class legal_file_Core {
   }
 
   /**
+   * Split a filename (or full path or url) into its base name and extension.  Optionally, the
+   * extension can be returned with a leading dot if it exists.
+   *
+   * This uses a regexp similar to change_extension.  It's results are analogous to that of
+   * pathinfo, but differ in some specific cases (e.g. when the filename has a leading dot) and
+   * tend to be quicker since we don't try to split the base name from its directory.
+   *
+   * @param  string  $filename                                 - as bare filename, full path, or url
+   * @param  boolean $return_extension_with_leading_dot (opt.) - default false
+   * @return array   array(base_name, extension)               - base_name and extension are strings
+   */
+  static function split_filename($filename, $return_extension_with_leading_dot=false) {
+    if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $filename, $matches)) {
+      if ($return_extension_with_leading_dot) {
+        // Return base name and extension with leading dot.
+        return array($matches[1], $matches[2]);
+      } else {
+        // Return base name and extension without leading dot.
+        if (strlen($matches[2]) == 1) {
+          return array($matches[1], "");
+        } else {
+          return array($matches[1], substr($matches[2], 1));
+        }
+      }
+    } else {
+      // No extension found - return base name and empty extension
+      return array($filename, "");
+    }
+  }
+
+  /**
    * Reduce the given file to having a single extension.
    */
   static function smash_extensions($filename) {
