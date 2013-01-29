@@ -76,6 +76,50 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
       legal_file::change_extension("/j'écris@un#nom/bizarre(mais quand.même/ça_passe.\$ÇÀ@€#_", "jpg"));
   }
 
+  public function split_filename_test() {
+    $this->assert_same(array("foo", "png"), legal_file::split_filename("foo.png"));
+  }
+
+  public function split_filename_with_four_letter_extension_test() {
+    $this->assert_same(array("foo", ".mpeg"), legal_file::split_filename("foo.mpeg", true));
+  }
+
+  public function split_filename_with_no_extension_test() {
+    $this->assert_same(array("foo", ""), legal_file::split_filename("foo"));
+  }
+
+  public function split_filename_with_dot_extension_test() {
+    $this->assert_same(array("foo", "."), legal_file::split_filename("foo.", true));
+  }
+
+  public function split_filename_with_dot_extension_removed_test() {
+    $this->assert_same(array("foo", ""), legal_file::split_filename("foo.", false));
+  }
+
+  public function split_filename_path_containing_dots_test() {
+    $this->assert_same(
+      array("/website/foo.com/VID_20120513_105421", "mp4"),
+      legal_file::split_filename("/website/foo.com/VID_20120513_105421.mp4"));
+  }
+
+  public function split_filename_path_containing_dots_and_no_extension_test() {
+    $this->assert_same(
+      array("/website/foo.com/VID_20120513_105421", ""),
+      legal_file::split_filename("/website/foo.com/VID_20120513_105421", true));
+  }
+
+  public function split_filename_path_containing_dots_and_dot_extension_test() {
+    $this->assert_same(
+      array("/website/foo.com/VID_20120513_105421", "."),
+      legal_file::split_filename("/website/foo.com/VID_20120513_105421.", true));
+  }
+
+  public function split_filename_path_containing_dots_and_non_standard_chars_test() {
+    $this->assert_same(
+      array("/j'écris@un#nom/bizarre(mais quand.même/ça_passe", "\$ÇÀ@€#_"),
+      legal_file::split_filename("/j'écris@un#nom/bizarre(mais quand.même/ça_passe.\$ÇÀ@€#_"));
+  }
+
   public function smash_extensions_test() {
     $this->assert_equal("foo_bar.jpg", legal_file::smash_extensions("foo.bar.jpg"));
     $this->assert_equal("foo_bar_baz.jpg", legal_file::smash_extensions("foo.bar.baz.jpg"));

@@ -334,9 +334,11 @@ class Item_Model_Core extends ORM_MPTT {
           $this->weight = item::get_max_weight();
         }
 
+        list ($item_base_name, $item_extension) = legal_file::split_filename($this->name);
+
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
-          $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
+          $this->slug = item::convert_filename_to_slug($item_base_name);
 
           // If the filename is all invalid characters, then the slug may be empty here.  We set a
           // generic name ("photo", "movie", or "album") based on its type, then rely on
@@ -407,7 +409,7 @@ class Item_Model_Core extends ORM_MPTT {
         // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
           $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
-          $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
+          $new_name = legal_file::change_extension($this->name, $extension);
           if (!empty($extension) && strcmp($this->name, $new_name)) {
             $this->name = $new_name;
           }
@@ -545,15 +547,7 @@ class Item_Model_Core extends ORM_MPTT {
         $this->relative_url_cache = null;
       }
     } else {
-      // Split the filename into its base and extension.  This uses a regexp similar to
-      // legal_file::change_extension (which isn't always the same as pathinfo).
-      if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $this->name, $matches)) {
-        $base_name = $matches[1];
-        $extension = $matches[2]; // includes a leading dot
-      } else {
-        $base_name = $this->name;
-        $extension = "";
-      }
+      list ($base_name, $extension) = legal_file::split_filename($this->name, true);
       $base_name_escaped = Database::escape_for_like($base_name);
       // Note: below query uses LIKE with wildcard % at end, which is still sargable (i.e. quick)
       while (db::build()
@@ -903,11 +897,7 @@ class Item_Model_Core extends ORM_MPTT {
         return;
       }
     } else {
-      if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $this->name, $matches)) {
-        $base_name = $matches[1];
-      } else {
-        $base_name = $this->name;
-      }
+      list ($base_name, $extension) = legal_file::split_filename($this->name);
       $base_name_escaped = Database::escape_for_like($base_name);
       if (db::build()
           ->from("items")
