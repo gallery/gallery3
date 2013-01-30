@@ -140,7 +140,11 @@ jQuery.extend(Gallery, {
       } else {
         if(search.length > 0) {
           $('#l10n-client-string-select li').hide();
-          $('#l10n-client-string-select li:contains('+search+')').show();
+          $('#l10n-client-string-select li').each(function() {
+            if ($(this).val().indexOf(search) != -1) {
+		$(this).show();
+	    }
+          });
           $('#l10n-client #g-l10n-search').val(search);
         }
       }
