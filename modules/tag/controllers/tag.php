@@ -86,6 +86,7 @@ class Tag_Controller extends Controller {
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
                  "sibling_count" => $tag->items_count($where),
+                 "siblings_callback" => array(array($tag, "items"), array()),
                  "breadcrumbs" => array(
                    Breadcrumb::instance($root->title, $root->url())->set_first(),
                    Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),

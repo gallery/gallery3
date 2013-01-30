@@ -93,8 +93,14 @@ class Albums_Controller extends Items_Controller {
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
                  "sibling_count" => $item->parent()->viewable()->children_count($where),
+                 "siblings_callback" => array("Albums_Controller::get_siblings", array($item)),
                  "parents" => $item->parents()->as_array(),
                  "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
+  }
+
+  static function get_siblings($item) {
+    // @todo consider creating Item_Model::siblings() if we use this more broadly.
+    return $item->parent()->viewable()->children();
   }
 
   public function create($parent_id) {
