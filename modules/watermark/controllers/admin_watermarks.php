@@ -66,7 +66,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
 
     $form = watermark::get_delete_form();
     if ($form->validate()) {
-      if ($name = module::get_var("watermark", "name")) {
+      if ($name = basename(module::get_var("watermark", "name"))) {
         @unlink(VARPATH . "modules/watermark/$name");
 
         module::clear_var("watermark", "name");
