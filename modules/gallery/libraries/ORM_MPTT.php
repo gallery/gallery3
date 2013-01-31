@@ -152,8 +152,9 @@ class ORM_MPTT_Core extends ORM {
    *
    * @return array ORM
    */
-  function parents() {
+  function parents($where=null) {
     return $this
+      ->merge_where($where)
       ->where("left_ptr", "<=", $this->left_ptr)
       ->where("right_ptr", ">=", $this->right_ptr)
       ->where("id", "<>", $this->id)
