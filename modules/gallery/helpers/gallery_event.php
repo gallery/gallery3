@@ -86,17 +86,17 @@ class gallery_event_Core {
   static function item_created($item) {
     access::add_item($item);
 
-    if ($item->is_photo() || $item->is_movie()) {
-      // Build our thumbnail/resizes.
-      try {
-        graphics::generate($item);
-      } catch (Exception $e) {
-        log::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
-                                 array("item_title" => $item->title)),
-                   html::anchor($item->abs_url(), t("details")));
-        Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
-      }
+    // Build our thumbnail/resizes.
+    try {
+      graphics::generate($item);
+    } catch (Exception $e) {
+      log::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
+                               array("item_title" => $item->title)),
+                 html::anchor($item->abs_url(), t("details")));
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+    }
 
+    if ($item->is_photo() || $item->is_movie()) {
       // If the parent has no cover item, make this it.
       $parent = $item->parent();
       if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
