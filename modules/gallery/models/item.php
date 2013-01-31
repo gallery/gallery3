@@ -318,9 +318,11 @@ class Item_Model_Core extends ORM_MPTT {
    */
   public function save() {
     $significant_changes = $this->changed;
-    unset($significant_changes["view_count"]);
-    unset($significant_changes["relative_url_cache"]);
-    unset($significant_changes["relative_path_cache"]);
+    foreach (array("view_count", "relative_url_cache", "relative_path_cache",
+                   "resize_width", "resize_height", "resize_dirty",
+                   "thumb_width", "thumb_height", "thumb_dirty") as $key) {
+      unset($significant_changes[$key]);
+    }
 
     if ((!empty($this->changed) && $significant_changes) || isset($this->data_file)) {
       $this->updated = time();
