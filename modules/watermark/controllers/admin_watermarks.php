@@ -104,7 +104,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
 
       list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
       if (!$width || !$height || !$mime_type || !$extension ||
-          !in_array($extension, legal_file::get_photo_extensions())) {
+          !legal_file::get_photo_extensions($extension)) {
         message::error(t("Invalid or unidentifiable image file"));
         @unlink($file);
         return;
