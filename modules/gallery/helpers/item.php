@@ -92,16 +92,15 @@ class item_Core {
 
     // When albums are album covers themselves, we hotlink directly to the target item.  This
     // means that when we change an album cover, the grandparent may have a deep link to the old
-    // album cover.  So find any albums that had the old item as their album cover and switch them
-    // over to the new item.
+    // album cover.  So find any parent albums that had the old item as their album cover and
+    // switch them over to the new item.
     if ($old_album_cover_id) {
-      foreach (ORM::factory("item")
-               ->where("album_cover_item_id", "=", $old_album_cover_id)
-               ->find_all() as $other_album) {
-        if (access::can("edit", $other_album)) {
-          $other_album->album_cover_item_id = $parent->album_cover_item_id;
-          $other_album->save();
-          graphics::generate($other_album);
+      foreach ($item->parents(array(array("album_cover_item_id", "=", $old_album_cover_id)))
+               as $ancestor) {
+        if (access::can("edit", $ancestor)) {
+          $ancestor->album_cover_item_id = $parent->album_cover_item_id;
+          $ancestor->save();
+          graphics::generate($ancestor);
         }
       }
     }
