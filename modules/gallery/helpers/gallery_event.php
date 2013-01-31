@@ -346,9 +346,9 @@ class gallery_event_Core {
             if (($item->type == "album" && empty($item->album_cover_item_id)) ||
                 ($item->type == "album" && $parent->album_cover_item_id == $item->album_cover_item_id) ||
                 $parent->album_cover_item_id == $item->id) {
-              $disabledState = " ui-state-disabled";
+              $disabledState = "ui-state-disabled";
             } else {
-              $disabledState = " ";
+              $disabledState = "";
             }
 
             if ($item->parent()->id != 1) {
@@ -357,7 +357,7 @@ class gallery_event_Core {
                   Menu::factory("ajax_link")
                   ->id("make_album_cover")
                   ->label(t("Choose as the album cover"))
-                  ->css_class("ui-icon-star")
+                  ->css_class("ui-icon-star $disabledState")
                   ->ajax_handler("function(data) { window.location.reload() }")
                   ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
             }
@@ -500,16 +500,16 @@ class gallery_event_Core {
         if (($item->type == "album" && empty($item->album_cover_item_id)) ||
             ($item->type == "album" && $parent->album_cover_item_id == $item->album_cover_item_id) ||
             $parent->album_cover_item_id == $item->id) {
-          $disabledState = " ui-state-disabled";
+          $disabledState = "ui-state-disabled";
         } else {
-          $disabledState = " ";
+          $disabledState = "";
         }
         if ($item->parent()->id != 1) {
           $options_menu
             ->append(Menu::factory("ajax_link")
                      ->id("make_album_cover")
                      ->label($cover_title)
-                     ->css_class("ui-icon-star")
+                     ->css_class("ui-icon-star $disabledState")
                      ->ajax_handler("function(data) { window.location.reload() }")
                      ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
         }
@@ -518,7 +518,8 @@ class gallery_event_Core {
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
+                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;" .
+                                   "from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
       if ($item->is_album()) {
