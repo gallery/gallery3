@@ -86,6 +86,10 @@ class Theme_View_Core extends Gallery_View {
     return $this->item;
   }
 
+  public function siblings() {
+    return call_user_func_array($this->siblings_callback[0], $this->siblings_callback[1]);
+  }
+
   public function tag() {
     return $this->tag;
   }
