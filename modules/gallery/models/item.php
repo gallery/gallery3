@@ -420,6 +420,15 @@ class Item_Model_Core extends ORM_MPTT {
           }
         }
 
+        // If an album's cover has changed (or been removed), delete any existing album cover,
+        // reset the thumb metadata, and mark the thumb as dirty.
+        if (array_key_exists("album_cover_item_id", $this->changed) && $this->is_album()) {
+          @unlink($original->thumb_path());
+          $this->thumb_dirty = 1;
+          $this->thumb_height = 0;
+          $this->thumb_width = 0;
+        }
+
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
           $original->_build_relative_caches();
           $this->relative_path_cache = null;
@@ -966,10 +975,12 @@ class Item_Model_Core extends ORM_MPTT {
       return;
     }
 
-    if ($this->album_cover_item_id && db::build()
+    if ($this->album_cover_item_id && ($this->is_photo() || $this->is_movie() ||
+        db::build()
         ->from("items")
         ->where("id", "=", $this->album_cover_item_id)
-        ->count_records() != 1) {
+        ->where("type", "<>", "album")
+        ->count_records() != 1)) {
       $v->add_error("album_cover_item_id", "invalid_item");
     }
   }
