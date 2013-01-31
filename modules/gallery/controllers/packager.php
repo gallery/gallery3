@@ -88,14 +88,17 @@ class Packager_Controller extends Controller {
 
     $dbconfig = Kohana::config('database.default');
     $conn = $dbconfig["connection"];
-    $pass = $conn["pass"] ? "-p{$conn['pass']}" : "";
     $sql_file = DOCROOT . "installer/install.sql";
     if (!is_writable($sql_file)) {
       print "$sql_file is not writeable";
       return;
     }
-    $command = "mysqldump --compact --skip-extended-insert --add-drop-table -h{$conn['host']} " .
-      "-u{$conn['user']} $pass {$conn['database']} > $sql_file";
+    $command = sprintf(
+      "mysqldump --compact --skip-extended-insert --add-drop-table %s %s %s %s > $sql_file",
+      escapeshellarg("-h{$conn['host']}"),
+      escapeshellarg("-u{$conn['user']}"),
+      $conn['pass'] ? escapeshellarg("-p{$conn['pass']}") : "",
+      escapeshellarg($conn['database']));
     exec($command, $output, $status);
     if ($status) {
       print "<pre>";
