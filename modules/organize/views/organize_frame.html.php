@@ -190,8 +190,10 @@
             getDragData: function(e) {
               var target = e.getTarget(v.itemSelector, 10);
               if (target) {
-                if (!v.isSelected(target)) {
-                  v.onClick(e);
+                if (e.ctrlKey == false) {
+                  if (!v.isSelected(target)) {
+                    v.onClick(e);
+                  }
                 }
                 var selected_nodes = v.getSelectedNodes();
                 var drag_data = {
