@@ -152,6 +152,7 @@ class graphics_Core {
             } catch (Exception $e) {
               // Didn't work, likely because of MISSING_FFMPEG - use placeholder
               graphics::_replace_image_with_placeholder($item, $target);
+              break;
             }
           }
           $working_file = $output_file;
@@ -167,7 +168,7 @@ class graphics_Core {
 
         case "album":
           if (!$cover = $item->album_cover()) {
-            // This album has no cover; there's nothing to generate.  Because of an old bug, it's
+            // This album has no cover; copy its placeholder image.  Because of an old bug, it's
             // possible that there's an album cover item id that points to an invalid item.  In that
             // case, just null out the album cover item id.  It's not optimal to do that at this low
             // level, but it's not trivial to find these cases quickly in an upgrade script and if we
@@ -179,7 +180,8 @@ class graphics_Core {
               $item->album_cover_item_id = null;
               $item->save();
             }
-            return;
+            graphics::_replace_image_with_placeholder($item, $target);
+            break;
           }
           if ($cover->thumb_dirty) {
             graphics::generate($cover);
@@ -238,7 +240,9 @@ class graphics_Core {
   }
 
   private static function _replace_image_with_placeholder($item, $target) {
-    if ($item->is_movie() || ($item->is_album() && $item->album_cover()->is_movie())) {
+    if ($item->is_album() && !$item->album_cover_item_id) {
+      $input_path = MODPATH . "gallery/images/missing_album_cover.jpg";
+    } else if ($item->is_movie() || ($item->is_album() && $item->album_cover()->is_movie())) {
       $input_path = MODPATH . "gallery/images/missing_movie.jpg";
     } else {
       $input_path = MODPATH . "gallery/images/missing_photo.jpg";

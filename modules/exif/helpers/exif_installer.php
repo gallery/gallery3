@@ -29,7 +29,6 @@ class exif_installer {
                  PRIMARY KEY (`id`),
                  KEY(`item_id`))
                DEFAULT CHARSET=utf8;");
-    module::set_version("exif", 1);
   }
 
   static function activate() {

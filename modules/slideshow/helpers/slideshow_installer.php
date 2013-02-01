@@ -20,7 +20,6 @@
 class slideshow_installer {
   static function install() {
     module::set_var("slideshow", "max_scale", 0);
-    module::set_version("slideshow", 2);
   }
 
   static function upgrade($version) {

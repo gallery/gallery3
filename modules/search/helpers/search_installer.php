@@ -30,7 +30,6 @@ class search_installer {
                  FULLTEXT INDEX (`data`))
                ENGINE=MyISAM
                DEFAULT CHARSET=utf8;");
-    module::set_version("search", 1);
   }
 
   static function activate() {

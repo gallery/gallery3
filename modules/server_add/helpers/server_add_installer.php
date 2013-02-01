@@ -30,7 +30,6 @@ class server_add_installer {
                   `task_id` int(9) NOT NULL,
                   PRIMARY KEY (`id`))
                 DEFAULT CHARSET=utf8;");
-    module::set_version("server_add", 4);
     server_add::check_config();
   }
 

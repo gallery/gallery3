@@ -49,7 +49,6 @@ class comment_installer {
     module::set_var("comment", "spam_caught", 0);
     module::set_var("comment", "access_permissions", "everybody");
     module::set_var("comment", "rss_visible", "all");
-    module::set_version("comment", 7);
   }
 
   static function upgrade($version) {

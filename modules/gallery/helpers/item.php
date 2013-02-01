@@ -113,6 +113,7 @@ class item_Core {
     model_cache::clear();
     $album->album_cover_item_id = null;
     $album->save();
+    graphics::generate($album);
   }
 
   /**

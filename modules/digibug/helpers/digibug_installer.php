@@ -30,7 +30,6 @@ class digibug_installer {
 
     module::set_var("digibug", "company_id", "3153");
     module::set_var("digibug", "event_id", "8491");
-    module::set_version("digibug", 2);
   }
 
   static function upgrade($version) {

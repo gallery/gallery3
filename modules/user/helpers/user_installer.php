@@ -138,6 +138,5 @@ class user_installer {
     access::allow($registered, "view_full", $root);
 
     module::set_var("user", "minimum_password_length", 5);
-    module::set_version("user", 4);
   }
 }
