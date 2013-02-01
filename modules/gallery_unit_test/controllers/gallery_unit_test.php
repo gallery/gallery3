@@ -108,7 +108,7 @@ class Gallery_Unit_Test_Controller extends Controller {
 
       // Install the active modules
       // Force gallery and user to be installed first to resolve dependencies.
-      gallery_installer::install(true);
+      module::install("gallery");
       module::load_modules();
 
       module::install("user");
