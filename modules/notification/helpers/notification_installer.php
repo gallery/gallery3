@@ -36,8 +36,6 @@ class notification_installer {
                `text` text,
                PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
-
-    module::set_version("notification", 2);
   }
 
   static function upgrade($version) {

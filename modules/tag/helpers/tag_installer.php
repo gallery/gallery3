@@ -37,7 +37,6 @@ class tag_installer {
                  KEY(`item_id`, `id`))
                DEFAULT CHARSET=utf8;");
     module::set_var("tag", "tag_cloud_size", 30);
-    module::set_version("tag", 3);
   }
 
   static function upgrade($version) {

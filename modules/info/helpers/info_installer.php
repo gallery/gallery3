@@ -25,7 +25,6 @@ class info_installer {
     module::set_var("info", "show_owner", 1);
     module::set_var("info", "show_name", 1);
     module::set_var("info", "show_captured", 1);
-    module::set_version("info", 2);
   }
 
   static function upgrade($version) {

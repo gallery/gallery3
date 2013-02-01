@@ -29,7 +29,6 @@ class rest_installer {
                 UNIQUE KEY(`user_id`))
               DEFAULT CHARSET=utf8;");
     module::set_var("rest", "allow_guest_access", false);
-    module::set_version("rest", 3);
   }
 
   static function upgrade($version) {

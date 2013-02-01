@@ -175,9 +175,8 @@ class module_Core {
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
-    } else {
-      module::set_version($module_name, module::available()->$module_name->code_version);
     }
+    module::set_version($module_name, module::available()->$module_name->code_version);
 
     // Set the weight of the new module, which controls the order in which the modules are
     // loaded. By default, new modules are installed at the end of the priority list.  Since the

@@ -315,8 +315,6 @@ class gallery_installer {
     module::set_var("gallery", "timezone", null);
     module::set_var("gallery", "lock_timeout", 1);
     module::set_var("gallery", "movie_extract_frame_time", 3);
-
-    module::set_version("gallery", 55);
   }
 
   static function upgrade($version) {
