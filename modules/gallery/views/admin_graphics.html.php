@@ -36,5 +36,22 @@
       <? endforeach ?>
     </div>
   </div>
-</div>
 
+  <div id="g-admin-graphics-settings" class="g-block ui-helper-clearfix">
+    <h2> <?= t("Other settings") ?> </h2>
+    <p>
+      <?= t("By default, Gallery preserves formats when generating resize and thumbnail images.") ?>
+      <?= t("This means that a PNG full-size image will have PNG resize and thumbnail images.") ?>
+    </p>
+    <p>
+      <?= t("Alternatively, Gallery can make all resize or thumbnail images JPG.") ?>
+      <?= t("These can be much smaller: for example, a typical photographic JPG is 5-10x smaller than a PNG.") ?>
+      <?= t("This reduces page load time while still preserving the full-size image in its original format.") ?>
+    </p>
+    <p>
+      <?= t("Changing these settings will temporarily put the site into maintenance mode (if not already in maintenance mode).") ?>
+      <?= t("Once finished, it will return maintenance mode to its original state and mark all affected images for rebuild.") ?>
+    </p>
+    <?= $form ?>
+  </div>
+</div>

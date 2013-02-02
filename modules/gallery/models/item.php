@@ -182,12 +182,13 @@ class Item_Model_Core extends ORM_MPTT {
    */
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
-    if ($this->is_photo()) {
+    if ($this->is_photo() && ($this->mime_type == "image/jpeg" ||
+        !module::get_var("gallery", "make_all_thumbs_jpg", 0))) {
       return $base;
     } else if ($this->is_album()) {
       return $base . "/.album.jpg";
-    } else if ($this->is_movie()) {
-      // Replace the extension with jpg
+    } else {
+      // Replace the extension with jpg for non-jpg photos if make_all_thumbs_jpg set and all movies
       return legal_file::change_extension($base, "jpg");
     }
   }
@@ -207,12 +208,13 @@ class Item_Model_Core extends ORM_MPTT {
     $cache_buster = $this->_cache_buster($this->thumb_path());
     $relative_path = "var/thumbs/" . $this->relative_path();
     $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
-    if ($this->is_photo()) {
+    if ($this->is_photo() && ($this->mime_type == "image/jpeg" ||
+        !module::get_var("gallery", "make_all_thumbs_jpg", 0))) {
       return $base . $cache_buster;
     } else if ($this->is_album()) {
       return $base . "/.album.jpg" . $cache_buster;
-    } else if ($this->is_movie()) {
-      // Replace the extension with jpg
+    } else {
+      // Replace the extension with jpg for non-jpg photos if make_all_thumbs_jpg set and all movies
       $base = legal_file::change_extension($base, "jpg");
       return $base . $cache_buster;
     }
@@ -223,8 +225,16 @@ class Item_Model_Core extends ORM_MPTT {
    * photo: /var/albums/album1/photo.resize.jpg
    */
   public function resize_path() {
-    return VARPATH . "resizes/" . urldecode($this->relative_path()) .
-      ($this->is_album() ? "/.album.jpg" : "");
+    $base = VARPATH . "resizes/" . urldecode($this->relative_path());
+    if ($this->is_photo() && ($this->mime_type == "image/jpeg" ||
+        !module::get_var("gallery", "make_all_resizes_jpg", 0))) {
+      return $base;
+    } else if ($this->is_album()) {
+      return $base . "/.album.jpg";
+    } else {
+      // Replace the extension with jpg for non-jpg photos if make_all_thumbs_jpg set and all movies
+      return legal_file::change_extension($base, "jpg");
+    }
   }
 
   /**
@@ -232,10 +242,19 @@ class Item_Model_Core extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
   public function resize_url($full_uri=false) {
-    $relative_path = "var/resizes/" . $this->relative_path();
     $cache_buster = $this->_cache_buster($this->resize_path());
-    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
-      ($this->is_album() ? "/.album.jpg" : "") . $cache_buster;
+    $relative_path = "var/resizes/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
+    if ($this->is_photo() && ($this->mime_type == "image/jpeg" ||
+        !module::get_var("gallery", "make_all_resizes_jpg", 0))) {
+      return $base . $cache_buster;
+    } else if ($this->is_album()) {
+      return $base . "/.album.jpg" . $cache_buster;
+    } else {
+      // Replace the extension with jpg for non-jpg photos if make_all_thumbs_jpg set and all movies
+      $base = legal_file::change_extension($base, "jpg");
+      return $base . $cache_buster;
+    }
   }
 
   /**

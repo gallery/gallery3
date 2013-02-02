@@ -315,6 +315,8 @@ class gallery_installer {
     module::set_var("gallery", "timezone", null);
     module::set_var("gallery", "lock_timeout", 1);
     module::set_var("gallery", "movie_extract_frame_time", 3);
+    module::set_var("gallery", "make_all_resizes_jpg", 0);
+    module::set_var("gallery", "make_all_thumbs_jpg", 0);
   }
 
   static function upgrade($version) {
@@ -789,6 +791,11 @@ class gallery_installer {
       module::set_version("gallery", $version = 55);
     }
 
+    if ($version == 55) {
+      module::set_var("gallery", "make_all_resizes_jpg", 0);
+      module::set_var("gallery", "make_all_thumbs_jpg", 0);
+      module::set_version("gallery", $version = 56);
+    }
   }
 
   static function uninstall() {

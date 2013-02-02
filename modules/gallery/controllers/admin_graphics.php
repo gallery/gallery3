@@ -24,6 +24,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
     $view->content = new View("admin_graphics.html");
     $view->content->tk = graphics::detect_toolkits();
     $view->content->active = module::get_var("gallery", "graphics_toolkit", "none");
+    $view->content->form = $this->_get_admin_form();
     print $view;
   }
 
@@ -46,5 +47,39 @@ class Admin_Graphics_Controller extends Admin_Controller {
 
     url::redirect("admin/graphics");
   }
-}
 
+  public function save() {
+    access::verify_csrf();
+    $form = $this->_get_admin_form();
+    if ($form->validate()) {
+      $enable_thumbs = $form->make_jpg->make_all_thumbs_jpg->value &&
+                       !module::get_var("gallery", "make_all_thumbs_jpg", 0);
+      $enable_resizes = $form->make_jpg->make_all_resizes_jpg->value &&
+                        !module::get_var("gallery", "make_all_resizes_jpg", 0);
+      $disable_thumbs = !$form->make_jpg->make_all_thumbs_jpg->value &&
+                        module::get_var("gallery", "make_all_thumbs_jpg", 0);
+      $disable_resizes = !$form->make_jpg->make_all_resizes_jpg->value &&
+                         module::get_var("gallery", "make_all_resizes_jpg", 0);
+      graphics::enable_make_all_jpg_mode($enable_thumbs, $enable_resizes);
+      graphics::disable_make_all_jpg_mode($disable_thumbs, $disable_resizes);
+      // All done - redirect with message.
+      message::success(t("Graphics settings updated successfully"));
+      url::redirect("admin/graphics");
+    }
+    // Something went wrong - print view from existing form.
+    $this->_print_view($form);
+  }
+
+  private function _get_admin_form() {
+    $form = new Forge("admin/graphics/save", "", "post", array("id" => "g-graphics-admin-form"));
+    $group = $form->group("make_jpg")->label(t("Generate JPG images for thumbnails and resizes"));
+    $group->checkbox("make_all_thumbs_jpg")
+      ->label(t("Make all thumbnail images JPG"))
+      ->checked(module::get_var("gallery", "make_all_thumbs_jpg", 0));
+    $group->checkbox("make_all_resizes_jpg")
+      ->label(t("Make all resize images JPG"))
+      ->checked(module::get_var("gallery", "make_all_resizes_jpg", 0));
+    $form->submit("save")->value(t("Save"));
+    return $form;
+  }
+}

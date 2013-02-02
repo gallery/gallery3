@@ -245,7 +245,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',55,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',56,1);
 INSERT INTO {modules} VALUES (2,1,'user',4,2);
 INSERT INTO {modules} VALUES (3,1,'comment',7,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
@@ -383,7 +383,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=46 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -417,6 +417,8 @@ INSERT INTO {vars} VALUES (NULL,'gallery','extra_binary_paths','/usr/local/bin:/
 INSERT INTO {vars} VALUES (NULL,'gallery','timezone',NULL);
 INSERT INTO {vars} VALUES (NULL,'gallery','lock_timeout','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','movie_extract_frame_time','3');
+INSERT INTO {vars} VALUES (NULL,'gallery','make_all_resizes_jpg','0');
+INSERT INTO {vars} VALUES (NULL,'gallery','make_all_thumbs_jpg','0');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_site_sidebar','a:4:{i:10;a:2:{i:0;s:7:\"gallery\";i:1;s:8:\"language\";}i:11;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:12;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:13;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','minimum_password_length','5');

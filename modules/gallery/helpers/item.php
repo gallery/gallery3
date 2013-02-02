@@ -204,14 +204,25 @@ class item_Core {
    * Find an item by its path.  If there's no match, return an empty Item_Model.
    * NOTE: the caller is responsible for performing security checks on the resulting item.
    * @param string $path
+   * @param string $type ("albums", "resizes", or "thumbs")
    * @return object Item_Model
    */
-  static function find_by_path($path) {
+  static function find_by_path($path, $type="albums") {
     $path = trim($path, "/");
 
     // The root path name is NULL not "", hence this workaround.
     if ($path == "") {
       return item::root();
+    }
+
+    $search_full_name = true;
+    if (preg_match("|^(.*)/\.album\.jpg$|", $path, $matches)) {
+      // It's an album thumb - remove "/.album.jpg" from the path.
+      $path = $matches[1];
+    } else if (($type != "albums") && preg_match("/^(.*)\.jpg$/", $path, $matches)) {
+      // Could be resize/thumb of jpg-converted photo or movie - remove .jpg from path.
+      $path = $matches[1];
+      $search_full_name = false;
     }
 
     // Check to see if there's an item in the database with a matching relative_path_cache value.
@@ -220,28 +231,61 @@ class item_Core {
       $encoded_array[] = rawurlencode($part);
     }
     $encoded_path = join("/", $encoded_array);
-    $item = ORM::factory("item")
-      ->where("relative_path_cache", "=", $encoded_path)
-      ->find();
-    if ($item->loaded()) {
-      return $item;
+    if ($search_full_name) {
+      $item = ORM::factory("item")
+        ->where("relative_path_cache", "=", $encoded_path)
+        ->find();
+      if ($item->loaded()) {
+        return $item;
+      }
+    } else {
+      // We use foreach since it's possible that the user hasn't upgraded their database to v54+.
+      // Note that the below query uses LIKE with wildcard % at end, which is still sargable and
+      // therefore still takes advantage of the indexed relative_path_cache (i.e. still quick).
+      foreach (ORM::factory("item")
+               ->where("relative_path_cache", "LIKE", Database::escape_for_like($encoded_path) . ".%")
+               ->find() as $item) {
+        // Found something - now check if asking for it as a jpg was correct.
+        if ($item->is_movie() ||
+            ($item->is_photo() && (preg_match("/^(.*)\.jpg$/", $item->name) ||
+            (module::get_var("gallery", "make_all_resizes_jpg", 0) && ($type == "resizes")) ||
+            (module::get_var("gallery", "make_all_thumbs_jpg", 0) && ($type == "thumbs"))))) {
+          return $item;
+        }
+      }
     }
 
     // Since the relative_path_cache field is a cache, it can be unavailable.  If we don't find
     // anything, fall back to checking the path the hard way.
     $paths = explode("/", $path);
-    foreach (ORM::factory("item")
-             ->where("name", "=", end($paths))
-             ->where("level", "=", count($paths) + 1)
-             ->find_all() as $item) {
-      if (urldecode($item->relative_path()) == $path) {
-        return $item;
+    if ($search_full_name) {
+      foreach (ORM::factory("item")
+               ->where("name", "=", end($paths))
+               ->where("level", "=", count($paths) + 1)
+               ->find_all() as $item) {
+        if (urldecode($item->relative_path()) == $path) {
+          return $item;
+        }
+      }
+    } else {
+      foreach (ORM::factory("item")
+               ->where("name", "LIKE", Database::escape_for_like(end($paths)) . ".%")
+               ->where("level", "=", count($paths) + 1)
+               ->find_all() as $item) {
+        // Compare relative_path without extension (regexp same as legal_file::change_extension)
+        if (preg_replace("/\.[^\.\/]*?$/", "", urldecode($item->relative_path())) == $path) {
+          // Found something - now check if asking for it as a jpg was correct.
+          if ($item->is_movie() ||
+              ($item->is_photo() && (preg_match("/^(.*)\.jpg$/", $item->name) ||
+              (module::get_var("gallery", "make_all_resizes_jpg", 0) && ($type == "resizes")) ||
+              (module::get_var("gallery", "make_all_thumbs_jpg", 0) && ($type == "thumbs"))))) {
+            return $item;
+          }
+        }
       }
     }
-
     return new Item_Model();
   }
-
 
   /**
    * Locate an item using the URL.  We assume that the url is in the form /a/b/c where each

@@ -66,25 +66,7 @@ class File_Proxy_Controller extends Controller {
       throw $e;
     }
 
-    // If the last element is .album.jpg, pop that off since it's not a real item
-    $path = preg_replace("|/.album.jpg$|", "", $path);
-
-    $item = item::find_by_path($path);
-    if (!$item->loaded()) {
-      // We didn't turn it up. If we're looking for a .jpg then it's it's possible that we're
-      // requesting the thumbnail for a movie.  In that case, the movie file would
-      // have been converted to a .jpg. So try some alternate types:
-      if (preg_match('/.jpg$/', $path)) {
-        foreach (legal_file::get_movie_extensions() as $ext) {
-          $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
-          $item = item::find_by_path($movie_path);
-          if ($item->loaded()) {
-            break;
-          }
-        }
-      }
-    }
-
+    $item = item::find_by_path($path, $type);
     if (!$item->loaded()) {
       $e = new Kohana_404_Exception();
       $e->test_fail_code = 3;
@@ -147,11 +129,15 @@ class File_Proxy_Controller extends Controller {
 
     expires::set(2592000, $item->updated);  // 30 days
 
-    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
-    if (($item->is_movie() || $item->is_album()) && $type == "thumbs") {
-      header("Content-Type: image/jpeg");
-    } else {
+    // Dump out the image.
+    if (($type == "albums") || ($item->is_photo() &&
+        (($type == "resizes") && !module::get_var("gallery", "make_all_resizes_jpg", 0)) ||
+        (($type == "thumbs") && !module::get_var("gallery", "make_all_thumbs_jpg", 0)))) {
+      // Full-size item or resize/thumb of photo that isn't converted to jpg - use original mime
       header("Content-Type: $item->mime_type");
+    } else {
+      // Resize/thumb of album, movie, or photo that has been converted to jpg - mime is jpg
+      header("Content-Type: image/jpeg");
     }
 
     if (TEST_MODE) {

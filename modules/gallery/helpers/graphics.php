@@ -520,4 +520,99 @@ class graphics_Core {
     // Some arbitrarily large size
     return array(1000000000, "1G");
   }
+
+  static function enable_make_all_jpg_mode($thumbs, $resizes) {
+    // Don't re-enable the mode(s) if already enabled.
+    $thumbs = ($thumbs && !module::get_var("gallery", "make_all_thumbs_jpg", 0));
+    $resizes = ($resizes && !module::get_var("gallery", "make_all_resizes_jpg", 0));
+
+    // If the user hasn't upgraded their DB to v54+, they risk causing collisions with this mode.
+    // If this is the case or neither thumbs nor resizes or set, exit.
+    if ((module::get_version("gallery") < 54) || (!$thumbs && !$resizes)) {
+      return false;
+    }
+
+    $previous_maintenance_mode = module::get_var("gallery", "maintenance_mode", 0);
+    module::set_var("gallery", "maintenance_mode", 1);
+
+    // Loop through each non-jpg photo.  This could be slow...
+    foreach (db::build()
+             ->from("items")
+             ->select("id")
+             ->where("type", "=", "photo")
+             ->where("mime_type", "<>", "image/jpeg")
+             ->execute() as $row) {
+      set_time_limit(30);
+      $item = ORM::factory("item", $row->id);
+      if ($thumbs) {
+        @rename($item->thumb_path(), legal_file::change_extension($item->thumb_path(), "jpg"));
+        $item->thumb_dirty = 1;
+      }
+      if ($resizes) {
+        @rename($item->resize_path(), legal_file::change_extension($item->resize_path(), "jpg"));
+        $item->resize_dirty = 1;
+      }
+      $item->save();
+    }
+
+    // Turn the mode(s) on and set a site warning for rebuilding images.
+    if ($thumbs) {
+      module::set_var("gallery", "make_all_thumbs_jpg", 1);
+    }
+    if ($resizes) {
+      module::set_var("gallery", "make_all_resizes_jpg", 1);
+    }
+    graphics::mark_dirty(0, 0);
+
+    module::set_var("gallery", "maintenance_mode", $previous_maintenance_mode);
+    return true;
+  }
+
+  static function disable_make_all_jpg_mode($thumbs, $resizes) {
+    // Don't re-disable the mode(s) if already disabled.
+    $thumbs = ($thumbs && module::get_var("gallery", "make_all_thumbs_jpg", 0));
+    $resizes = ($resizes && module::get_var("gallery", "make_all_resizes_jpg", 0));
+
+    // If neither thumbs nor resizes or set, exit.
+    if (!$thumbs && !$resizes) {
+      return false;
+    }
+
+    $previous_maintenance_mode = module::get_var("gallery", "maintenance_mode", 0);
+    module::set_var("gallery", "maintenance_mode", 1);
+
+    // Turn the mode(s) off.
+    if ($thumbs) {
+      module::set_var("gallery", "make_all_thumbs_jpg", 0);
+    }
+    if ($resizes) {
+      module::set_var("gallery", "make_all_resizes_jpg", 0);
+    }
+
+    // Loop through each non-jpg photo.  This could be slow...
+    foreach (db::build()
+             ->from("items")
+             ->select("id")
+             ->where("type", "=", "photo")
+             ->where("mime_type", "<>", "image/jpeg")
+             ->execute() as $row) {
+      set_time_limit(30);
+      $item = ORM::factory("item", $row->id);
+      if ($thumbs) {
+        @rename(legal_file::change_extension($item->thumb_path(), "jpg"), $item->thumb_path());
+        $item->thumb_dirty = 1;
+      }
+      if ($resizes) {
+        @rename(legal_file::change_extension($item->resize_path(), "jpg"), $item->resize_path());
+        $item->resize_dirty = 1;
+      }
+      $item->save();
+    }
+
+    // Set a site warning for rebuilding images.
+    graphics::mark_dirty(0, 0);
+
+    module::set_var("gallery", "maintenance_mode", $previous_maintenance_mode);
+    return true;
+  }
 }
