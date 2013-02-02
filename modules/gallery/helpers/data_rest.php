@@ -60,11 +60,15 @@ class data_rest_Core {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
-    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
-    if (($item->is_movie() || $item->is_album()) && $p->size == "thumb") {
-      header("Content-Type: image/jpeg");
-    } else {
+    // Dump out the image.
+    if (($p->size == "full") || ($item->is_photo() &&
+        (($p->size == "resize") && !module::get_var("gallery", "make_all_resizes_jpg", 0)) ||
+        (($p->size == "thumb") && !module::get_var("gallery", "make_all_thumbs_jpg", 0)))) {
+      // Full-size item or resize/thumb of photo that isn't converted to jpg - use original mime
       header("Content-Type: $item->mime_type");
+    } else {
+      // Resize/thumb of album, movie, or photo that has been converted to jpg - mime is jpg
+      header("Content-Type: image/jpeg");
     }
 
     if (TEST_MODE) {
