@@ -46,7 +46,7 @@ class Form_Uploadify_Core extends Form_Input {
     $v->album = $this->data["album"];
     $v->script_data = $this->data["script_data"];
     $v->simultaneous_upload_limit = module::get_var("gallery", "simultaneous_upload_limit");
-    $v->movies_allowed = (bool) movie::find_ffmpeg();
+    $v->movies_allowed = movie::allow_uploads();
     $v->extensions = legal_file::get_filters();
     $v->suhosin_session_encrypt = (bool) ini_get("suhosin.session.encrypt");
 

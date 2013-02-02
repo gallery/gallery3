@@ -20,11 +20,20 @@
 class system_Core {
   /**
    * Return the path to an executable version of the named binary, or null.
-   * Traverse the PATH environment variable looking for the given file.  If
-   * the $priority_path variable is set, check that path first.
+   * The paths are traversed in the following order:
+   *   1. $priority_path (if specified)
+   *   2. Gallery's own bin directory (DOCROOT . "bin")
+   *   3. PATH environment variable
+   *   4. extra_binary_paths Gallery variable (if specified)
+   * In addition, if the file is found inside the Gallery directory but it
+   * is not executable, we try to change its permissions to 0755.
+   *
+   * @param  string $binary
+   * @param  string $priority_path (optional)
+   * @return string path to binary if found; null if not found
    */
   static function find_binary($binary, $priority_path=null) {
-    $paths = array_merge(
+    $paths = array_merge(array(DOCROOT . "bin"),
       explode(":", getenv("PATH")),
       explode(":", module::get_var("gallery", "extra_binary_paths")));
     if ($priority_path) {
@@ -34,8 +43,15 @@ class system_Core {
     foreach ($paths as $path) {
       $candidate = "$path/$binary";
       // @suppress errors below to avoid open_basedir issues
-      if (@file_exists($candidate) && @is_executable($candidate)) {
-        return $candidate;
+      if (@file_exists($candidate)) {
+        if (!@is_executable($candidate) &&
+            (substr_compare(DOCROOT, $candidate, 0, strlen(DOCROOT)) == 0)) {
+          // Binary isn't executable but is in our Gallery directory - let's try fixing permissions.
+          @chmod($candidate, 0755);
+        }
+        if (@is_executable($candidate)) {
+          return $candidate;
+        }
       }
     }
     return null;
