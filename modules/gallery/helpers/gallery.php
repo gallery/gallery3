@@ -222,4 +222,12 @@ class gallery_Core {
   static function show_profiler() {
     return file_exists(VARPATH . "PROFILE");
   }
+
+  /**
+   * Return true if we should allow Javascript and CSS combining for performance reasons.
+   * Typically we want this, but it's convenient for developers to be able to disable it.
+   */
+  static function allow_css_and_js_combining() {
+    return !file_exists(VARPATH . "DONT_COMBINE");
+  }
 }
