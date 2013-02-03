@@ -57,6 +57,9 @@ ul.sf-menu li li li.sfHover ul {
 	float:			left;
 	margin-bottom:	1em;
 }
+.sf-menu ul {
+	box-shadow: 2px 2px 6px rgba(0,0,0,.2);
+}
 .sf-menu a {
 	border-left:	1px solid #fff;
 	border-top:		1px solid #CFDEFF;
@@ -120,17 +123,4 @@ li.sfHover > a > .sf-sub-indicator {
 .sf-menu ul li:hover > a > .sf-sub-indicator,
 .sf-menu ul li.sfHover > a > .sf-sub-indicator {
 	background-position: -10px 0; /* arrow hovers for modern browsers*/
-}
-
-/*** shadows for all but IE6 ***/
-.sf-shadow ul {
-	background:	url('../images/shadow.png') no-repeat bottom right;
-	padding: 0 8px 9px 0;
-	-moz-border-radius-bottomleft: 17px;
-	-moz-border-radius-topright: 17px;
-	-webkit-border-top-right-radius: 17px;
-	-webkit-border-bottom-left-radius: 17px;
-}
-.sf-shadow ul.sf-shadow-off {
-	background: transparent;
 }
