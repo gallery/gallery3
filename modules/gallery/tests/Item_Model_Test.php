@@ -464,10 +464,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       preg_match("|http://./var/albums/name_\w+\.jpg\?m=\d+|", $photo->file_url()),
       $photo->file_url() . " is malformed");
 
-    // Albums have special thumbnails.  Empty album has cachebuster of 0 since it has no thumbnail
     $album = test::random_album();
     $this->assert_true(
-      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=0|", $album->thumb_url()),
+      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
 
     $photo = test::random_photo($album);
