@@ -82,8 +82,10 @@ class Gallery_View_Core extends View {
    * @param $types  a comma separated list of types to combine, eg "script,css"
    */
   public function start_combining($types) {
-    foreach (explode(",", $types) as $type) {
-      $this->combine_queue[$type] = array();
+    if (gallery::allow_css_and_js_combining()) {
+      foreach (explode(",", $types) as $type) {
+        $this->combine_queue[$type] = array();
+      }
     }
   }
 
