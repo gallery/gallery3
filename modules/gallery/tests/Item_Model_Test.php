@@ -473,6 +473,12 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(
       preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
+
+    // If the file does not exist, we should return a cache buster of m=0.
+    unlink($album->thumb_path());
+    $this->assert_true(
+      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=0|", $album->thumb_url()),
+      $album->thumb_url() . " is malformed");
   }
 
   public function legal_extension_test() {
