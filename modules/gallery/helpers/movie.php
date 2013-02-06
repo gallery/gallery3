@@ -24,6 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class movie_Core {
+  private static $allow_uploads;
+
   static function get_edit_form($movie) {
     $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
     $form->hidden("from_id")->value($movie->id);
@@ -110,6 +112,29 @@ class movie_Core {
   }
 
   /**
+   * Return true if movie uploads are allowed, false if not.  This is based on the
+   * "allow_movie_uploads" Gallery variable as well as whether or not ffmpeg is found.
+   */
+  static function allow_uploads() {
+    if (empty(self::$allow_uploads)) {
+      // Refresh ffmpeg settings
+      $ffmpeg = movie::find_ffmpeg();
+      switch (module::get_var("gallery", "allow_movie_uploads")) {
+        case "always":
+          self::$allow_uploads = true;
+          break;
+        case "never":
+          self::$allow_uploads = false;
+          break;
+        default:
+          self::$allow_uploads = !empty($ffmpeg);
+          break;
+      }
+    }
+    return self::$allow_uploads;
+  }
+
+  /**
    * Return the path to the ffmpeg binary if one exists and is executable, or null.
    */
   static function find_ffmpeg() {
@@ -119,6 +144,33 @@ class movie_Core {
       module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
     }
     return $ffmpeg_path;
+  }
+
+  /**
+   * Return version number and build date of ffmpeg if found, empty string(s) if not.  When using
+   * static builds that aren't official releases, the version numbers are strange, hence why the
+   * date can be useful.
+   */
+  static function find_ffmpeg_version() {
+    $ffmpeg = movie::find_ffmpeg();
+    if (empty($ffmpeg)) {
+      return array("", "");
+    }
+
+    // Find version using -h argument.  The -version argument wasn't available in early versions.
+    // To keep the preg_match searches quick, we'll trim the (otherwise long) result.
+    $cmd = escapeshellcmd($ffmpeg) . " -h 2>&1";
+    $result = substr(`$cmd`, 0, 1000);
+    if (preg_match("/ffmpeg version (\S+)/i", $result, $matches_version)) {
+      if (preg_match("/built on (\S+\s\S+\s\S+)/i", $result, $matches_build_date)) {
+        return array(trim($matches_version[1], ","), trim($matches_build_date[1], ","));
+      } else if (preg_match("/copyright \S*\s?2000-(\d{4})/i", $result, $matches_copyright_date)) {
+        return array(trim($matches_version[1], ","), $matches_copyright_date[1]);
+      } else {
+        return array(trim($matches_version[1], ","), "");
+      }
+    }
+    return array("", "");
   }
 
   /**

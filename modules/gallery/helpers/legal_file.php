@@ -90,7 +90,7 @@ class legal_file_Core {
    */
   static function get_types_by_extension($extension=null) {
     $types_by_extension = legal_file::get_photo_types_by_extension();
-    if (movie::find_ffmpeg()) {
+    if (movie::allow_uploads()) {
       $types_by_extension = array_merge($types_by_extension,
                                         legal_file::get_movie_types_by_extension());
     }
@@ -157,7 +157,7 @@ class legal_file_Core {
    */
   static function get_extensions($extension=null) {
     $extensions = legal_file::get_photo_extensions();
-    if (movie::find_ffmpeg()) {
+    if (movie::allow_uploads()) {
       $extensions = array_merge($extensions, legal_file::get_movie_extensions());
     }
     if ($extension) {
