@@ -314,12 +314,19 @@ class graphics_Core {
   }
 
   /**
-   * Mark thumbnails and resizes as dirty.  They will have to be rebuilt.
+   * Mark thumbnails and resizes as dirty.  They will have to be rebuilt.  Optionally, only those of
+   * a specified type and/or mime type can be marked (e.g. $type="movie" to rebuild movies only).
    */
-  static function mark_dirty($thumbs, $resizes) {
+  static function mark_dirty($thumbs, $resizes, $type=null, $mime_type=null) {
     if ($thumbs || $resizes) {
       $db = db::build()
         ->update("items");
+      if ($type) {
+        $db->where("type", "=", $type);
+      }
+      if ($mime_type) {
+        $db->where("mime_type", "=", $mime_type);
+      }
       if ($thumbs) {
         $db->set("thumb_dirty", 1);
       }
