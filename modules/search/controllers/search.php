@@ -111,6 +111,7 @@ class Search_Controller extends Controller {
   }
 
   static function get_siblings($q, $album) {
-    return search::search_within_album(search::add_query_terms($q), $album, 1000, 1)[1];
+    $result = search::search_within_album(search::add_query_terms($q), $album, 1000, 1);
+    return $result[1];
   }
 }
