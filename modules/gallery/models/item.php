@@ -129,10 +129,11 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return the server-relative url to this item, eg:
-   *   /gallery3/index.php/BobsWedding?page=2
-   *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *   album: /gallery3/index.php/Bobs%20Wedding?page=2
+   *   photo: /gallery3/index.php/Bobs%20Wedding/Eating-Cake
+   *   movie: /gallery3/index.php/Bobs%20Wedding/First-Dance
    *
-   * @param string $query the query string (eg "show=3")
+   * @param string $query the query string (eg "page=2")
    */
   public function url($query=null) {
     $url = url::site($this->relative_url());
@@ -144,10 +145,11 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return the full url to this item, eg:
-   *   http://example.com/gallery3/index.php/BobsWedding?page=2
-   *   http://example.com/gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *   album: http://example.com/gallery3/index.php/Bobs%20Wedding?page=2
+   *   photo: http://example.com/gallery3/index.php/Bobs%20Wedding/Eating-Cake
+   *   movie: http://example.com/gallery3/index.php/Bobs%20Wedding/First-Dance
    *
-   * @param string $query the query string (eg "show=3")
+   * @param string $query the query string (eg "page=2")
    */
   public function abs_url($query=null) {
     $url = url::abs_site($this->relative_url());
@@ -158,16 +160,24 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/albums/album1/album2
-   * photo: /var/albums/album1/album2/photo.jpg
+   * Return the full path to this item's file, eg:
+   *   album: /usr/home/www/gallery3/var/albums/Bobs Wedding
+   *   photo: /usr/home/www/gallery3/var/albums/Bobs Wedding/Eating-Cake.jpg
+   *   movie: /usr/home/www/gallery3/var/albums/Bobs Wedding/First-Dance.mp4
    */
   public function file_path() {
     return VARPATH . "albums/" . urldecode($this->relative_path());
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/
-   * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
+   * Return the relative url to this item's file, with cache buster, eg:
+   *   album: var/albums/Bobs%20Wedding?m=1234567890
+   *   photo: var/albums/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: var/albums/Bobs%20Wedding/First-Dance.mp4?m=1234567890
+   * If $full_uri==true, return the full url to this item's file, with cache buster, eg:
+   *   album: http://example.com/gallery3/var/albums/Bobs%20Wedding?m=1234567890
+   *   photo: http://example.com/gallery3/var/albums/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: http://example.com/gallery3/var/albums/Bobs%20Wedding/First-Dance.mp4?m=1234567890
    */
   public function file_url($full_uri=false) {
     $relative_path = "var/albums/" . $this->relative_path();
@@ -177,8 +187,10 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/resizes/album1/.thumb.jpg
-   * photo: /var/albums/album1/photo.thumb.jpg
+   * Return the full path to this item's thumb, eg:
+   *   album: /usr/home/www/gallery3/var/thumbs/Bobs Wedding/.album.jpg
+   *   photo: /usr/home/www/gallery3/var/thumbs/Bobs Wedding/Eating-Cake.jpg
+   *   movie: /usr/home/www/gallery3/var/thumbs/Bobs Wedding/First-Dance.jpg
    */
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
@@ -200,8 +212,14 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
-   * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
+   * Return the relative url to this item's thumb, with cache buster, eg:
+   *   album: var/thumbs/Bobs%20Wedding/.album.jpg?m=1234567890
+   *   photo: var/thumbs/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: var/thumbs/Bobs%20Wedding/First-Dance.mp4?m=1234567890
+   * If $full_uri==true, return the full url to this item's file, with cache buster, eg:
+   *   album: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/.album.jpg?m=1234567890
+   *   photo: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/First-Dance.mp4?m=1234567890
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = $this->_cache_buster($this->thumb_path());
@@ -219,8 +237,11 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/resizes/album1/.resize.jpg
-   * photo: /var/albums/album1/photo.resize.jpg
+   * Return the full path to this item's resize, eg:
+   *   album: /usr/home/www/gallery3/var/resizes/Bobs Wedding/.album.jpg      (*)
+   *   photo: /usr/home/www/gallery3/var/resizes/Bobs Wedding/Eating-Cake.jpg
+   *   movie: /usr/home/www/gallery3/var/resizes/Bobs Wedding/First-Dance.mp4 (*)
+   * (*) Since only photos have resizes, album and movie paths are fictitious.
    */
   public function resize_path() {
     return VARPATH . "resizes/" . urldecode($this->relative_path()) .
@@ -228,8 +249,15 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
-   * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
+   * Return the relative url to this item's resize, with cache buster, eg:
+   *   album: var/resizes/Bobs%20Wedding/.album.jpg?m=1234567890      (*)
+   *   photo: var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: var/resizes/Bobs%20Wedding/First-Dance.mp4?m=1234567890 (*)
+   * If $full_uri==true, return the full url to this item's file, with cache buster, eg:
+   *   album: http://example.com/gallery3/var/resizes/Bobs%20Wedding/.album.jpg?m=1234567890      (*)
+   *   photo: http://example.com/gallery3/var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: http://example.com/gallery3/var/resizes/Bobs%20Wedding/First-Dance.mp4?m=1234567890 (*)
+   * (*) Since only photos have resizes, album and movie urls are fictitious.
    */
   public function resize_url($full_uri=false) {
     $relative_path = "var/resizes/" . $this->relative_path();
