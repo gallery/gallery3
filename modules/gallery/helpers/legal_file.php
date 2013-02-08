@@ -24,6 +24,8 @@ class legal_file_Core {
   private static $movie_extensions;
   private static $photo_types;
   private static $movie_types;
+  private static $blacklist = array("php", "php3", "php4", "php5", "phtml", "phtm", "shtml", "shtm",
+                                    "pl", "cgi", "asp", "sh", "py", "c", "js");
 
   /**
    * Create a default list of allowed photo MIME types paired with their extensions and then let
@@ -38,6 +40,9 @@ class legal_file_Core {
       $types_by_extension_wrapper->types_by_extension = array(
         "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
       module::event("photo_types_by_extension", $types_by_extension_wrapper);
+      foreach (self::$blacklist as $key) {
+        unset($types_by_extension_wrapper->types_by_extension[$key]);
+      }
       self::$photo_types_by_extension = $types_by_extension_wrapper->types_by_extension;
     }
     if ($extension) {
@@ -67,6 +72,9 @@ class legal_file_Core {
       $types_by_extension_wrapper->types_by_extension = array(
         "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v");
       module::event("movie_types_by_extension", $types_by_extension_wrapper);
+      foreach (self::$blacklist as $key) {
+        unset($types_by_extension_wrapper->types_by_extension[$key]);
+      }
       self::$movie_types_by_extension = $types_by_extension_wrapper->types_by_extension;
     }
     if ($extension) {
@@ -118,7 +126,7 @@ class legal_file_Core {
       $extensions_wrapper = new stdClass();
       $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
       module::event("legal_photo_extensions", $extensions_wrapper);
-      self::$photo_extensions = $extensions_wrapper->extensions;
+      self::$photo_extensions = array_diff($extensions_wrapper->extensions, self::$blacklist);
     }
     if ($extension) {
       // return true if in array, false if not
@@ -139,7 +147,7 @@ class legal_file_Core {
       $extensions_wrapper = new stdClass();
       $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
       module::event("legal_movie_extensions", $extensions_wrapper);
-      self::$movie_extensions = $extensions_wrapper->extensions;
+      self::$movie_extensions = array_diff($extensions_wrapper->extensions, self::$blacklist);
     }
     if ($extension) {
       // return true if in array, false if not
