@@ -64,18 +64,42 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function get_file_metadata_with_no_extension_test() {
     copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_no_extension");
-    $this->assert_equal(array(360, 288, null, null, 6.00),
-                        movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension"));
+    // Since mime type and extension are based solely on the filename, this is considered invalid.
+    try {
+      $metadata = movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension");
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (Exception $e) {
+      // pass
+    }
   }
 
   public function get_file_metadata_with_illegal_extension_test() {
-    $this->assert_equal(array(0, 0, null, null, 0),
-                        movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php"));
+    try {
+      $metadata = movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (Exception $e) {
+      // pass
+    }
   }
 
   public function get_file_metadata_with_illegal_extension_but_valid_file_contents_test() {
     copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_php_extension.php");
-    $this->assert_equal(array(360, 288, null, null, 6.00),
-                        movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php"));
+    // Since mime type and extension are based solely on the filename, this is considered invalid.
+    try {
+      $metadata = movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php");
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (Exception $e) {
+      // pass
+    }
+  }
+
+  public function get_file_metadata_with_valid_extension_but_illegal_file_contents_test() {
+    copy(MODPATH . "gallery/tests/Photo_Helper_Test.php", TMPPATH . "test_php_with_flv_extension.flv");
+    // Since mime type and extension are based solely on the filename, this is considered valid.
+    // Of course, FFmpeg cannot extract width, height, or duration from the file.  Note that this
+    // isn't a really a security problem, since the filename doesn't have a php extension and
+    // therefore will never be executed.
+    $this->assert_equal(array(0, 0, "video/x-flv", "flv", 0),
+                        movie::get_file_metadata(TMPPATH . "test_php_with_flv_extension.flv"));
   }
 }

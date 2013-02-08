@@ -102,18 +102,17 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
       $name = legal_file::smash_extensions($name);
 
-      list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
-      if (!$width || !$height || !$mime_type || !$extension ||
-          !legal_file::get_photo_extensions($extension)) {
-        message::error(t("Invalid or unidentifiable image file"));
-        @unlink($file);
-        return;
-      } else {
+      try {
+        list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
         // Force correct, legal extension type on file, which will be of our canonical type
         // (i.e. all lowercase, jpg instead of jpeg, etc.).  This renaming prevents the issues
         // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
         // php extension was previously accepted without changing its extension.
         $name = legal_file::change_extension($name, $extension);
+      } catch (Exception $e) {
+        message::error(t("Invalid or unidentifiable image file"));
+        @unlink($file);
+        return;
       }
 
       rename($file, VARPATH . "modules/watermark/$name");
