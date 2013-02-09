@@ -21,6 +21,7 @@ class Item_Model_Core extends ORM_MPTT {
   protected $children = "items";
   protected $sorting = array();
   public $data_file = null;
+  private $data_file_error = null;
 
   public function __construct($id=null) {
     parent::__construct($id);
@@ -378,18 +379,26 @@ class Item_Model_Core extends ORM_MPTT {
 
         // Get the width, height and mime type from our data file for photos and movies.
         if ($this->is_photo() || $this->is_movie()) {
-          if ($this->is_photo()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              photo::get_file_metadata($this->data_file);
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              movie::get_file_metadata($this->data_file);
-          }
+          try {
+            if ($this->is_photo()) {
+              list ($this->width, $this->height, $this->mime_type, $extension) =
+                photo::get_file_metadata($this->data_file);
+            } else if ($this->is_movie()) {
+              list ($this->width, $this->height, $this->mime_type, $extension) =
+                movie::get_file_metadata($this->data_file);
+            }
 
-          // Force an extension onto the name if necessary
-          $pi = pathinfo($this->data_file);
-          if (empty($pi["extension"])) {
-            $this->name = "{$this->name}.$extension";
+            // Force an extension onto the name if necessary
+            $pi = pathinfo($this->data_file);
+            if (empty($pi["extension"])) {
+              $this->name = "{$this->name}.$extension";
+            }
+
+            // Data file valid - make sure the flag is reset to false.
+            $this->data_file_error = false;
+          } catch (Exception $e) {
+            // Data file invalid - set the flag so it's reported during item validation.
+            $this->data_file_error = true;
           }
         }
 
@@ -436,17 +445,24 @@ class Item_Model_Core extends ORM_MPTT {
         // appropriate for its data. We don't try to preserve the name of the data file, though,
         // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
-          $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
-          $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
-          if (!empty($extension) && strcmp($this->name, $new_name)) {
-            $this->name = $new_name;
-          }
-          if ($this->is_photo()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              photo::get_file_metadata($this->data_file);
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              movie::get_file_metadata($this->data_file);
+          try {
+            $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
+            $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
+            if (!empty($extension) && strcmp($this->name, $new_name)) {
+              $this->name = $new_name;
+            }
+            if ($this->is_photo()) {
+              list ($this->width, $this->height, $this->mime_type, $extension) =
+                photo::get_file_metadata($this->data_file);
+            } else if ($this->is_movie()) {
+              list ($this->width, $this->height, $this->mime_type, $extension) =
+                movie::get_file_metadata($this->data_file);
+            }
+            // Data file valid - make sure the flag is reset to false.
+            $this->data_file_error = false;
+          } catch (Exception $e) {
+            // Data file invalid - set the flag so it's reported during item validation.
+            $this->data_file_error = true;
           }
         }
 
@@ -524,13 +540,6 @@ class Item_Model_Core extends ORM_MPTT {
         // Replace the data file, if requested.
         if ($this->data_file && ($this->is_photo() || $this->is_movie())) {
           copy($this->data_file, $this->file_path());
-
-          // Get the width, height and mime type from our data file for photos and movies.
-          if ($this->is_photo()) {
-            list ($this->width, $this->height) = photo::get_file_metadata($this->file_path());
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height) = movie::get_file_metadata($this->file_path());
-          }
           $this->thumb_dirty = 1;
           $this->resize_dirty = 1;
         }
@@ -966,6 +975,8 @@ class Item_Model_Core extends ORM_MPTT {
       $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
       $v->add_error("name", "empty_data_file");
+    } else if ($this->data_file_error) {
+      $v->add_error("name", "invalid_data_file");
     }
   }
 

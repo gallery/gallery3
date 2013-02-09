@@ -445,11 +445,23 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("mime_type" => "invalid", "name" => "illegal_data_file_extension"),
-                         $e->validation->errors());
+      $this->assert_same(array("name" => "illegal_data_file_extension"), $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
+  }
+
+  public function unsafe_data_file_replacement_with_valid_extension_test() {
+    $temp_file = TMPPATH . "masquerading_php.jpg";
+    copy(MODPATH . "gallery/tests/Item_Model_Test.php", $temp_file);
+    try {
+      $photo = test::random_photo();
+      $photo->set_data_file($temp_file);
+      $photo->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "invalid_data_file"), $e->validation->errors());
+      return;  // pass
+    }
   }
 
   public function urls_test() {
