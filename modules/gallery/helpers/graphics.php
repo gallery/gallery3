@@ -224,7 +224,16 @@ class graphics_Core {
         graphics::_replace_image_with_placeholder($item, "resize");
       }
       graphics::_replace_image_with_placeholder($item, "thumb");
-      graphics::_update_item_dimensions($item);
+      try {
+        graphics::_update_item_dimensions($item);
+      } catch (Exception $e) {
+        // Looks like get_file_metadata couldn't identify our placeholders.  We should never get
+        // here, but in the odd case we do, we need to do something.  Let's put in hardcoded values.
+        if ($item->is_photo()) {
+          list ($item->resize_width, $item->resize_height) = array(200, 200);
+        }
+        list ($item->thumb_width, $item->thumb_height) = array(200, 200);
+      }
       $item->save();
       throw $e;
     }

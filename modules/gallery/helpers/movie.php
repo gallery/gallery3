@@ -192,8 +192,16 @@ class movie_Core {
       $metadata->extension = strtolower($extension);
     }
 
-    // Run movie_get_file_metadata events which can modify the class, then return results.
+    // Run movie_get_file_metadata events which can modify the class.
     module::event("movie_get_file_metadata", $file_path, $metadata);
+
+    // If the post-events results are invalid, throw an exception.  Note that, unlike photos, having
+    // zero width and height isn't considered invalid (as is the case when FFmpeg isn't installed).
+    if (!$metadata->mime_type || !$metadata->extension ||
+        ($metadata->mime_type != legal_file::get_movie_types_by_extension($metadata->extension))) {
+      throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
+    }
+
     return array($metadata->width, $metadata->height, $metadata->mime_type,
                  $metadata->extension, $metadata->duration);
   }

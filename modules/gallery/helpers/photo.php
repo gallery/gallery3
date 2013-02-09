@@ -133,8 +133,15 @@ class photo_Core {
       $metadata->height = 0;
     }
 
-    // Run photo_get_file_metadata events which can modify the class, then return results.
+    // Run photo_get_file_metadata events which can modify the class.
     module::event("photo_get_file_metadata", $file_path, $metadata);
+
+    // If the post-events results are invalid, throw an exception.
+    if (!$metadata->width || !$metadata->height || !$metadata->mime_type || !$metadata->extension ||
+        ($metadata->mime_type != legal_file::get_photo_types_by_extension($metadata->extension))) {
+      throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
+    }
+
     return array($metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension);
   }
 }

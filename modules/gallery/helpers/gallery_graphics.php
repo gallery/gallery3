@@ -172,6 +172,11 @@ class gallery_graphics_Core {
 
       module::event("graphics_composite_completed", $input_file, $output_file, $options, $item);
     } catch (ErrorException $e) {
+      // Unlike rotate and resize, composite catches its exceptions here.  This is because
+      // composite is typically called for watermarks.  If during thumb/resize generation
+      // the watermark fails, we'd still like the image resized, just without its watermark.
+      // If the exception isn't caught here, graphics::generate will replace it with a
+      // placeholder.
       Kohana_Log::add("error", $e->getMessage());
     }
   }
