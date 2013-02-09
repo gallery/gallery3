@@ -98,9 +98,9 @@ class Albums_Controller extends Items_Controller {
                  "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
   }
 
-  static function get_siblings($item) {
+  static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Item_Model::siblings() if we use this more broadly.
-    return $item->parent()->viewable()->children();
+    return $item->parent()->viewable()->children($limit, $offset);
   }
 
   public function create($parent_id) {
