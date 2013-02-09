@@ -149,6 +149,19 @@ class graphics_Core {
           if (@filesize($output_file) == 0) {
             try {
               movie::extract_frame($working_file, $output_file, $movie_options_wrapper->movie_options);
+              // If we're here, we know ffmpeg is installed and the movie is valid.  Because the
+              // user may not always have had ffmpeg installed, the movie's width, height, and
+              // mime type may need updating.  Let's use this opportunity to make sure they're
+              // correct.  It's not optimal to do it at this low level, but it's not trivial to find
+              // these cases quickly in an upgrade script.
+              list ($width, $height, $mime_type) = movie::get_file_metadata($working_file);
+              // Only set them if they need updating to avoid marking them as "changed"
+              if (($item->width != $width) || ($item->height != $height) ||
+                  ($item->mime_type != $mime_type)) {
+                $item->width = $width;
+                $item->height = $height;
+                $item->mime_type = $mime_type;
+              }
             } catch (Exception $e) {
               // Didn't work, likely because of MISSING_FFMPEG - use placeholder
               graphics::_replace_image_with_placeholder($item, $target);
