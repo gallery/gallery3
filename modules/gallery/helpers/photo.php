@@ -94,10 +94,8 @@ class photo_Core {
    *   Input is *not* standard photo type that is supported by getimagesize (e.g. tif, bmp...)
    *     -> return metadata from getimagesize()
    *   Input is *not* standard photo type that is *not* supported by getimagesize but is legal
-   *     -> return zero width and height, mime type and extension according to legal_file
-   *   Input is *not* standard photo type that is *not* supported by getimagesize and is *not* legal
-   *     -> return zero width and height, null mime type and extension
-   *   Input is not readable or does not exist
+   *     -> return metadata if found by photo_get_file_metadata events
+   *   Input is illegal, unidentifiable, unreadable, or does not exist
    *     -> throw exception
    * Note: photo_get_file_metadata events can change any of the above cases (except the last one).
    */
