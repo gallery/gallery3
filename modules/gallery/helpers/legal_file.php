@@ -250,4 +250,61 @@ class legal_file_Core {
     $result .= isset($parts["extension"]) ? "{$parts['filename']}.{$parts['extension']}" : $parts["filename"];
     return $result;
   }
+
+  /**
+   * Sanitize a filename for a given type (given as "photo" or "movie") and a target file format
+   * (given as an extension).  This returns a completely legal and valid filename,
+   * or throws an exception if the type or extension given is invalid or illegal.  It tries to
+   * maintain the filename's original extension even if it's not identical to the given extension
+   * (e.g. don't change "JPG" or "jpeg" to "jpg").
+   *
+   * Note: it is not okay if the extension given is legal but does not match the type (e.g. if
+   * extension is "mp4" and type is "photo", it will throw an exception)
+   *
+   * @param  string $filename  (with no directory)
+   * @param  string $extension (can be uppercase or lowercase)
+   * @param  string $type      (as "photo" or "movie")
+   * @return string sanitized filename (or null if bad extension argument)
+   */
+  static function sanitize_filename($filename, $extension, $type) {
+    // Check if the type is valid - if so, get the mime types of the
+    // original and target extensions; if not, throw an exception.
+    $original_extension = pathinfo($filename, PATHINFO_EXTENSION);
+    switch ($type) {
+      case "photo":
+        $mime_type = legal_file::get_photo_types_by_extension($extension);
+        $original_mime_type = legal_file::get_photo_types_by_extension($original_extension);
+        break;
+      case "movie":
+        $mime_type = legal_file::get_movie_types_by_extension($extension);
+        $original_mime_type = legal_file::get_movie_types_by_extension($original_extension);
+        break;
+      default:
+        throw new Exception("@todo INVALID_TYPE");
+    }
+
+    // Check if the target extension is blank or invalid - if so, throw an exception.
+    if (!$extension || !$mime_type) {
+      throw new Exception("@todo ILLEGAL_EXTENSION");
+    }
+
+    // Check if the mime types of the original and target extensions match - if not, fix it.
+    if (!$original_extension || ($mime_type != $original_mime_type)) {
+      $filename = legal_file::change_extension($filename, $extension);
+    }
+
+    // It should be a filename without a directory - remove all slashes (and backslashes).
+    $filename = str_replace("/", "_", $filename);
+    $filename = str_replace("\\", "_", $filename);
+
+    // Remove extra dots from the filename.  This will also remove extraneous underscores.
+    $filename = legal_file::smash_extensions($filename);
+
+    // It's possible that the filename has no base (e.g. ".jpg") - if so, give it a generic one.
+    if (empty($filename) || (substr($filename, 0, 1) == ".")) {
+      $filename = $type . $filename;  // e.g. "photo.jpg" or "movie.mp4"
+    }
+
+    return $filename;
+  }
 }
