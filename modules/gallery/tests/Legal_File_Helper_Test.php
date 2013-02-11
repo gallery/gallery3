@@ -136,10 +136,18 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
   public function smash_extensions_test() {
     $this->assert_equal("foo_bar.jpg", legal_file::smash_extensions("foo.bar.jpg"));
     $this->assert_equal("foo_bar_baz.jpg", legal_file::smash_extensions("foo.bar.baz.jpg"));
-    $this->assert_equal("foo_bar_baz.jpg", legal_file::smash_extensions("foo.bar.baz.jpg"));
     $this->assert_equal("foo_bar_baz.jpg", legal_file::smash_extensions("...foo...bar..baz...jpg"));
     $this->assert_equal("/path/to/foo_bar.jpg", legal_file::smash_extensions("/path/to/foo.bar.jpg"));
     $this->assert_equal("/path/to.to/foo_bar.jpg", legal_file::smash_extensions("/path/to.to/foo.bar.jpg"));
     $this->assert_equal("foo_bar-12345678.jpg", legal_file::smash_extensions("foo.bar-12345678.jpg"));
+  }
+
+  public function smash_extensions_pass_thru_names_without_extensions_test() {
+    $this->assert_equal("foo", legal_file::smash_extensions("foo"));
+    $this->assert_equal("foo.", legal_file::smash_extensions("foo."));
+    $this->assert_equal(".foo", legal_file::smash_extensions(".foo"));
+    $this->assert_equal(".", legal_file::smash_extensions("."));
+    $this->assert_equal("", legal_file::smash_extensions(""));
+    $this->assert_equal(null, legal_file::smash_extensions(null));
   }
 }
