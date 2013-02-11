@@ -235,6 +235,10 @@ class legal_file_Core {
    * Reduce the given file to having a single extension.
    */
   static function smash_extensions($filename) {
+    if (!$filename) {
+      // It's harmless, so return it before it causes issues with pathinfo.
+      return $filename;
+    }
     $parts = pathinfo($filename);
     $result = "";
     if ($parts["dirname"] != ".") {
@@ -243,7 +247,7 @@ class legal_file_Core {
     $parts["filename"] = str_replace(".", "_", $parts["filename"]);
     $parts["filename"] = preg_replace("/[_]+/", "_", $parts["filename"]);
     $parts["filename"] = trim($parts["filename"], "_");
-    $result .= "{$parts['filename']}.{$parts['extension']}";
+    $result .= isset($parts["extension"]) ? "{$parts['filename']}.{$parts['extension']}" : $parts["filename"];
     return $result;
   }
 }
