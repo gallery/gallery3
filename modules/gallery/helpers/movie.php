@@ -24,6 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class movie_Core {
+  private static $allow_uploads;
+
   static function get_edit_form($movie) {
     $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
     $form->hidden("from_id")->value($movie->id);
@@ -107,6 +109,29 @@ class movie_Core {
         throw new Exception("@todo FFMPEG_FAILED");
       }
     }
+  }
+
+  /**
+   * Return true if movie uploads are allowed, false if not.  This is based on the
+   * "movie_allow_uploads" Gallery variable as well as whether or not ffmpeg is found.
+   */
+  static function allow_uploads() {
+    if (empty(self::$allow_uploads)) {
+      // Refresh ffmpeg settings
+      $ffmpeg = movie::find_ffmpeg();
+      switch (module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
+        case "always":
+          self::$allow_uploads = true;
+          break;
+        case "never":
+          self::$allow_uploads = false;
+          break;
+        default:
+          self::$allow_uploads = !empty($ffmpeg);
+          break;
+      }
+    }
+    return self::$allow_uploads;
   }
 
   /**
