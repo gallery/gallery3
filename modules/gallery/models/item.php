@@ -365,6 +365,14 @@ class Item_Model_Core extends ORM_MPTT {
           $this->weight = item::get_max_weight();
         }
 
+        // Process the data file info.
+        if (isset($this->data_file)) {
+          $this->_process_data_file_info();
+        } else if (!$this->is_album()) {
+          // Unless it's an album, new items must have a data file.
+          $this->data_file_error = true;
+        }
+
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
           $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
@@ -374,31 +382,6 @@ class Item_Model_Core extends ORM_MPTT {
           // check_and_fix_conflicts to ensure it doesn't conflict with another name.
           if (empty($this->slug)) {
             $this->slug = $this->type;
-          }
-        }
-
-        // Get the width, height and mime type from our data file for photos and movies.
-        if ($this->is_photo() || $this->is_movie()) {
-          try {
-            if ($this->is_photo()) {
-              list ($this->width, $this->height, $this->mime_type, $extension) =
-                photo::get_file_metadata($this->data_file);
-            } else if ($this->is_movie()) {
-              list ($this->width, $this->height, $this->mime_type, $extension) =
-                movie::get_file_metadata($this->data_file);
-            }
-
-            // Force an extension onto the name if necessary
-            $pi = pathinfo($this->data_file);
-            if (empty($pi["extension"])) {
-              $this->name = "{$this->name}.$extension";
-            }
-
-            // Data file valid - make sure the flag is reset to false.
-            $this->data_file_error = false;
-          } catch (Exception $e) {
-            // Data file invalid - set the flag so it's reported during item validation.
-            $this->data_file_error = true;
           }
         }
 
@@ -439,31 +422,19 @@ class Item_Model_Core extends ORM_MPTT {
         // keep it around.
         $original = ORM::factory("item", $this->id);
 
-        // Preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
+        // If we have a new data file, process its info.  This will get its metadata and
+        // preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
         // the MIME type from the extension. So when we adopt the new data file, it's important
         // to adopt the new extension. That ensures that the item's extension is always
         // appropriate for its data. We don't try to preserve the name of the data file, though,
         // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
-          try {
-            $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
-            $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
-            if (!empty($extension) && strcmp($this->name, $new_name)) {
-              $this->name = $new_name;
-            }
-            if ($this->is_photo()) {
-              list ($this->width, $this->height, $this->mime_type, $extension) =
-                photo::get_file_metadata($this->data_file);
-            } else if ($this->is_movie()) {
-              list ($this->width, $this->height, $this->mime_type, $extension) =
-                movie::get_file_metadata($this->data_file);
-            }
-            // Data file valid - make sure the flag is reset to false.
-            $this->data_file_error = false;
-          } catch (Exception $e) {
-            // Data file invalid - set the flag so it's reported during item validation.
-            $this->data_file_error = true;
-          }
+          $this->_process_data_file_info();
+        } else if (!$this->is_album() && array_key_exists("name", $this->changed)) {
+          // There's no new data file, but the name changed.  If it's a photo or movie,
+          // make sure the new name still agrees with the file type.
+          $this->name = legal_file::sanitize_filename($this->name,
+            pathinfo($original->name, PATHINFO_EXTENSION), $this->type);
         }
 
         // If an album's cover has changed (or been removed), delete any existing album cover,
@@ -621,6 +592,40 @@ class Item_Model_Core extends ORM_MPTT {
         $this->relative_path_cache = null;
         $this->relative_url_cache = null;
       }
+    }
+  }
+
+  /**
+   * Process the data file info.  Get its metadata and extension.
+   * If valid, use it to sanitize the item name and update the
+   * width, height, and mime type.
+   */
+  private function _process_data_file_info() {
+    try {
+      if ($this->is_photo()) {
+        list ($this->width, $this->height, $this->mime_type, $extension) =
+          photo::get_file_metadata($this->data_file);
+      } else if ($this->is_movie()) {
+        list ($this->width, $this->height, $this->mime_type, $extension) =
+          movie::get_file_metadata($this->data_file);
+      } else {
+        // Albums don't have data files.
+        $this->data_file = null;
+        return;
+      }
+
+      // Sanitize the name based on the idenified extension, but only set $this->name if different
+      // to ensure it isn't unnecessarily marked as "changed"
+      $name = legal_file::sanitize_filename($this->name, $extension, $this->type);
+      if ($this->name != $name) {
+        $this->name = $name;
+      }
+
+      // Data file valid - make sure the flag is reset to false.
+      $this->data_file_error = false;
+    } catch (Exception $e) {
+      // Data file invalid - set the flag so it's reported during item validation.
+      $this->data_file_error = true;
     }
   }
 
