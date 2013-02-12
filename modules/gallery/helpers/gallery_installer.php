@@ -315,6 +315,7 @@ class gallery_installer {
     module::set_var("gallery", "timezone", null);
     module::set_var("gallery", "lock_timeout", 1);
     module::set_var("gallery", "movie_extract_frame_time", 3);
+    module::set_var("gallery", "movie_allow_uploads", "autodetect");
   }
 
   static function upgrade($version) {
@@ -789,6 +790,13 @@ class gallery_installer {
       module::set_version("gallery", $version = 55);
     }
 
+    if ($version == 55) {
+      // In v56, we added the ability to change the default behavior regarding movie uploads.  It
+      // can be set to "always", "never", or "autodetect" to match the previous behavior where they
+      // are allowed only if FFmpeg is found.
+      module::set_var("gallery", "movie_allow_uploads", "autodetect");
+      module::set_version("gallery", $version = 56);
+    }
   }
 
   static function uninstall() {
