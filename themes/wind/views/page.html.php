@@ -49,7 +49,7 @@
     <?= $theme->script("gallery.ajax.js") ?>
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>
-    <?= $theme->script("jquery.localscroll.js") ?>
+    <?= $theme->script("jquery.localScroll.js") ?>
 
     <? /* These are page specific but they get combined */ ?>
     <? if ($theme->page_subtype == "photo"): ?>
