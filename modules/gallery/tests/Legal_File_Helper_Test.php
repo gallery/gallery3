@@ -150,4 +150,48 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("", legal_file::smash_extensions(""));
     $this->assert_equal(null, legal_file::smash_extensions(null));
   }
+
+  public function sanitize_filename_with_no_rename_test() {
+    $this->assert_equal("foo.jpeg", legal_file::sanitize_filename("foo.jpeg", "jpg", "photo"));
+    $this->assert_equal("foo.jpg", legal_file::sanitize_filename("foo.jpg", "jpeg", "photo"));
+    $this->assert_equal("foo.MP4", legal_file::sanitize_filename("foo.MP4", "mp4", "movie"));
+    $this->assert_equal("foo.mp4", legal_file::sanitize_filename("foo.mp4", "MP4", "movie"));
+  }
+
+  public function sanitize_filename_with_corrected_extension_test() {
+    $this->assert_equal("foo.jpg", legal_file::sanitize_filename("foo.png", "jpg", "photo"));
+    $this->assert_equal("foo.MP4", legal_file::sanitize_filename("foo.jpg", "MP4", "movie"));
+    $this->assert_equal("foo.jpg", legal_file::sanitize_filename("foo.php", "jpg", "photo"));
+  }
+
+  public function sanitize_filename_with_non_standard_chars_and_dots_test() {
+    $this->assert_equal("foo.jpg", legal_file::sanitize_filename("foo", "jpg", "photo"));
+    $this->assert_equal("foo.mp4", legal_file::sanitize_filename("foo.", "mp4", "movie"));
+    $this->assert_equal("foo.jpeg", legal_file::sanitize_filename(".foo.jpeg", "jpg", "photo"));
+    $this->assert_equal("foo_2013_02_10.jpeg",
+      legal_file::sanitize_filename("foo.2013/02/10.jpeg", "jpg", "photo"));
+    $this->assert_equal("foo_bar_baz.jpg",
+      legal_file::sanitize_filename("...foo...bar..baz...png", "jpg", "photo"));
+    $this->assert_equal("j'écris@un#nom_bizarre(mais quand_même_ça_passe.jpg",
+      legal_file::sanitize_filename("/j'écris@un#nom/bizarre(mais quand.même/ça_passe.\$ÇÀ@€#_", "jpg", "photo"));
+  }
+
+  public function sanitize_filename_with_no_base_name_test() {
+    $this->assert_equal("photo.jpg", legal_file::sanitize_filename(".png", "jpg", "photo"));
+    $this->assert_equal("movie.mp4", legal_file::sanitize_filename("__..__", "mp4", "movie"));
+    $this->assert_equal("photo.jpg", legal_file::sanitize_filename(".", "jpg", "photo"));
+    $this->assert_equal("movie.mp4", legal_file::sanitize_filename(null, "mp4", "movie"));
+  }
+
+  public function sanitize_filename_with_invalid_arguments_test() {
+    foreach (array("flv" => "photo", "jpg" => "movie", "php" => "photo",
+                   null => "movie", "jpg" => "album", "jpg" => null) as $extension => $type) {
+      try {
+        legal_file::sanitize_filename("foo.jpg", $extension, $type);
+        $this->assert_true(false, "Shouldn't get here");
+      } catch (Exception $e) {
+        // pass
+      }
+    }
+  }
 }
