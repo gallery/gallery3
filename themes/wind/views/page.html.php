@@ -37,7 +37,7 @@
       <? endif ?>
     <? endif ?>
 
-    <?= $theme->script("json2-min.js") ?>
+    <?= $theme->script("json2.js") ?>
     <?= $theme->script("jquery.js") ?>
     <?= $theme->script("jquery.form.js") ?>
     <?= $theme->script("jquery-ui.js") ?>
