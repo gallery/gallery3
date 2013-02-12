@@ -37,7 +37,7 @@
       <? endif ?>
     <? endif ?>
 
-    <?= $theme->script("json2-min.js") ?>
+    <?= $theme->script("json2.js") ?>
     <?= $theme->script("jquery.js") ?>
     <?= $theme->script("jquery.form.js") ?>
     <?= $theme->script("jquery-ui.js") ?>
@@ -49,7 +49,7 @@
     <?= $theme->script("gallery.ajax.js") ?>
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>
-    <?= $theme->script("jquery.localscroll.js") ?>
+    <?= $theme->script("jquery.localScroll.js") ?>
 
     <? /* These are page specific but they get combined */ ?>
     <? if ($theme->page_subtype == "photo"): ?>
