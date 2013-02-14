@@ -163,9 +163,7 @@ class movie_Core {
    *     -> return metadata from ffmpeg
    *   Input is *not* standard movie type that is *not* supported by ffmpeg but is legal
    *     -> return zero width, height, and duration; mime type and extension according to legal_file
-   *   Input is *not* standard movie type that is *not* supported by ffmpeg and is *not* legal
-   *     -> return zero width, height, and duration; null mime type and extension
-   *   Input is not readable or does not exist
+   *   Input is illegal, unidentifiable, unreadable, or does not exist
    *     -> throw exception
    * Note: movie_get_file_metadata events can change any of the above cases (except the last one).
    */
