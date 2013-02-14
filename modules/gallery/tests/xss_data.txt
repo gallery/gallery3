@@ -111,6 +111,7 @@ modules/gallery/views/admin_modules_confirm.html.php         11  DIRTY_ATTR $css
 modules/gallery/views/admin_modules_confirm.html.php         11  DIRTY    $message
 modules/gallery/views/admin_modules_confirm.html.php         16  DIRTY    access::csrf_form_field()
 modules/gallery/views/admin_modules_confirm.html.php         18  DIRTY    form::hidden($module,1)
+modules/gallery/views/admin_movies.html.php                  43  DIRTY    $form
 modules/gallery/views/admin_sidebar.html.php                 50  DIRTY    $available
 modules/gallery/views/admin_sidebar.html.php                 58  DIRTY    $active
 modules/gallery/views/admin_sidebar_blocks.html.php          4   DIRTY_ATTR $ref
