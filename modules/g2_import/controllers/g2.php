@@ -37,7 +37,7 @@ class G2_Controller extends Controller {
 
     // Tags did not have mappings created, so we need to catch them first. However, if a g2_itemId was
     // passed, we'll want to show lookup the mapping anyway
-    if (($path && 0 === strpos($path, "tag/")) || $view = "tags.VirtualAlbum") {
+    if (($path && 0 === strpos($path, "tag/")) || $view == "tags.VirtualAlbum") {
       if (0 === strpos($path, "tag/")) {
         $tag_name = substr($path, 4);
       }

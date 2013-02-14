@@ -126,14 +126,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function item_rename_wont_accept_slash_test() {
     $item = test::random_photo();
-    try {
-      $item->name = test::random_name() . "/";
-      $item->save();
-    } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("name" => "no_slashes"), $e->validation->errors());
-      return;
-    }
-    $this->assert_true(false, "Shouldn't get here");
+    $item->name = "/no_slashes/allowed/";
+    $item->save();
+    $this->assert_equal("no_slashes_allowed.jpg", $item->name);
   }
 
   public function move_album_test() {
@@ -328,30 +323,17 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function photo_files_must_have_an_extension_test() {
-    try {
-      $photo = test::random_photo_unsaved();
-      $photo->mime_type = "image/jpeg";
-      $photo->name = "no_extension";
-      $photo->save();
-    } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("name" => "illegal_data_file_extension"), $e->validation->errors());
-      return;  // pass
-    }
-    $this->assert_true(false, "Shouldn't get here");
+    $photo = test::random_photo_unsaved();
+    $photo->name = "no_extension_photo";
+    $photo->save();
+    $this->assert_equal("no_extension_photo.jpg", $photo->name);
   }
 
   public function movie_files_must_have_an_extension_test() {
-    try {
-      $movie = test::random_movie_unsaved();
-      $movie->type = "movie";
-      $movie->mime_type = "video/x-flv";
-      $movie->name = "no_extension";
-      $movie->save();
-    } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("name" => "illegal_data_file_extension"), $e->validation->errors());
-      return;  // pass
-    }
-    $this->assert_true(false, "Shouldn't get here");
+    $movie = test::random_movie_unsaved();
+    $movie->name = "no_extension_movie";
+    $movie->save();
+    $this->assert_equal("no_extension_movie.flv", $movie->name);
   }
 
   public function cant_delete_root_album_test() {
@@ -445,8 +427,21 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("mime_type" => "invalid", "name" => "illegal_data_file_extension"),
-                         $e->validation->errors());
+      $this->assert_same(array("name" => "invalid_data_file"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+  }
+
+  public function unsafe_data_file_replacement_with_valid_extension_test() {
+    $temp_file = TMPPATH . "masquerading_php.jpg";
+    copy(MODPATH . "gallery/tests/Item_Model_Test.php", $temp_file);
+    try {
+      $photo = test::random_photo();
+      $photo->set_data_file($temp_file);
+      $photo->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "invalid_data_file"), $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -473,45 +468,63 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(
       preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
+
+    // If the file does not exist, we should return a cache buster of m=0.
+    unlink($album->thumb_path());
+    $this->assert_true(
+      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=0|", $album->thumb_url()),
+      $album->thumb_url() . " is malformed");
   }
 
-  public function legal_extension_test() {
-    foreach (array("test.gif", "test.GIF", "test.Gif", "test.jpeg", "test.JPG") as $name) {
+  public function legal_extension_that_does_match_gets_used_test() {
+    foreach (array("jpg", "JPG", "Jpg", "jpeg") as $extension) {
       $photo = test::random_photo_unsaved(item::root());
-      $photo->name = $name;
+      $photo->name = test::random_name() . ".{$extension}";
       $photo->save();
+      // Should get renamed with the correct jpg extension of the data file.
+      $this->assert_equal($extension, pathinfo($photo->name, PATHINFO_EXTENSION));
     }
   }
 
   public function illegal_extension_test() {
     foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
                    "test.pl", "test.php.png") as $name) {
-      try {
-        $photo = test::random_photo_unsaved(item::root());
-        $photo->name = $name;
-        $photo->save();
-      } catch (ORM_Validation_Exception $e) {
-        $this->assert_equal(array("name" => "illegal_data_file_extension"),
-                            $e->validation->errors());
-        continue;
-      }
-      $this->assert_true(false, "Shouldn't get here");
+      $photo = test::random_photo_unsaved(item::root());
+      $photo->name = $name;
+      $photo->save();
+      // Should get renamed with the correct jpg extension of the data file.
+      $this->assert_equal("jpg", pathinfo($photo->name, PATHINFO_EXTENSION));
     }
   }
 
   public function cant_rename_to_illegal_extension_test() {
     foreach (array("test.php.test", "test.php", "test.PHP",
                    "test.php5", "test.php4", "test.pl") as $name) {
-      try {
-        $photo = test::random_photo(item::root());
-        $photo->name = $name;
-        $photo->save();
-      } catch (ORM_Validation_Exception $e) {
-        $this->assert_equal(array("name" => "illegal_data_file_extension"),
-                            $e->validation->errors());
-        continue;
-      }
-      $this->assert_true(false, "Shouldn't get here");
+      $photo = test::random_photo(item::root());
+      $photo->name = $name;
+      $photo->save();
+      // Should get renamed with the correct jpg extension of the data file.
+      $this->assert_equal("jpg", pathinfo($photo->name, PATHINFO_EXTENSION));
+    }
+  }
+
+  public function legal_extension_that_doesnt_match_gets_fixed_test() {
+    foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
+      $photo = test::random_photo_unsaved(item::root());
+      $photo->name = $name;
+      $photo->save();
+      // Should get renamed with the correct jpg extension of the data file.
+      $this->assert_equal("jpg", pathinfo($photo->name, PATHINFO_EXTENSION));
+    }
+  }
+
+  public function rename_to_legal_extension_that_doesnt_match_gets_fixed_test() {
+    foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
+      $photo = test::random_photo(item::root());
+      $photo->name = $name;
+      $photo->save();
+      // Should get renamed with the correct jpg extension of the data file.
+      $this->assert_equal("jpg", pathinfo($photo->name, PATHINFO_EXTENSION));
     }
   }
 

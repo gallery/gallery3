@@ -1469,6 +1469,7 @@ class ORM_Core {
 
 		// Load the result
 		$result = $this->db_builder->execute($this->db);
+                $this->db_applied = array();
 
 		if ($array === TRUE)
 		{

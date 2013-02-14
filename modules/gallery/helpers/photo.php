@@ -94,10 +94,8 @@ class photo_Core {
    *   Input is *not* standard photo type that is supported by getimagesize (e.g. tif, bmp...)
    *     -> return metadata from getimagesize()
    *   Input is *not* standard photo type that is *not* supported by getimagesize but is legal
-   *     -> return zero width and height, mime type and extension according to legal_file
-   *   Input is *not* standard photo type that is *not* supported by getimagesize and is *not* legal
-   *     -> return zero width and height, null mime type and extension
-   *   Input is not readable or does not exist
+   *     -> return metadata if found by photo_get_file_metadata events
+   *   Input is illegal, unidentifiable, unreadable, or does not exist
    *     -> throw exception
    * Note: photo_get_file_metadata events can change any of the above cases (except the last one).
    */
@@ -133,8 +131,15 @@ class photo_Core {
       $metadata->height = 0;
     }
 
-    // Run photo_get_file_metadata events which can modify the class, then return results.
+    // Run photo_get_file_metadata events which can modify the class.
     module::event("photo_get_file_metadata", $file_path, $metadata);
+
+    // If the post-events results are invalid, throw an exception.
+    if (!$metadata->width || !$metadata->height || !$metadata->mime_type || !$metadata->extension ||
+        ($metadata->mime_type != legal_file::get_photo_types_by_extension($metadata->extension))) {
+      throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
+    }
+
     return array($metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension);
   }
 }
