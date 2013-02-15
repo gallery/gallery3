@@ -8,7 +8,7 @@
   <p>
     <?= t("Although popular, FFmpeg is not installed on all Linux systems.") ?>
     <?= t("To use FFmpeg without fully installing it, download a pre-compiled, <b>static build</b> of FFmpeg from one of the links <a href=\"%url\">here</a>.", array("url" => "http://ffmpeg.org/download.html")) ?>
-    <?= t("Then, put the \"ffmpeg\" file in Gallery's \"bin\" directory (e.g. \"/gallery/bin\"), where Gallery will auto-detect it.") ?>
+    <?= t("Then, put the \"ffmpeg\" file in Gallery's \"bin\" directory (e.g. \"/gallery3/bin\"), where Gallery will auto-detect it.") ?>
   </p>
   <p>
     <?= t("Movies will work without FFmpeg, but their thumbnails will be placeholders.") ?>
