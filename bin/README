@@ -1,0 +1,5 @@
+This directory contains utility software that Gallery uses to perform
+image manipulation and other useful functions.  It should not be
+accessible from a web browser, and by default it's empty.  Gallery
+will instruct you when it's appropriate to download software and
+install it here.
