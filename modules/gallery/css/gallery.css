@@ -149,6 +149,15 @@
   text-align: center;
 }
 
+/* Dialogs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/**
+ * Newer Themeroller-based themes do this on their own, but older
+ * themes need help ensuring that dialogs and overlays are on top
+ */
+.ui-front {
+  z-index: 1000
+}
+
 /** *******************************************************************
  * 2) Admin
  **********************************************************************/

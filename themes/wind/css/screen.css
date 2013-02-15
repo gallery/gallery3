@@ -886,10 +886,6 @@ ul.sf-menu li li li.sfHover ul {
   opacity: .7;
 }
 
-.ui-dialog {
-  z-index: 9999;
-}
-
 /* Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-button {
