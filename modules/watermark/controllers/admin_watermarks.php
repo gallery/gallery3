@@ -97,23 +97,19 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     // validation logic will correctly reject it.  So, we skip validation when we're running tests.
     if (TEST_MODE || $form->validate()) {
       $file = $_POST["file"];
-      $pathinfo = pathinfo($file);
       // Forge prefixes files with "uploadfile-xxxxxxx" for uniqueness
-      $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
-      $name = legal_file::smash_extensions($name);
+      $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', basename($file));
 
-      list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
-      if (!$width || !$height || !$mime_type || !$extension ||
-          !legal_file::get_photo_extensions($extension)) {
+      try {
+        list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
+        // Sanitize filename, which ensures a valid extension.  This renaming prevents the issues
+        // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
+        // php extension was previously accepted without changing its extension.
+        $name = legal_file::sanitize_filename($name, $extension, "photo");
+      } catch (Exception $e) {
         message::error(t("Invalid or unidentifiable image file"));
         @unlink($file);
         return;
-      } else {
-        // Force correct, legal extension type on file, which will be of our canonical type
-        // (i.e. all lowercase, jpg instead of jpeg, etc.).  This renaming prevents the issues
-        // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
-        // php extension was previously accepted without changing its extension.
-        $name = legal_file::change_extension($name, $extension);
       }
 
       rename($file, VARPATH . "modules/watermark/$name");

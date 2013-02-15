@@ -110,7 +110,14 @@ class Search_Controller extends Controller {
                    Breadcrumb::instance($item->title, $item->url())->set_last()));
   }
 
-  static function get_siblings($q, $album) {
-    return search::search_within_album(search::add_query_terms($q), $album, 1000, 1)[1];
+  static function get_siblings($q, $album, $limit, $offset) {
+    if (!isset($limit)) {
+      $limit = 100;
+    }
+    if (!isset($offset)) {
+      $offset = 1;
+    }
+    $result = search::search_within_album(search::add_query_terms($q), $album, $limit, $offset);
+    return $result[1];
   }
 }

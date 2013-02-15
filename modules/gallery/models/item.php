@@ -21,6 +21,7 @@ class Item_Model_Core extends ORM_MPTT {
   protected $children = "items";
   protected $sorting = array();
   public $data_file = null;
+  private $data_file_error = null;
 
   public function __construct($id=null) {
     parent::__construct($id);
@@ -129,10 +130,11 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return the server-relative url to this item, eg:
-   *   /gallery3/index.php/BobsWedding?page=2
-   *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *   album: /gallery3/index.php/Bobs%20Wedding?page=2
+   *   photo: /gallery3/index.php/Bobs%20Wedding/Eating-Cake
+   *   movie: /gallery3/index.php/Bobs%20Wedding/First-Dance
    *
-   * @param string $query the query string (eg "show=3")
+   * @param string $query the query string (eg "page=2")
    */
   public function url($query=null) {
     $url = url::site($this->relative_url());
@@ -144,10 +146,11 @@ class Item_Model_Core extends ORM_MPTT {
 
   /**
    * Return the full url to this item, eg:
-   *   http://example.com/gallery3/index.php/BobsWedding?page=2
-   *   http://example.com/gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *   album: http://example.com/gallery3/index.php/Bobs%20Wedding?page=2
+   *   photo: http://example.com/gallery3/index.php/Bobs%20Wedding/Eating-Cake
+   *   movie: http://example.com/gallery3/index.php/Bobs%20Wedding/First-Dance
    *
-   * @param string $query the query string (eg "show=3")
+   * @param string $query the query string (eg "page=2")
    */
   public function abs_url($query=null) {
     $url = url::abs_site($this->relative_url());
@@ -158,16 +161,24 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/albums/album1/album2
-   * photo: /var/albums/album1/album2/photo.jpg
+   * Return the full path to this item's file, eg:
+   *   album: /usr/home/www/gallery3/var/albums/Bobs Wedding
+   *   photo: /usr/home/www/gallery3/var/albums/Bobs Wedding/Eating-Cake.jpg
+   *   movie: /usr/home/www/gallery3/var/albums/Bobs Wedding/First-Dance.mp4
    */
   public function file_path() {
     return VARPATH . "albums/" . urldecode($this->relative_path());
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/
-   * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
+   * Return the relative url to this item's file, with cache buster, eg:
+   *   album: var/albums/Bobs%20Wedding?m=1234567890
+   *   photo: var/albums/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: var/albums/Bobs%20Wedding/First-Dance.mp4?m=1234567890
+   * If $full_uri==true, return the full url to this item's file, with cache buster, eg:
+   *   album: http://example.com/gallery3/var/albums/Bobs%20Wedding?m=1234567890
+   *   photo: http://example.com/gallery3/var/albums/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: http://example.com/gallery3/var/albums/Bobs%20Wedding/First-Dance.mp4?m=1234567890
    */
   public function file_url($full_uri=false) {
     $relative_path = "var/albums/" . $this->relative_path();
@@ -177,8 +188,10 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/resizes/album1/.thumb.jpg
-   * photo: /var/albums/album1/photo.thumb.jpg
+   * Return the full path to this item's thumb, eg:
+   *   album: /usr/home/www/gallery3/var/thumbs/Bobs Wedding/.album.jpg
+   *   photo: /usr/home/www/gallery3/var/thumbs/Bobs Wedding/Eating-Cake.jpg
+   *   movie: /usr/home/www/gallery3/var/thumbs/Bobs Wedding/First-Dance.jpg
    */
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
@@ -200,8 +213,14 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
-   * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
+   * Return the relative url to this item's thumb, with cache buster, eg:
+   *   album: var/thumbs/Bobs%20Wedding/.album.jpg?m=1234567890
+   *   photo: var/thumbs/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: var/thumbs/Bobs%20Wedding/First-Dance.mp4?m=1234567890
+   * If $full_uri==true, return the full url to this item's file, with cache buster, eg:
+   *   album: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/.album.jpg?m=1234567890
+   *   photo: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/First-Dance.mp4?m=1234567890
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = $this->_cache_buster($this->thumb_path());
@@ -219,8 +238,11 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: /var/resizes/album1/.resize.jpg
-   * photo: /var/albums/album1/photo.resize.jpg
+   * Return the full path to this item's resize, eg:
+   *   album: /usr/home/www/gallery3/var/resizes/Bobs Wedding/.album.jpg      (*)
+   *   photo: /usr/home/www/gallery3/var/resizes/Bobs Wedding/Eating-Cake.jpg
+   *   movie: /usr/home/www/gallery3/var/resizes/Bobs Wedding/First-Dance.mp4 (*)
+   * (*) Since only photos have resizes, album and movie paths are fictitious.
    */
   public function resize_path() {
     return VARPATH . "resizes/" . urldecode($this->relative_path()) .
@@ -228,8 +250,15 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
-   * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
+   * Return the relative url to this item's resize, with cache buster, eg:
+   *   album: var/resizes/Bobs%20Wedding/.album.jpg?m=1234567890      (*)
+   *   photo: var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: var/resizes/Bobs%20Wedding/First-Dance.mp4?m=1234567890 (*)
+   * If $full_uri==true, return the full url to this item's file, with cache buster, eg:
+   *   album: http://example.com/gallery3/var/resizes/Bobs%20Wedding/.album.jpg?m=1234567890      (*)
+   *   photo: http://example.com/gallery3/var/resizes/Bobs%20Wedding/Eating-Cake.jpg?m=1234567890
+   *   movie: http://example.com/gallery3/var/resizes/Bobs%20Wedding/First-Dance.mp4?m=1234567890 (*)
+   * (*) Since only photos have resizes, album and movie urls are fictitious.
    */
   public function resize_url($full_uri=false) {
     $relative_path = "var/resizes/" . $this->relative_path();
@@ -336,6 +365,14 @@ class Item_Model_Core extends ORM_MPTT {
           $this->weight = item::get_max_weight();
         }
 
+        // Process the data file info.
+        if (isset($this->data_file)) {
+          $this->_process_data_file_info();
+        } else if (!$this->is_album()) {
+          // Unless it's an album, new items must have a data file.
+          $this->data_file_error = true;
+        }
+
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
           $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
@@ -345,23 +382,6 @@ class Item_Model_Core extends ORM_MPTT {
           // check_and_fix_conflicts to ensure it doesn't conflict with another name.
           if (empty($this->slug)) {
             $this->slug = $this->type;
-          }
-        }
-
-        // Get the width, height and mime type from our data file for photos and movies.
-        if ($this->is_photo() || $this->is_movie()) {
-          if ($this->is_photo()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              photo::get_file_metadata($this->data_file);
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              movie::get_file_metadata($this->data_file);
-          }
-
-          // Force an extension onto the name if necessary
-          $pi = pathinfo($this->data_file);
-          if (empty($pi["extension"])) {
-            $this->name = "{$this->name}.$extension";
           }
         }
 
@@ -402,24 +422,19 @@ class Item_Model_Core extends ORM_MPTT {
         // keep it around.
         $original = ORM::factory("item", $this->id);
 
-        // Preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
+        // If we have a new data file, process its info.  This will get its metadata and
+        // preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
         // the MIME type from the extension. So when we adopt the new data file, it's important
         // to adopt the new extension. That ensures that the item's extension is always
         // appropriate for its data. We don't try to preserve the name of the data file, though,
         // because the name is typically a temporary randomly-generated name.
         if (isset($this->data_file)) {
-          $extension = pathinfo($this->data_file, PATHINFO_EXTENSION);
-          $new_name = pathinfo($this->name, PATHINFO_FILENAME) . ".$extension";
-          if (!empty($extension) && strcmp($this->name, $new_name)) {
-            $this->name = $new_name;
-          }
-          if ($this->is_photo()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              photo::get_file_metadata($this->data_file);
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height, $this->mime_type, $extension) =
-              movie::get_file_metadata($this->data_file);
-          }
+          $this->_process_data_file_info();
+        } else if (!$this->is_album() && array_key_exists("name", $this->changed)) {
+          // There's no new data file, but the name changed.  If it's a photo or movie,
+          // make sure the new name still agrees with the file type.
+          $this->name = legal_file::sanitize_filename($this->name,
+            pathinfo($original->name, PATHINFO_EXTENSION), $this->type);
         }
 
         // If an album's cover has changed (or been removed), delete any existing album cover,
@@ -496,13 +511,6 @@ class Item_Model_Core extends ORM_MPTT {
         // Replace the data file, if requested.
         if ($this->data_file && ($this->is_photo() || $this->is_movie())) {
           copy($this->data_file, $this->file_path());
-
-          // Get the width, height and mime type from our data file for photos and movies.
-          if ($this->is_photo()) {
-            list ($this->width, $this->height) = photo::get_file_metadata($this->file_path());
-          } else if ($this->is_movie()) {
-            list ($this->width, $this->height) = movie::get_file_metadata($this->file_path());
-          }
           $this->thumb_dirty = 1;
           $this->resize_dirty = 1;
         }
@@ -584,6 +592,40 @@ class Item_Model_Core extends ORM_MPTT {
         $this->relative_path_cache = null;
         $this->relative_url_cache = null;
       }
+    }
+  }
+
+  /**
+   * Process the data file info.  Get its metadata and extension.
+   * If valid, use it to sanitize the item name and update the
+   * width, height, and mime type.
+   */
+  private function _process_data_file_info() {
+    try {
+      if ($this->is_photo()) {
+        list ($this->width, $this->height, $this->mime_type, $extension) =
+          photo::get_file_metadata($this->data_file);
+      } else if ($this->is_movie()) {
+        list ($this->width, $this->height, $this->mime_type, $extension) =
+          movie::get_file_metadata($this->data_file);
+      } else {
+        // Albums don't have data files.
+        $this->data_file = null;
+        return;
+      }
+
+      // Sanitize the name based on the idenified extension, but only set $this->name if different
+      // to ensure it isn't unnecessarily marked as "changed"
+      $name = legal_file::sanitize_filename($this->name, $extension, $this->type);
+      if ($this->name != $name) {
+        $this->name = $name;
+      }
+
+      // Data file valid - make sure the flag is reset to false.
+      $this->data_file_error = false;
+    } catch (Exception $e) {
+      // Data file invalid - set the flag so it's reported during item validation.
+      $this->data_file_error = true;
     }
   }
 
@@ -938,6 +980,8 @@ class Item_Model_Core extends ORM_MPTT {
       $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
       $v->add_error("name", "empty_data_file");
+    } else if ($this->data_file_error) {
+      $v->add_error("name", "invalid_data_file");
     }
   }
 

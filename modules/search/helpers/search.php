@@ -132,11 +132,12 @@ class search_Core {
 
   static function get_position_within_album($item, $q, $album) {
     $page_size = module::get_var("gallery", "page_size", 9);
-    $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id));
+    $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
+      "ORDER BY `score` DESC ";
     $db = Database::instance();
 
     // Truncate the score by two decimal places as this resolves the issues
-    // that arise due to in exact numeric conversions.
+    // that arise due to inexact numeric conversions.
     $current = $db->query($query)->current();
     if (!$current) {
       // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
@@ -149,7 +150,10 @@ class search_Core {
       $score = substr($score, 0, strlen($score) - 2);
     }
 
-    $data = $db->query(self::_build_query_base($q, $album) . " HAVING `score` >= " . $score);
+    // Redo the query but only look for results greater than or equal to our current location
+    // then seek backwards until we find our item.
+    $data = $db->query(self::_build_query_base($q, $album) . " HAVING `score` >= " . $score .
+                       "ORDER BY `score` DESC ");
     $data->seek($data->count() - 1);
 
     while ($data->get("id") != $item->id && $data->prev()->valid()) {

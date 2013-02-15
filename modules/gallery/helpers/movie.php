@@ -24,6 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class movie_Core {
+  private static $allow_uploads;
+
   static function get_edit_form($movie) {
     $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
     $form->hidden("from_id")->value($movie->id);
@@ -110,6 +112,29 @@ class movie_Core {
   }
 
   /**
+   * Return true if movie uploads are allowed, false if not.  This is based on the
+   * "movie_allow_uploads" Gallery variable as well as whether or not ffmpeg is found.
+   */
+  static function allow_uploads() {
+    if (empty(self::$allow_uploads)) {
+      // Refresh ffmpeg settings
+      $ffmpeg = movie::find_ffmpeg();
+      switch (module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
+        case "always":
+          self::$allow_uploads = true;
+          break;
+        case "never":
+          self::$allow_uploads = false;
+          break;
+        default:
+          self::$allow_uploads = !empty($ffmpeg);
+          break;
+      }
+    }
+    return self::$allow_uploads;
+  }
+
+  /**
    * Return the path to the ffmpeg binary if one exists and is executable, or null.
    */
   static function find_ffmpeg() {
@@ -119,6 +144,34 @@ class movie_Core {
       module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
     }
     return $ffmpeg_path;
+  }
+
+  /**
+   * Return version number and build date of ffmpeg if found, empty string(s) if not.  When using
+   * static builds that aren't official releases, the version numbers are strange, hence why the
+   * date can be useful.
+   */
+  static function get_ffmpeg_version() {
+    $ffmpeg = movie::find_ffmpeg();
+    if (empty($ffmpeg)) {
+      return array("", "");
+    }
+
+    // Find version using -h argument since -version wasn't available in early versions.
+    // To keep the preg_match searches quick, we'll trim the (otherwise long) result.
+    $cmd = escapeshellcmd($ffmpeg) . " -h 2>&1";
+    $result = substr(`$cmd`, 0, 1000);
+    if (preg_match("/ffmpeg version (\S+)/i", $result, $matches_version)) {
+      // Version number found - see if we can get the build date or copyright year as well.
+      if (preg_match("/built on (\S+\s\S+\s\S+)/i", $result, $matches_build_date)) {
+        return array(trim($matches_version[1], ","), trim($matches_build_date[1], ","));
+      } else if (preg_match("/copyright \S*\s?2000-(\d{4})/i", $result, $matches_copyright_date)) {
+        return array(trim($matches_version[1], ","), $matches_copyright_date[1]);
+      } else {
+        return array(trim($matches_version[1], ","), "");
+      }
+    }
+    return array("", "");
   }
 
   /**
@@ -138,9 +191,7 @@ class movie_Core {
    *     -> return metadata from ffmpeg
    *   Input is *not* standard movie type that is *not* supported by ffmpeg but is legal
    *     -> return zero width, height, and duration; mime type and extension according to legal_file
-   *   Input is *not* standard movie type that is *not* supported by ffmpeg and is *not* legal
-   *     -> return zero width, height, and duration; null mime type and extension
-   *   Input is not readable or does not exist
+   *   Input is illegal, unidentifiable, unreadable, or does not exist
    *     -> throw exception
    * Note: movie_get_file_metadata events can change any of the above cases (except the last one).
    */
@@ -192,8 +243,16 @@ class movie_Core {
       $metadata->extension = strtolower($extension);
     }
 
-    // Run movie_get_file_metadata events which can modify the class, then return results.
+    // Run movie_get_file_metadata events which can modify the class.
     module::event("movie_get_file_metadata", $file_path, $metadata);
+
+    // If the post-events results are invalid, throw an exception.  Note that, unlike photos, having
+    // zero width and height isn't considered invalid (as is the case when FFmpeg isn't installed).
+    if (!$metadata->mime_type || !$metadata->extension ||
+        ($metadata->mime_type != legal_file::get_movie_types_by_extension($metadata->extension))) {
+      throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
+    }
+
     return array($metadata->width, $metadata->height, $metadata->mime_type,
                  $metadata->extension, $metadata->duration);
   }
