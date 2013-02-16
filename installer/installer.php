@@ -243,11 +243,6 @@ class installer {
       $errors[] = "Gallery cannot function when PHP is in <a href=\"http://php.net/manual/en/features.safe-mode.php\">Safe Mode</a>.  Please disable safe mode.";
     }
 
-    if (function_exists("zend_current_obfuscation_level") && (zend_current_obfuscation_level() >= 3)) {
-      $errors[] = "Gallery doesn't use <a href=\"http://www.zend.com/en/products/guard\">Zend Guard code obfuscation</a>, and is incompatible if it's running " .
-        "with a level of 3 or higher.  Please edit your main php.ini file and change/add the following line: 'zend_loader.obfuscation_level_support = 2'";
-    }
-
     return @$errors;
   }
 
