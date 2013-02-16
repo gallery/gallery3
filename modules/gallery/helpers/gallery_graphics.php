@@ -36,6 +36,7 @@ class gallery_graphics_Core {
       // A graphics_rotate event made an image - move it to output_file and use it.
       @rename($temp_file, $output_file);
     } else {
+      Event::add("system.shutdown", create_function("", "@unlink(\"$temp_file\");"));
       // No events made an image - proceed with standard process.
       if (@filesize($input_file) == 0) {
         throw new Exception("@todo EMPTY_INPUT_FILE");
@@ -74,6 +75,7 @@ class gallery_graphics_Core {
       // A graphics_resize event made an image - move it to output_file and use it.
       @rename($temp_file, $output_file);
     } else {
+      Event::add("system.shutdown", create_function("", "@unlink(\"$temp_file\");"));
       // No events made an image - proceed with standard process.
       if (@filesize($input_file) == 0) {
         throw new Exception("@todo EMPTY_INPUT_FILE");
@@ -139,6 +141,7 @@ class gallery_graphics_Core {
         // A graphics_composite event made an image - move it to output_file and use it.
         @rename($temp_file, $output_file);
       } else {
+        Event::add("system.shutdown", create_function("", "@unlink(\"$temp_file\");"));
         // No events made an image - proceed with standard process.
 
         list ($width, $height) = photo::get_file_metadata($input_file);
