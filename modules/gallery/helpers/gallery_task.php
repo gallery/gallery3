@@ -290,6 +290,11 @@ class gallery_task_Core {
                 continue;
               }
 
+              // Ignore directories for now, but we should really address them in the long term.
+              if (is_dir("$dir/$file")) {
+                continue;
+              }
+
               if (filemtime("$dir/$file") <= $threshold) {
                 $files[] = "$dir/$file";
               }
