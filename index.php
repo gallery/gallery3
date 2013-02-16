@@ -29,13 +29,6 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
   exit("Gallery is not supported on Windows (PHP reports that you're using: " . PHP_OS . ")");
 }
 
-// Gallery doesn't use Zend Guard code obfuscation, and Kohana 2.4 will not work if level is 3+.
-if (function_exists("zend_current_obfuscation_level") && (zend_current_obfuscation_level() >= 3)) {
-  exit("Gallery doesn't use Zend Guard code obfuscation, and is incompatible if it's running " .
-       "with a level of 3 or higher.  For Gallery to run, please edit your main php.ini file and " .
-       "change/add the following line: 'zend_loader.obfuscation_level_support = 2'");
-}
-
 // PHP 5.4 requires a timezone - if one isn't set date functions aren't going to work properly.
 // We'll log this once the logging system is initialized (in the gallery_event::gallery_ready).
 if (!ini_get("date.timezone")) {
