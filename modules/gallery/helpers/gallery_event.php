@@ -36,6 +36,34 @@ class gallery_event_Core {
     locales::set_request_locale();
   }
 
+  static function gallery_shutdown() {
+    // Every 500th request, do a pass over var/logs and var/tmp and delete old files.
+    // Limit ourselves to deleting a single file so that we don't spend too much CPU
+    // time on it.  As long as servers call this at least twice a day they'll eventually
+    // wind up with a clean var/logs directory because we only create 1 file a day there.
+    // var/tmp might be stickier because theoretically we could wind up spamming that
+    // dir with a lot of files.  But let's start with this and refine as we go.
+    if (!(rand() % 500)) {
+      // Note that this code is roughly duplicated in gallery_event::gallery_shutdown
+      $threshold = time() - 1209600; // older than 2 weeks
+      foreach(array("logs", "tmp") as $dir) {
+        $dir = VARPATH . $dir;
+        if ($dh = opendir($dir)) {
+          while (($file = readdir($dh)) !== false) {
+            if ($file[0] == ".") {
+              continue;
+            }
+
+            if (filemtime("$dir/$file") <= $threshold) {
+              unlink("$dir/$file");
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
   static function user_deleted($user) {
     $admin = identity::admin_user();
     if (!empty($admin)) {          // could be empty if there is not identity provider
