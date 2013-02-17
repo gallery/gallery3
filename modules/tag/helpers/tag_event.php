@@ -124,7 +124,7 @@ class tag_event_Core {
       ->text("$('input[name=tags]')
                 .gallery_autocomplete(
                   '$autocomplete_url',
-                  {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1}
+                  {multiple: true}
                 );
               $('input[name=tags]')
                 .change(function (event) {
