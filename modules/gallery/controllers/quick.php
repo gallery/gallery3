@@ -41,7 +41,6 @@ class Quick_Controller extends Controller {
       gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees), $item);
       $item->set_data_file($tmpfile);
       $item->save();
-      unlink($tmpfile);
     }
 
     if (Input::instance()->get("page_type") == "collection") {
