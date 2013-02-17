@@ -5,10 +5,7 @@
 $("document").ready(function() {
   $("form input[name=embed_path]").gallery_autocomplete(
     "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
-    {
-      max: 256,
-      loadingClass: "g-loading-small",
-    });
+    {});
 });
 </script>
 
