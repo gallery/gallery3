@@ -281,11 +281,17 @@ class gallery_task_Core {
       switch ($task->get("mode", "init")) {
       case "init":
         $threshold = time() - 1209600; // older than 2 weeks
+        // Note that this code is roughly duplicated in gallery_event::gallery_shutdown
         foreach(array("logs", "tmp") as $dir) {
           $dir = VARPATH . $dir;
           if ($dh = opendir($dir)) {
             while (($file = readdir($dh)) !== false) {
               if ($file[0] == ".") {
+                continue;
+              }
+
+              // Ignore directories for now, but we should really address them in the long term.
+              if (is_dir("$dir/$file")) {
                 continue;
               }
 
