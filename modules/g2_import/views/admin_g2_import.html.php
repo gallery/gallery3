@@ -25,9 +25,9 @@ $("document").ready(function() {
       .tabs("disable", 1)
       .tabs("disable", 2)
       <? elseif ($g3_resource_count > .9 * $g2_resource_count):  ?>
-      .tabs("select", 2)
+      .tabs({active: 2})
       <? else: ?>
-      .tabs("select", 1)
+      .tabs({active: 1})
       <? endif ?>
       ;
 
