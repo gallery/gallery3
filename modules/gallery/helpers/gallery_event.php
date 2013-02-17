@@ -44,7 +44,7 @@ class gallery_event_Core {
     // var/tmp might be stickier because theoretically we could wind up spamming that
     // dir with a lot of files.  But let's start with this and refine as we go.
     if (!(rand() % 500)) {
-      // Note that this code is roughly duplicated in gallery_event::gallery_shutdown
+      // Note that this code is roughly duplicated in gallery_task::file_cleanup
       $threshold = time() - 1209600; // older than 2 weeks
       foreach(array("logs", "tmp") as $dir) {
         $dir = VARPATH . $dir;
@@ -67,6 +67,8 @@ class gallery_event_Core {
         }
       }
     }
+    // Delete all files marked using system::delete_later.
+    system::delete_marked_files();
   }
 
   static function user_deleted($user) {

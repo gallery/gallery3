@@ -67,7 +67,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     $form = watermark::get_delete_form();
     if ($form->validate()) {
       if ($name = basename(module::get_var("watermark", "name"))) {
-        @unlink(VARPATH . "modules/watermark/$name");
+        system::delete_later(VARPATH . "modules/watermark/$name");
 
         module::clear_var("watermark", "name");
         module::clear_var("watermark", "width");
@@ -108,7 +108,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         $name = legal_file::sanitize_filename($name, $extension, "photo");
       } catch (Exception $e) {
         message::error(t("Invalid or unidentifiable image file"));
-        @unlink($file);
+        system::delete_later($file);
         return;
       }
 
@@ -120,7 +120,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       module::set_var("watermark", "position", $form->add_watermark->position->value);
       module::set_var("watermark", "transparency", $form->add_watermark->transparency->value);
       $this->_update_graphics_rules();
-      @unlink($file);
+      system::delete_later($file);
 
       message::success(t("Watermark saved"));
       log::success("watermark", t("Watermark saved"));
