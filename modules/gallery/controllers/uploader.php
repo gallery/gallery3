@@ -55,7 +55,7 @@ class Uploader_Controller extends Controller {
 
     if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
-      Event::add("system.shutdown", create_function("", "unlink(\"$temp_filename\");"));
+      system::delete_later($temp_filename);
       try {
         $item = ORM::factory("item");
         $item->name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
