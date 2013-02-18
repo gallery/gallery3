@@ -37,6 +37,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     copy(MODPATH . "gallery/tests/test.jpg", TMPPATH . "test_jpg_with_no_extension");
     $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
                         photo::get_file_metadata(TMPPATH . "test_jpg_with_no_extension"));
+    unlink(TMPPATH . "test_jpg_with_no_extension");
   }
 
   public function get_file_metadata_with_illegal_extension_test() {
@@ -56,6 +57,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     copy(MODPATH . "gallery/tests/test.jpg", TMPPATH . "test_jpg_with_php_extension.php");
     $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
                         photo::get_file_metadata(TMPPATH . "test_jpg_with_php_extension.php"));
+    unlink(TMPPATH . "test_jpg_with_php_extension.php");
   }
 
   public function get_file_metadata_with_valid_extension_but_illegal_file_contents_test() {
@@ -66,5 +68,6 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     } catch (Exception $e) {
       // pass
     }
+    unlink(TMPPATH . "test_php_with_jpg_extension.jpg");
   }
 }
