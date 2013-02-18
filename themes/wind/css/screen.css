@@ -948,12 +948,6 @@ button {
   display: inline-block;
 }
 
-/* Autocomplete */
-
-.ui-autocomplete {
-  text-align: left;
-}
-
 /* Status and validation messages ~~~~ */
 
 .g-message-block {
