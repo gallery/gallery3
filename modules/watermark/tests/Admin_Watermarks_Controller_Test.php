@@ -68,6 +68,9 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $controller->add();
     $results = ob_get_clean();
 
+    // Delete all files marked using system::delete_later (from gallery_event::gallery_shutdown)
+    system::delete_marked_files();
+
     // Add should *not* be successful, and watermark should be deleted
     $this->assert_equal("", $results);
     $this->assert_false(file_exists($watermark_path));
@@ -114,6 +117,9 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     ob_start();
     $controller->add();
     $results = ob_get_clean();
+
+    // Delete all files marked using system::delete_later (from gallery_event::gallery_shutdown)
+    system::delete_marked_files();
 
     // Add should *not* be successful, and watermark should be deleted
     $this->assert_equal("", $results);
