@@ -7,7 +7,11 @@
     </legend>
     <ul>
       <li>
-        <label for="q"><?= t("Search the gallery") ?></label>
+        <? if ($album->id == item::root()->id): ?>
+          <label for="q"><?= t("Search the gallery") ?></label>
+        <? else: ?>
+          <label for="q"><?= t("Search this album") ?></label>
+        <? endif; ?>
         <input name="album" type="hidden" value="<?= html::clean_attribute($album->id) ?>" />
         <input name="q" id="q" type="text" value="<?= html::clean_attribute($q) ?>" class="text" />
       </li>
