@@ -39,8 +39,6 @@ modules/comment/views/comments.html.php                      31  DIRTY_ATTR $com
 modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $comment->id
 modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comment->item()->url()
 modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img(array(),50)
-modules/digibug/views/digibug_form.html.php                  4   DIRTY    form::open("http://www.digibug.com/dapi/order.php")
-modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::hidden($key,$value)
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
 modules/g2_import/views/admin_g2_import.html.php             7   DIRTY_JS url::site("__ARGS__")
@@ -343,13 +341,12 @@ modules/rss/views/feed.mrss.php                              67  DIRTY_ATTR $ite
 modules/rss/views/feed.mrss.php                              68  DIRTY_ATTR $item->height
 modules/rss/views/feed.mrss.php                              69  DIRTY_ATTR $item->width
 modules/rss/views/rss_block.html.php                         6   DIRTY_JS rss::url($url)
-modules/search/views/search.html.php                         39  DIRTY_ATTR $item_class
-modules/search/views/search.html.php                         40  DIRTY_JS $item->url()
-modules/search/views/search.html.php                         41  DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
 modules/search/views/search.html.php                         43  DIRTY_ATTR $item_class
-modules/search/views/search.html.php                         53  DIRTY    $theme->paginator()
-modules/search/views/search_link.html.php                    14  DIRTY_ATTR $item->id
-modules/search/views/search_link.html.php                    16  DIRTY_ATTR $item->parent_id
+modules/search/views/search.html.php                         44  DIRTY_JS $item->url()
+modules/search/views/search.html.php                         45  DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
+modules/search/views/search.html.php                         47  DIRTY_ATTR $item_class
+modules/search/views/search.html.php                         57  DIRTY    $theme->paginator()
+modules/search/views/search_link.html.php                    15  DIRTY_ATTR $album_id
 modules/server_add/views/admin_server_add.html.php           8   DIRTY_JS url::site("__ARGS__")
 modules/server_add/views/admin_server_add.html.php           19  DIRTY    $form
 modules/server_add/views/admin_server_add.html.php           30  DIRTY_ATTR $id
