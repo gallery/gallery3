@@ -90,6 +90,15 @@
         </div>
         <? endif ?>
 
+        <? if ($obsolete_modules_message): ?>
+        <div id="obsolete_modules_message">
+          <p>
+            <span class="failed"><?= t("Warning!") ?></span>
+            <?= $obsolete_modules_message ?>
+          </p>
+        </div>
+        <? endif ?>
+
         <table>
           <tr class="<?= $done ? "muted" : "" ?>">
             <th class="name"> <?= t("Module name") ?> </th>

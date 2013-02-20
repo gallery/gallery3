@@ -46,6 +46,12 @@
     <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Modules")) ?>
   </p>
 
+  <? if ($obsolete_modules_message): ?>
+  <p class="g-warning">
+    <?= $obsolete_modules_message ?>
+  </p>
+  <? endif ?>
+
   <div class="g-block-content">
     <form id="g-module-update-form" method="post" action="<?= url::site("admin/modules/confirm") ?>">
       <?= access::csrf_form_field() ?>

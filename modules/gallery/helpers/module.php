@@ -541,4 +541,34 @@ class module_Core {
   static function get_version($module_name) {
     return module::get($module_name)->version;
   }
+
+  /**
+   * Check if obsolete modules are active and, if so, return a warning message.
+   * If none are found, return null.
+   */
+  static function get_obsolete_modules_message() {
+    // This is the obsolete modules list.  Any active module that's on the list
+    // with version number at or below the one given will be considered obsolete.
+    // It is hard-coded here, and may be updated with future releases of Gallery.
+    $obsolete_modules = array("videos" => 4, "noffmpeg" => 1, "videodimensions" => 1,
+                              "digibug" => 2);
+
+    $modules_found = array();
+    foreach ($obsolete_modules as $module => $version) {
+      if (module::is_active($module) && (module::get_version($module) <= $version)) {
+        $modules_found[] = $module;
+      }
+    }
+
+    if ($modules_found) {
+      // Need this to be on one super-long line or else the localization scanner may not work.
+      // (ref: http://sourceforge.net/apps/trac/gallery/ticket/1321)
+      return t("Recent upgrades to Gallery have made the following modules obsolete: %modules. We recommend that you <a href=\"%url_mod\">deactivate</a> the module(s). For more information, please see the <a href=\"%url_doc\">documentation page</a>.",
+               array("modules" => implode(", ", $modules_found),
+                     "url_mod" => url::site("admin/modules"),
+                     "url_doc" => "http://codex.galleryproject.org/Gallery3:User_guide:Obsolete_modules"));
+    }
+
+    return null;
+  }
 }
