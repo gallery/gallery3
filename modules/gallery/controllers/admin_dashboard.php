@@ -26,6 +26,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $view->sidebar = "<div id=\"g-admin-dashboard-sidebar\">" .
       block_manager::get_html("dashboard_sidebar") .
       "</div>";
+    $view->content->obsolete_modules_message = module::get_obsolete_modules_message();
     print $view;
   }
 

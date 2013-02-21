@@ -46,6 +46,7 @@ class Upgrader_Controller extends Controller {
     $view->available = module::available();
     $view->failed = $failed ? explode(",", $failed) : array();
     $view->done = $available_upgrades == 0;
+    $view->obsolete_modules_message = module::get_obsolete_modules_message();
     print $view;
   }
 

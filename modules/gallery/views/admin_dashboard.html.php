@@ -31,6 +31,13 @@
     });
   });
 </script>
+<div>
+  <? if ($obsolete_modules_message): ?>
+  <p class="g-warning">
+    <?= $obsolete_modules_message ?>
+  </p>
+  <? endif ?>
+</div>
 <div id="g-admin-dashboard">
   <?= $blocks ?>
 </div>
