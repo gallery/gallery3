@@ -2,15 +2,13 @@
 <script type="text/javascript">
   $("#g-add-tag-form").ready(function() {
     var url = $("#g-tag-cloud-autocomplete-url").attr("href");
-    $("#g-add-tag-form input:text").gallery_autocomplete(
-      url, {
-        max: 30,
-        multiple: true,
-        multipleSeparator: ',',
-        cacheLength: 1,
-        selectFirst: false
-      }
-    );
+    function split(val) {
+      return val.split(/,\s*/);
+    }
+    function extract_last(term) {
+      return split(term).pop();
+    }
+    $("#g-add-tag-form input:text").gallery_autocomplete(url, {multiple: true});
     $("#g-add-tag-form").ajaxForm({
       dataType: "json",
       success: function(data) {

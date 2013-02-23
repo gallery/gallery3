@@ -48,18 +48,17 @@ class Tags_Controller extends Controller {
 
   public function autocomplete() {
     $tags = array();
-    $tag_parts = explode(",", Input::instance()->get("q"));
-    $limit = Input::instance()->get("limit");
+    $tag_parts = explode(",", Input::instance()->get("term"));
     $tag_part = ltrim(end($tag_parts));
     $tag_list = ORM::factory("tag")
       ->where("name", "LIKE", Database::escape_for_like($tag_part) . "%")
       ->order_by("name", "ASC")
-      ->limit($limit)
+      ->limit(100)
       ->find_all();
     foreach ($tag_list as $tag) {
-      $tags[] = html::clean($tag->name);
+      $tags[] = (string)html::clean($tag->name);
     }
 
-    ajax::response(implode("\n", $tags));
+    ajax::response(json_encode($tags));
   }
 }

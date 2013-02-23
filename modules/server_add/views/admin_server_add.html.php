@@ -6,10 +6,7 @@
 $("document").ready(function() {
   $("#g-path").gallery_autocomplete(
     "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/server_add/autocomplete"),
-    {
-      max: 256,
-      loadingClass: "g-loading-small",
-    });
+    {multiple: true});
 });
 </script>
 

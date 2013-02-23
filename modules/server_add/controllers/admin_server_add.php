@@ -73,14 +73,14 @@ class Admin_Server_Add_Controller extends Admin_Controller {
   public function autocomplete() {
     $directories = array();
 
-    $path_prefix = Input::instance()->get("q");
+    $path_prefix = Input::instance()->get("term");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
-        $directories[] = html::clean($file);
+        $directories[] = (string)html::clean($file);
       }
     }
 
-    ajax::response(implode("\n", $directories));
+    ajax::response(json_encode($directories));
   }
 
   private function _get_admin_form() {
