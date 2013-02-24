@@ -3,6 +3,7 @@
  */
 
 $(document).ready(function() {
+  var ie_version = $.gallery_ie_version();
 
   // Initialize Superfish menus (hidden, then shown to address IE issue)
   $("#g-site-menu .g-menu").hide().addClass("sf-menu");
@@ -82,12 +83,15 @@ $(document).ready(function() {
         } else {
           var sib_height = $(this).prev().height();
         }
+        if (ie_version <= 8) {
+          sib_height = sib_height + 1;
+        }
         $(this).css("height", sib_height);
         $(this).css("position", "relative");
         $(this).css("top", 0).css("left", 0);
         // Remove the placeholder and hover class from the item
         $(this).removeClass("g-hover-item");
-	$(this).gallery_valign();
+        $(this).gallery_valign();
         $("#g-place-holder").remove();
       }
     );
@@ -95,7 +99,7 @@ $(document).ready(function() {
     // Realign any thumbnails that change so that when we rotate a thumb it stays centered.
     $(".g-item").bind("gallery.change", function() {
       $(".g-item").each(function() {
-	$(this).height($(this).find("img").height() + 2);
+        $(this).height($(this).find("img").height() + 2);
       });
       $(".g-item").equal_heights().gallery_valign();
     });
