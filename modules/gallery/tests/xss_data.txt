@@ -42,7 +42,7 @@ modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comme
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
 modules/g2_import/views/admin_g2_import.html.php             7   DIRTY_JS url::site("__ARGS__")
-modules/g2_import/views/admin_g2_import.html.php             52  DIRTY    $form
+modules/g2_import/views/admin_g2_import.html.php             49  DIRTY    $form
 modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY_ATTR log::severity_class($entry->severity)
 modules/gallery/views/admin_block_log_entries.html.php       8   DIRTY_JS user_profile::url($entry->user->id)
@@ -216,7 +216,7 @@ modules/gallery/views/menu.html.php                          18  DIRTY    $eleme
 modules/gallery/views/menu_ajax_link.html.php                3   DIRTY    $menu->css_id?"id='{$menu->css_id}'":""
 modules/gallery/views/menu_ajax_link.html.php                4   DIRTY_ATTR $menu->css_class
 modules/gallery/views/menu_ajax_link.html.php                5   DIRTY_JS $menu->url
-modules/gallery/views/menu_ajax_link.html.php                7   DIRTY    $menu->ajax_handler
+modules/gallery/views/menu_ajax_link.html.php                7   DIRTY_ATTR $menu->ajax_handler
 modules/gallery/views/menu_dialog.html.php                   3   DIRTY    $menu->css_id?"id='{$menu->css_id}'":""
 modules/gallery/views/menu_dialog.html.php                   4   DIRTY_ATTR $menu->css_class
 modules/gallery/views/menu_dialog.html.php                   5   DIRTY_JS $menu->url
@@ -351,8 +351,8 @@ modules/search/views/search.html.php                         47  DIRTY_ATTR $ite
 modules/search/views/search.html.php                         57  DIRTY    $theme->paginator()
 modules/search/views/search_link.html.php                    15  DIRTY_ATTR $album_id
 modules/server_add/views/admin_server_add.html.php           8   DIRTY_JS url::site("__ARGS__")
-modules/server_add/views/admin_server_add.html.php           19  DIRTY    $form
-modules/server_add/views/admin_server_add.html.php           30  DIRTY_ATTR $id
+modules/server_add/views/admin_server_add.html.php           16  DIRTY    $form
+modules/server_add/views/admin_server_add.html.php           27  DIRTY_ATTR $id
 modules/server_add/views/server_add_tree.html.php            20  DIRTY_ATTR is_dir($file)?"ui-icon-folder-collapsed":"ui-icon-document"
 modules/server_add/views/server_add_tree.html.php            21  DIRTY_ATTR is_dir($file)?"g-directory":"g-file"
 modules/server_add/views/server_add_tree_dialog.html.php     3   DIRTY_JS url::site("server_add/children?path=__PATH__")
@@ -360,8 +360,8 @@ modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY_JS url::s
 modules/server_add/views/server_add_tree_dialog.html.php     21  DIRTY    $tree
 modules/tag/views/admin_tags.html.php                        45  DIRTY_ATTR $tag->id
 modules/tag/views/admin_tags.html.php                        46  DIRTY    $tag->count
-modules/tag/views/tag_block.html.php                         28  DIRTY    $cloud
-modules/tag/views/tag_block.html.php                         30  DIRTY    $form
+modules/tag/views/tag_block.html.php                         26  DIRTY    $cloud
+modules/tag/views/tag_block.html.php                         28  DIRTY    $form
 modules/tag/views/tag_cloud.html.php                         4   DIRTY_ATTR (int)(($tag->count/$max_count)*7)
 modules/tag/views/tag_cloud.html.php                         5   DIRTY    $tag->count
 modules/tag/views/tag_cloud.html.php                         6   DIRTY_JS $tag->url()
