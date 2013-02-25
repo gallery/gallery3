@@ -54,6 +54,8 @@ $(document).ready(function() {
     // Initialize thumbnail hover effect
     $(".g-item").hover(
       function() {
+        // Store original height so we can change it back afterward
+        $(this).attr("data-orig-height", $(this).height());
         // Insert a placeholder to hold the item's position in the grid
         var placeHolder = $(this).clone().attr("id", "g-place-holder");
         $(this).after($(placeHolder));
@@ -77,17 +79,12 @@ $(document).ready(function() {
       },
       function() {
         // Reset item height and position
-        if ($(this).next().height()) {
-          var sib_height = $(this).next().height();
-        } else {
-          var sib_height = $(this).prev().height();
-        }
-        $(this).css("height", sib_height);
+        $(this).css("height", $(this).attr("data-orig-height"));
         $(this).css("position", "relative");
         $(this).css("top", 0).css("left", 0);
         // Remove the placeholder and hover class from the item
         $(this).removeClass("g-hover-item");
-	$(this).gallery_valign();
+        $(this).gallery_valign();
         $("#g-place-holder").remove();
       }
     );
@@ -95,7 +92,7 @@ $(document).ready(function() {
     // Realign any thumbnails that change so that when we rotate a thumb it stays centered.
     $(".g-item").bind("gallery.change", function() {
       $(".g-item").each(function() {
-	$(this).height($(this).find("img").height() + 2);
+        $(this).height($(this).find("img").height() + 2);
       });
       $(".g-item").equal_heights().gallery_valign();
     });
