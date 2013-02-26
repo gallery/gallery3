@@ -66,7 +66,7 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   public function movie_thumbnails_are_jpgs_test() {
     $movie = test::random_movie();
     $name = legal_file::change_extension($movie->name, "jpg");
-    $_SERVER["REQUEST_URI"] = url::file("var/thumbs/{$movie->name}");
+    $_SERVER["REQUEST_URI"] = url::file("var/thumbs/$name");
     $controller = new File_Proxy_Controller();
     $this->assert_same($movie->thumb_path(), $controller->__call("", array()));
   }
