@@ -164,6 +164,10 @@
   text-align: left;
 }
 
+.ui-autocomplete-loading {
+  background: #e8e8e8 url('../images/loading-small.gif') no-repeat center center;
+}
+
 /** *******************************************************************
  * 2) Admin
  **********************************************************************/
