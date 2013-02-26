@@ -1057,9 +1057,3 @@ div#g-action-status {
 .g-inline li.g-first {
   margin-left: 0;
 }
-
-/* Autocomplete  ~~~~~~~~~~ */
-
-.ac_loading {
-  background: white url('../images/loading-small.gif') right center no-repeat !important;
-}

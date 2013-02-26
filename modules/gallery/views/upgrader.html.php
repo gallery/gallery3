@@ -17,7 +17,7 @@
           <a id="dialog_close_link" style="display: none" onclick="$('#dialog').fadeOut(); return false;" href="#" class="close">[x]</a>
           <div id="busy" style="display: none">
             <h1>
-              <img width="16" height="16" src="<?= url::file("themes/wind/images/loading-small.gif") ?>"/>
+              <img width="16" height="16" src="<?= url::file("modules/gallery/images/loading-small.gif") ?>"/>
               <?= t("Upgrade in progress!") ?>
             </h1>
             <p>
