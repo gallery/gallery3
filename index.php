@@ -93,7 +93,7 @@ if (PHP_SAPI == "cli") {
 
   default:
     print "To install:\n";
-    print "  php index.php install -d database -h host -u user -p password -x table_prefix \n\n";
+    print "  php index.php install -d database -h host -u user -p password -x table_prefix -g3p gallery3_admin_password \n\n";
     print "To upgrade:\n";
     print "  php index.php upgrade\n\n";
     print "Developer-only features:\n";
