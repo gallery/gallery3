@@ -6,7 +6,7 @@
 $("document").ready(function() {
   $("#g-path").gallery_autocomplete(
     "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/server_add/autocomplete"),
-    {multiple: true});
+    {});
 });
 </script>
 
