@@ -66,24 +66,8 @@ class File_Proxy_Controller extends Controller {
       throw $e;
     }
 
-    // If the last element is .album.jpg, pop that off since it's not a real item
-    $path = preg_replace("|/.album.jpg$|", "", $path);
-
-    $item = item::find_by_path($path);
-    if (!$item->loaded()) {
-      // We didn't turn it up. If we're looking for a .jpg then it's it's possible that we're
-      // requesting the thumbnail for a movie.  In that case, the movie file would
-      // have been converted to a .jpg. So try some alternate types:
-      if (preg_match('/.jpg$/', $path)) {
-        foreach (legal_file::get_movie_extensions() as $ext) {
-          $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
-          $item = item::find_by_path($movie_path);
-          if ($item->loaded()) {
-            break;
-          }
-        }
-      }
-    }
+    // Get the item model using the path and type (which corresponds to a var subdir)
+    $item = item::find_by_path($path, $type);
 
     if (!$item->loaded()) {
       $e = new Kohana_404_Exception();
