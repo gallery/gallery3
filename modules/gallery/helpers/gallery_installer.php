@@ -797,6 +797,18 @@ class gallery_installer {
       module::set_var("gallery", "movie_allow_uploads", "autodetect");
       module::set_version("gallery", $version = 56);
     }
+
+    if ($version == 56) {
+      // Cleanup possible instances where resize_dirty of albums or movies was set to 0.  This is
+      // unlikely to have occurred, and doesn't currently matter much since albums and movies don't
+      // have resize images anyway.  However, it may be useful to be consistent here going forward.
+      db::build()
+        ->update("items")
+        ->set("resize_dirty", 1)
+        ->where("type", "<>", "photo")
+        ->execute();
+      module::set_version("gallery", $version = 57);
+    }
   }
 
   static function uninstall() {
