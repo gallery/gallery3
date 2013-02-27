@@ -34,7 +34,6 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);
 
       $thumb_size = $form->edit_theme->thumb_size->value;
-      $thumb_dirty = false;
       if (module::get_var("gallery", "thumb_size") != $thumb_size) {
         graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
         graphics::add_rule(
@@ -45,7 +44,6 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       }
 
       $resize_size = $form->edit_theme->resize_size->value;
-      $resize_dirty = false;
       if (module::get_var("gallery", "resize_size") != $resize_size) {
         graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
         graphics::add_rule(

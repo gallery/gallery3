@@ -121,12 +121,6 @@ class graphics_Core {
     if ($item->resize_dirty && $item->is_photo()) {
       $ops["resize"] = $item->resize_path();
     }
-    if (empty($ops)) {
-      $item->thumb_dirty = 0;
-      $item->resize_dirty = 0;
-      $item->save();
-      return;
-    }
 
     try {
       foreach ($ops as $target => $output_file) {
