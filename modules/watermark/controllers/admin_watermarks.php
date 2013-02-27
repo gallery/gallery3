@@ -55,6 +55,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     } else {
       json::reply(array("result" => "error", "html" => (string)$form));
     }
+    // Override the application/json mime type for iframe compatibility.  See ticket #2022.
+    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
   }
 
   public function form_delete() {
@@ -83,6 +85,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     } else {
       json::reply(array("result" => "error", "html" => (string)$form));
     }
+    // Override the application/json mime type for iframe compatibility.  See ticket #2022.
+    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
   }
 
   public function form_add() {
@@ -126,18 +130,10 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       log::success("watermark", t("Watermark saved"));
       json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
     } else {
-      // rawurlencode the results because the JS code that uploads the file buffers it in an
-      // iframe which entitizes the HTML and makes it difficult for the JS to process.  If we url
-      // encode it now, it passes through cleanly.  See ticket #797.
-      json::reply(array("result" => "error", "html" => rawurlencode((string)$form)));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
-
-    // Override the application/json mime type.  The dialog based HTML uploader uses an iframe to
-    // buffer the reply, and on some browsers (Firefox 3.6) it does not know what to do with the
-    // JSON that it gets back so it puts up a dialog asking the user what to do with it.  So force
-    // the encoding type back to HTML for the iframe.
-    // See: http://jquery.malsup.com/form/#file-upload
-    header("Content-Type: text/html; charset=" . Kohana::CHARSET);
+    // Override the application/json mime type for iframe compatibility.  See ticket #2022.
+    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
   }
 
   private function _update_graphics_rules() {
