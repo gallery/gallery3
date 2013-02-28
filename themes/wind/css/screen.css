@@ -470,6 +470,7 @@ td {
 }
 
 #g-content .g-photo h2,
+#g-content .g-movie h2,
 #g-content .g-item .g-metadata {
   display: none;
   margin-bottom: .6em;
