@@ -21,22 +21,38 @@ final class Kohana extends Kohana_Core {
   /**
    * Wrapper function for Kohana::auto_load that provides compatibility with Zend Guard Loader's
    * code obfuscation.  Zend Guard is enabled by default on many PHP 5.3+ installations and can
-   * cause problems with Kohana 2.4.  When a class is not found, Zend Guard Loader may continue to
-   * try and load the class, eventually leading to a seg fault.
+   * cause problems with Kohana 2.4 if code obfuscation is set to level 3+.
    *
-   * Instead, if we can't find the class and we can see that code obfuscation is at level 3+, let's
-   * load a dummy class.  This does not change the return value, so Kohana still knows that
-   * there is no class.
+   * The problem is this: if you're searching for a method in a class that does not exist,
+   * Zend Guard Loader may continue to try and load the class, eventually leading to a seg fault.
    *
-   * This is based on the patch described here: http://blog.teatime.com.tw/1/post/403
+   * Instead, if the class isn't found and we can see that it was method_exists that searched for
+   * it (as opposed to class_exists or interface_exists), return a dummy class. In the general case,
+   * this is not foolproof: if you run method_exists on a nonexistent class, then later run
+   * class_exists on the same class, you'll get a false positive.  However, this case doesn't seem
+   * to affect Gallery, so it's a sufficient workaround.
+   *
+   * Ref on basic problem: http://forums.zend.com/viewtopic.php?f=57&t=42383  (English)
+   * Ref on partial patch: http://forums.zend.com/viewtopic.php?f=57&p=165438 (English)
+   * Ref on partial patch: http://blog.teatime.com.tw/1/post/403              (Chinese)
    */
   public static function auto_load($class) {
+    static $apply_patch = null;
+    if (is_null($apply_patch)) {
+      // Set to true if code obfuscation is at level 3+, false otherwise.
+      $apply_patch = (function_exists("zend_current_obfuscation_level") &&
+        (zend_current_obfuscation_level() >= 3));
+    }
+
     $found = parent::auto_load($class);
 
-    if (!$found && function_exists("zend_current_obfuscation_level") &&
-        (zend_current_obfuscation_level() >= 3)) {
-      // Load a dummy class instead.
-      eval("class $class {}");
+    if ($apply_patch && !$found) {
+      $stack = debug_backtrace();
+      if ($stack[2]["function"] == "method_exists") {
+        // Load a dummy class.  Since it's empty, the method_exists will still return false,
+        // but the class itself will now exist.
+        eval("class $class {}");
+      }
     }
 
     // Return the same result.
