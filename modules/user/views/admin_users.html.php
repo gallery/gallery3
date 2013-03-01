@@ -92,7 +92,7 @@
             </td>
             <td>
               <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
-                  open_text="<?= t("Close") ?>"
+                  data-open-text="<?= t("Close")->for_html_attr() ?>"
                   class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("Edit") ?></span></a>
               <? if (identity::active_user()->id != $user->id && !$user->guest): ?>

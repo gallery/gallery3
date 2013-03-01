@@ -1055,7 +1055,7 @@ class g2_import_Core {
           if (@copy(g2($derivative->fetchPath()), $item->thumb_path())) {
             $item->thumb_height = $derivative->getHeight();
             $item->thumb_width = $derivative->getWidth();
-            $item->thumb_dirty = false;
+            $item->thumb_dirty = 0;
           }
         }
 
@@ -1066,7 +1066,7 @@ class g2_import_Core {
           if (@copy(g2($derivative->fetchPath()), $item->resize_path())) {
             $item->resize_height = $derivative->getHeight();
             $item->resize_width = $derivative->getWidth();
-            $item->resize_dirty = false;
+            $item->resize_dirty = 0;
           }
         }
       }

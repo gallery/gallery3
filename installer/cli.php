@@ -90,6 +90,7 @@ function parse_cli_params() {
                   "password" => "",
                   "dbname" => "gallery3",
                   "prefix" => "",
+                  "g3_password" => "",
                   "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
 
   $argv = $_SERVER["argv"];
@@ -109,6 +110,9 @@ function parse_cli_params() {
       break;
     case "-x":
       $config["prefix"] = $argv[++$i];
+      break;
+    case "-g3p":
+      $config["g3_password"] = $argv[++$i];
       break;
     }
   }
