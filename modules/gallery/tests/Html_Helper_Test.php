@@ -27,7 +27,7 @@ class Html_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function purify_test() {
     $safe_string = html::purify("hello <p  >world</p>");
-    $expected = method_exists("purifier", "purify")
+    $expected = (class_exists("purifier") && method_exists("purifier", "purify"))
       ? "hello <p>world</p>"
       : "hello &lt;p  &gt;world&lt;/p&gt;";
     $this->assert_equal($expected, $safe_string->unescaped());

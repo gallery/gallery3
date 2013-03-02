@@ -141,7 +141,7 @@ class module_Core {
     $messages = array();
 
     $installer_class = "{$module_name}_installer";
-    if (method_exists($installer_class, "can_activate")) {
+    if (class_exists($installer_class) && method_exists($installer_class, "can_activate")) {
       $messages = call_user_func(array($installer_class, "can_activate"));
     }
 
@@ -173,7 +173,7 @@ class module_Core {
     module::_add_to_path($module_name);
 
     $installer_class = "{$module_name}_installer";
-    if (method_exists($installer_class, "install")) {
+    if (class_exists($installer_class) && method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
     module::set_version($module_name, module::available()->$module_name->code_version);
@@ -226,7 +226,7 @@ class module_Core {
     $version_before = module::get_version($module_name);
     $installer_class = "{$module_name}_installer";
     $available = module::available();
-    if (method_exists($installer_class, "upgrade")) {
+    if (class_exists($installer_class) && method_exists($installer_class, "upgrade")) {
       call_user_func_array(array($installer_class, "upgrade"), array($version_before));
     } else {
       if (isset($available->$module_name->code_version)) {
@@ -261,7 +261,7 @@ class module_Core {
     module::_add_to_path($module_name);
 
     $installer_class = "{$module_name}_installer";
-    if (method_exists($installer_class, "activate")) {
+    if (class_exists($installer_class) && method_exists($installer_class, "activate")) {
       call_user_func_array(array($installer_class, "activate"), array());
     }
 
@@ -288,7 +288,7 @@ class module_Core {
    */
   static function deactivate($module_name) {
     $installer_class = "{$module_name}_installer";
-    if (method_exists($installer_class, "deactivate")) {
+    if (class_exists($installer_class) && method_exists($installer_class, "deactivate")) {
       call_user_func_array(array($installer_class, "deactivate"), array());
     }
 
@@ -314,7 +314,7 @@ class module_Core {
    */
   static function uninstall($module_name) {
     $installer_class = "{$module_name}_installer";
-    if (method_exists($installer_class, "uninstall")) {
+    if (class_exists($installer_class) && method_exists($installer_class, "uninstall")) {
       call_user_func(array($installer_class, "uninstall"));
     }
 
@@ -403,7 +403,7 @@ class module_Core {
         continue;
       }
       $class = "{$module->name}_event";
-      if (method_exists($class, $function)) {
+      if (class_exists($class) && method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);
       }
     }
@@ -411,7 +411,7 @@ class module_Core {
     // Give the admin theme a chance to respond, if we're in admin mode.
     if (theme::$is_admin) {
       $class = theme::$admin_theme_name . "_event";
-      if (method_exists($class, $function)) {
+      if (class_exists($class) && method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);
       }
     }
@@ -419,7 +419,7 @@ class module_Core {
     // Give the site theme a chance to respond as well.  It gets a chance even in admin mode, as
     // long as the theme has an admin subdir.
     $class = theme::$site_theme_name . "_event";
-    if (method_exists($class, $function)) {
+    if (class_exists($class) && method_exists($class, $function)) {
       call_user_func_array(array($class, $function), $args);
     }
   }
