@@ -95,7 +95,7 @@ class Admin_View_Core extends Gallery_View {
       $blocks = array();
       foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";
-        if (method_exists($helper_class, $function)) {
+        if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
             array_merge(array($this), $args));
