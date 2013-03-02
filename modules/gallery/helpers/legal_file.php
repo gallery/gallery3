@@ -70,7 +70,8 @@ class legal_file_Core {
     if (empty(self::$movie_types_by_extension)) {
       $types_by_extension_wrapper = new stdClass();
       $types_by_extension_wrapper->types_by_extension = array(
-        "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v");
+        "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v",
+        "webm" => "video/webm", "ogv" => "video/ogg");
       module::event("movie_types_by_extension", $types_by_extension_wrapper);
       foreach (self::$blacklist as $key) {
         unset($types_by_extension_wrapper->types_by_extension[$key]);
