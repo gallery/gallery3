@@ -67,6 +67,11 @@ define("MODPATH", realpath("modules") . "/");
 define("THEMEPATH", realpath("themes") . "/");
 define("SYSPATH", realpath("system") . "/");
 
+// For profiling
+define('KOHANA_START_TIME', microtime(TRUE));
+define('KOHANA_START_MEMORY', memory_get_usage());
+
+
 // We only accept a few controllers on the command line
 if (PHP_SAPI == "cli") {
   switch ($arg_1 = $_SERVER["argv"][1]) {
@@ -113,4 +118,11 @@ if (file_exists("local.php")) {
 }
 
 // Initialize.
-require APPPATH . "Bootstrap" . EXT;
+require APPPATH . "bootstrap" . EXT;
+
+
+// Main request.
+echo Request::factory(true, array(), false)
+  ->execute()
+  ->send_headers(true)
+  ->body();
