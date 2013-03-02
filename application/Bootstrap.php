@@ -35,7 +35,7 @@ require SYSPATH.'core/Event'.EXT;
 final class Event extends Event_Core {}
 
 require SYSPATH.'core/Kohana'.EXT;
-require MODPATH.'gallery/libraries/MY_Kohana'.EXT;
+final class Kohana extends Kohana_Core {}
 
 require SYSPATH.'core/Kohana_Exception'.EXT;
 require MODPATH.'gallery/libraries/MY_Kohana_Exception'.EXT;
