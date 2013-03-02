@@ -751,7 +751,7 @@ class Item_Model_Core extends ORM_MPTT {
       // Not set correctly, likely because ffmpeg isn't available.  Making the window 0x0 causes the
       // video to be effectively unviewable.  So, let's guess: set width to max_size and guess a
       // height (using 4:3 aspect ratio).  Once the video metadata is loaded, js in
-      // movieplayer.html.php will correct these values.
+      // movieplayer-flash.html.php will correct these values.
       $width = $max_size;
       $height = ceil($width * 3/4);
     }
@@ -784,7 +784,7 @@ class Item_Model_Core extends ORM_MPTT {
       if (in_array(strtolower(pathinfo($this->name, PATHINFO_EXTENSION)),
                    array("flv", "mp4", "m4v", "mov", "f4v"))) {
         // Filetype supported by Flowplayer v3 - use it (default)
-        $view = new View("movieplayer.html");
+        $view = new View("movieplayer-flash.html");
         $view->max_size = $movie_img->max_size;
         $view->width = $movie_img->width;
         $view->height = $movie_img->height;
