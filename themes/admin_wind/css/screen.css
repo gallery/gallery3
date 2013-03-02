@@ -994,7 +994,9 @@ div#g-action-status {
 }
 
 #g-dialog .g-cancel {
-  margin: .59em 1em;
+  margin: 0 .3em;
+  float: left;
+  padding: .2em;
 }
 
 #g-panel {
