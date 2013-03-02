@@ -276,6 +276,10 @@ input[readonly] {
   width: 100%;
 }
 
+.g-short-form .submit {
+  padding: .3em .6em;
+}
+
 .g-short-form .textbox.g-error {
   border: 1px solid #f00;
   color: #f00;
@@ -284,7 +288,8 @@ input[readonly] {
 
 .g-short-form .g-cancel {
   display: block;
-  margin: .3em .8em;
+  margin: 0em .8em;
+  padding: .3em .6em;
 }
 
 #g-sidebar .g-short-form li {
