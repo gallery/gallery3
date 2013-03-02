@@ -98,7 +98,7 @@ class Rest_Controller extends Controller {
       $handler_class = "{$function}_rest";
       $handler_method = $request->method;
 
-      if (!method_exists($handler_class, $handler_method)) {
+      if (!class_exists($handler_class) || !method_exists($handler_class, $handler_method)) {
         throw new Rest_Exception("Bad Request", 400);
       }
 

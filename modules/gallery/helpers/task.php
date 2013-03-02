@@ -25,7 +25,7 @@ class task_Core {
     $tasks = array();
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_task";
-      if (method_exists($class_name, "available_tasks")) {
+      if (class_exists($class_name) && method_exists($class_name, "available_tasks")) {
         foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
           $tasks[$task->callback] = $task;
         }
