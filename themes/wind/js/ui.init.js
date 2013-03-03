@@ -82,9 +82,6 @@ $(document).ready(function() {
         } else {
           var sib_height = $(this).prev().height();
         }
-        if ($.browser.msie && $.browser.version <= 8) {
-          sib_height = sib_height + 1;
-        }
         $(this).css("height", sib_height);
         $(this).css("position", "relative");
         $(this).css("top", 0).css("left", 0);
