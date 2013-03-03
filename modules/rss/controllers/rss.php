@@ -32,7 +32,7 @@ class Rss_Controller extends Controller {
     // Run the appropriate feed callback
     if (module::is_active($module_id)) {
       $class_name = "{$module_id}_rss";
-      if (method_exists($class_name, "feed")) {
+      if (class_exists($class_name) && method_exists($class_name, "feed")) {
         $feed = call_user_func(
           array($class_name, "feed"), $feed_id,
           ($page - 1) * $page_size, $page_size, $id);

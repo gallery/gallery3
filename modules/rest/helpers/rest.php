@@ -141,7 +141,7 @@ class rest_Core {
     }
 
     $class = "$components[1]_rest";
-    if (!method_exists($class, "resolve")) {
+    if (!class_exists($class) || !method_exists($class, "resolve")) {
       throw new Kohana_404_Exception($url);
     }
 
@@ -158,7 +158,7 @@ class rest_Core {
     $resource_type = array_shift($args);
 
     $class = "{$resource_type}_rest";
-    if (!method_exists($class, "url")) {
+    if (!class_exists($class) || !method_exists($class, "url")) {
       throw new Rest_Exception("Bad Request", 400);
     }
 
@@ -178,7 +178,7 @@ class rest_Core {
     foreach (module::active() as $module) {
       foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
         $class = str_replace(".php", "", basename($filename));
-        if (method_exists($class, "relationships")) {
+        if (class_exists($class) && method_exists($class, "relationships")) {
           if ($tmp = call_user_func(array($class, "relationships"), $resource_type, $resource)) {
             $results = array_merge($results, $tmp);
           }
