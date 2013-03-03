@@ -56,7 +56,7 @@
     <?= $theme->script("jquery.scrollTo.js") ?>
     <?= $theme->script("gallery.show_full_size.js") ?>
     <? elseif ($theme->page_subtype == "movie"): ?>
-    <?= $theme->script("flowplayer.js") ?>
+    <?= $theme->script("flowplayer-flash/flowplayer.js") ?>
     <? endif ?>
 
     <?= $theme->head() ?>
