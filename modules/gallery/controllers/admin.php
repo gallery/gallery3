@@ -55,7 +55,7 @@ class Admin_Controller extends Controller {
       $method = "index";
     }
 
-    if (!method_exists($controller_name, $method)) {
+    if (!class_exists($controller_name) || !method_exists($controller_name, $method)) {
       throw new Kohana_404_Exception();
     }
 

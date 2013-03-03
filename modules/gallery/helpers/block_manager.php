@@ -35,7 +35,7 @@ class block_manager_Core {
 
   static function activate_blocks($module_name) {
     $block_class = "{$module_name}_block";
-    if (method_exists($block_class, "get_site_list")) {
+    if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach (array_keys($blocks) as $block_id) {
         block_manager::add("site_sidebar", $module_name, $block_id);
@@ -61,14 +61,14 @@ class block_manager_Core {
 
   static function deactivate_blocks($module_name) {
     $block_class = "{$module_name}_block";
-    if (method_exists($block_class, "get_site_list")) {
+    if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {
         block_manager::remove_blocks_for_module("site_sidebar", $module_name);
       }
     }
 
-    if (method_exists($block_class, "get_admin_list")) {
+    if (class_exists($block_class) && method_exists($block_class, "get_admin_list")) {
       $blocks = call_user_func(array($block_class, "get_admin_list"));
       foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
         block_manager::remove_blocks_for_module($location, $module_name);
@@ -89,7 +89,7 @@ class block_manager_Core {
 
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_block";
-      if (method_exists($class_name, $function)) {
+      if (class_exists($class_name) && method_exists($class_name, $function)) {
         foreach (call_user_func(array($class_name, $function)) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
         }
@@ -102,7 +102,7 @@ class block_manager_Core {
     $active = block_manager::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
-      if (method_exists("$desc[0]_block", "get")) {
+      if (class_exists("$desc[0]_block") && method_exists("$desc[0]_block", "get")) {
         $block = call_user_func(array("$desc[0]_block", "get"), $desc[1], $theme);
         if (!empty($block)) {
           $block->id = $id;

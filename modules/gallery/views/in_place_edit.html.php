@@ -8,7 +8,7 @@
     <li>
       <?= form::submit(array("class" => "submit ui-state-default"), t("Save")) ?>
     </li>
-    <li><a href="#" class="g-cancel"><?= t("Cancel") ?></a></li>
+    <li><button class="g-cancel ui-state-default ui-corner-all"><?= t("Cancel") ?></button></li>
     <? if (!empty($errors["input"])): ?>
     <li>
       <p id="g-in-place-edit-message" class="g-error"><?= $errors["input"] ?></p>
