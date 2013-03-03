@@ -120,6 +120,7 @@ if (file_exists("local.php")) {
 // Initialize.
 require APPPATH . "bootstrap" . EXT;
 
+Cookie::$salt = "g3";
 
 // Main request.
 echo Request::factory(true, array(), false)
