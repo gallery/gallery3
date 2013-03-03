@@ -416,7 +416,7 @@ class Item_Model_Core extends ORM_MPTT {
         module::event("item_created", $this);
       } else {
         // Update an existing item
-        module::event("item_before_update", $item);
+        module::event("item_before_update", $this);
 
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
