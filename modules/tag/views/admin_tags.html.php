@@ -26,7 +26,7 @@
       <tr>
         <td>
         <? foreach ($tags as $i => $tag): ?>
-          <? $current_letter = strtoupper(mb_substr($tag->name, 0, 1)) ?>
+          <? $current_letter = mb_strtoupper(mb_substr($tag->name, 0, 1)) ?>
 
           <? if ($i == 0): /* first letter */ ?>
           <strong><?= html::clean($current_letter) ?></strong>
