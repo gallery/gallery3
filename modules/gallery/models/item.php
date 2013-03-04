@@ -762,15 +762,15 @@ class Item_Model_Core extends ORM_MPTT {
     //  - generate a view, which is used in place of the standard Flowplayer v3 player
     //    (use view variable)
     //  - alter the arguments sent to the standard player
-    //    (use fp_params and fp_config variables)
+    //    (use fp_flash_params and fp_flash_config variables)
     $movie_img = new stdClass();
     $movie_img->max_size = $max_size;
     $movie_img->width = $width;
     $movie_img->height = $height;
     $movie_img->attrs = $attrs;
     $movie_img->url = $this->file_url(true);
-    $movie_img->fp_params = array(); // additional Flowplayer params values (will be json encoded)
-    $movie_img->fp_config = array(); // additional Flowplayer config values (will be json encoded)
+    $movie_img->fp_flash_params = array(); // add'l Flowplayer params values (will be json encoded)
+    $movie_img->fp_flash_config = array(); // add'l Flowplayer config values (will be json encoded)
     $movie_img->view = array();
     module::event("movie_img", $movie_img, $this);
 
@@ -790,8 +790,8 @@ class Item_Model_Core extends ORM_MPTT {
         $view->height = $movie_img->height;
         $view->attrs = $movie_img->attrs;
         $view->url = $movie_img->url;
-        $view->fp_params = $movie_img->fp_params;
-        $view->fp_config = $movie_img->fp_config;
+        $view->fp_flash_params = $movie_img->fp_flash_params;
+        $view->fp_flash_config = $movie_img->fp_flash_config;
       } else {
         // Filetype NOT supported by Flowplayer v3 - display download link
         $attrs = array_merge($attrs, array("style" => "width: {$max_size}px;",
