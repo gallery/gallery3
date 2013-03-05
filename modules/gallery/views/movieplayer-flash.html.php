@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<script type="text/javascript" src="<?= url::file("lib/flowplayer-flash/flowplayer.js") ?>"></script>
 <?= html::anchor($url, "", $attrs) ?>
 <script type="text/javascript">
   var id = "<?= $attrs["id"] ?>";
@@ -20,14 +21,14 @@
   // setup flowplayer
   flowplayer(id,
     $.extend(true, {
-      "src": "<?= url::abs_file("lib/flowplayer.swf") ?>",
+      "src": "<?= url::abs_file("lib/flowplayer-flash/flowplayer.swf") ?>",
       "wmode": "transparent",
       "provider": "pseudostreaming"
-    }, <?= json_encode($fp_params) ?>),
+    }, <?= json_encode($fp_flash_params) ?>),
     $.extend(true, {
       "plugins": {
         "pseudostreaming": {
-          "url": "<?= url::abs_file("lib/flowplayer.pseudostreaming-byterange.swf") ?>"
+          "url": "<?= url::abs_file("lib/flowplayer-flash/flowplayer.pseudostreaming-byterange.swf") ?>"
         },
         "controls": {
           "autoHide": "always",
@@ -42,7 +43,7 @@
           set_movie_size(parseInt(clip.metaData.width), parseInt(clip.metaData.height));
         }
       }
-    }, <?= json_encode($fp_config) ?>)
+    }, <?= json_encode($fp_flash_config) ?>)
   ).ipad();
   // set movie size using width and height passed from movie_img function
   $("document").ready(set_movie_size(<?= $width ?>, <?= $height ?>));

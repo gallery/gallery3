@@ -416,7 +416,7 @@ class Item_Model_Core extends ORM_MPTT {
         module::event("item_created", $this);
       } else {
         // Update an existing item
-        module::event("item_before_update", $item);
+        module::event("item_before_update", $this);
 
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
@@ -751,7 +751,7 @@ class Item_Model_Core extends ORM_MPTT {
       // Not set correctly, likely because ffmpeg isn't available.  Making the window 0x0 causes the
       // video to be effectively unviewable.  So, let's guess: set width to max_size and guess a
       // height (using 4:3 aspect ratio).  Once the video metadata is loaded, js in
-      // movieplayer.html.php will correct these values.
+      // movieplayer-flash.html.php will correct these values.
       $width = $max_size;
       $height = ceil($width * 3/4);
     }
@@ -762,15 +762,15 @@ class Item_Model_Core extends ORM_MPTT {
     //  - generate a view, which is used in place of the standard Flowplayer v3 player
     //    (use view variable)
     //  - alter the arguments sent to the standard player
-    //    (use fp_params and fp_config variables)
+    //    (use fp_flash_params and fp_flash_config variables)
     $movie_img = new stdClass();
     $movie_img->max_size = $max_size;
     $movie_img->width = $width;
     $movie_img->height = $height;
     $movie_img->attrs = $attrs;
     $movie_img->url = $this->file_url(true);
-    $movie_img->fp_params = array(); // additional Flowplayer params values (will be json encoded)
-    $movie_img->fp_config = array(); // additional Flowplayer config values (will be json encoded)
+    $movie_img->fp_flash_params = array(); // add'l Flowplayer params values (will be json encoded)
+    $movie_img->fp_flash_config = array(); // add'l Flowplayer config values (will be json encoded)
     $movie_img->view = array();
     module::event("movie_img", $movie_img, $this);
 
@@ -784,14 +784,14 @@ class Item_Model_Core extends ORM_MPTT {
       if (in_array(strtolower(pathinfo($this->name, PATHINFO_EXTENSION)),
                    array("flv", "mp4", "m4v", "mov", "f4v"))) {
         // Filetype supported by Flowplayer v3 - use it (default)
-        $view = new View("movieplayer.html");
+        $view = new View("movieplayer-flash.html");
         $view->max_size = $movie_img->max_size;
         $view->width = $movie_img->width;
         $view->height = $movie_img->height;
         $view->attrs = $movie_img->attrs;
         $view->url = $movie_img->url;
-        $view->fp_params = $movie_img->fp_params;
-        $view->fp_config = $movie_img->fp_config;
+        $view->fp_flash_params = $movie_img->fp_flash_params;
+        $view->fp_flash_config = $movie_img->fp_flash_config;
       } else {
         // Filetype NOT supported by Flowplayer v3 - display download link
         $attrs = array_merge($attrs, array("style" => "width: {$max_size}px;",

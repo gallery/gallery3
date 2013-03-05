@@ -55,6 +55,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       ->where("expiration", "<>", 0)
       ->where("expiration", "<=", time())
       ->execute();
+    module::deactivate_missing_modules();
   }
 
   /**

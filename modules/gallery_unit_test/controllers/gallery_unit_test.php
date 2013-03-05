@@ -27,6 +27,9 @@ class Gallery_Unit_Test_Controller extends Controller {
     ini_set("display_errors", true);
     error_reporting(-1);
 
+    // Track whether all tests pass so we can return an appropriate code to the CLI
+    $all_tests_passed = false;
+
     // Jump through some hoops to satisfy the way that we check for the site_domain in
     // config.php.  We structure this such that the code in config will leave us with a
     // site_domain of "." (for historical reasons)
@@ -132,7 +135,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       graphics::choose_default_toolkit();
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
-      print new Unit_Test($modules, $filter);
+      print new Unit_Test($modules, $filter, $all_tests_passed);
     } catch (ORM_Validation_Exception $e) {
       print "Validation Exception: {$e->getMessage()}\n";
       print $e->getTraceAsString() . "\n";
@@ -142,6 +145,12 @@ class Gallery_Unit_Test_Controller extends Controller {
     } catch (Exception $e) {
       print "Exception: {$e->getMessage()}\n";
       print $e->getTraceAsString() . "\n";
+    }
+
+    // Let the CLI caller know whether all tests passed or not,
+    // to allow usage of continuous integration servers.
+    if (PHP_SAPI == 'cli') {
+      exit($all_tests_passed ? 0 : 1);
     }
   }
 }
