@@ -1,6 +1,8 @@
 Gallery 3.0+ (development version)
 ==================================
 
+[![Build Status](https://travis-ci.org/gallery/gallery3.png?branch=master)](https://travis-ci.org/gallery/gallery3)
+
 About
 -----
 
