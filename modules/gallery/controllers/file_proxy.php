@@ -162,7 +162,6 @@ class File_Proxy_Controller extends Controller {
       // going to buffer up whatever file we're proxying (and it may be very large).  This may
       // affect embedding or systems with PHP's output_buffering enabled.
       while (ob_get_level()) {
-        Kohana_Log::add("error","".print_r(ob_get_level(),1));
         if (!@ob_end_clean()) {
           // ob_end_clean() can return false if the buffer can't be removed for some reason
           // (zlib output compression buffers sometimes cause problems).
