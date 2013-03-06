@@ -67,10 +67,9 @@ class Unit_Test_Core {
 	 *
 	 * @param   array      test path(s)
 	 * @param   string     filter (regular expression)
-	 * @param   boolean    will be set to true if all tests pass
 	 * @return  void
 	 */
-	public function __construct($extra_paths=array(), $filter=null, $all_passed=null)
+	public function __construct($extra_paths=array(), $filter=null)
 	{
 		// Merge possible default test path(s) from config with the rest
 		$paths = array_merge($extra_paths, Kohana::config('unit_test.paths', FALSE, FALSE));
@@ -83,9 +82,6 @@ class Unit_Test_Core {
 
 		// Take out duplicate test paths after normalization
 		$this->paths = array_unique($paths);
-
-		// Assume all tests will pass
-		$all_passed = true;
 
 		// Loop over each given test path
 		foreach ($this->paths as $path)
@@ -220,7 +216,6 @@ class Unit_Test_Core {
 						// Test failed
 						$this->results[$class][$method_name] = $e;
 						$this->stats[$class]['failed']++;
-						$all_passed = false;
 					}
 					catch (Exception $e)
 					{
@@ -229,7 +224,6 @@ class Unit_Test_Core {
 						// Test error
 						$this->results[$class][$method_name] = $e;
 						$this->stats[$class]['errors']++;
-						$all_passed = false;
 					}
 
 					// Calculate score
