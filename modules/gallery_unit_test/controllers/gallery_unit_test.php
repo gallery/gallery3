@@ -147,7 +147,7 @@ class Gallery_Unit_Test_Controller extends Controller {
 
     $failed = 0;
     foreach ($unit_test->stats as $class => $stats) {
-      $failed += $stats["failed"];
+      $failed += ($stats["failed"] + $stats["errors"]);
     }
     if (PHP_SAPI == 'cli') {
       exit($failed);
