@@ -150,7 +150,9 @@ class Gallery_Unit_Test_Controller extends Controller {
     // Let the CLI caller know whether all tests passed or not,
     // to allow usage of continuous integration servers.
     if (PHP_SAPI == 'cli') {
-      exit($all_tests_passed ? 0 : 1);
+      $exit_status = $all_tests_passed ? 0 : 1;
+      print "Exit: $exit_status\n";
+      exit($exit_status);
     }
   }
 }
