@@ -132,7 +132,8 @@ class Gallery_Unit_Test_Controller extends Controller {
       graphics::choose_default_toolkit();
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
-      print new Unit_Test($modules, $filter);
+      $unit_test = new Unit_Test($modules, $filter);
+      print $unit_test;
     } catch (ORM_Validation_Exception $e) {
       print "Validation Exception: {$e->getMessage()}\n";
       print $e->getTraceAsString() . "\n";
@@ -142,6 +143,14 @@ class Gallery_Unit_Test_Controller extends Controller {
     } catch (Exception $e) {
       print "Exception: {$e->getMessage()}\n";
       print $e->getTraceAsString() . "\n";
+    }
+
+    $failed = 0;
+    foreach ($unit_test->stats as $class => $stats) {
+      $failed += $stats["failed"];
+    }
+    if (PHP_SAPI == 'cli') {
+      exit($failed);
     }
   }
 }
