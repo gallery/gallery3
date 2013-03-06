@@ -362,6 +362,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $response = item::root()->as_restful_array();
     $this->assert_true($response["can_edit"]);
 
+    access::deny(identity::everybody(), "edit", item::root());
     identity::set_active_user(identity::guest());
     $response = item::root()->as_restful_array();
     $this->assert_false($response["can_edit"]);
@@ -371,6 +372,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $response = item::root()->as_restful_array();
     $this->assert_true($response["can_add"]);
 
+    access::deny(identity::everybody(), "add", item::root());
     identity::set_active_user(identity::guest());
     $response = item::root()->as_restful_array();
     $this->assert_false($response["can_add"]);
