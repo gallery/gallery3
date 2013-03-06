@@ -65,6 +65,7 @@ instructions.
 ```sh
 php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
 ```
+
  Command line parameters:
 
 ```sh
