@@ -303,8 +303,25 @@ class module_Core {
 
     block_manager::deactivate_blocks($module_name);
 
-    log::success(
-      "module", t("Deactivated module %module_name", array("module_name" => $module_name)));
+    if (module::info($module_name)) {
+      log::success(
+        "module", t("Deactivated module %module_name", array("module_name" => $module_name)));
+    } else {
+      log::success(
+        "module", t("Deactivated missing module %module_name", array("module_name" => $module_name)));
+    }
+  }
+
+  /**
+   * Deactivate modules that are unavailable or missing, yet still active.
+   * This happens when a user deletes a module without deactivating it.
+   */
+  static function deactivate_missing_modules() {
+    foreach (self::$modules as $module_name => $module) {
+      if (module::is_active($module_name) && !module::info($module_name)) {
+        module::deactivate($module_name);
+      }
+    }
   }
 
   /**
@@ -552,6 +569,9 @@ class module_Core {
     // It is hard-coded here, and may be updated with future releases of Gallery.
     $obsolete_modules = array("videos" => 4, "noffmpeg" => 1, "videodimensions" => 1,
                               "digibug" => 2);
+
+    // Before we check the active modules, deactivate any that are missing.
+    module::deactivate_missing_modules();
 
     $modules_found = array();
     foreach ($obsolete_modules as $module => $version) {
