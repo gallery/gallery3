@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.3.1
- * Copyright(c) 2006-2010 Sencha Inc.
+ * Ext JS Library 3.4.0
+ * Copyright(c) 2006-2011 Sencha Inc.
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
@@ -455,6 +455,10 @@ li.x-menu-list-item div {
 .x-view-drag-insert-below { 
     border-bottom:1px dotted #3366cc; 
 } 
+
+.ext-ie .ux-form-multiselect .x-fieldset legend {
+    margin-bottom: 0;
+}
 .x-panel-resize {
         height:5px;
         background:transparent url(../images/panel-handle.gif) no-repeat center bottom;
