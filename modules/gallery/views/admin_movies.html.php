@@ -21,7 +21,7 @@
   <div class="g-available">
     <h2> <?= t("Current configuration") ?> </h2>
     <div id="g-ffmpeg" class="g-block">
-      <img class="logo" width="284" height="70" src="<?= url::file("modules/gallery/images/ffmpeg.png"); ?>" alt="<? t("Visit the FFmpeg project site") ?>" />
+      <img class="logo" width="284" height="70" src="<?= url::file("modules/gallery/images/ffmpeg.png") ?>" alt="<? t("Visit the FFmpeg project site") ?>" />
       <p>
         <?= t("FFmpeg is a cross-platform standalone audio/video program.") ?><br/>
         <?= t("Please refer to the <a href=\"%url\">FFmpeg website</a> for more information.", array("url" => "http://ffmpeg.org")) ?>
