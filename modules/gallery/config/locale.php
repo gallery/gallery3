@@ -18,34 +18,24 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @package  Core
- *
- * Default language locale name(s).
- * First item must be a valid i18n directory name, subsequent items are alternative locales
- * for OS's that don't support the first (e.g. Windows). The first valid locale in the array will be used.
- * @see http://php.net/setlocale
- */
-$config['language'] = array('en_US', 'English_United States');
+return array(
+  // Default language locale name(s).
+  // First item must be a valid i18n directory name, subsequent items are alternative locales
+  // for OS's that don't support the first (e.g. Windows). The first valid locale in the array
+  // will be used.
+  // @see http://php.net/setlocale
+  "language" => array("en_US", "English_United States"),
 
-/**
- * Locale timezone.  Set in 'Advanced' settings, falling back to the server's zone.
- * @see http://php.net/timezones
- */
-if (file_exists(VARPATH . "database.php")) {
-  $config['timezone'] = module::get_var("gallery", "timezone", date_default_timezone_get());
-} else {
-  // Gallery3 is not installed yet -- don't make module::get_var() calls.
-  $config['timezone'] = date_default_timezone_get();
-}
+  // Locale timezone.  Set in 'Advanced' settings, falling back to the server's zone.
+  // @see http://php.net/timezones
+  "timezone" => (file_exists(VARPATH . "database.php") ?
+                 module::get_var("gallery", "timezone", date_default_timezone_get()) :
+                 // Gallery3 is not installed yet -- don't make module::get_var() calls.
+                 date_default_timezone_get()),
 
-// i18n settings
-
-/**
- * The locale of the built-in localization messages (locale of strings in translate() calls).
- * This can't be changed easily, unless all localization strings are replaced in all source files
- * as well.
- * Although the actual root is "en_US", the configured root is "en" that all en locales inherit the
- * built-in strings.
- */
-$config['root_locale'] = 'en';
+  // The locale of the built-in localization messages (locale of strings in translate() calls).
+  // This can't be changed easily, unless all localization strings are replaced in all source files
+  // as well.
+  // Although the actual root is "en_US", the configured root is "en" that all en locales inherit
+  // the built-in strings.
+  "root_locale" => "en");

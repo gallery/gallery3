@@ -20,4 +20,26 @@
 
 if (file_exists(VARPATH . "database.php")) {
   include(VARPATH . "database.php");
+
+  // Transform the result for Kohana 3.  We need to up-convert var/database.php
+  // eventually to avoid having to do this, but since we call Database::instance()
+  // very early in the bootstrap to make sure that the database is ok, we can't rely
+  // on the upgrader to convert the file so massage it by hand here.
+  $default = $config["default"];
+  return array(
+    "default" => array(
+      "type" => "MySQL", // Kohana 3 doesn't have a MySQLi module yet
+      "connection" => array(
+        "hostname" => (
+          !empty($default["connection"]["hostname"]) ?
+          $default["connection"]["hostname"] :
+          $default["connection"]["socket"]),
+        "database" => $default["connection"]["database"],
+        "username" => $default["connection"]["user"],
+        "password" => $default["connection"]["pass"],
+        "persistent" => $default["persistent"]
+      ),
+      "table_prefix" => $default["table_prefix"],
+      "charset" => $default["character_set"],
+      "caching" => $default["cache"]));
 }

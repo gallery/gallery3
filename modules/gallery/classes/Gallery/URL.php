@@ -17,29 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class url extends url_Core {
-  static function parse_url() {
-    if (Router::$controller) {
-      return;
-    }
-
-    // Work around problems with the CGI sapi by enforcing our default path
-    if ($_SERVER["SCRIPT_NAME"] && "/" . Router::$current_uri == $_SERVER["SCRIPT_NAME"]) {
-      Router::$controller_path = MODPATH . "gallery/controllers/albums.php";
-      Router::$controller = "albums";
-      Router::$method = 1;
-      return;
-    }
-
-    $item = item::find_by_relative_url(html_entity_decode(Router::$current_uri, ENT_QUOTES));
-    if ($item && $item->loaded()) {
-      Router::$controller = "{$item->type}s";
-      Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
-      Router::$method = "show";
-      Router::$arguments = array($item);
-    }
-  }
-
+class Gallery_URL extends Kohana_URL {
   /**
    * Just like url::file() except that it returns an absolute URI
    */

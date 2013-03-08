@@ -18,49 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @package Session
- *
- * Session driver name.
- */
-$config['driver'] = 'database';
-
-/**
- * Session storage parameter, used by drivers.
- */
-$config['storage'] = '';
-
-/**
- * Session name.
- * It must contain only alphanumeric characters and underscores. At least one letter must be present.
- */
-$config['name'] = 'g3sid';
-
-/**
- * Session parameters to validate: user_agent, ip_address, expiration.
- */
-$config['validate'] = array('user_agent', 'expiration');
-
-/**
- * Enable or disable session encryption.
- * Note: this has no effect on the native session driver.
- * Note: the cookie driver always encrypts session data. Set to TRUE for stronger encryption.
- */
-$config['encryption'] = FALSE;
-
-/**
- * Session lifetime. Number of seconds that each session will last.
- * A value of 0 will keep the session active until the browser is closed (with a limit of 24h).
- */
-$config['expiration'] = 604800; // 7 days
-
-/**
- * Number of page loads before the session id is regenerated.
- * A value of 0 will disable automatic session id regeneration.
- */
-$config['regenerate'] = 0;
-
-/**
- * Percentage probability that the gc (garbage collection) routine is started.
- */
-$config['gc_probability'] = 2;
+return array(
+  "database" => array(
+    "table" => "sessions",
+    "gc" => 500,
+    "columns" => array(
+      "session_id" => "session_id",
+      "last_active" => "last_activity",
+      "contents" => "data"),
+    "name" => "g3sid",
+    "lifetime" => 604800,  // 7 days
+    "encrypted" => false));

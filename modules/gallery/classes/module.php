@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class module_Core {
+class module {
   public static $active = array();
   public static $modules = array();
   public static $var_cache = null;
@@ -370,17 +370,21 @@ class module_Core {
         continue;
       }
 
+      // Kohana 3 will not let us load a module that's missing.  Kohana 2 would, so it was
+      // possible to have an active, deleted module.  Skip them.
+      if (!is_dir(MODPATH . $module->name)) {
+        continue;
+      }
+
       if ($module->name == "gallery") {
         $gallery = $module;
       } else {
         self::$active[] = $module;
-        $kohana_modules[] = MODPATH . $module->name;
+        $kohana_modules[$module->name] = MODPATH . $module->name;
       }
     }
     self::$active[] = $gallery;  // put gallery last in the module list to match core.modules
-    $config = Kohana_Config::instance();
-    $config->set(
-      "core.modules", array_merge($kohana_modules, $config->get("core.modules")));
+    Kohana::modules(Arr::merge($kohana_modules, Kohana::modules()));
   }
 
   /**
@@ -454,16 +458,19 @@ class module_Core {
       self::$var_cache = Cache::instance()->get("var_cache");
       if (empty(self::$var_cache)) {
         // Cache doesn't exist, create it now.
-        foreach (db::build()
-                 ->select("module_name", "name", "value")
+        self::$var_cache = new stdClass();
+        foreach (DB::select("module_name", "name", "value")
                  ->from("vars")
                  ->order_by("module_name")
                  ->order_by("name")
+                 ->as_object()
                  ->execute() as $row) {
-          // Mute the "Creating default object from empty value" warning below
-          @self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
+          if (!isset(self::$var_cache->{$row->module_name})) {
+            self::$var_cache->{$row->module_name} = new stdClass();
+          }
+          self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
         }
-        Cache::instance()->set("var_cache", self::$var_cache, array("vars"));
+        Cache::instance()->set_with_tags("var_cache", self::$var_cache, null, array("vars"));
       }
     }
 

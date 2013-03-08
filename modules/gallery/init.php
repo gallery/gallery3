@@ -17,5 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Module_Model_Core extends ORM {
-}
+
+Route::set("default", "(<controller>(/<action>(</id>)))")
+  ->defaults(array("controller" => "albums",
+                   "action" => "index"));

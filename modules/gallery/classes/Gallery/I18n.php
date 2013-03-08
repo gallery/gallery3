@@ -47,7 +47,7 @@ function t2($singular, $plural, $count, $options=array()) {
                                              array_merge($options, array("count" => $count)));
 }
 
-class Gallery_I18n_Core {
+class Gallery_I18n {
   private static $_instance;
   private $_config = array();
   private $_call_log = array();
@@ -60,11 +60,11 @@ class Gallery_I18n_Core {
 
   public static function instance($config=null) {
     if (self::$_instance == NULL || isset($config)) {
-      $config = isset($config) ? $config : Kohana::config('locale');
+      $config = isset($config) ? $config : Kohana::$config->load('locale');
       if (empty($config['default_locale'])) {
         $config['default_locale'] = module::get_var('gallery', 'default_locale');
       }
-      self::$_instance = new Gallery_I18n_Core($config);
+      self::$_instance = new Gallery_I18n($config);
     }
 
     return self::$_instance;

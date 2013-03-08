@@ -120,10 +120,46 @@ if (file_exists("local.php")) {
 // Initialize.
 require APPPATH . "bootstrap" . EXT;
 
-Cookie::$salt = "g3";
-
 // Main request.
-echo Request::factory(true, array(), false)
+Request::factory(true, array(), false)
   ->execute()
   ->send_headers(true)
   ->body();
+
+/*
+gallery::maintenance_mode();
+gallery::private_gallery();
+
+// Post request handlers
+/*
+Request::$initial
+
+print "MUST RESOLVE THIS POSTROUTING STUFF!";
+/*
+ *
+  static function parse_url() {
+    if (Router::$controller) {
+      return;
+    }
+
+    // Work around problems with the CGI sapi by enforcing our default path
+    if ($_SERVER["SCRIPT_NAME"] && "/" . Router::$current_uri == $_SERVER["SCRIPT_NAME"]) {
+      Router::$controller_path = MODPATH . "gallery/controllers/albums.php";
+      Router::$controller = "albums";
+      Router::$method = 1;
+      return;
+    }
+
+    $item = item::find_by_relative_url(html_entity_decode(Router::$current_uri, ENT_QUOTES));
+    if ($item && $item->loaded()) {
+      Router::$controller = "{$item->type}s";
+      Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
+      Router::$method = "show";
+      Router::$arguments = array($item);
+    }
+  }
+
+// this was triggered by the system.shutdown event in K2 - where do we put it in K3?.  Clearly not
+// here!
+gallery::shutdown();
+*/

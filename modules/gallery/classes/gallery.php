@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class gallery_Core {
-  const VERSION = "3.0+";
+class gallery {
+  const VERSION = "3.1+K3";
   const CODE_NAME = "";
   const RELEASE_CHANNEL = "git";
   const RELEASE_BRANCH = "master";
@@ -89,8 +89,8 @@ class gallery_Core {
    */
   static function ready() {
     // Don't keep a session for robots; it's a waste of database space.
-    if (request::user_agent("robot")) {
-      Session::instance()->abort_save();
+    if (Request::user_agent("robot")) {
+      Session::instance()->destroy();
     }
 
     module::event("gallery_ready");
