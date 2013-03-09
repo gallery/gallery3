@@ -47,6 +47,7 @@ class system_Core {
       explode(":", module::get_var("gallery", "extra_binary_paths")));
 
     foreach ($paths as $path) {
+      $path = rtrim($path, "/");
       $candidate = "$path/$binary";
       // @suppress errors below to avoid open_basedir issues
       if (@file_exists($candidate)) {
