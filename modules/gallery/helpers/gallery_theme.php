@@ -49,6 +49,10 @@ class gallery_theme_Core {
         . $theme->script("l10n_client.js");
     }
 
+    // Add MediaElementJS library
+    $buf .= $theme->script("mediaelementjs/mediaelement.js");
+    $buf .= $theme->script("mediaelementjs/mediaelementplayer.js");
+    $buf .= $theme->css("mediaelementjs/mediaelementplayer.css");
     $buf .= $theme->css("uploadify/uploadify.css");
     return $buf;
   }
