@@ -58,23 +58,37 @@ class Theme_View_Core extends Gallery_View {
   }
 
   /**
-   * Proportion of the current thumb_size's to default
+   * Proportion of the current thumb_size's to default.
+   *
+   * Themes can optionally use the $dimension parameter to choose which of the album's
+   * children will be used to determine the proportion.  If set, the proportion will be
+   * calculated based on the child item with the largest width or height.
+   *
    * @param object Item_Model (optional) check the proportions for this item
+   * @param int               (optional) minimum thumbnail width
+   * @param string            (optional) "width" or "height"
    * @return int
    */
-  public function thumb_proportion($item=null) {
-    // If the item is an album with children, grab the first item in that album instead.  We're
+  public function thumb_proportion($item=null, $minimum_size=0, $dimension=null) {
+    if (!in_array($dimension, array("height", "width"))) {
+      $dimension = null;
+    }
+
+    // If the item is an album with children, grab an item from that album instead.  We're
     // interested in the size of the thumbnails in this album, not the thumbnail of the
     // album itself.
     if ($item && $item->is_album() && $item->children_count()) {
-      $item = $item->children(1)->current();
+      $orderBy = (is_null($dimension)) ? array()
+                                       : array("thumb_".$dimension => "desc");
+
+      $item = $item->children(1, null, array(), $orderBy)->current();
     }
 
     // By default we have a globally fixed thumbnail size In core code, we just return a fixed
     // proportion based on the global thumbnail size, but since modules can override that, we
     // return the actual proportions when we have them.
     if ($item && $item->has_thumb()) {
-      return max($item->thumb_width, $item->thumb_height) / 200;
+      return max($item->thumb_width, $item->thumb_height, $minimum_size) / 200;
     } else {
       // @TODO change the 200 to a theme supplied value when and if we come up with an
       // API to allow the theme to set defaults.
