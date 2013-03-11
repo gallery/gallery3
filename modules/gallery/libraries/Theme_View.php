@@ -60,9 +60,10 @@ class Theme_View_Core extends Gallery_View {
   /**
    * Proportion of the current thumb_size's to default
    * @param object Item_Model (optional) check the proportions for this item
+   * @param int               (optional) minimum thumbnail width
    * @return int
    */
-  public function thumb_proportion($item=null) {
+  public function thumb_proportion($item=null, $minimum_size=0) {
     // If the item is an album with children, grab the first item in that album instead.  We're
     // interested in the size of the thumbnails in this album, not the thumbnail of the
     // album itself.
@@ -74,7 +75,7 @@ class Theme_View_Core extends Gallery_View {
     // proportion based on the global thumbnail size, but since modules can override that, we
     // return the actual proportions when we have them.
     if ($item && $item->has_thumb()) {
-      return max($item->thumb_width, $item->thumb_height) / 200;
+      return max($item->thumb_width, $item->thumb_height, $minimum_size) / 200;
     } else {
       // @TODO change the 200 to a theme supplied value when and if we come up with an
       // API to allow the theme to set defaults.
