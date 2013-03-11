@@ -93,7 +93,28 @@ class Admin_View_Core extends Gallery_View {
     case "body_attributes":
     case "html_attributes":
       $blocks = array();
+      if (method_exists("gallery_theme", $function)) {
+        switch (count($args)) {
+        case 0:
+          $blocks[] = gallery_theme::$function($this);
+          break;
+        case 1:
+          $blocks[] = gallery_theme::$function($this, $args[0]);
+          break;
+        case 2:
+          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
+          break;
+        default:
+          $blocks[] = call_user_func_array(
+            array("gallery_theme", $function),
+            array_merge(array($this), $args));
+        }
+      }
+
       foreach (module::active() as $module) {
+        if ($module->name == "gallery") {
+          continue;
+        }
         $helper_class = "{$module->name}_theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
@@ -102,15 +123,22 @@ class Admin_View_Core extends Gallery_View {
         }
       }
 
+      $helper_class = theme::$admin_theme_name . "_theme";
+      if (class_exists($helper_class) && method_exists($helper_class, $function)) {
+        $blocks[] = call_user_func_array(
+          array($helper_class, $function),
+          array_merge(array($this), $args));
+      }
+
       if (Session::instance()->get("debug")) {
-        if ($function != "admin_head") {
+        if ($function != "admin_head" && $function != "body_attributes") {
           array_unshift(
-            $blocks, "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function\">" .
+            $blocks,
+            "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function g-clear-fix\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }
       }
-
       return implode("\n", $blocks);
 
     default:
