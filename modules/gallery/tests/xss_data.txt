@@ -41,8 +41,8 @@ modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comme
 modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img(array(),50)
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
-modules/g2_import/views/admin_g2_import.html.php             7   DIRTY_JS url::site("__ARGS__")
-modules/g2_import/views/admin_g2_import.html.php             49  DIRTY    $form
+modules/g2_import/views/admin_g2_import.html.php             5   DIRTY_JS url::site("__ARGS__")
+modules/g2_import/views/admin_g2_import.html.php             47  DIRTY    $form
 modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY_ATTR log::severity_class($entry->severity)
 modules/gallery/views/admin_block_log_entries.html.php       8   DIRTY_JS user_profile::url($entry->user->id)
@@ -350,9 +350,9 @@ modules/search/views/search.html.php                         45  DIRTY    $item-
 modules/search/views/search.html.php                         47  DIRTY_ATTR $item_class
 modules/search/views/search.html.php                         57  DIRTY    $theme->paginator()
 modules/search/views/search_link.html.php                    15  DIRTY_ATTR $album_id
-modules/server_add/views/admin_server_add.html.php           8   DIRTY_JS url::site("__ARGS__")
-modules/server_add/views/admin_server_add.html.php           16  DIRTY    $form
-modules/server_add/views/admin_server_add.html.php           27  DIRTY_ATTR $id
+modules/server_add/views/admin_server_add.html.php           6   DIRTY_JS url::site("__ARGS__")
+modules/server_add/views/admin_server_add.html.php           14  DIRTY    $form
+modules/server_add/views/admin_server_add.html.php           25  DIRTY_ATTR $id
 modules/server_add/views/server_add_tree.html.php            20  DIRTY_ATTR is_dir($file)?"ui-icon-folder-collapsed":"ui-icon-document"
 modules/server_add/views/server_add_tree.html.php            21  DIRTY_ATTR is_dir($file)?"g-directory":"g-file"
 modules/server_add/views/server_add_tree_dialog.html.php     3   DIRTY_JS url::site("server_add/children?path=__PATH__")
