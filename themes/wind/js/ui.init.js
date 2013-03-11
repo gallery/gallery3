@@ -83,7 +83,7 @@ $(document).ready(function() {
     );
 
     // Realign any thumbnails that change so that when we rotate a thumb it stays centered.
-    $(".g-item").bind("gallery.change", function() {
+    $(".g-item").on("gallery.change", function() {
       $(".g-item").each(function() {
         $(this).height($(this).find("img").height() + 2);
       });
