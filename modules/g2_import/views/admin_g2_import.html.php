@@ -1,6 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?= $theme->css("jquery.autocomplete.css") ?>
-<?= $theme->script("jquery.autocomplete.js") ?>
 <script type="text/javascript">
 $("document").ready(function() {
   $("form input[name=embed_path]").gallery_autocomplete(
