@@ -19,9 +19,7 @@
  */
 class tag_theme_Core {
   static function head($theme) {
-    return $theme->css("jquery.autocomplete.css")
-      . $theme->script("jquery.autocomplete.js")
-      . $theme->css("tag.css");
+    return $theme->css("tag.css");
   }
 
   static function admin_head($theme) {
