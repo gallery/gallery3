@@ -124,11 +124,54 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal($fullsize_file, file_get_contents($photo->file_path()));
   }
 
-  public function item_rename_wont_accept_slash_test() {
+  public function photo_rename_wont_accept_slash_test() {
     $item = test::random_photo();
     $item->name = "/no_slashes/allowed/";
     $item->save();
     $this->assert_equal("no_slashes_allowed.jpg", $item->name);
+  }
+
+  public function photo_rename_wont_accept_backslash_test() {
+    $item = test::random_photo();
+    $item->name = "\\no_backslashes\\allowed\\";
+    $item->save();
+    $this->assert_equal("no_backslashes_allowed.jpg", $item->name);
+  }
+
+  public function album_rename_wont_accept_slash_test() {
+    try {
+      $item = test::random_album();
+      $item->name = "/no_album_slashes/allowed/";
+      $item->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "no_slashes"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+  }
+
+  public function album_rename_wont_accept_backslash_test() {
+    try {
+      $item = test::random_album();
+      $item->name = "\\no_album_backslashes\\allowed\\";
+      $item->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "no_backslashes"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+  }
+
+  public function album_rename_wont_accept_trailing_period_test() {
+    try {
+      $item = test::random_album();
+      $item->name = ".no_trailing_period.allowed.";
+      $item->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("name" => "no_trailing_period"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function move_album_test() {
