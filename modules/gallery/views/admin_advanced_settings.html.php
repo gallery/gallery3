@@ -39,8 +39,8 @@
 
   <script>
     $(document).ready(function() {
-      $("#g-admin-advanced-settings-filter").keyup(function() {
-        var filter = $(this).attr("value");
+      $("#g-admin-advanced-settings-filter").on("input keyup", function() {
+        var filter = $(this).val();
         if (filter) {
           $("tr.setting-row").fadeOut("fast");
           $("tr.setting-row").each(function() {
