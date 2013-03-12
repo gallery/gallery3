@@ -121,11 +121,11 @@ jQuery.extend(Gallery, {
             translation[form] = '';
           }
           $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']")
-              .attr('value', translation[form]);
+              .val(translation[form]);
           $('#plural-' + form).removeClass('hidden');
         }
       } else {
-        $('#l10n-edit-translation').attr('value', translation);
+        $('#l10n-edit-translation').val(translation);
         $('#l10n-edit-translation').removeClass('hidden');
       }
     };
@@ -167,10 +167,10 @@ jQuery.extend(Gallery, {
               text = source['one'];
             }
             $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']")
-                .attr('value', text);
+                .val(text);
           }
         } else {
-          $('#l10n-edit-translation').attr('value', source);
+          $('#l10n-edit-translation').val(source);
         }
 
       }
@@ -240,7 +240,7 @@ Gallery.behaviors.l10nClient = function(context) {
   });
 
   // Custom listener for l10n_client livesearch
-  $('#l10n-client #g-l10n-search').keyup(function(key) {
+  $('#l10n-client #g-l10n-search').on("input keyup", function(key) {
     Gallery.l10nClient.filter($('#l10n-client #g-l10n-search').val());
   });
 
@@ -264,11 +264,11 @@ Gallery.behaviors.l10nClient = function(context) {
               if (is_plural) {
                    for (var i = 0; i < num_plural_forms; i++) {
                       var form = plural_forms[i];
-                      translation[form] = $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']").attr('value');
+                      translation[form] = $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']").val();
                       is_non_empty = is_non_empty || translation[form];
                   }
               } else {
-                  translation = $('#l10n-edit-translation').attr('value');
+                  translation = $('#l10n-edit-translation').val();
                   is_non_empty = translation;
               }
               Gallery.l10nClient.setString(Gallery.l10nClient.selected, translation);

@@ -11,7 +11,7 @@
 
     _init: function() {
       var self = this;
-      $(this.element).keyup(function() {
+      $(this.element).on("input keyup", function() {
         var strength = self.calculateStrength(this.value);
         var index = Math.min(Math.floor(strength / 10), 10);
         $("#g-password-gauge")
