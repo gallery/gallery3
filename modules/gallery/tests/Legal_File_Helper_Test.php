@@ -194,4 +194,22 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
       }
     }
   }
+
+  public function sanitize_dirname_with_no_rename_test() {
+    $this->assert_equal("foo", legal_file::sanitize_dirname("foo"));
+    $this->assert_equal("foo.bar", legal_file::sanitize_dirname("foo.bar"));
+    $this->assert_equal(".foo.bar...baz", legal_file::sanitize_dirname(".foo.bar...baz"));
+    $this->assert_equal("foo bar  spaces", legal_file::sanitize_dirname("foo bar  spaces"));
+    $this->assert_equal("j'écris@un#nom_bizarre(mais quand_même_ça_passe \$ÇÀ@€",
+      legal_file::sanitize_dirname("j'écris@un#nom_bizarre(mais quand_même_ça_passe \$ÇÀ@€"));
+  }
+
+  public function sanitize_filename_with_corrections_test() {
+    $this->assert_equal("foo_bar", legal_file::sanitize_dirname("/foo/bar/"));
+    $this->assert_equal("foo_bar", legal_file::sanitize_dirname("\\foo\\bar\\"));
+    $this->assert_equal(".foo..bar", legal_file::sanitize_dirname(".foo..bar."));
+    $this->assert_equal("foo_bar", legal_file::sanitize_dirname("_foo__bar_"));
+    $this->assert_equal("album", legal_file::sanitize_dirname("_"));
+    $this->assert_equal("album", legal_file::sanitize_dirname(null));
+  }
 }

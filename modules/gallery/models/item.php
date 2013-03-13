@@ -365,13 +365,19 @@ class Item_Model_Core extends ORM_MPTT {
           $this->weight = item::get_max_weight();
         }
 
-        // Process the data file info.
-        if (isset($this->data_file)) {
-          $this->_process_data_file_info();
-        } else if (!$this->is_album()) {
-          // Unless it's an album, new items must have a data file.
-          $this->data_file_error = true;
+        if ($this->is_album()) {
+          // Sanitize the album name.
+          $this->name = legal_file::sanitize_dirname($this->name);
+        } else {
+          // Process the data file info.  This also sanitizes the item name.
+          if (isset($this->data_file)) {
+            $this->_process_data_file_info();
+          } else {
+            // New photos and movies must have a data file.
+            $this->data_file_error = true;
+          }
         }
+
 
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
@@ -435,6 +441,11 @@ class Item_Model_Core extends ORM_MPTT {
           // make sure the new name still agrees with the file type.
           $this->name = legal_file::sanitize_filename($this->name,
             pathinfo($original->name, PATHINFO_EXTENSION), $this->type);
+        }
+
+        // If an album's name changed, sanitize it.
+        if ($this->is_album() && array_key_exists("name", $this->changed)) {
+          $this->name = legal_file::sanitize_dirname($this->name);
         }
 
         // If an album's cover has changed (or been removed), delete any existing album cover,
