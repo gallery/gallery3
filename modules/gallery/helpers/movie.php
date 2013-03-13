@@ -138,7 +138,8 @@ class movie_Core {
    * Return the path to the ffmpeg binary if one exists and is executable, or null.
    */
   static function find_ffmpeg() {
-    if (!($ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) || !file_exists($ffmpeg_path)) {
+    if (!($ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) ||
+        !@is_executable($ffmpeg_path)) {
       $ffmpeg_path = system::find_binary(
         "ffmpeg", module::get_var("gallery", "graphics_toolkit_path"));
       module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
