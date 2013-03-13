@@ -121,7 +121,7 @@ if (file_exists("local.php")) {
 require APPPATH . "bootstrap" . EXT;
 
 // Main request.
-print Request::factory(true, array(), false)
+Request::factory(true, array(), false)
   ->execute()
   ->send_headers(true)
   ->body();

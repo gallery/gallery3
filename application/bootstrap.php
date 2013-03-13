@@ -184,11 +184,12 @@ Cache::$default = "database";
 // to the domain?
 Cookie::$salt = "g3";
 
-// Initialize the request
-Request::factory();
-
 // Initialize I18n support
 Gallery_I18n::instance();
+
+Route::set("default", "(<controller>(/<action>))")
+  ->defaults(array("controller" => "albums",
+                   "action" => "index"));
 
 // Load all active modules.  This will trigger each module to load its own routes.
 module::load_modules();
