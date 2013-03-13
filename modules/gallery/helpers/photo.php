@@ -35,6 +35,7 @@ class photo_Core {
     $group->input("name")->label(t("Filename"))->value($photo->name)
       ->error_messages("conflict", t("There is already a movie, photo or album with this name"))
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
+      ->error_messages("no_backslashes", t("The photo name can't contain a \"\\\""))
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""))
       ->error_messages("illegal_data_file_extension", t("You cannot change the photo file extension"))
       ->error_messages("required", t("You must provide a photo file name"))

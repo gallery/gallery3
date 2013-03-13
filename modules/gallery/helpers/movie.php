@@ -38,6 +38,7 @@ class movie_Core {
       ->error_messages(
         "conflict", t("There is already a movie, photo or album with this name"))
       ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))
+      ->error_messages("no_backslashes", t("The movie name can't contain a \"\\\""))
       ->error_messages("no_trailing_period", t("The movie name can't end in \".\""))
       ->error_messages("illegal_data_file_extension", t("You cannot change the movie file extension"))
       ->error_messages("required", t("You must provide a movie file name"))
