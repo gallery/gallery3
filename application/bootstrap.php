@@ -193,6 +193,9 @@ Gallery_I18n::instance();
 // Load all active modules.  This will trigger each module to load its own routes.
 module::load_modules();
 
+register_shutdown_function(array("gallery", "shutdown"));
+
 // Notify all modules that we're ready to serve
 gallery::ready();
+
 
