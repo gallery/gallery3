@@ -101,8 +101,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     // validation logic will correctly reject it.  So, we skip validation when we're running tests.
     if (TEST_MODE || $form->validate()) {
       $file = $_POST["file"];
-      // Forge prefixes files with "uploadfile-xxxxxxx" for uniqueness
-      $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', basename($file));
+      $name = $_FILES["file"]["name"];
 
       try {
         list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
