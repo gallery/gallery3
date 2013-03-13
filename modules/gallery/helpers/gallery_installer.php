@@ -809,6 +809,26 @@ class gallery_installer {
         ->execute();
       module::set_version("gallery", $version = 57);
     }
+
+    if ($version == 57) {
+      // In v58 we changed the Item_Model validation code to disallow files or directories with
+      // backslashes in them, and we need to fix any existing items that have them.  This is
+      // pretty unlikely, as having backslashes would have probably already caused other issues for
+      // users, but we should check anyway.  This might be slow, but if it times out it can just
+      // pick up where it left off.
+      foreach (db::build()
+               ->from("items")
+               ->select("id")
+               ->where(db::expr("`name` REGEXP '\\\\\\\\'"), "=", 1)  // one \, 3x escaped
+               ->order_by("id", "asc")
+               ->execute() as $row) {
+        set_time_limit(30);
+        $item = ORM::factory("item", $row->id);
+        $item->name = str_replace("\\", "_", $item->name);
+        $item->save();
+      }
+      module::set_version("gallery", $version = 58);
+    }
   }
 
   static function uninstall() {

@@ -889,12 +889,17 @@ class Item_Model_Core extends ORM_MPTT {
   }
 
   /**
-   * Validate that the desired slug does not conflict.
+   * Validate the item slug.  It can return the following error messages:
+   * - not_url_safe: has illegal characters
+   * - conflict: has conflicting slug
+   * - reserved (items in root only): has same slug as a controller
    */
   public function valid_slug(Validation $v, $field) {
     if (preg_match("/[^A-Za-z0-9-_]/", $this->slug)) {
       $v->add_error("slug", "not_url_safe");
-    } else if (db::build()
+    }
+
+    if (db::build()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("id", "<>", $this->id)
@@ -902,15 +907,29 @@ class Item_Model_Core extends ORM_MPTT {
         ->count_records()) {
       $v->add_error("slug", "conflict");
     }
+
+    if ($this->parent_id == 1 && Kohana::auto_load("{$this->slug}_Controller")) {
+      $v->add_error("slug", "reserved");
+      return;
+    }
   }
 
   /**
-   * Validate the item name.  It can't conflict with other names, can't contain slashes or
-   * trailing periods.
+   * Validate the item name.  It can return the following error messages:
+   * - no_slashes: contains slashes
+   * - no_backslashes: contains backslashes
+   * - no_trailing_period: has a trailing period
+   * - illegal_data_file_extension (non-albums only): has double, no, or illegal extension
+   * - conflict: has conflicting name
    */
   public function valid_name(Validation $v, $field) {
     if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
+      return;
+    }
+
+    if (strpos($this->name, "\\") !== false) {
+      $v->add_error("name", "no_backslashes");
       return;
     }
 
@@ -919,13 +938,13 @@ class Item_Model_Core extends ORM_MPTT {
       return;
     }
 
-    // Do not accept files with double extensions, they can cause problems on some
-    // versions of Apache.
-    if (!$this->is_album() && substr_count($this->name, ".") > 1) {
-      $v->add_error("name", "illegal_data_file_extension");
-    }
-
     if ($this->is_movie() || $this->is_photo()) {
+      if (substr_count($this->name, ".") > 1) {
+        // Do not accept files with double extensions, as they can
+        // cause problems on some versions of Apache.
+        $v->add_error("name", "illegal_data_file_extension");
+      }
+
       $ext = pathinfo($this->name, PATHINFO_EXTENSION);
 
       if (!$this->loaded() && !$ext) {
@@ -966,11 +985,6 @@ class Item_Model_Core extends ORM_MPTT {
         $v->add_error("name", "conflict");
         return;
       }
-    }
-
-    if ($this->parent_id == 1 && Kohana::auto_load("{$this->slug}_Controller")) {
-      $v->add_error("slug", "reserved");
-      return;
     }
   }
 
