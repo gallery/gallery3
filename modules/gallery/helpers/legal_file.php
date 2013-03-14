@@ -298,7 +298,7 @@ class legal_file_Core {
     $filename = str_replace("/", "_", $filename);
     $filename = str_replace("\\", "_", $filename);
 
-    // Remove extra dots from the filename.  This will also remove extraneous underscores.
+    // Remove extra dots from the filename.  Also removes extraneous and leading/trailing underscores.
     $filename = legal_file::smash_extensions($filename);
 
     // It's possible that the filename has no base (e.g. ".jpg") - if so, give it a generic one.
@@ -307,5 +307,32 @@ class legal_file_Core {
     }
 
     return $filename;
+  }
+
+  /**
+   * Sanitize a directory name for an album.  This returns a completely legal and valid
+   * directory name.
+   *
+   * @param  string $dirname (with no parent directory)
+   * @return string sanitized dirname
+   */
+  static function sanitize_dirname($dirname) {
+    // It should be a dirname without a parent directory - remove all slashes (and backslashes).
+    $dirname = str_replace("/", "_", $dirname);
+    $dirname = str_replace("\\", "_", $dirname);
+
+    // Remove extraneous and leading/trailing underscores.
+    $dirname = preg_replace("/[_]+/", "_", $dirname);
+    $dirname = trim($dirname, "_");
+
+    // Remove any trailing dots.
+    $dirname = rtrim($dirname, ".");
+
+    // It's possible that the dirname is now empty - if so, give it a generic one.
+    if (empty($dirname)) {
+      $dirname = "album";
+    }
+
+    return $dirname;
   }
 }
