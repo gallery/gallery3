@@ -123,10 +123,25 @@ class Uploader_Controller extends Controller {
       ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
     $group->uploadify("uploadify")->album($album);
 
-    $group = $form->group("actions");
-    $group->uploadify_buttons("");
+    $group_actions = $form->group("actions");
+    $group_actions->uploadify_buttons("");
 
+    $inputs_before_event = array_keys($form->add_photos->inputs);
     module::event("add_photos_form", $album, $form);
+    $inputs_after_event = array_keys($form->add_photos->inputs);
+
+    // For each new input in add_photos, attach JS to make uploadify update its value.
+    foreach (array_diff($inputs_after_event, $inputs_before_event) as $input) {
+      if (!$input) {
+        // Likely a script input - don't do anything with it.
+        continue;
+      }
+      $group->uploadify->script_data($input, $group->{$input}->value);
+      $group->script("")
+        ->text("$('input[name=\"$input\"]').change(function (event) {
+                  $('#g-uploadify').uploadifySettings('scriptData', {'$input': $(this).val()});
+                });");
+    }
 
     return $form;
   }

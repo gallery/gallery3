@@ -69,18 +69,14 @@ class tag_event_Core {
   }
 
   static function item_edit_form($item, $form) {
-    $url = url::site("tags/autocomplete");
-    $form->script("")
-      ->text("$('form input[name=tags]').ready(function() {
-                $('form input[name=tags]').gallery_autocomplete('$url', {multiple: true});
-              });");
-
     $tag_names = array();
     foreach (tag::item_tags($item) as $tag) {
       $tag_names[] = $tag->name;
     }
     $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
       ->value(implode(", ", $tag_names));
+
+    $form->script("")->text(self::_get_autocomplete_js());
   }
 
   static function item_edit_form_completed($item, $form) {
@@ -110,38 +106,21 @@ class tag_event_Core {
 
   static function add_photos_form($album, $form) {
     $group = $form->add_photos;
-    if (!is_object($group->uploadify)) {
-      return;
-    }
 
     $group->input("tags")
       ->label(t("Add tags to all uploaded files"))
       ->value("");
-    $group->uploadify->script_data("tags", "");
 
-    $autocomplete_url = url::site("tags/autocomplete");
-    $group->script("")
-      ->text("$('input[name=tags]')
-                .gallery_autocomplete(
-                  '$autocomplete_url',
-                  {multiple: true}
-                );
-              $('input[name=tags]')
-                .change(function (event) {
-                  $('#g-uploadify').uploadifySettings('scriptData', {'tags': $(this).val()});
-                });");
+    $group->script("")->text(self::_get_autocomplete_js());
   }
 
-  static function add_photos_form_completed($album, $form) {
+  static function add_photos_form_completed($item, $form) {
     $group = $form->add_photos;
-    if (!is_object($group->uploadify)) {
-      return;
-    }
 
-    foreach (explode(",", $form->add_photos->tags->value) as $tag_name) {
+    foreach (explode(",", $group->tags->value) as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {
-        $tag = tag::add($album, $tag_name);
+        $tag = tag::add($item, $tag_name);
       }
     }
   }
@@ -160,5 +139,10 @@ class tag_event_Core {
       );
       $block->content->metadata = $info;
     }
+  }
+
+  private static function _get_autocomplete_js() {
+    $url = url::site("tags/autocomplete");
+    return "$('input[name=\"tags\"]').gallery_autocomplete('$url', {multiple: true});";
   }
 }
