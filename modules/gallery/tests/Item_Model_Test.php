@@ -808,4 +808,171 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_same("{$item1_orig_base}-02.flv", $item3->name);
     $this->assert_same("{$item3_orig_slug}-02", $item3->slug);
   }
+
+  public function find_by_path_test() {
+    $level1 = test::random_album();
+    $level2 = test::random_album_unsaved($level1);
+    $level2->name = "plus + space";
+    $level2->save()->reload();
+
+    $level3 = test::random_photo_unsaved($level2);
+    $level3->name = "same.jpg";
+    $level3->save()->reload();
+
+    $level2b = test::random_album($level1);
+    $level3b = test::random_photo_unsaved($level2b);
+    $level3b->name = "same.jpg";
+    $level3b->save()->reload();
+
+    // Item in album
+    $test = new Item_Model("path", "/{$level1->name}/{$level2->name}/{$level3->name}", "albums");
+    $this->assert_same($level3->id, $test->id);
+
+    // Album, ends with a slash
+    $test = new Item_Model("path", "/{$level1->name}/{$level2->name}/", "albums");
+    $this->assert_same($level2->id, $test->id);
+
+    // Album, ends without a slash
+    $test = new Item_Model("path", "/{$level1->name}/{$level2->name}", "albums");
+    $this->assert_same($level2->id, $test->id);
+
+    // Return root if "" is passed
+    $test = new Item_Model("path", "", "albums");
+    $this->assert_same(item::root()->id, $test->id);
+
+    // Verify that we don't get confused by the part names, using the fallback code.
+    self::_remove_relative_path_caches();
+
+    $test = new Item_Model("path", "/{$level1->name}/{$level2->name}/{$level3->name}", "albums");
+    $this->assert_same($level3->id, $test->id);
+
+    $test = new Item_Model("path", "/{$level1->name}/{$level2b->name}/{$level3b->name}", "albums");
+    $this->assert_same($level3b->id, $test->id);
+
+    // Verify that we don't get false positives
+    $test = new Item_Model("path", "foo/bar/baz", "albums");
+    $this->assert_same(null, $test->id);
+  }
+
+  public function find_by_path_with_photo_test() {
+    $parent = test::random_album();
+    $item = test::random_photo($parent);
+
+    $jpg_path = "{$parent->name}/{$item->name}";
+    $flv_path = legal_file::change_extension($jpg_path, "flv");
+
+    // Check normal operation.
+    $test = new Item_Model("path", $jpg_path, "albums");
+    $this->assert_equal($item->id, $test->id);
+    $test = new Item_Model("path", $jpg_path, "resizes");
+    $this->assert_equal($item->id, $test->id);
+    $test = new Item_Model("path", $jpg_path, "thumbs");
+    $this->assert_equal($item->id, $test->id);
+
+    // Check that we don't get false positives.
+    $test = new Item_Model("path", $flv_path, "albums");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $flv_path, "resizes");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $flv_path, "thumbs");
+    $this->assert_equal(null, $test->id);
+
+    // Check normal operation without relative path cache.
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $jpg_path, "albums");
+    $this->assert_equal($item->id, $test->id);
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $jpg_path, "resizes");
+    $this->assert_equal($item->id, $test->id);
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $jpg_path, "thumbs");
+    $this->assert_equal($item->id, $test->id);
+
+    // Check that we don't get false positives without relative path cache.
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $flv_path, "albums");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $flv_path, "resizes");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $flv_path, "thumbs");
+    $this->assert_equal(null, $test->id);
+  }
+
+  public function find_by_path_with_movie_test() {
+    $parent = test::random_album();
+    $item = test::random_movie($parent);
+
+    $flv_path = "{$parent->name}/{$item->name}";
+    $jpg_path = legal_file::change_extension($flv_path, "jpg");
+
+    // Check normal operation.
+    $test = new Item_Model("path", $flv_path, "albums");
+    $this->assert_equal($item->id, $test->id);
+    $test = new Item_Model("path", $jpg_path, "thumbs");
+    $this->assert_equal($item->id, $test->id);
+
+    // Check that we don't get false positives.
+    $test = new Item_Model("path", $jpg_path, "albums");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $flv_path, "thumbs");
+    $this->assert_equal(null, $test->id);
+
+    // Check normal operation without relative path cache.
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $flv_path, "albums");
+    $this->assert_equal($item->id, $test->id);
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $jpg_path, "thumbs");
+    $this->assert_equal($item->id, $test->id);
+
+    // Check that we don't get false positives without relative path cache.
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $jpg_path, "albums");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $flv_path, "thumbs");
+    $this->assert_equal(null, $test->id);
+  }
+
+  public function find_by_path_with_album_test() {
+    $parent = test::random_album();
+    $item = test::random_album($parent);
+
+    $album_path = "{$parent->name}/{$item->name}";
+    $thumb_path = "{$album_path}/.album.jpg";
+
+    // Check normal operation.
+    $test = new Item_Model("path", $album_path, "albums");
+    $this->assert_equal($item->id, $test->id);
+    $test = new Item_Model("path", $thumb_path, "thumbs");
+    $this->assert_equal($item->id, $test->id);
+
+    // Check that we don't get false positives.
+    $test = new Item_Model("path", $thumb_path, "albums");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $album_path, "thumbs");
+    $this->assert_equal(null, $test->id);
+
+    // Check normal operation without relative path cache.
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $album_path, "albums");
+    $this->assert_equal($item->id, $test->id);
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $thumb_path, "thumbs");
+    $this->assert_equal($item->id, $test->id);
+
+    // Check that we don't get false positives without relative path cache.
+    self::_remove_relative_path_caches();
+    $test = new Item_Model("path", $thumb_path, "albums");
+    $this->assert_equal(null, $test->id);
+    $test = new Item_Model("path", $album_path, "thumbs");
+    $this->assert_equal(null, $test->id);
+  }
+
+  private function _remove_relative_path_caches() {
+    // This gets used *many* times in the find_by_path tests above to check the fallback code.
+    db::build()
+      ->update("items")
+      ->set("relative_path_cache", null)
+      ->execute();
+  }
 }
