@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon-precomposed"
           href="<?= url::file(module::get_var("gallery", "apple_touch_icon_url")) ?>" />
     <? if ($theme->page_type == "collection"): ?>
-    <? if (($thumb_proportion = $theme->thumb_proportion($theme->item(), 100, "width")) != 1): ?>
+      <? if (($thumb_proportion = $theme->thumb_proportion($theme->item(), 100, "width")) != 1): ?>
         <? $new_width = round($thumb_proportion * 213) ?>
         <? $new_height = round($thumb_proportion * 240) ?>
         <style type="text/css">
@@ -69,10 +69,7 @@
           media="screen,print,projection" />
     <![endif]-->
 
-    <!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->
     <?= $theme->get_combined("css") ?>
-
-    <!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->
     <?= $theme->get_combined("script") ?>
   </head>
 
