@@ -42,8 +42,8 @@ class search_Core {
     $db = Database::instance();
 
     $query = self::_build_query_base($q, $album) .
-      "ORDER BY `score` DESC " .
-      "LIMIT $limit OFFSET " . (int)$offset;
+      " ORDER BY `score` DESC" .
+      " LIMIT $limit OFFSET " . (int)$offset;
 
     $data = $db->query($query);
     $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
@@ -68,7 +68,7 @@ class search_Core {
       $album_sql = "";
     } else {
       $album_sql =
-        " AND {items}.left_ptr > " .$db->escape($album->left_ptr) .
+        " AND {items}.left_ptr > " . $db->escape($album->left_ptr) .
         " AND {items}.right_ptr <= " . $db->escape($album->right_ptr);
     }
 
@@ -76,11 +76,10 @@ class search_Core {
       "SELECT SQL_CALC_FOUND_ROWS {items}.*, " .
       "  MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
       "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
-      "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
+      "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE)" .
       $album_sql .
       (empty($where) ? "" : " AND " . join(" AND ", $where)) .
-      $access_sql .
-      " ";
+      $access_sql;
   }
 
   /**
@@ -133,7 +132,7 @@ class search_Core {
   static function get_position_within_album($item, $q, $album) {
     $page_size = module::get_var("gallery", "page_size", 9);
     $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
-      "ORDER BY `score` DESC ";
+      " ORDER BY `score` DESC";
     $db = Database::instance();
 
     // Truncate the score by two decimal places as this resolves the issues
@@ -153,7 +152,7 @@ class search_Core {
     // Redo the query but only look for results greater than or equal to our current location
     // then seek backwards until we find our item.
     $data = $db->query(self::_build_query_base($q, $album) . " HAVING `score` >= " . $score .
-                       "ORDER BY `score` DESC ");
+                       " ORDER BY `score` DESC");
     $data->seek($data->count() - 1);
 
     while ($data->get("id") != $item->id && $data->prev()->valid()) {
