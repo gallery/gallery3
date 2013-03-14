@@ -769,6 +769,7 @@ class Item_Model_Core extends ORM_MPTT {
     $movie_img->height = $height;
     $movie_img->attrs = $attrs;
     $movie_img->url = $this->file_url(true);
+    $movie_img->filename = $this->name;
     $movie_img->fp_params = array(); // additional Flowplayer params values (will be json encoded)
     $movie_img->fp_config = array(); // additional Flowplayer config values (will be json encoded)
     $movie_img->view = array();
@@ -781,7 +782,7 @@ class Item_Model_Core extends ORM_MPTT {
       // View NOT generated - see if filetype supported by Flowplayer v3
       // Note that the extension list below is hard-coded and doesn't use the legal_file helper
       // since anything else will not work in Flowplayer v3.
-      if (in_array(strtolower(pathinfo($this->name, PATHINFO_EXTENSION)),
+      if (in_array(strtolower(pathinfo($movie_img->filename, PATHINFO_EXTENSION)),
                    array("flv", "mp4", "m4v", "mov", "f4v"))) {
         // Filetype supported by Flowplayer v3 - use it (default)
         $view = new View("movieplayer.html");
