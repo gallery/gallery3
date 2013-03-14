@@ -82,10 +82,9 @@ class Gallery_View_Core extends View {
    * @param $types  a comma separated list of types to combine, eg "script,css"
    */
   public function start_combining($types) {
-    if (gallery::allow_css_and_js_combining()) {
-      foreach (explode(",", $types) as $type) {
-        $this->combine_queue[$type] = array();
-      }
+    foreach (explode(",", $types) as $type) {
+      // Initialize the core group so it gets included first.
+      $this->combine_queue[$type] = array("core" => array());
     }
   }
 
@@ -135,70 +134,93 @@ class Gallery_View_Core extends View {
   /**
    * Combine a series of files into a single one and cache it in the database.
    * @param $type  the data type (script or css)
-   * @param $group the group of scripts or css we want
+   * @param $group the group of scripts or css we want (null will combine all groups)
    */
-  public function get_combined($type, $group="core") {
-    $links = array();
-
-    if (empty($this->combine_queue[$type][$group])) {
-      return;
+  public function get_combined($type, $group=null) {
+    if (is_null($group)) {
+      $groups = array_keys($this->combine_queue[$type]);
+    } else {
+      $groups = array($group);
     }
 
-    // Include the url in the cache key so that if the Gallery moves, we don't use old cached
-    // entries.
-    $key = array(url::abs_file(""));
+    $buf = "";
+    foreach ($groups as $group) {
+      if (empty($this->combine_queue[$type][$group])) {
+        continue;
+      }
 
-    foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
-      $stats = stat($path);
-      // 7 == size, 9 == mtime, see http://php.net/stat
-      $key[] = "$path $stats[7] $stats[9]";
-    }
-
-    $key = md5(join(" ", $key));
-    $cache = Cache::instance();
-    $contents = $cache->get($key);
-
-    if (empty($contents)) {
-      $combine_data = new stdClass();
-      $combine_data->type = $type;
-      $combine_data->contents = $this->combine_queue[$type][$group];
-      module::event("before_combine", $combine_data);
-
-      $contents = "";
+      // Include the url in the cache key so that if the Gallery moves, we don't use old cached
+      // entries.
+      $key = array(url::abs_file(""));
       foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
+        $stats = stat($path);
+        // 7 == size, 9 == mtime, see http://php.net/stat
+        $key[] = "$path $stats[7] $stats[9]";
+      }
+      $key = md5(join(" ", $key));
+
+      if (gallery::allow_css_and_js_combining()) {
+        // Combine enabled - if we're at the start of the buffer, add a comment.
+        if (!$buf) {
+          $type_text = ($type == "css") ? "CSS" : "JS";
+          $buf .= "<!-- LOOKING FOR YOUR $type_text? It's all been combined into the link(s) below -->\n";
+        }
+
+        $cache = Cache::instance();
+        $contents = $cache->get($key);
+
+        if (empty($contents)) {
+          $combine_data = new stdClass();
+          $combine_data->type = $type;
+          $combine_data->contents = $this->combine_queue[$type][$group];
+          module::event("before_combine", $combine_data);
+
+          $contents = "";
+          foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
+            if ($type == "css") {
+              $contents .= "/* $path */\n" . $this->process_css($path) . "\n";
+            } else {
+              $contents .= "/* $path */\n" . file_get_contents($path) . "\n";
+            }
+          }
+
+          $combine_data = new stdClass();
+          $combine_data->type = $type;
+          $combine_data->contents = $contents;
+          module::event("after_combine", $combine_data);
+
+          $cache->set($key, $combine_data->contents, array($type), 30 * 84600);
+
+          $use_gzip = function_exists("gzencode") &&
+            (int) ini_get("zlib.output_compression") === 0;
+          if ($use_gzip) {
+            $cache->set("{$key}_gz", gzencode($combine_data->contents, 9, FORCE_GZIP),
+                        array($type, "gzip"), 30 * 84600);
+          }
+        }
+
         if ($type == "css") {
-          $contents .= "/* $path */\n" . $this->process_css($path) . "\n";
+          $buf .= html::stylesheet("combined/css/$key", "screen,print,projection", true);
         } else {
-          $contents .= "/* $path */\n" . file_get_contents($path) . "\n";
+          $buf .= html::script("combined/javascript/$key", true);
+        }
+      } else {
+        // Don't combine - just return the CSS and JS links (with the key as a cache buster).
+        foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
+          if ($type == "css") {
+            $buf .= html::stylesheet("$path?m=$key", "screen,print,projection", false);
+          } else {
+            $buf .= html::script("$path?m=$key", false);
+          }
         }
       }
 
-      $combine_data = new stdClass();
-      $combine_data->type = $type;
-      $combine_data->contents = $contents;
-      module::event("after_combine", $combine_data);
-
-      $cache->set($key, $combine_data->contents, array($type), 30 * 84600);
-
-      $use_gzip = function_exists("gzencode") &&
-        (int) ini_get("zlib.output_compression") === 0;
-      if ($use_gzip) {
-        $cache->set("{$key}_gz", gzencode($combine_data->contents, 9, FORCE_GZIP),
-                    array($type, "gzip"), 30 * 84600);
+      unset($this->combine_queue[$type][$group]);
+      if (empty($this->combine_queue[$type])) {
+        unset($this->combine_queue[$type]);
       }
-
     }
-
-    unset($this->combine_queue[$type][$group]);
-    if (empty($this->combine_queue[$type])) {
-      unset($this->combine_queue[$type]);
-    }
-
-    if ($type == "css") {
-      return html::stylesheet("combined/css/$key", "screen,print,projection", true);
-    } else {
-      return html::script("combined/javascript/$key", true);
-    }
+    return $buf;
   }
 
   /**

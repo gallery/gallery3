@@ -47,10 +47,7 @@
           media="screen,print,projection" />
     <![endif]-->
 
-    <!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->
     <?= $theme->get_combined("css") ?>
-
-    <!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->
     <?= $theme->get_combined("script") ?>
   </head>
 
