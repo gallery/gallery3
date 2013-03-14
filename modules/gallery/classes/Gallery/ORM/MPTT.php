@@ -31,7 +31,7 @@
  * Unfortunately that code was not ready for production and I did not want to absorb their code
  * and licensing issues so I've reimplemented just the features that we need.
  */
-class ORM_MPTT_Core extends ORM {
+class Gallery_ORM_MPTT extends ORM {
   private $model_name = null;
 
   function __construct($id=null) {
