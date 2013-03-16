@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Database_Builder extends Database_Builder_Core {
+class Gallery_ORM extends Kohana_ORM {
   /**
    * Merge in a series of where clause tuples and call where() on each one.
    * @chainable
@@ -42,9 +42,5 @@ class Database_Builder extends Database_Builder_Core {
       }
     }
     return $this;
-  }
-
-  public function compile() {
-    return parent::compile();
   }
 }

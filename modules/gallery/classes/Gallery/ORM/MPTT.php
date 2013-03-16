@@ -36,56 +36,66 @@ class Gallery_ORM_MPTT extends ORM {
 
   function __construct($id=null) {
     parent::__construct($id);
-    $this->model_name = inflector::singular($this->table_name);
+    $this->model_name = inflector::singular($this->table_name());
   }
 
   /**
-   * Overload ORM::save() to update the MPTT tree when we add new items to the hierarchy.
+   * Overload ORM::create() to update the MPTT tree when we add new items to the hierarchy.
    *
    * @chainable
    * @return  ORM
    */
-  function save() {
-    if (!$this->loaded()) {
-      $this->lock();
-      $parent = ORM::factory("item", $this->parent_id);
-
-      try {
-        // Make a hole in the parent for this new item
-        db::build()
-          ->update($this->table_name)
-          ->set("left_ptr", db::expr("`left_ptr` + 2"))
-          ->where("left_ptr", ">=", $parent->right_ptr)
-          ->execute();
-        db::build()
-          ->update($this->table_name)
-          ->set("right_ptr", db::expr("`right_ptr` + 2"))
-          ->where("right_ptr", ">=", $parent->right_ptr)
-          ->execute();
-        $parent->right_ptr += 2;
-
-        // Insert this item into the hole
-        $this->left_ptr = $parent->right_ptr - 2;
-        $this->right_ptr = $parent->right_ptr - 1;
-        $this->parent_id = $parent->id;
-        $this->level = $parent->level + 1;
-      } catch (Exception $e) {
-        $this->unlock();
-        throw $e;
-      }
-      parent::save();
-      $this->unlock();
-    } else {
-      parent::save();
+  function create(Validation $validation=null) {
+    if ($this->_loaded) {
+      throw new Kohana_Exception("Cannot create :model model because it is already loaded.",
+                                 array(':model' => $this->_object_name));
     }
+
+    // Require model validation before saving
+    if (!$this->_valid || $validation) {
+      $this->check($validation);
+    }
+
+    $this->lock();
+    $parent = ORM::factory("item", $this->parent_id);
+
+    try {
+      // Make a hole in the parent for this new item
+      DB::update($this->table_name())
+        ->set("left_ptr", db::expr("`left_ptr` + 2"))
+        ->where("left_ptr", ">=", $parent->right_ptr)
+        ->execute($this->_db);
+      DB::update($this->table_name())
+        ->set("right_ptr", db::expr("`right_ptr` + 2"))
+        ->where("right_ptr", ">=", $parent->right_ptr)
+        ->execute($this->_db);
+      $parent->right_ptr += 2;
+
+      // Insert this item into the hole
+      $this->left_ptr = $parent->right_ptr - 2;
+      $this->right_ptr = $parent->right_ptr - 1;
+      $this->parent_id = $parent->id;
+      $this->level = $parent->level + 1;
+    } catch (Exception $e) {
+      $this->unlock();
+      throw $e;
+    }
+
+    parent::create();
+    $this->unlock();
 
     return $this;
   }
 
   /**
-   * Delete this node and all of its children.
+   * Overload ORM::delete to delete all of this node's children.
    */
   public function delete($ignored_id=null) {
+    if (!$this->_loaded) {
+      throw new Kohana_Exception("Cannot delete :model model because it is not loaded.",
+                                 array(':model' => $this->_object_name));
+    }
+
     $children = $this->children();
     if ($children) {
       foreach ($this->children() as $item) {
@@ -107,16 +117,14 @@ class Gallery_ORM_MPTT extends ORM {
     }
 
     try {
-      db::build()
-        ->update($this->table_name)
+      DB::update($this->table_name())
         ->set("left_ptr", db::expr("`left_ptr` - 2"))
         ->where("left_ptr", ">", $this->right_ptr)
-        ->execute();
-      db::build()
-        ->update($this->table_name)
+        ->execute($this->_db);
+      DB::update($this->table_name())
         ->set("right_ptr", db::expr("`right_ptr` - 2"))
         ->where("right_ptr", ">", $this->right_ptr)
-        ->execute();
+        ->execute($this->_db);
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
@@ -252,32 +260,28 @@ class Gallery_ORM_MPTT extends ORM {
     try {
       if ($level_delta) {
         // Update the levels for the to-be-moved items
-        db::build()
-          ->update($this->table_name)
+        DB::update($this->table_name())
           ->set("level", db::expr("`level` + $level_delta"))
           ->where("left_ptr", ">=", $original_left_ptr)
           ->where("right_ptr", "<=", $original_right_ptr)
-          ->execute();
+          ->execute($this->_db);
       }
 
       // Make a hole in the target for the move
-      db::build()
-        ->update($this->table_name)
+      DB::update($this->table_name())
         ->set("left_ptr", db::expr("`left_ptr` + $size_of_hole"))
         ->where("left_ptr", ">=", $target_right_ptr)
-        ->execute();
-      db::build()
-        ->update($this->table_name)
+        ->execute($this->_db);
+      DB::update($this->table_name())
         ->set("right_ptr", db::expr("`right_ptr` + $size_of_hole"))
         ->where("right_ptr", ">=", $target_right_ptr)
-        ->execute();
+        ->execute($this->_db);
 
       // Change the parent.
-      db::build()
-        ->update($this->table_name)
+      DB::update($this->table_name())
         ->set("parent_id", $target->id)
         ->where("id", "=", $this->id)
-        ->execute();
+        ->execute($this->_db);
 
       // If the source is to the right of the target then we just adjusted its left_ptr and
       // right_ptr above.
@@ -289,25 +293,22 @@ class Gallery_ORM_MPTT extends ORM {
       }
 
       $new_offset = $target->right_ptr - $left_ptr;
-      db::build()
-        ->update($this->table_name)
+      DB::update($this->table_name())
         ->set("left_ptr", db::expr("`left_ptr` + $new_offset"))
         ->set("right_ptr", db::expr("`right_ptr` + $new_offset"))
         ->where("left_ptr", ">=", $left_ptr)
         ->where("right_ptr", "<=", $right_ptr)
-        ->execute();
+        ->execute($this->_db);
 
       // Close the hole in the source's parent after the move
-      db::build()
-        ->update($this->table_name)
+      DB::update($this->table_name())
         ->set("left_ptr", db::expr("`left_ptr` - $size_of_hole"))
         ->where("left_ptr", ">", $right_ptr)
-        ->execute();
-      db::build()
-        ->update($this->table_name)
+        ->execute($this->_db);
+      DB::update($this->table_name())
         ->set("right_ptr", db::expr("`right_ptr` - $size_of_hole"))
         ->where("right_ptr", ">", $right_ptr)
-        ->execute();
+        ->execute($this->_db);
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
@@ -326,7 +327,8 @@ class Gallery_ORM_MPTT extends ORM {
    */
   protected function lock() {
     $timeout = module::get_var("gallery", "lock_timeout", 1);
-    $result = $this->db->query("SELECT GET_LOCK('{$this->table_name}', $timeout) AS l")->current();
+    $result = $this->_db->query("SELECT GET_LOCK('" . $this->table_name() . "', $timeout) AS l")
+      ->current();
     if (empty($result->l)) {
       throw new Exception("@todo UNABLE_TO_LOCK_EXCEPTION");
     }
@@ -336,6 +338,6 @@ class Gallery_ORM_MPTT extends ORM {
    * Unlock the tree.
    */
   protected function unlock() {
-    $this->db->query("SELECT RELEASE_LOCK('{$this->table_name}')");
+    $this->db->query("SELECT RELEASE_LOCK('" . $this->table_name() . "')");
   }
 }
