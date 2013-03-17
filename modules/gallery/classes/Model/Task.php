@@ -1,3 +1,3 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
-class Controller_Items extends Gallery_Controller_Items {}
+class Model_Task extends Gallery_Model_Task {}
