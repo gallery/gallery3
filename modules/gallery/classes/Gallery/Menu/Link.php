@@ -17,14 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Block_Core {
-  public $content = null;
-  public $css_id = null;
-  public $id = null;
-  public $title = null;
-  public $anchor = null;
-
-  public function __toString() {
-    return View::factory("block.html", get_object_vars($this))->__toString();
+/**
+ * Menu element that provides a link to a new page.
+ */
+class Gallery_Menu_Link extends Menu_Element {
+  public function render() {
+    $view = new View(isset($this->view) ? $this->view : "menu_link.html");
+    $view->menu = $this;
+    return $view;
   }
 }

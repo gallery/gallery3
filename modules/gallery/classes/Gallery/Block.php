@@ -17,34 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class Gallery_Block {
+  public $content = null;
+  public $css_id = null;
+  public $id = null;
+  public $title = null;
+  public $anchor = null;
 
-class Task_Definition_Core {
-  public $callback;
-  public $description;
-  public $name;
-  public $severity;
-
-  static function factory() {
-    return new Task_Definition();
-  }
-
-  function callback($callback) {
-    $this->callback = $callback;
-    return $this;
-  }
-
-  function description($description) {
-    $this->description = $description;
-    return $this;
-  }
-
-  function name($name) {
-    $this->name = $name;
-    return $this;
-  }
-
-  function severity($severity) {
-    $this->severity = $severity;
-    return $this;
+  public function __toString() {
+    return View::factory("block.html", get_object_vars($this))->__toString();
   }
 }
