@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class theme {
+class Gallery_Theme {
   public static $admin_theme_name;
   public static $site_theme_name;
   public static $is_admin;
