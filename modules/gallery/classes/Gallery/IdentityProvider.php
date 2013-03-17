@@ -21,7 +21,7 @@
 /**
  * Provides a driver-based interface for managing users and groups.
  */
-class IdentityProvider_Core {
+class Gallery_IdentityProvider {
   protected static $instance;
 
   // Configuration
