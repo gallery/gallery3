@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class L10n_Client_Controller extends Controller {
+class Gallery_Controller_L10n_Client extends Controller {
   public function save() {
     access::verify_csrf();
     if (!identity::active_user()->admin) {

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photos_Controller extends Items_Controller {
+class Gallery_Controller_Photos extends Controller_Items {
   public function show($photo) {
     if (!is_object($photo)) {
       // show() must be public because we route to it in url::parse_url(), so make

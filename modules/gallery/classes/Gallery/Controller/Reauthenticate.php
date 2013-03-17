@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Reauthenticate_Controller extends Controller {
+class Gallery_Controller_Reauthenticate extends Controller {
   public function index() {
     $is_ajax = Session::instance()->get_once("is_ajax_request", request::is_ajax());
     if (!identity::active_user()->admin) {

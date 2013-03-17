@@ -26,7 +26,7 @@
  * *only* use information from the database to find and proxy the correct file.  This way all user
  * input is sanitized against the database before we perform any file I/O.
  */
-class File_Proxy_Controller extends Controller {
+class Gallery_Controller_FileProxy extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
   public function __call($function, $args) {
 

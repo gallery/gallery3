@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Modules_Controller extends Admin_Controller {
+class Gallery_Controller_Admin_Modules extends Controller_Admin {
   public function index() {
     // If modules need upgrading, this will get recreated in module::available()
     site_status::clear("upgrade_now");

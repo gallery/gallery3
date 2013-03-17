@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Quick_Controller extends Controller {
+class Gallery_Controller_Quick extends Controller {
   public function rotate($id, $dir) {
     access::verify_csrf();
     $item = model_cache::get("item", $id);

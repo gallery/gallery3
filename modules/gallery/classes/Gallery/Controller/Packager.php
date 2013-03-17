@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Packager_Controller extends Controller {
+class Gallery_Controller_Packager extends Controller {
   function package() {
     if (PHP_SAPI != "cli") {
       access::forbidden();

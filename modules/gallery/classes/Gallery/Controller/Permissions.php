@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Permissions_Controller extends Controller {
+class Gallery_Controller_Permissions extends Controller {
   function browse($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);

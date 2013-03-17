@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Upgrade_Checker_Controller extends Admin_Controller {
+class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
   function check_now() {
     access::verify_csrf();
     upgrade_checker::fetch_version_info();

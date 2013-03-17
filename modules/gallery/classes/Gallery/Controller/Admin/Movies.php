@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Movies_Controller extends Admin_Controller {
+class Gallery_Controller_Admin_Movies extends Controller_Admin {
   public function index() {
     // Print screen from new form.
     $form = $this->_get_admin_form();
