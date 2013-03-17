@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class module {
+class Gallery_Module {
   public static $active = array();
   public static $modules = array();
   public static $var_cache = null;
