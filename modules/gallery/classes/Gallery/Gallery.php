@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class gallery {
+class Gallery_Gallery {
   const VERSION = "3.1+K3";
   const CODE_NAME = "";
   const RELEASE_CHANNEL = "git";
