@@ -47,7 +47,7 @@ function t2($singular, $plural, $count, $options=array()) {
                                              array_merge($options, array("count" => $count)));
 }
 
-class Gallery_I18n {
+class Gallery_I18n extends Kohana_I18n {
   private static $_instance;
   private $_config = array();
   private $_call_log = array();
