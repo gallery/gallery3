@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Kohana_Exception extends Kohana_Exception_Core {
+class Gallery_Kohana_Exception extends Kohana_Kohana_Exception {
   /**
    * Dump out the full stack trace as part of the text representation of the exception.
    */
