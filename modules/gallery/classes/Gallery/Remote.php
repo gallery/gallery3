@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class remote extends remote_Core {
+class Gallery_Remote {
 
   static function post($url, $post_data_array, $extra_headers=array()) {
     $post_data_raw = self::_encode_post_data($post_data_array, $extra_headers);
