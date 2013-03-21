@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class photo_Core {
+class Gallery_Photo {
   static function get_edit_form($photo) {
     $form = new Forge("photos/update/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
     $form->hidden("from_id")->value($photo->id);

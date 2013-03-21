@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class graphics_Core {
+class Gallery_Graphics {
   private static $init;
   private static $_rules_cache = array();
 

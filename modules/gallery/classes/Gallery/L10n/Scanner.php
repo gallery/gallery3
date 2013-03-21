@@ -21,7 +21,7 @@
 /**
  * Scans all source code for messages that need to be localized.
  */
-class l10n_scanner_Core {
+class Gallery_L10n_Scanner {
   // Based on Drupal's potx module, originally written by:
   // Gbor Hojtsy http://drupal.org/user/4166
   public static $cache;

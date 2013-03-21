@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class auth_Core {
+class Gallery_Auth {
   static function get_login_form($url) {
     $form = new Forge($url, "", "post", array("id" => "g-login-form"));
     $form->set_attr("class", "g-narrow");

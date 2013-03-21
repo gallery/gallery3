@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class album_Core {
+class Gallery_Album {
 
   static function get_add_form($parent) {
     $form = new Forge("albums/create/{$parent->id}", "", "post", array("id" => "g-add-album-form"));

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class encoding_Core {
+class Gallery_Encoding {
   static function convert_to_utf8($value) {
     if (function_exists("mb_detect_encoding")) {
       // Rely on mb_detect_encoding()'s strict mode

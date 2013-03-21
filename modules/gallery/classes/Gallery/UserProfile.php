@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class user_profile_Core {
+class Gallery_UserProfile {
   /**
    * Generate the url to display the profile
    * @return url for the profile display

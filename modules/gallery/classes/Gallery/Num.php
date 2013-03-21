@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class num extends num_Core {
+class Gallery_Num extends Kohana_Num {
   /**
    * Convert a size value as accepted by PHP's shorthand to bytes.
    * ref: http://us2.php.net/manual/en/function.ini-get.php

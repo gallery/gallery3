@@ -65,7 +65,7 @@
  * o If at any time the Access_Cache_Model becomes invalid, we can rebuild the entire table from
  *   the Access_Intent_Model
  */
-class access_Core {
+class Gallery_Access {
   const DENY      = "0";
   const ALLOW     = "1";
   const INHERIT   = null; // access_intent

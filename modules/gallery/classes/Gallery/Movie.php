@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class movie_Core {
+class Gallery_Movie {
   private static $allow_uploads;
 
   static function get_edit_form($movie) {

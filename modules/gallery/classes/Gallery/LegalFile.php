@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class legal_file_Core {
+class Gallery_LegalFile {
   private static $photo_types_by_extension;
   private static $movie_types_by_extension;
   private static $photo_extensions;

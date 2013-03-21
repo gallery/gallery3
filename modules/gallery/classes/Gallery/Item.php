@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class item_Core {
+class Gallery_Item {
   static function move($source, $target) {
     access::required("view", $source);
     access::required("view", $target);

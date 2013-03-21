@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class upgrade_checker_Core {
+class Gallery_UpgradeChecker {
   const CHECK_URL = "http://galleryproject.org/versioncheck/gallery3";
   const AUTO_CHECK_INTERVAL = 604800;  // 7 days in seconds
 

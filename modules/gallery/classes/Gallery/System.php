@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class system_Core {
+class Gallery_System {
   private static $files_marked_for_deletion = array();
 
   /**

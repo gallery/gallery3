@@ -21,7 +21,7 @@
 /**
  * This is the API for handling locales.
  */
-class locales_Core {
+class Gallery_Locales {
   private static $locales;
   private static $language_subtag_to_locale;
 
