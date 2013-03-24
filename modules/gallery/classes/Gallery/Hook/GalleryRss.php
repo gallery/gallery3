@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class gallery_rss_Core {
+class Gallery_Hook_GalleryRss {
   static function available_feeds($item, $tag) {
     $feeds["gallery/latest"] = t("Latest photos and movies");
 

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class items_rest_Core {
+class Gallery_Hook_Rest_Items {
   /**
    * To retrieve a collection of items, you can specify the following query parameters to specify
    * the type of the collection.  If both are specified, then the url parameter is used and the
