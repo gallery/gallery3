@@ -20,7 +20,7 @@
 
 /**
  * This resource returns the raw contents of Model_Item data files.  It's analogous to the
- * file_proxy controller, but it uses the REST authentication model.
+ * FileProxy controller, but it uses the REST authentication model.
  */
 class Gallery_Hook_Rest_Data {
   static function get($request) {
@@ -32,7 +32,7 @@ class Gallery_Hook_Rest_Data {
       throw new Rest_Exception("Bad Request", 400, array("errors" => array("size" => "invalid")));
     }
 
-    // Note: this code is roughly duplicated in file_proxy, so if you modify this, please look to
+    // Note: this code is roughly duplicated in FileProxy, so if you modify this, please look to
     // see if you should make the same change there as well.
 
     if ($p->size == "full") {
