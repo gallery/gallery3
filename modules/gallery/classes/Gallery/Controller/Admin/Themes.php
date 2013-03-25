@@ -21,7 +21,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
   public function index() {
     $view = new View_Admin("admin.html");
     $view->page_title = t("Theme choice");
-    $view->content = new View("admin_themes.html");
+    $view->content = new View("admin/themes.html");
     $view->content->admin = Module::get_var("gallery", "active_admin_theme");
     $view->content->site = Module::get_var("gallery", "active_site_theme");
     $view->content->themes = $this->_get_themes();
@@ -47,7 +47,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
   }
 
   public function preview($type, $theme_name) {
-    $view = new View("admin_themes_preview.html");
+    $view = new View("admin/themes_preview.html");
     $view->info = Theme::get_info($theme_name);
     $view->theme_name = t($theme_name);
     $view->type = $type;

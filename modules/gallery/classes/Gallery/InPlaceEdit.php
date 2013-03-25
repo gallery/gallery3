@@ -73,7 +73,7 @@ class Gallery_InPlaceEdit {
   }
 
   public function render() {
-    $v = new View("in_place_edit.html");
+    $v = new View("gallery/in_place_edit.html");
     $v->action = $this->action;
     $v->form = $this->form;
     $v->errors = $this->errors;

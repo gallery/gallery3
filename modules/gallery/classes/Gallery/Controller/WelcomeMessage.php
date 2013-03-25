@@ -23,7 +23,7 @@ class Gallery_Controller_WelcomeMessage extends Controller {
       URL::redirect(Item::root()->abs_url());
     }
 
-    $v = new View("welcome_message.html");
+    $v = new View("gallery/welcome_message.html");
     $v->user = Identity::active_user();
     print $v;
   }

@@ -21,7 +21,7 @@ class Gallery_Controller_Admin_Graphics extends Controller_Admin {
   public function index() {
     $view = new View_Admin("admin.html");
     $view->page_title = t("Graphics settings");
-    $view->content = new View("admin_graphics.html");
+    $view->content = new View("admin/graphics.html");
     $view->content->tk = Graphics::detect_toolkits();
     $view->content->active = Module::get_var("gallery", "graphics_toolkit", "none");
     print $view;

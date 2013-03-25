@@ -21,10 +21,10 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
   public function index() {
     $view = new View_Admin("admin.html");
     $view->page_title = t("Manage sidebar");
-    $view->content = new View("admin_sidebar.html");
+    $view->content = new View("admin/sidebar.html");
     $view->content->csrf = Access::csrf_token();
-    $view->content->available = new View("admin_sidebar_blocks.html");
-    $view->content->active = new View("admin_sidebar_blocks.html");
+    $view->content->available = new View("admin/sidebar_blocks.html");
+    $view->content->active = new View("admin/sidebar_blocks.html");
     list($view->content->available->blocks, $view->content->active->blocks) = $this->_get_blocks();
     print $view;
   }
@@ -42,10 +42,10 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
 
     $result = array("result" => "success");
     list($available, $active) = $this->_get_blocks();
-    $v = new View("admin_sidebar_blocks.html");
+    $v = new View("admin/sidebar_blocks.html");
     $v->blocks = $available;
     $result["available"] = $v->render();
-    $v = new View("admin_sidebar_blocks.html");
+    $v = new View("admin/sidebar_blocks.html");
     $v->blocks = $active;
     $result["active"] = $v->render();
     $message = t("Updated sidebar blocks");

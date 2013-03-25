@@ -250,7 +250,7 @@ class Gallery_Hook_GalleryEvent {
         $menu->append(Menu::factory("link")
                       ->id("user_menu_edit_profile")
                       ->css_id("g-user-profile-link")
-                      ->view("login_current_user.html")
+                      ->view("gallery/login_current_user.html")
                       ->url(UserProfile::url($user->id))
                       ->label($user->display_name()));
 
@@ -582,7 +582,7 @@ class Gallery_Hook_GalleryEvent {
   }
 
   static function show_user_profile($data) {
-    $v = new View("user_profile_info.html");
+    $v = new View("gallery/user_profile_info.html");
 
     $fields = array("name" => t("Name"), "locale" => t("Language Preference"),
                     "email" => t("Email"), "full_name" => t("Full name"), "url" => t("Web site"));

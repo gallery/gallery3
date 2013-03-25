@@ -80,7 +80,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   public function generate_album_cover_for_empty_album_test() {
     $album = test::random_album();
     // Check that the album cover is the missing image placeholder
-    $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_album_cover.jpg"),
+    $this->assert_same(file_get_contents(MODPATH . "gallery/media/graphics/missing_album_cover.jpg"),
                        file_get_contents($album->thumb_path()));
     // Check that the items table got updated with new metadata
     $this->assert_equal(array(200, 200), array($album->thumb_width, $album->thumb_height));
@@ -102,9 +102,9 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
       // Exception expected
     }
     // Check that the images got replaced with missing image placeholders
-    $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_photo.jpg"),
+    $this->assert_same(file_get_contents(MODPATH . "gallery/media/graphics/missing_photo.jpg"),
                        file_get_contents($photo->resize_path()));
-    $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_photo.jpg"),
+    $this->assert_same(file_get_contents(MODPATH . "gallery/media/graphics/missing_photo.jpg"),
                        file_get_contents($photo->thumb_path()));
     // Check that the items table got updated with new metadata
     $this->assert_equal(array(200, 200), array($photo->resize_width, $photo->resize_height));
@@ -123,7 +123,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $movie->thumb_dirty = 1;
     Graphics::generate($movie);
     // Check that the image got replaced with a missing image placeholder
-    $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_movie.jpg"),
+    $this->assert_same(file_get_contents(MODPATH . "gallery/media/graphics/missing_movie.jpg"),
                        file_get_contents($movie->thumb_path()));
     // Check that the items table got updated with new metadata
     $this->assert_equal(array(200, 200), array($movie->thumb_width, $movie->thumb_height));
@@ -148,7 +148,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
       // Exception expected
     }
     // Check that the image got replaced with a missing image placeholder
-    $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_photo.jpg"),
+    $this->assert_same(file_get_contents(MODPATH . "gallery/media/graphics/missing_photo.jpg"),
                        file_get_contents($album->thumb_path()));
     // Check that the items table got updated with new metadata
     $this->assert_equal(array(200, 200), array($album->thumb_width, $album->thumb_height));

@@ -20,7 +20,7 @@
 class Xss_Security_Test extends Gallery_Unit_Test_Case {
   public function find_unescaped_variables_in_views_test() {
     $found = array();
-    foreach (glob("*/*/views/*.php") as $view) {
+    foreach (glob("*/*/views/*/*.php") as $view) {
       // List of all tokens without whitespace, simplifying parsing.
       $tokens = array();
       foreach (token_get_all(file_get_contents($view)) as $token) {
