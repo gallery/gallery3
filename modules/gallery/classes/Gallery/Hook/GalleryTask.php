@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class gallery_task_Core {
+class Gallery_Hook_GalleryTask {
   const FIX_STATE_START_MPTT = 0;
   const FIX_STATE_RUN_MPTT = 1;
   const FIX_STATE_START_ALBUMS = 2;
