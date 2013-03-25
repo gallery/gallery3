@@ -239,7 +239,7 @@ class Gallery_ORM_MPTT extends ORM {
    *
    * @chainable
    * @param   Model_Item $target Target node
-   * @return  ORM_MTPP
+   * @return  ORM_MPTT
    */
   protected function move_to($target) {
     if ($this->contains($target)) {
