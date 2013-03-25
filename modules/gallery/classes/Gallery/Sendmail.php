@@ -35,10 +35,10 @@ class Gallery_Sendmail {
 
   public function __construct() {
     $this->headers = array();
-    $this->from(module::get_var("gallery", "email_from", ""));
-    $this->reply_to(module::get_var("gallery", "email_reply_to", ""));
-    $this->line_length(module::get_var("gallery", "email_line_length", 70));
-    $separator = module::get_var("gallery", "email_header_separator", null);
+    $this->from(Module::get_var("gallery", "email_from", ""));
+    $this->reply_to(Module::get_var("gallery", "email_reply_to", ""));
+    $this->line_length(Module::get_var("gallery", "email_line_length", 70));
+    $separator = Module::get_var("gallery", "email_header_separator", null);
     $this->header_separator(empty($separator) ? "\n" : unserialize($separator));
   }
 
@@ -53,7 +53,7 @@ class Gallery_Sendmail {
       break;
     case  "header":
       if (count($value) != 2) {
-        Kohana_Log::add("error", wordwrap("Invalid header parameters\n" . Kohana::debug($value)));
+        Log::add("error", wordwrap("Invalid header parameters\n" . Kohana::debug($value)));
         throw new Exception("@todo INVALID_HEADER_PARAMETERS");
       }
       $this->headers[$value[0]] = $value[1];
@@ -72,7 +72,7 @@ class Gallery_Sendmail {
 
   public function send() {
     if (empty($this->to)) {
-      Kohana_Log::add("error", wordwrap("Sending mail failed:\nNo to address specified"));
+      Log::add("error", wordwrap("Sending mail failed:\nNo to address specified"));
       throw new Exception("@todo TO_IS_REQUIRED_FOR_MAIL");
     }
     $to = implode(", ", $this->to);

@@ -20,18 +20,18 @@
 class Gallery_Controller_Movies extends Controller_Items {
   public function show($movie) {
     if (!is_object($movie)) {
-      // show() must be public because we route to it in url::parse_url(), so make
+      // show() must be public because we route to it in URL::parse_url(), so make
       // sure that we're actually receiving an object
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    access::required("view", $movie);
+    Access::required("view", $movie);
 
-    $template = new Theme_View("page.html", "item", "movie");
+    $template = new View_Theme("page.html", "item", "movie");
     $template->set_global(array("item" => $movie,
                                 "children" => array(),
                                 "children_count" => 0));
-    $template->set_global(item::get_display_context($movie));
+    $template->set_global(Item::get_display_context($movie));
     $template->content = new View("movie.html");
 
     $movie->increment_view_count();
@@ -40,12 +40,12 @@ class Gallery_Controller_Movies extends Controller_Items {
   }
 
   public function update($movie_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
     $movie = ORM::factory("item", $movie_id);
-    access::required("view", $movie);
-    access::required("edit", $movie);
+    Access::required("view", $movie);
+    Access::required("edit", $movie);
 
-    $form = movie::get_edit_form($movie);
+    $form = Movie::get_edit_form($movie);
     try {
       $valid = $form->validate();
       $movie->title = $form->edit_item->title->value;
@@ -63,29 +63,29 @@ class Gallery_Controller_Movies extends Controller_Items {
 
     if ($valid) {
       $movie->save();
-      module::event("item_edit_form_completed", $movie, $form);
+      Module::event("item_edit_form_completed", $movie, $form);
 
-      log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
-      message::success(
+      Log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
+      Message::success(
         t("Saved movie %movie_title", array("movie_title" => $movie->title)));
 
       if ($form->from_id->value == $movie->id) {
-        // Use the new url; it might have changed.
-        json::reply(array("result" => "success", "location" => $movie->url()));
+        // Use the new URL; it might have changed.
+        JSON::reply(array("result" => "success", "location" => $movie->url()));
       } else {
         // Stay on the same page
-        json::reply(array("result" => "success"));
+        JSON::reply(array("result" => "success"));
       }
     } else {
-      json::reply(array("result" => "error", "html" => (string) $form));
+      JSON::reply(array("result" => "error", "html" => (string) $form));
     }
   }
 
   public function form_edit($movie_id) {
     $movie = ORM::factory("item", $movie_id);
-    access::required("view", $movie);
-    access::required("edit", $movie);
+    Access::required("view", $movie);
+    Access::required("edit", $movie);
 
-    print movie::get_edit_form($movie);
+    print Movie::get_edit_form($movie);
   }
 }

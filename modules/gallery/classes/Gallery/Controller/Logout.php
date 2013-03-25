@@ -19,11 +19,11 @@
  */
 class Gallery_Controller_Logout extends Controller {
   public function index() {
-    access::verify_csrf();
-    auth::logout();
+    Access::verify_csrf();
+    Auth::logout();
     if ($continue_url = Input::instance()->get("continue_url")) {
-      url::redirect($continue_url);
+      URL::redirect($continue_url);
     }
-    url::redirect(item::root()->abs_url());
+    URL::redirect(Item::root()->abs_url());
   }
 }

@@ -28,25 +28,25 @@ class Gallery_L10n_Client {
   }
 
   static function client_token() {
-    return md5("l10n_client_client_token" . access::private_key());
+    return md5("l10n_client_client_token" . Access::private_key());
   }
 
   static function api_key($api_key=null) {
     if ($api_key !== null) {
-      module::set_var("gallery", "l10n_client_key", $api_key);
+      Module::set_var("gallery", "l10n_client_key", $api_key);
     }
-    return module::get_var("gallery", "l10n_client_key", "");
+    return Module::get_var("gallery", "l10n_client_key", "");
   }
 
   static function server_uid($api_key=null) {
-    $api_key = $api_key == null ? l10n_client::api_key() : $api_key;
+    $api_key = $api_key == null ? L10n_Client::api_key() : $api_key;
     $parts = explode(":", $api_key);
     return empty($parts) ? 0 : $parts[0];
   }
 
   private static function _sign($payload, $api_key=null) {
-    $api_key = $api_key == null ? l10n_client::api_key() : $api_key;
-    return md5($api_key . $payload . l10n_client::client_token());
+    $api_key = $api_key == null ? L10n_Client::api_key() : $api_key;
+    return md5($api_key . $payload . L10n_Client::client_token());
   }
 
   static function validate_api_key($api_key) {
@@ -55,20 +55,20 @@ class Gallery_L10n_Client {
     $signature = self::_sign($version, $api_key);
 
     try {
-      list ($response_data, $response_status) = remote::post(
+      list ($response_data, $response_status) = Remote::post(
         $url, array("version" => $version,
-                    "client_token" => l10n_client::client_token(),
+                    "client_token" => L10n_Client::client_token(),
                     "signature" => $signature,
-                    "uid" => l10n_client::server_uid($api_key)));
+                    "uid" => L10n_Client::server_uid($api_key)));
     } catch (ErrorException $e) {
       // Log the error, but then return a "can't make connection" error
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
     if (!isset($response_data) && !isset($response_status)) {
       return array(false, false);
     }
 
-    if (!remote::success($response_status)) {
+    if (!Remote::success($response_status)) {
       return array(true, false);
     }
     return array(true, true);
@@ -88,7 +88,7 @@ class Gallery_L10n_Client {
     $request->locales = array();
     $request->messages = new stdClass();
 
-    $locales = locales::installed();
+    $locales = Locales::installed();
     foreach ($locales as $locale => $locale_data) {
       $request->locales[] = $locale;
     }
@@ -97,7 +97,7 @@ class Gallery_L10n_Client {
     // number as a good limit for #locales * #messages.
     $max_messages = 2000 / count($locales);
     $num_messages = 0;
-    $rows = db::build()
+    $rows = DB::build()
         ->select("key", "locale", "revision", "translation")
         ->from("incoming_translations")
         ->order_by("key")
@@ -131,8 +131,8 @@ class Gallery_L10n_Client {
 
     $request_data = json_encode($request);
     $url = self::_server_url("fetch");
-    list ($response_data, $response_status) = remote::post($url, array("data" => $request_data));
-    if (!remote::success($response_status)) {
+    list ($response_data, $response_status) = Remote::post($url, array("data" => $request_data));
+    if (!Remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
     }
     if (empty($response_data)) {
@@ -165,13 +165,13 @@ class Gallery_L10n_Client {
       // and incoming_translations(id, translation, locale, revision)? Or just allow
       // incoming_translations.message to be NULL?
       $locale = $message_data->locale;
-      $entry = ORM::factory("incoming_translation")
+      $entry = ORM::factory("IncomingTranslation")
         ->where("key", "=", $key)
         ->where("locale", "=", $locale)
         ->find();
       if (!$entry->loaded()) {
         // @todo Load a message key -> message (text) dict into memory outside of this loop
-        $root_entry = ORM::factory("incoming_translation")
+        $root_entry = ORM::factory("IncomingTranslation")
           ->where("key", "=", $key)
           ->where("locale", "=", "root")
           ->find();
@@ -203,7 +203,7 @@ class Gallery_L10n_Client {
     // @todo Batch requests (max request size)
     // @todo include base_revision in submission / how to handle resubmissions / edit fights?
     $request = new stdClass();
-    foreach (db::build()
+    foreach (DB::build()
              ->select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
              ->execute() as $row) {
@@ -221,13 +221,13 @@ class Gallery_L10n_Client {
     $url = self::_server_url("submit");
     $signature = self::_sign($request_data);
 
-    list ($response_data, $response_status) = remote::post(
+    list ($response_data, $response_status) = Remote::post(
       $url, array("data" => $request_data,
-                  "client_token" => l10n_client::client_token(),
+                  "client_token" => L10n_Client::client_token(),
                   "signature" => $signature,
-                  "uid" => l10n_client::server_uid()));
+                  "uid" => L10n_Client::server_uid()));
 
-    if (!remote::success($response_status)) {
+    if (!Remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_SUBMISSION_FAILED " . $response_status);
     }
     if (empty($response_data)) {

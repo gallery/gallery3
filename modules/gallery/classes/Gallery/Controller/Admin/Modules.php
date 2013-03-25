@@ -19,24 +19,24 @@
  */
 class Gallery_Controller_Admin_Modules extends Controller_Admin {
   public function index() {
-    // If modules need upgrading, this will get recreated in module::available()
-    site_status::clear("upgrade_now");
+    // If modules need upgrading, this will get recreated in Module::available()
+    SiteStatus::clear("upgrade_now");
 
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Modules");
     $view->content = new View("admin_modules.html");
-    $view->content->available = module::available();
-    $view->content->obsolete_modules_message = module::get_obsolete_modules_message();
+    $view->content->available = Module::available();
+    $view->content->obsolete_modules_message = Module::get_obsolete_modules_message();
     print $view;
   }
 
 
   public function confirm() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $messages = array("error" => array(), "warn" => array());
     $desired_list = array();
-    foreach (module::available() as $module_name => $info) {
+    foreach (Module::available() as $module_name => $info) {
       if ($info->locked) {
         continue;
       }
@@ -44,10 +44,10 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
       if ($desired = Input::instance()->post($module_name) == 1) {
         $desired_list[] = $module_name;
       }
-      if ($info->active && !$desired && module::is_active($module_name)) {
-        $messages = array_merge($messages, module::can_deactivate($module_name));
-      } else if (!$info->active && $desired && !module::is_active($module_name)) {
-        $messages = array_merge($messages, module::can_activate($module_name));
+      if ($info->active && !$desired && Module::is_active($module_name)) {
+        $messages = array_merge($messages, Module::can_deactivate($module_name));
+      } else if (!$info->active && $desired && !Module::is_active($module_name)) {
+        $messages = array_merge($messages, Module::can_activate($module_name));
       }
     }
 
@@ -61,14 +61,14 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
       $result["dialog"] = (string)$v;
       $result["allow_continue"] = empty($messages["error"]);
     }
-    json::reply($result);
+    JSON::reply($result);
   }
 
   public function save() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $this->_do_save();
-    url::redirect("admin/modules");
+    URL::redirect("admin/modules");
   }
 
   private function _do_save() {
@@ -77,42 +77,42 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     $changes->deactivate = array();
     $activated_names = array();
     $deactivated_names = array();
-    foreach (module::available() as $module_name => $info) {
+    foreach (Module::available() as $module_name => $info) {
       if ($info->locked) {
         continue;
       }
 
       try {
         $desired = Input::instance()->post($module_name) == 1;
-        if ($info->active && !$desired && module::is_active($module_name)) {
-          module::deactivate($module_name);
+        if ($info->active && !$desired && Module::is_active($module_name)) {
+          Module::deactivate($module_name);
           $changes->deactivate[] = $module_name;
           $deactivated_names[] = t($info->name);
-        } else if (!$info->active && $desired && !module::is_active($module_name)) {
-          if (module::is_installed($module_name)) {
-            module::upgrade($module_name);
+        } else if (!$info->active && $desired && !Module::is_active($module_name)) {
+          if (Module::is_installed($module_name)) {
+            Module::upgrade($module_name);
           } else {
-            module::install($module_name);
+            Module::install($module_name);
           }
-          module::activate($module_name);
+          Module::activate($module_name);
           $changes->activate[] = $module_name;
           $activated_names[] = t($info->name);
         }
       } catch (Exception $e) {
-        message::warning(t("An error occurred while installing the <b>%module_name</b> module",
+        Message::warning(t("An error occurred while installing the <b>%module_name</b> module",
                            array("module_name" => $info->name)));
-        Kohana_Log::add("error", (string)$e);
+        Log::add("error", (string)$e);
       }
     }
 
-    module::event("module_change", $changes);
+    Module::event("module_change", $changes);
 
     // @todo this type of collation is questionable from an i18n perspective
     if ($activated_names) {
-      message::success(t("Activated: %names", array("names" => join(", ", $activated_names))));
+      Message::success(t("Activated: %names", array("names" => join(", ", $activated_names))));
     }
     if ($deactivated_names) {
-      message::success(t("Deactivated: %names", array("names" => join(", ", $deactivated_names))));
+      Message::success(t("Deactivated: %names", array("names" => join(", ", $deactivated_names))));
     }
   }
 }

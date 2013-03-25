@@ -19,10 +19,10 @@
  */
 class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Advanced settings");
     $view->content = new View("admin_advanced_settings.html");
-    $view->content->vars = ORM::factory("var")
+    $view->content->vars = ORM::factory("Var")
       ->order_by("module_name")
       ->order_by("name")
       ->find_all();
@@ -30,8 +30,8 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
   }
 
   public function edit($module_name, $var_name) {
-    if (module::is_installed($module_name)) {
-      $value = module::get_var($module_name, $var_name);
+    if (Module::is_installed($module_name)) {
+      $value = Module::get_var($module_name, $var_name);
       $form = new Forge("admin/advanced_settings/save/$module_name/$var_name", "", "post");
       $group = $form->group("edit_var")->label(t("Edit setting"));
       $group->input("module_name")->label(t("Module"))->value($module_name)->disabled(1);
@@ -43,15 +43,15 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
   }
 
   public function save($module_name, $var_name) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    if (module::is_installed($module_name)) {
-      module::set_var($module_name, $var_name, Input::instance()->post("value"));
-      message::success(
+    if (Module::is_installed($module_name)) {
+      Module::set_var($module_name, $var_name, Input::instance()->post("value"));
+      Message::success(
         t("Saved value for %var (%module_name)",
           array("var" => $var_name, "module_name" => $module_name)));
 
-      json::reply(array("result" => "success"));
+      JSON::reply(array("result" => "success"));
     }
   }
 }

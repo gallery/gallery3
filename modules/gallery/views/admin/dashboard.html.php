@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   update_blocks = function() {
-    $.get(<?= html::js_string(url::site("admin/dashboard/reorder")) ?>,
+    $.get(<?= HTML::js_string(URL::site("admin/dashboard/reorder")) ?>,
           {"csrf": "<?= $csrf ?>",
            "dashboard_center[]": $("#g-admin-dashboard").sortable(
              "toArray", {attribute: "block_id"}),

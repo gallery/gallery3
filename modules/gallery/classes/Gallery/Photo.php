@@ -49,7 +49,7 @@ class Gallery_Photo {
       ->error_messages("required", t("You must provide an internet address"))
       ->error_messages("length", t("Your internet address is too long"));
 
-    module::event("item_edit_form", $photo, $form);
+    Module::event("item_edit_form", $photo, $form);
 
     $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
@@ -84,7 +84,7 @@ class Gallery_Photo {
    * Metadata is first generated using getimagesize (or the legal_file mapping if it fails),
    * then can be modified by other modules using photo_get_file_metadata events.
    *
-   * This function and its use cases are symmetric to those of photo::get_file_metadata.
+   * This function and its use cases are symmetric to those of Photo::get_file_metadata.
    *
    * @param  string $file_path
    * @return array  array($width, $height, $mime_type, $extension)
@@ -120,7 +120,7 @@ class Gallery_Photo {
       // getimagesize failed - try to use legal_file mapping instead.
       $extension = pathinfo($file_path, PATHINFO_EXTENSION);
       if (!$extension ||
-          (!$metadata->mime_type = legal_file::get_photo_types_by_extension($extension))) {
+          (!$metadata->mime_type = LegalFile::get_photo_types_by_extension($extension))) {
         // Extension is empty or illegal.
         $metadata->extension = null;
         $metadata->mime_type = null;
@@ -133,11 +133,11 @@ class Gallery_Photo {
     }
 
     // Run photo_get_file_metadata events which can modify the class.
-    module::event("photo_get_file_metadata", $file_path, $metadata);
+    Module::event("photo_get_file_metadata", $file_path, $metadata);
 
     // If the post-events results are invalid, throw an exception.
     if (!$metadata->width || !$metadata->height || !$metadata->mime_type || !$metadata->extension ||
-        ($metadata->mime_type != legal_file::get_photo_types_by_extension($metadata->extension))) {
+        ($metadata->mime_type != LegalFile::get_photo_types_by_extension($metadata->extension))) {
       throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
     }
 

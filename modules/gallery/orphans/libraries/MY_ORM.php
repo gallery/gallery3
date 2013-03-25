@@ -30,7 +30,7 @@ class ORM extends ORM_Core {
   }
 
   public function save() {
-    model_cache::clear();
+    ModelCache::clear();
     return parent::save();
   }
 }
@@ -45,7 +45,7 @@ class ORM_Iterator extends ORM_Iterator_Core {
   public function current() {
     $row = parent::current();
     if (is_object($row)) {
-      model_cache::set($row);
+      ModelCache::set($row);
     }
     return $row;
   }

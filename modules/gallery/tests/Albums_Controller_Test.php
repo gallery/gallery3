@@ -27,7 +27,7 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function change_album_test() {
-    $controller = new Albums_Controller();
+    $controller = new Controller_Albums();
     $album = test::random_album();
 
     // Randomize to avoid conflicts.
@@ -38,9 +38,9 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
     $_POST["description"] = "new description";
     $_POST["column"] = "weight";
     $_POST["direction"] = "ASC";
-    $_POST["csrf"] = access::csrf_token();
+    $_POST["csrf"] = Access::csrf_token();
     $_POST["slug"] = "new-name";
-    access::allow(identity::everybody(), "edit", item::root());
+    Access::allow(Identity::everybody(), "edit", Item::root());
 
     ob_start();
     $controller->update($album->id);
@@ -55,13 +55,13 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function change_album_no_csrf_fails_test() {
-    $controller = new Albums_Controller();
+    $controller = new Controller_Albums();
     $album = test::random_album();
 
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
-    access::allow(identity::everybody(), "edit", item::root());
+    Access::allow(Identity::everybody(), "edit", Item::root());
 
     try {
       $controller->update($album->id);

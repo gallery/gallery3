@@ -30,7 +30,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function success($category, $message, $html="") {
-    self::_add($category, $message, $html, log::SUCCESS);
+    self::_add($category, $message, $html, Log::SUCCESS);
   }
 
   /**
@@ -40,7 +40,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function info($category, $message, $html="") {
-    self::_add($category, $message, $html, log::INFO);
+    self::_add($category, $message, $html, Log::INFO);
   }
 
   /**
@@ -50,7 +50,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function warning($category, $message, $html="") {
-    self::_add($category, $message, $html, log::WARNING);
+    self::_add($category, $message, $html, Log::WARNING);
   }
 
   /**
@@ -60,7 +60,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function error($category, $message, $html="") {
-    self::_add($category, $message, $html, log::ERROR);
+    self::_add($category, $message, $html, Log::ERROR);
   }
 
   /**
@@ -72,15 +72,15 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   private static function _add($category, $message, $html, $severity) {
-    $log = ORM::factory("log");
+    $log = ORM::factory("Log");
     $log->category = $category;
     $log->message = $message;
     $log->severity = $severity;
     $log->html = $html;
-    $log->url = substr(url::abs_current(true), 0, 255);
-    $log->referer = request::referrer(null);
+    $log->url = substr(URL::abs_current(true), 0, 255);
+    $log->referer = Request::referrer(null);
     $log->timestamp = time();
-    $log->user_id = identity::active_user()->id;
+    $log->user_id = Identity::active_user()->id;
     $log->save();
   }
 
@@ -92,16 +92,16 @@ class Gallery_Log {
    */
   static function severity_class($severity) {
     switch($severity) {
-    case log::SUCCESS:
+    case Log::SUCCESS:
       return "g-success";
 
-    case log::INFO:
+    case Log::INFO:
       return "g-info";
 
-    case log::WARNING:
+    case Log::WARNING:
       return "g-warning";
 
-    case log::ERROR:
+    case Log::ERROR:
       return "g-error";
     }
   }

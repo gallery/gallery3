@@ -23,20 +23,20 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".jpg";
     $options = array("degrees" => 90);
-    gallery_graphics::rotate($input_file, $output_file, $options, null);
+    GalleryGraphics::rotate($input_file, $output_file, $options, null);
 
     // Output is rotated to 768x1024 jpg
-    $this->assert_equal(array(768, 1024, "image/jpeg", "jpg"), photo::get_file_metadata($output_file));
+    $this->assert_equal(array(768, 1024, "image/jpeg", "jpg"), Photo::get_file_metadata($output_file));
   }
 
   public function rotate_jpg_without_options_test() {
     // Input is a 1024x768 jpg, output options undefined
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".jpg";
-    gallery_graphics::rotate($input_file, $output_file, null, null);
+    GalleryGraphics::rotate($input_file, $output_file, null, null);
 
     // Output is not rotated, still a 1024x768 jpg
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"), photo::get_file_metadata($output_file));
+    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"), Photo::get_file_metadata($output_file));
   }
 
   public function rotate_bad_jpg_test() {
@@ -48,7 +48,7 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Should get passed to Image library and throw an exception
     try {
-      gallery_graphics::rotate($input_file, $output_file, $options, null);
+      GalleryGraphics::rotate($input_file, $output_file, $options, null);
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
@@ -60,10 +60,10 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".jpg";
     $options = array("width" => 300, "height" => 300, "master" => Image::AUTO);
-    gallery_graphics::resize($input_file, $output_file, $options, null);
+    GalleryGraphics::resize($input_file, $output_file, $options, null);
 
     // Output is resized to 300x225 jpg
-    $this->assert_equal(array(300, 225, "image/jpeg", "jpg"), photo::get_file_metadata($output_file));
+    $this->assert_equal(array(300, 225, "image/jpeg", "jpg"), Photo::get_file_metadata($output_file));
   }
 
   public function resize_jpg_to_png_test() {
@@ -71,10 +71,10 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".png";
     $options = array("width" => 300, "height" => 300, "master" => Image::AUTO);
-    gallery_graphics::resize($input_file, $output_file, $options, null);
+    GalleryGraphics::resize($input_file, $output_file, $options, null);
 
     // Output is resized to 300x225 png
-    $this->assert_equal(array(300, 225, "image/png", "png"), photo::get_file_metadata($output_file));
+    $this->assert_equal(array(300, 225, "image/png", "png"), Photo::get_file_metadata($output_file));
   }
 
   public function resize_jpg_with_no_upscale_test() {
@@ -82,7 +82,7 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".jpg";
     $options = array("width" => 1200, "height" => 1200, "master" => Image::AUTO);
-    gallery_graphics::resize($input_file, $output_file, $options, null);
+    GalleryGraphics::resize($input_file, $output_file, $options, null);
 
     // Output is copied directly from input
     $this->assert_equal(file_get_contents($input_file), file_get_contents($output_file));
@@ -93,17 +93,17 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".png";
     $options = array("width" => 1200, "height" => 1200, "master" => Image::AUTO);
-    gallery_graphics::resize($input_file, $output_file, $options, null);
+    GalleryGraphics::resize($input_file, $output_file, $options, null);
 
     // Output is converted from input without resize
-    $this->assert_equal(array(1024, 768, "image/png", "png"), photo::get_file_metadata($output_file));
+    $this->assert_equal(array(1024, 768, "image/png", "png"), Photo::get_file_metadata($output_file));
   }
 
   public function resize_jpg_without_options_test() {
     // Input is a 1024x768 jpg, output is jpg without options - should not attempt resize
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".jpg";
-    gallery_graphics::resize($input_file, $output_file, null, null);
+    GalleryGraphics::resize($input_file, $output_file, null, null);
 
     // Output is copied directly from input
     $this->assert_equal(file_get_contents($input_file), file_get_contents($output_file));
@@ -113,10 +113,10 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     // Input is a 1024x768 jpg, output is png without options - should not attempt resize
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".png";
-    gallery_graphics::resize($input_file, $output_file, null, null);
+    GalleryGraphics::resize($input_file, $output_file, null, null);
 
     // Output is converted from input without resize
-    $this->assert_equal(array(1024, 768, "image/png", "png"), photo::get_file_metadata($output_file));
+    $this->assert_equal(array(1024, 768, "image/png", "png"), Photo::get_file_metadata($output_file));
   }
 
   public function resize_bad_jpg_test() {
@@ -128,7 +128,7 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Should get passed to Image library and throw an exception
     try {
-      gallery_graphics::resize($input_file, $output_file, $options, null);
+      GalleryGraphics::resize($input_file, $output_file, $options, null);
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass

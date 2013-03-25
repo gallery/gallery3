@@ -57,7 +57,7 @@ class Gallery_Controller_Combined extends Controller {
     }
 
     if (empty($key)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     $cache = Cache::instance();
@@ -73,7 +73,7 @@ class Gallery_Controller_Combined extends Controller {
       $content = $cache->get($key);
     }
     if (empty($content)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     // $type is either 'javascript' or 'css'

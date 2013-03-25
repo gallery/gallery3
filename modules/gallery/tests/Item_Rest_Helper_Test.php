@@ -19,7 +19,7 @@
  */
 class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function teardown() {
-    identity::set_active_user(identity::admin_user());
+    Identity::set_active_user(Identity::admin_user());
   }
 
   public function resolve_test() {
@@ -52,7 +52,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               rest::url("item", $photo1),
               rest::url("item", $album2)),
             ),
-      item_rest::get($request));
+      Hook_Rest_Item::get($request));
 
     $request->url = rest::url("item", $album1);
     $request->params->scope = "direct";
@@ -69,7 +69,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               rest::url("item", $photo1),
               rest::url("item", $album2)),
             ),
-      item_rest::get($request));
+      Hook_Rest_Item::get($request));
 
     $request->url = rest::url("item", $album1);
     $request->params->scope = "all";
@@ -87,7 +87,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               rest::url("item", $album2),
               rest::url("item", $photo2)),
             ),
-      item_rest::get($request));
+      Hook_Rest_Item::get($request));
   }
 
   public function get_children_like_test() {
@@ -114,7 +114,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
             "members" => array(
               rest::url("item", $photo2)),
             ),
-      item_rest::get($request));
+      Hook_Rest_Item::get($request));
   }
 
   public function get_children_type_test() {
@@ -139,12 +139,12 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
             "members" => array(
               rest::url("item", $album2)),
             ),
-      item_rest::get($request));
+      Hook_Rest_Item::get($request));
   }
 
   public function update_album_test() {
     $album1 = test::random_album();
-    access::allow(identity::everybody(), "edit", $album1);
+    Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
@@ -152,13 +152,13 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity = new stdClass();
     $request->params->entity->title = "my new title";
 
-    item_rest::put($request);
+    Hook_Rest_Item::put($request);
     $this->assert_equal("my new title", $album1->reload()->title);
   }
 
   public function update_album_illegal_value_fails_test() {
     $album1 = test::random_album();
-    access::allow(identity::everybody(), "edit", $album1);
+    Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
@@ -168,7 +168,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity->slug = "not url safe";
 
     try {
-      item_rest::put($request);
+      Hook_Rest_Item::put($request);
     } catch (ORM_Validation_Exception $e) {
       $this->assert_equal(array("slug" => "not_url_safe"), $e->validation->errors());
       return;
@@ -178,7 +178,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function add_album_test() {
     $album1 = test::random_album();
-    access::allow(identity::everybody(), "edit", $album1);
+    Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
@@ -187,7 +187,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity->type = "album";
     $request->params->entity->name = "my album";
     $request->params->entity->title = "my album";
-    $response = item_rest::post($request);
+    $response = Hook_Rest_Item::post($request);
     $new_album = rest::resolve($response["url"]);
 
     $this->assert_true($new_album->is_album());
@@ -196,7 +196,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function add_album_illegal_value_fails_test() {
     $album1 = test::random_album();
-    access::allow(identity::everybody(), "edit", $album1);
+    Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
@@ -208,7 +208,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity->slug = "not url safe";
 
     try {
-      item_rest::post($request);
+      Hook_Rest_Item::post($request);
     } catch (ORM_Validation_Exception $e) {
       $this->assert_equal(array("slug" => "not_url_safe"), $e->validation->errors());
       return;
@@ -219,7 +219,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function add_photo_test() {
     $album1 = test::random_album();
-    access::allow(identity::everybody(), "edit", $album1);
+    Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
@@ -228,7 +228,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity->type = "photo";
     $request->params->entity->name = "my photo.jpg";
     $request->file = MODPATH . "gallery/tests/test.jpg";
-    $response = item_rest::post($request);
+    $response = Hook_Rest_Item::post($request);
     $new_photo = rest::resolve($response["url"]);
 
     $this->assert_true($new_photo->is_photo());
@@ -237,11 +237,11 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function delete_album_test() {
     $album1 = test::random_album();
-    access::allow(identity::everybody(), "edit", $album1);
+    Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
-    item_rest::delete($request);
+    Hook_Rest_Item::delete($request);
 
     $album1->reload();
     $this->assert_false($album1->loaded());
@@ -249,13 +249,13 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function delete_album_fails_without_permission_test() {
     $album1 = test::random_album();
-    access::deny(identity::everybody(), "edit", $album1);
-    identity::set_active_user(identity::guest());
+    Access::deny(Identity::everybody(), "edit", $album1);
+    Identity::set_active_user(Identity::guest());
 
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
     try {
-      item_rest::delete($request);
+      Hook_Rest_Item::delete($request);
     } catch (Exception $e) {
       $this->assert_equal("@todo FORBIDDEN", $e->getMessage());
       return;

@@ -20,7 +20,7 @@
 class Gallery_Controller_Packager extends Controller {
   function package() {
     if (PHP_SAPI != "cli") {
-      access::forbidden();
+      Access::forbidden();
     }
 
     $_SERVER["HTTP_HOST"] = "example.com";
@@ -44,16 +44,16 @@ class Gallery_Controller_Packager extends Controller {
     }
 
     // Clean out data
-    dir::unlink(VARPATH . "uploads");
-    dir::unlink(VARPATH . "albums");
-    dir::unlink(VARPATH . "resizes");
-    dir::unlink(VARPATH . "thumbs");
-    dir::unlink(VARPATH . "modules");
-    dir::unlink(VARPATH . "tmp");
+    Encoding::unlink(VARPATH . "uploads");
+    Encoding::unlink(VARPATH . "albums");
+    Encoding::unlink(VARPATH . "resizes");
+    Encoding::unlink(VARPATH . "thumbs");
+    Encoding::unlink(VARPATH . "modules");
+    Encoding::unlink(VARPATH . "tmp");
 
     Database::instance()->clear_cache();
-    module::$modules = array();
-    module::$active = array();
+    Module::$modules = array();
+    Module::$active = array();
 
     // Use a known random seed so that subsequent packaging runs will reuse the same random
     // numbers, keeping our install.sql file more stable.
@@ -61,8 +61,8 @@ class Gallery_Controller_Packager extends Controller {
 
     foreach (array("gallery", "user", "comment", "organize", "info",
                    "rss", "search", "slideshow", "tag") as $module_name) {
-      module::install($module_name);
-      module::activate($module_name);
+      Module::install($module_name);
+      Module::activate($module_name);
     }
   }
 
@@ -72,16 +72,16 @@ class Gallery_Controller_Packager extends Controller {
     $i = 1;
     foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $key) {
       $blocks = array();
-      foreach (unserialize(module::get_var("gallery", "blocks_{$key}")) as $rnd => $value) {
+      foreach (unserialize(Module::get_var("gallery", "blocks_{$key}")) as $rnd => $value) {
         $blocks[++$i] = $value;
       }
-      module::set_var("gallery", "blocks_{$key}", serialize($blocks));
+      Module::set_var("gallery", "blocks_{$key}", serialize($blocks));
     }
 
     Database::instance()->query("TRUNCATE {caches}");
     Database::instance()->query("TRUNCATE {sessions}");
     Database::instance()->query("TRUNCATE {logs}");
-    db::build()->update("users")
+    DB::build()->update("users")
       ->set(array("password" => ""))
       ->where("id", "in", array(1, 2))
       ->execute();

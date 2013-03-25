@@ -29,8 +29,8 @@ class Gallery_View_Admin extends View_Gallery {
   public function __construct($name) {
     parent::__construct($name);
 
-    $this->theme_name = module::get_var("gallery", "active_admin_theme");
-    if (identity::active_user()->admin) {
+    $this->theme_name = Module::get_var("gallery", "active_admin_theme");
+    if (Identity::active_user()->admin) {
       $theme_name = Input::instance()->get("theme");
       if ($theme_name &&
           file_exists(THEMEPATH . $theme_name) &&
@@ -40,7 +40,7 @@ class Gallery_View_Admin extends View_Gallery {
     }
     $this->sidebar = "";
     $this->set_global(array("theme" => $this,
-                            "user" => identity::active_user(),
+                            "user" => Identity::active_user(),
                             "page_type" => "admin",
                             "page_subtype" => $name,
                             "page_title" => null));
@@ -48,7 +48,7 @@ class Gallery_View_Admin extends View_Gallery {
 
   public function admin_menu() {
     $menu = Menu::factory("root");
-    module::event("admin_menu", $menu, $this);
+    Module::event("admin_menu", $menu, $this);
 
     $settings_menu = $menu->get("settings_menu");
     uasort($settings_menu->elements, array("Menu", "title_comparator"));
@@ -60,7 +60,7 @@ class Gallery_View_Admin extends View_Gallery {
     $menu = Menu::factory("root")
       ->css_id("g-login-menu")
       ->css_class("g-inline ui-helper-clear-fix");
-    module::event("user_menu", $menu, $this);
+    Module::event("user_menu", $menu, $this);
     return $menu->render();
   }
 
@@ -68,14 +68,14 @@ class Gallery_View_Admin extends View_Gallery {
    * Print out any site wide status information.
    */
   public function site_status() {
-    return site_status::get();
+    return SiteStatus::get();
   }
 
   /**
    * Print out any messages waiting for this user.
    */
   public function messages() {
-    return message::get();
+    return Message::get();
   }
 
  /**
@@ -96,13 +96,13 @@ class Gallery_View_Admin extends View_Gallery {
       if (method_exists("gallery_theme", $function)) {
         switch (count($args)) {
         case 0:
-          $blocks[] = gallery_theme::$function($this);
+          $blocks[] = Hook_GalleryTheme::$function($this);
           break;
         case 1:
-          $blocks[] = gallery_theme::$function($this, $args[0]);
+          $blocks[] = Hook_GalleryTheme::$function($this, $args[0]);
           break;
         case 2:
-          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
+          $blocks[] = Hook_GalleryTheme::$function($this, $args[0], $args[1]);
           break;
         default:
           $blocks[] = call_user_func_array(
@@ -111,7 +111,7 @@ class Gallery_View_Admin extends View_Gallery {
         }
       }
 
-      foreach (module::active() as $module) {
+      foreach (Module::active() as $module) {
         if ($module->name == "gallery") {
           continue;
         }
@@ -123,7 +123,7 @@ class Gallery_View_Admin extends View_Gallery {
         }
       }
 
-      $helper_class = theme::$admin_theme_name . "_theme";
+      $helper_class = Theme::$admin_theme_name . "_theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),

@@ -27,7 +27,7 @@
  * @return String The translated message string.
  */
 function t($message, $options=array()) {
-  return Gallery_I18n::instance()->translate($message, $options);
+  return I18n::instance()->translate($message, $options);
 }
 
 /**
@@ -43,7 +43,7 @@ function t($message, $options=array()) {
  * @return String The translated message string.
  */
 function t2($singular, $plural, $count, $options=array()) {
-  return Gallery_I18n::instance()->translate(array("one" => $singular, "other" => $plural),
+  return I18n::instance()->translate(array("one" => $singular, "other" => $plural),
                                              array_merge($options, array("count" => $count)));
 }
 
@@ -62,9 +62,9 @@ class Gallery_I18n extends Kohana_I18n {
     if (self::$_instance == NULL || isset($config)) {
       $config = isset($config) ? $config : Kohana::$config->load('locale');
       if (empty($config['default_locale'])) {
-        $config['default_locale'] = module::get_var('gallery', 'default_locale');
+        $config['default_locale'] = Module::get_var('gallery', 'default_locale');
       }
-      self::$_instance = new Gallery_I18n($config);
+      self::$_instance = new I18n($config);
     }
 
     return self::$_instance;
@@ -168,7 +168,7 @@ class Gallery_I18n extends Kohana_I18n {
     $translations = $cache->get($cache_key);
     if (!isset($translations) || !is_array($translations)) {
       $translations = array();
-      foreach (db::build()
+      foreach (DB::build()
                ->select("key", "translation")
                ->from("incoming_translations")
                ->where("locale", "=", $locale)
@@ -177,7 +177,7 @@ class Gallery_I18n extends Kohana_I18n {
       }
 
       // Override incoming with outgoing...
-      foreach (db::build()
+      foreach (DB::build()
                ->select("key", "translation")
                ->from("outgoing_translations")
                ->where("locale", "=", $locale)

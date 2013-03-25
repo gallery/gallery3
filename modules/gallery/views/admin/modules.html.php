@@ -6,7 +6,7 @@
       dataType: "json",
       success: function(data) {
         if (data.reload) {
-          window.location = "<? url::site("/admin/modules") ?>";
+          window.location = "<? URL::site("/admin/modules") ?>";
         } else {
           $("body").append('<div id="g-dialog">' + data.dialog + '</div>');
           $("#g-dialog").dialog({
@@ -53,8 +53,8 @@
   <? endif ?>
 
   <div class="g-block-content">
-    <form id="g-module-update-form" method="post" action="<?= url::site("admin/modules/confirm") ?>">
-      <?= access::csrf_form_field() ?>
+    <form id="g-module-update-form" method="post" action="<?= URL::site("admin/modules/confirm") ?>">
+      <?= Access::csrf_form_field() ?>
       <table>
         <tr>
           <th> <?= t("Installed") ?> </th>
@@ -64,10 +64,10 @@
           <th style="width: 60px"> <?= t("Details") ?> </th>
         </tr>
         <? foreach ($available as $module_name => $module_info):  ?>
-        <tr class="<?= text::alternate("g-odd", "g-even") ?>">
+        <tr class="<?= Text::alternate("g-odd", "g-even") ?>">
           <? $data = array("name" => $module_name); ?>
           <? if ($module_info->locked) $data["disabled"] = 1; ?>
-          <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>
+          <td> <?= Form::checkbox($data, '1', Module::is_active($module_name)) ?> </td>
           <td> <?= t($module_info->name) ?> </td>
           <td> <?= $module_info->version ?> </td>
           <td> <?= t($module_info->description) ?> </td>

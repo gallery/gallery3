@@ -46,7 +46,7 @@ class Gallery_Model_Task extends ORM {
   }
 
   public function owner() {
-    return identity::lookup_user($this->owner_id);
+    return Identity::lookup_user($this->owner_id);
   }
 
   /**

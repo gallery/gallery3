@@ -28,7 +28,7 @@ class Gallery_Identity {
   static function providers() {
     if (empty(self::$available)) {
       $drivers = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-      foreach (module::available() as $module_name => $module) {
+      foreach (Module::available() as $module_name => $module) {
         if (file_exists(MODPATH . "{$module_name}/config/identity.php")) {
           $drivers->$module_name = $module->description;
         }
@@ -60,7 +60,7 @@ class Gallery_Identity {
 
       $session = Session::instance();
       if (!($user = $session->get("user"))) {
-        identity::set_active_user($user = identity::guest());
+        Identity::set_active_user($user = Identity::guest());
       }
 
       // The installer cannot set a user into the session, so it just sets an id which we should
@@ -69,7 +69,7 @@ class Gallery_Identity {
       //       user object
       if ($user === 2) {
         $session->delete("user");  // delete it so that identity code isn't confused by the integer
-        auth::login(IdentityProvider::instance()->admin_user());
+        Auth::login(IdentityProvider::instance()->admin_user());
       }
 
       // Cache the group ids for a day to trade off performance for security updates.
@@ -83,14 +83,14 @@ class Gallery_Identity {
       }
     } catch (Exception $e) {
       // Log it, so we at least have so notification that we swallowed the exception.
-      Kohana_Log::add("error", "load_user Exception: " .
+      Log::add("error", "load_user Exception: " .
                       $e->getMessage() . "\n" . $e->getTraceAsString());
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
         // We don't care if there was a problem destroying the session.
       }
-      url::redirect(item::root()->abs_url());
+      URL::redirect(Item::root()->abs_url());
     }
   }
 
@@ -114,7 +114,7 @@ class Gallery_Identity {
     if (!isset($user)) {
       // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
       // work.
-      $user = identity::guest();
+      $user = Identity::guest();
     }
     return $user;
   }
@@ -127,7 +127,7 @@ class Gallery_Identity {
     $session = Session::instance();
     $session->set("user", $user);
     $session->delete("group_ids");
-    identity::load_user();
+    Identity::load_user();
   }
 
   /**

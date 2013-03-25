@@ -54,7 +54,7 @@ class Gallery_IdentityProvider {
    */
   static function reset() {
     self::$instance = null;
-    Kohana_Config::instance()->clear("identity");
+    Config::instance()->clear("identity");
   }
 
   /**
@@ -65,21 +65,21 @@ class Gallery_IdentityProvider {
   }
 
   static function change_provider($new_provider) {
-    if (!identity::active_user()->admin && PHP_SAPI != "cli") {
+    if (!Identity::active_user()->admin && PHP_SAPI != "cli") {
       // Below, the active user is set to the primary admin.
-      access::forbidden();
+      Access::forbidden();
     }
 
-    $current_provider = module::get_var("gallery", "identity_provider");
+    $current_provider = Module::get_var("gallery", "identity_provider");
     if (!empty($current_provider)) {
-      module::uninstall($current_provider);
+      Module::uninstall($current_provider);
     }
 
     try {
       IdentityProvider::reset();
       $provider = new IdentityProvider($new_provider);
 
-      module::set_var("gallery", "identity_provider", $new_provider);
+      Module::set_var("gallery", "identity_provider", $new_provider);
 
       if (class_exists("{$new_provider}_installer") &&
           method_exists("{$new_provider}_installer", "initialize")) {
@@ -90,9 +90,9 @@ class Gallery_IdentityProvider {
         throw new Exception("IdentityProvider $new_provider: Couldn't find the admin user!");
       }
 
-      module::event("identity_provider_changed", $current_provider, $new_provider);
+      Module::event("identity_provider_changed", $current_provider, $new_provider);
 
-      identity::set_active_user($provider->admin_user());
+      Identity::set_active_user($provider->admin_user());
       Session::instance()->regenerate();
     } catch (Exception $e) {
       static $restore_already_running;
@@ -104,24 +104,24 @@ class Gallery_IdentityProvider {
 
         // Make sure new provider is not in the database
         try {
-          module::uninstall($new_provider);
+          Module::uninstall($new_provider);
         } catch (Exception $e2) {
-          Kohana_Log::add("error", "Error uninstalling failed new provider\n" .
+          Log::add("error", "Error uninstalling failed new provider\n" .
                           $e2->getMessage() . "\n" . $e2->getTraceAsString());
         }
 
         try {
           // Lets reset to the current provider so that the gallery installation is still
           // working.
-          module::set_var("gallery", "identity_provider", null);
+          Module::set_var("gallery", "identity_provider", null);
           IdentityProvider::change_provider($current_provider);
-          module::activate($current_provider);
+          Module::activate($current_provider);
         } catch (Exception $e2) {
-          Kohana_Log::add("error", "Error restoring original identity provider\n" .
+          Log::add("error", "Error restoring original identity provider\n" .
                           $e2->getMessage() . "\n" . $e2->getTraceAsString());
         }
 
-        message::error(
+        Message::error(
           t("Error attempting to enable \"%new_provider\" identity provider, reverted to \"%old_provider\" identity provider",
             array("new_provider" => $new_provider, "old_provider" => $current_provider)));
 
@@ -138,7 +138,7 @@ class Gallery_IdentityProvider {
    */
   public function __construct($config=null) {
     if (empty($config)) {
-      $config = module::get_var("gallery", "identity_provider", "user");
+      $config = Module::get_var("gallery", "identity_provider", "user");
     }
 
     // Test the config group name
@@ -164,7 +164,7 @@ class Gallery_IdentityProvider {
                                  get_class($this), "IdentityProvider_Driver");
     }
 
-    Kohana_Log::add("debug", "Identity Library initialized");
+    Log::add("debug", "Identity Library initialized");
   }
 
   /**

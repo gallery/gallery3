@@ -12,10 +12,10 @@
      <? endforeach ?>
      <? endforeach ?>
    </ul>
-    <form method="post" action="<?= url::site("admin/modules/save") ?>">
-      <?= access::csrf_form_field() ?>
+    <form method="post" action="<?= URL::site("admin/modules/save") ?>">
+      <?= Access::csrf_form_field() ?>
       <? foreach ($modules as $module): ?>
-        <?= form::hidden($module, 1) ?>
+        <?= Form::hidden($module, 1) ?>
       <? endforeach ?>
     </form>
   </div>

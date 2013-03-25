@@ -19,14 +19,14 @@
  */
 class Gallery_Controller_Reauthenticate extends Controller {
   public function index() {
-    $is_ajax = Session::instance()->get_once("is_ajax_request", request::is_ajax());
-    if (!identity::active_user()->admin) {
+    $is_ajax = Session::instance()->get_once("is_ajax_request", Request::is_ajax());
+    if (!Identity::active_user()->admin) {
       if ($is_ajax) {
-        // We should never be able to get here since Admin_Controller::_reauth_check() won't work
+        // We should never be able to get here since Controller_Admin::_reauth_check() won't work
         // for non-admins.
-        access::forbidden();
+        Access::forbidden();
       } else {
-        url::redirect(item::root()->abs_url());
+        URL::redirect(Item::root()->abs_url());
       }
     }
 
@@ -35,7 +35,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     if ($is_ajax) {
       $v = new View("reauthenticate.html");
       $v->form = self::_form();
-      $v->user_name = identity::active_user()->name;
+      $v->user_name = Identity::active_user()->name;
       print $v;
     } else {
       self::_show_form(self::_form());
@@ -43,29 +43,29 @@ class Gallery_Controller_Reauthenticate extends Controller {
   }
 
   public function auth() {
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $form = self::_form();
     $valid = $form->validate();
-    $user = identity::active_user();
+    $user = Identity::active_user();
     if ($valid) {
-      module::event("user_auth", $user);
-      if (!request::is_ajax()) {
-        message::success(t("Successfully re-authenticated!"));
+      Module::event("user_auth", $user);
+      if (!Request::is_ajax()) {
+        Message::success(t("Successfully re-authenticated!"));
       }
-      url::redirect(Session::instance()->get_once("continue_url"));
+      URL::redirect(Session::instance()->get_once("continue_url"));
     } else {
       $name = $user->name;
-      log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
-      module::event("user_auth_failed", $name);
-      if (request::is_ajax()) {
+      Log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
+      Module::event("user_auth_failed", $name);
+      if (Request::is_ajax()) {
         $v = new View("reauthenticate.html");
         $v->form = $form;
-        $v->user_name = identity::active_user()->name;
-        json::reply(array("html" => (string)$v));
+        $v->user_name = Identity::active_user()->name;
+        JSON::reply(array("html" => (string)$v));
       } else {
         self::_show_form($form);
       }
@@ -73,11 +73,11 @@ class Gallery_Controller_Reauthenticate extends Controller {
   }
 
   private static function _show_form($form) {
-    $view = new Theme_View("page.html", "other", "reauthenticate");
+    $view = new View_Theme("page.html", "other", "reauthenticate");
     $view->page_title = t("Re-authenticate");
     $view->content = new View("reauthenticate.html");
     $view->content->form = $form;
-    $view->content->user_name = identity::active_user()->name;
+    $view->content->user_name = Identity::active_user()->name;
 
     print $view;
   }
@@ -87,8 +87,8 @@ class Gallery_Controller_Reauthenticate extends Controller {
     $form->set_attr("class", "g-narrow");
     $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null)
-      ->callback("auth::validate_too_many_failed_auth_attempts")
-      ->callback("Reauthenticate_Controller::valid_password")
+      ->callback("Auth::validate_too_many_failed_auth_attempts")
+      ->callback("Controller_Reauthenticate::valid_password")
       ->error_messages("invalid_password", t("Incorrect password"))
       ->error_messages(
         "too_many_failed_auth_attempts",
@@ -98,7 +98,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
   }
 
   static function valid_password($password_input) {
-    if (!identity::is_correct_password(identity::active_user(), $password_input->value)) {
+    if (!Identity::is_correct_password(Identity::active_user(), $password_input->value)) {
       $password_input->add_error("invalid_password", 1);
     }
   }

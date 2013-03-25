@@ -26,9 +26,9 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
         'root_locale' => 'en',
         'default_locale' => 'te_ST',
         'locale_dir' => VARPATH . 'locale/');
-    $this->i18n = Gallery_I18n::instance($config);
+    $this->i18n = I18n::instance($config);
 
-    db::build()
+    DB::build()
       ->delete("incoming_translations")
       ->where("locale", "=", "te_ST")
       ->execute();
@@ -43,8 +43,8 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
 
     foreach ($messages_te_ST as $data) {
       list ($message, $translation) = $data;
-      $entry = ORM::factory("incoming_translation");
-      $entry->key = Gallery_I18n::get_message_key($message);
+      $entry = ORM::factory("IncomingTranslation");
+      $entry->key = I18n::get_message_key($message);
       $entry->message = serialize($message);
       $entry->translation = serialize($translation);
       $entry->locale = 'te_ST';

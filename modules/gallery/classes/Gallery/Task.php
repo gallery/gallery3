@@ -23,7 +23,7 @@ class Gallery_Task {
    */
   static function get_definitions() {
     $tasks = array();
-    foreach (module::active() as $module) {
+    foreach (Module::active() as $module) {
       $class_name = "{$module->name}_task";
       if (class_exists($class_name) && method_exists($class_name, "available_tasks")) {
         foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
@@ -36,8 +36,8 @@ class Gallery_Task {
   }
 
   static function start($task_callback, $context=array()) {
-    $tasks = task::get_definitions();
-    $task = task::create($tasks[$task_callback], array());
+    $tasks = Task::get_definitions();
+    $task = Task::create($tasks[$task_callback], array());
 
     $task->log(t("Task %task_name started (task id %task_id)",
                  array("task_name" => $task->name, "task_id" => $task->id)));
@@ -45,13 +45,13 @@ class Gallery_Task {
   }
 
   static function create($task_def, $context) {
-    $task = ORM::factory("task");
+    $task = ORM::factory("Task");
     $task->callback = $task_def->callback;
     $task->name = $task_def->name;
     $task->percent_complete = 0;
     $task->status = "";
     $task->state = "started";
-    $task->owner_id = identity::active_user()->id;
+    $task->owner_id = Identity::active_user()->id;
     $task->context = serialize($context);
     $task->save();
 
@@ -93,12 +93,12 @@ class Gallery_Task {
       }
       $task->save();
     } catch (Exception $e) {
-      Kohana_Log::add("error", (string)$e);
+      Log::add("error", (string)$e);
 
       // Ugh.  I hate to use instanceof, But this beats catching the exception separately since
       // we mostly want to treat it the same way as all other exceptions
       if ($e instanceof ORM_Validation_Exception) {
-        Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+        Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
       }
 
       $task->log((string)$e);

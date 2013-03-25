@@ -39,34 +39,34 @@ class Gallery_Theme {
       $path = "/" . $input->get("kohana_uri");
     }
 
-    $config = Kohana_Config::instance();
+    $config = Config::instance();
     $modules = $config->get("core.modules");
 
-    // Normally Router::find_uri() strips off the url suffix for us, but we're working off of the
+    // Normally Route::find_uri() strips off the url suffix for us, but we're working off of the
     // PATH_INFO here so we need to strip it off manually
     if ($suffix = Kohana::config("core.url_suffix")) {
       $path = preg_replace("#" . preg_quote($suffix) . "$#u", "", $path);
     }
 
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
-    self::$site_theme_name = module::get_var("gallery", "active_site_theme");
+    self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
     // If the site theme doesn't exist, fall back to wind.
     if (!file_exists(THEMEPATH . self::$site_theme_name . "/theme.info")) {
-      site_status::error(t("Theme '%name' is missing.  Falling back to the Wind theme.",
+      SiteStatus::error(t("Theme '%name' is missing.  Falling back to the Wind theme.",
                            array("name" => self::$site_theme_name)), "missing_site_theme");
-      module::set_var("gallery", "active_site_theme", self::$site_theme_name = "wind");
+      Module::set_var("gallery", "active_site_theme", self::$site_theme_name = "wind");
     }
 
     if (self::$is_admin) {
       // Load the admin theme
-      self::$admin_theme_name = module::get_var("gallery", "active_admin_theme");
+      self::$admin_theme_name = Module::get_var("gallery", "active_admin_theme");
 
       // If the admin theme doesn't exist, fall back to admin_wind.
       if (!file_exists(THEMEPATH . self::$admin_theme_name . "/theme.info")) {
-        site_status::error(t("Admin theme '%name' is missing!  Falling back to the Wind theme.",
+        SiteStatus::error(t("Admin theme '%name' is missing!  Falling back to the Wind theme.",
                              array("name" => self::$admin_theme_name)), "missing_admin_theme");
-        module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
+        Module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
       }
 
       array_unshift($modules, THEMEPATH . self::$admin_theme_name);
@@ -77,21 +77,21 @@ class Gallery_Theme {
         array_unshift($modules, THEMEPATH . self::$site_theme_name . "/admin");
       }
       // Admins can override the site theme, temporarily.  This lets us preview themes.
-      if (identity::active_user()->admin && $override = $input->get("theme")) {
+      if (Identity::active_user()->admin && $override = $input->get("theme")) {
         if (file_exists(THEMEPATH . $override)) {
           self::$admin_theme_name = $override;
           array_unshift($modules, THEMEPATH . self::$admin_theme_name);
         } else {
-          Kohana_Log::add("error", "Missing override admin theme: '$override'");
+          Log::add("error", "Missing override admin theme: '$override'");
         }
       }
     } else {
       // Admins can override the site theme, temporarily.  This lets us preview themes.
-      if (identity::active_user()->admin && $override = $input->get("theme")) {
+      if (Identity::active_user()->admin && $override = $input->get("theme")) {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {
-          Kohana_Log::add("error", "Missing override site theme: '$override'");
+          Log::add("error", "Missing override site theme: '$override'");
         }
       }
       array_unshift($modules, THEMEPATH . self::$site_theme_name);

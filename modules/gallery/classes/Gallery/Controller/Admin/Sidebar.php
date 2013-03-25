@@ -19,10 +19,10 @@
  */
 class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Manage sidebar");
     $view->content = new View("admin_sidebar.html");
-    $view->content->csrf = access::csrf_token();
+    $view->content->csrf = Access::csrf_token();
     $view->content->available = new View("admin_sidebar_blocks.html");
     $view->content->active = new View("admin_sidebar_blocks.html");
     list($view->content->available->blocks, $view->content->active->blocks) = $this->_get_blocks();
@@ -30,15 +30,15 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
   }
 
   public function update() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $available_blocks = block_manager::get_available_site_blocks();
+    $available_blocks = BlockManager::get_available_site_blocks();
 
     $active_blocks = array();
     foreach (Input::instance()->get("block", array()) as $block_id) {
       $active_blocks[md5($block_id)] = explode(":", (string) $block_id);
     }
-    block_manager::set_active("site_sidebar", $active_blocks);
+    BlockManager::set_active("site_sidebar", $active_blocks);
 
     $result = array("result" => "success");
     list($available, $active) = $this->_get_blocks();
@@ -50,13 +50,13 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $result["active"] = $v->render();
     $message = t("Updated sidebar blocks");
     $result["message"] = (string) $message;
-    json::reply($result);
+    JSON::reply($result);
   }
 
   private function _get_blocks() {
     $active_blocks = array();
-    $available_blocks = block_manager::get_available_site_blocks();
-    foreach (block_manager::get_active("site_sidebar") as $block) {
+    $available_blocks = BlockManager::get_available_site_blocks();
+    foreach (BlockManager::get_active("site_sidebar") as $block) {
       $id = "{$block[0]}:{$block[1]}";
       if (!empty($available_blocks[$id])) {
         $active_blocks[$id] = $available_blocks[$id];

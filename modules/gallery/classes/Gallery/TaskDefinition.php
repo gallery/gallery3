@@ -24,7 +24,7 @@ class Gallery_TaskDefinition {
   public $severity;
 
   static function factory() {
-    return new Task_Definition();
+    return new TaskDefinition();
   }
 
   function callback($callback) {

@@ -19,25 +19,25 @@
  */
 class Url_Security_Test extends Gallery_Unit_Test_Case {
   public function setup() {
-    $this->save = array(Router::$current_uri, Router::$complete_uri, $_GET);
+    $this->save = array(Route::$current_uri, Route::$complete_uri, $_GET);
   }
 
   public function teardown() {
-    list(Router::$current_uri, Router::$complete_uri, $_GET) = $this->save;
+    list(Route::$current_uri, Route::$complete_uri, $_GET) = $this->save;
   }
 
   public function xss_in_current_url_test() {
-    Router::$current_uri = "foo/<xss>/bar";
-    Router::$complete_uri = "foo/<xss>/bar?foo=bar";
-    $this->assert_same("foo/&lt;xss&gt;/bar", url::current());
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", url::current(true));
+    Route::$current_uri = "foo/<xss>/bar";
+    Route::$complete_uri = "foo/<xss>/bar?foo=bar";
+    $this->assert_same("foo/&lt;xss&gt;/bar", URL::current());
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", URL::current(true));
   }
 
   public function xss_in_merged_url_test() {
-    Router::$current_uri = "foo/<xss>/bar";
-    Router::$complete_uri = "foo/<xss>/bar?foo=bar";
+    Route::$current_uri = "foo/<xss>/bar";
+    Route::$complete_uri = "foo/<xss>/bar?foo=bar";
     $_GET = array("foo" => "bar");
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", url::merge(array()));
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", url::merge(array("a" => "b")));
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", URL::merge(array()));
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", URL::merge(array("a" => "b")));
   }
 }

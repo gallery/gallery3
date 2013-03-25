@@ -19,10 +19,10 @@
  */
 class Gallery_Item {
   static function move($source, $target) {
-    access::required("view", $source);
-    access::required("view", $target);
-    access::required("edit", $source);
-    access::required("edit", $target);
+    Access::required("view", $source);
+    Access::required("view", $target);
+    Access::required("edit", $source);
+    Access::required("edit", $target);
 
     $parent = $source->parent();
     if ($parent->album_cover_item_id == $source->id) {
@@ -33,9 +33,9 @@ class Gallery_Item {
             break;
           }
         }
-        item::make_album_cover($new_cover_item);
+        Item::make_album_cover($new_cover_item);
       } else {
-        item::remove_album_cover($parent);
+        Item::remove_album_cover($parent);
       }
     }
 
@@ -45,19 +45,19 @@ class Gallery_Item {
     if ($orig_name != $source->name) {
       switch ($source->type) {
       case "album":
-        message::info(
+        Message::info(
           t("Album <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
             array("old_name" => $orig_name, "new_name" => $source->name)));
         break;
 
       case "photo":
-        message::info(
+        Message::info(
           t("Photo <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
             array("old_name" => $orig_name, "new_name" => $source->name)));
         break;
 
       case "movie":
-        message::info(
+        Message::info(
           t("Movie <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
             array("old_name" => $orig_name, "new_name" => $source->name)));
         break;
@@ -66,54 +66,54 @@ class Gallery_Item {
 
     // If the target has no cover item, make this it.
     if ($target->album_cover_item_id == null)  {
-      item::make_album_cover($source);
+      Item::make_album_cover($source);
     }
   }
 
   static function make_album_cover($item) {
     $parent = $item->parent();
-    access::required("view", $item);
-    access::required("view", $parent);
-    access::required("edit", $parent);
+    Access::required("view", $item);
+    Access::required("view", $parent);
+    Access::required("edit", $parent);
 
     $old_album_cover_id = $parent->album_cover_item_id;
 
-    model_cache::clear();
+    ModelCache::clear();
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
     $parent->save();
-    graphics::generate($parent);
+    Graphics::generate($parent);
 
     // Walk up the parent hierarchy and set album covers if necessary
     $grand_parent = $parent->parent();
-    if ($grand_parent && access::can("edit", $grand_parent) &&
+    if ($grand_parent && Access::can("edit", $grand_parent) &&
         $grand_parent->album_cover_item_id == null)  {
-      item::make_album_cover($parent);
+      Item::make_album_cover($parent);
     }
 
     // When albums are album covers themselves, we hotlink directly to the target item.  This
     // means that when we change an album cover, the grandparent may have a deep link to the old
     // album cover.  So find any parent albums that had the old item as their album cover and
-    // switch them over to the new item.
+    // switch them over to the new Item.
     if ($old_album_cover_id) {
       foreach ($item->parents(array(array("album_cover_item_id", "=", $old_album_cover_id)))
                as $ancestor) {
-        if (access::can("edit", $ancestor)) {
+        if (Access::can("edit", $ancestor)) {
           $ancestor->album_cover_item_id = $parent->album_cover_item_id;
           $ancestor->save();
-          graphics::generate($ancestor);
+          Graphics::generate($ancestor);
         }
       }
     }
   }
 
   static function remove_album_cover($album) {
-    access::required("view", $album);
-    access::required("edit", $album);
+    Access::required("view", $album);
+    Access::required("edit", $album);
 
-    model_cache::clear();
+    ModelCache::clear();
     $album->album_cover_item_id = null;
     $album->save();
-    graphics::generate($album);
+    Graphics::generate($album);
   }
 
   /**
@@ -141,7 +141,7 @@ class Gallery_Item {
     if (class_exists("transliterate")) {
       $result = transliterate::utf8_to_ascii($result);
     } else {
-      $result = text::transliterate_to_ascii($result);
+      $result = Text::transliterate_to_ascii($result);
     }
     $result = preg_replace("/[^A-Za-z0-9-_]+/", "-", $result);
     $result = preg_replace("/-+/", "-", $result);
@@ -162,7 +162,7 @@ class Gallery_Item {
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     $form->script("")
-      ->url(url::abs_file("modules/gallery/js/item_form_delete.js"));
+      ->url(URL::abs_file("modules/gallery/js/item_form_delete.js"));
     return $form;
   }
 
@@ -173,7 +173,7 @@ class Gallery_Item {
     // Guard against an empty result when we create the first item.  It's unfortunate that we
     // have to check this every time.
     // @todo: figure out a better way to bootstrap the weight.
-    $result = db::build()
+    $result = DB::build()
       ->select("weight")->from("items")
       ->order_by("weight", "desc")->limit(1)
       ->execute()->current();
@@ -187,9 +187,9 @@ class Gallery_Item {
    */
   static function viewable($model) {
     $view_restrictions = array();
-    if (!identity::active_user()->admin) {
-      foreach (identity::group_ids_for_active_user() as $id) {
-        $view_restrictions[] = array("items.view_$id", "=", access::ALLOW);
+    if (!Identity::active_user()->admin) {
+      foreach (Identity::group_ids_for_active_user() as $id) {
+        $view_restrictions[] = array("items.view_$id", "=", Access::ALLOW);
       }
     }
 
@@ -219,7 +219,7 @@ class Gallery_Item {
 
     // The root path name is NULL not "", hence this workaround.
     if ($path == "") {
-      return item::root();
+      return Item::root();
     }
 
     $search_full_name = true;
@@ -241,7 +241,7 @@ class Gallery_Item {
     }
     $encoded_path = join("/", $encoded_array);
     if ($search_full_name) {
-      $item = ORM::factory("item")
+      $item = ORM::factory("Item")
         ->where("relative_path_cache", "=", $encoded_path)
         ->find();
       // See if the item was found and if it should have been found.
@@ -252,7 +252,7 @@ class Gallery_Item {
     } else {
       // Note that the below query uses LIKE with wildcard % at end, which is still sargable and
       // therefore still takes advantage of the indexed relative_path_cache (i.e. still quick).
-      $item = ORM::factory("item")
+      $item = ORM::factory("Item")
         ->where("relative_path_cache", "LIKE", Database::escape_for_like($encoded_path) . ".%")
         ->find();
       // See if the item was found and should be a jpg.
@@ -267,7 +267,7 @@ class Gallery_Item {
     // anything, fall back to checking the path the hard way.
     $paths = explode("/", $path);
     if ($search_full_name) {
-      foreach (ORM::factory("item")
+      foreach (ORM::factory("Item")
                ->where("name", "=", end($paths))
                ->where("level", "=", count($paths) + 1)
                ->find_all() as $item) {
@@ -278,11 +278,11 @@ class Gallery_Item {
         }
       }
     } else {
-      foreach (ORM::factory("item")
+      foreach (ORM::factory("Item")
                ->where("name", "LIKE", Database::escape_for_like(end($paths)) . ".%")
                ->where("level", "=", count($paths) + 1)
                ->find_all() as $item) {
-        // Compare relative_path without extension (regexp same as legal_file::change_extension),
+        // Compare relative_path without extension (regexp same as LegalFile::change_extension),
         // see if it should be a jpg.
         if ((preg_replace("/\.[^\.\/]*?$/", "", urldecode($item->relative_path())) == $path) &&
             (($item->is_movie() && ($var_subdir == "thumbs")) ||
@@ -293,7 +293,7 @@ class Gallery_Item {
     }
 
     // Nothing found - return an empty item model.
-    return new Item_Model();
+    return new Model_Item();
   }
 
   /**
@@ -301,16 +301,16 @@ class Gallery_Item {
    * component matches up with an item slug.  If there's no match, return an empty Item_Model
    * NOTE: the caller is responsible for performing security checks on the resulting item.
    * @param string $url the relative url fragment
-   * @return Item_Model
+   * @return Model_Item
    */
   static function find_by_relative_url($relative_url) {
     // In most cases, we'll have an exact match in the relative_url_cache item field.
     // but failing that, walk down the tree until we find it.  The fallback code will fix caches
     // as it goes, so it'll never be run frequently.
-    $item = ORM::factory("item")->where("relative_url_cache", "=", $relative_url)->find();
+    $item = ORM::factory("Item")->where("relative_url_cache", "=", $relative_url)->find();
     if (!$item->loaded()) {
       $segments = explode("/", $relative_url);
-      foreach (ORM::factory("item")
+      foreach (ORM::factory("Item")
                ->where("slug", "=", end($segments))
                ->where("level", "=", count($segments) + 1)
                ->find_all() as $match) {
@@ -324,15 +324,15 @@ class Gallery_Item {
 
   /**
    * Return the root Item_Model
-   * @return Item_Model
+   * @return Model_Item
    */
   static function root() {
-    return model_cache::get("item", 1);
+    return ModelCache::get("item", 1);
   }
 
   /**
    * Return a query to get a random Item_Model, with optional filters.
-   * Usage: item::random_query()->execute();
+   * Usage: Item::random_query()->execute();
    *
    * Note: You can add your own ->where() clauses but if your Gallery is
    * small or your where clauses are over-constrained you may wind up with
@@ -343,9 +343,9 @@ class Gallery_Item {
     // Pick a random number and find the item that's got nearest smaller number.
     // This approach works best when the random numbers in the system are roughly evenly
     // distributed so this is going to be more efficient with larger data sets.
-    return ORM::factory("item")
+    return ORM::factory("Item")
       ->viewable()
-      ->where("rand_key", "<", random::percent())
+      ->where("rand_key", "<", Random::percent())
       ->order_by("rand_key", "DESC");
   }
 
@@ -353,7 +353,7 @@ class Gallery_Item {
    * Find the position of the given item in its parent album.  The resulting
    * value is 1-indexed, so the first child in the album is at position 1.
    *
-   * @param Item_Model $item
+   * @param Model_Item $item
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
   static function get_position($item, $where=array()) {
@@ -364,7 +364,7 @@ class Gallery_Item {
     } else {
       $comp = "<";
     }
-    $query_model = ORM::factory("item");
+    $query_model = ORM::factory("Item");
 
     // If the comparison column has NULLs in it, we can't use comparators on it
     // and will have to deal with it the hard way.
@@ -441,7 +441,7 @@ class Gallery_Item {
    * Set the display context callback for any future item renders.
    */
   static function set_display_context_callback() {
-    if (!request::user_agent("robot")) {
+    if (!Request::user_agent("robot")) {
       $args = func_get_args();
       Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
                              array("display_context"));
@@ -459,14 +459,14 @@ class Gallery_Item {
    * Call the display context callback for the given item
    */
   static function get_display_context($item) {
-    if (!request::user_agent("robot")) {
+    if (!Request::user_agent("robot")) {
       $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
       $callback = $args[0];
       $args[0] = $item;
     }
 
     if (empty($callback)) {
-      $callback = "Albums_Controller::get_display_context";
+      $callback = "Controller_Albums::get_display_context";
       $args = array($item);
     }
     return call_user_func_array($callback, $args);

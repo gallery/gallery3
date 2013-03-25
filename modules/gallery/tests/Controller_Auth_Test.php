@@ -101,10 +101,10 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
           // Check body of all public functions
           //
           // Authorization
-          //   Require: access::required\(
+          //   Require: Access::required\(
           // Authentication (CSRF token)
           //   [When using Input, $this->input, Forge]
-          //   Require: ->validate() or access::verify_csrf\(
+          //   Require: ->validate() or Access::verify_csrf\(
           if ($function && $open_braces >= 2) {
             if ($token[0] == T_STRING) {
               if ($token[1] == "access" &&

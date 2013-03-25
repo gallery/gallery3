@@ -24,7 +24,7 @@ class Forge extends Forge_Core {
    */
   public function __construct($action=null, $title='', $method=null, $attr=array()) {
     parent::__construct($action, $title, $method, $attr);
-    $this->hidden("csrf")->value(access::csrf_token());
+    $this->hidden("csrf")->value(Access::csrf_token());
   }
 
   /**
@@ -39,7 +39,7 @@ class Forge extends Forge_Core {
    */
   public function validate() {
     $status = parent::validate();
-    access::verify_csrf();
+    Access::verify_csrf();
     return $status;
   }
 }

@@ -60,7 +60,7 @@ class Gallery_View extends Kohana_View {
    */
   public function __construct($name = NULL, $data = NULL, $type = NULL) {
     parent::__construct($name, $data, $type);
-    $this->set_global("csrf", access::csrf_token());
+    $this->set_global("csrf", Access::csrf_token());
   }
 
   /**
@@ -74,11 +74,11 @@ class Gallery_View extends Kohana_View {
       $this->kohana_local_data = array_merge(View::$global_data, $this->kohana_local_data);
       return parent::render($print, $renderer, $modifier);
     } catch (ORM_Validation_Exception $e) {
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
-      Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
       return "";
     } catch (Exception $e) {
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";
     }
   }

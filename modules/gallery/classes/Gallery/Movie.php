@@ -52,7 +52,7 @@ class Gallery_Movie {
       ->error_messages("required", t("You must provide an internet address"))
       ->error_messages("length", t("Your internet address is too long"));
 
-    module::event("item_edit_form", $movie, $form);
+    Module::event("item_edit_form", $movie, $form);
 
     $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
@@ -70,21 +70,21 @@ class Gallery_Movie {
    * @param array      $movie_options (optional)
    */
   static function extract_frame($input_file, $output_file, $movie_options=null) {
-    $ffmpeg = movie::find_ffmpeg();
+    $ffmpeg = Movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
 
-    list($width, $height, $mime_type, $extension, $duration) = movie::get_file_metadata($input_file);
+    list($width, $height, $mime_type, $extension, $duration) = Movie::get_file_metadata($input_file);
 
     if (isset($movie_options["start_time"]) && is_numeric($movie_options["start_time"])) {
       $start_time = max(0, $movie_options["start_time"]); // ensure it's non-negative
     } else {
-      $start_time = module::get_var("gallery", "movie_extract_frame_time", 3); // use default
+      $start_time = Module::get_var("gallery", "movie_extract_frame_time", 3); // use default
     }
     // extract frame at start_time, unless movie is too short
     $start_time_arg = ($duration >= $start_time + 0.1) ?
-      "-ss " . movie::seconds_to_hhmmssdd($start_time) : "";
+      "-ss " . Movie::seconds_to_hhmmssdd($start_time) : "";
 
     $input_args = isset($movie_options["input_args"]) ? $movie_options["input_args"] : "";
     $output_args = isset($movie_options["output_args"]) ? $movie_options["output_args"] : "";
@@ -119,8 +119,8 @@ class Gallery_Movie {
   static function allow_uploads() {
     if (empty(self::$allow_uploads)) {
       // Refresh ffmpeg settings
-      $ffmpeg = movie::find_ffmpeg();
-      switch (module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
+      $ffmpeg = Movie::find_ffmpeg();
+      switch (Module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
         case "always":
           self::$allow_uploads = true;
           break;
@@ -139,11 +139,11 @@ class Gallery_Movie {
    * Return the path to the ffmpeg binary if one exists and is executable, or null.
    */
   static function find_ffmpeg() {
-    if (!($ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) ||
+    if (!($ffmpeg_path = Module::get_var("gallery", "ffmpeg_path")) ||
         !@is_executable($ffmpeg_path)) {
-      $ffmpeg_path = system::find_binary(
-        "ffmpeg", module::get_var("gallery", "graphics_toolkit_path"));
-      module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
+      $ffmpeg_path = System::find_binary(
+        "ffmpeg", Module::get_var("gallery", "graphics_toolkit_path"));
+      Module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
     }
     return $ffmpeg_path;
   }
@@ -154,7 +154,7 @@ class Gallery_Movie {
    * date can be useful.
    */
   static function get_ffmpeg_version() {
-    $ffmpeg = movie::find_ffmpeg();
+    $ffmpeg = Movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       return array("", "");
     }
@@ -181,7 +181,7 @@ class Gallery_Movie {
    * Metadata is first generated using ffmpeg (or set to defaults if it fails),
    * then can be modified by other modules using movie_get_file_metadata events.
    *
-   * This function and its use cases are symmetric to those of photo::get_file_metadata.
+   * This function and its use cases are symmetric to those of Photo::get_file_metadata.
    *
    * @param  string $file_path
    * @return array  array($width, $height, $mime_type, $extension, $duration)
@@ -203,7 +203,7 @@ class Gallery_Movie {
     }
 
     $metadata = new stdClass();
-    $ffmpeg = movie::find_ffmpeg();
+    $ffmpeg = Movie::find_ffmpeg();
     if (!empty($ffmpeg)) {
       // ffmpeg found - use it to get width, height, and duration.
       $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($file_path) . " 2>&1";
@@ -221,7 +221,7 @@ class Gallery_Movie {
       }
 
       if (preg_match("/Duration: (\d+:\d+:\d+\.\d+)/", $result, $matches)) {
-        $metadata->duration = movie::hhmmssdd_to_seconds($matches[1]);
+        $metadata->duration = Movie::hhmmssdd_to_seconds($matches[1]);
       } else if (preg_match("/duration.*?:.*?(\d+)/", $result, $matches)) {
         $metadata->duration = $matches[1];
       } else {
@@ -236,7 +236,7 @@ class Gallery_Movie {
 
     $extension = pathinfo($file_path, PATHINFO_EXTENSION);
     if (!$extension ||
-        (!$metadata->mime_type = legal_file::get_movie_types_by_extension($extension))) {
+        (!$metadata->mime_type = LegalFile::get_movie_types_by_extension($extension))) {
         // Extension is empty or illegal.
         $metadata->extension = null;
         $metadata->mime_type = null;
@@ -246,12 +246,12 @@ class Gallery_Movie {
     }
 
     // Run movie_get_file_metadata events which can modify the class.
-    module::event("movie_get_file_metadata", $file_path, $metadata);
+    Module::event("movie_get_file_metadata", $file_path, $metadata);
 
     // If the post-events results are invalid, throw an exception.  Note that, unlike photos, having
     // zero width and height isn't considered invalid (as is the case when FFmpeg isn't installed).
     if (!$metadata->mime_type || !$metadata->extension ||
-        ($metadata->mime_type != legal_file::get_movie_types_by_extension($metadata->extension))) {
+        ($metadata->mime_type != LegalFile::get_movie_types_by_extension($metadata->extension))) {
       throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
     }
 

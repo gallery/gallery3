@@ -19,39 +19,39 @@
  */
 class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
   function check_now() {
-    access::verify_csrf();
-    upgrade_checker::fetch_version_info();
-    $message = upgrade_checker::get_upgrade_message();
+    Access::verify_csrf();
+    UpgradeChecker::fetch_version_info();
+    $message = UpgradeChecker::get_upgrade_message();
     if ($message) {
       $message .= t(
         " <a href=\"%hide-url\"><i>(remind me later)</i></a>",
-        array("hide-url" => url::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__")));
-      site_status::info($message, "upgrade_checker");
+        array("hide-url" => URL::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__")));
+      SiteStatus::info($message, "upgrade_checker");
     } else {
-      site_status::clear("upgrade_checker");
+      SiteStatus::clear("upgrade_checker");
     }
-    url::redirect("admin/dashboard");
+    URL::redirect("admin/dashboard");
   }
 
   function remind_me_later() {
-    access::verify_csrf();
-    site_status::clear("upgrade_checker");
+    Access::verify_csrf();
+    SiteStatus::clear("upgrade_checker");
     if ($referer = Input::instance()->server("HTTP_REFERER")) {
-      url::redirect($referer);
+      URL::redirect($referer);
     } else {
-      url::redirect(item::root()->abs_url());
+      URL::redirect(Item::root()->abs_url());
     }
   }
 
   function set_auto($val) {
-    access::verify_csrf();
-    module::set_var("gallery", "upgrade_checker_auto_enabled", (bool)$val);
+    Access::verify_csrf();
+    Module::set_var("gallery", "upgrade_checker_auto_enabled", (bool)$val);
 
     if ((bool)$val) {
-      message::success(t("Automatic upgrade checking is enabled."));
+      Message::success(t("Automatic upgrade checking is enabled."));
     } else {
-      message::success(t("Automatic upgrade checking is disabled."));
+      Message::success(t("Automatic upgrade checking is disabled."));
     }
-    url::redirect("admin/dashboard");
+    URL::redirect("admin/dashboard");
   }
 }

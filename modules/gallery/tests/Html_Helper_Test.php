@@ -19,14 +19,14 @@
  */
 class Html_Helper_Test extends Gallery_Unit_Test_Case {
   public function clean_test() {
-    $safe_string = html::clean("hello <p  >world</p>");
+    $safe_string = HTML::clean("hello <p  >world</p>");
     $this->assert_equal("hello &lt;p  &gt;world&lt;/p&gt;",
                         $safe_string);
     $this->assert_true($safe_string instanceof SafeString);
   }
 
   public function purify_test() {
-    $safe_string = html::purify("hello <p  >world</p>");
+    $safe_string = HTML::purify("hello <p  >world</p>");
     $expected = (class_exists("purifier") && method_exists("purifier", "purify"))
       ? "hello <p>world</p>"
       : "hello &lt;p  &gt;world&lt;/p&gt;";
@@ -35,22 +35,22 @@ class Html_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function mark_clean_test() {
-    $safe_string = html::mark_clean("hello <p  >world</p>");
+    $safe_string = HTML::mark_clean("hello <p  >world</p>");
     $this->assert_true($safe_string instanceof SafeString);
-    $safe_string_2 = html::clean($safe_string);
+    $safe_string_2 = HTML::clean($safe_string);
     $this->assert_equal("hello <p  >world</p>",
                         $safe_string_2);
   }
 
   public function js_string_test() {
-    $string = html::js_string("hello's <p  >world</p>");
+    $string = HTML::js_string("hello's <p  >world</p>");
     $this->assert_equal('"hello\'s <p  >world<\\/p>"',
                         $string);
   }
 
   public function clean_attribute_test() {
     $safe_string = SafeString::of_safe_html("hello's <p  >world</p>");
-    $safe_string = html::clean_attribute($safe_string);
+    $safe_string = HTML::clean_attribute($safe_string);
     $this->assert_equal("hello&#039;s <p  >world</p>",
                         $safe_string);
   }

@@ -19,8 +19,8 @@
  */
 class Sendmail_Test extends Gallery_Unit_Test_Case {
   public function setup() {
-    module::set_var("gallery", "email_from", "from@gallery3.com");
-    module::set_var("gallery", "email_reply_to", "reply_to@gallery3.com");
+    Module::set_var("gallery", "email_from", "from@gallery3.com");
+    Module::set_var("gallery", "email_reply_to", "reply_to@gallery3.com");
   }
 
   public function sendmail_basic_test() {

@@ -75,11 +75,11 @@ class Gallery_Access {
    * Does the active user have this permission on this item?
    *
    * @param  string     $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    * @return boolean
    */
   static function can($perm_name, $item) {
-    return access::user_can(identity::active_user(), $perm_name, $item);
+    return Access::user_can(Identity::active_user(), $perm_name, $item);
   }
 
   /**
@@ -87,7 +87,7 @@ class Gallery_Access {
    *
    * @param  User_Model $user
    * @param  string     $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    * @return boolean
    */
   static function user_can($user, $perm_name, $item) {
@@ -103,10 +103,10 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $id, "item_id");
+      $item : ModelCache::get("access_cache", $id, "item_id");
 
     foreach ($user->groups() as $group) {
-      if ($resource->__get("{$perm_name}_{$group->id}") === access::ALLOW) {
+      if ($resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW) {
         return true;
       }
     }
@@ -114,19 +114,19 @@ class Gallery_Access {
   }
 
   /**
-   * If the active user does not have this permission, failed with an access::forbidden().
+   * If the active user does not have this permission, failed with an Access::forbidden().
    *
    * @param  string     $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    * @return boolean
    */
   static function required($perm_name, $item) {
-    if (!access::can($perm_name, $item)) {
+    if (!Access::can($perm_name, $item)) {
       if ($perm_name == "view") {
         // Treat as if the item didn't exist, don't leak any information.
-        throw new Kohana_404_Exception();
+        throw new HTTP_Exception_404();
       } else {
-        access::forbidden();
+        Access::forbidden();
       }
     }
   }
@@ -136,7 +136,7 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string      $perm_name
-   * @param  Item_Model  $item
+   * @param  Model_Item  $item
    * @return boolean
    */
   static function group_can($group, $perm_name, $item) {
@@ -144,9 +144,9 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $id, "item_id");
+      $item : ModelCache::get("access_cache", $id, "item_id");
 
-    return $resource->__get("{$perm_name}_{$group->id}") === access::ALLOW;
+    return $resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW;
   }
 
   /**
@@ -154,11 +154,11 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string      $perm_name
-   * @param  Item_Model  $item
-   * @return boolean     access::ALLOW, access::DENY or access::INHERIT (null) for no intent
+   * @param  Model_Item  $item
+   * @return boolean     Access::ALLOW, Access::DENY or Access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
-    $intent = model_cache::get("access_intent", $item->id, "item_id");
+    $intent = ModelCache::get("access_intent", $item->id, "item_id");
     return $intent->__get("{$perm_name}_{$group->id}");
   }
 
@@ -168,7 +168,7 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string      $perm_name
-   * @param  Item_Model  $item
+   * @param  Model_Item  $item
    * @return ORM_Model   item that locks this one
    */
   static function locked_by($group, $perm_name, $item) {
@@ -176,14 +176,14 @@ class Gallery_Access {
       return null;
     }
 
-    // For view permissions, if any parent is access::DENY, then those parents lock this one.
+    // For view permissions, if any parent is Access::DENY, then those parents lock this one.
     // Return
-    $lock = ORM::factory("item")
+    $lock = ORM::factory("Item")
       ->where("left_ptr", "<=", $item->left_ptr)
       ->where("right_ptr", ">=", $item->right_ptr)
       ->where("items.id", "<>", $item->id)
       ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", "=", access::DENY)
+      ->where("access_intents.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
       ->limit(1)
       ->find();
@@ -207,7 +207,7 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string      $perm_name
-   * @param  Item_Model  $item
+   * @param  Model_Item  $item
    * @param  boolean     $value
    */
   private static function _set(Group_Definition $group, $perm_name, $album, $value) {
@@ -220,7 +220,7 @@ class Gallery_Access {
     if (!$album->is_album()) {
       throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
-    $access = model_cache::get("access_intent", $album->id, "item_id");
+    $access = ModelCache::get("access_intent", $album->id, "item_id");
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
@@ -230,8 +230,8 @@ class Gallery_Access {
       self::_update_access_non_view_cache($group, $perm_name, $album);
     }
 
-    access::update_htaccess_files($album, $group, $perm_name, $value);
-    model_cache::clear();
+    Access::update_htaccess_files($album, $group, $perm_name, $value);
+    ModelCache::clear();
   }
 
   /**
@@ -239,7 +239,7 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    */
   static function allow($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::ALLOW);
@@ -250,7 +250,7 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    */
   static function deny($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::DENY);
@@ -261,7 +261,7 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    */
   static function reset($group, $perm_name, $item) {
     if ($item->id == 1) {
@@ -275,7 +275,7 @@ class Gallery_Access {
    */
   static function recalculate_album_permissions($album) {
     foreach (self::_get_all_groups() as $group) {
-      foreach (ORM::factory("permission")->find_all() as $perm) {
+      foreach (ORM::factory("Permission")->find_all() as $perm) {
         if ($perm->name == "view") {
           self::_update_access_view_cache($group, $album);
         } else {
@@ -283,7 +283,7 @@ class Gallery_Access {
         }
       }
     }
-    model_cache::clear();
+    ModelCache::clear();
   }
 
   /**
@@ -291,10 +291,10 @@ class Gallery_Access {
    */
   static function recalculate_photo_permissions($photo) {
     $parent = $photo->parent();
-    $parent_access_cache = ORM::factory("access_cache")->where("item_id", "=", $parent->id)->find();
-    $photo_access_cache = ORM::factory("access_cache")->where("item_id", "=", $photo->id)->find();
+    $parent_access_cache = ORM::factory("AccessCache")->where("item_id", "=", $parent->id)->find();
+    $photo_access_cache = ORM::factory("AccessCache")->where("item_id", "=", $photo->id)->find();
     foreach (self::_get_all_groups() as $group) {
-      foreach (ORM::factory("permission")->find_all() as $perm) {
+      foreach (ORM::factory("Permission")->find_all() as $perm) {
         $field = "{$perm->name}_{$group->id}";
         if ($perm->name == "view") {
           $photo->$field = $parent->$field;
@@ -305,7 +305,7 @@ class Gallery_Access {
     }
     $photo_access_cache->save();
     $photo->save();
-    model_cache::clear();
+    ModelCache::clear();
   }
 
   /**
@@ -339,7 +339,7 @@ class Gallery_Access {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group);
     }
-    $permission = ORM::factory("permission")->where("name", "=", $name)->find();
+    $permission = ORM::factory("Permission")->where("name", "=", $name)->find();
     if ($permission->loaded()) {
       $permission->delete();
     }
@@ -352,7 +352,7 @@ class Gallery_Access {
    * @return void
    */
   static function add_group($group) {
-    foreach (ORM::factory("permission")->find_all() as $perm) {
+    foreach (ORM::factory("Permission")->find_all() as $perm) {
       self::_add_columns($perm->name, $group);
     }
   }
@@ -364,15 +364,15 @@ class Gallery_Access {
    * @return void
    */
   static function delete_group($group) {
-    foreach (ORM::factory("permission")->find_all() as $perm) {
+    foreach (ORM::factory("Permission")->find_all() as $perm) {
       self::_drop_columns($perm->name, $group);
     }
   }
 
   /**
-   * Add new access rows when a new item is added.
+   * Add new Access rows when a new Item is added.
    *
-   * @param Item_Model $item
+   * @param Model_Item $item
    * @return void
    */
   static function add_item($item) {
@@ -380,18 +380,18 @@ class Gallery_Access {
     if ($access_intent->loaded()) {
       throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
     }
-    $access_intent = ORM::factory("access_intent");
+    $access_intent = ORM::factory("AccessIntent");
     $access_intent->item_id = $item->id;
     $access_intent->save();
 
-    // Create a new access cache entry and copy the parents values.
-    $access_cache = ORM::factory("access_cache");
+    // Create a new Access cache entry and copy the parents values.
+    $access_cache = ORM::factory("AccessCache");
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {
       $parent_access_cache =
-        ORM::factory("access_cache")->where("item_id", "=", $item->parent()->id)->find();
+        ORM::factory("AccessCache")->where("item_id", "=", $item->parent()->id)->find();
       foreach (self::_get_all_groups() as $group) {
-        foreach (ORM::factory("permission")->find_all() as $perm) {
+        foreach (ORM::factory("Permission")->find_all() as $perm) {
           $field = "{$perm->name}_{$group->id}";
           if ($perm->name == "view") {
             $item->$field = $item->parent()->$field;
@@ -408,12 +408,12 @@ class Gallery_Access {
   /**
    * Delete appropriate access rows when an item is deleted.
    *
-   * @param Item_Model $item
+   * @param Model_Item $item
    * @return void
    */
   static function delete_item($item) {
-    ORM::factory("access_intent")->where("item_id", "=", $item->id)->find()->delete();
-    ORM::factory("access_cache")->where("item_id", "=", $item->id)->find()->delete();
+    ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find()->delete();
+    ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->delete();
   }
 
   /**
@@ -422,7 +422,7 @@ class Gallery_Access {
   static function verify_csrf() {
     $input = Input::instance();
     if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
-      access::forbidden();
+      Access::forbidden();
     }
   }
 
@@ -434,7 +434,7 @@ class Gallery_Access {
     $session = Session::instance();
     $csrf = $session->get("csrf");
     if (empty($csrf)) {
-      $csrf = random::hash();
+      $csrf = Random::hash();
       $session->set("csrf", $csrf);
     }
     return $csrf;
@@ -445,7 +445,7 @@ class Gallery_Access {
    * @return string
    */
   static function csrf_form_field() {
-    return "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"/>";
+    return "<input type=\"hidden\" name=\"csrf\" value=\"" . Access::csrf_token() . "\"/>";
   }
 
   /**
@@ -456,8 +456,8 @@ class Gallery_Access {
   private static function _get_all_groups() {
     // When we build the gallery package, it's possible that there is no identity provider
     // installed yet.  This is ok at packaging time, so work around it.
-   if (module::is_active(module::get_var("gallery", "identity_provider", "user"))) {
-      return identity::groups();
+   if (Module::is_active(Module::get_var("gallery", "identity_provider", "user"))) {
+      return Identity::groups();
     } else {
       return array();
     }
@@ -475,8 +475,8 @@ class Gallery_Access {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     Database::instance()->query("ALTER TABLE {{$cache_table}} DROP `$field`");
     Database::instance()->query("ALTER TABLE {access_intents} DROP `$field`");
-    model_cache::clear();
-    ORM::factory("access_intent")->clear_cache();
+    ModelCache::clear();
+    ORM::factory("AccessIntent")->clear_cache();
   }
 
   /**
@@ -494,13 +494,13 @@ class Gallery_Access {
       "ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
     Database::instance()->query(
       "ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
-    db::build()
+    DB::build()
       ->update("access_intents")
-      ->set($field, access::DENY)
+      ->set($field, Access::DENY)
       ->where("item_id", "=", 1)
       ->execute();
-    model_cache::clear();
-    ORM::factory("access_intent")->clear_cache();
+    ModelCache::clear();
+    ORM::factory("AccessIntent")->clear_cache();
   }
 
   /**
@@ -510,11 +510,11 @@ class Gallery_Access {
    * @todo: use database locking
    *
    * @param  Group_Model $group
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    * @return void
    */
   private static function _update_access_view_cache($group, $item) {
-    $access = ORM::factory("access_intent")->where("item_id", "=", $item->id)->find();
+    $access = ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find();
     $field = "view_{$group->id}";
 
     // With view permissions, deny values in the parent can override allow values in the child,
@@ -525,12 +525,12 @@ class Gallery_Access {
     // DENY and this ALLOW cannot be obeyed.  So in that case, back up the tree and find any
     // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
     // item, then its safe to propagate from here.
-    if ($access->$field !== access::DENY) {
-      $tmp_item = ORM::factory("item")
+    if ($access->$field !== Access::DENY) {
+      $tmp_item = ORM::factory("Item")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
         ->join("access_intents", "access_intents.item_id", "items.id")
-        ->where("access_intents.$field", "=", access::DENY)
+        ->where("access_intents.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -543,35 +543,35 @@ class Gallery_Access {
     // access_caches table will already contain DENY values and we won't be able to overwrite
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
-    db::build()
+    DB::build()
       ->update("items")
-      ->set($field, access::UNKNOWN)
+      ->set($field, Access::UNKNOWN)
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->execute();
 
-    $query = ORM::factory("access_intent")
+    $query = ORM::factory("AccessIntent")
       ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"))
       ->join("items", "items.id", "access_intents.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where("type", "=", "album")
-      ->where("access_intents.$field", "IS NOT", access::INHERIT)
+      ->where("access_intents.$field", "IS NOT", Access::INHERIT)
       ->order_by("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
-      if ($row->$field == access::ALLOW) {
+      if ($row->$field == Access::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
-        db::build()
+        DB::build()
           ->update("items")
           ->set($field, $row->$field)
-          ->where($field, "IS", access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
+          ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
           ->where("left_ptr", ">=", $row->left_ptr)
           ->where("right_ptr", "<=", $row->right_ptr)
           ->execute();
-      } else if ($row->$field == access::DENY) {
+      } else if ($row->$field == Access::DENY) {
         // DENY overwrites everything below it
-        db::build()
+        DB::build()
           ->update("items")
           ->set($field, $row->$field)
           ->where("left_ptr", ">=", $row->left_ptr)
@@ -583,10 +583,10 @@ class Gallery_Access {
     // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
-    db::build()
+    DB::build()
       ->update("items")
-      ->set($field, access::ALLOW)
-      ->where($field, "IS", access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
+      ->set($field, Access::ALLOW)
+      ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->execute();
@@ -600,11 +600,11 @@ class Gallery_Access {
    *
    * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  Item_Model $item
+   * @param  Model_Item $item
    * @return void
    */
   private static function _update_access_non_view_cache($group, $perm_name, $item) {
-    $access = ORM::factory("access_intent")->where("item_id", "=", $item->id)->find();
+    $access = ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find();
 
     $field = "{$perm_name}_{$group->id}";
 
@@ -613,12 +613,12 @@ class Gallery_Access {
     //
     // @todo To optimize this, we wouldn't need to propagate from the parent, we could just
     //       propagate from here with the parent's intent.
-    if ($access->$field === access::INHERIT) {
-      $tmp_item = ORM::factory("item")
+    if ($access->$field === Access::INHERIT) {
+      $tmp_item = ORM::factory("Item")
         ->join("access_intents", "items.id", "access_intents.item_id")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
-        ->where($field, "IS NOT", access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
+        ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -629,21 +629,21 @@ class Gallery_Access {
 
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
-    $query = ORM::factory("access_intent")
+    $query = ORM::factory("AccessIntent")
       ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr"))
       ->join("items", "items.id", "access_intents.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
-      ->where($field, "IS NOT", access::INHERIT)
+      ->where($field, "IS NOT", Access::INHERIT)
       ->order_by("level", "ASC")
       ->find_all();
     foreach ($query as $row) {
-      $value = ($row->$field === access::ALLOW) ? true : false;
-      db::build()
+      $value = ($row->$field === Access::ALLOW) ? true : false;
+      DB::build()
         ->update("access_caches")
         ->set($field, $value)
         ->where("item_id", "IN",
-                db::build()
+                DB::build()
                 ->select("id")
                 ->from("items")
                 ->where("left_ptr", ">=", $row->left_ptr)
@@ -657,13 +657,13 @@ class Gallery_Access {
    * call this internally any time we change the view or view_full permissions for guest users.
    * This function is only public because we use it in maintenance tasks.
    *
-   * @param  Item_Model   the album
+   * @param  Model_Item   the album
    * @param  Group_Model  the group whose permission is changing
    * @param  string       the permission name
-   * @param  string       the new permission value (eg access::DENY)
+   * @param  string       the new permission value (eg Access::DENY)
    */
   static function update_htaccess_files($album, $group, $perm_name, $value) {
-    if ($group->id != identity::everybody()->id ||
+    if ($group->id != Identity::everybody()->id ||
         !($perm_name == "view" || $perm_name == "view_full")) {
       return;
     }
@@ -674,7 +674,7 @@ class Gallery_Access {
       $dirs[] = dirname($album->thumb_path());
     }
 
-    $base_url = url::base(true);
+    $base_url = URL::base(true);
     $sep = "?";
     if (strpos($base_url, "?") !== false) {
       $sep = "&";
@@ -691,7 +691,7 @@ class Gallery_Access {
     }
 
     foreach ($dirs as $dir) {
-      if ($value === access::DENY) {
+      if ($value === Access::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");
         fwrite($fp, "<IfModule mod_rewrite.c>\n");
         fwrite($fp, "  RewriteEngine On\n");
@@ -709,7 +709,7 @@ class Gallery_Access {
   }
 
   static function private_key() {
-    return module::get_var("gallery", "private_key");
+    return Module::get_var("gallery", "private_key");
   }
 
   /**
@@ -719,7 +719,7 @@ class Gallery_Access {
    * working and our permission system works.
    */
   static function htaccess_works() {
-    $success_url = url::file("var/security_test/success");
+    $success_url = URL::file("var/security_test/success");
 
     @mkdir(VARPATH . "security_test");
     try {
@@ -745,13 +745,13 @@ class Gallery_Access {
         }
       }
       list ($status, $headers, $body) =
-        remote::do_request(url::abs_file("var/security_test/verify"), "GET", $headers);
+        Remote::do_request(URL::abs_file("var/security_test/verify"), "GET", $headers);
       $works = ($status == "HTTP/1.1 200 OK") && ($body == "success");
     } catch (Exception $e) {
-      @dir::unlink(VARPATH . "security_test");
+      @Encoding::unlink(VARPATH . "security_test");
       throw $e;
     }
-    @dir::unlink(VARPATH . "security_test");
+    @Encoding::unlink(VARPATH . "security_test");
 
     return $works;
   }

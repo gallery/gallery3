@@ -24,26 +24,26 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function teardown() {
     list($_SERVER) = $this->_save;
-    identity::set_active_user(identity::admin_user());
+    Identity::set_active_user(Identity::admin_user());
   }
 
   public function basic_test() {
     $photo = test::random_photo();
-    $_SERVER["REQUEST_URI"] = url::file("var/albums/{$photo->name}");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
+    $controller = new Controller_FileProxy();
     $this->assert_same($photo->file_path(), $controller->__call("", array()));
   }
 
   public function query_params_are_ignored_test() {
     $photo = test::random_photo();
-    $_SERVER["REQUEST_URI"] = url::file("var/albums/{$photo->name}?a=1&b=2");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}?a=1&b=2");
+    $controller = new Controller_FileProxy();
     $this->assert_same($photo->file_path(), $controller->__call("", array()));
   }
 
   public function file_must_be_in_var_test() {
-    $_SERVER["REQUEST_URI"] = url::file("index.php");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("index.php");
+    $controller = new Controller_FileProxy();
     try {
       $controller->__call("", array());
       $this->assert_true(false);
@@ -53,8 +53,8 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function file_must_be_in_albums_thumbs_or_resizes_test() {
-    $_SERVER["REQUEST_URI"] = url::file("var/test/var/uploads/.htaccess");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("var/test/var/uploads/.htaccess");
+    $controller = new Controller_FileProxy();
     try {
       $controller->__call("", array());
       $this->assert_true(false);
@@ -65,16 +65,16 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function movie_thumbnails_are_jpgs_test() {
     $movie = test::random_movie();
-    $name = legal_file::change_extension($movie->name, "jpg");
-    $_SERVER["REQUEST_URI"] = url::file("var/thumbs/$name");
-    $controller = new File_Proxy_Controller();
+    $name = LegalFile::change_extension($movie->name, "jpg");
+    $_SERVER["REQUEST_URI"] = URL::file("var/thumbs/$name");
+    $controller = new Controller_FileProxy();
     $this->assert_same($movie->thumb_path(), $controller->__call("", array()));
   }
 
   public function invalid_item_test() {
     $photo = test::random_photo();
-    $_SERVER["REQUEST_URI"] = url::file("var/albums/x_{$photo->name}");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("var/albums/x_{$photo->name}");
+    $controller = new Controller_FileProxy();
     try {
       $controller->__call("", array());
       $this->assert_true(false);
@@ -87,11 +87,11 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
     $album = test::random_album();
     $photo = test::random_photo($album);
     $album = $album->reload(); // adding the photo changed the album in the db
-    $_SERVER["REQUEST_URI"] = url::file("var/albums/{$album->name}/{$photo->name}");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}/{$photo->name}");
+    $controller = new Controller_FileProxy();
 
-    access::deny(identity::everybody(), "view_full", $album);
-    identity::set_active_user(identity::guest());
+    Access::deny(Identity::everybody(), "view_full", $album);
+    Identity::set_active_user(Identity::guest());
 
     try {
       $controller->__call("", array());
@@ -103,8 +103,8 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function cant_proxy_an_album_test() {
     $album = test::random_album();
-    $_SERVER["REQUEST_URI"] = url::file("var/albums/{$album->name}");
-    $controller = new File_Proxy_Controller();
+    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}");
+    $controller = new Controller_FileProxy();
 
     try {
       $controller->__call("", array());
@@ -116,9 +116,9 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function missing_file_test() {
     $photo = test::random_photo();
-    $_SERVER["REQUEST_URI"] = url::file("var/albums/{$photo->name}");
+    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
     unlink($photo->file_path());
-    $controller = new File_Proxy_Controller();
+    $controller = new Controller_FileProxy();
 
     try {
       $controller->__call("", array());

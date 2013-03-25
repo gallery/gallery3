@@ -28,15 +28,15 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function change_photo_test() {
-    $controller = new Photos_Controller();
+    $controller = new Controller_Photos();
     $photo = test::random_photo();
 
     $_POST["name"] = "new name.jpg";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["slug"] = "new-slug";
-    $_POST["csrf"] = access::csrf_token();
-    access::allow(identity::everybody(), "edit", item::root());
+    $_POST["csrf"] = Access::csrf_token();
+    Access::allow(Identity::everybody(), "edit", Item::root());
 
     ob_start();
     $controller->update($photo->id);
@@ -52,14 +52,14 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function change_photo_no_csrf_fails_test() {
-    $controller = new Photos_Controller();
+    $controller = new Controller_Photos();
     $photo = test::random_photo();
 
     $_POST["name"] = "new name.jpg";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["slug"] = "new slug";
-    access::allow(identity::everybody(), "edit", item::root());
+    Access::allow(Identity::everybody(), "edit", Item::root());
 
     try {
       $controller->update($photo);

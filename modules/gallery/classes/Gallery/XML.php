@@ -22,9 +22,9 @@ class Gallery_XML {
     $xml = "<$element_names[0]>\n";
     foreach ($array as $key => $value) {
       if (is_array($value)) {
-        $xml .= xml::to_xml($value, array_slice($element_names, 1));
+        $xml .= XML::to_xml($value, array_slice($element_names, 1));
       } else if (is_object($value)) {
-        $xml .= xml::to_xml($value->as_array(), array_slice($element_names, 1));
+        $xml .= XML::to_xml($value->as_array(), array_slice($element_names, 1));
       } else {
         $xml .= "<$key>$value</$key>\n";
       }

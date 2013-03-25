@@ -4,7 +4,7 @@
     $(".g-available .g-block").equal_heights();
     select_toolkit = function(el) {
       if (!$(this).hasClass("g-unavailable")) {
-        window.location = <?= html::js_string(url::site("admin/graphics/choose/__TK__?csrf=$csrf")) ?>
+        window.location = <?= HTML::js_string(URL::site("admin/graphics/choose/__TK__?csrf=$csrf")) ?>
           .replace("__TK__", $(this).attr("id"));
       }
     };

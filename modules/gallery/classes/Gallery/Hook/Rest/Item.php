@@ -39,13 +39,13 @@ class Gallery_Hook_Rest_Item {
    */
   static function get($request) {
     $item = rest::resolve($request->url);
-    access::required("view", $item);
+    Access::required("view", $item);
 
     $p = $request->params;
     if (isset($p->random)) {
-      $orm = item::random_query()->offset(0)->limit(1);
+      $orm = Item::random_query()->offset(0)->limit(1);
     } else {
-      $orm = ORM::factory("item")->viewable();
+      $orm = ORM::factory("Item")->viewable();
     }
 
     if (empty($p->scope)) {
@@ -72,7 +72,7 @@ class Gallery_Hook_Rest_Item {
     }
 
     // Apply the item's sort order, using id as the tie breaker.
-    // See Item_Model::children()
+    // See Model_Item::children()
     $order_by = array($item->sort_column => $item->sort_order);
     if ($item->sort_column != "id") {
       $order_by["id"] = "ASC";
@@ -95,7 +95,7 @@ class Gallery_Hook_Rest_Item {
 
   static function put($request) {
     $item = rest::resolve($request->url);
-    access::required("edit", $item);
+    Access::required("edit", $item);
 
     if ($entity = $request->params->entity) {
       // Only change fields from a whitelist.
@@ -108,7 +108,7 @@ class Gallery_Hook_Rest_Item {
         case "album_cover":
           if (property_exists($entity, "album_cover")) {
             $album_cover_item = rest::resolve($entity->album_cover);
-            access::required("view", $album_cover_item);
+            Access::required("view", $album_cover_item);
             $item->album_cover_item_id = $album_cover_item->id;
           }
           break;
@@ -116,7 +116,7 @@ class Gallery_Hook_Rest_Item {
         case "parent":
           if (property_exists($entity, "parent")) {
             $parent = rest::resolve($entity->parent);
-            access::required("edit", $parent);
+            Access::required("edit", $parent);
             $item->parent_id = $parent->id;
           }
           break;
@@ -150,10 +150,10 @@ class Gallery_Hook_Rest_Item {
 
   static function post($request) {
     $parent = rest::resolve($request->url);
-    access::required("add", $parent);
+    Access::required("add", $parent);
 
     $entity = $request->params->entity;
-    $item = ORM::factory("item");
+    $item = ORM::factory("Item");
     switch ($entity->type) {
     case "album":
       $item->type = "album";
@@ -191,20 +191,20 @@ class Gallery_Hook_Rest_Item {
 
   static function delete($request) {
     $item = rest::resolve($request->url);
-    access::required("edit", $item);
+    Access::required("edit", $item);
 
     $item->delete();
   }
 
   static function resolve($id) {
     $item = ORM::factory("item", $id);
-    if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
     return $item;
   }
 
   static function url($item) {
-    return url::abs_site("rest/item/{$item->id}");
+    return URL::abs_site("rest/item/{$item->id}");
   }
 }

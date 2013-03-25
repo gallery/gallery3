@@ -35,50 +35,50 @@ class Gallery_Hook_GalleryTask {
   const FIX_STATE_DONE = 14;
 
   static function available_tasks() {
-    $dirty_count = graphics::find_dirty_images_query()->count_records();
+    $dirty_count = Graphics::find_dirty_images_query()->count_records();
     $tasks = array();
-    $tasks[] = Task_Definition::factory()
-                 ->callback("gallery_task::rebuild_dirty_images")
+    $tasks[] = TaskDefinition::factory()
+                 ->callback("Hook_GalleryTask::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?
                                t2("You have one out of date photo",
                                   "You have %count out of date photos",
                                   $dirty_count)
                                : t("All your photos are up to date"))
-      ->severity($dirty_count ? log::WARNING : log::SUCCESS);
+      ->severity($dirty_count ? Log::WARNING : Log::SUCCESS);
 
-    $tasks[] = Task_Definition::factory()
-                 ->callback("gallery_task::update_l10n")
+    $tasks[] = TaskDefinition::factory()
+                 ->callback("Hook_GalleryTask::update_l10n")
                  ->name(t("Update translations"))
                  ->description(t("Download new and updated translated strings"))
-      ->severity(log::SUCCESS);
+      ->severity(Log::SUCCESS);
 
-    $tasks[] = Task_Definition::factory()
-                 ->callback("gallery_task::file_cleanup")
+    $tasks[] = TaskDefinition::factory()
+                 ->callback("Hook_GalleryTask::file_cleanup")
                  ->name(t("Remove old files"))
                  ->description(t("Remove expired files from the logs and tmp directory"))
-      ->severity(log::SUCCESS);
+      ->severity(Log::SUCCESS);
 
-    $tasks[] = Task_Definition::factory()
-      ->callback("gallery_task::fix")
+    $tasks[] = TaskDefinition::factory()
+      ->callback("Hook_GalleryTask::fix")
       ->name(t("Fix your Gallery"))
       ->description(t("Fix a variety of problems that might cause your Gallery to act strangely.  Requires maintenance mode."))
-      ->severity(log::SUCCESS);
+      ->severity(Log::SUCCESS);
 
     return $tasks;
   }
 
   /**
    * Task that rebuilds all dirty images.
-   * @param Task_Model the task
+   * @param Model_Task the task
    */
   static function rebuild_dirty_images($task) {
     $errors = array();
     try {
       // Choose the dirty images in a random order so that if we run this task multiple times
       // concurrently each task is rebuilding different images simultaneously.
-      $result = graphics::find_dirty_images_query()->select("id")
-        ->select(db::expr("RAND() as r"))
+      $result = Graphics::find_dirty_images_query()->select("id")
+        ->select(DB::expr("RAND() as r"))
         ->order_by("r", "ASC")
         ->execute();
       $total_count = $task->get("total_count", $result->count());
@@ -86,7 +86,7 @@ class Gallery_Hook_GalleryTask {
       if ($mode == "init") {
         $task->set("total_count", $total_count);
         $task->set("mode", "process");
-        batch::start();
+        Batch::start();
       }
 
       $completed = $task->get("completed", 0);
@@ -108,14 +108,14 @@ class Gallery_Hook_GalleryTask {
         $item = ORM::factory("item", $row->id);
         if ($item->loaded()) {
           try {
-            graphics::generate($item);
+            Graphics::generate($item);
             $completed++;
 
             $errors[] = t("Successfully rebuilt images for '%title'",
-                          array("title" => html::purify($item->title)));
+                          array("title" => HTML::purify($item->title)));
           } catch (Exception $e) {
             $errors[] = t("Unable to rebuild images for '%title'",
-                          array("title" => html::purify($item->title)));
+                          array("title" => HTML::purify($item->title)));
             $errors[] = (string)$e;
             $ignored[$item->id] = 1;
           }
@@ -142,11 +142,11 @@ class Gallery_Hook_GalleryTask {
       if ($task->percent_complete == 100) {
         $task->done = true;
         $task->state = "success";
-        batch::stop();
-        site_status::clear("graphics_dirty");
+        Batch::stop();
+        SiteStatus::clear("graphics_dirty");
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error",(string)$e);
+      Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -208,11 +208,11 @@ class Gallery_Hook_GalleryTask {
           $file = DOCROOT . $file;
           switch (pathinfo($file, PATHINFO_EXTENSION)) {
           case "php":
-            l10n_scanner::scan_php_file($file, $cache);
+            L10n_Scanner::scan_php_file($file, $cache);
             break;
 
           case "info":
-            l10n_scanner::scan_info_file($file, $cache);
+            L10n_Scanner::scan_info_file($file, $cache);
             break;
           }
         }
@@ -231,12 +231,12 @@ class Gallery_Hook_GalleryTask {
 
       case "fetch_updates":  // 70% - 100%
         // Send fetch requests in batches until we're done
-        $num_remaining = l10n_client::fetch_updates($num_fetched);
+        $num_remaining = L10n_Client::fetch_updates($num_fetched);
         if ($num_remaining) {
           $total = $num_fetched + $num_remaining;
           $task->percent_complete = 70 + 30 * ((float) $num_fetched / $total);
         } else {
-          Gallery_I18n::clear_cache();
+          I18n::clear_cache();
 
           $task->done = true;
           $task->state = "success";
@@ -253,7 +253,7 @@ class Gallery_Hook_GalleryTask {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error",(string)$e);
+      Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -266,7 +266,7 @@ class Gallery_Hook_GalleryTask {
 
   /**
    * Task that removes old files from var/logs and var/tmp.
-   * @param Task_Model the task
+   * @param Model_Task the task
    */
   static function file_cleanup($task) {
     $errors = array();
@@ -281,7 +281,7 @@ class Gallery_Hook_GalleryTask {
       switch ($task->get("mode", "init")) {
       case "init":
         $threshold = time() - 1209600; // older than 2 weeks
-        // Note that this code is roughly duplicated in gallery_event::gallery_shutdown
+        // Note that this code is roughly duplicated in Hook_GalleryEvent::gallery_shutdown
         foreach(array("logs", "tmp") as $dir) {
           $dir = VARPATH . $dir;
           if ($dh = opendir($dir)) {
@@ -331,7 +331,7 @@ class Gallery_Hook_GalleryTask {
         $task->percent_complete = 100;
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error",(string)$e);
+      Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -347,14 +347,14 @@ class Gallery_Hook_GalleryTask {
 
     $total = $task->get("total");
     if (empty($total)) {
-      $item_count = db::build()->count_records("items");
+      $item_count = DB::build()->count_records("items");
       $total = 0;
 
       // mptt: 2 operations for every item
       $total += 2 * $item_count;
 
       // album audit (permissions and bogus album covers): 1 operation for every album
-      $total += db::build()->where("type", "=", "album")->count_records("items");
+      $total += DB::build()->where("type", "=", "album")->count_records("items");
 
       // one operation for each dupe slug, dupe name, dupe base name, and missing access cache
       foreach (array("find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
@@ -376,8 +376,8 @@ class Gallery_Hook_GalleryTask {
     $completed = $task->get("completed");
     $state = $task->get("state");
 
-    if (!module::get_var("gallery", "maintenance_mode")) {
-      module::set_var("gallery", "maintenance_mode", 1);
+    if (!Module::get_var("gallery", "maintenance_mode")) {
+      Module::set_var("gallery", "maintenance_mode", 1);
     }
 
     // This is a state machine that checks each item in the database.  It verifies the following
@@ -398,7 +398,7 @@ class Gallery_Hook_GalleryTask {
       switch ($state) {
       case self::FIX_STATE_START_MPTT:
         $task->set("ptr", $ptr = 1);
-        $task->set("stack", item::root()->id . ":L");
+        $task->set("stack", Item::root()->id . ":L");
         $state = self::FIX_STATE_RUN_MPTT;
         break;
 
@@ -408,13 +408,13 @@ class Gallery_Hook_GalleryTask {
         list ($id, $ptr_mode) = explode(":", array_pop($stack));
         if ($ptr_mode == "L") {
           $stack[] = "$id:R";
-          db::build()
+          DB::build()
             ->update("items")
             ->set("left_ptr", $ptr++)
             ->where("id", "=", $id)
             ->execute();
 
-          foreach (db::build()
+          foreach (DB::build()
                    ->select(array("id"))
                    ->from("items")
                    ->where("parent_id", "=", $id)
@@ -423,7 +423,7 @@ class Gallery_Hook_GalleryTask {
             array_push($stack, "{$child->id}:L");
           }
         } else if ($ptr_mode == "R") {
-          db::build()
+          DB::build()
             ->update("items")
             ->set("right_ptr", $ptr++)
             ->set("relative_path_cache", null)
@@ -461,13 +461,13 @@ class Gallery_Hook_GalleryTask {
 
         // We want to leave the first one alone and update all conflicts to be random values.
         $fixed = 0;
-        $conflicts = ORM::factory("item")
+        $conflicts = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("slug", "=", $slug)
           ->find_all(1, 1);
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
-          db::build()
+          DB::build()
             ->update("items")
             ->set("slug", $slug . "-" . (string)rand(1000, 9999))
             ->where("id", "=", $conflict->id)
@@ -509,7 +509,7 @@ class Gallery_Hook_GalleryTask {
 
         $fixed = 0;
         // We want to leave the first one alone and update all conflicts to be random values.
-        $conflicts = ORM::factory("item")
+        $conflicts = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("name", "=", $name)
           ->find_all(1, 1);
@@ -522,7 +522,7 @@ class Gallery_Hook_GalleryTask {
             $item_base_name = $conflict->name;
             $item_extension = "";
           }
-          db::build()
+          DB::build()
             ->update("items")
             ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
             ->where("id", "=", $conflict->id)
@@ -565,7 +565,7 @@ class Gallery_Hook_GalleryTask {
 
         $fixed = 0;
         // We want to leave the first one alone and update all conflicts to be random values.
-        $conflicts = ORM::factory("item")
+        $conflicts = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("name", "LIKE", "{$base_name_escaped}.%")
           ->where("type", "<>", "album")
@@ -589,7 +589,7 @@ class Gallery_Hook_GalleryTask {
             $conflict->save();
           } catch (Exception $e) {
             // Didn't work.  Edit database directly without fixing file system.
-            db::build()
+            DB::build()
               ->update("items")
               ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
               ->where("id", "=", $conflict->id)
@@ -613,7 +613,7 @@ class Gallery_Hook_GalleryTask {
 
       case self::FIX_STATE_START_ALBUMS:
         $stack = array();
-        foreach (db::build()
+        foreach (DB::build()
                  ->select("id")
                  ->from("items")
                  ->where("type", "=", "album")
@@ -637,15 +637,15 @@ class Gallery_Hook_GalleryTask {
           }
         }
 
-        $everybody = identity::everybody();
+        $everybody = Identity::everybody();
         $view_col = "view_{$everybody->id}";
         $view_full_col = "view_full_{$everybody->id}";
-        $intent = ORM::factory("access_intent")->where("item_id", "=", $id)->find();
-        if ($intent->$view_col === access::DENY) {
-          access::update_htaccess_files($item, $everybody, "view", access::DENY);
+        $intent = ORM::factory("AccessIntent")->where("item_id", "=", $id)->find();
+        if ($intent->$view_col === Access::DENY) {
+          Access::update_htaccess_files($item, $everybody, "view", Access::DENY);
         }
-        if ($intent->$view_full_col === access::DENY) {
-          access::update_htaccess_files($item, $everybody, "view_full", access::DENY);
+        if ($intent->$view_full_col === Access::DENY) {
+          Access::update_htaccess_files($item, $everybody, "view_full", Access::DENY);
         }
         $task->set("stack", implode(" ", $stack));
         $completed++;
@@ -700,7 +700,7 @@ class Gallery_Hook_GalleryTask {
         $stack = array_filter(explode(" ", $task->get("stack"))); // filter removes empty/zero ids
         if (!empty($stack)) {
           $id = array_pop($stack);
-          $access_cache = ORM::factory("access_cache");
+          $access_cache = ORM::factory("AccessCache");
           $access_cache->item_id = $id;
           $access_cache->save();
           $task->set("stack", implode(" ", $stack));
@@ -717,8 +717,8 @@ class Gallery_Hook_GalleryTask {
           if (empty($stack)) {
             // The new cache rows are there, but they're incorrectly populated so we have to fix
             // them.  If this turns out to be too slow, we'll have to refactor
-            // access::recalculate_permissions to allow us to do it in slices.
-            access::recalculate_album_permissions(item::root());
+            // Access::recalculate_permissions to allow us to do it in slices.
+            Access::recalculate_album_permissions(Item::root());
             $state = self::FIX_STATE_DONE;
           }
         }
@@ -733,7 +733,7 @@ class Gallery_Hook_GalleryTask {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
-      module::set_var("gallery", "maintenance_mode", 0);
+      Module::set_var("gallery", "maintenance_mode", 0);
     } else {
       $task->percent_complete = round(100 * $completed / $total);
     }
@@ -742,9 +742,9 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_dupe_slugs() {
-    return db::build()
+    return DB::build()
       ->select_distinct(
-        array("parent_slug" => db::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
+        array("parent_slug" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -755,9 +755,9 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_names() {
     // looking for photos, movies, and albums
-    return db::build()
+    return DB::build()
       ->select_distinct(
-        array("parent_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
+        array("parent_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -768,9 +768,9 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_base_names() {
     // looking for photos or movies, not albums
-    return db::build()
+    return DB::build()
       ->select_distinct(
-        array("parent_base_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+        array("parent_base_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -781,7 +781,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_empty_item_caches($limit) {
-    return db::build()
+    return DB::build()
       ->select("items.id")
       ->from("items")
       ->where("relative_path_cache", "is", null)
@@ -795,7 +795,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_missing_access_caches_limited($limit) {
-    return db::build()
+    return DB::build()
       ->select("items.id")
       ->from("items")
       ->join("access_caches", "items.id", "access_caches.item_id", "left")
