@@ -31,7 +31,7 @@
   var ERROR_MSG = <?= t("Something went wrong!  Trying again in a moment... (__COUNT__)")->for_js() ?>;
   update = function() {
     $.ajax({
-      url: <?= html::js_string(url::site("admin/maintenance/run/$task->id?csrf=$csrf")) ?>,
+      url: <?= HTML::js_string(URL::site("admin/maintenance/run/$task->id?csrf=$csrf")) ?>,
       dataType: "json",
       success: function(data) {
         target_value = data.task.percent_complete;

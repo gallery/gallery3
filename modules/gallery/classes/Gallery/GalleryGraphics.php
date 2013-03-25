@@ -24,13 +24,13 @@ class Gallery_GalleryGraphics {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
-   * @param Item_Model $item (optional)
+   * @param Model_Item $item (optional)
    */
   static function rotate($input_file, $output_file, $options, $item=null) {
-    graphics::init_toolkit();
+    Graphics::init_toolkit();
 
-    $temp_file = system::temp_filename("rotate_", pathinfo($output_file, PATHINFO_EXTENSION));
-    module::event("graphics_rotate", $input_file, $temp_file, $options, $item);
+    $temp_file = System::temp_filename("rotate_", pathinfo($output_file, PATHINFO_EXTENSION));
+    Module::event("graphics_rotate", $input_file, $temp_file, $options, $item);
 
     if (@filesize($temp_file) > 0) {
       // A graphics_rotate event made an image - move it to output_file and use it.
@@ -47,12 +47,12 @@ class Gallery_GalleryGraphics {
 
       // Rotate the image.  This also implicitly converts its format if needed.
       Image::factory($input_file)
-        ->quality(module::get_var("gallery", "image_quality"))
+        ->quality(Module::get_var("gallery", "image_quality"))
         ->rotate($options["degrees"])
         ->save($output_file);
     }
 
-    module::event("graphics_rotate_completed", $input_file, $output_file, $options, $item);
+    Module::event("graphics_rotate_completed", $input_file, $output_file, $options, $item);
   }
 
   /**
@@ -62,13 +62,13 @@ class Gallery_GalleryGraphics {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
-   * @param Item_Model $item (optional)
+   * @param Model_Item $item (optional)
    */
   static function resize($input_file, $output_file, $options, $item=null) {
-    graphics::init_toolkit();
+    Graphics::init_toolkit();
 
-    $temp_file = system::temp_filename("resize_", pathinfo($output_file, PATHINFO_EXTENSION));
-    module::event("graphics_resize", $input_file, $temp_file, $options, $item);
+    $temp_file = System::temp_filename("resize_", pathinfo($output_file, PATHINFO_EXTENSION));
+    Module::event("graphics_resize", $input_file, $temp_file, $options, $item);
 
     if (@filesize($temp_file) > 0) {
       // A graphics_resize event made an image - move it to output_file and use it.
@@ -80,36 +80,36 @@ class Gallery_GalleryGraphics {
       }
 
       list ($input_width, $input_height, $input_mime, $input_extension) =
-        photo::get_file_metadata($input_file);
+        Photo::get_file_metadata($input_file);
       if ($input_width && $input_height &&
           (empty($options["width"]) || empty($options["height"]) || empty($options["master"]) ||
           (max($input_width, $input_height) <= min($options["width"], $options["height"])))) {
         // Photo dimensions well-defined, but options not well-defined or would upscale the image.
         // Do not resize.  Check mimes to see if we can copy the file or if we need to convert it.
         // (checking mimes avoids needlessly converting jpg to jpeg, etc.)
-        $output_mime = legal_file::get_photo_types_by_extension(pathinfo($output_file, PATHINFO_EXTENSION));
+        $output_mime = LegalFile::get_photo_types_by_extension(pathinfo($output_file, PATHINFO_EXTENSION));
         if ($input_mime && $output_mime && ($input_mime == $output_mime)) {
           // Mimes well-defined and identical - copy input to output
           copy($input_file, $output_file);
         } else {
           // Mimes not well-defined or not the same - convert input to output
           $image = Image::factory($input_file)
-            ->quality(module::get_var("gallery", "image_quality"))
+            ->quality(Module::get_var("gallery", "image_quality"))
             ->save($output_file);
         }
       } else {
         // Resize the image.  This also implicitly converts its format if needed.
         $image = Image::factory($input_file)
           ->resize($options["width"], $options["height"], $options["master"])
-          ->quality(module::get_var("gallery", "image_quality"));
-        if (graphics::can("sharpen")) {
-          $image->sharpen(module::get_var("gallery", "image_sharpen"));
+          ->quality(Module::get_var("gallery", "image_quality"));
+        if (Graphics::can("sharpen")) {
+          $image->sharpen(Module::get_var("gallery", "image_sharpen"));
         }
         $image->save($output_file);
       }
     }
 
-    module::event("graphics_resize_completed", $input_file, $output_file, $options, $item);
+    Module::event("graphics_resize_completed", $input_file, $output_file, $options, $item);
   }
 
   /**
@@ -126,14 +126,14 @@ class Gallery_GalleryGraphics {
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
-   * @param Item_Model $item (optional)
+   * @param Model_Item $item (optional)
    */
   static function composite($input_file, $output_file, $options, $item=null) {
     try {
-      graphics::init_toolkit();
+      Graphics::init_toolkit();
 
-      $temp_file = system::temp_filename("composite_", pathinfo($output_file, PATHINFO_EXTENSION));
-      module::event("graphics_composite", $input_file, $temp_file, $options, $item);
+      $temp_file = System::temp_filename("composite_", pathinfo($output_file, PATHINFO_EXTENSION));
+      Module::event("graphics_composite", $input_file, $temp_file, $options, $item);
 
       if (@filesize($temp_file) > 0) {
         // A graphics_composite event made an image - move it to output_file and use it.
@@ -141,8 +141,8 @@ class Gallery_GalleryGraphics {
       } else {
         // No events made an image - proceed with standard process.
 
-        list ($width, $height) = photo::get_file_metadata($input_file);
-        list ($w_width, $w_height) = photo::get_file_metadata($options["file"]);
+        list ($width, $height) = Photo::get_file_metadata($input_file);
+        list ($w_width, $w_height) = Photo::get_file_metadata($options["file"]);
 
         $pad = isset($options["padding"]) ? $options["padding"] : 10;
         $top = $pad;
@@ -166,18 +166,18 @@ class Gallery_GalleryGraphics {
 
         Image::factory($input_file)
           ->composite($options["file"], $x, $y, $options["transparency"])
-          ->quality(module::get_var("gallery", "image_quality"))
+          ->quality(Module::get_var("gallery", "image_quality"))
           ->save($output_file);
       }
 
-      module::event("graphics_composite_completed", $input_file, $output_file, $options, $item);
+      Module::event("graphics_composite_completed", $input_file, $output_file, $options, $item);
     } catch (ErrorException $e) {
       // Unlike rotate and resize, composite catches its exceptions here.  This is because
       // composite is typically called for watermarks.  If during thumb/resize generation
       // the watermark fails, we'd still like the image resized, just without its watermark.
-      // If the exception isn't caught here, graphics::generate will replace it with a
+      // If the exception isn't caught here, Graphics::generate will replace it with a
       // placeholder.
-      Kohana_Log::add("error", $e->getMessage());
+      Log::add("error", $e->getMessage());
     }
   }
 }

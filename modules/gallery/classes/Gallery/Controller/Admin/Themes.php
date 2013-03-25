@@ -19,15 +19,15 @@
  */
 class Gallery_Controller_Admin_Themes extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Theme choice");
     $view->content = new View("admin_themes.html");
-    $view->content->admin = module::get_var("gallery", "active_admin_theme");
-    $view->content->site = module::get_var("gallery", "active_site_theme");
+    $view->content->admin = Module::get_var("gallery", "active_admin_theme");
+    $view->content->site = Module::get_var("gallery", "active_site_theme");
     $view->content->themes = $this->_get_themes();
 
-    site_status::clear("missing_site_theme");
-    site_status::clear("missing_admin_theme");
+    SiteStatus::clear("missing_site_theme");
+    SiteStatus::clear("missing_admin_theme");
     print $view;
   }
 
@@ -40,7 +40,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
       $theme_name = preg_replace("/[^a-zA-Z0-9\._-]/", "", $theme_name);
       if (file_exists(THEMEPATH . "$theme_name/theme.info")) {
 
-        $themes[$theme_name] = theme::get_info($theme_name);
+        $themes[$theme_name] = Theme::get_info($theme_name);
       }
     }
     return $themes;
@@ -48,33 +48,33 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
 
   public function preview($type, $theme_name) {
     $view = new View("admin_themes_preview.html");
-    $view->info = theme::get_info($theme_name);
+    $view->info = Theme::get_info($theme_name);
     $view->theme_name = t($theme_name);
     $view->type = $type;
     if ($type == "admin") {
-      $view->url = url::site("admin?theme=$theme_name");
+      $view->url = URL::site("admin?theme=$theme_name");
     } else {
-      $view->url = item::root()->url("theme=$theme_name");
+      $view->url = Item::root()->url("theme=$theme_name");
     }
     print $view;
   }
 
   public function choose($type, $theme_name) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $info = theme::get_info($theme_name);
+    $info = Theme::get_info($theme_name);
 
     if ($type == "admin" && $info->admin) {
-      module::set_var("gallery", "active_admin_theme", $theme_name);
-      message::success(t("Successfully changed your admin theme to <b>%theme_name</b>",
+      Module::set_var("gallery", "active_admin_theme", $theme_name);
+      Message::success(t("Successfully changed your admin theme to <b>%theme_name</b>",
                          array("theme_name" => $info->name)));
     } else if ($type == "site" && $info->site) {
-      module::set_var("gallery", "active_site_theme", $theme_name);
-      message::success(t("Successfully changed your Gallery theme to <b>%theme_name</b>",
+      Module::set_var("gallery", "active_site_theme", $theme_name);
+      Message::success(t("Successfully changed your Gallery theme to <b>%theme_name</b>",
                          array("theme_name" => $info->name)));
     }
 
-    url::redirect("admin/themes");
+    URL::redirect("admin/themes");
   }
 }
 

@@ -53,7 +53,7 @@ class Form_Script_Core extends Forge {
   public function render($template="forge_template", $custom=false) {
     $script = array();
     if (!empty($this->data["url"])) {
-      $script[] = html::script($this->data["url"]);
+      $script[] = HTML::script($this->data["url"]);
     }
 
     if (!empty($this->data["text"])) {

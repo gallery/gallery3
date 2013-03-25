@@ -3,7 +3,7 @@
   $("#g-login-form").ready(function() {
     $("#g-password-reset").click(function() {
       $.ajax({
-        url: "<?= url::site("password/reset") ?>",
+        url: "<?= URL::site("password/reset") ?>",
         success: function(data) {
           $("#g-login").html(data);
           $("#ui-dialog-title-g-dialog").html(<?= t("Reset password")->for_js() ?>);
@@ -43,7 +43,7 @@
     <li id="g-login-form">
       <?= $form ?>
     </li>
-    <? if (identity::is_writable() && !module::get_var("gallery", "maintenance_mode")): ?>
+    <? if (Identity::is_writable() && !Module::get_var("gallery", "maintenance_mode")): ?>
     <li>
       <a href="#" id="g-password-reset" class="g-right g-text-small"><?= t("Forgot your password?") ?></a>
     </li>

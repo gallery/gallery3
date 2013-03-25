@@ -43,7 +43,7 @@ class Gallery_Breadcrumb {
    * @return array Breadcrumb instances
    */
   static function array_from_item_parents($item) {
-    if ($item->id == item::root()->id) {
+    if ($item->id == Item::root()->id) {
       return array();
     }
 

@@ -19,36 +19,36 @@
  */
 class Gallery_URL extends Kohana_URL {
   /**
-   * Just like url::file() except that it returns an absolute URI
+   * Just like URL::file() except that it returns an absolute URI
    */
   static function abs_file($path) {
-    return url::base(false, request::protocol()) . $path;
+    return URL::base(false, Request::protocol()) . $path;
   }
 
   /**
-   * Just like url::site() except that it returns an absolute URI and
+   * Just like URL::site() except that it returns an absolute URI and
    * doesn't take a protocol parameter.
    */
   static function abs_site($path) {
-    return url::site($path, request::protocol());
+    return URL::site($path, Request::protocol());
   }
 
   /**
-   * Just like url::current except that it returns an absolute URI
+   * Just like URL::current except that it returns an absolute URI
    */
   static function abs_current($qs=false) {
-    return self::abs_site(url::current($qs));
+    return self::abs_site(URL::current($qs));
   }
 
   /**
-   * Just like url::merge except that it escapes any XSS in the path.
+   * Just like URL::merge except that it escapes any XSS in the path.
    */
   static function merge(array $arguments) {
     return htmlspecialchars(parent::merge($arguments));
   }
 
   /**
-   * Just like url::current except that it escapes any XSS in the path.
+   * Just like URL::current except that it escapes any XSS in the path.
    */
   static function current($qs=false, $suffix=false) {
     return htmlspecialchars(parent::current($qs, $suffix));

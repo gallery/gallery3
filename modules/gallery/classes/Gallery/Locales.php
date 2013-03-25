@@ -38,8 +38,8 @@ class Gallery_Locales {
 
   static function installed() {
     $available = self::available();
-    $default = module::get_var("gallery", "default_locale");
-    $codes = explode("|", module::get_var("gallery", "installed_locales", $default));
+    $default = Module::get_var("gallery", "default_locale");
+    $codes = explode("|", Module::get_var("gallery", "installed_locales", $default));
     foreach ($codes as $code) {
       if (isset($available[$code])) {
         $installed[$code] = $available[$code];
@@ -50,12 +50,12 @@ class Gallery_Locales {
 
   static function update_installed($locales) {
     // Ensure that the default is included...
-    $default = module::get_var("gallery", "default_locale");
+    $default = Module::get_var("gallery", "default_locale");
     $locales = in_array($default, $locales)
       ? $locales
       : array_merge($locales, array($default));
 
-    module::set_var("gallery", "installed_locales", join("|", $locales));
+    Module::set_var("gallery", "installed_locales", join("|", $locales));
 
     // Clear the cache
     self::$locales = null;
@@ -135,19 +135,19 @@ class Gallery_Locales {
     if (empty(self::$locales)) {
       self::_init_language_data();
     }
-    $locale or $locale = Gallery_I18n::instance()->locale();
+    $locale or $locale = I18n::instance()->locale();
 
     return self::$locales[$locale];
   }
 
   static function is_rtl($locale=null) {
-    return Gallery_I18n::instance()->is_rtl($locale);
+    return I18n::instance()->is_rtl($locale);
   }
 
   /**
    * Returns the best match comparing the HTTP accept-language header
    * with the installed locales.
-   * @todo replace this with request::accepts_language() when we upgrade to Kohana 2.4
+   * @todo replace this with Request::accepts_language() when we upgrade to Kohana 2.4
    */
   static function locale_from_http_request() {
     $http_accept_language = Input::instance()->server("HTTP_ACCEPT_LANGUAGE");
@@ -215,7 +215,7 @@ class Gallery_Locales {
   }
 
   private static function _locale_match_score($requested_locale, $qvalue, $adjustment_factor) {
-    $installed = locales::installed();
+    $installed = Locales::installed();
     if (isset($installed[$requested_locale])) {
       return array($requested_locale, $qvalue);
     }
@@ -230,18 +230,18 @@ class Gallery_Locales {
 
   static function set_request_locale() {
     // 1. Check the session specific preference (cookie)
-    $locale = locales::cookie_locale();
+    $locale = Locales::cookie_locale();
     // 2. Check the user's preference
     if (!$locale) {
-      $locale = identity::active_user()->locale;
+      $locale = Identity::active_user()->locale;
     }
     // 3. Check the browser's / OS' preference
     if (!$locale) {
-      $locale = locales::locale_from_http_request();
+      $locale = Locales::locale_from_http_request();
     }
     // If we have any preference, override the site's default locale
     if ($locale) {
-      Gallery_I18n::instance()->locale($locale);
+      I18n::instance()->locale($locale);
     }
   }
 
@@ -253,7 +253,7 @@ class Gallery_Locales {
     if ($cookie_data) {
       if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
         $requested_locale = $matches[1];
-        $installed_locales = locales::installed();
+        $installed_locales = Locales::installed();
         if (isset($installed_locales[$requested_locale])) {
           $locale = $requested_locale;
         }

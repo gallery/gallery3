@@ -35,39 +35,39 @@ class Gallery_Hook_GalleryRss {
     $feed = new stdClass();
     switch ($feed_id) {
     case "latest":
-      $feed->items = ORM::factory("item")
+      $feed->items = ORM::factory("Item")
         ->viewable()
         ->where("type", "<>", "album")
         ->order_by("created", "DESC")
         ->find_all($limit, $offset);
 
-      $all_items = ORM::factory("item")
+      $all_items = ORM::factory("Item")
         ->viewable()
         ->where("type", "<>", "album")
         ->order_by("created", "DESC");
 
       $feed->max_pages = ceil($all_items->find_all()->count() / $limit);
-      $feed->title = t("%site_title - Recent updates", array("site_title" => item::root()->title));
+      $feed->title = t("%site_title - Recent updates", array("site_title" => Item::root()->title));
       $feed->description = t("Recent updates");
       return $feed;
 
     case "album":
       $item = ORM::factory("item", $id);
-      access::required("view", $item);
+      Access::required("view", $item);
 
       $feed->items = $item
         ->viewable()
         ->descendants($limit, $offset, array(array("type", "=", "photo")));
       $feed->max_pages = ceil(
         $item->viewable()->descendants_count(array(array("type", "=", "photo"))) / $limit);
-      if ($item->id == item::root()->id) {
-        $feed->title = html::purify($item->title);
+      if ($item->id == Item::root()->id) {
+        $feed->title = HTML::purify($item->title);
       } else {
         $feed->title = t("%site_title - %item_title",
-                         array("site_title" => item::root()->title,
+                         array("site_title" => Item::root()->title,
                                "item_title" => $item->title));
       }
-      $feed->description = nl2br(html::purify($item->description));
+      $feed->description = nl2br(HTML::purify($item->description));
 
       return $feed;
     }

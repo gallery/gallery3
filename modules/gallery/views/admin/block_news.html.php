@@ -4,7 +4,7 @@
   <li>
     <a href="<?= $entry["link"] ?>"><?= $entry["title"] ?></a>
     <p>
-      <?= text::limit_words(strip_tags($entry["description"]), 25); ?>
+      <?= Text::limit_words(strip_tags($entry["description"]), 25); ?>
     </p>
   </li>
   <? endforeach ?>

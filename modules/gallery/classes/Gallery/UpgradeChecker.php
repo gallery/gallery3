@@ -33,17 +33,17 @@ class Gallery_UpgradeChecker {
    * Return true if auto checking is enabled.
    */
   static function auto_check_enabled() {
-    return (bool)module::get_var("gallery", "upgrade_checker_auto_enabled");
+    return (bool)Module::get_var("gallery", "upgrade_checker_auto_enabled");
   }
 
   /**
    * Return true if it's time to auto check.
    */
   static function should_auto_check() {
-    if (upgrade_checker::auto_check_enabled() && random::int(1, 100) == 1) {
-      $version_info = upgrade_checker::version_info();
+    if (UpgradeChecker::auto_check_enabled() && Random::int(1, 100) == 1) {
+      $version_info = UpgradeChecker::version_info();
       return (!$version_info ||
-              (time() - $version_info->timestamp) > upgrade_checker::AUTO_CHECK_INTERVAL);
+              (time() - $version_info->timestamp) > UpgradeChecker::AUTO_CHECK_INTERVAL);
     }
     return false;
   }
@@ -54,7 +54,7 @@ class Gallery_UpgradeChecker {
   static function fetch_version_info() {
     $result = new stdClass();
     try {
-      list ($status, $headers, $body) = remote::do_request(upgrade_checker::CHECK_URL);
+      list ($status, $headers, $body) = Remote::do_request(UpgradeChecker::CHECK_URL);
       if ($status == "HTTP/1.1 200 OK") {
         $result->status = "success";
         foreach (explode("\n", $body) as $line) {
@@ -67,7 +67,7 @@ class Gallery_UpgradeChecker {
         $result->status = "error";
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error",
+      Log::add("error",
                       sprintf("%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),
                               $e->getLine(), $e->getTraceAsString()));
     }
@@ -80,19 +80,19 @@ class Gallery_UpgradeChecker {
    * Check the latest version info blob to see if it's time for an upgrade.
    */
   static function get_upgrade_message() {
-    $version_info = upgrade_checker::version_info();
+    $version_info = UpgradeChecker::version_info();
     if ($version_info) {
-      if (gallery::RELEASE_CHANNEL == "release") {
-        if (version_compare($version_info->data["release_version"], gallery::VERSION, ">")) {
+      if (Gallery::RELEASE_CHANNEL == "release") {
+        if (version_compare($version_info->data["release_version"], Gallery::VERSION, ">")) {
           return t("A newer version of Gallery is available! <a href=\"%upgrade-url\">Upgrade now</a> to version %version",
                    array("version" => $version_info->data["release_version"],
                          "upgrade-url" => $version_info->data["release_upgrade_url"]));
         }
       } else {
-        $branch = gallery::RELEASE_BRANCH;
+        $branch = Gallery::RELEASE_BRANCH;
         if (isset($version_info->data["branch_{$branch}_build_number"]) &&
             version_compare($version_info->data["branch_{$branch}_build_number"],
-                            gallery::build_number(), ">")) {
+                            Gallery::build_number(), ">")) {
           return t("A newer version of Gallery is available! <a href=\"%upgrade-url\">Upgrade now</a> to version %version (build %build on branch %branch)",
                    array("version" => $version_info->data["branch_{$branch}_version"],
                          "upgrade-url" => $version_info->data["branch_{$branch}_upgrade_url"],

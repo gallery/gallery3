@@ -29,8 +29,8 @@ return array(
   // Locale timezone.  Set in 'Advanced' settings, falling back to the server's zone.
   // @see http://php.net/timezones
   "timezone" => (file_exists(VARPATH . "database.php") ?
-                 module::get_var("gallery", "timezone", date_default_timezone_get()) :
-                 // Gallery3 is not installed yet -- don't make module::get_var() calls.
+                 Module::get_var("gallery", "timezone", date_default_timezone_get()) :
+                 // Gallery3 is not installed yet -- don't make Module::get_var() calls.
                  date_default_timezone_get()),
 
   // The locale of the built-in localization messages (locale of strings in translate() calls).

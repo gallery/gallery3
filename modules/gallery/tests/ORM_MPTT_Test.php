@@ -85,7 +85,7 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cant_move_parent_into_own_subtree_test() {
-    $album1 = test::random_album(item::root());
+    $album1 = test::random_album(Item::root());
     $album2 = test::random_album($album1);
     $album3 = test::random_album($album2);
 

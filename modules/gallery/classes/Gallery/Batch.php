@@ -30,7 +30,7 @@ class Gallery_Batch {
       $session->set("batch_level", $batch_level);
     } else {
       $session->delete("batch_level");
-      module::event("batch_complete");
+      Module::event("batch_complete");
     }
   }
 

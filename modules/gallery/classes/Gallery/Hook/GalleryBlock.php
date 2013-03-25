@@ -47,7 +47,7 @@ class Gallery_Hook_GalleryBlock {
       $block->css_id = "g-photo-stream";
       $block->title = t("Photo stream");
       $block->content = new View("admin_block_photo_stream.html");
-      $block->content->photos = ORM::factory("item")
+      $block->content->photos = ORM::factory("Item")
         ->where("type", "=", "photo")->order_by("created", "DESC")->find_all(10);
       break;
 
@@ -55,7 +55,7 @@ class Gallery_Hook_GalleryBlock {
       $block->css_id = "g-log-entries";
       $block->title = t("Log entries");
       $block->content = new View("admin_block_log_entries.html");
-      $block->content->entries = ORM::factory("log")
+      $block->content->entries = ORM::factory("Log")
         ->order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
       break;
 
@@ -64,8 +64,8 @@ class Gallery_Hook_GalleryBlock {
       $block->title = t("Gallery stats");
       $block->content = new View("admin_block_stats.html");
       $block->content->album_count =
-        ORM::factory("item")->where("type", "=", "album")->where("id", "<>", 1)->count_all();
-      $block->content->photo_count = ORM::factory("item")->where("type", "=", "photo")->count_all();
+        ORM::factory("Item")->where("type", "=", "album")->where("id", "<>", 1)->count_all();
+      $block->content->photo_count = ORM::factory("Item")->where("type", "=", "photo")->count_all();
       break;
 
     case "platform_info":
@@ -78,11 +78,11 @@ class Gallery_Hook_GalleryBlock {
       $block->css_id = "g-project-news";
       $block->title = t("Gallery project news");
       $block->content = new View("admin_block_news.html");
-      $block->content->feed = feed::parse("http://galleryproject.org/node/feed", 3);
+      $block->content->feed = Feed::parse("http://galleryproject.org/node/feed", 3);
       break;
 
     case "block_adder":
-      if ($form = gallery_block::get_add_block_form()) {
+      if ($form = Hook_GalleryBlock::get_add_block_form()) {
         $block->css_id = "g-block-adder";
         $block->title = t("Dashboard content");
         $block->content = $form;
@@ -92,7 +92,7 @@ class Gallery_Hook_GalleryBlock {
       break;
 
     case "language":
-      $locales = locales::installed();
+      $locales = Locales::installed();
       if (count($locales) > 1) {
         foreach ($locales as $locale => $display_name) {
           $locales[$locale] = SafeString::of_safe_html($display_name);
@@ -102,7 +102,7 @@ class Gallery_Hook_GalleryBlock {
         $block->title = t("Language preference");
         $block->content = new View("user_languages_block.html");
         $block->content->installed_locales = array_merge(array("" => t("« none »")), $locales);
-        $block->content->selected = (string) locales::cookie_locale();
+        $block->content->selected = (string) Locales::cookie_locale();
       } else {
         $block = "";
       }
@@ -113,20 +113,20 @@ class Gallery_Hook_GalleryBlock {
       $block->css_id = "g-upgrade-available-block";
       $block->title = t("Check for Gallery upgrades");
       $block->content = new View("upgrade_checker_block.html");
-      $block->content->version_info = upgrade_checker::version_info();
-      $block->content->auto_check_enabled = upgrade_checker::auto_check_enabled();
-      $block->content->new_version = upgrade_checker::get_upgrade_message();
-      $block->content->build_number = gallery::build_number();
+      $block->content->version_info = UpgradeChecker::version_info();
+      $block->content->auto_check_enabled = UpgradeChecker::auto_check_enabled();
+      $block->content->new_version = UpgradeChecker::get_upgrade_message();
+      $block->content->build_number = Gallery::build_number();
     }
     return $block;
   }
 
   static function get_add_block_form() {
-    $available_blocks = block_manager::get_available_admin_blocks();
+    $available_blocks = BlockManager::get_available_admin_blocks();
 
     $active = array();
-    foreach (array_merge(block_manager::get_active("dashboard_sidebar"),
-                         block_manager::get_active("dashboard_center")) as $b) {
+    foreach (array_merge(BlockManager::get_active("dashboard_sidebar"),
+                         BlockManager::get_active("dashboard_center")) as $b) {
       unset($available_blocks[implode(":", $b)]);
     }
 

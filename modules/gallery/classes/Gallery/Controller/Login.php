@@ -23,40 +23,40 @@ class Gallery_Controller_Login extends Controller {
 
   public function ajax() {
     $view = new View("login_ajax.html");
-    $view->form = auth::get_login_form("login/auth_ajax");
+    $view->form = Auth::get_login_form("login/auth_ajax");
     print $view;
   }
 
   public function auth_ajax() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
-      json::reply(array("result" => "success"));
+      JSON::reply(array("result" => "success"));
     } else {
       $view = new View("login_ajax.html");
       $view->form = $form;
-      json::reply(array("result" => "error", "html" => (string)$view));
+      JSON::reply(array("result" => "error", "html" => (string)$view));
     }
   }
 
   public function html() {
-    $view = new Theme_View("page.html", "other", "login");
+    $view = new View_Theme("page.html", "other", "login");
     $view->page_title = t("Log in to Gallery");
     $view->content = new View("login_ajax.html");
-    $view->content->form = auth::get_login_form("login/auth_html");
+    $view->content->form = Auth::get_login_form("login/auth_html");
     print $view;
   }
 
   public function auth_html() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     list ($valid, $form) = $this->_auth("login/auth_html");
     if ($valid) {
       $continue_url = $form->continue_url->value;
-      url::redirect($continue_url ? $continue_url : item::root()->abs_url());
+      URL::redirect($continue_url ? $continue_url : Item::root()->abs_url());
     } else {
-      $view = new Theme_View("page.html", "other", "login");
+      $view = new View_Theme("page.html", "other", "login");
       $view->page_title = t("Log in to Gallery");
       $view->content = new View("login_ajax.html");
       $view->content->form = $form;
@@ -65,21 +65,21 @@ class Gallery_Controller_Login extends Controller {
   }
 
   private function _auth($url) {
-    $form = auth::get_login_form($url);
+    $form = Auth::get_login_form($url);
     $valid = $form->validate();
     if ($valid) {
-      $user = identity::lookup_user_by_name($form->login->inputs["name"]->value);
-      if (empty($user) || !identity::is_correct_password($user, $form->login->password->value)) {
+      $user = Identity::lookup_user_by_name($form->login->inputs["name"]->value);
+      if (empty($user) || !Identity::is_correct_password($user, $form->login->password->value)) {
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $name = $form->login->inputs["name"]->value;
-        log::warning("user", t("Failed login for %name", array("name" => $name)));
-        module::event("user_auth_failed", $name);
+        Log::warning("user", t("Failed login for %name", array("name" => $name)));
+        Module::event("user_auth_failed", $name);
         $valid = false;
       }
     }
 
     if ($valid) {
-      auth::login($user);
+      Auth::login($user);
     }
 
     // Either way, regenerate the session id to avoid session trapping

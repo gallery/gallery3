@@ -31,13 +31,13 @@ class Gallery_Menu extends Menu_Element {
   public static function factory($type) {
     switch($type) {
     case "link":
-      return new Menu_Element_Link($type);
+      return new Menu_Link($type);
 
     case "ajax_link":
-      return new Menu_Element_Ajax_Link($type);
+      return new Menu_AjaxLink($type);
 
     case "dialog":
-      return new Menu_Element_Dialog($type);
+      return new Menu_Dialog($type);
 
     case "root":
       $menu = new Menu("root");

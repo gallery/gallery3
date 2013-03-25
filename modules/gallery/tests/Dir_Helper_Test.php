@@ -25,7 +25,7 @@ class Dir_Helper_Test extends Gallery_Unit_Test_Case {
     $filename = tempnam($dirname, "file");
     touch($filename);
 
-    dir::unlink($dirname);
+    Encoding::unlink($dirname);
     $this->assert_boolean(!file_exists($filename), "File not deleted");
     $this->assert_boolean(!file_exists($dirname), "Directory not deleted");
   }

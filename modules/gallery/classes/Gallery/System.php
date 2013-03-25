@@ -44,7 +44,7 @@ class Gallery_System {
     }
     $paths = array_merge($paths,
       explode(":", getenv("PATH")),
-      explode(":", module::get_var("gallery", "extra_binary_paths")));
+      explode(":", Module::get_var("gallery", "extra_binary_paths")));
 
     foreach ($paths as $path) {
       $path = rtrim($path, "/");
@@ -70,7 +70,7 @@ class Gallery_System {
    * It allows the caller to specify a prefix and an extension.
    * It always places the file in TMPPATH.
    * Unless specified with the $delete_later argument, it will be marked
-   * for deletion at shutdown using system::delete_later.
+   * for deletion at shutdown using System::delete_later.
    */
   static function temp_filename($prefix="", $extension="", $delete_later=true) {
     do {
@@ -86,7 +86,7 @@ class Gallery_System {
     } while (!$success);
 
     if ($delete_later) {
-      system::delete_later($filename);
+      System::delete_later($filename);
     }
 
     return $filename;
@@ -101,7 +101,7 @@ class Gallery_System {
   }
 
   /**
-   * Delete all files marked using system::delete_later.  This is called at gallery shutdown.
+   * Delete all files marked using System::delete_later.  This is called at gallery shutdown.
    */
   static function delete_marked_files() {
     foreach (self::$files_marked_for_deletion as $filename) {

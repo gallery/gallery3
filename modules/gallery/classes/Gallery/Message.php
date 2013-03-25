@@ -28,7 +28,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function success($msg) {
-    self::_add($msg, message::SUCCESS);
+    self::_add($msg, Message::SUCCESS);
   }
 
   /**
@@ -36,7 +36,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function info($msg) {
-    self::_add($msg, message::INFO);
+    self::_add($msg, Message::INFO);
   }
 
   /**
@@ -44,7 +44,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function warning($msg) {
-    self::_add($msg, message::WARNING);
+    self::_add($msg, Message::WARNING);
   }
 
   /**
@@ -52,7 +52,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function error($msg) {
-    self::_add($msg, message::ERROR);
+    self::_add($msg, Message::ERROR);
   }
 
   /**
@@ -71,15 +71,15 @@ class Gallery_Message {
    * Get any pending messages.  There are two types of messages, transient and permanent.
    * Permanent messages are used to let the admin know that there are pending administrative
    * issues that need to be resolved.  Transient ones are only displayed once.
-   * @return html text
+   * @return HTML text
    */
   static function get() {
     $buf = array();
 
     $messages = Session::instance()->get_once("messages", array());
     foreach ($messages as $msg) {
-      $msg[0] = str_replace("__CSRF__", access::csrf_token(), $msg[0]);
-      $buf[] = "<li class=\"" . message::severity_class($msg[1]) . "\">$msg[0]</li>";
+      $msg[0] = str_replace("__CSRF__", Access::csrf_token(), $msg[0]);
+      $buf[] = "<li class=\"" . Message::severity_class($msg[1]) . "\">$msg[0]</li>";
     }
     if ($buf) {
       return "<ul id=\"g-action-status\" class=\"g-message-block\">" . implode("", $buf) . "</ul>";
@@ -93,16 +93,16 @@ class Gallery_Message {
    */
   static function severity_class($severity) {
     switch($severity) {
-    case message::SUCCESS:
+    case Message::SUCCESS:
       return "g-success";
 
-    case message::INFO:
+    case Message::INFO:
       return "g-info";
 
-    case message::WARNING:
+    case Message::WARNING:
       return "g-warning";
 
-    case message::ERROR:
+    case Message::ERROR:
       return "g-error";
     }
   }

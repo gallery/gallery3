@@ -20,15 +20,15 @@
 class Gallery_Controller_Permissions extends Controller {
   function browse($id) {
     $item = ORM::factory("item", $id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     if (!$item->is_album()) {
-      access::forbidden();
+      Access::forbidden();
     }
 
     $view = new View("permissions_browse.html");
-    $view->htaccess_works = access::htaccess_works();
+    $view->htaccess_works = Access::htaccess_works();
     $view->item = $item;
     $view->parents = $item->parents();
     $view->form = $this->_get_form($item);
@@ -38,44 +38,44 @@ class Gallery_Controller_Permissions extends Controller {
 
   function form($id) {
     $item = ORM::factory("item", $id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     if (!$item->is_album()) {
-      access::forbidden();
+      Access::forbidden();
     }
 
     print $this->_get_form($item);
   }
 
   function change($command, $group_id, $perm_id, $item_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $group = identity::lookup_group($group_id);
+    $group = Identity::lookup_group($group_id);
     $perm = ORM::factory("permission", $perm_id);
     $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     if (!empty($group) && $perm->loaded() && $item->loaded()) {
       switch($command) {
       case "allow":
-        access::allow($group, $perm->name, $item);
+        Access::allow($group, $perm->name, $item);
         break;
 
       case "deny":
-        access::deny($group, $perm->name, $item);
+        Access::deny($group, $perm->name, $item);
         break;
 
       case "reset":
-        access::reset($group, $perm->name, $item);
+        Access::reset($group, $perm->name, $item);
         break;
       }
 
       // If the active user just took away their own edit permissions, give it back.
       if ($perm->name == "edit") {
-        if (!access::user_can(identity::active_user(), "edit", $item)) {
-          access::allow($group, $perm->name, $item);
+        if (!Access::user_can(Identity::active_user(), "edit", $item)) {
+          Access::allow($group, $perm->name, $item);
         }
       }
     }
@@ -84,8 +84,8 @@ class Gallery_Controller_Permissions extends Controller {
   private function _get_form($item) {
     $view = new View("permissions_form.html");
     $view->item = $item;
-    $view->groups = identity::groups();
-    $view->permissions = ORM::factory("permission")->find_all();
+    $view->groups = Identity::groups();
+    $view->permissions = ORM::factory("Permission")->find_all();
     return $view;
   }
 }

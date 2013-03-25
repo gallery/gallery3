@@ -19,10 +19,10 @@
  */
 class Gallery_Controller_Quick extends Controller {
   public function rotate($id, $dir) {
-    access::verify_csrf();
-    $item = model_cache::get("item", $id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    Access::verify_csrf();
+    $item = ModelCache::get("item", $id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     $degrees = 0;
     switch($dir) {
@@ -36,20 +36,20 @@ class Gallery_Controller_Quick extends Controller {
     }
 
     if ($degrees) {
-      $tmpfile = system::temp_filename("rotate",
+      $tmpfile = System::temp_filename("rotate",
         pathinfo($item->file_path(), PATHINFO_EXTENSION));
-      gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees), $item);
+      GalleryGraphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees), $item);
       $item->set_data_file($tmpfile);
       $item->save();
     }
 
     if (Input::instance()->get("page_type") == "collection") {
-      json::reply(
+      JSON::reply(
         array("src" => $item->thumb_url(),
               "width" => $item->thumb_width,
               "height" => $item->thumb_height));
     } else {
-      json::reply(
+      JSON::reply(
         array("src" => $item->resize_url(),
               "width" => $item->resize_width,
               "height" => $item->resize_height));
@@ -57,42 +57,42 @@ class Gallery_Controller_Quick extends Controller {
   }
 
   public function make_album_cover($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $item = model_cache::get("item", $id);
-    access::required("view", $item);
-    access::required("view", $item->parent());
-    access::required("edit", $item->parent());
+    $item = ModelCache::get("item", $id);
+    Access::required("view", $item);
+    Access::required("view", $item->parent());
+    Access::required("edit", $item->parent());
 
-    $msg = t("Made <b>%title</b> this album's cover", array("title" => html::purify($item->title)));
+    $msg = t("Made <b>%title</b> this album's cover", array("title" => HTML::purify($item->title)));
 
-    item::make_album_cover($item);
-    message::success($msg);
+    Item::make_album_cover($item);
+    Message::success($msg);
 
-    json::reply(array("result" => "success", "reload" => 1));
+    JSON::reply(array("result" => "success", "reload" => 1));
   }
 
   public function form_delete($id) {
-    $item = model_cache::get("item", $id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    $item = ModelCache::get("item", $id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     $v = new View("quick_delete_confirm.html");
     $v->item = $item;
-    $v->form = item::get_delete_form($item);
+    $v->form = Item::get_delete_form($item);
     print $v;
   }
 
   public function delete($id) {
-    access::verify_csrf();
-    $item = model_cache::get("item", $id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    Access::verify_csrf();
+    $item = ModelCache::get("item", $id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     if ($item->is_album()) {
-      $msg = t("Deleted album <b>%title</b>", array("title" => html::purify($item->title)));
+      $msg = t("Deleted album <b>%title</b>", array("title" => HTML::purify($item->title)));
     } else {
-      $msg = t("Deleted photo <b>%title</b>", array("title" => html::purify($item->title)));
+      $msg = t("Deleted photo <b>%title</b>", array("title" => HTML::purify($item->title)));
     }
 
     $parent = $item->parent();
@@ -100,27 +100,27 @@ class Gallery_Controller_Quick extends Controller {
     if ($item->is_album()) {
       // Album delete will trigger deletes for all children.  Do this in a batch so that we can be
       // smart about notifications, album cover updates, etc.
-      batch::start();
+      Batch::start();
       $item->delete();
-      batch::stop();
+      Batch::stop();
     } else {
       $item->delete();
     }
-    message::success($msg);
+    Message::success($msg);
 
     $from_id = Input::instance()->get("from_id");
     if (Input::instance()->get("page_type") == "collection" &&
         $from_id != $id /* deleted the item we were viewing */) {
-      json::reply(array("result" => "success", "reload" => 1));
+      JSON::reply(array("result" => "success", "reload" => 1));
     } else {
-      json::reply(array("result" => "success", "location" => $parent->url()));
+      JSON::reply(array("result" => "success", "location" => $parent->url()));
     }
   }
 
   public function form_edit($id) {
-    $item = model_cache::get("item", $id);
-    access::required("view", $item);
-    access::required("edit", $item);
+    $item = ModelCache::get("item", $id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
     switch ($item->type) {
     case "album":
@@ -128,11 +128,11 @@ class Gallery_Controller_Quick extends Controller {
       break;
 
     case "photo":
-      $form = photo::get_edit_form($item);
+      $form = Photo::get_edit_form($item);
       break;
 
     case "movie":
-      $form = movie::get_edit_form($item);
+      $form = Movie::get_edit_form($item);
       break;
     }
 

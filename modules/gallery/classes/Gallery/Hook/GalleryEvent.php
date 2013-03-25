@@ -24,15 +24,15 @@ class Gallery_Hook_GalleryEvent {
   static function gallery_ready() {
     if (!get_cfg_var("date.timezone")) {
       if (!(rand() % 4)) {
-        Kohana_Log::add("error", "date.timezone setting not detected in " .
+        Log::add("error", "date.timezone setting not detected in " .
                         get_cfg_var("cfg_file_path") . " falling back to UTC.  " .
                         "Consult http://php.net/manual/function.get-cfg-var.php for help.");
       }
     }
 
-    identity::load_user();
-    theme::load_themes();
-    locales::set_request_locale();
+    Identity::load_user();
+    Theme::load_themes();
+    Locales::set_request_locale();
   }
 
   static function gallery_shutdown() {
@@ -43,7 +43,7 @@ class Gallery_Hook_GalleryEvent {
     // var/tmp might be stickier because theoretically we could wind up spamming that
     // dir with a lot of files.  But let's start with this and refine as we go.
     if (!(rand() % 500)) {
-      // Note that this code is roughly duplicated in gallery_task::file_cleanup
+      // Note that this code is roughly duplicated in Hook_GalleryTask::file_cleanup
       $threshold = time() - 1209600; // older than 2 weeks
       foreach(array("logs", "tmp") as $dir) {
         $dir = VARPATH . $dir;
@@ -66,24 +66,24 @@ class Gallery_Hook_GalleryEvent {
         }
       }
     }
-    // Delete all files marked using system::delete_later.
-    system::delete_marked_files();
+    // Delete all files marked using System::delete_later.
+    System::delete_marked_files();
   }
 
   static function user_deleted($user) {
-    $admin = identity::admin_user();
+    $admin = Identity::admin_user();
     if (!empty($admin)) {          // could be empty if there is not identity provider
-      db::build()
+      DB::build()
         ->update("tasks")
         ->set("owner_id", $admin->id)
         ->where("owner_id", "=", $user->id)
         ->execute();
-      db::build()
+      DB::build()
         ->update("items")
         ->set("owner_id", $admin->id)
         ->where("owner_id", "=", $user->id)
         ->execute();
-      db::build()
+      DB::build()
         ->update("logs")
         ->set("user_id", $admin->id)
         ->where("user_id", "=", $user->id)
@@ -92,69 +92,69 @@ class Gallery_Hook_GalleryEvent {
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
-    $admin = identity::admin_user();
-    db::build()
+    $admin = Identity::admin_user();
+    DB::build()
       ->update("tasks")
       ->set("owner_id", $admin->id)
       ->execute();
-    db::build()
+    DB::build()
       ->update("items")
       ->set("owner_id", $admin->id)
       ->execute();
-    db::build()
+    DB::build()
       ->update("logs")
       ->set("user_id", $admin->id)
       ->execute();
-    module::set_var("gallery", "email_from", $admin->email);
-    module::set_var("gallery", "email_reply_to", $admin->email);
+    Module::set_var("gallery", "email_from", $admin->email);
+    Module::set_var("gallery", "email_reply_to", $admin->email);
   }
 
   static function group_created($group) {
-    access::add_group($group);
+    Access::add_group($group);
   }
 
   static function group_deleted($group) {
-    access::delete_group($group);
+    Access::delete_group($group);
   }
 
   static function item_created($item) {
-    access::add_item($item);
+    Access::add_item($item);
 
     // Build our thumbnail/resizes.
     try {
-      graphics::generate($item);
+      Graphics::generate($item);
     } catch (Exception $e) {
-      log::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
+      Log::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
                                array("item_title" => $item->title)),
-                 html::anchor($item->abs_url(), t("details")));
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+                 HTML::anchor($item->abs_url(), t("details")));
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 
     if ($item->is_photo() || $item->is_movie()) {
       // If the parent has no cover item, make this it.
       $parent = $item->parent();
-      if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
-        item::make_album_cover($item);
+      if (Access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
+        Item::make_album_cover($item);
       }
     }
   }
 
   static function item_deleted($item) {
-    access::delete_item($item);
+    Access::delete_item($item);
 
     // Find any other albums that had the deleted item as the album cover and null it out.
     // In some cases this may leave us with a missing album cover up in this item's parent
     // hierarchy, but in most cases it'll work out fine.
-    foreach (ORM::factory("item")
+    foreach (ORM::factory("Item")
              ->where("album_cover_item_id", "=", $item->id)
              ->find_all() as $parent) {
-      item::remove_album_cover($parent);
+      Item::remove_album_cover($parent);
     }
 
     $parent = $item->parent();
     if (!$parent->album_cover_item_id) {
       // Assume that we deleted the album cover
-      if (batch::in_progress()) {
+      if (Batch::in_progress()) {
         // Remember that this parent is missing an album cover, for later.
         $batch_missing_album_cover = Session::instance()->get("batch_missing_album_cover", array());
         $batch_missing_album_cover[$parent->id] = 1;
@@ -162,22 +162,22 @@ class Gallery_Hook_GalleryEvent {
       } else {
         // Choose the first viewable child as the new cover.
         if ($child = $parent->viewable()->children(1)->current()) {
-          item::make_album_cover($child);
+          Item::make_album_cover($child);
         }
       }
     }
   }
 
   static function item_updated_data_file($item) {
-    graphics::generate($item);
+    Graphics::generate($item);
 
     // Update any places where this is the album cover
-    foreach (ORM::factory("item")
+    foreach (ORM::factory("Item")
              ->where("album_cover_item_id", "=", $item->id)
              ->find_all() as $target) {
       $target->thumb_dirty = 1;
       $target->save();
-      graphics::generate($target);
+      Graphics::generate($target);
     }
   }
 
@@ -190,7 +190,7 @@ class Gallery_Hook_GalleryEvent {
       $item = ORM::factory("item", $id);
       if ($item->loaded() && !$item->album_cover_item_id) {
         if ($child = $item->children(1)->current()) {
-          item::make_album_cover($child);
+          Item::make_album_cover($child);
         }
       }
     }
@@ -199,34 +199,34 @@ class Gallery_Hook_GalleryEvent {
 
   static function item_moved($item, $old_parent) {
     if ($item->is_album()) {
-      access::recalculate_album_permissions($item->parent());
+      Access::recalculate_album_permissions($item->parent());
     } else {
-      access::recalculate_photo_permissions($item);
+      Access::recalculate_photo_permissions($item);
     }
 
     // If the new parent doesn't have an album cover, make this it.
     if (!$item->parent()->album_cover_item_id) {
-      item::make_album_cover($item);
+      Item::make_album_cover($item);
     }
   }
 
   static function user_login($user) {
     // If this user is an admin, check to see if there are any post-install tasks that we need
     // to run and take care of those now.
-    if ($user->admin && module::get_var("gallery", "choose_default_tookit", null)) {
-      graphics::choose_default_toolkit();
-      module::clear_var("gallery", "choose_default_tookit");
+    if ($user->admin && Module::get_var("gallery", "choose_default_tookit", null)) {
+      Graphics::choose_default_toolkit();
+      Module::clear_var("gallery", "choose_default_tookit");
     }
     Session::instance()->set("active_auth_timestamp", time());
-    auth::clear_failed_attempts($user);
+    Auth::clear_failed_attempts($user);
   }
 
   static function user_auth_failed($name) {
-    auth::record_failed_attempt($name);
+    Auth::record_failed_attempt($name);
   }
 
   static function user_auth($user) {
-    auth::clear_failed_attempts($user);
+    Auth::clear_failed_attempts($user);
     Session::instance()->set("active_auth_timestamp", time());
   }
 
@@ -238,38 +238,38 @@ class Gallery_Hook_GalleryEvent {
 
   static function user_menu($menu, $theme) {
     if ($theme->page_subtype != "login") {
-      $user = identity::active_user();
+      $user = Identity::active_user();
       if ($user->guest) {
         $menu->append(Menu::factory("dialog")
                       ->id("user_menu_login")
                       ->css_id("g-login-link")
-                      ->url(url::site("login/ajax"))
+                      ->url(URL::site("login/ajax"))
                       ->label(t("Login")));
       } else {
-        $csrf = access::csrf_token();
+        $csrf = Access::csrf_token();
         $menu->append(Menu::factory("link")
                       ->id("user_menu_edit_profile")
                       ->css_id("g-user-profile-link")
                       ->view("login_current_user.html")
-                      ->url(user_profile::url($user->id))
+                      ->url(UserProfile::url($user->id))
                       ->label($user->display_name()));
 
-        if (Router::$controller == "admin") {
-          $continue_url = url::abs_site("");
+        if (Route::$controller == "admin") {
+          $continue_url = URL::abs_site("");
         } else if ($item = $theme->item()) {
-          if (access::user_can(identity::guest(), "view", $theme->item)) {
+          if (Access::user_can(Identity::guest(), "view", $theme->item)) {
             $continue_url = $item->abs_url();
           } else {
-            $continue_url = item::root()->abs_url();
+            $continue_url = Item::root()->abs_url();
           }
         } else {
-          $continue_url = url::abs_current();
+          $continue_url = URL::abs_current();
         }
 
         $menu->append(Menu::factory("link")
                       ->id("user_menu_logout")
                       ->css_id("g-logout-link")
-                      ->url(url::site("logout?csrf=$csrf&amp;continue_url=" . urlencode($continue_url)))
+                      ->url(URL::site("logout?csrf=$csrf&amp;continue_url=" . urlencode($continue_url)))
                       ->label(t("Logout")));
       }
     }
@@ -280,14 +280,14 @@ class Gallery_Hook_GalleryEvent {
       $menu->append(Menu::factory("link")
                     ->id("home")
                     ->label(t("Home"))
-                    ->url(item::root()->url()));
+                    ->url(Item::root()->url()));
 
 
       $item = $theme->item();
 
       if (!empty($item)) {
-        $can_edit = $item && access::can("edit", $item);
-        $can_add = $item && access::can("add", $item);
+        $can_edit = $item && Access::can("edit", $item);
+        $can_add = $item && Access::can("add", $item);
 
         if ($can_add) {
           $menu->append($add_menu = Menu::factory("submenu")
@@ -299,15 +299,15 @@ class Gallery_Hook_GalleryEvent {
             $add_menu->append(Menu::factory("dialog")
                               ->id("add_photos_item")
                               ->label(t("Add photos"))
-                              ->url(url::site("uploader/index/$item->id")));
+                              ->url(URL::site("uploader/index/$item->id")));
             if ($item->is_album()) {
               $add_menu->append(Menu::factory("dialog")
                                 ->id("add_album_item")
                                 ->label(t("Add an album"))
-                                ->url(url::site("form/add/albums/$item->id?type=album")));
+                                ->url(URL::site("form/add/albums/$item->id?type=album")));
             }
           } else {
-            message::warning(t("The album '%album_name' is not writable.",
+            Message::warning(t("The album '%album_name' is not writable.",
                                array("album_name" => $item->title)));
           }
         }
@@ -337,7 +337,7 @@ class Gallery_Hook_GalleryEvent {
             $options_menu->append(Menu::factory("dialog")
                                   ->id("edit_item")
                                   ->label($edit_text)
-                                  ->url(url::site("form/edit/{$item->type}s/$item->id?from_id={$item->id}")));
+                                  ->url(URL::site("form/edit/{$item->type}s/$item->id?from_id={$item->id}")));
           }
 
           if ($item->is_album()) {
@@ -345,14 +345,14 @@ class Gallery_Hook_GalleryEvent {
               $options_menu->append(Menu::factory("dialog")
                                     ->id("edit_permissions")
                                     ->label(t("Edit permissions"))
-                                    ->url(url::site("permissions/browse/$item->id")));
+                                    ->url(URL::site("permissions/browse/$item->id")));
             }
           }
         }
 
-        $csrf = access::csrf_token();
+        $csrf = Access::csrf_token();
         $page_type = $theme->page_type();
-        if ($can_edit && $item->is_photo() && graphics::can("rotate")) {
+        if ($can_edit && $item->is_photo() && Graphics::can("rotate")) {
           $options_menu
             ->append(
               Menu::factory("ajax_link")
@@ -361,7 +361,7 @@ class Gallery_Hook_GalleryEvent {
               ->css_class("ui-icon-rotate-ccw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")))
+              ->url(URL::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")))
             ->append(
               Menu::factory("ajax_link")
               ->id("rotate_cw")
@@ -369,12 +369,12 @@ class Gallery_Hook_GalleryEvent {
               ->css_class("ui-icon-rotate-cw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
+              ->url(URL::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
         }
 
-        if ($item->id != item::root()->id) {
+        if ($item->id != Item::root()->id) {
           $parent = $item->parent();
-          if (access::can("edit", $parent)) {
+          if (Access::can("edit", $parent)) {
             // We can't make this item the highlight if it's an album with no album cover, or if it's
             // already the album cover.
             if (($item->type == "album" && empty($item->album_cover_item_id)) ||
@@ -393,7 +393,7 @@ class Gallery_Hook_GalleryEvent {
                   ->label(t("Choose as the album cover"))
                   ->css_class("ui-icon-star $disabledState")
                   ->ajax_handler("function(data) { window.location.reload() }")
-                  ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+                  ->url(URL::site("quick/make_album_cover/$item->id?csrf=$csrf")));
             }
             $options_menu
               ->append(
@@ -402,16 +402,16 @@ class Gallery_Hook_GalleryEvent {
                 ->label($delete_text)
                 ->css_class("ui-icon-trash")
                 ->css_class("g-quick-delete")
-                ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
+                ->url(URL::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
           }
         }
       }
 
-      if (identity::active_user()->admin) {
+      if (Identity::active_user()->admin) {
         $menu->append($admin_menu = Menu::factory("submenu")
                 ->id("admin_menu")
                 ->label(t("Admin")));
-        module::event("admin_menu", $admin_menu, $theme);
+        Module::event("admin_menu", $admin_menu, $theme);
 
         $settings_menu = $admin_menu->get("settings_menu");
         uasort($settings_menu->elements, array("Menu", "title_comparator"));
@@ -424,30 +424,30 @@ class Gallery_Hook_GalleryEvent {
       ->append(Menu::factory("link")
                ->id("dashboard")
                ->label(t("Dashboard"))
-               ->url(url::site("admin")))
+               ->url(URL::site("admin")))
       ->append(Menu::factory("submenu")
                ->id("settings_menu")
                ->label(t("Settings"))
                ->append(Menu::factory("link")
                         ->id("graphics_toolkits")
                         ->label(t("Graphics"))
-                        ->url(url::site("admin/graphics")))
+                        ->url(URL::site("admin/graphics")))
                ->append(Menu::factory("link")
                         ->id("movies_settings")
                         ->label(t("Movies"))
-                        ->url(url::site("admin/movies")))
+                        ->url(URL::site("admin/movies")))
                ->append(Menu::factory("link")
                         ->id("languages")
                         ->label(t("Languages"))
-                        ->url(url::site("admin/languages")))
+                        ->url(URL::site("admin/languages")))
                ->append(Menu::factory("link")
                         ->id("advanced")
                         ->label(t("Advanced"))
-                        ->url(url::site("admin/advanced_settings"))))
+                        ->url(URL::site("admin/advanced_settings"))))
       ->append(Menu::factory("link")
                ->id("modules")
                ->label(t("Modules"))
-               ->url(url::site("admin/modules")))
+               ->url(URL::site("admin/modules")))
       ->append(Menu::factory("submenu")
                ->id("content_menu")
                ->label(t("Content")))
@@ -457,22 +457,22 @@ class Gallery_Hook_GalleryEvent {
                ->append(Menu::factory("link")
                         ->id("themes")
                         ->label(t("Theme choice"))
-                        ->url(url::site("admin/themes")))
+                        ->url(URL::site("admin/themes")))
                ->append(Menu::factory("link")
                         ->id("theme_options")
                         ->label(t("Theme options"))
-                        ->url(url::site("admin/theme_options")))
+                        ->url(URL::site("admin/theme_options")))
                ->append(Menu::factory("link")
                         ->id("sidebar")
                         ->label(t("Manage sidebar"))
-                        ->url(url::site("admin/sidebar"))))
+                        ->url(URL::site("admin/sidebar"))))
       ->append(Menu::factory("submenu")
                ->id("statistics_menu")
                ->label(t("Statistics")))
       ->append(Menu::factory("link")
                ->id("maintenance")
                ->label(t("Maintenance"))
-               ->url(url::site("admin/maintenance")));
+               ->url(URL::site("admin/maintenance")));
     return $menu;
   }
 
@@ -483,7 +483,7 @@ class Gallery_Hook_GalleryEvent {
                   ->css_class("ui-icon-carat-1-n"));
 
     $page_type = $theme->page_type();
-    if (access::can("edit", $item)) {
+    if (Access::can("edit", $item)) {
       switch ($item->type) {
       case "movie":
         $edit_title = t("Edit this movie");
@@ -502,16 +502,16 @@ class Gallery_Hook_GalleryEvent {
       }
       $cover_title = t("Choose as the album cover");
 
-      $csrf = access::csrf_token();
+      $csrf = Access::csrf_token();
 
       $theme_item = $theme->item();
       $options_menu->append(Menu::factory("dialog")
                             ->id("edit")
                             ->label($edit_title)
                             ->css_class("ui-icon-pencil")
-                            ->url(url::site("quick/form_edit/$item->id?from_id={$theme_item->id}")));
+                            ->url(URL::site("quick/form_edit/$item->id?from_id={$theme_item->id}")));
 
-      if ($item->is_photo() && graphics::can("rotate")) {
+      if ($item->is_photo() && Graphics::can("rotate")) {
         $options_menu
           ->append(
             Menu::factory("ajax_link")
@@ -520,7 +520,7 @@ class Gallery_Hook_GalleryEvent {
             ->css_class("ui-icon-rotate-ccw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")))
+            ->url(URL::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")))
           ->append(
             Menu::factory("ajax_link")
             ->id("rotate_cw")
@@ -528,11 +528,11 @@ class Gallery_Hook_GalleryEvent {
             ->css_class("ui-icon-rotate-cw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
+            ->url(URL::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
       $parent = $item->parent();
-      if (access::can("edit", $parent)) {
+      if (Access::can("edit", $parent)) {
         // We can't make this item the highlight if it's an album with no album cover, or if it's
         // already the album cover.
         if (($item->type == "album" && empty($item->album_cover_item_id)) ||
@@ -549,14 +549,14 @@ class Gallery_Hook_GalleryEvent {
                      ->label($cover_title)
                      ->css_class("ui-icon-star $disabledState")
                      ->ajax_handler("function(data) { window.location.reload() }")
-                     ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+                     ->url(URL::site("quick/make_album_cover/$item->id?csrf=$csrf")));
         }
         $options_menu
           ->append(Menu::factory("dialog")
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;" .
+                   ->url(URL::site("quick/form_delete/$item->id?csrf=$csrf&amp;" .
                                    "from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
@@ -566,17 +566,17 @@ class Gallery_Hook_GalleryEvent {
                    ->id("add_item")
                    ->label(t("Add a photo"))
                    ->css_class("ui-icon-plus")
-                   ->url(url::site("uploader/index/$item->id")))
+                   ->url(URL::site("uploader/index/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("add_album")
                    ->label(t("Add an album"))
                    ->css_class("ui-icon-note")
-                   ->url(url::site("form/add/albums/$item->id?type=album")))
+                   ->url(URL::site("form/add/albums/$item->id?type=album")))
           ->append(Menu::factory("dialog")
                    ->id("edit_permissions")
                    ->label(t("Edit permissions"))
                    ->css_class("ui-icon-key")
-                   ->url(url::site("permissions/browse/$item->id")));
+                   ->url(URL::site("permissions/browse/$item->id")));
       }
     }
   }
@@ -594,9 +594,9 @@ class Gallery_Hook_GalleryEvent {
       if (!empty($data->user->$field)) {
         $value = $data->user->$field;
         if ($field == "locale") {
-          $value = locales::display_name($value);
+          $value = Locales::display_name($value);
         } else if ($field == "url") {
-          $value = html::mark_clean(html::anchor(html::clean($data->user->$field)));
+          $value = HTML::mark_clean(HTML::anchor(HTML::clean($data->user->$field)));
         }
         $v->user_profile_data[(string) $label] = $value;
       }
@@ -610,10 +610,10 @@ class Gallery_Hook_GalleryEvent {
     // of unknown@unknown.com then adopt the value from the first admin to set their own email
     // address so that we at least have a valid address for the Gallery.
     if ($updated_user->admin) {
-      $email = module::get_var("gallery", "email_from", "");
+      $email = Module::get_var("gallery", "email_from", "");
       if ($email == "unknown@unknown.com") {
-        module::set_var("gallery", "email_from", $updated_user->email);
-        module::set_var("gallery", "email_reply_to", $updated_user->email);
+        Module::set_var("gallery", "email_from", $updated_user->email);
+        Module::set_var("gallery", "email_reply_to", $updated_user->email);
       }
     }
   }

@@ -19,7 +19,7 @@
  */
 class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function teardown() {
-    identity::set_active_user(identity::admin_user());
+    Identity::set_active_user(Identity::admin_user());
   }
 
   public function saving_sets_created_and_updated_dates_test() {
@@ -32,7 +32,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $item = test::random_photo();
 
     // Force the creation date to something well known
-    db::build()
+    DB::build()
       ->update("items")
       ->set("created", 0)
       ->set("updated", 0)
@@ -52,7 +52,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(0, $item->view_count);
 
     // Force the updated date to something well known
-    db::build()
+    DB::build()
       ->update("items")
       ->set("updated", 0)
       ->where("id", "=", $item->id)
@@ -254,7 +254,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $fullsize_file = file_get_contents($photo->file_path());
 
     // Now move the album
-    $album1->parent_id = item::root()->id;
+    $album1->parent_id = Item::root()->id;
     $album1->save();
     $photo->reload();
 
@@ -309,7 +309,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     // $source and $album have the same name, so if we move $source into the root they should
     // conflict and get randomized
 
-    $source->parent_id = item::root()->id;
+    $source->parent_id = Item::root()->id;
     $source->save();
 
     // foo should become foo-01
@@ -344,7 +344,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     // $photo1 and $photo2 have the same name, so if we move $photo1 into the root they should
     // conflict and get uniquified.
 
-    $photo2->parent_id = item::root()->id;
+    $photo2->parent_id = Item::root()->id;
     $photo2->save();
 
     // foo.jpg should become foo-01.jpg
@@ -371,11 +371,11 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
 
   public function basic_validation_test() {
-    $item = ORM::factory("item");
-    $item->album_cover_item_id = random::int();  // invalid
+    $item = ORM::factory("Item");
+    $item->album_cover_item_id = Random::int();  // invalid
     $item->description = str_repeat("x", 70000);  // invalid
     $item->name = null;
-    $item->parent_id = random::int();
+    $item->parent_id = Random::int();
     $item->slug = null;
     $item->sort_column = "bogus";
     $item->sort_order = "bogus";
@@ -451,7 +451,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function cant_delete_root_album_test() {
     try {
-      item::root()->delete();
+      Item::root()->delete();
     } catch (ORM_Validation_Exception $e) {
       $this->assert_same(array("id" => "cant_delete_root_album"), $e->validation->errors());
       return;  // pass
@@ -465,29 +465,29 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $album->reload();
 
     $result = $album->as_restful_array();
-    $this->assert_same(rest::url("item", item::root()), $result["parent"]);
+    $this->assert_same(rest::url("item", Item::root()), $result["parent"]);
     $this->assert_same(rest::url("item", $photo), $result["album_cover"]);
     $this->assert_true(!array_key_exists("parent_id", $result));
     $this->assert_true(!array_key_exists("album_cover_item_id", $result));
   }
 
   public function as_restful_array_with_edit_bit_test() {
-    $response = item::root()->as_restful_array();
+    $response = Item::root()->as_restful_array();
     $this->assert_true($response["can_edit"]);
 
-    access::deny(identity::everybody(), "edit", item::root());
-    identity::set_active_user(identity::guest());
-    $response = item::root()->as_restful_array();
+    Access::deny(Identity::everybody(), "edit", Item::root());
+    Identity::set_active_user(Identity::guest());
+    $response = Item::root()->as_restful_array();
     $this->assert_false($response["can_edit"]);
   }
 
   public function as_restful_array_with_add_bit_test() {
-    $response = item::root()->as_restful_array();
+    $response = Item::root()->as_restful_array();
     $this->assert_true($response["can_add"]);
 
-    access::deny(identity::everybody(), "add", item::root());
-    identity::set_active_user(identity::guest());
-    $response = item::root()->as_restful_array();
+    Access::deny(Identity::everybody(), "add", Item::root());
+    Identity::set_active_user(Identity::guest());
+    $response = Item::root()->as_restful_array();
     $this->assert_false($response["can_add"]);
   }
 
@@ -593,7 +593,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function legal_extension_that_does_match_gets_used_test() {
     foreach (array("jpg", "JPG", "Jpg", "jpeg") as $extension) {
-      $photo = test::random_photo_unsaved(item::root());
+      $photo = test::random_photo_unsaved(Item::root());
       $photo->name = test::random_name() . ".{$extension}";
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -604,7 +604,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function illegal_extension_test() {
     foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
                    "test.pl", "test.php.png") as $name) {
-      $photo = test::random_photo_unsaved(item::root());
+      $photo = test::random_photo_unsaved(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -615,7 +615,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function cant_rename_to_illegal_extension_test() {
     foreach (array("test.php.test", "test.php", "test.PHP",
                    "test.php5", "test.php4", "test.pl") as $name) {
-      $photo = test::random_photo(item::root());
+      $photo = test::random_photo(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -625,7 +625,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function legal_extension_that_doesnt_match_gets_fixed_test() {
     foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
-      $photo = test::random_photo_unsaved(item::root());
+      $photo = test::random_photo_unsaved(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -635,7 +635,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function rename_to_legal_extension_that_doesnt_match_gets_fixed_test() {
     foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
-      $photo = test::random_photo(item::root());
+      $photo = test::random_photo(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -644,7 +644,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function albums_can_have_two_dots_in_name_test() {
-    $album = test::random_album_unsaved(item::root());
+    $album = test::random_album_unsaved(Item::root());
     $album->name = $album->name . ".foo.bar";
     $album->save();
   }

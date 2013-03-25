@@ -5,7 +5,7 @@
 
 // Log validation exceptions to ease debugging
 if ($e instanceof ORM_Validation_Exception) {
-  Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+  Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
 }
 
 if (php_sapi_name() == "cli") {
@@ -15,7 +15,7 @@ if (php_sapi_name() == "cli") {
 
 try {
   // Admins get a special error page
-  $user = identity::active_user();
+  $user = Identity::active_user();
   if ($user && $user->admin) {
     include Kohana::find_file("views", "error_admin.html");
     return;
@@ -24,18 +24,18 @@ try {
 }
 
 // Try to show a themed error page for 404 errors
-if ($e instanceof Kohana_404_Exception) {
-  if (Router::$controller == "file_proxy") {
+if ($e instanceof HTTP_Exception_404) {
+  if (Route::$controller == "file_proxy") {
     print "File not found";
   } else {
-    $view = new Theme_View("page.html", "other", "error");
+    $view = new View_Theme("page.html", "other", "error");
     $view->page_title = t("Dang...  Page not found!");
     $view->content = new View("error_404.html");
-    $user = identity::active_user();
+    $user = Identity::active_user();
     $view->content->is_guest = $user && $user->guest;
     if ($view->content->is_guest) {
       $view->content->login_form = new View("login_ajax.html");
-      $view->content->login_form->form = auth::get_login_form("login/auth_html");
+      $view->content->login_form->form = Auth::get_login_form("login/auth_html");
     }
     print $view;
   }

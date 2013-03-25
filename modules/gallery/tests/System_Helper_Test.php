@@ -19,7 +19,7 @@
  */
 class System_Helper_Test extends Gallery_Unit_Test_Case {
   public function temp_filename_test() {
-    $filename = system::temp_filename("file", "ext");
+    $filename = System::temp_filename("file", "ext");
     $this->assert_true(file_exists($filename), "File not created");
     unlink($filename);
     $this->assert_pattern($filename, "|/file.*\\.ext$|");

@@ -28,7 +28,7 @@ class Gallery_L10n_Scanner {
 
   static function process_message($message, &$cache) {
     if (empty($cache)) {
-      foreach (db::build()
+      foreach (DB::build()
                ->select("key")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
@@ -37,12 +37,12 @@ class Gallery_L10n_Scanner {
       }
     }
 
-    $key = Gallery_I18n::get_message_key($message);
+    $key = I18n::get_message_key($message);
     if (array_key_exists($key, $cache)) {
       return $cache[$key];
     }
 
-    $entry = ORM::factory("incoming_translation")->where("key", "=", $key)->find();
+    $entry = ORM::factory("IncomingTranslation")->where("key", "=", $key)->find();
     if (!$entry->loaded()) {
       $entry->key = $key;
       $entry->message = serialize($message);
@@ -74,18 +74,18 @@ class Gallery_L10n_Scanner {
     unset($raw_tokens);
 
     if (!empty($func_token_list["t"])) {
-      $errors = l10n_scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
+      $errors = L10n_Scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
       foreach ($errors as $line => $error) {
-        Kohana_Log::add(
+        Log::add(
           "error", "Translation scanner error.  " .
           "file: " . substr($file, strlen(DOCROOT)) . ", line: $line, context: $error");
       }
     }
 
     if (!empty($func_token_list["t2"])) {
-      $errors = l10n_scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
+      $errors = L10n_Scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
       foreach ($errors as $line => $error) {
-        Kohana_Log::add(
+        Log::add(
           "error", "Translation scanner error.  " .
           "file: " . substr($file, strlen(DOCROOT)) . ", line: $line, context: $error");
       }
@@ -96,7 +96,7 @@ class Gallery_L10n_Scanner {
     $info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
     foreach (array('name', 'description') as $property) {
       if (isset($info->$property)) {
-        l10n_scanner::process_message($info->$property, $cache);
+        L10n_Scanner::process_message($info->$property, $cache);
       }
     }
   }
@@ -113,7 +113,7 @@ class Gallery_L10n_Scanner {
         if (in_array($next_token, array(")", ","))
             && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {
           $message = self::_escape_quoted_string($first_param[1]);
-          l10n_scanner::process_message($message, $cache);
+          L10n_Scanner::process_message($message, $cache);
         } else {
           if (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING)) {
             // Malformed string literals; escalate this
@@ -144,7 +144,7 @@ class Gallery_L10n_Scanner {
             && is_array($second_param) && $second_param[0] == T_CONSTANT_ENCAPSED_STRING) {
           $singular = self::_escape_quoted_string($first_param[1]);
           $plural = self::_escape_quoted_string($second_param[1]);
-          l10n_scanner::process_message(array("one" => $singular, "other" => $plural), $cache);
+          L10n_Scanner::process_message(array("one" => $singular, "other" => $plural), $cache);
         } else {
           if (is_array($first_param) && $first_param[0] == T_CONSTANT_ENCAPSED_STRING) {
             $errors[$first_param[2]] = var_export(

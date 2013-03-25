@@ -27,7 +27,7 @@ class Gallery_Dir {
         } else if ($resource->isFile()) {
           unlink($resource->getPathName());
         } else if ($resource->isDir()) {
-          dir::unlink($resource->getRealPath());
+          Encoding::unlink($resource->getRealPath());
         }
         unset($resource);
       }

@@ -27,7 +27,7 @@ class Gallery_View_Gallery extends View {
    */
   public function url($path, $absolute_url=false) {
     $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : url::file($arg);
+    return $absolute_url ? URL::abs_file($arg) : URL::file($arg);
   }
 
   /**
@@ -50,13 +50,13 @@ class Gallery_View_Gallery extends View {
       $v->total = $this->children_count;
 
       if ($this->page != 1) {
-        $v->first_page_url = url::site(url::merge(array("page" => 1)));
-        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
+        $v->first_page_url = URL::site(URL::merge(array("page" => 1)));
+        $v->previous_page_url = URL::site(URL::merge(array("page" => $this->page - 1)));
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
-        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
+        $v->next_page_url = URL::site(URL::merge(array("page" => $this->page + 1)));
+        $v->last_page_url = URL::site(URL::merge(array("page" => $this->max_pages)));
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
@@ -98,14 +98,14 @@ class Gallery_View_Gallery extends View {
    * @param $group the group of scripts to combine this with.  defaults to "core"
    */
   public function script($file, $group="core") {
-    if (($path = gallery::find_file("js", $file, false))) {
+    if (($path = Gallery::find_file("js", $file, false))) {
       if (isset($this->combine_queue["script"])) {
         $this->combine_queue["script"][$group][$path] = 1;
       } else {
-        return html::script($path);
+        return HTML::script($path);
       }
     } else {
-      Kohana_Log::add("error", "Can't find script file: $file");
+      Log::add("error", "Can't find script file: $file");
     }
   }
 
@@ -120,14 +120,14 @@ class Gallery_View_Gallery extends View {
    * @param $group the group of css to combine this with.  defaults to "core"
    */
   public function css($file, $group="core") {
-    if (($path = gallery::find_file("css", $file, false))) {
+    if (($path = Gallery::find_file("css", $file, false))) {
       if (isset($this->combine_queue["css"])) {
         $this->combine_queue["css"][$group][$path] = 1;
       } else {
-        return html::stylesheet($path);
+        return HTML::stylesheet($path);
       }
     } else {
-      Kohana_Log::add("error", "Can't find css file: $file");
+      Log::add("error", "Can't find css file: $file");
     }
   }
 
@@ -151,7 +151,7 @@ class Gallery_View_Gallery extends View {
 
       // Include the url in the cache key so that if the Gallery moves, we don't use old cached
       // entries.
-      $key = array(url::abs_file(""));
+      $key = array(URL::abs_file(""));
       foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
         $stats = stat($path);
         // 7 == size, 9 == mtime, see http://php.net/stat
@@ -159,7 +159,7 @@ class Gallery_View_Gallery extends View {
       }
       $key = md5(join(" ", $key));
 
-      if (gallery::allow_css_and_js_combining()) {
+      if (Gallery::allow_css_and_js_combining()) {
         // Combine enabled - if we're at the start of the buffer, add a comment.
         if (!$buf) {
           $type_text = ($type == "css") ? "CSS" : "JS";
@@ -173,7 +173,7 @@ class Gallery_View_Gallery extends View {
           $combine_data = new stdClass();
           $combine_data->type = $type;
           $combine_data->contents = $this->combine_queue[$type][$group];
-          module::event("before_combine", $combine_data);
+          Module::event("before_combine", $combine_data);
 
           $contents = "";
           foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
@@ -187,7 +187,7 @@ class Gallery_View_Gallery extends View {
           $combine_data = new stdClass();
           $combine_data->type = $type;
           $combine_data->contents = $contents;
-          module::event("after_combine", $combine_data);
+          Module::event("after_combine", $combine_data);
 
           $cache->set($key, $combine_data->contents, array($type), 30 * 84600);
 
@@ -200,17 +200,17 @@ class Gallery_View_Gallery extends View {
         }
 
         if ($type == "css") {
-          $buf .= html::stylesheet("combined/css/$key", "screen,print,projection", true);
+          $buf .= HTML::stylesheet("combined/css/$key", "screen,print,projection", true);
         } else {
-          $buf .= html::script("combined/javascript/$key", true);
+          $buf .= HTML::script("combined/javascript/$key", true);
         }
       } else {
         // Don't combine - just return the CSS and JS links (with the key as a cache buster).
         foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
           if ($type == "css") {
-            $buf .= html::stylesheet("$path?m=$key", "screen,print,projection", false);
+            $buf .= HTML::stylesheet("$path?m=$key", "screen,print,projection", false);
           } else {
-            $buf .= html::script("$path?m=$key", false);
+            $buf .= HTML::script("$path?m=$key", false);
           }
         }
       }
@@ -239,9 +239,9 @@ class Gallery_View_Gallery extends View {
         $relative = dirname($css_file) . "/$match[1]";
         if (!empty($relative)) {
           $search[] = $match[0];
-          $replace[] = "url('" . url::abs_file($relative) . "')";
+          $replace[] = "url('" . URL::abs_file($relative) . "')";
         } else {
-          Kohana_Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+          Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
 
         }
       }

@@ -39,7 +39,7 @@ class Gallery_LegalFile {
       $types_by_extension_wrapper = new stdClass();
       $types_by_extension_wrapper->types_by_extension = array(
         "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
-      module::event("photo_types_by_extension", $types_by_extension_wrapper);
+      Module::event("photo_types_by_extension", $types_by_extension_wrapper);
       foreach (self::$blacklist as $key) {
         unset($types_by_extension_wrapper->types_by_extension[$key]);
       }
@@ -72,7 +72,7 @@ class Gallery_LegalFile {
       $types_by_extension_wrapper->types_by_extension = array(
         "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v",
         "webm" => "video/webm", "ogv" => "video/ogg");
-      module::event("movie_types_by_extension", $types_by_extension_wrapper);
+      Module::event("movie_types_by_extension", $types_by_extension_wrapper);
       foreach (self::$blacklist as $key) {
         unset($types_by_extension_wrapper->types_by_extension[$key]);
       }
@@ -98,10 +98,10 @@ class Gallery_LegalFile {
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
   static function get_types_by_extension($extension=null) {
-    $types_by_extension = legal_file::get_photo_types_by_extension();
-    if (movie::allow_uploads()) {
+    $types_by_extension = LegalFile::get_photo_types_by_extension();
+    if (Movie::allow_uploads()) {
       $types_by_extension = array_merge($types_by_extension,
-                                        legal_file::get_movie_types_by_extension());
+                                        LegalFile::get_movie_types_by_extension());
     }
     if ($extension) {
       // return matching MIME type
@@ -125,8 +125,8 @@ class Gallery_LegalFile {
   static function get_photo_extensions($extension=null) {
     if (empty(self::$photo_extensions)) {
       $extensions_wrapper = new stdClass();
-      $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
-      module::event("legal_photo_extensions", $extensions_wrapper);
+      $extensions_wrapper->extensions = array_keys(LegalFile::get_photo_types_by_extension());
+      Module::event("legal_photo_extensions", $extensions_wrapper);
       self::$photo_extensions = array_diff($extensions_wrapper->extensions, self::$blacklist);
     }
     if ($extension) {
@@ -146,8 +146,8 @@ class Gallery_LegalFile {
   static function get_movie_extensions($extension=null) {
     if (empty(self::$movie_extensions)) {
       $extensions_wrapper = new stdClass();
-      $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
-      module::event("legal_movie_extensions", $extensions_wrapper);
+      $extensions_wrapper->extensions = array_keys(LegalFile::get_movie_types_by_extension());
+      Module::event("legal_movie_extensions", $extensions_wrapper);
       self::$movie_extensions = array_diff($extensions_wrapper->extensions, self::$blacklist);
     }
     if ($extension) {
@@ -165,9 +165,9 @@ class Gallery_LegalFile {
    * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
   static function get_extensions($extension=null) {
-    $extensions = legal_file::get_photo_extensions();
-    if (movie::allow_uploads()) {
-      $extensions = array_merge($extensions, legal_file::get_movie_extensions());
+    $extensions = LegalFile::get_photo_extensions();
+    if (Movie::allow_uploads()) {
+      $extensions = array_merge($extensions, LegalFile::get_movie_extensions());
     }
     if ($extension) {
       // return true if in array, false if not
@@ -184,7 +184,7 @@ class Gallery_LegalFile {
    */
   static function get_filters() {
     $filters = array();
-    foreach (legal_file::get_extensions() as $extension) {
+    foreach (LegalFile::get_extensions() as $extension) {
       array_push($filters, "*." . $extension, "*." . strtoupper($extension));
     }
     return $filters;
@@ -199,8 +199,8 @@ class Gallery_LegalFile {
     if (empty(self::$photo_types)) {
       $types_wrapper = new stdClass();
       // Need array_unique since types_by_extension can be many-to-one (e.g. jpeg and jpg).
-      $types_wrapper->types = array_unique(array_values(legal_file::get_photo_types_by_extension()));
-      module::event("legal_photo_types", $types_wrapper);
+      $types_wrapper->types = array_unique(array_values(LegalFile::get_photo_types_by_extension()));
+      Module::event("legal_photo_types", $types_wrapper);
       self::$photo_types = $types_wrapper->types;
     }
     return self::$photo_types;
@@ -215,9 +215,9 @@ class Gallery_LegalFile {
     if (empty(self::$movie_types)) {
       $types_wrapper = new stdClass();
       // Need array_unique since types_by_extension can be many-to-one (e.g. jpeg and jpg).
-      $types_wrapper->types = array_unique(array_values(legal_file::get_movie_types_by_extension()));
+      $types_wrapper->types = array_unique(array_values(LegalFile::get_movie_types_by_extension()));
       $types_wrapper->types[] = "video/flv";
-      module::event("legal_movie_types", $types_wrapper);
+      Module::event("legal_movie_types", $types_wrapper);
       self::$movie_types = $types_wrapper->types;
     }
     return self::$movie_types;
@@ -273,12 +273,12 @@ class Gallery_LegalFile {
     $original_extension = pathinfo($filename, PATHINFO_EXTENSION);
     switch ($type) {
       case "photo":
-        $mime_type = legal_file::get_photo_types_by_extension($extension);
-        $original_mime_type = legal_file::get_photo_types_by_extension($original_extension);
+        $mime_type = LegalFile::get_photo_types_by_extension($extension);
+        $original_mime_type = LegalFile::get_photo_types_by_extension($original_extension);
         break;
       case "movie":
-        $mime_type = legal_file::get_movie_types_by_extension($extension);
-        $original_mime_type = legal_file::get_movie_types_by_extension($original_extension);
+        $mime_type = LegalFile::get_movie_types_by_extension($extension);
+        $original_mime_type = LegalFile::get_movie_types_by_extension($original_extension);
         break;
       default:
         throw new Exception("@todo INVALID_TYPE");
@@ -291,7 +291,7 @@ class Gallery_LegalFile {
 
     // Check if the mime types of the original and target extensions match - if not, fix it.
     if (!$original_extension || ($mime_type != $original_mime_type)) {
-      $filename = legal_file::change_extension($filename, $extension);
+      $filename = LegalFile::change_extension($filename, $extension);
     }
 
     // It should be a filename without a directory - remove all slashes (and backslashes).
@@ -299,7 +299,7 @@ class Gallery_LegalFile {
     $filename = str_replace("\\", "_", $filename);
 
     // Remove extra dots from the filename.  Also removes extraneous and leading/trailing underscores.
-    $filename = legal_file::smash_extensions($filename);
+    $filename = LegalFile::smash_extensions($filename);
 
     // It's possible that the filename has no base (e.g. ".jpg") - if so, give it a generic one.
     if (empty($filename) || (substr($filename, 0, 1) == ".")) {

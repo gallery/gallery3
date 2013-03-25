@@ -19,12 +19,12 @@
  */
 class Gallery_Controller_Admin_Languages extends Controller_Admin {
   public function index($share_translations_form=null) {
-    $v = new Admin_View("admin.html");
+    $v = new View_Admin("admin.html");
     $v->page_title = t("Languages and translations");
     $v->content = new View("admin_languages.html");
-                $v->content->available_locales = locales::available();
-    $v->content->installed_locales = locales::installed();
-    $v->content->default_locale = module::get_var("gallery", "default_locale");
+                $v->content->available_locales = Locales::available();
+    $v->content->installed_locales = Locales::installed();
+    $v->content->default_locale = Module::get_var("gallery", "default_locale");
 
     if (empty($share_translations_form)) {
       $share_translations_form = $this->_share_translations_form();
@@ -35,12 +35,12 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
   }
 
   public function save() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $input = Input::instance();
-    locales::update_installed($input->post("installed_locales"));
+    Locales::update_installed($input->post("installed_locales"));
 
-    $installed_locales = array_keys(locales::installed());
+    $installed_locales = array_keys(Locales::installed());
     $new_default_locale = $input->post("default_locale");
     if (!in_array($new_default_locale, $installed_locales)) {
       if (!empty($installed_locales)) {
@@ -49,13 +49,13 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
         $new_default_locale = "en_US";
       }
     }
-    module::set_var("gallery", "default_locale", $new_default_locale);
+    Module::set_var("gallery", "default_locale", $new_default_locale);
 
-    json::reply(array("result" => "success"));
+    JSON::reply(array("result" => "success"));
   }
 
   public function share() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $form = $this->_share_translations_form();
     if (!$form->validate()) {
@@ -64,18 +64,18 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
 
     if (Input::instance()->post("share")) {
-      l10n_client::submit_translations();
-      message::success(t("Translations submitted"));
+      L10n_Client::submit_translations();
+      Message::success(t("Translations submitted"));
     } else {
       return $this->_save_api_key($form);
     }
-    url::redirect("admin/languages");
+    URL::redirect("admin/languages");
   }
 
   private function _save_api_key($form) {
     $new_key = $form->sharing->api_key->value;
     if ($new_key) {
-      list($connected, $valid) = l10n_client::validate_api_key($new_key);
+      list($connected, $valid) = L10n_Client::validate_api_key($new_key);
       if (!$valid) {
         $form->sharing->api_key->add_error($connected ? "invalid" : "no_connection", 1);
       }
@@ -84,20 +84,20 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
 
     if ($valid) {
-        $old_key = l10n_client::api_key();
-        l10n_client::api_key($new_key);
+        $old_key = L10n_Client::api_key();
+        L10n_Client::api_key($new_key);
         if ($old_key && !$new_key) {
-          message::success(t("Your API key has been cleared."));
+          Message::success(t("Your API key has been cleared."));
         } else if ($old_key && $new_key && $old_key != $new_key) {
-          message::success(t("Your API key has been changed."));
+          Message::success(t("Your API key has been changed."));
         } else if (!$old_key && $new_key) {
-          message::success(t("Your API key has been saved."));
+          Message::success(t("Your API key has been saved."));
         } else if ($old_key && $new_key && $old_key == $new_key) {
-          message::info(t("Your API key was not changed."));
+          Message::info(t("Your API key was not changed."));
         }
 
-        log::success(t("gallery"), t("l10n_client API key changed."));
-        url::redirect("admin/languages");
+        Log::success(t("gallery"), t("l10n_client API key changed."));
+        URL::redirect("admin/languages");
     } else {
       // Show the page with form errors
       $this->index($form);
@@ -105,20 +105,20 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
   }
 
   private function _outgoing_translations_count() {
-    return ORM::factory("outgoing_translation")->count_all();
+    return ORM::factory("OutgoingTranslation")->count_all();
   }
 
   private function _share_translations_form() {
     $form = new Forge("admin/languages/share", "", "post", array("id" => "g-share-translations-form"));
     $group = $form->group("sharing")
       ->label("Translations API Key");
-    $api_key = l10n_client::api_key();
-    $server_link = l10n_client::server_api_key_url();
+    $api_key = L10n_Client::api_key();
+    $server_link = L10n_Client::server_api_key_url();
     $group->input("api_key")
       ->label(empty($api_key)
               ? t("This is a unique key that will allow you to send translations to the remote
                   server. To get your API key go to %server-link.",
-                  array("server-link" => html::mark_clean(html::anchor($server_link))))
+                  array("server-link" => HTML::mark_clean(HTML::anchor($server_link))))
               : t("API key"))
       ->value($api_key)
       ->error_messages("invalid", t("The API key you provided is invalid."))

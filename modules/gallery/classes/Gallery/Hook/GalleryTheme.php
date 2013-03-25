@@ -26,7 +26,7 @@ class Gallery_Hook_GalleryTheme {
       $buf .= $theme->css("debug.css");
     }
 
-    if (module::is_active("rss")) {
+    if (Module::is_active("rss")) {
       if ($item = $theme->item()) {
         if ($item->is_album()) {
           $buf .= rss::feed_link("gallery/album/{$item->id}");
@@ -38,7 +38,7 @@ class Gallery_Hook_GalleryTheme {
       }
     }
 
-    if (count(locales::installed())) {
+    if (count(Locales::installed())) {
       // Needed by the languages block
       $buf .= $theme->script("jquery.cookie.js");
     }
@@ -75,24 +75,24 @@ class Gallery_Hook_GalleryTheme {
 
   static function page_bottom($theme) {
     $session = Session::instance();
-    if (gallery::show_profiler()) {
+    if (Gallery::show_profiler()) {
       Profiler::enable();
       $profiler = new Profiler();
       $profiler->render();
     }
     $content = "";
     if ($session->get("l10n_mode", false)) {
-      $content .= L10n_Client_Controller::l10n_form();
+      $content .= Controller_L10n_Client::l10n_form();
     }
 
     if ($session->get_once("after_install")) {
       $content .= new View("welcome_message_loader.html");
     }
 
-    if (identity::active_user()->admin && upgrade_checker::should_auto_check()) {
+    if (Identity::active_user()->admin && UpgradeChecker::should_auto_check()) {
       $content .= '<script type="text/javascript">
-        $.ajax({url: "' . url::site("admin/upgrade_checker/check_now?csrf=" .
-                                    access::csrf_token()) . '"});
+        $.ajax({url: "' . URL::site("admin/upgrade_checker/check_now?csrf=" .
+                                    Access::csrf_token()) . '"});
         </script>';
     }
     return $content;
@@ -100,7 +100,7 @@ class Gallery_Hook_GalleryTheme {
 
   static function admin_page_bottom($theme) {
     $session = Session::instance();
-    if (gallery::show_profiler()) {
+    if (Gallery::show_profiler()) {
       Profiler::enable();
       $profiler = new Profiler();
       $profiler->render();
@@ -109,7 +109,7 @@ class Gallery_Hook_GalleryTheme {
     // Redirect to the root album when the admin session expires.
     $content = '<script type="text/javascript">
       var adminReauthCheck = function() {
-        $.ajax({url: "' . url::site("admin?reauth_check=1") . '",
+        $.ajax({url: "' . URL::site("admin?reauth_check=1") . '",
                 dataType: "json",
                 success: function(data){
                   if ("location" in data) {
@@ -120,35 +120,35 @@ class Gallery_Hook_GalleryTheme {
       setInterval("adminReauthCheck();", 60 * 1000);
       </script>';
 
-    if (upgrade_checker::should_auto_check()) {
+    if (UpgradeChecker::should_auto_check()) {
       $content .= '<script type="text/javascript">
-        $.ajax({url: "' . url::site("admin/upgrade_checker/check_now?csrf=" .
-                                    access::csrf_token()) . '"});
+        $.ajax({url: "' . URL::site("admin/upgrade_checker/check_now?csrf=" .
+                                    Access::csrf_token()) . '"});
         </script>';
     }
 
     if ($session->get("l10n_mode", false)) {
-      $content .= "\n" . L10n_Client_Controller::l10n_form();
+      $content .= "\n" . Controller_L10n_Client::l10n_form();
     }
     return $content;
   }
 
   static function credits() {
     $version_string = SafeString::of_safe_html(
-      '<bdo dir="ltr">Gallery ' . gallery::version_string() . '</bdo>');
+      '<bdo dir="ltr">Gallery ' . Gallery::version_string() . '</bdo>');
     return "<li class=\"g-first\">" .
-      t(module::get_var("gallery", "credits"),
+      t(Module::get_var("gallery", "credits"),
         array("url" => "http://galleryproject.org",
               "gallery_version" => $version_string)) .
       "</li>";
   }
 
   static function admin_credits() {
-    return gallery_theme::credits();
+    return Hook_GalleryTheme::credits();
   }
 
   static function body_attributes() {
-    if (locales::is_rtl()) {
+    if (Locales::is_rtl()) {
       return 'class="rtl"';
     }
   }

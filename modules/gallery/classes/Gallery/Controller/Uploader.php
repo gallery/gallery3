@@ -20,8 +20,8 @@
 class Gallery_Controller_Uploader extends Controller {
   public function index($id) {
     $item = ORM::factory("item", $id);
-    access::required("view", $item);
-    access::required("add", $item);
+    Access::required("view", $item);
+    Access::required("add", $item);
     if (!$item->is_album()) {
       $item = $item->parent();
     }
@@ -30,19 +30,19 @@ class Gallery_Controller_Uploader extends Controller {
   }
 
   public function start() {
-    access::verify_csrf();
-    batch::start();
+    Access::verify_csrf();
+    Batch::start();
   }
 
   public function add_photo($id) {
     $album = ORM::factory("item", $id);
-    access::required("view", $album);
-    access::required("add", $album);
-    access::verify_csrf();
+    Access::required("view", $album);
+    Access::required("add", $album);
+    Access::verify_csrf();
 
     // The Flash uploader not call /start directly, so simulate it here for now.
-    if (!batch::in_progress()) {
-      batch::start();
+    if (!Batch::in_progress()) {
+      Batch::start();
     }
 
     $form = $this->_get_add_form($album);
@@ -50,42 +50,42 @@ class Gallery_Controller_Uploader extends Controller {
     // Uploadify adds its own field to the form, so validate that separately.
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
-      "Filedata", "upload::valid",  "upload::required",
-      "upload::type[" . implode(",", legal_file::get_extensions()) . "]");
+      "Filedata", "Upload::valid",  "Upload::required",
+      "Upload::type[" . implode(",", LegalFile::get_extensions()) . "]");
 
     if ($form->validate() && $file_validation->validate()) {
-      $temp_filename = upload::save("Filedata");
-      system::delete_later($temp_filename);
+      $temp_filename = Upload::save("Filedata");
+      System::delete_later($temp_filename);
       try {
-        $item = ORM::factory("item");
+        $item = ORM::factory("Item");
         $item->name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
-        $item->title = item::convert_filename_to_title($item->name);
+        $item->title = Item::convert_filename_to_title($item->name);
         $item->parent_id = $album->id;
         $item->set_data_file($temp_filename);
 
         $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
-            legal_file::get_movie_extensions($path_info["extension"])) {
+            LegalFile::get_movie_extensions($path_info["extension"])) {
           $item->type = "movie";
           $item->save();
-          log::success("content", t("Added a movie"),
-                       html::anchor("movies/$item->id", t("view movie")));
+          Log::success("content", t("Added a movie"),
+                       HTML::anchor("movies/$item->id", t("view movie")));
         } else {
           $item->type = "photo";
           $item->save();
-          log::success("content", t("Added a photo"),
-                       html::anchor("photos/$item->id", t("view photo")));
+          Log::success("content", t("Added a photo"),
+                       HTML::anchor("photos/$item->id", t("view photo")));
         }
 
-        module::event("add_photos_form_completed", $item, $form);
+        Module::event("add_photos_form_completed", $item, $form);
       } catch (Exception $e) {
         // The Flash uploader has no good way of reporting complex errors, so just keep it simple.
-        Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+        Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
 
         // Ugh.  I hate to use instanceof, But this beats catching the exception separately since
         // we mostly want to treat it the same way as all other exceptions
         if ($e instanceof ORM_Validation_Exception) {
-          Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+          Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
         }
 
         header("HTTP/1.1 500 Internal Server Error");
@@ -111,23 +111,23 @@ class Gallery_Controller_Uploader extends Controller {
   }
 
   public function finish() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    batch::stop();
-    json::reply(array("result" => "success"));
+    Batch::stop();
+    JSON::reply(array("result" => "success"));
   }
 
   private function _get_add_form($album)  {
     $form = new Forge("uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
-      ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
+      ->label(t("Add photos to %album_title", array("album_title" => HTML::purify($album->title))));
     $group->uploadify("uploadify")->album($album);
 
     $group_actions = $form->group("actions");
     $group_actions->uploadify_buttons("");
 
     $inputs_before_event = array_keys($form->add_photos->inputs);
-    module::event("add_photos_form", $album, $form);
+    Module::event("add_photos_form", $album, $form);
     $inputs_after_event = array_keys($form->add_photos->inputs);
 
     // For each new input in add_photos, attach JS to make uploadify update its value.

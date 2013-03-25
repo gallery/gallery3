@@ -77,12 +77,12 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sanitize_for_dump_user_test() {
-    $user = new User_Model();
+    $user = new Model_User();
     $user->name = "john";
     $user->hash = "value 1";
     $user->email = "value 2";
     $user->full_name = "value 3";
-    $this->assert_equal('User_Model object for "john" - details omitted for display',
+    $this->assert_equal('Model_User object for "john" - details omitted for display',
         Kohana_Exception::_sanitize_for_dump($user, "ignored", 5));
   }
 
@@ -121,7 +121,7 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sanitize_for_dump_nested_object_test() {
-    $user = new User_Model();
+    $user = new Model_User();
     $user->name = "john";
     $obj = new Kohana_Exception_Test_Class();
     $obj->meow = new Kohana_Exception_Test_Class();
@@ -139,8 +139,8 @@ class Kohana_Exception_Test extends Gallery_Unit_Test_Case {
                                 "protected: hash" => "removed for display",
                                 "private: email_address" => "removed for display"),
                       "woof" => "original value",
-                      "foo" => array("bar (type: User_Model)" =>
-                                     'User_Model object for "john" - details omitted for display'));
+                      "foo" => array("bar (type: Model_User)" =>
+                                     'Model_User object for "john" - details omitted for display'));
     $this->assert_equal($expected,
         Kohana_Exception::_sanitize_for_dump($obj, "ignored", 5));
   }

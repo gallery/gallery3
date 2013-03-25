@@ -19,6 +19,6 @@
     <?= t("Server load: %load_average", array("load_average" => join(" ", sys_getloadavg()))) ?>
   </li>
   <li>
-    <?= t("Graphics toolkit: %toolkit", array("toolkit" => module::get_var("gallery", "graphics_toolkit"))) ?>
+    <?= t("Graphics toolkit: %toolkit", array("toolkit" => Module::get_var("gallery", "graphics_toolkit"))) ?>
   </li>
 </ul>

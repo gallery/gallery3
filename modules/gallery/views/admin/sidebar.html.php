@@ -42,7 +42,7 @@
   </p>
 
   <div class="g-block-content">
-    <div id="g-site-blocks" ref="<?= url::site("admin/sidebar/update?csrf={$csrf}__ACTIVE__") ?>">
+    <div id="g-site-blocks" ref="<?= URL::site("admin/sidebar/update?csrf={$csrf}__ACTIVE__") ?>">
       <div class="g-admin-blocks-list g-left">
         <h3><?= t("Available blocks") ?></h3>
         <div>

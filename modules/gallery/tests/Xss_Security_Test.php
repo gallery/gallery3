@@ -59,7 +59,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
           }
 
           // Note: This approach won't catch <script src="..."> blocks if the src
-          // URL is generated via < ? = url::site() ? > or some other PHP.
+          // URL is generated via < ? = URL::site() ? > or some other PHP.
           // Assume that all such script blocks with a src URL have an
           // empty element body.
           // But we'll catch closing tags for such blocks, so don't keep track
@@ -293,7 +293,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
      *     X can be anything without a call to ->for_html() or ->purified_html()
      * CLEAN:
      *   Outside <script> block:
-     *     X = is SafeString (t(), t2(), url::site())
+     *     X = is SafeString (t(), t2(), URL::site())
      *     X = * and for_html() or purified_html() is called
      *   Inside <script> block:
      *     X = * with ->for_js() or json_encode(...)

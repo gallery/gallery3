@@ -66,7 +66,7 @@ class Gallery_SiteStatus {
    * @param string  $permanent_key make this message permanent and store it under this key
    */
   private static function _add($msg, $severity, $permanent_key) {
-    $message = ORM::factory("message")
+    $message = ORM::factory("Message")
       ->where("key", "=", $permanent_key)
       ->find();
     if (!$message->loaded()) {
@@ -82,7 +82,7 @@ class Gallery_SiteStatus {
    * @param string $permanent_key
    */
   static function clear($permanent_key) {
-    $message = ORM::factory("message")->where("key", "=", $permanent_key)->find();
+    $message = ORM::factory("Message")->where("key", "=", $permanent_key)->find();
     if ($message->loaded()) {
       $message->delete();
     }
@@ -92,16 +92,16 @@ class Gallery_SiteStatus {
    * Get any pending messages.  There are two types of messages, transient and permanent.
    * Permanent messages are used to let the admin know that there are pending administrative
    * issues that need to be resolved.  Transient ones are only displayed once.
-   * @return html text
+   * @return HTML text
    */
   static function get() {
-    if (!identity::active_user()->admin) {
+    if (!Identity::active_user()->admin) {
       return;
     }
     $buf = array();
-    foreach (ORM::factory("message")->find_all() as $msg) {
-      $value = str_replace("__CSRF__", access::csrf_token(), $msg->value);
-      $buf[] = "<li class=\"" . site_status::severity_class($msg->severity) . "\">$value</li>";
+    foreach (ORM::factory("Message")->find_all() as $msg) {
+      $value = str_replace("__CSRF__", Access::csrf_token(), $msg->value);
+      $buf[] = "<li class=\"" . SiteStatus::severity_class($msg->severity) . "\">$value</li>";
     }
 
     if ($buf) {
@@ -116,16 +116,16 @@ class Gallery_SiteStatus {
    */
   static function severity_class($severity) {
     switch($severity) {
-    case site_status::SUCCESS:
+    case SiteStatus::SUCCESS:
       return "g-success";
 
-    case site_status::INFO:
+    case SiteStatus::INFO:
       return "g-info";
 
-    case site_status::WARNING:
+    case SiteStatus::WARNING:
       return "g-warning";
 
-    case site_status::ERROR:
+    case SiteStatus::ERROR:
       return "g-error";
     }
   }

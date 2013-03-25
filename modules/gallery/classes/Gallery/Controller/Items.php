@@ -21,22 +21,22 @@ class Gallery_Controller_Items extends Controller {
   public function __call($function, $args) {
     $item = ORM::factory("item", (int)$function);
     if (!$item->loaded()) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     // Redirect to the more specific resource type, since it will render differently.  We can't
     // delegate here because we may have gotten to this page via /items/<id> which means that we
     // don't have a type-specific controller.  Also, we want to drive a single canonical resource
     // mapping where possible.
-    access::required("view", $item);
-    url::redirect($item->abs_url());
+    Access::required("view", $item);
+    URL::redirect($item->abs_url());
   }
 
   // Return the width/height dimensions for the given item
   public function dimensions($id) {
     $item = ORM::factory("item", $id);
-    access::required("view", $item);
-    json::reply(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
+    Access::required("view", $item);
+    JSON::reply(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
                       "resize" => array((int)$item->resize_width, (int)$item->resize_height),
                       "full" => array((int)$item->width, (int)$item->height)));
   }

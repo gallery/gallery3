@@ -19,14 +19,14 @@
  */
 class Num_Helper_Test extends Gallery_Unit_Test_Case {
   public function convert_to_bytes_test() {
-    $this->assert_equal(5 * 1024, num::convert_to_bytes("5K"));
-    $this->assert_equal(3 * 1024*1024, num::convert_to_bytes("3M"));
-    $this->assert_equal(4 * 1024*1024*1024, num::convert_to_bytes("4G"));
+    $this->assert_equal(5 * 1024, Num::convert_to_bytes("5K"));
+    $this->assert_equal(3 * 1024*1024, Num::convert_to_bytes("3M"));
+    $this->assert_equal(4 * 1024*1024*1024, Num::convert_to_bytes("4G"));
   }
 
   public function convert_to_human_readable_test() {
-    $this->assert_equal("6K", num::convert_to_human_readable(5615));
-    $this->assert_equal("1M", num::convert_to_human_readable(1205615));
-    $this->assert_equal("3G", num::convert_to_human_readable(3091205615));
+    $this->assert_equal("6K", Num::convert_to_human_readable(5615));
+    $this->assert_equal("1M", Num::convert_to_human_readable(1205615));
+    $this->assert_equal("3G", Num::convert_to_human_readable(3091205615));
   }
 }

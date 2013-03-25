@@ -4,12 +4,12 @@
 </p>
 
 <p>
-  <? if (gallery::RELEASE_CHANNEL == "release"): ?>
-  <?= t("You are using the official Gallery %version release, code named <i>%code_name</i>.", array("version" => gallery::VERSION, "code_name" => gallery::CODE_NAME)) ?>
+  <? if (Gallery::RELEASE_CHANNEL == "release"): ?>
+  <?= t("You are using the official Gallery %version release, code named <i>%code_name</i>.", array("version" => Gallery::VERSION, "code_name" => Gallery::CODE_NAME)) ?>
   <? elseif (isset($build_number)): ?>
-  <?= t("You are using an experimental snapshot of Gallery %version (build %build_number on branch %branch).", array("version" => gallery::VERSION, "branch" => gallery::RELEASE_BRANCH, "build_number" => $build_number)) ?>
+  <?= t("You are using an experimental snapshot of Gallery %version (build %build_number on branch %branch).", array("version" => Gallery::VERSION, "branch" => Gallery::RELEASE_BRANCH, "build_number" => $build_number)) ?>
   <? else: ?>
-  <?= t("You are using an experimental snapshot of Gallery %version (branch %branch) but your gallery3/.build_number file is missing so we don't know what build you have.  You should probably upgrade so that you have that file.", array("version" => gallery::VERSION, "branch" => gallery::RELEASE_BRANCH, "build_number" => $build_number)) ?>
+  <?= t("You are using an experimental snapshot of Gallery %version (branch %branch) but your gallery3/.build_number file is missing so we don't know what build you have.  You should probably upgrade so that you have that file.", array("version" => Gallery::VERSION, "branch" => Gallery::RELEASE_BRANCH, "build_number" => $build_number)) ?>
   <? endif ?>
 </p>
 
@@ -23,17 +23,17 @@
 
 <p>
   <a class="g-button ui-state-default ui-corner-all"
-     href="<?= url::site("admin/upgrade_checker/check_now?csrf=$csrf") ?>">
+     href="<?= URL::site("admin/upgrade_checker/check_now?csrf=$csrf") ?>">
     <?= t("Check now") ?>
   </a>
   <? if ($auto_check_enabled): ?>
   <a class="g-button ui-state-default ui-corner-all"
-     href="<?= url::site("admin/upgrade_checker/set_auto/0?csrf=$csrf") ?>">
+     href="<?= URL::site("admin/upgrade_checker/set_auto/0?csrf=$csrf") ?>">
     <?= t("Disable automatic checking") ?>
   </a>
   <? else: ?>
   <a class="g-button ui-state-default ui-corner-all"
-     href="<?= url::site("admin/upgrade_checker/set_auto/1?csrf=$csrf") ?>">
+     href="<?= URL::site("admin/upgrade_checker/set_auto/1?csrf=$csrf") ?>">
     <?= t("Enable automatic checking") ?>
   </a>
   <? endif ?>
@@ -49,7 +49,7 @@
   <?= t("No upgrade checks have been made yet.") ?>
   <? else: ?>
   <?= t("The last upgrade check was made on %date.",
-        array("date" => gallery::date_time($version_info->timestamp))) ?>
+        array("date" => Gallery::date_time($version_info->timestamp))) ?>
   <? endif ?>
 </p>
 

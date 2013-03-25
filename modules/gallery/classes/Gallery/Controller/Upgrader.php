@@ -23,7 +23,7 @@ class Gallery_Controller_Upgrader extends Controller {
 
     // Make sure we have an upgrade token
     if (!($upgrade_token = $session->get("upgrade_token", null))) {
-      $session->set("upgrade_token", $upgrade_token = random::hash());
+      $session->set("upgrade_token", $upgrade_token = Random::hash());
     }
 
     // If the upgrade token exists, then bless this session
@@ -33,7 +33,7 @@ class Gallery_Controller_Upgrader extends Controller {
     }
 
     $available_upgrades = 0;
-    foreach (module::available() as $module) {
+    foreach (Module::available() as $module) {
       if ($module->version && $module->version != $module->code_version) {
         $available_upgrades++;
       }
@@ -41,12 +41,12 @@ class Gallery_Controller_Upgrader extends Controller {
 
     $failed = Input::instance()->get("failed");
     $view = new View("upgrader.html");
-    $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
+    $view->can_upgrade = Identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
-    $view->available = module::available();
+    $view->available = Module::available();
     $view->failed = $failed ? explode(",", $failed) : array();
     $view->done = $available_upgrades == 0;
-    $view->obsolete_modules_message = module::get_obsolete_modules_message();
+    $view->obsolete_modules_message = Module::get_obsolete_modules_message();
     print $view;
   }
 
@@ -56,35 +56,35 @@ class Gallery_Controller_Upgrader extends Controller {
       // this time.
       $_SERVER["HTTP_HOST"] = "example.com";
     } else {
-      if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
-        access::forbidden();
+      if (!Identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
+        Access::forbidden();
       }
 
       try {
-        access::verify_csrf();
+        Access::verify_csrf();
       } catch (Exception $e) {
-        url::redirect("upgrader");
+        URL::redirect("upgrader");
       }
     }
 
-    $available = module::available();
+    $available = Module::available();
     // Upgrade gallery first
     $gallery = $available["gallery"];
     if ($gallery->code_version != $gallery->version) {
-      module::upgrade("gallery");
-      module::activate("gallery");
+      Module::upgrade("gallery");
+      Module::activate("gallery");
     }
 
     // Then upgrade the rest
     $failed = array();
-    foreach (module::available() as $id => $module) {
+    foreach (Module::available() as $id => $module) {
       if ($id == "gallery") {
         continue;
       }
 
       if ($module->active && $module->code_version != $module->version) {
         try {
-          module::upgrade($id);
+          Module::upgrade($id);
         } catch (Exception $e) {
           // @todo assume it's MODULE_FAILED_TO_UPGRADE for now
           $failed[] = $id;
@@ -93,10 +93,10 @@ class Gallery_Controller_Upgrader extends Controller {
     }
 
     // If the upgrade failed, this will get recreated
-    site_status::clear("upgrade_now");
+    SiteStatus::clear("upgrade_now");
 
     // Clear any upgrade check strings, we are probably up to date.
-    site_status::clear("upgrade_checker");
+    SiteStatus::clear("upgrade_checker");
 
     if (php_sapi_name() == "cli") {
       if ($failed) {
@@ -109,9 +109,9 @@ class Gallery_Controller_Upgrader extends Controller {
       }
     } else {
       if ($failed) {
-        url::redirect("upgrader?failed=" . join(",", $failed));
+        URL::redirect("upgrader?failed=" . join(",", $failed));
       } else {
-        url::redirect("upgrader");
+        URL::redirect("upgrader");
       }
     }
   }

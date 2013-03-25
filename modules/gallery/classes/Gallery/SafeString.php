@@ -146,7 +146,7 @@ class Gallery_SafeString {
    * Escape special HTML chars ("<", ">", "&", etc.) to HTML entities.
    */
   private static function _escape_for_html($dirty_html) {
-    return html::chars($dirty_html);
+    return HTML::chars($dirty_html);
   }
 
   /**

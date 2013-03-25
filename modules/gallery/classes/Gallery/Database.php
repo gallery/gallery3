@@ -32,7 +32,7 @@ abstract class Gallery_Database extends Database {
       $config["connection"]["params"] = null;
     }
     parent::__construct($config);
-    if (gallery::show_profiler()) {
+    if (Gallery::show_profiler()) {
       $this->config['benchmark'] = true;
     }
   }

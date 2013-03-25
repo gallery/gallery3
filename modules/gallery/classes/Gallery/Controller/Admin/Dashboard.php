@@ -19,69 +19,69 @@
  */
 class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Dashboard");
     $view->content = new View("admin_dashboard.html");
-    $view->content->blocks = block_manager::get_html("dashboard_center");
+    $view->content->blocks = BlockManager::get_html("dashboard_center");
     $view->sidebar = "<div id=\"g-admin-dashboard-sidebar\">" .
-      block_manager::get_html("dashboard_sidebar") .
+      BlockManager::get_html("dashboard_sidebar") .
       "</div>";
-    $view->content->obsolete_modules_message = module::get_obsolete_modules_message();
+    $view->content->obsolete_modules_message = Module::get_obsolete_modules_message();
     print $view;
   }
 
   public function add_block() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $form = gallery_block::get_add_block_form();
+    $form = Hook_GalleryBlock::get_add_block_form();
     if ($form->validate()) {
       list ($module_name, $id) = explode(":", $form->add_block->id->value);
-      $available = block_manager::get_available_admin_blocks();
+      $available = BlockManager::get_available_admin_blocks();
 
       if ($form->add_block->center->value) {
-        block_manager::add("dashboard_center", $module_name, $id);
-        message::success(
+        BlockManager::add("dashboard_center", $module_name, $id);
+        Message::success(
           t("Added <b>%title</b> block to the dashboard center",
             array("title" => $available["$module_name:$id"])));
       } else {
-        block_manager::add("dashboard_sidebar", $module_name, $id);
-        message::success(
+        BlockManager::add("dashboard_sidebar", $module_name, $id);
+        Message::success(
           t("Added <b>%title</b> to the dashboard sidebar",
             array("title" => $available["$module_name:$id"])));
       }
     }
-    url::redirect("admin/dashboard");
+    URL::redirect("admin/dashboard");
   }
 
   public function remove_block($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $blocks_center = block_manager::get_active("dashboard_center");
-    $blocks_sidebar = block_manager::get_active("dashboard_sidebar");
+    $blocks_center = BlockManager::get_active("dashboard_center");
+    $blocks_sidebar = BlockManager::get_active("dashboard_sidebar");
 
     if (array_key_exists($id, $blocks_sidebar)) {
       $deleted = $blocks_sidebar[$id];
-      block_manager::remove("dashboard_sidebar", $id);
+      BlockManager::remove("dashboard_sidebar", $id);
     } else if (array_key_exists($id, $blocks_center)) {
       $deleted = $blocks_center[$id];
-      block_manager::remove("dashboard_center", $id);
+      BlockManager::remove("dashboard_center", $id);
     }
 
     if (!empty($deleted)) {
-      $available = block_manager::get_available_admin_blocks();
+      $available = BlockManager::get_available_admin_blocks();
       $title = $available[join(":", $deleted)];
-      message::success(t("Removed <b>%title</b> block", array("title" => $title)));
+      Message::success(t("Removed <b>%title</b> block", array("title" => $title)));
     }
 
-    url::redirect("admin");
+    URL::redirect("admin");
   }
 
   public function reorder() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $active_set = array();
     foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
-      foreach (block_manager::get_active($location) as $id => $info) {
+      foreach (BlockManager::get_active($location) as $id => $info) {
         $active_set[$id] = $info;
       }
     }
@@ -91,7 +91,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
       foreach (Input::instance()->get($location, array()) as $id) {
         $new_blocks[$id] = $active_set[$id];
       }
-      block_manager::set_active($location, $new_blocks);
+      BlockManager::set_active($location, $new_blocks);
     }
   }
 }

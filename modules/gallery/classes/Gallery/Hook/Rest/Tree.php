@@ -37,7 +37,7 @@ class Gallery_Hook_Rest_Tree {
    */
   static function get($request) {
     $item = rest::resolve($request->url);
-    access::required("view", $item);
+    Access::required("view", $item);
 
     $query_params = array();
     $p = $request->params;
@@ -66,7 +66,7 @@ class Gallery_Hook_Rest_Tree {
       $entity[] = array("url" => rest::url("item", $child),
                         "entity" => $child->as_restful_array($fields));
       if (isset($lowest_depth) && $child->level == $lowest_depth) {
-        $members[] = url::merge_querystring(rest::url("tree", $child), $query_params);
+        $members[] = URL::merge_querystring(rest::url("tree", $child), $query_params);
       }
     }
 
@@ -80,13 +80,13 @@ class Gallery_Hook_Rest_Tree {
 
   static function resolve($id) {
     $item = ORM::factory("item", $id);
-    if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
     return $item;
   }
 
   static function url($item) {
-    return url::abs_site("rest/tree/{$item->id}");
+    return URL::abs_site("rest/tree/{$item->id}");
   }
 }

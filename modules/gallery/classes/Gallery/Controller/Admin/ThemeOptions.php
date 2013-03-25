@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Theme options");
     $view->content = new View("admin_theme_options.html");
     $view->content->form = $this->_get_edit_form_admin();
@@ -27,44 +27,44 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
   }
 
   public function save() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $form = $this->_get_edit_form_admin();
     if ($form->validate()) {
-      module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);
+      Module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);
 
       $thumb_size = $form->edit_theme->thumb_size->value;
-      if (module::get_var("gallery", "thumb_size") != $thumb_size) {
-        graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
-        graphics::add_rule(
-          "gallery", "thumb", "gallery_graphics::resize",
+      if (Module::get_var("gallery", "thumb_size") != $thumb_size) {
+        Graphics::remove_rule("gallery", "thumb", "GalleryGraphics::resize");
+        Graphics::add_rule(
+          "gallery", "thumb", "GalleryGraphics::resize",
           array("width" => $thumb_size, "height" => $thumb_size, "master" => Image::AUTO),
           100);
-        module::set_var("gallery", "thumb_size", $thumb_size);
+        Module::set_var("gallery", "thumb_size", $thumb_size);
       }
 
       $resize_size = $form->edit_theme->resize_size->value;
-      if (module::get_var("gallery", "resize_size") != $resize_size) {
-        graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
-        graphics::add_rule(
-          "gallery", "resize", "gallery_graphics::resize",
+      if (Module::get_var("gallery", "resize_size") != $resize_size) {
+        Graphics::remove_rule("gallery", "resize", "GalleryGraphics::resize");
+        Graphics::add_rule(
+          "gallery", "resize", "GalleryGraphics::resize",
           array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO),
           100);
-        module::set_var("gallery", "resize_size", $resize_size);
+        Module::set_var("gallery", "resize_size", $resize_size);
       }
 
-      module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
-      module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
-      module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
-      module::set_var("gallery", "favicon_url", $form->edit_theme->favicon_url->value);
-      module::set_var("gallery", "apple_touch_icon_url", $form->edit_theme->apple_touch_icon_url->value);
+      Module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
+      Module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
+      Module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
+      Module::set_var("gallery", "favicon_url", $form->edit_theme->favicon_url->value);
+      Module::set_var("gallery", "apple_touch_icon_url", $form->edit_theme->apple_touch_icon_url->value);
 
-      module::event("theme_edit_form_completed", $form);
+      Module::event("theme_edit_form_completed", $form);
 
-      message::success(t("Updated theme details"));
-      url::redirect("admin/theme_options");
+      Message::success(t("Updated theme details"));
+      URL::redirect("admin/theme_options");
     } else {
-      $view = new Admin_View("admin.html");
+      $view = new View_Admin("admin.html");
       $view->content = new View("admin_theme_options.html");
       $view->content->form = $form;
       print $view;
@@ -80,31 +80,31 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->error_messages("valid_min_value", t("The value must be greater than zero"))
-      ->value(module::get_var("gallery", "page_size"));
+      ->value(Module::get_var("gallery", "page_size"));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
       ->rules("required|valid_digit")
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("gallery", "thumb_size"));
+      ->value(Module::get_var("gallery", "thumb_size"));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
       ->rules("required|valid_digit")
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("gallery", "resize_size"));
+      ->value(Module::get_var("gallery", "resize_size"));
     $group->input("favicon_url")->label(t("URL (or relative path) to your favicon.ico"))
       ->id("g-favicon")
-      ->value(module::get_var("gallery", "favicon_url"));
+      ->value(Module::get_var("gallery", "favicon_url"));
     $group->input("apple_touch_icon_url")->label(t("URL (or relative path) to your Apple Touch icon"))
       ->id("g-apple-touch")
-      ->value(module::get_var("gallery", "apple_touch_icon_url"));
+      ->value(Module::get_var("gallery", "apple_touch_icon_url"));
     $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
-      ->value(module::get_var("gallery", "header_text"));
+      ->value(Module::get_var("gallery", "header_text"));
     $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")
-      ->value(module::get_var("gallery", "footer_text"));
+      ->value(Module::get_var("gallery", "footer_text"));
     $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
-      ->checked(module::get_var("gallery", "show_credits"));
+      ->checked(Module::get_var("gallery", "show_credits"));
 
-    module::event("theme_edit_form", $form);
+    Module::event("theme_edit_form", $form);
 
     $group->submit("")->value(t("Save"));
     return $form;

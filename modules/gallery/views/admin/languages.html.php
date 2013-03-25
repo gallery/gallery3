@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  var old_default_locale = <?= html::js_string($default_locale) ?>;
+  var old_default_locale = <?= HTML::js_string($default_locale) ?>;
 
   $("#g-languages-form").ready(function() {
     $("input[name='installed_locales[]']").change(function (event) {
@@ -18,7 +18,7 @@
       dataType: "json",
       success: function(data) {
         if (data.result == "success") {
-          el = $('<a href="' + <?= html::js_string(url::site("admin/maintenance/start/gallery_task::update_l10n?csrf=$csrf")) ?> + '"></a>'); // this is a little hack to trigger the update_l10n task in a dialog
+          el = $('<a href="' + <?= HTML::js_string(URL::site("admin/maintenance/start/Hook_GalleryTask::update_l10n?csrf=$csrf")) ?> + '"></a>'); // this is a little hack to trigger the update_l10n task in a dialog
           el.gallery_dialog();
           el.trigger('click');
         }
@@ -39,8 +39,8 @@
       </p>
 
       <div class="g-block-content ui-helper-clearfix">
-        <form id="g-languages-form" method="post" action="<?= url::site("admin/languages/save") ?>">
-          <?= access::csrf_form_field() ?>
+        <form id="g-languages-form" method="post" action="<?= URL::site("admin/languages/save") ?>">
+          <?= Access::csrf_form_field() ?>
           <table class="g-left">
             <tr>
               <th> <?= t("Installed") ?> </th>
@@ -59,10 +59,10 @@
             </tr>
             <? endif ?>
             <tr class="<?= (isset($installed_locales[$code])) ? "g-available" : "" ?><?= ($default_locale == $code) ? " g-selected" : "" ?>">
-              <td> <?= form::checkbox("installed_locales[]", $code, isset($installed_locales[$code])) ?> </td>
+              <td> <?= Form::checkbox("installed_locales[]", $code, isset($installed_locales[$code])) ?> </td>
               <td> <?= $display_name ?> </td>
               <td>
-              <?= form::radio("default_locale", $code, ($default_locale == $code), ((isset($installed_locales[$code]))?'':'disabled="disabled"') ) ?>
+              <?= Form::radio("default_locale", $code, ($default_locale == $code), ((isset($installed_locales[$code]))?'':'disabled="disabled"') ) ?>
               </td>
             </tr>
             <? $i++ ?>
@@ -93,10 +93,10 @@
         <ol>
           <li><?= t("Make sure the target language is installed and up to date (check above).") ?></li>
           <li><?= t("Make sure you have selected the right target language (currently %default_locale).",
-               array("default_locale" => locales::display_name())) ?></li>
+               array("default_locale" => Locales::display_name())) ?></li>
           <li><?= t("Start the translation mode and the translation interface will appear at the bottom of each Gallery page.") ?></li>
         </ol>
-        <a href="<?= url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token()) ?>"
+        <a href="<?= URL::site("l10n_client/toggle_l10n_mode?csrf=".Access::csrf_token()) ?>"
            class="g-button ui-state-default ui-corner-all ui-icon-left">
           <span class="ui-icon ui-icon-power"></span>
           <? if (Session::instance()->get("l10n_mode", false)): ?>

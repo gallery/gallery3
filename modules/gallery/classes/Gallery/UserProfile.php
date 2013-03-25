@@ -20,10 +20,10 @@
 class Gallery_UserProfile {
   /**
    * Generate the url to display the profile
-   * @return url for the profile display
+   * @return URL for the profile display
    */
   static function url($user_id) {
-    return url::site("user_profile/show/{$user_id}");
+    return URL::site("user_profile/show/{$user_id}");
   }
 
   static function get_contact_form($user) {
@@ -46,8 +46,8 @@ class Gallery_UserProfile {
       ->label(t("Message:"))
       ->rules("required")
       ->error_messages("required", t("You must enter a message"));
-    module::event("user_profile_contact_form", $form);
-    module::event("captcha_protect_form", $form);
+    Module::event("user_profile_contact_form", $form);
+    Module::event("captcha_protect_form", $form);
     $group->submit("")->value(t("Send"));
     return $form;
   }
