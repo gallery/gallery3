@@ -98,7 +98,7 @@ class Gallery_View_Gallery extends View {
    * @param $group the group of scripts to combine this with.  defaults to "core"
    */
   public function script($file, $group="core") {
-    if (($path = Gallery::find_file("js", $file, false))) {
+    if (($path = Gallery::find_file("media", $file, false))) {
       if (isset($this->combine_queue["script"])) {
         $this->combine_queue["script"][$group][$path] = 1;
       } else {
@@ -120,7 +120,7 @@ class Gallery_View_Gallery extends View {
    * @param $group the group of css to combine this with.  defaults to "core"
    */
   public function css($file, $group="core") {
-    if (($path = Gallery::find_file("css", $file, false))) {
+    if (($path = Gallery::find_file("media", $file, false))) {
       if (isset($this->combine_queue["css"])) {
         $this->combine_queue["css"][$group][$path] = 1;
       } else {

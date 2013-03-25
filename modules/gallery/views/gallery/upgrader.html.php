@@ -4,7 +4,7 @@
 <html>
   <head>
     <title><?= t("Gallery 3 upgrader") ?></title>
-    <link rel="stylesheet" type="text/css" href="<?= URL::file("modules/gallery/css/upgrader.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= URL::file("modules/gallery/media/upgrader.css") ?>"
           media="screen,print,projection" />
     <script src="<?= URL::file("lib/jquery.js") ?>" type="text/javascript"></script>
   </head>

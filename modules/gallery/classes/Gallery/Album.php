@@ -56,7 +56,7 @@ class Gallery_Album {
 
     $group->submit("")->value(t("Create"));
     $form->script("")
-      ->url(URL::abs_file("modules/gallery/js/albums_form_add.js"));
+      ->url(URL::abs_file("modules/gallery/media/albums_form_add.js"));
 
     return $form;
   }
