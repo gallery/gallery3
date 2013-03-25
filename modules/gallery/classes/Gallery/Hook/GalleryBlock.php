@@ -40,13 +40,13 @@ class Gallery_Hook_GalleryBlock {
     case "welcome":
       $block->css_id = "g-welcome";
       $block->title = t("Welcome to Gallery 3");
-      $block->content = new View("admin_block_welcome.html");
+      $block->content = new View("admin/block_welcome.html");
       break;
 
     case "photo_stream":
       $block->css_id = "g-photo-stream";
       $block->title = t("Photo stream");
-      $block->content = new View("admin_block_photo_stream.html");
+      $block->content = new View("admin/block_photo_stream.html");
       $block->content->photos = ORM::factory("Item")
         ->where("type", "=", "photo")->order_by("created", "DESC")->find_all(10);
       break;
@@ -54,7 +54,7 @@ class Gallery_Hook_GalleryBlock {
     case "log_entries":
       $block->css_id = "g-log-entries";
       $block->title = t("Log entries");
-      $block->content = new View("admin_block_log_entries.html");
+      $block->content = new View("admin/block_log_entries.html");
       $block->content->entries = ORM::factory("Log")
         ->order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
       break;
@@ -62,7 +62,7 @@ class Gallery_Hook_GalleryBlock {
     case "stats":
       $block->css_id = "g-stats";
       $block->title = t("Gallery stats");
-      $block->content = new View("admin_block_stats.html");
+      $block->content = new View("admin/block_stats.html");
       $block->content->album_count =
         ORM::factory("Item")->where("type", "=", "album")->where("id", "<>", 1)->count_all();
       $block->content->photo_count = ORM::factory("Item")->where("type", "=", "photo")->count_all();
@@ -71,13 +71,13 @@ class Gallery_Hook_GalleryBlock {
     case "platform_info":
       $block->css_id = "g-platform";
       $block->title = t("Platform information");
-      $block->content = new View("admin_block_platform.html");
+      $block->content = new View("admin/block_platform.html");
       break;
 
     case "project_news":
       $block->css_id = "g-project-news";
       $block->title = t("Gallery project news");
-      $block->content = new View("admin_block_news.html");
+      $block->content = new View("admin/block_news.html");
       $block->content->feed = Feed::parse("http://galleryproject.org/node/feed", 3);
       break;
 
@@ -100,7 +100,7 @@ class Gallery_Hook_GalleryBlock {
         $block = new Block();
         $block->css_id = "g-user-language-block";
         $block->title = t("Language preference");
-        $block->content = new View("user_languages_block.html");
+        $block->content = new View("gallery/user_languages_block.html");
         $block->content->installed_locales = array_merge(array("" => t("« none »")), $locales);
         $block->content->selected = (string) Locales::cookie_locale();
       } else {
@@ -112,7 +112,7 @@ class Gallery_Hook_GalleryBlock {
       $block = new Block();
       $block->css_id = "g-upgrade-available-block";
       $block->title = t("Check for Gallery upgrades");
-      $block->content = new View("upgrade_checker_block.html");
+      $block->content = new View("gallery/upgrade_checker_block.html");
       $block->content->version_info = UpgradeChecker::version_info();
       $block->content->auto_check_enabled = UpgradeChecker::auto_check_enabled();
       $block->content->new_version = UpgradeChecker::get_upgrade_message();

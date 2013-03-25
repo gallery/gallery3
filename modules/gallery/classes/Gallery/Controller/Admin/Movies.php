@@ -48,7 +48,7 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
 
     $view = new View_Admin("admin.html");
     $view->page_title = t("Movies settings");
-    $view->content = new View("admin_movies.html");
+    $view->content = new View("admin/movies.html");
     $view->content->form = $form;
     $view->content->ffmpeg_dir = $ffmpeg_dir;
     $view->content->ffmpeg_version = $ffmpeg_version;

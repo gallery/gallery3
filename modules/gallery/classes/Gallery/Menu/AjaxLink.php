@@ -33,7 +33,7 @@ class Gallery_Menu_AjaxLink extends Menu_Element {
   }
 
   public function render() {
-    $view = new View(isset($this->view) ? $this->view : "menu_ajax_link.html");
+    $view = new View(isset($this->view) ? $this->view : "gallery/menu_ajax_link.html");
     $view->menu = $this;
     return $view;
   }

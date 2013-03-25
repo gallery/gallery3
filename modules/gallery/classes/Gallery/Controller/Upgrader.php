@@ -40,7 +40,7 @@ class Gallery_Controller_Upgrader extends Controller {
     }
 
     $failed = Input::instance()->get("failed");
-    $view = new View("upgrader.html");
+    $view = new View("gallery/upgrader.html");
     $view->can_upgrade = Identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = Module::available();

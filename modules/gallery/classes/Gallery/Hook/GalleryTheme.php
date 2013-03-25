@@ -86,7 +86,7 @@ class Gallery_Hook_GalleryTheme {
     }
 
     if ($session->get_once("after_install")) {
-      $content .= new View("welcome_message_loader.html");
+      $content .= new View("gallery/welcome_message_loader.html");
     }
 
     if (Identity::active_user()->admin && UpgradeChecker::should_auto_check()) {

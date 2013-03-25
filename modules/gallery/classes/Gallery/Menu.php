@@ -129,7 +129,7 @@ class Gallery_Menu extends Menu_Element {
   }
 
   public function render() {
-    $view = new View(isset($this->view) ? $this->view : "menu.html");
+    $view = new View(isset($this->view) ? $this->view : "gallery/menu.html");
     $view->menu = $this;
     return $view;
   }

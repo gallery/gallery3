@@ -32,7 +32,7 @@ class Gallery_Controller_UserProfile extends Controller {
 
     $v = new View_Theme("page.html", "other", "profile");
     $v->page_title = t("%name Profile", array("name" => $user->display_name()));
-    $v->content = new View("user_profile.html");
+    $v->content = new View("gallery/user_profile.html");
 
     $v->content->user = $user;
     $v->content->contactable =
