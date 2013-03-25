@@ -26,7 +26,7 @@ class Gallery_HTML extends Kohana_HTML {
    * unescaped HTML which is assumed to be safe.
    *
    * Example:<pre>
-   *   <div><?= html::clean($php_var) ?>
+   *   <div><?= HTML::clean($php_var) ?>
    * </pre>
    */
   static function clean($html) {
@@ -39,7 +39,7 @@ class Gallery_HTML extends Kohana_HTML {
    * only non-malicious HTML.
    *
    * Example:<pre>
-   *   <div><?= html::purify($item->title) ?>
+   *   <div><?= HTML::purify($item->title) ?>
    * </pre>
    */
   static function purify($html) {
@@ -53,7 +53,7 @@ class Gallery_HTML extends Kohana_HTML {
    *   // Parameters to t() are automatically escaped by default.
    *   // If the parameter is marked as clean, it won't get escaped.
    *   t('Go <a href="%url">there</a>',
-   *     array("url" => html::mark_clean(url::current())))
+   *     array("url" => HTML::mark_clean(URL::current())))
    * </pre>
    */
   static function mark_clean($html) {
@@ -65,7 +65,7 @@ class Gallery_HTML extends Kohana_HTML {
    *
    * Example:<pre>
    *   <script type="text/javascript>"
-   *     var some_js_string = <?= html::js_string($php_string) ?>;
+   *     var some_js_string = <?= HTML::js_string($php_string) ?>;
    *   </script>
    * </pre>
    */
@@ -80,12 +80,12 @@ class Gallery_HTML extends Kohana_HTML {
    * delimited by single or double quotes
    *
    * Example:<pre>
-   *     <a title="<?= html::clean_for_attribute($php_var) ?>">;
+   *     <a title="<?= HTML::clean_for_attribute($php_var) ?>">;
    *   </script>
    * </pre>
    * @return the string escaped for use in HTML attributes.
    */
   static function clean_attribute($string) {
-    return html::clean($string)->for_html_attr();
+    return HTML::clean($string)->for_html_attr();
   }
 }

@@ -149,7 +149,7 @@
     </script>
   </head>
   <body>
-    <? try { $user = identity::active_user(); } catch (Exception $e) { } ?>
+    <? try { $user = Identity::active_user(); } catch (Exception $e) { } ?>
     <div class="big_box" id="framework_error">
       <div class="crashlogo">
         :-(
@@ -176,8 +176,8 @@
         tickets</a> to see if the problem you're seeing has been
         reported.  If you post a request, here's some useful
         information to include:
-        <?=  @gallery_block::get("platform_info") ?>
-        <?=  @gallery_block::get("stats") ?>
+        <?=  @Hook_GalleryBlock::get("platform_info") ?>
+        <?=  @Hook_GalleryBlock::get("stats") ?>
       </p>
       <div id="kohana_error">
         <h3>
@@ -185,7 +185,7 @@
             <?= $type?> [ <?= $code ?> ]:
           </span>
           <span class="message">
-            <?= html::purify($message) ?>
+            <?= HTML::purify($message) ?>
           </span>
         </h3>
         <div id="<?= $error_id ?>" class="content">

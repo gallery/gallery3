@@ -19,32 +19,32 @@
  */
 class Gallery_Controller_Admin_Graphics extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Graphics settings");
     $view->content = new View("admin_graphics.html");
-    $view->content->tk = graphics::detect_toolkits();
-    $view->content->active = module::get_var("gallery", "graphics_toolkit", "none");
+    $view->content->tk = Graphics::detect_toolkits();
+    $view->content->active = Module::get_var("gallery", "graphics_toolkit", "none");
     print $view;
   }
 
   public function choose($toolkit_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    if ($toolkit_id != module::get_var("gallery", "graphics_toolkit")) {
-      $tk = graphics::detect_toolkits();
-      module::set_var("gallery", "graphics_toolkit", $toolkit_id);
-      module::set_var("gallery", "graphics_toolkit_path", $tk->$toolkit_id->dir);
+    if ($toolkit_id != Module::get_var("gallery", "graphics_toolkit")) {
+      $tk = Graphics::detect_toolkits();
+      Module::set_var("gallery", "graphics_toolkit", $toolkit_id);
+      Module::set_var("gallery", "graphics_toolkit_path", $tk->$toolkit_id->dir);
 
-      site_status::clear("missing_graphics_toolkit");
+      SiteStatus::clear("missing_graphics_toolkit");
 
       $msg = t("Changed graphics toolkit to: %toolkit", array("toolkit" => $tk->$toolkit_id->name));
-      message::success($msg);
-      log::success("graphics", $msg);
+      Message::success($msg);
+      Log::success("graphics", $msg);
 
-      module::event("graphics_toolkit_change", $toolkit_id);
+      Module::event("graphics_toolkit_change", $toolkit_id);
     }
 
-    url::redirect("admin/graphics");
+    URL::redirect("admin/graphics");
   }
 }
 

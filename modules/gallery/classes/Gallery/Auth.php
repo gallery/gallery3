@@ -24,7 +24,7 @@ class Gallery_Auth {
     $form->hidden("continue_url")->value(Session::instance()->get("continue_url"));
     $group = $form->group("login")->label(t("Login"));
     $group->input("name")->label(t("Username"))->id("g-username")->class(null)
-      ->callback("auth::validate_too_many_failed_logins")
+      ->callback("Auth::validate_too_many_failed_logins")
       ->error_messages(
         "too_many_failed_logins", t("Too many failed login attempts.  Try again later"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null);
@@ -34,30 +34,30 @@ class Gallery_Auth {
   }
 
   static function login($user) {
-    identity::set_active_user($user);
-    if (identity::is_writable()) {
+    Identity::set_active_user($user);
+    if (Identity::is_writable()) {
       $user->login_count += 1;
       $user->last_login = time();
       $user->save();
     }
-    log::info("user", t("User %name logged in", array("name" => $user->name)));
-    module::event("user_login", $user);
+    Log::info("user", t("User %name logged in", array("name" => $user->name)));
+    Module::event("user_login", $user);
   }
 
   static function logout() {
-    $user = identity::active_user();
+    $user = Identity::active_user();
     if (!$user->guest) {
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
-        Kohana_Log::add("error", $e);
+        Log::add("error", $e);
       }
-      module::event("user_logout", $user);
+      Module::event("user_logout", $user);
     }
-    log::info("user", t("User %name logged out", array("name" => $user->name)),
+    Log::info("user", t("User %name logged out", array("name" => $user->name)),
               t('<a href="%url">%user_name</a>',
-                array("url" => user_profile::url($user->id),
-                      "user_name" => html::clean($user->name))));
+                array("url" => UserProfile::url($user->id),
+                      "user_name" => HTML::clean($user->name))));
   }
 
   /**
@@ -65,7 +65,7 @@ class Gallery_Auth {
    * minute.
    */
   static function too_many_failures($name) {
-    $failed = ORM::factory("failed_auth")
+    $failed = ORM::factory("FailedAuth")
       ->where("name", "=", $name)
       ->find();
     return ($failed->loaded() &&
@@ -74,13 +74,13 @@ class Gallery_Auth {
   }
 
   static function validate_too_many_failed_logins($name_input) {
-    if (auth::too_many_failures($name_input->value)) {
+    if (Auth::too_many_failures($name_input->value)) {
       $name_input->add_error("too_many_failed_logins", 1);
     }
   }
 
   static function validate_too_many_failed_auth_attempts($form_input) {
-    if (auth::too_many_failures(identity::active_user()->name)) {
+    if (Auth::too_many_failures(Identity::active_user()->name)) {
       $form_input->add_error("too_many_failed_auth_attempts", 1);
     }
   }
@@ -89,7 +89,7 @@ class Gallery_Auth {
    * Record a failed authentication for this user
    */
   static function record_failed_attempt($name) {
-    $failed = ORM::factory("failed_auth")
+    $failed = ORM::factory("FailedAuth")
       ->where("name", "=", $name)
       ->find();
     if (!$failed->loaded()) {
@@ -104,7 +104,7 @@ class Gallery_Auth {
    * Clear any failed logins for this user
    */
   static function clear_failed_attempts($user) {
-    ORM::factory("failed_auth")
+    ORM::factory("FailedAuth")
       ->where("name", "=", $user->name)
       ->delete_all();
   }
@@ -115,14 +115,14 @@ class Gallery_Auth {
    * to the admin area.
    */
   static function must_reauth_for_admin_area() {
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
 
     $session = Session::instance();
     $last_active_auth = $session->get("active_auth_timestamp", 0);
     $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
-    $admin_area_timeout = module::get_var("gallery", "admin_area_timeout");
+    $admin_area_timeout = Module::get_var("gallery", "admin_area_timeout");
 
     if (max($last_active_auth, $last_admin_area_activity) + $admin_area_timeout < time()) {
       return true;

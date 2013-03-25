@@ -19,20 +19,20 @@
  */
 
 /**
- * This resource returns the raw contents of Item_Model data files.  It's analogous to the
- * file_proxy controller, but it uses the REST authentication model.
+ * This resource returns the raw contents of Model_Item data files.  It's analogous to the
+ * FileProxy controller, but it uses the REST authentication model.
  */
 class Gallery_Hook_Rest_Data {
   static function get($request) {
     $item = rest::resolve($request->url);
-    access::required("view", $item);
+    Access::required("view", $item);
 
     $p = $request->params;
     if (!isset($p->size) || !in_array($p->size, array("thumb", "resize", "full"))) {
       throw new Rest_Exception("Bad Request", 400, array("errors" => array("size" => "invalid")));
     }
 
-    // Note: this code is roughly duplicated in file_proxy, so if you modify this, please look to
+    // Note: this code is roughly duplicated in FileProxy, so if you modify this, please look to
     // see if you should make the same change there as well.
 
     if ($p->size == "full") {
@@ -44,7 +44,7 @@ class Gallery_Hook_Rest_Data {
     }
 
     if (!file_exists($file)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     header("Content-Length: " . filesize($file));
@@ -86,8 +86,8 @@ class Gallery_Hook_Rest_Data {
 
   static function resolve($id) {
     $item = ORM::factory("item", $id);
-    if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
     return $item;
   }
@@ -101,10 +101,10 @@ class Gallery_Hook_Rest_Data {
       $file = $item->thumb_path();
     }
     if (!file_exists($file)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    return url::abs_site("rest/data/{$item->id}?size=$size&m=" . filemtime($file));
+    return URL::abs_site("rest/data/{$item->id}?size=$size&m=" . filemtime($file));
   }
 }
 

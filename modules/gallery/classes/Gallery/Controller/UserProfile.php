@@ -21,62 +21,62 @@ class Gallery_Controller_UserProfile extends Controller {
 
   public function show($id) {
     // If we get here, then we should have a user id other than guest.
-    $user = identity::lookup_user($id);
+    $user = Identity::lookup_user($id);
     if (!$user) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     if (!$this->_can_view_profile_pages($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    $v = new Theme_View("page.html", "other", "profile");
+    $v = new View_Theme("page.html", "other", "profile");
     $v->page_title = t("%name Profile", array("name" => $user->display_name()));
     $v->content = new View("user_profile.html");
 
     $v->content->user = $user;
     $v->content->contactable =
-      !$user->guest && $user->id != identity::active_user()->id && $user->email;
+      !$user->guest && $user->id != Identity::active_user()->id && $user->email;
     $v->content->editable =
-      identity::is_writable() && !$user->guest && $user->id == identity::active_user()->id;
+      Identity::is_writable() && !$user->guest && $user->id == Identity::active_user()->id;
 
     $event_data = (object)array("user" => $user, "content" => array());
-    module::event("show_user_profile", $event_data);
+    Module::event("show_user_profile", $event_data);
     $v->content->info_parts = $event_data->content;
 
     print $v;
   }
 
   public function contact($id) {
-    $user = identity::lookup_user($id);
+    $user = Identity::lookup_user($id);
     if (!$this->_can_view_profile_pages($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    print user_profile::get_contact_form($user);
+    print UserProfile::get_contact_form($user);
   }
 
   public function send($id) {
-    access::verify_csrf();
-    $user = identity::lookup_user($id);
+    Access::verify_csrf();
+    $user = Identity::lookup_user($id);
     if (!$this->_can_view_profile_pages($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    $form = user_profile::get_contact_form($user);
+    $form = UserProfile::get_contact_form($user);
     if ($form->validate()) {
       Sendmail::factory()
         ->to($user->email)
-        ->subject(html::clean($form->message->subject->value))
+        ->subject(HTML::clean($form->message->subject->value))
         ->header("Mime-Version", "1.0")
         ->header("Content-type", "text/html; charset=UTF-8")
         ->reply_to($form->message->reply_to->value)
-        ->message(html::purify($form->message->message->value))
+        ->message(HTML::purify($form->message->message->value))
         ->send();
-      message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
-      json::reply(array("result" => "success"));
+      Message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
+      JSON::reply(array("result" => "success"));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -85,17 +85,17 @@ class Gallery_Controller_UserProfile extends Controller {
       return false;
     }
 
-    if ($user->id == identity::active_user()->id) {
+    if ($user->id == Identity::active_user()->id) {
       // You can always view your own profile
       return true;
     }
 
-    switch (module::get_var("gallery", "show_user_profiles_to")) {
+    switch (Module::get_var("gallery", "show_user_profiles_to")) {
     case "admin_users":
-      return identity::active_user()->admin;
+      return Identity::active_user()->admin;
 
     case "registered_users":
-      return !identity::active_user()->guest;
+      return !Identity::active_user()->guest;
 
     case "everybody":
       return true;

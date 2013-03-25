@@ -20,18 +20,18 @@
 class Gallery_Controller_Photos extends Controller_Items {
   public function show($photo) {
     if (!is_object($photo)) {
-      // show() must be public because we route to it in url::parse_url(), so make
+      // show() must be public because we route to it in URL::parse_url(), so make
       // sure that we're actually receiving an object
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    access::required("view", $photo);
+    Access::required("view", $photo);
 
-    $template = new Theme_View("page.html", "item", "photo");
+    $template = new View_Theme("page.html", "item", "photo");
     $template->set_global(array("item" => $photo,
                                 "children" => array(),
                                 "children_count" => 0));
-    $template->set_global(item::get_display_context($photo));
+    $template->set_global(Item::get_display_context($photo));
     $template->content = new View("photo.html");
 
     $photo->increment_view_count();
@@ -40,12 +40,12 @@ class Gallery_Controller_Photos extends Controller_Items {
   }
 
   public function update($photo_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
     $photo = ORM::factory("item", $photo_id);
-    access::required("view", $photo);
-    access::required("edit", $photo);
+    Access::required("view", $photo);
+    Access::required("edit", $photo);
 
-    $form = photo::get_edit_form($photo);
+    $form = Photo::get_edit_form($photo);
     try {
       $valid = $form->validate();
       $photo->title = $form->edit_item->title->value;
@@ -63,29 +63,29 @@ class Gallery_Controller_Photos extends Controller_Items {
 
     if ($valid) {
       $photo->save();
-      module::event("item_edit_form_completed", $photo, $form);
+      Module::event("item_edit_form_completed", $photo, $form);
 
-      log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
-      message::success(
-        t("Saved photo %photo_title", array("photo_title" => html::purify($photo->title))));
+      Log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
+      Message::success(
+        t("Saved photo %photo_title", array("photo_title" => HTML::purify($photo->title))));
 
       if ($form->from_id->value == $photo->id) {
-        // Use the new url; it might have changed.
-        json::reply(array("result" => "success", "location" => $photo->url()));
+        // Use the new URL; it might have changed.
+        JSON::reply(array("result" => "success", "location" => $photo->url()));
       } else {
         // Stay on the same page
-        json::reply(array("result" => "success"));
+        JSON::reply(array("result" => "success"));
       }
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function form_edit($photo_id) {
     $photo = ORM::factory("item", $photo_id);
-    access::required("view", $photo);
-    access::required("edit", $photo);
+    Access::required("view", $photo);
+    Access::required("edit", $photo);
 
-    print photo::get_edit_form($photo);
+    print Photo::get_edit_form($photo);
   }
 }

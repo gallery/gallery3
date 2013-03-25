@@ -19,16 +19,16 @@
  */
 class Gallery_Controller_L10n_Client extends Controller {
   public function save() {
-    access::verify_csrf();
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    Access::verify_csrf();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
 
-    $locale = Gallery_I18n::instance()->locale();
+    $locale = I18n::instance()->locale();
     $input = Input::instance();
     $key = $input->post("l10n-message-key");
 
-    $root_message = ORM::factory("incoming_translation")
+    $root_message = ORM::factory("IncomingTranslation")
       ->where("key", "=", $key)
       ->where("locale", "=", "root")
       ->find();
@@ -36,11 +36,11 @@ class Gallery_Controller_L10n_Client extends Controller {
     if (!$root_message->loaded()) {
       throw new Exception("@todo bad request data / illegal state");
     }
-    $is_plural = Gallery_I18n::is_plural_message(unserialize($root_message->message));
+    $is_plural = I18n::is_plural_message(unserialize($root_message->message));
 
     $is_empty = true;
     if ($is_plural) {
-      $plural_forms = l10n_client::plural_forms($locale);
+      $plural_forms = L10n_Client::plural_forms($locale);
       $translation = array();
       foreach($plural_forms as $plural_form) {
         $value = $input->post("l10n-edit-plural-translation-$plural_form");
@@ -58,7 +58,7 @@ class Gallery_Controller_L10n_Client extends Controller {
       }
     }
 
-    $entry = ORM::factory("outgoing_translation")
+    $entry = ORM::factory("OutgoingTranslation")
       ->where("key", "=", $key)
       ->where("locale", "=", $locale)
       ->find();
@@ -77,7 +77,7 @@ class Gallery_Controller_L10n_Client extends Controller {
 
       $entry->translation = serialize($translation);
 
-      $entry_from_incoming = ORM::factory("incoming_translation")
+      $entry_from_incoming = ORM::factory("IncomingTranslation")
         ->where("key", "=", $key)
         ->where("locale", "=", $locale)
         ->find();
@@ -89,15 +89,15 @@ class Gallery_Controller_L10n_Client extends Controller {
       $entry->save();
     }
 
-    Gallery_I18n::clear_cache($locale);
+    I18n::clear_cache($locale);
 
-    json::reply(new stdClass());
+    JSON::reply(new stdClass());
   }
 
   public function toggle_l10n_mode() {
-    access::verify_csrf();
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    Access::verify_csrf();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
 
     $session = Session::instance();
@@ -109,7 +109,7 @@ class Gallery_Controller_L10n_Client extends Controller {
       $redirect_url .= "#l10n-client";
     }
 
-    url::redirect($redirect_url);
+    URL::redirect($redirect_url);
   }
 
   private static function _l10n_client_search_form() {
@@ -123,7 +123,7 @@ class Gallery_Controller_L10n_Client extends Controller {
   public static function l10n_form() {
     if (Input::instance()->get("show_all_l10n_messages")) {
       $calls = array();
-      foreach (db::build()
+      foreach (DB::build()
                ->select("key", "message")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
@@ -131,13 +131,13 @@ class Gallery_Controller_L10n_Client extends Controller {
         $calls[$row->key] = array(unserialize($row->message), array());
       }
     } else {
-      $calls = Gallery_I18n::instance()->call_log();
+      $calls = I18n::instance()->call_log();
     }
-    $locale = Gallery_I18n::instance()->locale();
+    $locale = I18n::instance()->locale();
 
     if ($calls) {
       $translations = array();
-      foreach (db::build()
+      foreach (DB::build()
                ->select("key", "translation")
                ->from("incoming_translations")
                ->where("locale", "=", $locale)
@@ -145,7 +145,7 @@ class Gallery_Controller_L10n_Client extends Controller {
         $translations[$row->key] = unserialize($row->translation);
       }
       // Override incoming with outgoing...
-      foreach (db::build()
+      foreach (DB::build()
                ->select("key", "translation")
                ->from("outgoing_translations")
                ->where("locale", "=", $locale)
@@ -158,7 +158,7 @@ class Gallery_Controller_L10n_Client extends Controller {
       foreach ($calls as $key => $call) {
         list ($message, $options) = $call;
         // Ensure that the message is in the DB
-        l10n_scanner::process_message($message, $cache);
+        L10n_Scanner::process_message($message, $cache);
         // Note: Not interpolating placeholders for the actual translation input field.
         // TODO: Might show a preview w/ interpolations (using $options)
         $translation = isset($translations[$key]) ? $translations[$key] : '';
@@ -170,7 +170,7 @@ class Gallery_Controller_L10n_Client extends Controller {
       $v = new View('l10n_client.html');
       $v->string_list = $string_list;
       $v->l10n_search_form = self::_l10n_client_search_form();
-      $v->plural_forms = l10n_client::plural_forms($locale);
+      $v->plural_forms = L10n_Client::plural_forms($locale);
       return $v;
     }
 

@@ -44,12 +44,12 @@ class Gallery_Controller_FileProxy extends Controller {
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
     // var_uri: gallery3/var/
-    $var_uri = url::file("var/");
+    $var_uri = URL::file("var/");
 
     // Make sure that the request is for a file inside var
     $offset = strpos(rawurldecode($request_uri), $var_uri);
     if ($offset !== 0) {
-      $e = new Kohana_404_Exception();
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 1;
       throw $e;
     }
@@ -61,42 +61,42 @@ class Gallery_Controller_FileProxy extends Controller {
     // path: foo/bar.jpg
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      $e = new Kohana_404_Exception();
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 2;
       throw $e;
     }
 
     // Get the item model using the path and type (which corresponds to a var subdir)
-    $item = item::find_by_path($path, $type);
+    $item = Item::find_by_path($path, $type);
 
     if (!$item->loaded()) {
-      $e = new Kohana_404_Exception();
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 3;
       throw $e;
     }
 
     // Make sure we have access to the item
-    if (!access::can("view", $item)) {
-      $e = new Kohana_404_Exception();
+    if (!Access::can("view", $item)) {
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 4;
       throw $e;
     }
 
     // Make sure we have view_full access to the original
-    if ($type == "albums" && !access::can("view_full", $item)) {
-      $e = new Kohana_404_Exception();
+    if ($type == "albums" && !Access::can("view_full", $item)) {
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 5;
       throw $e;
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      $e = new Kohana_404_Exception();
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 6;
       throw $e;
     }
 
-    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
+    // Note: this code is roughly duplicated in Hook_Rest_Data, so if you modify this, please look to
     // see if you should make the same change there as well.
 
     if ($type == "albums") {
@@ -108,12 +108,12 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     if (!file_exists($file)) {
-      $e = new Kohana_404_Exception();
+      $e = new HTTP_Exception_404();
       $e->test_fail_code = 7;
       throw $e;
     }
 
-    if (gallery::show_profiler()) {
+    if (Gallery::show_profiler()) {
       Profiler::enable();
       $profiler = new Profiler();
       $profiler->render();

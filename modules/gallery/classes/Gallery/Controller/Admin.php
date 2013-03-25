@@ -21,12 +21,12 @@ class Gallery_Controller_Admin extends Controller {
   private $theme;
 
   public function __construct($theme=null) {
-    if (!identity::active_user()->admin) {
-      if (identity::active_user()->guest) {
-        Session::instance()->set("continue_url", url::abs_current(true));
-        url::redirect("login");
+    if (!Identity::active_user()->admin) {
+      if (Identity::active_user()->guest) {
+        Session::instance()->set("continue_url", URL::abs_current(true));
+        URL::redirect("login");
       } else {
-        access::forbidden();
+        Access::forbidden();
       }
     }
 
@@ -37,18 +37,18 @@ class Gallery_Controller_Admin extends Controller {
     if (Input::instance()->get("reauth_check")) {
       return self::_reauth_check();
     }
-    if (auth::must_reauth_for_admin_area()) {
+    if (Auth::must_reauth_for_admin_area()) {
       return self::_prompt_for_reauth($controller_name, $args);
     }
 
-    if (request::method() == "post") {
-      access::verify_csrf();
+    if (Request::method() == "post") {
+      Access::verify_csrf();
     }
 
     if ($controller_name == "index") {
       $controller_name = "dashboard";
     }
-    $controller_name = "Admin_{$controller_name}_Controller";
+    $controller_name = "Controller_Admin_{$controller_name}";
     if ($args) {
       $method = array_shift($args);
     } else {
@@ -56,7 +56,7 @@ class Gallery_Controller_Admin extends Controller {
     }
 
     if (!class_exists($controller_name) || !method_exists($controller_name, $method)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     call_user_func_array(array(new $controller_name, $method), $args);
@@ -66,7 +66,7 @@ class Gallery_Controller_Admin extends Controller {
     $session = Session::instance();
     $last_active_auth = $session->get("active_auth_timestamp", 0);
     $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
-    $admin_area_timeout = module::get_var("gallery", "admin_area_timeout");
+    $admin_area_timeout = Module::get_var("gallery", "admin_area_timeout");
 
     $time_remaining = max($last_active_auth, $last_admin_area_activity) +
       $admin_area_timeout - time();
@@ -74,21 +74,21 @@ class Gallery_Controller_Admin extends Controller {
     $result = new stdClass();
     $result->result = "success";
     if ($time_remaining < 30) {
-      message::success(t("Automatically logged out of the admin area for your security"));
-      $result->location = url::abs_site("");
+      Message::success(t("Automatically logged out of the admin area for your security"));
+      $result->location = URL::abs_site("");
     }
 
-    json::reply($result);
+    JSON::reply($result);
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {
-    if (request::method() == "get") {
+    if (Request::method() == "get") {
       // Avoid anti-phishing protection by passing the url as session variable.
-      Session::instance()->set("continue_url", url::abs_current(true));
+      Session::instance()->set("continue_url", URL::abs_current(true));
     }
     // Save the is_ajax value as we lose it, if set, when we redirect
-    Session::instance()->set("is_ajax_request", request::is_ajax());
-    url::redirect("reauthenticate");
+    Session::instance()->set("is_ajax_request", Request::is_ajax());
+    URL::redirect("reauthenticate");
   }
 }
 

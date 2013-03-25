@@ -28,25 +28,25 @@ class Gallery_Gallery {
    * down for maintenance" page.
    */
   static function maintenance_mode() {
-    if (module::get_var("gallery", "maintenance_mode", 0) &&
-        !identity::active_user()->admin) {
+    if (Module::get_var("gallery", "maintenance_mode", 0) &&
+        !Identity::active_user()->admin) {
       try {
-        $class = new ReflectionClass(ucfirst(Router::$controller).'_Controller');
+        $class = new ReflectionClass('Controller_'.ucfirst(Route::$controller));
         $allowed = $class->getConstant("ALLOW_MAINTENANCE_MODE") === true;
       } catch (ReflectionClass $e) {
         $allowed = false;
       }
       if (!$allowed) {
-        if (Router::$controller == "admin") {
+        if (Route::$controller == "admin") {
           // At this point we're in the admin theme and it doesn't have a themed login page, so
           // we can't just swap in the login controller and have it work.  So redirect back to the
           // root item where we'll run this code again with the site theme.
-          url::redirect(item::root()->abs_url());
+          URL::redirect(Item::root()->abs_url());
         } else {
-          Session::instance()->set("continue_url", url::abs_site("admin/maintenance"));
-          Router::$controller = "login";
-          Router::$controller_path = MODPATH . "gallery/controllers/login.php";
-          Router::$method = "html";
+          Session::instance()->set("continue_url", URL::abs_site("admin/maintenance"));
+          Route::$controller = "login";
+          Route::$controller_path = MODPATH . "gallery/controllers/login.php";
+          Route::$method = "html";
         }
       }
     }
@@ -57,26 +57,26 @@ class Gallery_Gallery {
    * the login page.
    */
   static function private_gallery() {
-    if (identity::active_user()->guest &&
-        !access::user_can(identity::guest(), "view", item::root()) &&
+    if (Identity::active_user()->guest &&
+        !Access::user_can(Identity::guest(), "view", Item::root()) &&
         php_sapi_name() != "cli") {
       try {
-        $class = new ReflectionClass(ucfirst(Router::$controller).'_Controller');
+        $class = new ReflectionClass('Controller_'.ucfirst(Route::$controller));
         $allowed = $class->getConstant("ALLOW_PRIVATE_GALLERY") === true;
       } catch (ReflectionClass $e) {
         $allowed = false;
       }
       if (!$allowed) {
-        if (Router::$controller == "admin") {
+        if (Route::$controller == "admin") {
           // At this point we're in the admin theme and it doesn't have a themed login page, so
           // we can't just swap in the login controller and have it work.  So redirect back to the
           // root item where we'll run this code again with the site theme.
-          url::redirect(item::root()->abs_url());
+          URL::redirect(Item::root()->abs_url());
         } else {
-          Session::instance()->set("continue_url", url::abs_current());
-          Router::$controller = "login";
-          Router::$controller_path = MODPATH . "gallery/controllers/login.php";
-          Router::$method = "html";
+          Session::instance()->set("continue_url", URL::abs_current());
+          Route::$controller = "login";
+          Route::$controller_path = MODPATH . "gallery/controllers/login.php";
+          Route::$method = "html";
         }
       }
     }
@@ -85,7 +85,7 @@ class Gallery_Gallery {
   /**
    * This function is called when the Gallery is fully initialized.  We relay it to modules as the
    * "gallery_ready" event.  Any module that wants to perform an action at the start of every
-   * request should implement the <module>_event::gallery_ready() handler.
+   * request should implement the <module>Event::gallery_ready() handler.
    */
   static function ready() {
     // Don't keep a session for robots; it's a waste of database space.
@@ -93,16 +93,16 @@ class Gallery_Gallery {
       Session::instance()->destroy();
     }
 
-    module::event("gallery_ready");
+    Module::event("gallery_ready");
   }
 
   /**
    * This function is called right before the Kohana framework shuts down.  We relay it to modules
    * as the "gallery_shutdown" event.  Any module that wants to perform an action at the start of
-   * every request should implement the <module>_event::gallery_shutdown() handler.
+   * every request should implement the <module>Event::gallery_shutdown() handler.
    */
   static function shutdown() {
-    module::event("gallery_shutdown");
+    Module::event("gallery_shutdown");
   }
 
   /**
@@ -111,7 +111,7 @@ class Gallery_Gallery {
    * @return string
    */
   static function date_time($timestamp) {
-    return date(module::get_var("gallery", "date_time_format"), $timestamp);
+    return date(Module::get_var("gallery", "date_time_format"), $timestamp);
   }
 
   /**
@@ -120,7 +120,7 @@ class Gallery_Gallery {
    * @return string
    */
   static function date($timestamp) {
-    return date(module::get_var("gallery", "date_format"), $timestamp);
+    return date(Module::get_var("gallery", "date_format"), $timestamp);
   }
 
   /**
@@ -129,7 +129,7 @@ class Gallery_Gallery {
    * @return string
    */
   static function time($timestamp) {
-    return date(module::get_var("gallery", "time_format", "H:i:s"), $timestamp);
+    return date(Module::get_var("gallery", "time_format", "H:i:s"), $timestamp);
   }
 
   /**
@@ -192,13 +192,13 @@ class Gallery_Gallery {
    * Return a string describing this version of Gallery and the type of release.
    */
   static function version_string() {
-    if (gallery::RELEASE_CHANNEL == "git") {
-      $build_number = gallery::build_number();
+    if (Gallery::RELEASE_CHANNEL == "git") {
+      $build_number = Gallery::build_number();
       return sprintf(
-        "%s (branch %s, %s)", gallery::VERSION, gallery::RELEASE_BRANCH,
+        "%s (branch %s, %s)", Gallery::VERSION, Gallery::RELEASE_BRANCH,
         $build_number ? " build $build_number" : "unknown build number");
     } else {
-      return sprintf("%s (%s)", gallery::VERSION, gallery::CODE_NAME);
+      return sprintf("%s (%s)", Gallery::VERSION, Gallery::CODE_NAME);
     }
   }
 

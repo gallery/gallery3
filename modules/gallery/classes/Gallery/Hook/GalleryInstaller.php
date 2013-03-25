@@ -219,10 +219,10 @@ class Gallery_Hook_GalleryInstaller {
       }
     }
 
-    access::register_permission("view", "View");
-    access::register_permission("view_full", "View full size");
-    access::register_permission("edit", "Edit");
-    access::register_permission("add", "Add");
+    Access::register_permission("view", "View");
+    Access::register_permission("view_full", "View full size");
+    Access::register_permission("edit", "Edit");
+    Access::register_permission("add", "Add");
 
     // Mark for translation (must be the same strings as used above)
     t("View full size");
@@ -232,7 +232,7 @@ class Gallery_Hook_GalleryInstaller {
 
     // Hardcode the first item to sidestep ORM validation rules
     $now = time();
-    db::build()->insert(
+    DB::build()->insert(
       "items",
       array("created" => $now,
             "description" => "",
@@ -250,25 +250,25 @@ class Gallery_Hook_GalleryInstaller {
             "weight" => 1))
       ->execute();
     $root = ORM::factory("item", 1);
-    access::add_item($root);
+    Access::add_item($root);
 
-    module::set_var("gallery", "active_site_theme", "wind");
-    module::set_var("gallery", "active_admin_theme", "admin_wind");
-    module::set_var("gallery", "page_size", 9);
-    module::set_var("gallery", "thumb_size", 200);
-    module::set_var("gallery", "resize_size", 640);
-    module::set_var("gallery", "default_locale", "en_US");
-    module::set_var("gallery", "image_quality", 75);
-    module::set_var("gallery", "image_sharpen", 15);
-    module::set_var("gallery", "upgrade_checker_auto_enabled", true);
+    Module::set_var("gallery", "active_site_theme", "wind");
+    Module::set_var("gallery", "active_admin_theme", "admin_wind");
+    Module::set_var("gallery", "page_size", 9);
+    Module::set_var("gallery", "thumb_size", 200);
+    Module::set_var("gallery", "resize_size", 640);
+    Module::set_var("gallery", "default_locale", "en_US");
+    Module::set_var("gallery", "image_quality", 75);
+    Module::set_var("gallery", "image_sharpen", 15);
+    Module::set_var("gallery", "upgrade_checker_auto_enabled", true);
 
     // Add rules for generating our thumbnails and resizes
-    graphics::add_rule(
-      "gallery", "thumb", "gallery_graphics::resize",
+    Graphics::add_rule(
+      "gallery", "thumb", "GalleryGraphics::resize",
       array("width" => 200, "height" => 200, "master" => Image::AUTO),
       100);
-    graphics::add_rule(
-      "gallery", "resize", "gallery_graphics::resize",
+    Graphics::add_rule(
+      "gallery", "resize", "GalleryGraphics::resize",
       array("width" => 640, "height" => 640, "master" => Image::AUTO),
       100);
 
@@ -276,60 +276,60 @@ class Gallery_Hook_GalleryInstaller {
     foreach (array("wind", "admin_wind") as $theme_name) {
       $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
                                     ArrayObject::ARRAY_AS_PROPS);
-      $theme = ORM::factory("theme");
+      $theme = ORM::factory("Theme");
       $theme->name = $theme_name;
       $theme->version = $theme_info->version;
       $theme->save();
     }
 
-    block_manager::add("dashboard_sidebar", "gallery", "block_adder");
-    block_manager::add("dashboard_sidebar", "gallery", "stats");
-    block_manager::add("dashboard_sidebar", "gallery", "platform_info");
-    block_manager::add("dashboard_sidebar", "gallery", "project_news");
-    block_manager::add("dashboard_center", "gallery", "welcome");
-    block_manager::add("dashboard_center", "gallery", "upgrade_checker");
-    block_manager::add("dashboard_center", "gallery", "photo_stream");
-    block_manager::add("dashboard_center", "gallery", "log_entries");
+    BlockManager::add("dashboard_sidebar", "gallery", "block_adder");
+    BlockManager::add("dashboard_sidebar", "gallery", "stats");
+    BlockManager::add("dashboard_sidebar", "gallery", "platform_info");
+    BlockManager::add("dashboard_sidebar", "gallery", "project_news");
+    BlockManager::add("dashboard_center", "gallery", "welcome");
+    BlockManager::add("dashboard_center", "gallery", "upgrade_checker");
+    BlockManager::add("dashboard_center", "gallery", "photo_stream");
+    BlockManager::add("dashboard_center", "gallery", "log_entries");
 
-    module::set_var("gallery", "choose_default_tookit", 1);
-    module::set_var("gallery", "date_format", "Y-M-d");
-    module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
-    module::set_var("gallery", "time_format", "H:i:s");
-    module::set_var("gallery", "show_credits", 1);
+    Module::set_var("gallery", "choose_default_tookit", 1);
+    Module::set_var("gallery", "date_format", "Y-M-d");
+    Module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
+    Module::set_var("gallery", "time_format", "H:i:s");
+    Module::set_var("gallery", "show_credits", 1);
     // Mark string for translation
     $powered_by_string = t("Powered by <a href=\"%url\">%gallery_version</a>",
                            array("locale" => "root"));
-    module::set_var("gallery", "credits", (string) $powered_by_string);
-    module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_var("gallery", "admin_area_timeout", 90 * 60);
-    module::set_var("gallery", "maintenance_mode", 0);
-    module::set_var("gallery", "visible_title_length", 15);
-    module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
-    module::set_var("gallery", "apple_touch_icon_url", "lib/images/apple-touch-icon.png");
-    module::set_var("gallery", "email_from", "");
-    module::set_var("gallery", "email_reply_to", "");
-    module::set_var("gallery", "email_line_length", 70);
-    module::set_var("gallery", "email_header_separator", serialize("\n"));
-    module::set_var("gallery", "show_user_profiles_to", "registered_users");
-    module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
-    module::set_var("gallery", "timezone", null);
-    module::set_var("gallery", "lock_timeout", 1);
-    module::set_var("gallery", "movie_extract_frame_time", 3);
-    module::set_var("gallery", "movie_allow_uploads", "autodetect");
+    Module::set_var("gallery", "credits", (string) $powered_by_string);
+    Module::set_var("gallery", "simultaneous_upload_limit", 5);
+    Module::set_var("gallery", "admin_area_timeout", 90 * 60);
+    Module::set_var("gallery", "maintenance_mode", 0);
+    Module::set_var("gallery", "visible_title_length", 15);
+    Module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
+    Module::set_var("gallery", "apple_touch_icon_url", "lib/images/apple-touch-icon.png");
+    Module::set_var("gallery", "email_from", "");
+    Module::set_var("gallery", "email_reply_to", "");
+    Module::set_var("gallery", "email_line_length", 70);
+    Module::set_var("gallery", "email_header_separator", serialize("\n"));
+    Module::set_var("gallery", "show_user_profiles_to", "registered_users");
+    Module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
+    Module::set_var("gallery", "timezone", null);
+    Module::set_var("gallery", "lock_timeout", 1);
+    Module::set_var("gallery", "movie_extract_frame_time", 3);
+    Module::set_var("gallery", "movie_allow_uploads", "autodetect");
   }
 
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      module::set_var("gallery", "date_format", "Y-M-d");
-      module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
-      module::set_var("gallery", "time_format", "H:i:s");
-      module::set_version("gallery", $version = 2);
+      Module::set_var("gallery", "date_format", "Y-M-d");
+      Module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
+      Module::set_var("gallery", "time_format", "H:i:s");
+      Module::set_version("gallery", $version = 2);
     }
 
     if ($version == 2) {
-      module::set_var("gallery", "show_credits", 1);
-      module::set_version("gallery", $version = 3);
+      Module::set_var("gallery", "show_credits", 1);
+      Module::set_version("gallery", $version = 3);
     }
 
     if ($version == 3) {
@@ -341,13 +341,13 @@ class Gallery_Hook_GalleryInstaller {
                  PRIMARY KEY (`id`),
                  KEY (`tags`))
                  DEFAULT CHARSET=utf8;");
-      module::set_version("gallery", $version = 4);
+      Module::set_version("gallery", $version = 4);
     }
 
     if ($version == 4) {
       Cache::instance()->delete_all();
       $db->query("ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
-      module::set_version("gallery", $version = 5);
+      Module::set_version("gallery", $version = 5);
     }
 
     if ($version == 5) {
@@ -355,17 +355,17 @@ class Gallery_Hook_GalleryInstaller {
       $db->query("ALTER TABLE {caches} DROP COLUMN `id`");
       $db->query("ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
       $db->query("ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
-      module::set_version("gallery", $version = 6);
+      Module::set_version("gallery", $version = 6);
     }
 
     if ($version == 6) {
-      module::clear_var("gallery", "version");
-      module::set_version("gallery", $version = 7);
+      Module::clear_var("gallery", "version");
+      Module::set_version("gallery", $version = 7);
     }
 
     if ($version == 7) {
-      $groups = identity::groups();
-      $permissions = ORM::factory("permission")->find_all();
+      $groups = Identity::groups();
+      $permissions = ORM::factory("Permission")->find_all();
       foreach($groups as $group) {
         foreach($permissions as $permission) {
           // Update access intents
@@ -378,25 +378,25 @@ class Gallery_Hook_GalleryInstaller {
           }
         }
       }
-      module::set_version("gallery", $version = 8);
+      Module::set_version("gallery", $version = 8);
     }
 
     if ($version == 8) {
       $db->query("ALTER TABLE {items} CHANGE COLUMN `left`  `left_ptr`  INT(9) NOT NULL;");
       $db->query("ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
-      module::set_version("gallery", $version = 9);
+      Module::set_version("gallery", $version = 9);
     }
 
     if ($version == 9) {
       $db->query("ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
 
-      module::set_version("gallery", $version = 10);
+      Module::set_version("gallery", $version = 10);
     }
 
     if ($version == 10) {
-      module::set_var("gallery", "image_sharpen", 15);
+      Module::set_var("gallery", "image_sharpen", 15);
 
-      module::set_version("gallery", $version = 11);
+      Module::set_version("gallery", $version = 11);
     }
 
     if ($version == 11) {
@@ -409,88 +409,88 @@ class Gallery_Hook_GalleryInstaller {
 
       // Flush all path caches because we're going to start urlencoding them.
       $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
-      module::set_version("gallery", $version = 12);
+      Module::set_version("gallery", $version = 12);
     }
 
     if ($version == 12) {
-      if (module::get_var("gallery", "active_site_theme") == "default") {
-        module::set_var("gallery", "active_site_theme", "wind");
+      if (Module::get_var("gallery", "active_site_theme") == "default") {
+        Module::set_var("gallery", "active_site_theme", "wind");
       }
-      if (module::get_var("gallery", "active_admin_theme") == "admin_default") {
-        module::set_var("gallery", "active_admin_theme", "admin_wind");
+      if (Module::get_var("gallery", "active_admin_theme") == "admin_default") {
+        Module::set_var("gallery", "active_admin_theme", "admin_wind");
       }
-      module::set_version("gallery", $version = 13);
+      Module::set_version("gallery", $version = 13);
     }
 
     if ($version == 13) {
       // Add rules for generating our thumbnails and resizes
       Database::instance()->query(
-        "UPDATE {graphics_rules} SET `operation` = CONCAT('gallery_graphics::', `operation`);");
-      module::set_version("gallery", $version = 14);
+        "UPDATE {graphics_rules} SET `operation` = CONCAT('GalleryGraphics::', `operation`);");
+      Module::set_version("gallery", $version = 14);
     }
 
     if ($version == 14) {
-      $sidebar_blocks = block_manager::get_active("site_sidebar");
+      $sidebar_blocks = BlockManager::get_active("site_sidebar");
       if (empty($sidebar_blocks)) {
-        $available_blocks = block_manager::get_available_site_blocks();
-        foreach  (array_keys(block_manager::get_available_site_blocks()) as $id) {
+        $available_blocks = BlockManager::get_available_site_blocks();
+        foreach  (array_keys(BlockManager::get_available_site_blocks()) as $id) {
           $sidebar_blocks[] = explode(":", $id);
         }
-        block_manager::set_active("site_sidebar", $sidebar_blocks);
+        BlockManager::set_active("site_sidebar", $sidebar_blocks);
       }
-      module::set_version("gallery", $version = 15);
+      Module::set_version("gallery", $version = 15);
     }
 
     if ($version == 15) {
-      module::set_var("gallery", "identity_provider", "user");
-      module::set_version("gallery", $version = 16);
+      Module::set_var("gallery", "identity_provider", "user");
+      Module::set_version("gallery", $version = 16);
     }
 
     // Convert block keys to an md5 hash of the module and block name
     if ($version == 16) {
       foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
-        $blocks = block_manager::get_active($location);
+        $blocks = BlockManager::get_active($location);
         $new_blocks = array();
         foreach ($blocks as $block) {
           $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
         }
-        block_manager::set_active($location, $new_blocks);
+        BlockManager::set_active($location, $new_blocks);
       }
-      module::set_version("gallery", $version = 17);
+      Module::set_version("gallery", $version = 17);
     }
 
     // We didn't like md5 hashes so convert block keys back to random keys to allow duplicates.
     if ($version == 17) {
       foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
-        $blocks = block_manager::get_active($location);
+        $blocks = BlockManager::get_active($location);
         $new_blocks = array();
         foreach ($blocks as $block) {
-          $new_blocks[random::int()] = $block;
+          $new_blocks[Random::int()] = $block;
         }
-        block_manager::set_active($location, $new_blocks);
+        BlockManager::set_active($location, $new_blocks);
       }
-      module::set_version("gallery", $version = 18);
+      Module::set_version("gallery", $version = 18);
     }
 
     // Rename blocks_site.sidebar to blocks_site_sidebar
     if ($version == 18) {
-      $blocks = block_manager::get_active("site.sidebar");
-      block_manager::set_active("site_sidebar", $blocks);
-      module::clear_var("gallery", "blocks_site.sidebar");
-      module::set_version("gallery", $version = 19);
+      $blocks = BlockManager::get_active("site.sidebar");
+      BlockManager::set_active("site_sidebar", $blocks);
+      Module::clear_var("gallery", "blocks_site.sidebar");
+      Module::set_version("gallery", $version = 19);
     }
 
     // Set a default for the number of simultaneous uploads
     // Version 20 was reverted in 57adefc5baa7a2b0dfcd3e736e80c2fa86d3bfa2, so skip it.
     if ($version == 19 || $version == 20) {
-      module::set_var("gallery", "simultaneous_upload_limit", 5);
-      module::set_version("gallery", $version = 21);
+      Module::set_var("gallery", "simultaneous_upload_limit", 5);
+      Module::set_version("gallery", $version = 21);
     }
 
     // Update the graphics rules table so that the maximum height for resizes is 640 not 480.
     // Fixes ticket #671
     if ($version == 21) {
-      $resize_rule = ORM::factory("graphics_rule")
+      $resize_rule = ORM::factory("GraphicsRule")
         ->where("id", "=", "2")
         ->find();
       // make sure it hasn't been changed already
@@ -500,29 +500,29 @@ class Gallery_Hook_GalleryInstaller {
         $resize_rule->args = serialize($args);
         $resize_rule->save();
       }
-      module::set_version("gallery", $version = 22);
+      Module::set_version("gallery", $version = 22);
     }
 
     // Update slug values to be legal.  We should have done this in the 11->12 upgrader, but I was
     // lazy.  Mea culpa!
     if ($version == 22) {
-      foreach (db::build()
+      foreach (DB::build()
                ->from("items")
                ->select("id", "slug")
-               ->where(db::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
+               ->where(DB::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
                ->execute() as $row) {
-        $new_slug = item::convert_filename_to_slug($row->slug);
+        $new_slug = Item::convert_filename_to_slug($row->slug);
         if (empty($new_slug)) {
-          $new_slug = random::int();
+          $new_slug = Random::int();
         }
-        db::build()
+        DB::build()
           ->update("items")
           ->set("slug", $new_slug)
           ->set("relative_url_cache", null)
           ->where("id", "=", $row->id)
           ->execute();
       }
-      module::set_version("gallery", $version = 23);
+      Module::set_version("gallery", $version = 23);
     }
 
     if ($version == 23) {
@@ -533,195 +533,195 @@ class Gallery_Hook_GalleryInstaller {
                   `time` int(9) NOT NULL,
                   PRIMARY KEY (`id`))
                   DEFAULT CHARSET=utf8;");
-      module::set_version("gallery", $version = 24);
+      Module::set_version("gallery", $version = 24);
     }
 
     if ($version == 24) {
       foreach (array("logs", "tmp", "uploads") as $dir) {
         self::_protect_directory(VARPATH . $dir);
       }
-      module::set_version("gallery", $version = 25);
+      Module::set_version("gallery", $version = 25);
     }
 
     if ($version == 25) {
-      db::build()
+      DB::build()
         ->update("items")
-        ->set("title", db::expr("`name`"))
+        ->set("title", DB::expr("`name`"))
         ->and_open()
         ->where("title", "IS", null)
         ->or_where("title", "=", "")
         ->close()
         ->execute();
-      module::set_version("gallery", $version = 26);
+      Module::set_version("gallery", $version = 26);
     }
 
     if ($version == 26) {
       if (in_array("failed_logins", Database::instance()->list_tables())) {
         $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
       }
-      module::set_version("gallery", $version = 27);
+      Module::set_version("gallery", $version = 27);
     }
 
     if ($version == 27) {
       // Set the admin area timeout to 90 minutes
-      module::set_var("gallery", "admin_area_timeout", 90 * 60);
-      module::set_version("gallery", $version = 28);
+      Module::set_var("gallery", "admin_area_timeout", 90 * 60);
+      Module::set_version("gallery", $version = 28);
     }
 
     if ($version == 28) {
-      module::set_var("gallery", "credits", "Powered by <a href=\"%url\">%gallery_version</a>");
-      module::set_version("gallery", $version = 29);
+      Module::set_var("gallery", "credits", "Powered by <a href=\"%url\">%gallery_version</a>");
+      Module::set_version("gallery", $version = 29);
     }
 
     if ($version == 29) {
       $db->query("ALTER TABLE {caches} ADD KEY (`key`);");
-      module::set_version("gallery", $version = 30);
+      Module::set_version("gallery", $version = 30);
     }
 
     if ($version == 30) {
-      module::set_var("gallery", "maintenance_mode", 0);
-      module::set_version("gallery", $version = 31);
+      Module::set_var("gallery", "maintenance_mode", 0);
+      Module::set_version("gallery", $version = 31);
     }
 
     if ($version == 31) {
       $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
       $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
-      db::update("modules")
-        ->set("weight", db::expr("`id`"))
+      DB::update("modules")
+        ->set("weight", DB::expr("`id`"))
         ->execute();
-      module::set_version("gallery", $version = 32);
+      Module::set_version("gallery", $version = 32);
     }
 
     if ($version == 32) {
       $db->query("ALTER TABLE {items} ADD KEY (`left_ptr`)");
-      module::set_version("gallery", $version = 33);
+      Module::set_version("gallery", $version = 33);
     }
 
     if ($version == 33) {
       $db->query("ALTER TABLE {access_caches} ADD KEY (`item_id`)");
-      module::set_version("gallery", $version = 34);
+      Module::set_version("gallery", $version = 34);
     }
 
     if ($version == 34) {
-      module::set_var("gallery", "visible_title_length", 15);
-      module::set_version("gallery", $version = 35);
+      Module::set_var("gallery", "visible_title_length", 15);
+      Module::set_version("gallery", $version = 35);
     }
 
     if ($version == 35) {
-      module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
-      module::set_version("gallery", $version = 36);
+      Module::set_var("gallery", "favicon_url", "lib/images/favicon.ico");
+      Module::set_version("gallery", $version = 36);
     }
 
     if ($version == 36) {
-      module::set_var("gallery", "email_from", "admin@example.com");
-      module::set_var("gallery", "email_reply_to", "public@example.com");
-      module::set_var("gallery", "email_line_length", 70);
-      module::set_var("gallery", "email_header_separator", serialize("\n"));
-      module::set_version("gallery", $version = 37);
+      Module::set_var("gallery", "email_from", "admin@example.com");
+      Module::set_var("gallery", "email_reply_to", "public@example.com");
+      Module::set_var("gallery", "email_line_length", 70);
+      Module::set_var("gallery", "email_header_separator", serialize("\n"));
+      Module::set_version("gallery", $version = 37);
     }
 
     // Changed our minds and decided that the initial value should be empty
     // But don't just reset it blindly, only do it if the value is version 37 default
     if ($version == 37) {
-      $email = module::get_var("gallery", "email_from", "");
+      $email = Module::get_var("gallery", "email_from", "");
       if ($email == "admin@example.com") {
-        module::set_var("gallery", "email_from", "");
+        Module::set_var("gallery", "email_from", "");
       }
-      $email = module::get_var("gallery", "email_reply_to", "");
+      $email = Module::get_var("gallery", "email_reply_to", "");
       if ($email == "admin@example.com") {
-        module::set_var("gallery", "email_reply_to", "");
+        Module::set_var("gallery", "email_reply_to", "");
       }
-      module::set_version("gallery", $version = 38);
+      Module::set_version("gallery", $version = 38);
     }
 
     if ($version == 38) {
-      module::set_var("gallery", "show_user_profiles_to", "registered_users");
-      module::set_version("gallery", $version = 39);
+      Module::set_var("gallery", "show_user_profiles_to", "registered_users");
+      Module::set_version("gallery", $version = 39);
     }
 
     if ($version == 39) {
-      module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
-      module::set_version("gallery", $version = 40);
+      Module::set_var("gallery", "extra_binary_paths", "/usr/local/bin:/opt/local/bin:/opt/bin");
+      Module::set_version("gallery", $version = 40);
     }
 
     if ($version == 40) {
-      module::clear_var("gallery", "_cache");
-      module::set_version("gallery", $version = 41);
+      Module::clear_var("gallery", "_cache");
+      Module::set_version("gallery", $version = 41);
     }
 
     if ($version == 41) {
       $db->query("TRUNCATE TABLE {caches}");
       $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
-      module::set_version("gallery", $version = 42);
+      Module::set_version("gallery", $version = 42);
     }
 
     if ($version == 42) {
       $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
-      module::set_version("gallery", $version = 43);
+      Module::set_version("gallery", $version = 43);
     }
 
     if ($version == 43) {
       $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
-      module::set_version("gallery", $version = 44);
+      Module::set_version("gallery", $version = 44);
     }
 
     if ($version == 44) {
       $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
-      module::set_version("gallery", $version = 45);
+      Module::set_version("gallery", $version = 45);
     }
 
     if ($version == 45) {
       // Splice the upgrade_checker block into the admin dashboard at the top
       // of the page, but under the welcome block if it's in the first position.
-      $blocks = block_manager::get_active("dashboard_center");
+      $blocks = BlockManager::get_active("dashboard_center");
       $index = count($blocks) && current($blocks) == array("gallery", "welcome") ? 1 : 0;
-      array_splice($blocks, $index, 0, array(random::int() => array("gallery", "upgrade_checker")));
-      block_manager::set_active("dashboard_center", $blocks);
+      array_splice($blocks, $index, 0, array(Random::int() => array("gallery", "upgrade_checker")));
+      BlockManager::set_active("dashboard_center", $blocks);
 
-      module::set_var("gallery", "upgrade_checker_auto_enabled", true);
-      module::set_version("gallery", $version = 46);
+      Module::set_var("gallery", "upgrade_checker_auto_enabled", true);
+      Module::set_version("gallery", $version = 46);
     }
 
     if ($version == 46) {
-      module::set_var("gallery", "apple_touch_icon_url", "lib/images/apple-touch-icon.png");
-      module::set_version("gallery", $version = 47);
+      Module::set_var("gallery", "apple_touch_icon_url", "lib/images/apple-touch-icon.png");
+      Module::set_version("gallery", $version = 47);
     }
 
     if ($version == 47 || $version == 48) {
       // Add configuration variable to set timezone.  Defaults to the currently
       // used timezone (from PHP configuration).  Note that in v48 we were
       // setting this value incorrectly, so we're going to stomp this value for v49.
-      module::set_var("gallery", "timezone", null);
-      module::set_version("gallery", $version = 49);
+      Module::set_var("gallery", "timezone", null);
+      Module::set_version("gallery", $version = 49);
     }
 
     if ($version == 49) {
-      // In v49 we changed the Item_Model validation code to disallow files with two dots in them,
+      // In v49 we changed the Model_Item validation code to disallow files with two dots in them,
       // but we didn't rename any files which fail to validate, so as soon as you do anything to
       // change those files (eg. as a side effect of getting the url or file path) it fails to
       // validate.  Fix those here.  This might be slow, but if it times out it can just pick up
       // where it left off.
-      foreach (db::build()
+      foreach (DB::build()
                ->from("items")
                ->select("id")
                ->where("type", "<>", "album")
-               ->where(db::expr("`name` REGEXP '\\\\..*\\\\.'"), "=", 1)
+               ->where(DB::expr("`name` REGEXP '\\\\..*\\\\.'"), "=", 1)
                ->order_by("id", "asc")
                ->execute() as $row) {
         set_time_limit(30);
         $item = ORM::factory("item", $row->id);
-        $item->name = legal_file::smash_extensions($item->name);
+        $item->name = LegalFile::smash_extensions($item->name);
         $item->save();
       }
-      module::set_version("gallery", $version = 50);
+      Module::set_version("gallery", $version = 50);
     }
 
     if ($version == 50) {
       // In v51, we added a lock_timeout variable so that administrators could edit the time out
       // from 1 second to a higher variable if their system runs concurrent parallel uploads for
       // instance.
-      module::set_var("gallery", "lock_timeout", 1);
-      module::set_version("gallery", $version = 51);
+      Module::set_var("gallery", "lock_timeout", 1);
+      Module::set_version("gallery", $version = 51);
     }
 
     if ($version == 51) {
@@ -729,23 +729,23 @@ class Gallery_Hook_GalleryInstaller {
       // extensions to their mime types (and allow extension of the list by other modules).  During
       // this process, we correctly mapped m4v files to video/x-m4v, correcting a previous error
       // where they were mapped to video/mp4.  This corrects the existing items.
-      db::build()
+      DB::build()
         ->update("items")
         ->set("mime_type", "video/x-m4v")
         ->where("name", "REGEXP", "\.m4v$") // case insensitive since name column is utf8_general_ci
         ->execute();
-      module::set_version("gallery", $version = 52);
+      Module::set_version("gallery", $version = 52);
     }
 
     if ($version == 52) {
       // In v53, we added the ability to change the default time used when extracting frames from
       // movies.  Previously we hard-coded this at 3 seconds, so we use that as the default.
-      module::set_var("gallery", "movie_extract_frame_time", 3);
-      module::set_version("gallery", $version = 53);
+      Module::set_var("gallery", "movie_extract_frame_time", 3);
+      Module::set_version("gallery", $version = 53);
     }
 
     if ($version == 53) {
-      // In v54, we changed how we check for name and slug conflicts in Item_Model.  Previously,
+      // In v54, we changed how we check for name and slug conflicts in Model_Item.  Previously,
       // we checked the whole filename.  As a result, "foo.jpg" and "foo.png" were not considered
       // conflicting if their slugs were different (a rare case in practice since server_add and
       // uploader would give them both the same slug "foo").  Now, we check the filename without its
@@ -755,9 +755,9 @@ class Gallery_Hook_GalleryInstaller {
 
       // Find and loop through each conflict (e.g. "foo.jpg", "foo.png", and "foo.flv" are one
       // conflict; "bar.jpg", "bar.png", and "bar.flv" are another)
-      foreach (db::build()
+      foreach (DB::build()
                ->select_distinct(array("parent_base_name" =>
-                 db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+                 DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
                ->select(array("C" => "COUNT(\"*\")"))
                ->from("items")
                ->where("type", "<>", "album")
@@ -767,7 +767,7 @@ class Gallery_Hook_GalleryInstaller {
         list ($parent_id, $base_name) = explode(":", $conflict->parent_base_name, 2);
         $base_name_escaped = Database::escape_for_like($base_name);
         // Loop through the items for each conflict
-        foreach (db::build()
+        foreach (DB::build()
                  ->from("items")
                  ->select("id")
                  ->where("type", "<>", "album")
@@ -778,48 +778,48 @@ class Gallery_Hook_GalleryInstaller {
                  ->execute() as $row) {
           set_time_limit(30);
           $item = ORM::factory("item", $row->id);
-          $item->name = $item->name;  // this will force Item_Model to check for conflicts on save
+          $item->name = $item->name;  // this will force Model_Item to check for conflicts on save
           $item->save();
         }
       }
-      module::set_version("gallery", $version = 54);
+      Module::set_version("gallery", $version = 54);
     }
 
     if ($version == 54) {
       $db->query("ALTER TABLE {items} ADD KEY `relative_path_cache` (`relative_path_cache`)");
-      module::set_version("gallery", $version = 55);
+      Module::set_version("gallery", $version = 55);
     }
 
     if ($version == 55) {
       // In v56, we added the ability to change the default behavior regarding movie uploads.  It
       // can be set to "always", "never", or "autodetect" to match the previous behavior where they
       // are allowed only if FFmpeg is found.
-      module::set_var("gallery", "movie_allow_uploads", "autodetect");
-      module::set_version("gallery", $version = 56);
+      Module::set_var("gallery", "movie_allow_uploads", "autodetect");
+      Module::set_version("gallery", $version = 56);
     }
 
     if ($version == 56) {
       // Cleanup possible instances where resize_dirty of albums or movies was set to 0.  This is
       // unlikely to have occurred, and doesn't currently matter much since albums and movies don't
       // have resize images anyway.  However, it may be useful to be consistent here going forward.
-      db::build()
+      DB::build()
         ->update("items")
         ->set("resize_dirty", 1)
         ->where("type", "<>", "photo")
         ->execute();
-      module::set_version("gallery", $version = 57);
+      Module::set_version("gallery", $version = 57);
     }
 
     if ($version == 57) {
-      // In v58 we changed the Item_Model validation code to disallow files or directories with
+      // In v58 we changed the Model_Item validation code to disallow files or directories with
       // backslashes in them, and we need to fix any existing items that have them.  This is
       // pretty unlikely, as having backslashes would have probably already caused other issues for
       // users, but we should check anyway.  This might be slow, but if it times out it can just
       // pick up where it left off.
-      foreach (db::build()
+      foreach (DB::build()
                ->from("items")
                ->select("id")
-               ->where(db::expr("`name` REGEXP '\\\\\\\\'"), "=", 1)  // one \, 3x escaped
+               ->where(DB::expr("`name` REGEXP '\\\\\\\\'"), "=", 1)  // one \, 3x escaped
                ->order_by("id", "asc")
                ->execute() as $row) {
         set_time_limit(30);
@@ -827,7 +827,7 @@ class Gallery_Hook_GalleryInstaller {
         $item->name = str_replace("\\", "_", $item->name);
         $item->save();
       }
-      module::set_version("gallery", $version = 58);
+      Module::set_version("gallery", $version = 58);
     }
   }
 

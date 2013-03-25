@@ -33,7 +33,7 @@ class Gallery_Hook_Rest_Items {
    *
    *   type=<comma separate list of photo, movie or album>
    *     Limit the type to types in this list, eg: "type=photo,movie".
-   *     Also limits the types returned in the member collections (same behaviour as item_rest).
+   *     Also limits the types returned in the member collections (same behaviour as Hook_Rest_Item).
    *     Ignored if ancestors_for is set.
    */
   static function get($request) {
@@ -47,22 +47,22 @@ class Gallery_Hook_Rest_Items {
 
       foreach (json_decode($request->params->urls) as $url) {
         $item = rest::resolve($url);
-        if (!access::can("view", $item)) {
+        if (!Access::can("view", $item)) {
           continue;
         }
 
         if (empty($types) || in_array($item->type, $types)) {
-          $items[] = items_rest::_format_restful_item($item, $types);
+          $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
         }
       }
     } else if (isset($request->params->ancestors_for)) {
       $item = rest::resolve($request->params->ancestors_for);
-      if (!access::can("view", $item)) {
-        throw new Kohana_404_Exception();
+      if (!Access::can("view", $item)) {
+        throw new HTTP_Exception_404();
       }
-      $items[] = items_rest::_format_restful_item($item, $types);
+      $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
       while (($item = $item->parent()) != null) {
-        array_unshift($items, items_rest::_format_restful_item($item, $types));
+        array_unshift($items, Hook_Rest_Items::_format_restful_item($item, $types));
       };
     }
 
@@ -71,8 +71,8 @@ class Gallery_Hook_Rest_Items {
 
   static function resolve($id) {
     $item = ORM::factory("item", $id);
-    if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
     return $item;
   }

@@ -26,9 +26,9 @@ class Gallery_Model_Log extends ORM {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       try {
-        return identity::lookup_user($this->user_id);
+        return Identity::lookup_user($this->user_id);
       } catch (Exception $e) {
-        Kohana_Log::add("alert", "Unable to load user with id $this->user_id");
+        Log::add("alert", "Unable to load user with id $this->user_id");
         return null;
       }
     } else {

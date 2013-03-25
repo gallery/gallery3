@@ -28,7 +28,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
                    "03:45:19.00" => 3 * 3600 + 45 * 60 + 19,
                    "126:45:19.00" => 126 * 3600 + 45 * 60 + 19);
     foreach ($times as $hhmmssdd => $seconds) {
-      $this->assert_equal($hhmmssdd, movie::seconds_to_hhmmssdd($seconds));
+      $this->assert_equal($hhmmssdd, Movie::seconds_to_hhmmssdd($seconds));
     }
   }
 
@@ -43,19 +43,19 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
                    "03:45:19.00" => 3 * 3600 + 45 * 60 + 19,
                    "126:45:19.00" => 126 * 3600 + 45 * 60 + 19);
     foreach ($times as $hhmmssdd => $seconds) {
-      $this->assert_equal($seconds, movie::hhmmssdd_to_seconds($hhmmssdd));
+      $this->assert_equal($seconds, Movie::hhmmssdd_to_seconds($hhmmssdd));
     }
   }
 
   public function get_file_metadata_test() {
     $movie = test::random_movie();
     $this->assert_equal(array(360, 288, "video/x-flv", "flv", 6.00),
-                        movie::get_file_metadata($movie->file_path()));
+                        Movie::get_file_metadata($movie->file_path()));
   }
 
   public function get_file_metadata_with_non_existent_file_test() {
     try {
-      $metadata = movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
+      $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
@@ -66,7 +66,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_no_extension");
     // Since mime type and extension are based solely on the filename, this is considered invalid.
     try {
-      $metadata = movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension");
+      $metadata = Movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension");
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
@@ -76,7 +76,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function get_file_metadata_with_illegal_extension_test() {
     try {
-      $metadata = movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
+      $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
@@ -87,7 +87,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_php_extension.php");
     // Since mime type and extension are based solely on the filename, this is considered invalid.
     try {
-      $metadata = movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php");
+      $metadata = Movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php");
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
@@ -102,7 +102,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     // isn't a really a security problem, since the filename doesn't have a php extension and
     // therefore will never be executed.
     $this->assert_equal(array(0, 0, "video/x-flv", "flv", 0),
-                        movie::get_file_metadata(TMPPATH . "test_php_with_flv_extension.flv"));
+                        Movie::get_file_metadata(TMPPATH . "test_php_with_flv_extension.flv"));
     unlink(TMPPATH . "test_php_with_flv_extension.flv");
   }
 }

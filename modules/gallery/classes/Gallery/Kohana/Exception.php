@@ -22,8 +22,8 @@ class Gallery_Kohana_Exception extends Kohana_Kohana_Exception {
    * Dump out the full stack trace as part of the text representation of the exception.
    */
   public static function text($e) {
-    if ($e instanceof Kohana_404_Exception) {
-      return "File not found: " . rawurlencode(Router::$complete_uri);
+    if ($e instanceof HTTP_Exception_404) {
+      return "File not found: " . rawurlencode(Route::$complete_uri);
     } else {
       return sprintf(
         "%s [ %s ]: %s\n%s [ %s ]\n%s",
@@ -69,7 +69,7 @@ class Gallery_Kohana_Exception extends Kohana_Kohana_Exception {
       if ($value instanceof Database) {
         // Elide database password, host, name, user, etc.
         return get_class($value) . ' object - details omitted for display';
-      } else if ($value instanceof User_Model) {
+      } else if ($value instanceof Model_User) {
         return get_class($value) . ' object for "' . $value->name . '" - details omitted for display';
       }
       return self::_sanitize_for_dump((array) $value, $key, $max_level - 1);
@@ -96,6 +96,6 @@ class Gallery_Kohana_Exception extends Kohana_Kohana_Exception {
   }
 
   public static function debug_path($file) {
-    return html::clean(parent::debug_path($file));
+    return HTML::clean(parent::debug_path($file));
   }
 }

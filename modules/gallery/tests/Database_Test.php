@@ -19,14 +19,14 @@
  */
 class Database_Test extends Gallery_Unit_Test_Case {
   function setup() {
-    $config = Kohana_Config::instance();
+    $config = Config::instance();
     $config->set("database.mock.connection.type", "mock");
     $config->set("database.mock.cache", false);
     $config->set("database.mock.table_prefix", "g_");
   }
 
   function simple_where_test() {
-    $sql = db::build("mock")
+    $sql = DB::build("mock")
       ->select("some_column")
       ->from("some_table")
       ->where("a", "=", 1)
@@ -37,7 +37,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function compound_where_test() {
-    $sql = db::build("mock")
+    $sql = DB::build("mock")
       ->select()
       ->where("outer1", "=", 1)
       ->and_open()
@@ -53,7 +53,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function group_first_test() {
-    $sql = db::build("mock")
+    $sql = DB::build("mock")
       ->select()
       ->and_open()
       ->where("inner1", "=", 1)
@@ -69,7 +69,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function where_array_test() {
-    $sql = db::build("mock")
+    $sql = DB::build("mock")
       ->select()
       ->where("outer1", "=", 1)
       ->and_open()
@@ -85,7 +85,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function notlike_test() {
-    $sql = db::build("mock")
+    $sql = DB::build("mock")
       ->select()
       ->where("outer1", "=", 1)
       ->or_open()
@@ -138,7 +138,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function prefix_no_replacement_test() {
-    $sql = db::build("mock")
+    $sql = DB::build("mock")
       ->from("test_tables")
       ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))

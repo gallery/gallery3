@@ -19,7 +19,7 @@
  */
 class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function teardown() {
-    identity::set_active_user(identity::admin_user());
+    Identity::set_active_user(Identity::admin_user());
   }
 
   public function resolve_test() {
@@ -31,13 +31,13 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function resolve_needs_permission_test() {
     $album = test::random_album();
     $photo = test::random_photo($album);
-    $album->reload();  // new photo changed the album in the db
+    $album->reload();  // new Photo changed the album in the db
 
-    access::deny(identity::everybody(), "view", $album);
-    identity::set_active_user(identity::guest());
+    Access::deny(Identity::everybody(), "view", $album);
+    Identity::set_active_user(Identity::guest());
 
     try {
-      data_rest::resolve($photo->id);
+      Hook_Rest_Data::resolve($photo->id);
       $this->assert_true(false);
     } catch (Kohana_404_Exception $e) {
       // pass
@@ -52,13 +52,13 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params = new stdClass();
 
     $request->params->size = "thumb";
-    $this->assert_same($photo->thumb_path(), data_rest::get($request));
+    $this->assert_same($photo->thumb_path(), Hook_Rest_Data::get($request));
 
     $request->params->size = "resize";
-    $this->assert_same($photo->resize_path(), data_rest::get($request));
+    $this->assert_same($photo->resize_path(), Hook_Rest_Data::get($request));
 
     $request->params->size = "full";
-    $this->assert_same($photo->file_path(), data_rest::get($request));
+    $this->assert_same($photo->file_path(), Hook_Rest_Data::get($request));
   }
 
   public function illegal_access_test() {
@@ -66,8 +66,8 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo($album);
     $album->reload();
 
-    access::deny(identity::everybody(), "view", $album);
-    identity::set_active_user(identity::guest());
+    Access::deny(Identity::everybody(), "view", $album);
+    Identity::set_active_user(Identity::guest());
 
     $request = new stdClass();
     $request->url = rest::url("data", $photo, "thumb");
@@ -75,7 +75,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->size = "thumb";
 
     try {
-      data_rest::get($request);
+      Hook_Rest_Data::get($request);
       $this->assert_true(false);
     } catch (Kohana_404_Exception $e) {
       // pass
@@ -93,7 +93,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     unlink($photo->thumb_path());  // oops!
 
     try {
-      data_rest::get($request);
+      Hook_Rest_Data::get($request);
       $this->assert_true(false);
     } catch (Kohana_404_Exception $e) {
       // pass
@@ -104,8 +104,8 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo();
 
     $this->assert_same(
-      url::abs_site("rest/data/{$photo->id}?size=thumb&m=" . filemtime($photo->thumb_path())),
-      data_rest::url($photo, "thumb"));
+      URL::abs_site("rest/data/{$photo->id}?size=thumb&m=" . filemtime($photo->thumb_path())),
+      Hook_Rest_Data::url($photo, "thumb"));
   }
 }
 

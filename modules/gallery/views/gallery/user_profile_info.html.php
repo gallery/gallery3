@@ -2,8 +2,8 @@
 <table>
   <? foreach ($user_profile_data as $label => $value): ?>
   <tr>
-    <th><?= html::clean($label) ?></th>
-    <td><?= html::purify($value) ?></td>
+    <th><?= HTML::clean($label) ?></th>
+    <td><?= HTML::purify($value) ?></td>
   </tr>
   <? endforeach ?>
 </table>

@@ -1,12 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?= form::open($action, array("method" => "post", "id" => "g-in-place-edit-form", "class" => "g-short-form")) ?>
-  <?= access::csrf_form_field() ?>
+<?= Form::open($action, array("method" => "post", "id" => "g-in-place-edit-form", "class" => "g-short-form")) ?>
+  <?= Access::csrf_form_field() ?>
   <ul>
     <li<? if (!empty($errors["input"])): ?> class="g-error"<? endif ?>>
-      <?= form::input("input", $form["input"], " class=\"textbox\"") ?>
+      <?= Form::input("input", $form["input"], " class=\"textbox\"") ?>
     </li>
     <li>
-      <?= form::submit(array("class" => "submit ui-state-default"), t("Save")) ?>
+      <?= Form::submit(array("class" => "submit ui-state-default"), t("Save")) ?>
     </li>
     <li><button class="g-cancel ui-state-default ui-corner-all"><?= t("Cancel") ?></button></li>
     <? if (!empty($errors["input"])): ?>

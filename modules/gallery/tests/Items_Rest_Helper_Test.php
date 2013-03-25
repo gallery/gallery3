@@ -51,7 +51,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
                    "members" => array())),
                "members" => array(
                  rest::url("item", $photo2)))),
-      items_rest::get($request));
+      Hook_Rest_Items::get($request));
   }
 
   public function get_url_filter_album_test() {
@@ -80,7 +80,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
                    "members" => array())),
                "members" => array(
                  rest::url("item", $album2)))),
-      items_rest::get($request));
+      Hook_Rest_Items::get($request));
   }
 
   public function get_url_filter_photo_test() {
@@ -107,7 +107,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
                 "tags" => array(
                   "url" => rest::url("item_tags", $photo1),
                   "members" => array())))),
-      items_rest::get($request));
+      Hook_Rest_Items::get($request));
   }
 
   public function get_url_filter_albums_photos_test() {
@@ -144,7 +144,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
                    "members" => array())),
                "members" => array(
                  rest::url("item", $photo2)))),
-      items_rest::get($request));
+      Hook_Rest_Items::get($request));
   }
 
   public function get_ancestors_test() {
@@ -201,6 +201,6 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
                 "tags" => array(
                   "url" => rest::url("item_tags", $photo2),
                   "members" => array())))),
-      items_rest::get($request));
+      Hook_Rest_Items::get($request));
   }
 }

@@ -22,9 +22,9 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo();
     // Check that the images were correctly resized
     $this->assert_equal(array(640, 480, "image/jpeg", "jpg"),
-                        photo::get_file_metadata($photo->resize_path()));
+                        Photo::get_file_metadata($photo->resize_path()));
     $this->assert_equal(array(200, 150, "image/jpeg", "jpg"),
-                        photo::get_file_metadata($photo->thumb_path()));
+                        Photo::get_file_metadata($photo->thumb_path()));
     // Check that the items table got updated
     $this->assert_equal(array(640, 480), array($photo->resize_width, $photo->resize_height));
     $this->assert_equal(array(200, 150), array($photo->thumb_width, $photo->thumb_height));
@@ -37,7 +37,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $movie = test::random_movie();
     // Check that the image was correctly resized
     $this->assert_equal(array(200, 160, "image/jpeg", "jpg"),
-                        photo::get_file_metadata($movie->thumb_path()));
+                        Photo::get_file_metadata($movie->thumb_path()));
     // Check that the items table got updated
     $this->assert_equal(array(200, 160), array($movie->thumb_width, $movie->thumb_height));
     // Check that the image is not marked dirty
@@ -60,7 +60,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   public function generate_album_cover_from_png_test() {
     $input_file = MODPATH . "gallery/tests/test.jpg";
     $output_file = TMPPATH . test::random_name() . ".png";
-    gallery_graphics::resize($input_file, $output_file, null, null);
+    GalleryGraphics::resize($input_file, $output_file, null, null);
 
     $album = test::random_album();
     $photo = test::random_photo_unsaved($album);
@@ -70,7 +70,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $album->reload();
     // Check that the image was correctly resized and converted to jpg
     $this->assert_equal(array(200, 150, "image/jpeg", "jpg"),
-                        photo::get_file_metadata($album->thumb_path()));
+                        Photo::get_file_metadata($album->thumb_path()));
     // Check that the items table got updated
     $this->assert_equal(array(200, 150), array($album->thumb_width, $album->thumb_height));
     // Check that the image is not marked dirty
@@ -96,7 +96,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $photo->resize_dirty = 1;
     $photo->thumb_dirty = 1;
     try {
-      graphics::generate($photo);
+      Graphics::generate($photo);
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // Exception expected
@@ -121,7 +121,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     file_put_contents($movie->file_path(), test::lorem_ipsum(200));
     // Regenerate
     $movie->thumb_dirty = 1;
-    graphics::generate($movie);
+    Graphics::generate($movie);
     // Check that the image got replaced with a missing image placeholder
     $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_movie.jpg"),
                        file_get_contents($movie->thumb_path()));
@@ -142,7 +142,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $photo->save();
     $album->thumb_dirty = 1;
     try {
-      graphics::generate($album);
+      Graphics::generate($album);
       $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // Exception expected

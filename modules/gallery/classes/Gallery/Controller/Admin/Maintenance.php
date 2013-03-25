@@ -22,56 +22,56 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Show a list of all available, running and finished tasks.
    */
   public function index() {
-    $query = db::build()
+    $query = DB::build()
       ->update("tasks")
       ->set("state", "stalled")
       ->where("done", "=", 0)
       ->where("state", "<>", "stalled")
-      ->where(db::expr("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
+      ->where(DB::expr("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
       ->execute();
     $stalled_count = $query->count();
     if ($stalled_count) {
-      log::warning("tasks",
+      Log::warning("tasks",
                    t2("One task is stalled",
                       "%count tasks are stalled",
                       $stalled_count),
                    t('<a href="%url">view</a>',
-                     array("url" => html::mark_clean(url::site("admin/maintenance")))));
+                     array("url" => HTML::mark_clean(URL::site("admin/maintenance")))));
     }
 
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Maintenance tasks");
     $view->content = new View("admin_maintenance.html");
-    $view->content->task_definitions = task::get_definitions();
-    $view->content->running_tasks = ORM::factory("task")
+    $view->content->task_definitions = Task::get_definitions();
+    $view->content->running_tasks = ORM::factory("Task")
       ->where("done", "=", 0)->order_by("updated", "DESC")->find_all();
-    $view->content->finished_tasks = ORM::factory("task")
+    $view->content->finished_tasks = ORM::factory("Task")
       ->where("done", "=", 1)->order_by("updated", "DESC")->find_all();
     print $view;
 
     // Do some maintenance while we're in here
-    db::build()
+    DB::build()
       ->delete("caches")
       ->where("expiration", "<>", 0)
       ->where("expiration", "<=", time())
       ->execute();
-    module::deactivate_missing_modules();
+    Module::deactivate_missing_modules();
   }
 
   /**
-   * Start a new task
+   * Start a new Task
    * @param string $task_callback
    */
   public function start($task_callback) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $task = task::start($task_callback);
+    $task = Task::start($task_callback);
     $view = new View("admin_maintenance_task.html");
     $view->task = $task;
 
-    log::info("tasks", t("Task %task_name started (task id %task_id)",
+    Log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
-              html::anchor("admin/maintenance", t("maintenance")));
+              HTML::anchor("admin/maintenance", t("maintenance")));
     print $view;
   }
 
@@ -80,7 +80,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function resume($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
     if (!$task->loaded()) {
@@ -91,9 +91,9 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     $task->log(t("Task %task_name resumed (task id %task_id)",
                  array("task_name" => $task->name, "task_id" => $task->id)));
-    log::info("tasks", t("Task %task_name resumed (task id %task_id)",
+    Log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
-              html::anchor("admin/maintenance", t("maintenance")));
+              HTML::anchor("admin/maintenance", t("maintenance")));
     print $view;
   }
 
@@ -102,7 +102,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function show_log($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
     if (!$task->loaded()) {
@@ -119,7 +119,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function save_log($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
     if (!$task->loaded()) {
@@ -136,24 +136,24 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function cancel($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    task::cancel($task_id);
+    Task::cancel($task_id);
 
-    message::success(t("Task cancelled"));
-    url::redirect("admin/maintenance");
+    Message::success(t("Task cancelled"));
+    URL::redirect("admin/maintenance");
   }
 
   public function cancel_running_tasks() {
-    access::verify_csrf();
-    db::build()
+    Access::verify_csrf();
+    DB::build()
       ->update("tasks")
       ->set("done", 1)
       ->set("state", "cancelled")
       ->where("done", "=", 0)
       ->execute();
-    message::success(t("All running tasks cancelled"));
-    url::redirect("admin/maintenance");
+    Message::success(t("All running tasks cancelled"));
+    URL::redirect("admin/maintenance");
   }
 
   /**
@@ -161,26 +161,26 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function remove($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    task::remove($task_id);
+    Task::remove($task_id);
 
-    message::success(t("Task removed"));
-    url::redirect("admin/maintenance");
+    Message::success(t("Task removed"));
+    URL::redirect("admin/maintenance");
   }
 
   public function remove_finished_tasks() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     // Do it the long way so we can call delete and remove the cache.
-    $finished = ORM::factory("task")
+    $finished = ORM::factory("Task")
       ->where("done", "=", 1)
       ->find_all();
     foreach ($finished as $task) {
-      task::remove($task->id);
+      Task::remove($task->id);
     }
-    message::success(t("All finished tasks removed"));
-    url::redirect("admin/maintenance");
+    Message::success(t("All finished tasks removed"));
+    URL::redirect("admin/maintenance");
   }
 
   /**
@@ -189,12 +189,12 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function run($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     try {
-      $task = task::run($task_id);
+      $task = Task::run($task_id);
     } catch (Exception $e) {
-      Kohana_Log::add(
+      Log::add(
         "error",
         sprintf(
           "%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),
@@ -205,29 +205,29 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     if ($task->done) {
       switch ($task->state) {
       case "success":
-        log::success("tasks", t("Task %task_name completed (task id %task_id)",
+        Log::success("tasks", t("Task %task_name completed (task id %task_id)",
                                 array("task_name" => $task->name, "task_id" => $task->id)),
-                     html::anchor("admin/maintenance", t("maintenance")));
-        message::success(t("Task completed successfully"));
+                     HTML::anchor("admin/maintenance", t("maintenance")));
+        Message::success(t("Task completed successfully"));
         break;
 
       case "error":
-        log::error("tasks", t("Task %task_name failed (task id %task_id)",
+        Log::error("tasks", t("Task %task_name failed (task id %task_id)",
                               array("task_name" => $task->name, "task_id" => $task->id)),
-                   html::anchor("admin/maintenance", t("maintenance")));
-        message::success(t("Task failed"));
+                   HTML::anchor("admin/maintenance", t("maintenance")));
+        Message::success(t("Task failed"));
         break;
       }
       // Using sprintf("%F") to avoid comma as decimal separator.
-      json::reply(array("result" => "success",
+      JSON::reply(array("result" => "success",
                         "task" => array(
                           "percent_complete" => sprintf("%F", $task->percent_complete),
                           "status" => (string) $task->status,
                           "done" => (bool) $task->done),
-                        "location" => url::site("admin/maintenance")));
+                        "location" => URL::site("admin/maintenance")));
 
     } else {
-      json::reply(array("result" => "in_progress",
+      JSON::reply(array("result" => "in_progress",
                         "task" => array(
                           "percent_complete" => sprintf("%F", $task->percent_complete),
                           "status" => (string) $task->status,
@@ -236,8 +236,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   }
 
   public function maintenance_mode($value) {
-    access::verify_csrf();
-    module::set_var("gallery", "maintenance_mode", $value);
-    url::redirect("admin/maintenance");
+    Access::verify_csrf();
+    Module::set_var("gallery", "maintenance_mode", $value);
+    URL::redirect("admin/maintenance");
   }
 }

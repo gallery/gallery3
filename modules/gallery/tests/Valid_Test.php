@@ -19,10 +19,10 @@
  */
 class Valid_Test extends Gallery_Unit_Test_Case {
   public function url_test() {
-    $this->assert_true(valid::url("http://foo.bar.com"));
-    $this->assert_true(valid::url("https://foo.bar.com"));
+    $this->assert_true(Valid::url("http://foo.bar.com"));
+    $this->assert_true(Valid::url("https://foo.bar.com"));
 
-    $this->assert_false(valid::url("mailto://bar"));
-    $this->assert_false(valid::url("ftp://bar"));
+    $this->assert_false(Valid::url("mailto://bar"));
+    $this->assert_false(Valid::url("ftp://bar"));
   }
 }

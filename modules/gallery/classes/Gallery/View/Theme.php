@@ -31,8 +31,8 @@ class Gallery_View_Theme extends View_Gallery {
   public function __construct($name, $page_type, $page_subtype) {
     parent::__construct($name);
 
-    $this->theme_name = module::get_var("gallery", "active_site_theme");
-    if (identity::active_user()->admin) {
+    $this->theme_name = Module::get_var("gallery", "active_site_theme");
+    if (Identity::active_user()->admin) {
       $theme_name = Input::instance()->get("theme");
       if ($theme_name &&
           file_exists(THEMEPATH . $theme_name) &&
@@ -43,17 +43,17 @@ class Gallery_View_Theme extends View_Gallery {
     $this->item = null;
     $this->tag = null;
     $this->set_global(array("theme" => $this,
-                            "theme_info" => theme::get_info($this->theme_name),
-                            "user" => identity::active_user(),
+                            "theme_info" => Theme::get_info($this->theme_name),
+                            "user" => Identity::active_user(),
                             "page_type" => $page_type,
                             "page_subtype" => $page_subtype,
                             "page_title" => null));
 
-    if (module::get_var("gallery", "maintenance_mode", 0)) {
-      if (identity::active_user()->admin) {
-        message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => url::site("admin/maintenance"))));
+    if (Module::get_var("gallery", "maintenance_mode", 0)) {
+      if (Identity::active_user()->admin) {
+        Message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => URL::site("admin/maintenance"))));
     } else
-        message::warning(t("This site is currently in maintenance mode."));
+        Message::warning(t("This site is currently in maintenance mode."));
     }
   }
 
@@ -64,7 +64,7 @@ class Gallery_View_Theme extends View_Gallery {
    * children will be used to determine the proportion.  If set, the proportion will be
    * calculated based on the child item with the largest width or height.
    *
-   * @param object Item_Model (optional) check the proportions for this item
+   * @param object Model_Item (optional) check the proportions for this item
    * @param int               (optional) minimum thumbnail width
    * @param string            (optional) "width" or "height"
    * @return int
@@ -92,7 +92,7 @@ class Gallery_View_Theme extends View_Gallery {
     } else {
       // @TODO change the 200 to a theme supplied value when and if we come up with an
       // API to allow the theme to set defaults.
-      return module::get_var("gallery", "thumb_size", 200) / 200;
+      return Module::get_var("gallery", "thumb_size", 200) / 200;
     }
   }
 
@@ -122,31 +122,31 @@ class Gallery_View_Theme extends View_Gallery {
     $menu = Menu::factory("root")
       ->css_id("g-login-menu")
       ->css_class("g-inline ui-helper-clear-fix");
-    module::event("user_menu", $menu, $this);
+    Module::event("user_menu", $menu, $this);
     return $menu->render();
   }
 
   public function site_menu($item_css_selector) {
     $menu = Menu::factory("root");
-    module::event("site_menu", $menu, $this, $item_css_selector);
+    Module::event("site_menu", $menu, $this, $item_css_selector);
     return $menu->render();
   }
 
   public function album_menu() {
     $menu = Menu::factory("root");
-    module::event("album_menu", $menu, $this);
+    Module::event("album_menu", $menu, $this);
     return $menu->render();
   }
 
   public function tag_menu() {
     $menu = Menu::factory("root");
-    module::event("tag_menu", $menu, $this);
+    Module::event("tag_menu", $menu, $this);
     return $menu->render();
   }
 
   public function photo_menu() {
     $menu = Menu::factory("root");
-    if (access::can("view_full", $this->item())) {
+    if (Access::can("view_full", $this->item())) {
       $menu->append(Menu::factory("link")
                     ->id("fullsize")
                     ->label(t("View full size"))
@@ -154,13 +154,13 @@ class Gallery_View_Theme extends View_Gallery {
                     ->css_class("g-fullsize-link"));
     }
 
-    module::event("photo_menu", $menu, $this);
+    Module::event("photo_menu", $menu, $this);
     return $menu->render();
   }
 
   public function movie_menu() {
     $menu = Menu::factory("root");
-    module::event("movie_menu", $menu, $this);
+    Module::event("movie_menu", $menu, $this);
     return $menu->render();
   }
 
@@ -171,7 +171,7 @@ class Gallery_View_Theme extends View_Gallery {
                ->label(t("Options")))
       ->css_class("g-context-menu");
 
-    module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
+    Module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
     return $menu->render();
   }
 
@@ -179,22 +179,22 @@ class Gallery_View_Theme extends View_Gallery {
    * Print out any site wide status information.
    */
   public function site_status() {
-    return site_status::get();
+    return SiteStatus::get();
   }
 
   /**
    * Print out any messages waiting for this user.
    */
   public function messages() {
-    return message::get();
+    return Message::get();
   }
 
   /**
    * Print out the sidebar.
    */
   public function sidebar_blocks() {
-    $sidebar = block_manager::get_html("site_sidebar", $this);
-    if (empty($sidebar) && identity::active_user()->admin) {
+    $sidebar = BlockManager::get_html("site_sidebar", $this);
+    if (empty($sidebar) && Identity::active_user()->admin) {
       $sidebar = new View("no_sidebar.html");
     }
     return $sidebar;
@@ -230,29 +230,29 @@ class Gallery_View_Theme extends View_Gallery {
     case "thumb_info":
     case "thumb_top":
       $blocks = array();
-      if (method_exists("gallery_theme", $function)) {
+      if (method_exists("GalleryTheme", $function)) {
         switch (count($args)) {
         case 0:
-          $blocks[] = gallery_theme::$function($this);
+          $blocks[] = Hook_GalleryTheme::$function($this);
           break;
         case 1:
-          $blocks[] = gallery_theme::$function($this, $args[0]);
+          $blocks[] = Hook_GalleryTheme::$function($this, $args[0]);
           break;
         case 2:
-          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
+          $blocks[] = Hook_GalleryTheme::$function($this, $args[0], $args[1]);
           break;
         default:
           $blocks[] = call_user_func_array(
-            array("gallery_theme", $function),
+            array("GalleryTheme", $function),
             array_merge(array($this), $args));
         }
       }
 
-      foreach (module::active() as $module) {
+      foreach (Module::active() as $module) {
         if ($module->name == "gallery") {
           continue;
         }
-        $helper_class = "{$module->name}_theme";
+        $helper_class = "{$module->name}Theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
@@ -260,7 +260,7 @@ class Gallery_View_Theme extends View_Gallery {
         }
       }
 
-      $helper_class = theme::$site_theme_name . "_theme";
+      $helper_class = Theme::$site_theme_name . "Theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),
