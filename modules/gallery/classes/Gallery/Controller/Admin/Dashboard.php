@@ -21,7 +21,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
   public function index() {
     $view = new View_Admin("admin.html");
     $view->page_title = t("Dashboard");
-    $view->content = new View("admin_dashboard.html");
+    $view->content = new View("admin/dashboard.html");
     $view->content->blocks = BlockManager::get_html("dashboard_center");
     $view->sidebar = "<div id=\"g-admin-dashboard-sidebar\">" .
       BlockManager::get_html("dashboard_sidebar") .

@@ -21,7 +21,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
   public function index($share_translations_form=null) {
     $v = new View_Admin("admin.html");
     $v->page_title = t("Languages and translations");
-    $v->content = new View("admin_languages.html");
+    $v->content = new View("admin/languages.html");
                 $v->content->available_locales = Locales::available();
     $v->content->installed_locales = Locales::installed();
     $v->content->default_locale = Module::get_var("gallery", "default_locale");

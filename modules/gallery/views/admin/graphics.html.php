@@ -22,7 +22,7 @@
   <div class="g-block-content">
     <h2> <?= t("Active toolkit") ?> </h2>
     <? if ($active == "none"): ?>
-    <?= new View("admin_graphics_none.html") ?>
+    <?= new View("admin/graphics_none.html") ?>
     <? else: ?>
     <?= new View("admin_graphics_$active.html", array("tk" => $tk->$active, "is_active" => true)) ?>
     <? endif ?>

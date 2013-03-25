@@ -21,7 +21,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
   public function index() {
     $view = new View_Admin("admin.html");
     $view->page_title = t("Theme options");
-    $view->content = new View("admin_theme_options.html");
+    $view->content = new View("admin/theme_options.html");
     $view->content->form = $this->_get_edit_form_admin();
     print $view;
   }
@@ -65,7 +65,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
       URL::redirect("admin/theme_options");
     } else {
       $view = new View_Admin("admin.html");
-      $view->content = new View("admin_theme_options.html");
+      $view->content = new View("admin/theme_options.html");
       $view->content->form = $form;
       print $view;
     }

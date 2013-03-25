@@ -257,11 +257,11 @@ class Gallery_Graphics {
 
   private static function _replace_image_with_placeholder($item, $target) {
     if ($item->is_album() && !$item->album_cover_item_id) {
-      $input_path = MODPATH . "gallery/images/missing_album_cover.jpg";
+      $input_path = MODPATH . "gallery/media/graphics/missing_album_cover.jpg";
     } else if ($item->is_movie() || ($item->is_album() && $item->album_cover()->is_movie())) {
-      $input_path = MODPATH . "gallery/images/missing_movie.jpg";
+      $input_path = MODPATH . "gallery/media/graphics/missing_movie.jpg";
     } else {
-      $input_path = MODPATH . "gallery/images/missing_photo.jpg";
+      $input_path = MODPATH . "gallery/media/graphics/missing_photo.jpg";
     }
 
     if ($target == "thumb") {

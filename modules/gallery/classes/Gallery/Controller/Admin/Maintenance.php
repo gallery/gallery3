@@ -41,7 +41,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     $view = new View_Admin("admin.html");
     $view->page_title = t("Maintenance tasks");
-    $view->content = new View("admin_maintenance.html");
+    $view->content = new View("admin/maintenance.html");
     $view->content->task_definitions = Task::get_definitions();
     $view->content->running_tasks = ORM::factory("Task")
       ->where("done", "=", 0)->order_by("updated", "DESC")->find_all();
@@ -66,7 +66,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     Access::verify_csrf();
 
     $task = Task::start($task_callback);
-    $view = new View("admin_maintenance_task.html");
+    $view = new View("admin/maintenance_task.html");
     $view->task = $task;
 
     Log::info("tasks", t("Task %task_name started (task id %task_id)",
@@ -86,7 +86,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
-    $view = new View("admin_maintenance_task.html");
+    $view = new View("admin/maintenance_task.html");
     $view->task = $task;
 
     $task->log(t("Task %task_name resumed (task id %task_id)",
@@ -108,7 +108,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
-    $view = new View("admin_maintenance_show_log.html");
+    $view = new View("admin/maintenance_show_log.html");
     $view->task = $task;
 
     print $view;

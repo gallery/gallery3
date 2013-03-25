@@ -22,7 +22,7 @@ class Gallery_Controller_Login extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
 
   public function ajax() {
-    $view = new View("login_ajax.html");
+    $view = new View("gallery/login_ajax.html");
     $view->form = Auth::get_login_form("login/auth_ajax");
     print $view;
   }
@@ -34,7 +34,7 @@ class Gallery_Controller_Login extends Controller {
     if ($valid) {
       JSON::reply(array("result" => "success"));
     } else {
-      $view = new View("login_ajax.html");
+      $view = new View("gallery/login_ajax.html");
       $view->form = $form;
       JSON::reply(array("result" => "error", "html" => (string)$view));
     }
@@ -43,7 +43,7 @@ class Gallery_Controller_Login extends Controller {
   public function html() {
     $view = new View_Theme("page.html", "other", "login");
     $view->page_title = t("Log in to Gallery");
-    $view->content = new View("login_ajax.html");
+    $view->content = new View("gallery/login_ajax.html");
     $view->content->form = Auth::get_login_form("login/auth_html");
     print $view;
   }
@@ -58,7 +58,7 @@ class Gallery_Controller_Login extends Controller {
     } else {
       $view = new View_Theme("page.html", "other", "login");
       $view->page_title = t("Log in to Gallery");
-      $view->content = new View("login_ajax.html");
+      $view->content = new View("gallery/login_ajax.html");
       $view->content->form = $form;
       print $view;
     }

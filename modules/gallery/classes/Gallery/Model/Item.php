@@ -822,7 +822,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       $extension = strtolower(pathinfo($movie_img->filename, PATHINFO_EXTENSION));
       if (in_array($extension, array("webm", "ogv", "mp4", "flv", "m4v", "mov", "f4v", "wmv"))) {
         // Filetype supported by MediaElementPlayer - use it (default)
-        $view = new View("movieplayer.html");
+        $view = new View("gallery/movieplayer.html");
         $view->width = $movie_img->width;
         $view->height = $movie_img->height;
         $view->div_attrs = $movie_img->div_attrs;

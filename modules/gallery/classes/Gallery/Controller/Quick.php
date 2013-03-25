@@ -77,7 +77,7 @@ class Gallery_Controller_Quick extends Controller {
     Access::required("view", $item);
     Access::required("edit", $item);
 
-    $v = new View("quick_delete_confirm.html");
+    $v = new View("gallery/quick_delete_confirm.html");
     $v->item = $item;
     $v->form = Item::get_delete_form($item);
     print $v;

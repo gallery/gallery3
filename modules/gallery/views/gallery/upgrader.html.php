@@ -10,14 +10,14 @@
   </head>
   <body<? if (Locales::is_rtl()) { echo ' class="rtl"'; } ?>>
     <div id="outer">
-      <img id="logo" src="<?= URL::file("modules/gallery/images/gallery.png") ?>" />
+      <img id="logo" src="<?= URL::file("modules/gallery/media/gallery.png") ?>" />
       <div id="inner">
         <? if ($can_upgrade): ?>
         <div id="dialog" style="visibility: hidden">
           <a id="dialog_close_link" style="display: none" onclick="$('#dialog').fadeOut(); return false;" href="#" class="close">[x]</a>
           <div id="busy" style="display: none">
             <h1>
-              <img width="16" height="16" src="<?= URL::file("modules/gallery/images/loading-small.gif") ?>"/>
+              <img width="16" height="16" src="<?= URL::file("modules/gallery/media/loading-small.gif") ?>"/>
               <?= t("Upgrade in progress!") ?>
             </h1>
             <p>
