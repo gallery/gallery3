@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tree_rest_Core {
+class Gallery_Hook_Rest_Tree {
   /**
    * The tree is rooted in a single item and can have modifiers which adjust what data is shown
    * for items inside the given tree, up to the depth that you want.  The entity for this resource
