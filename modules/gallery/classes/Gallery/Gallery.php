@@ -31,7 +31,7 @@ class Gallery_Gallery {
     if (Module::get_var("gallery", "maintenance_mode", 0) &&
         !Identity::active_user()->admin) {
       try {
-        $class = new ReflectionClass(ucfirst(Route::$controller).'_Controller');
+        $class = new ReflectionClass('Controller_'.ucfirst(Route::$controller));
         $allowed = $class->getConstant("ALLOW_MAINTENANCE_MODE") === true;
       } catch (ReflectionClass $e) {
         $allowed = false;
@@ -61,7 +61,7 @@ class Gallery_Gallery {
         !Access::user_can(Identity::guest(), "view", Item::root()) &&
         php_sapi_name() != "cli") {
       try {
-        $class = new ReflectionClass(ucfirst(Route::$controller).'_Controller');
+        $class = new ReflectionClass('Controller_'.ucfirst(Route::$controller));
         $allowed = $class->getConstant("ALLOW_PRIVATE_GALLERY") === true;
       } catch (ReflectionClass $e) {
         $allowed = false;
@@ -85,7 +85,7 @@ class Gallery_Gallery {
   /**
    * This function is called when the Gallery is fully initialized.  We relay it to modules as the
    * "gallery_ready" event.  Any module that wants to perform an action at the start of every
-   * request should implement the <module>_event::gallery_ready() handler.
+   * request should implement the <module>Event::gallery_ready() handler.
    */
   static function ready() {
     // Don't keep a session for robots; it's a waste of database space.
@@ -99,7 +99,7 @@ class Gallery_Gallery {
   /**
    * This function is called right before the Kohana framework shuts down.  We relay it to modules
    * as the "gallery_shutdown" event.  Any module that wants to perform an action at the start of
-   * every request should implement the <module>_event::gallery_shutdown() handler.
+   * every request should implement the <module>Event::gallery_shutdown() handler.
    */
   static function shutdown() {
     Module::event("gallery_shutdown");

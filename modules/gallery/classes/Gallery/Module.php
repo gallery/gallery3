@@ -30,7 +30,7 @@ class Gallery_Module {
   public static $available = array();
 
   /**
-   * Set the version of the corresponding Module_Model
+   * Set the version of the corresponding Model_Module
    * @param string  $module_name
    * @param integer $version
    */
@@ -46,7 +46,7 @@ class Gallery_Module {
   }
 
   /**
-   * Load the corresponding Module_Model
+   * Load the corresponding Model_Module
    * @param string $module_name
    */
   static function get($module_name) {
@@ -140,7 +140,7 @@ class Gallery_Module {
     Module::_add_to_path($module_name);
     $messages = array();
 
-    $installer_class = "{$module_name}_installer";
+    $installer_class = "{$module_name}Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "can_activate")) {
       $messages = call_user_func(array($installer_class, "can_activate"));
     }
@@ -164,7 +164,7 @@ class Gallery_Module {
   }
 
   /**
-   * Install a module.  This will call <module>_installer::install(), which is responsible for
+   * Install a module.  This will call <module>Installer::install(), which is responsible for
    * creating database tables, setting module variables and calling Module::set_version().
    * Note that after installing, the module must be activated before it is available for use.
    * @param string $module_name
@@ -172,7 +172,7 @@ class Gallery_Module {
   static function install($module_name) {
     Module::_add_to_path($module_name);
 
-    $installer_class = "{$module_name}_installer";
+    $installer_class = "{$module_name}Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
@@ -217,14 +217,14 @@ class Gallery_Module {
   }
 
   /**
-   * Upgrade a module.  This will call <module>_installer::upgrade(), which is responsible for
+   * Upgrade a module.  This will call <module>Installer::upgrade(), which is responsible for
    * modifying database tables, changing module variables and calling Module::set_version().
    * Note that after upgrading, the module must be activated before it is available for use.
    * @param string $module_name
    */
   static function upgrade($module_name) {
     $version_before = Module::get_version($module_name);
-    $installer_class = "{$module_name}_installer";
+    $installer_class = "{$module_name}Installer";
     $available = Module::available();
     if (class_exists($installer_class) && method_exists($installer_class, "upgrade")) {
       call_user_func_array(array($installer_class, "upgrade"), array($version_before));
@@ -252,7 +252,7 @@ class Gallery_Module {
   }
 
   /**
-   * Activate an installed module.  This will call <module>_installer::activate() which should take
+   * Activate an installed module.  This will call <module>Installer::activate() which should take
    * any steps to make sure that the module is ready for use.  This will also activate any
    * existing graphics rules for this module.
    * @param string $module_name
@@ -260,7 +260,7 @@ class Gallery_Module {
   static function activate($module_name) {
     Module::_add_to_path($module_name);
 
-    $installer_class = "{$module_name}_installer";
+    $installer_class = "{$module_name}Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "activate")) {
       call_user_func_array(array($installer_class, "activate"), array());
     }
@@ -281,13 +281,13 @@ class Gallery_Module {
   }
 
   /**
-   * Deactivate an installed module.  This will call <module>_installer::deactivate() which should
+   * Deactivate an installed module.  This will call <module>Installer::deactivate() which should
    * take any cleanup steps to make sure that the module isn't visible in any way.  Note that the
    * module remains available in Kohana's cascading file system until the end of the request!
    * @param string $module_name
    */
   static function deactivate($module_name) {
-    $installer_class = "{$module_name}_installer";
+    $installer_class = "{$module_name}Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "deactivate")) {
       call_user_func_array(array($installer_class, "deactivate"), array());
     }
@@ -325,12 +325,12 @@ class Gallery_Module {
   }
 
   /**
-   * Uninstall a deactivated module.  This will call <module>_installer::uninstall() which should
+   * Uninstall a deactivated module.  This will call <module>Installer::uninstall() which should
    * take whatever steps necessary to make sure that all traces of a module are gone.
    * @param string $module_name
    */
   static function uninstall($module_name) {
-    $installer_class = "{$module_name}_installer";
+    $installer_class = "{$module_name}Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "uninstall")) {
       call_user_func(array($installer_class, "uninstall"));
     }
@@ -397,7 +397,7 @@ class Gallery_Module {
     array_shift($args);
     $function = str_replace(".", "_", $name);
 
-    if (method_exists("gallery_event", $function)) {
+    if (method_exists("GalleryEvent", $function)) {
       switch (count($args)) {
       case 0:
         Hook_GalleryEvent::$function();
@@ -415,7 +415,7 @@ class Gallery_Module {
         Hook_GalleryEvent::$function($args[0], $args[1], $args[2], $args[3]);
         break;
       default:
-        call_user_func_array(array("gallery_event", $function), $args);
+        call_user_func_array(array("GalleryEvent", $function), $args);
       }
     }
 
@@ -423,7 +423,7 @@ class Gallery_Module {
       if ($module->name == "gallery") {
         continue;
       }
-      $class = "{$module->name}_event";
+      $class = "{$module->name}Event";
       if (class_exists($class) && method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);
       }
@@ -431,7 +431,7 @@ class Gallery_Module {
 
     // Give the admin theme a chance to respond, if we're in admin mode.
     if (Theme::$is_admin) {
-      $class = Theme::$admin_theme_name . "_event";
+      $class = Theme::$admin_theme_name . "Event";
       if (class_exists($class) && method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);
       }
@@ -439,7 +439,7 @@ class Gallery_Module {
 
     // Give the site theme a chance to respond as well.  It gets a chance even in admin mode, as
     // long as the theme has an admin subdir.
-    $class = Theme::$site_theme_name . "_event";
+    $class = Theme::$site_theme_name . "Event";
     if (class_exists($class) && method_exists($class, $function)) {
       call_user_func_array(array($class, $function), $args);
     }

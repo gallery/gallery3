@@ -35,7 +35,7 @@ class Gallery_Hook_Rest_Item {
    *
    *   type=<comma separate list of photo, movie or album>
    *     Limit the type to types in this list, eg: "type=photo,movie".
-   *     Also limits the types returned in the member collections (same behaviour as item_rest).
+   *     Also limits the types returned in the member collections (same behaviour as Hook_Rest_Items).
    */
   static function get($request) {
     $item = rest::resolve($request->url);

@@ -24,7 +24,7 @@ class Gallery_Task {
   static function get_definitions() {
     $tasks = array();
     foreach (Module::active() as $module) {
-      $class_name = "{$module->name}_task";
+      $class_name = "{$module->name}Task";
       if (class_exists($class_name) && method_exists($class_name, "available_tasks")) {
         foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
           $tasks[$task->callback] = $task;

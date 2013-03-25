@@ -81,9 +81,9 @@ class Gallery_IdentityProvider {
 
       Module::set_var("gallery", "identity_provider", $new_provider);
 
-      if (class_exists("{$new_provider}_installer") &&
-          method_exists("{$new_provider}_installer", "initialize")) {
-        call_user_func("{$new_provider}_installer::initialize");
+      if (class_exists("{$new_provider}Installer") &&
+          method_exists("{$new_provider}Installer", "initialize")) {
+        call_user_func("{$new_provider}Installer::initialize");
       }
 
       if (!$provider->admin_user()) {

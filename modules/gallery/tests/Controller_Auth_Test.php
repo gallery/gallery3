@@ -21,8 +21,8 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
   public function find_missing_auth_test() {
     $found = array();
     $git_ignores = explode("\n", `git ls-files -o -i --exclude-standard`);
-    $controllers = array_diff(glob("*/*/controllers/*.php"), $git_ignores);
-    $feeds = array_diff(glob("*/*/helpers/*_rss.php"), $git_ignores);
+    $controllers = array_diff(glob("*/*/classes/*/Controller/*.php"), $git_ignores);
+    $feeds = array_diff(glob("*/*/classes/*/*Rss.php"), $git_ignores);
     foreach (array_merge($controllers, $feeds) as $controller) {
       if (preg_match("{modules/(gallery_)?unit_test/}", $controller)) {
         continue;
@@ -67,7 +67,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
           // An array token
 
           if ($open_braces == 0 && $token[0] == T_EXTENDS) {
-            if (self::_token_matches(array(T_STRING, "Admin_Controller"), $tokens, $token_number + 1)) {
+            if (self::_token_matches(array(T_STRING, "Controller_Admin"), $tokens, $token_number + 1)) {
               $is_admin_controller = true;
             }
           } else if ($open_braces == 1 && $token[0] == T_FUNCTION) {
@@ -91,7 +91,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
               }
             } while ($token_number < count($tokens));
 
-            $is_rss_feed = $name == "feed" && strpos(basename($controller), "_rss.php");
+            $is_rss_feed = $name == "feed" && strpos(basename($controller), "Rss.php");
 
             if ((!$is_static || $is_rss_feed) && !$is_private) {
               $function = self::_function($name, $line, $is_admin_controller);

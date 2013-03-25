@@ -357,7 +357,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * Handle any business logic necessary to create an item.
    * @see ORM::save()
    *
-   * @return ORM Item_Model
+   * @return ORM Model_Item
    */
   public function create(Validation $validation=null) {
     if ($this->_significant_changes() || isset($this->data_file)) {
@@ -439,7 +439,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * Handle any business logic necessary to modify an item.
    * @see ORM::save()
    *
-   * @return ORM Item_Model
+   * @return ORM Model_Item
    */
   public function update(Validation $validation=null) {
     if ($this->_significant_changes() || isset($this->data_file)) {
@@ -666,7 +666,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   }
 
   /**
-   * Return the Item_Model representing the cover for this album.
+   * Return the Model_Item representing the cover for this album.
    * @return Model_Item or null if there's no cover
    */
   public function album_cover() {
@@ -939,7 +939,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       $v->add_error("slug", "conflict");
     }
 
-    if ($this->parent_id == 1 && Kohana::auto_load("{$this->slug}_Controller")) {
+    if ($this->parent_id == 1 && Kohana::auto_load("Controller_{$this->slug}")) {
       $v->add_error("slug", "reserved");
       return;
     }

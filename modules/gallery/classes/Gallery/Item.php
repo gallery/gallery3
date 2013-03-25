@@ -201,7 +201,7 @@ class Gallery_Item {
   }
 
   /**
-   * Find an item by its path.  If there's no match, return an empty Item_Model.
+   * Find an item by its path.  If there's no match, return an empty Model_Item.
    * NOTE: the caller is responsible for performing security checks on the resulting item.
    *
    * In addition to $path, $var_subdir can be specified ("albums", "resizes", or "thumbs").  This
@@ -212,7 +212,7 @@ class Gallery_Item {
    *
    * @param string $path
    * @param string $var_subdir
-   * @return object Item_Model
+   * @return object Model_Item
    */
   static function find_by_path($path, $var_subdir="albums") {
     $path = trim($path, "/");
@@ -298,7 +298,7 @@ class Gallery_Item {
 
   /**
    * Locate an item using the URL.  We assume that the url is in the form /a/b/c where each
-   * component matches up with an item slug.  If there's no match, return an empty Item_Model
+   * component matches up with an item slug.  If there's no match, return an empty Model_Item
    * NOTE: the caller is responsible for performing security checks on the resulting item.
    * @param string $url the relative url fragment
    * @return Model_Item
@@ -323,7 +323,7 @@ class Gallery_Item {
   }
 
   /**
-   * Return the root Item_Model
+   * Return the root Model_Item
    * @return Model_Item
    */
   static function root() {
@@ -331,7 +331,7 @@ class Gallery_Item {
   }
 
   /**
-   * Return a query to get a random Item_Model, with optional filters.
+   * Return a query to get a random Model_Item, with optional filters.
    * Usage: Item::random_query()->execute();
    *
    * Note: You can add your own ->where() clauses but if your Gallery is

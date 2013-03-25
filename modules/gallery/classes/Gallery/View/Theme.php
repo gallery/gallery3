@@ -64,7 +64,7 @@ class Gallery_View_Theme extends View_Gallery {
    * children will be used to determine the proportion.  If set, the proportion will be
    * calculated based on the child item with the largest width or height.
    *
-   * @param object Item_Model (optional) check the proportions for this item
+   * @param object Model_Item (optional) check the proportions for this item
    * @param int               (optional) minimum thumbnail width
    * @param string            (optional) "width" or "height"
    * @return int
@@ -230,7 +230,7 @@ class Gallery_View_Theme extends View_Gallery {
     case "thumb_info":
     case "thumb_top":
       $blocks = array();
-      if (method_exists("gallery_theme", $function)) {
+      if (method_exists("GalleryTheme", $function)) {
         switch (count($args)) {
         case 0:
           $blocks[] = Hook_GalleryTheme::$function($this);
@@ -243,7 +243,7 @@ class Gallery_View_Theme extends View_Gallery {
           break;
         default:
           $blocks[] = call_user_func_array(
-            array("gallery_theme", $function),
+            array("GalleryTheme", $function),
             array_merge(array($this), $args));
         }
       }
@@ -252,7 +252,7 @@ class Gallery_View_Theme extends View_Gallery {
         if ($module->name == "gallery") {
           continue;
         }
-        $helper_class = "{$module->name}_theme";
+        $helper_class = "{$module->name}Theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
@@ -260,7 +260,7 @@ class Gallery_View_Theme extends View_Gallery {
         }
       }
 
-      $helper_class = Theme::$site_theme_name . "_theme";
+      $helper_class = Theme::$site_theme_name . "Theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),

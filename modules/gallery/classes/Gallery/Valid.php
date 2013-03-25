@@ -19,7 +19,7 @@
  */
 class Gallery_Valid extends Kohana_Valid {
   static function url($url) {
-    return valid_Core::url($url) &&
+    return Kohana_Valid::url($url) &&
       (!strncasecmp($url, "http://", strlen("http://")) ||
        !strncasecmp($url, "https://", strlen("https://")));
   }

@@ -38,7 +38,7 @@ class Gallery_View extends Kohana_View {
   }
 
   /**
-   * Completely replace View_Core::__get() so that local data trumps global data, trumps members.
+   * Completely replace Kohana_View::__get() so that local data trumps global data, trumps members.
    * This simulates the Kohana 2.3 behavior.
    */
   public function &__get($key) {
@@ -54,9 +54,9 @@ class Gallery_View extends Kohana_View {
   }
 
   /**
-   * Override View_Core::__construct so that we can set the csrf value into all views.
+   * Override Kohana_View::__construct so that we can set the csrf value into all views.
    *
-   * @see View_Core::__construct
+   * @see Kohana_View::__construct
    */
   public function __construct($name = NULL, $data = NULL, $type = NULL) {
     parent::__construct($name, $data, $type);
@@ -64,10 +64,10 @@ class Gallery_View extends Kohana_View {
   }
 
   /**
-   * Override View_Core::render so that we trap errors stemming from bad PHP includes and show a
+   * Override Kohana_View::render so that we trap errors stemming from bad PHP includes and show a
    * visible stack trace to help developers.
    *
-   * @see View_Core::render
+   * @see Kohana_View::render
    */
   public function render($print=false, $renderer=false, $modifier=false) {
     try {

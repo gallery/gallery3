@@ -19,7 +19,7 @@
  */
 
 /**
- * This resource returns the raw contents of Item_Model data files.  It's analogous to the
+ * This resource returns the raw contents of Model_Item data files.  It's analogous to the
  * file_proxy controller, but it uses the REST authentication model.
  */
 class Gallery_Hook_Rest_Data {

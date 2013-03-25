@@ -696,7 +696,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 49) {
-      // In v49 we changed the Item_Model validation code to disallow files with two dots in them,
+      // In v49 we changed the Model_Item validation code to disallow files with two dots in them,
       // but we didn't rename any files which fail to validate, so as soon as you do anything to
       // change those files (eg. as a side effect of getting the url or file path) it fails to
       // validate.  Fix those here.  This might be slow, but if it times out it can just pick up
@@ -745,7 +745,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 53) {
-      // In v54, we changed how we check for name and slug conflicts in Item_Model.  Previously,
+      // In v54, we changed how we check for name and slug conflicts in Model_Item.  Previously,
       // we checked the whole filename.  As a result, "foo.jpg" and "foo.png" were not considered
       // conflicting if their slugs were different (a rare case in practice since server_add and
       // uploader would give them both the same slug "foo").  Now, we check the filename without its
@@ -778,7 +778,7 @@ class Gallery_Hook_GalleryInstaller {
                  ->execute() as $row) {
           set_time_limit(30);
           $item = ORM::factory("item", $row->id);
-          $item->name = $item->name;  // this will force Item_Model to check for conflicts on save
+          $item->name = $item->name;  // this will force Model_Item to check for conflicts on save
           $item->save();
         }
       }
@@ -811,7 +811,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 57) {
-      // In v58 we changed the Item_Model validation code to disallow files or directories with
+      // In v58 we changed the Model_Item validation code to disallow files or directories with
       // backslashes in them, and we need to fix any existing items that have them.  This is
       // pretty unlikely, as having backslashes would have probably already caused other issues for
       // users, but we should check anyway.  This might be slow, but if it times out it can just

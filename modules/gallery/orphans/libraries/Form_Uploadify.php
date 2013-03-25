@@ -32,7 +32,7 @@ class Form_Uploadify_Core extends Form_Input {
       "csrf" => Access::csrf_token());
   }
 
-  public function album(Item_Model $album) {
+  public function album(Model_Item $album) {
     $this->data["album"] = $album;
     return $this;
   }

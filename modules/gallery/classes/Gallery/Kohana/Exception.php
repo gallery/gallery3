@@ -69,7 +69,7 @@ class Gallery_Kohana_Exception extends Kohana_Kohana_Exception {
       if ($value instanceof Database) {
         // Elide database password, host, name, user, etc.
         return get_class($value) . ' object - details omitted for display';
-      } else if ($value instanceof User_Model) {
+      } else if ($value instanceof Model_User) {
         return get_class($value) . ' object for "' . $value->name . '" - details omitted for display';
       }
       return self::_sanitize_for_dump((array) $value, $key, $max_level - 1);

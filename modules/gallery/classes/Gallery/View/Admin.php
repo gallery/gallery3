@@ -93,7 +93,7 @@ class Gallery_View_Admin extends View_Gallery {
     case "body_attributes":
     case "html_attributes":
       $blocks = array();
-      if (method_exists("gallery_theme", $function)) {
+      if (method_exists("GalleryTheme", $function)) {
         switch (count($args)) {
         case 0:
           $blocks[] = Hook_GalleryTheme::$function($this);
@@ -106,7 +106,7 @@ class Gallery_View_Admin extends View_Gallery {
           break;
         default:
           $blocks[] = call_user_func_array(
-            array("gallery_theme", $function),
+            array("GalleryTheme", $function),
             array_merge(array($this), $args));
         }
       }
@@ -115,7 +115,7 @@ class Gallery_View_Admin extends View_Gallery {
         if ($module->name == "gallery") {
           continue;
         }
-        $helper_class = "{$module->name}_theme";
+        $helper_class = "{$module->name}Theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
@@ -123,7 +123,7 @@ class Gallery_View_Admin extends View_Gallery {
         }
       }
 
-      $helper_class = Theme::$admin_theme_name . "_theme";
+      $helper_class = Theme::$admin_theme_name . "Theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),

@@ -48,22 +48,22 @@
  *
  * o Intents are specified as <group_id, perm, item_id> tuples.  It would be inefficient to check
  *   these tuples every time we want to do a lookup, so we use these intents to create an entire
- *   table of permissions for easy lookup in the Access_Cache_Model.  There's a 1:1 mapping
- *   between Item_Model and Access_Cache_Model entries.
+ *   table of permissions for easy lookup in the Model_AccessCache.  There's a 1:1 mapping
+ *   between Model_Item and Model_AccessCache entries.
  *
- * o For efficiency, we create columns in Access_Intent_Model and Access_Cache_Model for each of
- *   the possible Group_Model and Permission_Model combinations.  This may lead to performance
+ * o For efficiency, we create columns in Model_AccessIntent and Model_AccessCache for each of
+ *   the possible Model_Group and Model_Permission combinations.  This may lead to performance
  *   issues for very large Gallery installs, but for small to medium sized ones (5-10 groups, 5-10
  *   permissions) it's especially efficient because there's a single field value for each
  *   group/permission/item combination.
  *
- * o For efficiency, we store the cache columns for view permissions directly in the Item_Model.
+ * o For efficiency, we store the cache columns for view permissions directly in the Model_Item.
  *   This means that we can filter items by group/permission combination without doing any table
  *   joins making for an especially efficient permission check at the expense of having to
  *   maintain extra columns for each item.
  *
- * o If at any time the Access_Cache_Model becomes invalid, we can rebuild the entire table from
- *   the Access_Intent_Model
+ * o If at any time the Model_AccessCache becomes invalid, we can rebuild the entire table from
+ *   the Model_AccessIntent
  */
 class Gallery_Access {
   const DENY      = "0";
@@ -85,7 +85,7 @@ class Gallery_Access {
   /**
    * Does the user have this permission on this item?
    *
-   * @param  User_Model $user
+   * @param  Model_User $user
    * @param  string     $perm_name
    * @param  Model_Item $item
    * @return boolean
@@ -134,7 +134,7 @@ class Gallery_Access {
   /**
    * Does this group have this permission on this item?
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string      $perm_name
    * @param  Model_Item  $item
    * @return boolean
@@ -152,7 +152,7 @@ class Gallery_Access {
   /**
    * Return this group's intent for this permission on this item.
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string      $perm_name
    * @param  Model_Item  $item
    * @return boolean     Access::ALLOW, Access::DENY or Access::INHERIT (null) for no intent
@@ -166,10 +166,10 @@ class Gallery_Access {
    * Is the permission on this item locked by a parent?  If so return the nearest parent that
    * locks it.
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string      $perm_name
    * @param  Model_Item  $item
-   * @return ORM_Model   item that locks this one
+   * @return ORM         item that locks this one
    */
   static function locked_by($group, $perm_name, $item) {
     if ($perm_name != "view") {
@@ -205,7 +205,7 @@ class Gallery_Access {
   /**
    * Internal method to set a permission
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string      $perm_name
    * @param  Model_Item  $item
    * @param  boolean     $value
@@ -237,7 +237,7 @@ class Gallery_Access {
   /**
    * Allow a group to have a permission on an item.
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string  $perm_name
    * @param  Model_Item $item
    */
@@ -248,7 +248,7 @@ class Gallery_Access {
   /**
    * Deny a group the given permission on an item.
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string  $perm_name
    * @param  Model_Item $item
    */
@@ -259,7 +259,7 @@ class Gallery_Access {
   /**
    * Unset the given permission for this item and use inherited values
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string  $perm_name
    * @param  Model_Item $item
    */
@@ -348,7 +348,7 @@ class Gallery_Access {
   /**
    * Add the appropriate columns for a new group
    *
-   * @param Group_Model $group
+   * @param Model_Group $group
    * @return void
    */
   static function add_group($group) {
@@ -360,7 +360,7 @@ class Gallery_Access {
   /**
    * Remove a group's permission columns (usually when it's deleted)
    *
-   * @param Group_Model $group
+   * @param Model_Group $group
    * @return void
    */
   static function delete_group($group) {
@@ -466,7 +466,7 @@ class Gallery_Access {
   /**
    * Internal method to  remove Permission/Group columns
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string      $perm_name
    * @return void
    */
@@ -482,7 +482,7 @@ class Gallery_Access {
   /**
    * Internal method to add Permission/Group columns
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string  $perm_name
    * @return void
    */
@@ -509,7 +509,7 @@ class Gallery_Access {
    *
    * @todo: use database locking
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  Model_Item $item
    * @return void
    */
@@ -598,7 +598,7 @@ class Gallery_Access {
    *
    * @todo: use database locking
    *
-   * @param  Group_Model $group
+   * @param  Model_Group $group
    * @param  string  $perm_name
    * @param  Model_Item $item
    * @return void
@@ -658,7 +658,7 @@ class Gallery_Access {
    * This function is only public because we use it in maintenance tasks.
    *
    * @param  Model_Item   the album
-   * @param  Group_Model  the group whose permission is changing
+   * @param  Model_Group  the group whose permission is changing
    * @param  string       the permission name
    * @param  string       the new permission value (eg Access::DENY)
    */

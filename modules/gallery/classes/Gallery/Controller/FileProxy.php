@@ -96,7 +96,7 @@ class Gallery_Controller_FileProxy extends Controller {
       throw $e;
     }
 
-    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
+    // Note: this code is roughly duplicated in Hook_Rest_Data, so if you modify this, please look to
     // see if you should make the same change there as well.
 
     if ($type == "albums") {

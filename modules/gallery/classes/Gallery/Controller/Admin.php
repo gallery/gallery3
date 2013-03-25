@@ -48,7 +48,7 @@ class Gallery_Controller_Admin extends Controller {
     if ($controller_name == "index") {
       $controller_name = "dashboard";
     }
-    $controller_name = "Admin_{$controller_name}_Controller";
+    $controller_name = "Controller_Admin_{$controller_name}";
     if ($args) {
       $method = array_shift($args);
     } else {
