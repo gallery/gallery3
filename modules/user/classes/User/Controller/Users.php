@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Users_Controller extends Controller {
+class User_Controller_Users extends Controller {
   public function update($id) {
     $user = user::lookup($id);
     if (!$user || $user->guest || $user->id != identity::active_user()->id) {

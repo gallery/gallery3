@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Password_Controller extends Controller {
+class User_Controller_Password extends Controller {
   const ALLOW_MAINTENANCE_MODE = true;
   const ALLOW_PRIVATE_GALLERY = true;
 

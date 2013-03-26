@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class user_Core {
+class User_User {
   /**
    * Return the guest user.
    *

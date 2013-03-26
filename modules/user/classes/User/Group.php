@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class group_Core {
+class User_Group {
   /**
    * The group of all possible visitors.  This includes the guest user.
    *

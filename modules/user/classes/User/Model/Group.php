@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Group_Model_Core extends ORM implements Group_Definition {
+class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
   protected $has_and_belongs_to_many = array("users");
   protected $users_cache = null;
 

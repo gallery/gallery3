@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class user_event_Core {
+class User_Hook_UserEvent {
   static function admin_menu($menu, $theme) {
     $menu->add_after("appearance_menu", Menu::factory("link")
                      ->id("users_groups")

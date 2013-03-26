@@ -20,7 +20,7 @@
 /*
  * Based on the Cache_Sqlite_Driver developed by the Kohana Team
  */
-class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
+class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
   /**
    * @see IdentityProvider_Driver::guest.
    */
@@ -161,4 +161,3 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
     $group->save();
   }
 } // End Identity Gallery Driver
-

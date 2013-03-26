@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class user_theme_Core {
+class User_Hook_UserTheme {
   static function head($theme) {
     return $theme->css("user.css")
       . $theme->script("password_strength.js");
