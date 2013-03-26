@@ -128,7 +128,3 @@ interface Gallery_IdentityProvider_Driver {
    */
   public function remove_user_from_group($user, $group);
 } // End Identity Driver Definition
-
-interface Group_Definition {}
-
-interface User_Definition {}
