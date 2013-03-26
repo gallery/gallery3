@@ -21,32 +21,32 @@ interface Gallery_IdentityProvider_Driver {
   /**
    * Return the guest user.
    *
-   * @return User_Definition the user object
+   * @return IdentityProvider_UserDefinition the user object
    */
   public function guest();
 
   /**
    * Return the primary admin user.
    *
-   * @return User_Definition the user object
+   * @return IdentityProvider_UserDefinition the user object
    */
   public function admin_user();
 
   /**
-   * Create a new user.
+   * Create a new User.
    *
    * @param string  $name
    * @param string  $full_name
    * @param string  $password
    * @param string  $email
-   * @return User_Definition the user object
+   * @return IdentityProvider_UserDefinition the user object
    */
   public function create_user($name, $full_name, $password, $email);
 
   /**
    * Is the password provided correct?
    *
-   * @param user User_Definition the user object
+   * @param User User_Definition the user object
    * @param string $password a plaintext password
    * @return boolean true if the password is correct
    */
@@ -55,36 +55,36 @@ interface Gallery_IdentityProvider_Driver {
   /**
    * Look up a user by id.
    * @param integer $id
-   * @return User_Definition the user object, or null if the name was invalid.
+   * @return IdentityProvider_UserDefinition the user object, or null if the name was invalid.
    */
   public function lookup_user($id);
 
   /**
    * Look up a user by name.
    * @param string $name
-   * @return User_Definition the user object, or null if the name was invalid.
+   * @return IdentityProvider_UserDefinition the user object, or null if the name was invalid.
    */
   public function lookup_user_by_name($name);
 
   /**
-   * Create a new group.
+   * Create a new Group.
    *
    * @param string $name
-   * @return Group_Definition the group object
+   * @return IdentityProvider_GroupDefinition the group object
    */
   public function create_group($name);
 
   /**
    * The group of all possible visitors.  This includes the guest user.
    *
-   * @return Group_Definition the group object
+   * @return IdentityProvider_GroupDefinition the group object
    */
   public function everybody();
 
   /**
    * The group of all logged-in visitors.  This does not include guest users.
    *
-   * @return Group_Definition the group object
+   * @return IdentityProvider_GroupDefinition the group object
    */
   public function registered_users();
 
@@ -98,14 +98,14 @@ interface Gallery_IdentityProvider_Driver {
   /**
    * Look up a group by id.
    * @param integer $id id
-   * @return Group_Definition the user object, or null if the name was invalid.
+   * @return IdentityProvider_GroupDefinition the user object, or null if the name was invalid.
    */
   public function lookup_group($id);
 
   /**
    * Look up the group by name.
    * @param string $name the name of the group to locate
-   * @return Group_Definition
+   * @return IdentityProvider_GroupDefinition
    */
   public function lookup_group_by_name($name);
 
@@ -116,15 +116,15 @@ interface Gallery_IdentityProvider_Driver {
 
   /**
    * Add the user to the specified group
-   * @param User_Definition  the user to add
-   * @param Group_Definition the target group
+   * @param IdentityProvider_UserDefinition  the user to add
+   * @param IdentityProvider_GroupDefinition the target group
    */
   public function add_user_to_group($user, $group);
 
   /**
    * Remove the user to the specified group
-   * @param User_Definition  the user to remove
-   * @param Group_Definition the owning group
+   * @param IdentityProvider_UserDefinition  the user to remove
+   * @param IdentityProvider_GroupDefinition the owning group
    */
   public function remove_user_from_group($user, $group);
 } // End Identity Driver Definition

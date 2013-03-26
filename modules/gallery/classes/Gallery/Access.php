@@ -211,7 +211,7 @@ class Gallery_Access {
    * @param  boolean     $value
    */
   private static function _set(Group_Definition $group, $perm_name, $album, $value) {
-    if (!($group instanceof Group_Definition)) {
+    if (!($group instanceof IdentityProvider_GroupDefinition)) {
       throw new Exception("@todo PERMISSIONS_ONLY_WORK_ON_GROUPS");
     }
     if (!$album->loaded()) {
@@ -346,7 +346,7 @@ class Gallery_Access {
   }
 
   /**
-   * Add the appropriate columns for a new group
+   * Add the appropriate columns for a new Group
    *
    * @param Model_Group $group
    * @return void
