@@ -2,10 +2,10 @@
 #
 # Portable PHP password hashing framework.
 #
-# Version 0.1 / genuine.
+# Version 0.3 / genuine.
 #
 # Written by Solar Designer <solar at openwall.com> in 2004-2006 and placed in
-# the public domain.
+# the public domain.  Revised in subsequent years, still public domain.
 #
 # There's absolutely no warranty.
 #
@@ -40,13 +40,16 @@ class PasswordHash {
 
 		$this->portable_hashes = $portable_hashes;
 
-		$this->random_state = microtime() . getmypid();
+		$this->random_state = microtime();
+		if (function_exists('getmypid'))
+			$this->random_state .= getmypid();
 	}
 
 	function get_random_bytes($count)
 	{
 		$output = '';
-		if (($fh = @fopen('/dev/urandom', 'rb'))) {
+		if (is_readable('/dev/urandom') &&
+		    ($fh = @fopen('/dev/urandom', 'rb'))) {
 			$output = fread($fh, $count);
 			fclose($fh);
 		}
@@ -104,7 +107,9 @@ class PasswordHash {
 		if (substr($setting, 0, 2) == $output)
 			$output = '*1';
 
-		if (substr($setting, 0, 3) != '$P$')
+		$id = substr($setting, 0, 3);
+		# We use "$P$", phpBB3 uses "$H$" for the same thing
+		if ($id != '$P$' && $id != '$H$')
 			return $output;
 
 		$count_log2 = strpos($this->itoa64, $setting[3]);
