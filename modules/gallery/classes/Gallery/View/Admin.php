@@ -115,7 +115,7 @@ class Gallery_View_Admin extends View_Gallery {
         if ($module->name == "gallery") {
           continue;
         }
-        $helper_class = "{$module->name}Theme";
+        $helper_class = ucfirst(Inflector::camelize($module->name)) . "Theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
@@ -123,7 +123,7 @@ class Gallery_View_Admin extends View_Gallery {
         }
       }
 
-      $helper_class = Theme::$admin_theme_name . "Theme";
+      $helper_class = ucfirst(Inflector::camelize(Theme::$admin_theme_name)) . "Theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),
