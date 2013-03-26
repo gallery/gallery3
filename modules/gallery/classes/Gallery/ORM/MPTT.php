@@ -60,7 +60,7 @@ class Gallery_ORM_MPTT extends ORM {
     $parent = ORM::factory("item", $this->parent_id);
 
     try {
-      // Make a hole in the parent for this new Item
+      // Make a hole in the parent for this new item
       DB::update($this->table_name())
         ->set("left_ptr", DB::expr("`left_ptr` + 2"))
         ->where("left_ptr", ">=", $parent->right_ptr)

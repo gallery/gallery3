@@ -10,7 +10,7 @@
 <div class="g-block ui-helper-clearfix">
   <h1> <?= t("Theme choice") ?> </h1>
   <p>
-    <?= t("Make your Gallery beautiful <a href=\"%url\">with a new Theme</a>!  There are separate themes for the regular site and for the administration interface.  Click a theme below to preview and activate it.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
+    <?= t("Make your Gallery beautiful <a href=\"%url\">with a new theme</a>!  There are separate themes for the regular site and for the administration interface.  Click a theme below to preview and activate it.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
   </p>
 
   <div class="g-block-content">
