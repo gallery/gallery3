@@ -158,7 +158,7 @@ class User_User {
    * Look up a user by field value.
    * @param string      search field
    * @param string      search value
-   * @return User_Core  the user object, or null if the name was invalid.
+   * @return User       the user object, or null if the name was invalid.
    */
   private static function _lookup_user_by_field($field_name, $value) {
     try {
