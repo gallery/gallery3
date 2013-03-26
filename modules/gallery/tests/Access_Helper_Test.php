@@ -282,7 +282,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function i_can_edit_test() {
-    // Create a new user that belongs to no groups
+    // Create a new User that belongs to no groups
     $user = Identity::create_user("access_test", "Access Test", "*****", "user@user.com");
     foreach ($user->groups() as $group) {
       $user->remove($group);

@@ -1,3 +1,3 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
-abstract class Database extends Gallery_Database {}
+class Controller_Password extends User_Controller_Password {}

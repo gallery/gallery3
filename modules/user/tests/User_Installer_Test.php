@@ -19,7 +19,7 @@
  */
 
 /**
- * This test case operates under the assumption that user_installer::install() is called by the
+ * This test case operates under the assumption that Hook_UserInstaller::install() is called by the
  * test controller before it starts.
  */
 class User_Installer_Test extends Gallery_Unit_Test_Case {
