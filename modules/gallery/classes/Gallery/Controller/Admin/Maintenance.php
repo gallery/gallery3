@@ -59,7 +59,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   }
 
   /**
-   * Start a new Task
+   * Start a new task
    * @param string $task_callback
    */
   public function start($task_callback) {

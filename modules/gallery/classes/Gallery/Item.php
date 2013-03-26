@@ -93,7 +93,7 @@ class Gallery_Item {
     // When albums are album covers themselves, we hotlink directly to the target item.  This
     // means that when we change an album cover, the grandparent may have a deep link to the old
     // album cover.  So find any parent albums that had the old item as their album cover and
-    // switch them over to the new Item.
+    // switch them over to the new item.
     if ($old_album_cover_id) {
       foreach ($item->parents(array(array("album_cover_item_id", "=", $old_album_cover_id)))
                as $ancestor) {

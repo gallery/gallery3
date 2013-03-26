@@ -363,7 +363,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     if ($this->_significant_changes() || isset($this->data_file)) {
       $this->updated = time();
 
-      // Create a new Item.
+      // Create a new item.
       Module::event("item_before_create", $this);
 
       // Set a weight if it's missing.  We don't do this in the constructor because it's not a
@@ -507,7 +507,7 @@ class Gallery_Model_Item extends ORM_MPTT {
         // (Third-party event handlers would like access to both). The old data file will be
         // accessible via the $original item, and the new one via $this item. But in that case,
         // we don't want to rename the original as below, because the old data would end up being
-        // clobbered by the new data file. Also, the rename isn't necessary, because the new Item
+        // clobbered by the new data file. Also, the rename isn't necessary, because the new item
         // data is coming from the data file anyway. So we only perform the rename if there isn't
         // a data file. Another way to solve this would be to copy the original file rather than
         // conditionally rename it, but a copy would cost far more than the rename.

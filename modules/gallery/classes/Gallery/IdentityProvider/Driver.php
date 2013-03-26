@@ -33,7 +33,7 @@ interface Gallery_IdentityProvider_Driver {
   public function admin_user();
 
   /**
-   * Create a new User.
+   * Create a new user.
    *
    * @param string  $name
    * @param string  $full_name
@@ -67,7 +67,7 @@ interface Gallery_IdentityProvider_Driver {
   public function lookup_user_by_name($name);
 
   /**
-   * Create a new Group.
+   * Create a new group.
    *
    * @param string $name
    * @return IdentityProvider_GroupDefinition the group object

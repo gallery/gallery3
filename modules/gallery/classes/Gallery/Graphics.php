@@ -22,7 +22,7 @@ class Gallery_Graphics {
   private static $_rules_cache = array();
 
   /**
-   * Add a new Graphics rule.
+   * Add a new graphics rule.
    *
    * Rules are applied to targets (thumbnails and resizes) in priority order.  Rules are functions
    * in the graphics class.  So for example, the following rule:

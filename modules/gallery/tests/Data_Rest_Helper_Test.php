@@ -31,7 +31,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function resolve_needs_permission_test() {
     $album = test::random_album();
     $photo = test::random_photo($album);
-    $album->reload();  // new Photo changed the album in the db
+    $album->reload();  // new photo changed the album in the db
 
     Access::deny(Identity::everybody(), "view", $album);
     Identity::set_active_user(Identity::guest());
