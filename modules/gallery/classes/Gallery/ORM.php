@@ -59,11 +59,8 @@ class Gallery_ORM extends Kohana_ORM {
    */
   protected function _initialize() {
     if (empty($this->_table_name)) {
-      // Remove "Model_" from the class name
-      $this->_table_name = substr(get_class($this), 6);
-      // Convert camelcase to lowercase and underscore
-      $this->_table_name = preg_replace("/([^A-Z_])([A-Z])/", "$1_$2", $this->_table_name);
-      $this->_table_name = strtolower($this->_table_name);
+      // Get the table name by using Inflector::decamelize() instead of strtolower()
+      $this->_table_name = Inflector::decamelize(substr(get_class($this), 6), "_");
       // Make the table name plural (if specified)
       if ($this->_table_names_plural === true) {
         $this->_table_name = Inflector::plural($this->_table_name);
