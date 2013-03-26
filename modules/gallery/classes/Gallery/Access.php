@@ -346,7 +346,7 @@ class Gallery_Access {
   }
 
   /**
-   * Add the appropriate columns for a new Group
+   * Add the appropriate columns for a new group
    *
    * @param Model_Group $group
    * @return void
@@ -370,7 +370,7 @@ class Gallery_Access {
   }
 
   /**
-   * Add new Access rows when a new Item is added.
+   * Add new access rows when a new item is added.
    *
    * @param Model_Item $item
    * @return void
@@ -384,7 +384,7 @@ class Gallery_Access {
     $access_intent->item_id = $item->id;
     $access_intent->save();
 
-    // Create a new Access cache entry and copy the parents values.
+    // Create a new access cache entry and copy the parents values.
     $access_cache = ORM::factory("AccessCache");
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {

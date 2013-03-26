@@ -50,9 +50,9 @@
     <div id="g-user-admin" class="g-block">
       <a href="<?= URL::site("admin/users/add_user_form") ?>"
           class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
-          title="<?= t("Create a new User")->for_html_attr() ?>">
+          title="<?= t("Create a new user")->for_html_attr() ?>">
         <span class="ui-icon ui-icon-circle-plus"></span>
-        <?= t("Add a new User") ?>
+        <?= t("Add a new user") ?>
       </a>
 
       <h2> <?= t("Users") ?> </h2>

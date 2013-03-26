@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Admin_Movies extends Controller_Admin {
   public function index() {
-    // Print screen from new Form.
+    // Print screen from new form.
     $form = $this->_get_admin_form();
     $this->_print_view($form);
   }
