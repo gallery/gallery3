@@ -147,7 +147,7 @@ class Gallery_IdentityProvider {
     }
 
     // Set driver name
-    $driver = "IdentityProvider_" . ucfirst($this->config["driver"])  ."_Driver";
+    $driver = "IdentityProvider_" . ucfirst($this->config["driver"]);
 
     // Load the driver
     if ( ! Kohana::auto_load($driver)) {

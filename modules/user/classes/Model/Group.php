@@ -1,3 +1,3 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
-abstract class Database extends Gallery_Database {}
+class Model_Group extends User_Model_Group {}

@@ -106,7 +106,7 @@ class Gallery_Identity {
   /**
    * Return the active user.  If there's no active user, return the guest user.
    *
-   * @return User_Definition
+   * @return IdentityProvider_UserDefinition
    */
   static function active_user() {
     // @todo (maybe) cache this object so we're not always doing session lookups.
@@ -121,7 +121,7 @@ class Gallery_Identity {
 
   /**
    * Change the active user.
-   * @param User_Definition $user
+   * @param IdentityProvider_UserDefinition $user
    */
   static function set_active_user($user) {
     $session = Session::instance();
