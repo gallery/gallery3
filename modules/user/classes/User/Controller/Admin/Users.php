@@ -19,16 +19,16 @@
  */
 class User_Controller_Admin_Users extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Users and groups");
     $view->page_type = "collection";
     $view->page_subtype = "admin_users";
-    $view->content = new View("admin_users.html");
+    $view->content = new View("admin/users.html");
 
     // @todo: add this as a config option
-    $page_size = module::get_var("user", "page_size", 10);
+    $page_size = Module::get_var("user", "page_size", 10);
     $page = Input::instance()->get("page", "1");
-    $builder = db::build();
+    $builder = DB::build();
     $user_count = $builder->from("users")->count_records();
 
     // Pagination info
@@ -46,27 +46,27 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      url::redirect(url::merge(array("page" => 1)));
+      URL::redirect(URL::merge(array("page" => 1)));
     } else if ($page > $view->content->pager->total_pages) {
-      url::redirect(url::merge(array("page" => $view->content->pager->total_pages)));
+      URL::redirect(URL::merge(array("page" => $view->content->pager->total_pages)));
     }
 
     // Join our users against the items table so that we can get a count of their items
     // in the same query.
-    $view->content->users = ORM::factory("user")
+    $view->content->users = ORM::factory("User")
       ->order_by("users.name", "ASC")
       ->find_all($page_size, $view->content->pager->sql_offset);
-    $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();
+    $view->content->groups = ORM::factory("Group")->order_by("name", "ASC")->find_all();
 
     print $view;
   }
 
   public function add_user() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $form = $this->_get_user_add_form_admin();
     try {
-      $user = ORM::factory("user");
+      $user = ORM::factory("User");
       $valid = $form->validate();
       $user->name = $form->add_user->inputs["name"]->value;
       $user->full_name = $form->add_user->full_name->value;
@@ -86,11 +86,11 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     if ($valid) {
       $user->save();
-      module::event("user_add_form_admin_completed", $user, $form);
-      message::success(t("Created user %user_name", array("user_name" => $user->name)));
-      json::reply(array("result" => "success"));
+      Module::event("user_add_form_admin_completed", $user, $form);
+      Message::success(t("Created user %user_name", array("user_name" => $user->name)));
+      JSON::reply(array("result" => "success"));
     } else {
-      print json::reply(array("result" => "error", "html" => (string)$form));
+      print JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -99,15 +99,15 @@ class User_Controller_Admin_Users extends Controller_Admin {
   }
 
   public function delete_user($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    if ($id == identity::active_user()->id || $id == user::guest()->id) {
-      access::forbidden();
+    if ($id == Identity::active_user()->id || $id == User::guest()->id) {
+      Access::forbidden();
     }
 
-    $user = user::lookup($id);
+    $user = User::lookup($id);
     if (empty($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     $form = $this->_get_user_delete_form_admin($user);
@@ -115,32 +115,32 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $name = $user->name;
       $user->delete();
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
 
     $message = t("Deleted user %user_name", array("user_name" => $name));
-    log::success("user", $message);
-    message::success($message);
-    json::reply(array("result" => "success"));
+    Log::success("user", $message);
+    Message::success($message);
+    JSON::reply(array("result" => "success"));
   }
 
   public function delete_user_form($id) {
-    $user = user::lookup($id);
+    $user = User::lookup($id);
     if (empty($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
-    $v = new View("admin_users_delete_user.html");
+    $v = new View("admin/users_delete_user.html");
     $v->user = $user;
     $v->form = $this->_get_user_delete_form_admin($user);
     print $v;
   }
 
   public function edit_user($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $user = user::lookup($id);
+    $user = User::lookup($id);
     if (empty($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     $form = $this->_get_user_edit_form_admin($user);
@@ -154,7 +154,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
       $user->locale = $form->edit_user->locale->value;
-      if ($user->id != identity::active_user()->id) {
+      if ($user->id != Identity::active_user()->id) {
         $user->admin = $form->edit_user->admin->checked;
       }
 
@@ -169,52 +169,52 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     if ($valid) {
       $user->save();
-      module::event("user_edit_form_admin_completed", $user, $form);
-      message::success(t("Changed user %user_name", array("user_name" => $user->name)));
-      json::reply(array("result" => "success"));
+      Module::event("user_edit_form_admin_completed", $user, $form);
+      Message::success(t("Changed user %user_name", array("user_name" => $user->name)));
+      JSON::reply(array("result" => "success"));
     } else {
-      json::reply(array("result" => "error", "html" => (string) $form));
+      JSON::reply(array("result" => "error", "html" => (string) $form));
     }
   }
 
   public function edit_user_form($id) {
-    $user = user::lookup($id);
+    $user = User::lookup($id);
     if (empty($user)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     print $this->_get_user_edit_form_admin($user);
   }
 
   public function add_user_to_group($user_id, $group_id) {
-    access::verify_csrf();
-    $group = group::lookup($group_id);
-    $user = user::lookup($user_id);
+    Access::verify_csrf();
+    $group = Group::lookup($group_id);
+    $user = User::lookup($user_id);
     $group->add($user);
     $group->save();
   }
 
   public function remove_user_from_group($user_id, $group_id) {
-    access::verify_csrf();
-    $group = group::lookup($group_id);
-    $user = user::lookup($user_id);
+    Access::verify_csrf();
+    $group = Group::lookup($group_id);
+    $user = User::lookup($user_id);
     $group->remove($user);
     $group->save();
   }
 
   public function group($group_id) {
-    $view = new View("admin_users_group.html");
-    $view->group = group::lookup($group_id);
+    $view = new View("admin/users_group.html");
+    $view->group = Group::lookup($group_id);
     print $view;
   }
 
   public function add_group() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $form = $this->_get_group_add_form_admin();
     try {
       $valid = $form->validate();
-      $group = ORM::factory("group");
+      $group = ORM::factory("Group");
       $group->name = $form->add_group->inputs["name"]->value;
       $group->validate();
     } catch (ORM_Validation_Exception $e) {
@@ -227,11 +227,11 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     if ($valid) {
       $group->save();
-      message::success(
+      Message::success(
         t("Created group %group_name", array("group_name" => $group->name)));
-      json::reply(array("result" => "success"));
+      JSON::reply(array("result" => "success"));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -240,11 +240,11 @@ class User_Controller_Admin_Users extends Controller_Admin {
   }
 
   public function delete_group($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $group = group::lookup($id);
+    $group = Group::lookup($id);
     if (empty($group)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     $form = $this->_get_group_delete_form_admin($group);
@@ -252,30 +252,30 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $name = $group->name;
       $group->delete();
     } else {
-      json::reply(array("result" => "error", "html" => (string) $form));
+      JSON::reply(array("result" => "error", "html" => (string) $form));
     }
 
     $message = t("Deleted group %group_name", array("group_name" => $name));
-    log::success("group", $message);
-    message::success($message);
-    json::reply(array("result" => "success"));
+    Log::success("group", $message);
+    Message::success($message);
+    JSON::reply(array("result" => "success"));
   }
 
   public function delete_group_form($id) {
-    $group = group::lookup($id);
+    $group = Group::lookup($id);
     if (empty($group)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     print $this->_get_group_delete_form_admin($group);
   }
 
   public function edit_group($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $group = group::lookup($id);
+    $group = Group::lookup($id);
     if (empty($group)) {
-       throw new Kohana_404_Exception();
+       throw new HTTP_Exception_404();
     }
 
     $form = $this->_get_group_edit_form_admin($group);
@@ -293,21 +293,21 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     if ($valid) {
       $group->save();
-      message::success(
+      Message::success(
         t("Changed group %group_name", array("group_name" => $group->name)));
-      json::reply(array("result" => "success"));
+      JSON::reply(array("result" => "success"));
     } else {
       $group->reload();
-      message::error(
+      Message::error(
         t("Failed to change group %group_name", array("group_name" => $group->name)));
-      json::reply(array("result" => "error", "html" => (string) $form));
+      JSON::reply(array("result" => "error", "html" => (string) $form));
     }
   }
 
   public function edit_group_form($id) {
-    $group = group::lookup($id);
+    $group = Group::lookup($id);
     if (empty($group)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     print $this->_get_group_edit_form_admin($group);
@@ -342,11 +342,11 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
 
     // Don't allow the user to control their own admin bit, else you can lock yourself out
-    if ($user->id == identity::active_user()->id) {
+    if ($user->id == Identity::active_user()->id) {
       $group->admin->disabled(1);
     }
 
-    module::event("user_edit_form_admin", $user, $form);
+    Module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify user"));
     return $form;
   }
@@ -377,13 +377,13 @@ class User_Controller_Admin_Users extends Controller_Admin {
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
 
-    module::event("user_add_form_admin", $user, $form);
+    Module::event("user_add_form_admin", $user, $form);
     $group->submit("")->value(t("Add user"));
     return $form;
   }
 
   private static function _add_locale_dropdown(&$form, $user=null) {
-    $locales = locales::installed();
+    $locales = Locales::installed();
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);
     }

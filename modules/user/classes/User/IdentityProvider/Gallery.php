@@ -25,21 +25,21 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::guest.
    */
   public function guest() {
-    return user::guest();
+    return User::guest();
   }
 
   /**
    * @see IdentityProvider_Driver::guest.
    */
   public function admin_user() {
-    return user::admin_user();
+    return User::admin_user();
   }
 
   /**
    * @see IdentityProvider_Driver::create_user.
    */
   public function create_user($name, $full_name, $password, $email) {
-    $user = ORM::factory("user");
+    $user = ORM::factory("User");
     $user->name = $name;
     $user->full_name = $full_name;
     $user->password = $password;
@@ -68,7 +68,7 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
     }
 
     // Passwords with <&"> created by G2 prior to 2.1 were hashed with entities
-    $sanitizedPassword = html::chars($password, false);
+    $sanitizedPassword = HTML::chars($password, false);
     $guess = (strlen($valid) == 32) ? md5($sanitizedPassword)
           : ($salt . md5($salt . $sanitizedPassword));
     if (!strcmp($guess, $valid)) {
@@ -82,21 +82,21 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::lookup_user.
    */
   public function lookup_user($id) {
-    return user::lookup($id);
+    return User::lookup($id);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_user_by_name.
    */
   public function lookup_user_by_name($name) {
-    return user::lookup_by_name($name);
+    return User::lookup_by_name($name);
   }
 
   /**
    * @see IdentityProvider_Driver::create_group.
    */
   public function create_group($name) {
-    $group = ORM::factory("group");
+    $group = ORM::factory("Group");
     $group->name = $name;
     return $group->save();
   }
@@ -105,35 +105,35 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::everybody.
    */
   public function everybody() {
-    return group::everybody();
+    return Group::everybody();
   }
 
   /**
    * @see IdentityProvider_Driver::registered_users.
    */
   public function registered_users() {
-    return group::registered_users();
+    return Group::registered_users();
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_group.
    */
   public function lookup_group($id) {
-    return group::lookup($id);
+    return Group::lookup($id);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_group_by_name.
    */
   public function lookup_group_by_name($name) {
-    return group::lookup_by_name($name);
+    return Group::lookup_by_name($name);
   }
 
   /**
    * @see IdentityProvider_Driver::get_user_list.
    */
   public function get_user_list($ids) {
-    return ORM::factory("user")
+    return ORM::factory("User")
       ->where("id", "IN", $ids)
       ->find_all();
   }
@@ -142,7 +142,7 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::groups.
    */
   public function groups() {
-    return ORM::factory("group")->find_all();
+    return ORM::factory("Group")->find_all();
   }
 
   /**

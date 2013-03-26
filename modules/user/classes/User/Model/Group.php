@@ -26,15 +26,15 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
    */
   public function delete($id=null) {
     $old = clone $this;
-    module::event("group_before_delete", $this);
+    Module::event("group_before_delete", $this);
     parent::delete($id);
 
-    db::build()
+    DB::build()
       ->delete("groups_users")
       ->where("group_id", "=", empty($id) ? $old->id : $id)
       ->execute();
 
-    module::event("group_deleted", $old);
+    Module::event("group_deleted", $old);
     $this->users_cache = null;
   }
 
@@ -63,12 +63,12 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
     if (!$this->loaded()) {
       // New group
       parent::save();
-      module::event("group_created", $this);
+      Module::event("group_created", $this);
     } else {
       // Updated group
       $original = ORM::factory("group", $this->id);
       parent::save();
-      module::event("group_updated", $original, $this);
+      Module::event("group_updated", $original, $this);
     }
 
     $this->users_cache = null;
@@ -79,7 +79,7 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
    * Validate the user name.  Make sure there are no conflicts.
    */
   public function valid_name(Validation $v, $field) {
-    if (db::build()->from("groups")
+    if (DB::build()->from("groups")
         ->where("name", "=", $this->name)
         ->where("id", "<>", $this->id)
         ->count_records() == 1) {

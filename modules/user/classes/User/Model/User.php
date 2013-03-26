@@ -30,7 +30,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
 
     case "password":
       $this->password_length = strlen($value);
-      $value = user::hash_password($value);
+      $value = User::hash_password($value);
       break;
     }
     parent::__set($column, $value);
@@ -41,15 +41,15 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    */
   public function delete($id=null) {
     $old = clone $this;
-    module::event("user_before_delete", $this);
+    Module::event("user_before_delete", $this);
     parent::delete($id);
 
-    db::build()
+    DB::build()
       ->delete("groups_users")
       ->where("user_id", "=", empty($id) ? $old->id : $id)
       ->execute();
 
-    module::event("user_deleted", $old);
+    Module::event("user_deleted", $old);
     $this->groups_cache = null;
   }
 
@@ -78,14 +78,14 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
     if (!$array) {
       $this->rules = array(
         "admin"     => array("callbacks" => array(array($this, "valid_admin"))),
-        "email"     => array("rules"     => array("length[1,255]", "valid::email"),
+        "email"     => array("rules"     => array("length[1,255]", "Valid::email"),
                              "callbacks" => array(array($this, "valid_email"))),
         "full_name" => array("rules"     => array("length[0,255]")),
         "locale"    => array("rules"     => array("length[2,10]")),
         "name"      => array("rules"     => array("length[1,32]", "required"),
                              "callbacks" => array(array($this, "valid_name"))),
         "password"  => array("callbacks" => array(array($this, "valid_password"))),
-        "url"       => array("rules"     => array("valid::url")),
+        "url"       => array("rules"     => array("Valid::url")),
       );
     }
 
@@ -96,7 +96,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    * Handle any business logic necessary to create or update a user.
    * @see ORM::save()
    *
-   * @return ORM User_Model
+   * @return ORM Model_User
    */
   public function save() {
     if ($this->full_name === null) {
@@ -105,18 +105,18 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
 
     if (!$this->loaded()) {
       // New user
-      $this->add(group::everybody());
+      $this->add(Group::everybody());
       if (!$this->guest) {
-        $this->add(group::registered_users());
+        $this->add(Group::registered_users());
       }
 
       parent::save();
-      module::event("user_created", $this);
+      Module::event("user_created", $this);
     } else {
       // Updated user
       $original = ORM::factory("user", $this->id);
       parent::save();
-      module::event("user_updated", $original, $this);
+      Module::event("user_updated", $original, $this);
     }
 
     $this->groups_cache = null;
@@ -136,7 +136,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    * Validate the user name.  Make sure there are no conflicts.
    */
   public function valid_name(Validation $v, $field) {
-    if (db::build()->from("users")
+    if (DB::build()->from("users")
         ->where("name", "=", $this->name)
         ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
         ->count_records() == 1) {
@@ -153,7 +153,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
     }
 
     if (!$this->loaded() || isset($this->password_length)) {
-      $minimum_length = module::get_var("user", "minimum_password_length", 5);
+      $minimum_length = Module::get_var("user", "minimum_password_length", 5);
       if ($this->password_length < $minimum_length) {
         $v->add_error("password", "min_length");
       }
@@ -164,7 +164,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    * Validate the admin bit.
    */
   public function valid_admin(Validation $v, $field) {
-    $active = identity::active_user();
+    $active = Identity::active_user();
     if ($this->id == $active->id && $active->admin && !$this->admin) {
       $v->add_error("admin", "locked");
     }

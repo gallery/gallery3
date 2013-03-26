@@ -19,9 +19,9 @@
  */
 class User_Controller_Users extends Controller {
   public function update($id) {
-    $user = user::lookup($id);
-    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
-      access::forbidden();
+    $user = User::lookup($id);
+    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
     $form = $this->_get_edit_form($user);
@@ -30,7 +30,7 @@ class User_Controller_Users extends Controller {
       $user->full_name = $form->edit_user->full_name->value;
       $user->url = $form->edit_user->url->value;
 
-      if (count(locales::installed()) > 1 &&
+      if (count(Locales::installed()) > 1 &&
           $user->locale != $form->edit_user->locale->value) {
         $user->locale = $form->edit_user->locale->value;
         $flush_locale_cookie = true;
@@ -52,19 +52,19 @@ class User_Controller_Users extends Controller {
       }
 
       $user->save();
-      module::event("user_edit_form_completed", $user, $form);
-      message::success(t("User information updated"));
-      json::reply(array("result" => "success",
-                        "resource" => url::site("users/{$user->id}")));
+      Module::event("user_edit_form_completed", $user, $form);
+      Message::success(t("User information updated"));
+      JSON::reply(array("result" => "success",
+                        "resource" => URL::site("users/{$user->id}")));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function change_password($id) {
-    $user = user::lookup($id);
-    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
-      access::forbidden();
+    $user = User::lookup($id);
+    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
     $form = $this->_get_change_password_form($user);
@@ -82,24 +82,24 @@ class User_Controller_Users extends Controller {
 
     if ($valid) {
       $user->save();
-      module::event("user_change_password_form_completed", $user, $form);
-      message::success(t("Password changed"));
-      module::event("user_auth", $user);
-      module::event("user_password_change", $user);
-      json::reply(array("result" => "success",
-                        "resource" => url::site("users/{$user->id}")));
+      Module::event("user_change_password_form_completed", $user, $form);
+      Message::success(t("Password changed"));
+      Module::event("user_auth", $user);
+      Module::event("user_password_change", $user);
+      JSON::reply(array("result" => "success",
+                        "resource" => URL::site("users/{$user->id}")));
     } else {
-      log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
+      Log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
-      module::event("user_auth_failed", $name);
-      json::reply(array("result" => "error", "html" => (string)$form));
+      Module::event("user_auth_failed", $name);
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function change_email($id) {
-    $user = user::lookup($id);
-    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
-      access::forbidden();
+    $user = User::lookup($id);
+    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
     $form = $this->_get_change_email_form($user);
@@ -117,41 +117,41 @@ class User_Controller_Users extends Controller {
 
     if ($valid) {
       $user->save();
-      module::event("user_change_email_form_completed", $user, $form);
-      message::success(t("Email address changed"));
-      module::event("user_auth", $user);
-      json::reply(array("result" => "success",
-                        "resource" => url::site("users/{$user->id}")));
+      Module::event("user_change_email_form_completed", $user, $form);
+      Message::success(t("Email address changed"));
+      Module::event("user_auth", $user);
+      JSON::reply(array("result" => "success",
+                        "resource" => URL::site("users/{$user->id}")));
     } else {
-      log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
+      Log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
-      module::event("user_auth_failed", $name);
-      json::reply(array("result" => "error", "html" => (string)$form));
+      Module::event("user_auth_failed", $name);
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function form_edit($id) {
-    $user = user::lookup($id);
-    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
-      access::forbidden();
+    $user = User::lookup($id);
+    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
     print $this->_get_edit_form($user);
   }
 
   public function form_change_password($id) {
-    $user = user::lookup($id);
-    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
-      access::forbidden();
+    $user = User::lookup($id);
+    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
     print $this->_get_change_password_form($user);
   }
 
   public function form_change_email($id) {
-    $user = user::lookup($id);
-    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
-      access::forbidden();
+    $user = User::lookup($id);
+    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
     print $this->_get_change_email_form($user);
@@ -162,8 +162,8 @@ class User_Controller_Users extends Controller {
       "users/change_password/$user->id", "", "post", array("id" => "g-change-password-user-form"));
     $group = $form->group("change_password")->label(t("Change your password"));
     $group->password("old_password")->label(t("Old password"))->id("g-password")
-      ->callback("auth::validate_too_many_failed_auth_attempts")
-      ->callback("user::valid_password")
+      ->callback("Auth::validate_too_many_failed_auth_attempts")
+      ->callback("User::valid_password")
       ->error_messages("invalid_password", t("Incorrect password"))
       ->error_messages(
         "too_many_failed_auth_attempts",
@@ -177,7 +177,7 @@ class User_Controller_Users extends Controller {
       ->matches($group->password)
       ->error_messages("matches", t("The passwords you entered do not match"));
 
-    module::event("user_change_password_form", $user, $form);
+    Module::event("user_change_password_form", $user, $form);
     $group->submit("")->value(t("Save"));
     return $form;
   }
@@ -187,8 +187,8 @@ class User_Controller_Users extends Controller {
       "users/change_email/$user->id", "", "post", array("id" => "g-change-email-user-form"));
     $group = $form->group("change_email")->label(t("Change your email address"));
     $group->password("password")->label(t("Current password"))->id("g-password")
-      ->callback("auth::validate_too_many_failed_auth_attempts")
-      ->callback("user::valid_password")
+      ->callback("Auth::validate_too_many_failed_auth_attempts")
+      ->callback("User::valid_password")
       ->error_messages("invalid_password", t("Incorrect password"))
       ->error_messages(
         "too_many_failed_auth_attempts",
@@ -198,7 +198,7 @@ class User_Controller_Users extends Controller {
       ->error_messages("length", t("Your email address is too long"))
       ->error_messages("required", t("You must enter a valid email address"));
 
-    module::event("user_change_email_form", $user, $form);
+    Module::event("user_change_email_form", $user, $form);
     $group->submit("")->value(t("Save"));
     return $form;
   }
@@ -212,14 +212,14 @@ class User_Controller_Users extends Controller {
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url)
       ->error_messages("url", t("You must enter a valid url"));
 
-    module::event("user_edit_form", $user, $form);
+    Module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));
     return $form;
   }
 
-  /** @todo combine with Admin_Users_Controller::_add_locale_dropdown */
+  /** @todo combine with Controller_Admin_Users::_add_locale_dropdown */
   private function _add_locale_dropdown(&$form, $user=null) {
-    $locales = locales::installed();
+    $locales = Locales::installed();
     if (count($locales) <= 1) {
       return;
     }

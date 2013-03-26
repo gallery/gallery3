@@ -22,7 +22,7 @@ class User_Hook_UserEvent {
     $menu->add_after("appearance_menu", Menu::factory("link")
                      ->id("users_groups")
                      ->label(t("Users/Groups"))
-                     ->url(url::site("admin/users")));
+                     ->url(URL::site("admin/users")));
 
     return $menu;
   }

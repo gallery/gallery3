@@ -29,12 +29,12 @@ class User_Hook_UserInstaller {
 
   static function upgrade($version) {
     if ($version == 1) {
-      module::set_var("user", "mininum_password_length", 5);
-      module::set_version("user", $version = 2);
+      Module::set_var("user", "mininum_password_length", 5);
+      Module::set_version("user", $version = 2);
     }
 
     if ($version == 2) {
-      db::build()
+      DB::build()
         ->update("users")
         ->set("email", "unknown@unknown.com")
         ->where("guest", "=", 0)
@@ -43,24 +43,24 @@ class User_Hook_UserInstaller {
         ->or_where("email", "=", "")
         ->close()
         ->execute();
-      module::set_version("user", $version = 3);
+      Module::set_version("user", $version = 3);
     }
 
     if ($version == 3) {
-      $password_length = module::get_var("user", "mininum_password_length", 5);
-      module::set_var("user", "minimum_password_length", $password_length);
-      module::clear_var("user", "mininum_password_length");
-      module::set_version("user", $version = 4);
+      $password_length = Module::get_var("user", "mininum_password_length", 5);
+      Module::set_var("user", "minimum_password_length", $password_length);
+      Module::clear_var("user", "mininum_password_length");
+      Module::set_version("user", $version = 4);
     }
   }
 
   static function uninstall() {
     // Delete all users and groups so that we give other modules an opportunity to clean up
-    foreach (ORM::factory("user")->find_all() as $user) {
+    foreach (ORM::factory("User")->find_all() as $user) {
       $user->delete();
     }
 
-    foreach (ORM::factory("group")->find_all() as $group) {
+    foreach (ORM::factory("Group")->find_all() as $group) {
       $group->delete();
     }
 
@@ -105,24 +105,24 @@ class User_Hook_UserInstaller {
                  UNIQUE KEY(`user_id`, `group_id`))
                DEFAULT CHARSET=utf8;");
 
-    $everybody = ORM::factory("group");
+    $everybody = ORM::factory("Group");
     $everybody->name = "Everybody";
     $everybody->special = true;
     $everybody->save();
 
-    $registered = ORM::factory("group");
+    $registered = ORM::factory("Group");
     $registered->name = "Registered Users";
     $registered->special = true;
     $registered->save();
 
-    $guest = ORM::factory("user");
+    $guest = ORM::factory("User");
     $guest->name = "guest";
     $guest->full_name = "Guest User";
     $guest->password = "";
     $guest->guest = true;
     $guest->save();
 
-    $admin = ORM::factory("user");
+    $admin = ORM::factory("User");
     $admin->name = "admin";
     $admin->full_name = "Gallery Administrator";
     $admin->password = "admin";
@@ -131,12 +131,12 @@ class User_Hook_UserInstaller {
     $admin->save();
 
     $root = ORM::factory("item", 1);
-    access::allow($everybody, "view", $root);
-    access::allow($everybody, "view_full", $root);
+    Access::allow($everybody, "view", $root);
+    Access::allow($everybody, "view_full", $root);
 
-    access::allow($registered, "view", $root);
-    access::allow($registered, "view_full", $root);
+    Access::allow($registered, "view", $root);
+    Access::allow($registered, "view_full", $root);
 
-    module::set_var("user", "minimum_password_length", 5);
+    Module::set_var("user", "minimum_password_length", 5);
   }
 }

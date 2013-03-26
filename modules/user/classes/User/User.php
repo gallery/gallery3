@@ -29,30 +29,30 @@ class User_User {
    *
    * @todo consider caching
    *
-   * @return User_Model
+   * @return Model_User
    */
   static function guest() {
-    return model_cache::get("user", 1);
+    return ModelCache::get("user", 1);
   }
 
   /**
    * Return an admin user.  Prefer the currently logged in user, if possible.
    *
-   * @return User_Model
+   * @return Model_User
    */
   static function admin_user() {
-    $active = identity::active_user();
+    $active = Identity::active_user();
     if ($active->admin) {
       return $active;
     }
 
-    return ORM::factory("user")->where("admin", "=", 1)->order_by("id", "ASC")->find();
+    return ORM::factory("User")->where("admin", "=", 1)->order_by("id", "ASC")->find();
   }
 
   /**
    * Is the password provided correct?
    *
-   * @param user User Model
+   * @param User User Model
    * @param string $password a plaintext password
    * @return boolean true if the password is correct
    */
@@ -74,7 +74,7 @@ class User_User {
     }
 
     // Passwords with <&"> created by G2 prior to 2.1 were hashed with entities
-    $sanitizedPassword = html::chars($password, false);
+    $sanitizedPassword = HTML::chars($password, false);
     $guess = (strlen($valid) == 32) ? md5($sanitizedPassword)
           : ($salt . md5($salt . $sanitizedPassword));
     if (!strcmp($guess, $valid)) {
@@ -85,7 +85,7 @@ class User_User {
   }
 
   static function valid_password($password_input) {
-    if (!user::is_correct_password(identity::active_user(), $password_input->value)) {
+    if (!User::is_correct_password(Identity::active_user(), $password_input->value)) {
       $password_input->add_error("invalid_password", 1);
     }
   }
@@ -110,7 +110,7 @@ class User_User {
   /**
    * Look up a user by id.
    * @param integer      $id the user id
-   * @return User_Model  the user object, or null if the id was invalid.
+   * @return Model_User  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
     return self::_lookup_user_by_field("id", $id);
@@ -119,7 +119,7 @@ class User_User {
   /**
    * Look up a user by name.
    * @param integer      $name the user name
-   * @return User_Model  the user object, or null if the name was invalid.
+   * @return Model_User  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
     return self::_lookup_user_by_field("name", $name);
@@ -128,7 +128,7 @@ class User_User {
   /**
    * Look up a user by hash.
    * @param integer      $hash the user hash value
-   * @return User_Model  the user object, or null if the name was invalid.
+   * @return Model_User  the user object, or null if the name was invalid.
    */
   static function lookup_by_hash($hash) {
     return self::_lookup_user_by_field("hash", $hash);
@@ -140,7 +140,7 @@ class User_User {
    * @return array     the user list.
    */
   static function get_user_list($filter=array()) {
-    $user = ORM::factory("user");
+    $user = ORM::factory("User");
 
     foreach($filter as $method => $args) {
       switch ($method) {
@@ -162,7 +162,7 @@ class User_User {
    */
   private static function _lookup_user_by_field($field_name, $value) {
     try {
-      $user = model_cache::get("user", $value, $field_name);
+      $user = ModelCache::get("user", $value, $field_name);
       if ($user->loaded()) {
         return $user;
       }
