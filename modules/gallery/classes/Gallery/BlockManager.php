@@ -34,7 +34,7 @@ class Gallery_BlockManager {
   }
 
   static function activate_blocks($module_name) {
-    $block_class = "{$module_name}Block";
+    $block_class = ucfirst(Inflector::camelize($module->name)) . "Block";
     if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach (array_keys($blocks) as $block_id) {
@@ -60,7 +60,7 @@ class Gallery_BlockManager {
   }
 
   static function deactivate_blocks($module_name) {
-    $block_class = "{$module_name}Block";
+    $block_class = ucfirst(Inflector::camelize($module->name)) . "Block";
     if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {
@@ -88,7 +88,7 @@ class Gallery_BlockManager {
     $blocks = array();
 
     foreach (Module::active() as $module) {
-      $class_name = "{$module->name}Block";
+      $class_name = ucfirst(Inflector::camelize($module->name)) . "Block";
       if (class_exists($class_name) && method_exists($class_name, $function)) {
         foreach (call_user_func(array($class_name, $function)) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
@@ -102,8 +102,9 @@ class Gallery_BlockManager {
     $active = BlockManager::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
-      if (class_exists("{$desc[0]}Block") && method_exists("{$desc[0]}Block", "get")) {
-        $block = call_user_func(array("{$desc[0]}Block", "get"), $desc[1], $theme);
+      $class_name = ucfirst(Inflector::camelize($desc[0])) . "Block";
+      if (class_exists($class_name) && method_exists($class_name, "get")) {
+        $block = call_user_func(array($class_name, "get"), $desc[1], $theme);
         if (!empty($block)) {
           $block->id = $id;
           $result .= $block;
