@@ -26,18 +26,6 @@ class Gallery_Hook_GalleryTheme {
       $buf .= $theme->css("debug.css");
     }
 
-    if (Module::is_active("rss")) {
-      if ($item = $theme->item()) {
-        if ($item->is_album()) {
-          $buf .= Rss::feed_link("gallery/album/{$item->id}");
-        } else {
-          $buf .= Rss::feed_link("gallery/album/{$item->parent()->id}");
-        }
-      } else if ($tag = $theme->tag()) {
-        $buf .= Rss::feed_link("tag/tag/{$tag->id}");
-      }
-    }
-
     if (count(Locales::installed())) {
       // Needed by the languages block
       $buf .= $theme->script("jquery.cookie.js");
