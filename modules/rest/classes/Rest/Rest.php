@@ -120,8 +120,8 @@ class Rest_Rest {
    * Convert a REST url into an object.
    * Eg:
    *   http://example.com/gallery3/index.php/rest/item/35          -> Model_Item
-   *   http://example.com/gallery3/index.php/rest/tag/16           -> Tag_Model
-   *   http://example.com/gallery3/index.php/rest/tagged_item/1,16 -> [Tag_Model, Model_Item]
+   *   http://example.com/gallery3/index.php/rest/tag/16           -> Model_Tag
+   *   http://example.com/gallery3/index.php/rest/tagged_item/1,16 -> [Model_Tag, Model_Item]
    *
    * @param string  the fully qualified REST url
    * @return mixed  the corresponding object (usually a model of some kind)
@@ -140,7 +140,7 @@ class Rest_Rest {
       throw new HTTP_Exception_404($url);
     }
 
-    $class = "$components[1]_rest";
+    $class = "Hook_Rest_" . Inflector::camelize($components[1], true);
     if (!class_exists($class) || !method_exists($class, "resolve")) {
       throw new HTTP_Exception_404($url);
     }
@@ -157,7 +157,7 @@ class Rest_Rest {
     $args = func_get_args();
     $resource_type = array_shift($args);
 
-    $class = "{$resource_type}_rest";
+    $class = "Hook_Rest_" . Inflector::camelize($resource_type, true);
     if (!class_exists($class) || !method_exists($class, "url")) {
       throw new Rest_Exception("Bad Request", 400);
     }
@@ -176,8 +176,8 @@ class Rest_Rest {
   static function relationships($resource_type, $resource) {
     $results = array();
     foreach (Module::active() as $module) {
-      foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
-        $class = str_replace(".php", "", basename($filename));
+      foreach (glob(MODPATH . "{$module->name}/classes/Hook/Rest/*.php") as $filename) {
+        $class = "Hook_Rest_" . str_replace(".php", "", basename($filename));
         if (class_exists($class) && method_exists($class, "relationships")) {
           if ($tmp = call_user_func(array($class, "relationships"), $resource_type, $resource)) {
             $results = array_merge($results, $tmp);

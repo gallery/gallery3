@@ -21,8 +21,8 @@ class Rest_Hook_Rest_Registry {
   static function get($request) {
     $results = array();
     foreach (Module::active() as $module) {
-      foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
-        $results[] = str_replace("_rest.php", "", basename($filename));
+      foreach (glob(MODPATH . "{$module->name}/classes/Hook/Rest/*.php") as $filename) {
+        $results[] = Inflector::decamelize(str_replace(".php", "", basename($filename)), "_");
       }
     }
     return array_unique($results);

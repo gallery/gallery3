@@ -95,7 +95,7 @@ class Rest_Controller_Rest extends Controller {
 
       Rest::set_active_user($request->access_key);
 
-      $handler_class = "{$function}_rest";
+      $handler_class = "Hook_Rest_" . Inflector::camelize($function, true);
       $handler_method = $request->method;
 
       if (!class_exists($handler_class) || !method_exists($handler_class, $handler_method)) {
