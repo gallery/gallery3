@@ -105,7 +105,7 @@ class Gallery_Hook_GalleryTask {
           continue;
         }
 
-        $item = ORM::factory("item", $row->id);
+        $item = ORM::factory("Item", $row->id);
         if ($item->loaded()) {
           try {
             Graphics::generate($item);
@@ -628,9 +628,9 @@ class Gallery_Hook_GalleryTask {
         $stack = explode(" ", $task->get("stack"));
         $id = array_pop($stack);
 
-        $item = ORM::factory("item", $id);
+        $item = ORM::factory("Item", $id);
         if ($item->album_cover_item_id) {
-          $album_cover_item = ORM::factory("item", $item->album_cover_item_id);
+          $album_cover_item = ORM::factory("Item", $item->album_cover_item_id);
           if (!$album_cover_item->loaded()) {
             $item->album_cover_item_id = null;
             $item->save();
@@ -668,7 +668,7 @@ class Gallery_Hook_GalleryTask {
         $stack = explode(" ", $task->get("stack"));
         if (!empty($stack)) {
           $id = array_pop($stack);
-          $item = ORM::factory("item", $id);
+          $item = ORM::factory("Item", $id);
           $item->relative_path();  // this rebuilds the cache and saves the item as a side-effect
           $task->set("stack", implode(" ", $stack));
           $completed++;

@@ -155,7 +155,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1->reload();
     $album2->reload();
 
-    $root = ORM::factory("item", 1);
+    $root = ORM::factory("Item", 1);
     $restful_root = array(
       "url" => rest::url("item", $root),
       "entity" => $root->as_restful_array(),

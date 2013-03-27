@@ -32,7 +32,7 @@ class User_User {
    * @return Model_User
    */
   static function guest() {
-    return ModelCache::get("user", 1);
+    return ModelCache::get("User", 1);
   }
 
   /**
@@ -162,7 +162,7 @@ class User_User {
    */
   private static function _lookup_user_by_field($field_name, $value) {
     try {
-      $user = ModelCache::get("user", $value, $field_name);
+      $user = ModelCache::get("User", $value, $field_name);
       if ($user->loaded()) {
         return $user;
       }

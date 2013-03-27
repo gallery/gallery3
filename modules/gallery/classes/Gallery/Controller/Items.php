@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Items extends Controller {
   public function __call($function, $args) {
-    $item = ORM::factory("item", (int)$function);
+    $item = ORM::factory("Item", (int)$function);
     if (!$item->loaded()) {
       throw new HTTP_Exception_404();
     }
@@ -34,7 +34,7 @@ class Gallery_Controller_Items extends Controller {
 
   // Return the width/height dimensions for the given item
   public function dimensions($id) {
-    $item = ORM::factory("item", $id);
+    $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     JSON::reply(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
                       "resize" => array((int)$item->resize_width, (int)$item->resize_height),

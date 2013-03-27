@@ -101,7 +101,7 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   public function parent_test() {
     $album = test::random_album();
 
-    $parent = ORM::factory("item", 1);
+    $parent = ORM::factory("Item", 1);
     $this->assert_equal($parent->id, $album->parent()->id);
   }
 

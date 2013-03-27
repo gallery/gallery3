@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Uploader extends Controller {
   public function index($id) {
-    $item = ORM::factory("item", $id);
+    $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("add", $item);
     if (!$item->is_album()) {
@@ -35,7 +35,7 @@ class Gallery_Controller_Uploader extends Controller {
   }
 
   public function add_photo($id) {
-    $album = ORM::factory("item", $id);
+    $album = ORM::factory("Item", $id);
     Access::required("view", $album);
     Access::required("add", $album);
     Access::verify_csrf();

@@ -24,7 +24,7 @@ class Gallery_Task {
   static function get_definitions() {
     $tasks = array();
     foreach (Module::active() as $module) {
-      $class_name = ucfirst(Inflector::camelize($module->name)) . "Task";
+      $class_name = Inflector::camelize($module->name, true) . "Task";
       if (class_exists($class_name) && method_exists($class_name, "available_tasks")) {
         foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
           $tasks[$task->callback] = $task;
@@ -59,7 +59,7 @@ class Gallery_Task {
   }
 
   static function cancel($task_id) {
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
@@ -73,14 +73,14 @@ class Gallery_Task {
   }
 
   static function remove($task_id) {
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if ($task->loaded()) {
       $task->delete();
     }
   }
 
   static function run($task_id) {
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }

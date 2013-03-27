@@ -249,7 +249,7 @@ class Gallery_Hook_GalleryInstaller {
             "updated" => $now,
             "weight" => 1))
       ->execute();
-    $root = ORM::factory("item", 1);
+    $root = ORM::factory("Item", 1);
     Access::add_item($root);
 
     Module::set_var("gallery", "active_site_theme", "wind");
@@ -709,7 +709,7 @@ class Gallery_Hook_GalleryInstaller {
                ->order_by("id", "asc")
                ->execute() as $row) {
         set_time_limit(30);
-        $item = ORM::factory("item", $row->id);
+        $item = ORM::factory("Item", $row->id);
         $item->name = LegalFile::smash_extensions($item->name);
         $item->save();
       }
@@ -777,7 +777,7 @@ class Gallery_Hook_GalleryInstaller {
                  ->offset(1)       // skips the 0th item
                  ->execute() as $row) {
           set_time_limit(30);
-          $item = ORM::factory("item", $row->id);
+          $item = ORM::factory("Item", $row->id);
           $item->name = $item->name;  // this will force Model_Item to check for conflicts on save
           $item->save();
         }
@@ -823,7 +823,7 @@ class Gallery_Hook_GalleryInstaller {
                ->order_by("id", "asc")
                ->execute() as $row) {
         set_time_limit(30);
-        $item = ORM::factory("item", $row->id);
+        $item = ORM::factory("Item", $row->id);
         $item->name = str_replace("\\", "_", $item->name);
         $item->save();
       }

@@ -327,7 +327,7 @@ class Gallery_Item {
    * @return Model_Item
    */
   static function root() {
-    return ModelCache::get("item", 1);
+    return ModelCache::get("Item", 1);
   }
 
   /**

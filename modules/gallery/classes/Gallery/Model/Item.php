@@ -450,7 +450,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
       // If any significant fields have changed, load up a copy of the original item and
       // keep it around.
-      $original = ORM::factory("item", $this->id);
+      $original = ORM::factory("Item", $this->id);
 
       // If we have a new data file, process its info.  This will get its metadata and
       // preserve the extension of the data file. Many helpers, (e.g. ImageMagick), assume
@@ -679,7 +679,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     try {
-      return ModelCache::get("item", $this->album_cover_item_id);
+      return ModelCache::get("Item", $this->album_cover_item_id);
     } catch (Exception $e) {
       // It's possible (unlikely) that the item was deleted, if so keep going.
       return null;
