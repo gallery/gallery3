@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class search_installer {
+class Search_Hook_SearchInstaller {
   static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE {search_records} (
@@ -36,12 +36,12 @@ class search_installer {
     // Update the root item.  This is a quick hack because the search module is activated as part
     // of the official install, so this way we don't start off with a "your index is out of date"
     // banner.
-    search::update(model_cache::get("item", 1));
-    search::check_index();
+    Search::update(ModelCache::get("Item", 1));
+    Search::check_index();
   }
 
   static function deactivate() {
-    site_status::clear("search_index_out_of_date");
+    SiteStatus::clear("search_index_out_of_date");
   }
 
   static function uninstall() {
