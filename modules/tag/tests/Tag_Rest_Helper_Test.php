@@ -26,26 +26,26 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_test() {
-    $tag = tag::add(item::root(), "tag1")->reload();
+    $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
-    $request->url = rest::url("tag", $tag);
+    $request->url = Rest::url("tag", $tag);
     $this->assert_equal_array(
-      array("url" => rest::url("tag", $tag),
+      array("url" => Rest::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
-                "url" => rest::url("tag_items", $tag),
+                "url" => Rest::url("tag_items", $tag),
                 "members" => array(
-                  rest::url("tag_item", $tag, item::root()))))),
-      tag_rest::get($request));
+                  Rest::url("tag_item", $tag, Item::root()))))),
+      Hook_Rest_Tag::get($request));
   }
 
   public function get_with_invalid_url_test() {
     $request = new stdClass();
     $request->url = "bogus";
     try {
-      tag_rest::get($request);
+      Hook_Rest_Tag::get($request);
     } catch (Kohana_404_Exception $e) {
       return;  // pass
     }
@@ -56,34 +56,34 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $tag = test::random_tag();
 
     $request = new stdClass();
-    $request->url = rest::url("tag", $tag);
+    $request->url = Rest::url("tag", $tag);
     $this->assert_equal_array(
-      array("url" => rest::url("tag", $tag),
+      array("url" => Rest::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
-                "url" => rest::url("tag_items", $tag),
+                "url" => Rest::url("tag_items", $tag),
                 "members" => array()))),
-      tag_rest::get($request));
+      Hook_Rest_Tag::get($request));
   }
 
   public function put_test() {
     $tag = test::random_tag();
     $request = new stdClass();
-    $request->url = rest::url("tag", $tag);
+    $request->url = Rest::url("tag", $tag);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->name = "new name";
 
-    tag_rest::put($request);
+    Hook_Rest_Tag::put($request);
     $this->assert_equal("new name", $tag->reload()->name);
   }
 
   public function delete_tag_test() {
     $tag = test::random_tag();
     $request = new stdClass();
-    $request->url = rest::url("tag", $tag);
-    tag_rest::delete($request);
+    $request->url = Rest::url("tag", $tag);
+    Hook_Rest_Tag::delete($request);
 
     $this->assert_false($tag->reload()->loaded());
   }
@@ -93,6 +93,6 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     $this->assert_equal(
       $tag->as_array(),
-      rest::resolve(rest::url("tag", $tag))->as_array());
+      Rest::resolve(Rest::url("tag", $tag))->as_array());
   }
 }
