@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rss_block_Core {
+class Rss_Hook_RssBlock {
   static function get_site_list() {
     return array("rss_feeds" => t("Available RSS feeds"));
   }
@@ -27,8 +27,8 @@ class rss_block_Core {
     switch ($block_id) {
     case "rss_feeds":
       $feeds = array();
-      foreach (module::active() as $module) {
-        $class_name = "{$module->name}_rss";
+      foreach (Module::active() as $module) {
+        $class_name = "Hook_" . Inflector::camelize($module->name, true) . "Rss";
         if (class_exists($class_name) && method_exists($class_name, "available_feeds")) {
           $feeds = array_merge($feeds,
             call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));
@@ -38,7 +38,7 @@ class rss_block_Core {
         $block = new Block();
         $block->css_id = "g-rss";
         $block->title = t("Available RSS feeds");
-        $block->content = new View("rss_block.html");
+        $block->content = new View("rss/block.html");
         $block->content->feeds = $feeds;
       }
       break;

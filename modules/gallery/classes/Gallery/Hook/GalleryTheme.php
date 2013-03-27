@@ -29,12 +29,12 @@ class Gallery_Hook_GalleryTheme {
     if (Module::is_active("rss")) {
       if ($item = $theme->item()) {
         if ($item->is_album()) {
-          $buf .= rss::feed_link("gallery/album/{$item->id}");
+          $buf .= Rss::feed_link("gallery/album/{$item->id}");
         } else {
-          $buf .= rss::feed_link("gallery/album/{$item->parent()->id}");
+          $buf .= Rss::feed_link("gallery/album/{$item->parent()->id}");
         }
       } else if ($tag = $theme->tag()) {
-        $buf .= rss::feed_link("tag/tag/{$tag->id}");
+        $buf .= Rss::feed_link("tag/tag/{$tag->id}");
       }
     }
 

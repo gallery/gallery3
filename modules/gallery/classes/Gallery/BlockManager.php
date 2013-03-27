@@ -34,7 +34,7 @@ class Gallery_BlockManager {
   }
 
   static function activate_blocks($module_name) {
-    $block_class = Inflector::camelize($module->name, true) . "Block";
+    $block_class = "Hook_" . Inflector::camelize($module->name, true) . "Block";
     if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach (array_keys($blocks) as $block_id) {
@@ -60,7 +60,7 @@ class Gallery_BlockManager {
   }
 
   static function deactivate_blocks($module_name) {
-    $block_class = Inflector::camelize($module->name, true) . "Block";
+    $block_class = "Hook_" . Inflector::camelize($module->name, true) . "Block";
     if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {
@@ -88,7 +88,7 @@ class Gallery_BlockManager {
     $blocks = array();
 
     foreach (Module::active() as $module) {
-      $class_name = Inflector::camelize($module->name, true) . "Block";
+      $class_name = "Hook_" . Inflector::camelize($module->name, true) . "Block";
       if (class_exists($class_name) && method_exists($class_name, $function)) {
         foreach (call_user_func(array($class_name, $function)) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
@@ -102,7 +102,7 @@ class Gallery_BlockManager {
     $active = BlockManager::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
-      $class_name = Inflector::camelize($desc[0], true) . "Block";
+      $class_name = "Hook_" . Inflector::camelize($desc[0], true) . "Block";
       if (class_exists($class_name) && method_exists($class_name, "get")) {
         $block = call_user_func(array($class_name, "get"), $desc[1], $theme);
         if (!empty($block)) {
