@@ -19,84 +19,84 @@
  */
 class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
   public function index() {
-    $name = module::get_var("watermark", "name");
+    $name = Module::get_var("watermark", "name");
 
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Watermarks");
-    $view->content = new View("admin_watermarks.html");
+    $view->content = new View("admin/watermarks.html");
     if ($name) {
-      $view->content->name = module::get_var("watermark", "name");
-      $view->content->url = url::file("var/modules/watermark/$name");
-      $view->content->width = module::get_var("watermark", "width");
-      $view->content->height = module::get_var("watermark", "height");
-      $view->content->position = module::get_var("watermark", "position");
+      $view->content->name = Module::get_var("watermark", "name");
+      $view->content->url = URL::file("var/modules/watermark/$name");
+      $view->content->width = Module::get_var("watermark", "width");
+      $view->content->height = Module::get_var("watermark", "height");
+      $view->content->position = Module::get_var("watermark", "position");
     }
     print $view;
   }
 
   public function form_edit() {
-    print watermark::get_edit_form();
+    print Watermark::get_edit_form();
   }
 
   public function edit() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $form = watermark::get_edit_form();
+    $form = Watermark::get_edit_form();
     if ($form->validate()) {
-      module::set_var("watermark", "position", $form->edit_watermark->position->value);
-      module::set_var("watermark", "transparency", $form->edit_watermark->transparency->value);
+      Module::set_var("watermark", "position", $form->edit_watermark->position->value);
+      Module::set_var("watermark", "transparency", $form->edit_watermark->transparency->value);
       $this->_update_graphics_rules();
 
-      log::success("watermark", t("Watermark changed"));
-      message::success(t("Watermark changed"));
-      json::reply(
+      Log::success("watermark", t("Watermark changed"));
+      Message::success(t("Watermark changed"));
+      JSON::reply(
         array("result" => "success",
-              "location" => url::site("admin/watermarks")));
+              "location" => URL::site("admin/watermarks")));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
   }
 
   public function form_delete() {
-    print watermark::get_delete_form();
+    print Watermark::get_delete_form();
   }
 
   public function delete() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $form = watermark::get_delete_form();
+    $form = Watermark::get_delete_form();
     if ($form->validate()) {
-      if ($name = basename(module::get_var("watermark", "name"))) {
-        system::delete_later(VARPATH . "modules/watermark/$name");
+      if ($name = basename(Module::get_var("watermark", "name"))) {
+        System::delete_later(VARPATH . "modules/watermark/$name");
 
-        module::clear_var("watermark", "name");
-        module::clear_var("watermark", "width");
-        module::clear_var("watermark", "height");
-        module::clear_var("watermark", "mime_type");
-        module::clear_var("watermark", "position");
+        Module::clear_var("watermark", "name");
+        Module::clear_var("watermark", "width");
+        Module::clear_var("watermark", "height");
+        Module::clear_var("watermark", "mime_type");
+        Module::clear_var("watermark", "position");
         $this->_update_graphics_rules();
 
-        log::success("watermark", t("Watermark deleted"));
-        message::success(t("Watermark deleted"));
+        Log::success("watermark", t("Watermark deleted"));
+        Message::success(t("Watermark deleted"));
       }
-      json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
+      JSON::reply(array("result" => "success", "location" => URL::site("admin/watermarks")));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
   }
 
   public function form_add() {
-    print watermark::get_add_form();
+    print Watermark::get_add_form();
   }
 
   public function add() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $form = watermark::get_add_form();
+    $form = Watermark::get_add_form();
     // For TEST_MODE, we want to simulate a file upload.  Because this is not a true upload, Forge's
     // validation logic will correctly reject it.  So, we skip validation when we're running tests.
     if (TEST_MODE || $form->validate()) {
@@ -105,48 +105,48 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', basename($file));
 
       try {
-        list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
+        list ($width, $height, $mime_type, $extension) = Photo::get_file_metadata($file);
         // Sanitize filename, which ensures a valid extension.  This renaming prevents the issues
         // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
         // php extension was previously accepted without changing its extension.
-        $name = legal_file::sanitize_filename($name, $extension, "photo");
+        $name = LegalFile::sanitize_filename($name, $extension, "photo");
       } catch (Exception $e) {
-        message::error(t("Invalid or unidentifiable image file"));
-        system::delete_later($file);
+        Message::error(t("Invalid or unidentifiable image file"));
+        System::delete_later($file);
         return;
       }
 
       rename($file, VARPATH . "modules/watermark/$name");
-      module::set_var("watermark", "name", $name);
-      module::set_var("watermark", "width", $width);
-      module::set_var("watermark", "height", $height);
-      module::set_var("watermark", "mime_type", $mime_type);
-      module::set_var("watermark", "position", $form->add_watermark->position->value);
-      module::set_var("watermark", "transparency", $form->add_watermark->transparency->value);
+      Module::set_var("watermark", "name", $name);
+      Module::set_var("watermark", "width", $width);
+      Module::set_var("watermark", "height", $height);
+      Module::set_var("watermark", "mime_type", $mime_type);
+      Module::set_var("watermark", "position", $form->add_watermark->position->value);
+      Module::set_var("watermark", "transparency", $form->add_watermark->transparency->value);
       $this->_update_graphics_rules();
-      system::delete_later($file);
+      System::delete_later($file);
 
-      message::success(t("Watermark saved"));
-      log::success("watermark", t("Watermark saved"));
-      json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
+      Message::success(t("Watermark saved"));
+      Log::success("watermark", t("Watermark saved"));
+      JSON::reply(array("result" => "success", "location" => URL::site("admin/watermarks")));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
   }
 
   private function _update_graphics_rules() {
-    graphics::remove_rules("watermark");
-    if ($name = module::get_var("watermark", "name")) {
+    Graphics::remove_rules("watermark");
+    if ($name = Module::get_var("watermark", "name")) {
       foreach (array("thumb", "resize") as $target) {
-        graphics::add_rule(
-          "watermark", $target, "gallery_graphics::composite",
+        Graphics::add_rule(
+          "watermark", $target, "GalleryGraphics::composite",
           array("file" => VARPATH . "modules/watermark/$name",
-                "width" => module::get_var("watermark", "width"),
-                "height" => module::get_var("watermark", "height"),
-                "position" => module::get_var("watermark", "position"),
-                "transparency" => 101 - module::get_var("watermark", "transparency")),
+                "width" => Module::get_var("watermark", "width"),
+                "height" => Module::get_var("watermark", "height"),
+                "position" => Module::get_var("watermark", "position"),
+                "transparency" => 101 - Module::get_var("watermark", "transparency")),
           1000);
       }
     }

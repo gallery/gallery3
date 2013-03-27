@@ -24,6 +24,6 @@ class Watermark_Hook_WatermarkEvent {
         Menu::factory("link")
         ->id("watermarks")
         ->label(t("Watermarks"))
-        ->url(url::site("admin/watermarks")));
+        ->url(URL::site("admin/watermarks")));
   }
 }

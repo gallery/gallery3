@@ -48,10 +48,10 @@ class Watermark_Watermark {
     $group = $form->group("edit_watermark")->label(t("Edit Watermark"));
     $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
-      ->selected(module::get_var("watermark", "position"));
+      ->selected(Module::get_var("watermark", "position"));
     $group->dropdown("transparency")->label(t("Transparency (100% = completely transparent)"))
       ->options($range)
-      ->selected(module::get_var("watermark", "transparency"));
+      ->selected(Module::get_var("watermark", "transparency"));
     $group->submit("")->value(t("Save"));
     return $form;
   }

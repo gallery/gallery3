@@ -30,27 +30,27 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
   public function add_watermark_test() {
     // Source is a jpg file, watermark path has extension jpg
     $name = test::random_name();
-    $source_path = MODPATH . "gallery/images/imagemagick.jpg";
+    $source_path = MODPATH . "gallery/media/graphics/imagemagick.jpg";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);
 
-    // Setup and run Admin_Watermarks_Controller::add
-    $controller = new Admin_Watermarks_Controller();
+    // Setup and run Controller_Admin_Watermarks::add
+    $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
-    $_POST["csrf"] = access::csrf_token();
+    $_POST["csrf"] = Access::csrf_token();
     ob_start();
     $controller->add();
     $results = ob_get_clean();
 
     // Add should be successful
     $this->assert_equal(json_encode(array("result" => "success",
-                                          "location" => url::site("admin/watermarks"))), $results);
+                                          "location" => URL::site("admin/watermarks"))), $results);
     $this->assert_equal(file_get_contents($source_path),
                         file_get_contents(VARPATH . "modules/watermark/$name.jpg"));
-    $this->assert_equal("$name.jpg", module::get_var("watermark", "name"));
-    $this->assert_equal(114, module::get_var("watermark", "width"));
-    $this->assert_equal(118, module::get_var("watermark", "height"));
-    $this->assert_equal("image/jpeg", module::get_var("watermark", "mime_type"));
+    $this->assert_equal("$name.jpg", Module::get_var("watermark", "name"));
+    $this->assert_equal(114, Module::get_var("watermark", "width"));
+    $this->assert_equal(118, Module::get_var("watermark", "height"));
+    $this->assert_equal("image/jpeg", Module::get_var("watermark", "mime_type"));
   }
 
   public function add_watermark_reject_illegal_file_test() {
@@ -60,16 +60,16 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
 
-    // Setup and run Admin_Watermarks_Controller::add
-    $controller = new Admin_Watermarks_Controller();
+    // Setup and run Controller_Admin_Watermarks::add
+    $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
-    $_POST["csrf"] = access::csrf_token();
+    $_POST["csrf"] = Access::csrf_token();
     ob_start();
     $controller->add();
     $results = ob_get_clean();
 
-    // Delete all files marked using system::delete_later (from gallery_event::gallery_shutdown)
-    system::delete_marked_files();
+    // Delete all files marked using System::delete_later (from Hook_GalleryEvent::gallery_shutdown)
+    System::delete_marked_files();
 
     // Add should *not* be successful, and watermark should be deleted
     $this->assert_equal("", $results);
@@ -80,27 +80,27 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
   public function add_watermark_rename_legal_file_with_illegal_extension_test() {
     // Source is a jpg file, watermark path has extension php
     $name = test::random_name();
-    $source_path = MODPATH . "gallery/images/imagemagick.jpg";
+    $source_path = MODPATH . "gallery/media/graphics/imagemagick.jpg";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
 
-    // Setup and run Admin_Watermarks_Controller::add
-    $controller = new Admin_Watermarks_Controller();
+    // Setup and run Controller_Admin_Watermarks::add
+    $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
-    $_POST["csrf"] = access::csrf_token();
+    $_POST["csrf"] = Access::csrf_token();
     ob_start();
     $controller->add();
     $results = ob_get_clean();
 
     // Add should be successful with file renamed as jpg
     $this->assert_equal(json_encode(array("result" => "success",
-                                          "location" => url::site("admin/watermarks"))), $results);
+                                          "location" => URL::site("admin/watermarks"))), $results);
     $this->assert_equal(file_get_contents($source_path),
                         file_get_contents(VARPATH . "modules/watermark/$name.jpg"));
-    $this->assert_equal("$name.jpg", module::get_var("watermark", "name"));
-    $this->assert_equal(114, module::get_var("watermark", "width"));
-    $this->assert_equal(118, module::get_var("watermark", "height"));
-    $this->assert_equal("image/jpeg", module::get_var("watermark", "mime_type"));
+    $this->assert_equal("$name.jpg", Module::get_var("watermark", "name"));
+    $this->assert_equal(114, Module::get_var("watermark", "width"));
+    $this->assert_equal(118, Module::get_var("watermark", "height"));
+    $this->assert_equal("image/jpeg", Module::get_var("watermark", "mime_type"));
   }
 
   public function add_watermark_reject_illegal_file_with_legal_extension_test() {
@@ -110,16 +110,16 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);
 
-    // Setup and run Admin_Watermarks_Controller::add
-    $controller = new Admin_Watermarks_Controller();
+    // Setup and run Controller_Admin_Watermarks::add
+    $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
-    $_POST["csrf"] = access::csrf_token();
+    $_POST["csrf"] = Access::csrf_token();
     ob_start();
     $controller->add();
     $results = ob_get_clean();
 
-    // Delete all files marked using system::delete_later (from gallery_event::gallery_shutdown)
-    system::delete_marked_files();
+    // Delete all files marked using System::delete_later (from Hook_GalleryEvent::gallery_shutdown)
+    System::delete_marked_files();
 
     // Add should *not* be successful, and watermark should be deleted
     $this->assert_equal("", $results);
