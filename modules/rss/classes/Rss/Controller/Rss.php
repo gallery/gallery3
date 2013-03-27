@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rss_Controller extends Controller {
+class Rss_Controller_Rss extends Controller {
   public static $page_size = 20;
 
   public function feed($module_id, $feed_id, $id=null) {
