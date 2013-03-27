@@ -38,7 +38,7 @@ class Gallery_Hook_Rest_Item {
    *     Also limits the types returned in the member collections (same behaviour as Hook_Rest_Items).
    */
   static function get($request) {
-    $item = rest::resolve($request->url);
+    $item = Rest::resolve($request->url);
     Access::required("view", $item);
 
     $p = $request->params;
@@ -82,11 +82,11 @@ class Gallery_Hook_Rest_Item {
     $result = array(
       "url" => $request->url,
       "entity" => $item->as_restful_array(),
-      "relationships" => rest::relationships("item", $item));
+      "relationships" => Rest::relationships("item", $item));
     if ($item->is_album()) {
       $result["members"] = array();
       foreach ($orm->find_all() as $child) {
-        $result["members"][] = rest::url("item", $child);
+        $result["members"][] = Rest::url("item", $child);
       }
     }
 
@@ -94,7 +94,7 @@ class Gallery_Hook_Rest_Item {
   }
 
   static function put($request) {
-    $item = rest::resolve($request->url);
+    $item = Rest::resolve($request->url);
     Access::required("edit", $item);
 
     if ($entity = $request->params->entity) {
@@ -107,7 +107,7 @@ class Gallery_Hook_Rest_Item {
         switch ($key) {
         case "album_cover":
           if (property_exists($entity, "album_cover")) {
-            $album_cover_item = rest::resolve($entity->album_cover);
+            $album_cover_item = Rest::resolve($entity->album_cover);
             Access::required("view", $album_cover_item);
             $item->album_cover_item_id = $album_cover_item->id;
           }
@@ -115,7 +115,7 @@ class Gallery_Hook_Rest_Item {
 
         case "parent":
           if (property_exists($entity, "parent")) {
-            $parent = rest::resolve($entity->parent);
+            $parent = Rest::resolve($entity->parent);
             Access::required("edit", $parent);
             $item->parent_id = $parent->id;
           }
@@ -138,7 +138,7 @@ class Gallery_Hook_Rest_Item {
     if (isset($request->params->members) && $item->sort_column == "weight") {
       $weight = 0;
       foreach ($request->params->members as $url) {
-        $child = rest::resolve($url);
+        $child = Rest::resolve($url);
         if ($child->parent_id == $item->id && $child->weight != $weight) {
           $child->weight = $weight;
           $child->save();
@@ -149,7 +149,7 @@ class Gallery_Hook_Rest_Item {
   }
 
   static function post($request) {
-    $parent = rest::resolve($request->url);
+    $parent = Rest::resolve($request->url);
     Access::required("add", $parent);
 
     $entity = $request->params->entity;
@@ -186,11 +186,11 @@ class Gallery_Hook_Rest_Item {
         "Bad Request", 400, array("errors" => array("type" => "invalid")));
     }
 
-    return array("url" => rest::url("item", $item));
+    return array("url" => Rest::url("item", $item));
   }
 
   static function delete($request) {
-    $item = rest::resolve($request->url);
+    $item = Rest::resolve($request->url);
     Access::required("edit", $item);
 
     $item->delete();
