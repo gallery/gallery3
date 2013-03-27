@@ -31,7 +31,7 @@ class Rss_Controller_Rss extends Controller {
 
     // Run the appropriate feed callback
     if (Module::is_active($module_id)) {
-      $class_name = "{$module_id}_rss";
+      $class_name = Inflector::camelize($module_id, true) . "Rss";
       if (class_exists($class_name) && method_exists($class_name, "feed")) {
         $feed = call_user_func(
           array($class_name, "feed"), $feed_id,
