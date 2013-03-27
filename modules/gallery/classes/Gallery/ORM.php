@@ -66,6 +66,6 @@ class Gallery_ORM extends Kohana_ORM {
         $this->_table_name = Inflector::plural($this->_table_name);
       }
     }
-    parent::_initialize()
+    parent::_initialize();
   }
 }
