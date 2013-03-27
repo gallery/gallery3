@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class watermark_event_Core {
+class Watermark_Hook_WatermarkEvent {
   static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(

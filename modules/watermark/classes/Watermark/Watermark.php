@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class watermark_Core {
+class Watermark_Watermark {
   static function get_add_form() {
     for ($i = 1; $i <= 100; $i++) {
       $range[$i] = "$i%";

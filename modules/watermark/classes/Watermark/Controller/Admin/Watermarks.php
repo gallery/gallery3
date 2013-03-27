@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Watermarks_Controller extends Admin_Controller {
+class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
   public function index() {
     $name = module::get_var("watermark", "name");
 
