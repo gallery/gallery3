@@ -19,21 +19,21 @@
  */
 class Search_Hook_SearchEvent {
   static function item_created($item) {
-    search::update($item);
+    Search::update($item);
   }
 
   static function item_updated($original, $new) {
-    search::update($new);
+    Search::update($new);
   }
 
   static function item_deleted($item) {
-    db::build()
+    DB::build()
       ->delete("search_records")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
 
   static function item_related_update($item) {
-    search::update($item);
+    Search::update($item);
   }
 }

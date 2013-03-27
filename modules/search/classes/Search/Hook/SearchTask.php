@@ -20,14 +20,14 @@
 class Search_Hook_SearchTask {
   static function available_tasks() {
     // Delete extra search_records
-    db::build()
+    DB::build()
       ->delete("search_records")
-      ->where("item_id", "NOT IN", db::build()->select("id")->from("items"))
+      ->where("item_id", "NOT IN", DB::build()->select("id")->from("items"))
       ->execute();
 
-    list ($remaining, $total, $percent) = search::stats();
-    return array(Task_Definition::factory()
-                 ->callback("search_task::update_index")
+    list ($remaining, $total, $percent) = Search::stats();
+    return array(TaskDefinition::factory()
+                 ->callback("Hook_SearchTask::update_index")
                  ->name(t("Update Search Index"))
                  ->description(
                    $remaining
@@ -35,7 +35,7 @@ class Search_Hook_SearchTask {
                         "%count (%percent%) of your photos and albums need to be scanned",
                         $remaining, array("percent" => (100 - $percent)))
                    : t("Search data is up-to-date"))
-                 ->severity($remaining ? log::WARNING : log::SUCCESS));
+                 ->severity($remaining ? Log::WARNING : Log::SUCCESS));
   }
 
   static function update_index($task) {
@@ -43,7 +43,7 @@ class Search_Hook_SearchTask {
       $completed = $task->get("completed", 0);
 
       $start = microtime(true);
-      foreach (ORM::factory("item")
+      foreach (ORM::factory("Item")
                ->join("search_records", "items.id", "search_records.item_id", "left")
                ->where("search_records.item_id", "IS", null)
                ->or_where("search_records.dirty", "=", 1)
@@ -54,7 +54,7 @@ class Search_Hook_SearchTask {
           $start = microtime(true);
         }
 
-        search::update($item);
+        Search::update($item);
         $completed++;
 
         if (microtime(true) - $start > .75) {
@@ -62,12 +62,12 @@ class Search_Hook_SearchTask {
         }
       }
 
-      list ($remaining, $total, $percent) = search::stats();
+      list ($remaining, $total, $percent) = Search::stats();
       $task->set("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {
         $task->done = true;
         $task->state = "success";
-        site_status::clear("search_index_out_of_date");
+        SiteStatus::clear("search_index_out_of_date");
         $task->percent_complete = 100;
       } else {
         $task->percent_complete = round(100 * $completed / ($remaining + $completed));
