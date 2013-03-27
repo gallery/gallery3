@@ -6,9 +6,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><?= html::clean($feed->title) ?></title>
+    <title><?= HTML::clean($feed->title) ?></title>
     <link><?= $feed->uri ?></link>
-    <description><?= html::clean($feed->description) ?></description>
+    <description><?= HTML::clean($feed->description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -22,26 +22,26 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($feed->items as $item): ?>
     <item>
-      <title><?= html::purify($item->title) ?></title>
-      <link><?= url::abs_site("{$item->type}s/{$item->id}") ?></link>
-      <guid isPermaLink="true"><?= url::abs_site("{$item->type}s/{$item->id}") ?></guid>
+      <title><?= HTML::purify($item->title) ?></title>
+      <link><?= URL::abs_site("{$item->type}s/{$item->id}") ?></link>
+      <guid isPermaLink="true"><?= URL::abs_site("{$item->type}s/{$item->id}") ?></guid>
       <pubDate><?= date("D, d M Y H:i:s O", $item->created); ?></pubDate>
-      <description><?= html::purify($item->description) ?></description>
+      <description><?= HTML::purify($item->description) ?></description>
       <content:encoded>
         <![CDATA[
-          <span><?= html::purify($item->description) ?></span>
+          <span><?= HTML::purify($item->description) ?></span>
           <p>
           <? if ($item->type == "photo"): ?>
             <img alt="" src="<?= $item->resize_url(true) ?>"
-                 title="<?= html::purify($item->title)->for_html_attr() ?>"
+                 title="<?= HTML::purify($item->title)->for_html_attr() ?>"
                  height="<?= $item->resize_height ?>" width="<?= $item->resize_width ?>" /><br />
           <? else: ?>
-            <a href="<?= url::abs_site("{$item->type}s/{$item->id}") ?>">
+            <a href="<?= URL::abs_site("{$item->type}s/{$item->id}") ?>">
             <img alt="" src="<?= $item->thumb_url(true) ?>"
-                 title="<?= html::purify($item->title)->for_html_attr() ?>"
+                 title="<?= HTML::purify($item->title)->for_html_attr() ?>"
                  height="<?= $item->thumb_height ?>" width="<?= $item->thumb_width ?>" /></a><br />
           <? endif ?>
-            <?= html::purify($item->description) ?>
+            <?= HTML::purify($item->description) ?>
           </p>
         ]]>
       </content:encoded>
@@ -49,7 +49,7 @@
                        height="<?= $item->thumb_height ?>"
                        width="<?= $item->thumb_width ?>"
                        />
-    <? $view_full = access::can("view_full", $item); ?>
+    <? $view_full = Access::can("view_full", $item); ?>
     <? if ($item->type == "photo" && $view_full): ?>
       <media:group>
     <? endif ?>

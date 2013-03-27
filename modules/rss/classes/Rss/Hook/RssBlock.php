@@ -27,7 +27,7 @@ class Rss_Hook_RssBlock {
     switch ($block_id) {
     case "rss_feeds":
       $feeds = array();
-      foreach (module::active() as $module) {
+      foreach (Module::active() as $module) {
         $class_name = "{$module->name}_rss";
         if (class_exists($class_name) && method_exists($class_name, "available_feeds")) {
           $feeds = array_merge($feeds,
@@ -38,7 +38,7 @@ class Rss_Hook_RssBlock {
         $block = new Block();
         $block->css_id = "g-rss";
         $block->title = t("Available RSS feeds");
-        $block->content = new View("rss_block.html");
+        $block->content = new View("rss/block.html");
         $block->content->feeds = $feeds;
       }
       break;

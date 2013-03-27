@@ -23,14 +23,14 @@ class Rss_Controller_Rss extends Controller {
   public function feed($module_id, $feed_id, $id=null) {
     $page = (int) Input::instance()->get("page", 1);
     if ($page < 1) {
-      url::redirect(url::merge(array("page" => 1)));
+      URL::redirect(URL::merge(array("page" => 1)));
     }
 
     // Configurable page size between 1 and 100, default 20
     $page_size = max(1, min(100, (int) Input::instance()->get("page_size", self::$page_size)));
 
     // Run the appropriate feed callback
-    if (module::is_active($module_id)) {
+    if (Module::is_active($module_id)) {
       $class_name = "{$module_id}_rss";
       if (class_exists($class_name) && method_exists($class_name, "feed")) {
         $feed = call_user_func(
@@ -39,25 +39,25 @@ class Rss_Controller_Rss extends Controller {
       }
     }
     if (empty($feed)) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {
-      url::redirect(url::merge(array("page" => $feed->max_pages)));
+      URL::redirect(URL::merge(array("page" => $feed->max_pages)));
     }
 
-    $view = new View(empty($feed->view) ? "feed.mrss" : $feed->view);
+    $view = new View(empty($feed->view) ? "rss/feed.mrss" : $feed->view);
     unset($feed->view);
 
     $view->feed = $feed;
     $view->pub_date = date("D, d M Y H:i:s O");
 
-    $feed->uri = url::abs_site(url::merge($_GET));
+    $feed->uri = URL::abs_site(URL::merge($_GET));
     if ($page > 1) {
-      $feed->previous_page_uri = url::abs_site(url::merge(array("page" => $page - 1)));
+      $feed->previous_page_uri = URL::abs_site(URL::merge(array("page" => $page - 1)));
     }
     if ($page < $feed->max_pages) {
-      $feed->next_page_uri = url::abs_site(url::merge(array("page" => $page + 1)));
+      $feed->next_page_uri = URL::abs_site(URL::merge(array("page" => $page + 1)));
     }
 
     header("Content-Type: application/rss+xml");
