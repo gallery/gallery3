@@ -17,8 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Search_Record_Model_Core extends ORM {
-  function item() {
-    return model_cache::get("item", $this->item_id);
+class Search_Hook_SearchEvent {
+  static function item_created($item) {
+    Search::update($item);
+  }
+
+  static function item_updated($original, $new) {
+    Search::update($new);
+  }
+
+  static function item_deleted($item) {
+    DB::build()
+      ->delete("search_records")
+      ->where("item_id", "=", $item->id)
+      ->execute();
+  }
+
+  static function item_related_update($item) {
+    Search::update($item);
   }
 }

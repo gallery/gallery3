@@ -1,19 +1,19 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // @todo Set hover on AlbumGrid list items ?>
-<form action="<?= url::site("/search") ?>" id="g-search-form" class="g-short-form">
+<form action="<?= URL::site("/search") ?>" id="g-search-form" class="g-short-form">
   <fieldset>
     <legend>
       <?= t("Search") ?>
     </legend>
     <ul>
       <li>
-        <? if ($album->id == item::root()->id): ?>
+        <? if ($album->id == Item::root()->id): ?>
           <label for="q"><?= t("Search the gallery") ?></label>
         <? else: ?>
           <label for="q"><?= t("Search this album") ?></label>
         <? endif; ?>
-        <input name="album" type="hidden" value="<?= html::clean_attribute($album->id) ?>" />
-        <input name="q" id="q" type="text" value="<?= html::clean_attribute($q) ?>" class="text" />
+        <input name="album" type="hidden" value="<?= HTML::clean_attribute($album->id) ?>" />
+        <input name="q" id="q" type="text" value="<?= HTML::clean_attribute($q) ?>" class="text" />
       </li>
       <li>
         <input type="submit" value="<?= t("Search")->for_html_attr() ?>" class="submit" />
@@ -25,14 +25,14 @@
 <div id="g-search-results">
   <h1><?= t("Search results") ?></h1>
 
-  <? if ($album->id == item::root()->id): ?>
+  <? if ($album->id == Item::root()->id): ?>
     <div>
       <?= t("Searched the whole gallery.") ?>
     </div>
   <? else: ?>
     <div>
-      <?= t("Searched within album <b>%album</b>.", array("album" => html::purify($album->title))) ?>
-      <a href="<?= url::site(url::merge(array("album" => item::root()->id))) ?>"><?= t("Search whole gallery") ?></a>
+      <?= t("Searched within album <b>%album</b>.", array("album" => HTML::purify($album->title))) ?>
+      <a href="<?= URL::site(URL::merge(array("album" => Item::root()->id))) ?>"><?= t("Search whole gallery") ?></a>
     </div>
   <? endif; ?>
 
@@ -45,10 +45,10 @@
         <?= $item->thumb_img(array("class" => "g-thumbnail")) ?>
         <p>
           <span class="<?= $item_class ?>"></span>
-          <?= html::purify(text::limit_chars($item->title, 32, "…")) ?>
+          <?= HTML::purify(Text::limit_chars($item->title, 32, "…")) ?>
         </p>
         <div>
-          <?= nl2br(html::purify(text::limit_chars($item->description, 64, "…"))) ?>
+          <?= nl2br(HTML::purify(Text::limit_chars($item->description, 64, "…"))) ?>
         </div>
       </a>
     </li>

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class search_Core {
+class Search_Search {
   /**
    * Add more terms to the query by wildcarding the stem value of the first
    * few terms in the query.
@@ -35,7 +35,7 @@ class search_Core {
   }
 
   static function search($q, $limit, $offset) {
-    return search::search_within_album($q, item::root(), $limit, $offset);
+    return Search::search_within_album($q, Item::root(), $limit, $offset);
   }
 
   static function search_within_album($q, $album, $limit, $offset) {
@@ -48,23 +48,23 @@ class search_Core {
     $data = $db->query($query);
     $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
 
-    return array($count, new ORM_Iterator(ORM::factory("item"), $data));
+    return array($count, new ORM_Iterator(ORM::factory("Item"), $data));
   }
 
   private static function _build_query_base($q, $album, $where=array()) {
     $db = Database::instance();
     $q = $db->escape($q);
 
-    if (!identity::active_user()->admin) {
-      foreach (identity::group_ids_for_active_user() as $id) {
-        $fields[] = "`view_$id` = TRUE"; // access::ALLOW
+    if (!Identity::active_user()->admin) {
+      foreach (Identity::group_ids_for_active_user() as $id) {
+        $fields[] = "`view_$id` = TRUE"; // Access::ALLOW
       }
       $access_sql = " AND (" . join(" OR ", $fields) . ")";
     } else {
       $access_sql = "";
     }
 
-    if ($album->id == item::root()->id) {
+    if ($album->id == Item::root()->id) {
       $album_sql = "";
     } else {
       $album_sql =
@@ -87,31 +87,31 @@ class search_Core {
    * @return string An error message suitable for inclusion in the task log
    */
   static function check_index() {
-    list ($remaining) = search::stats();
+    list ($remaining) = Search::stats();
     if ($remaining) {
-      site_status::warning(
+      SiteStatus::warning(
         t('Your search index needs to be updated.  <a href="%url" class="g-dialog-link">Fix this now</a>',
-          array("url" => html::mark_clean(url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__")))),
+          array("url" => HTML::mark_clean(URL::site("admin/maintenance/start/Hook_SearchTask::update_index?csrf=__CSRF__")))),
         "search_index_out_of_date");
     }
   }
 
   static function update($item) {
     $data = new ArrayObject();
-    $record = ORM::factory("search_record")->where("item_id", "=", $item->id)->find();
+    $record = ORM::factory("SearchRecord")->where("item_id", "=", $item->id)->find();
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
 
     $item = $record->item();
-    module::event("item_index_data", $item, $data);
+    Module::event("item_index_data", $item, $data);
     $record->data = join(" ", (array)$data);
     $record->dirty = 0;
     $record->save();
   }
 
   static function stats() {
-    $remaining = db::build()
+    $remaining = DB::build()
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
       ->and_open()
@@ -120,18 +120,18 @@ class search_Core {
       ->close()
       ->count_records();
 
-    $total = ORM::factory("item")->count_all();
+    $total = ORM::factory("Item")->count_all();
     $percent = round(100 * ($total - $remaining) / $total);
 
     return array($remaining, $total, $percent);
   }
 
   static function get_position($item, $q) {
-    return search::get_position_within_album($item, $q, item::root());
+    return Search::get_position_within_album($item, $q, Item::root());
   }
 
   static function get_position_within_album($item, $q, $album) {
-    $page_size = module::get_var("gallery", "page_size", 9);
+    $page_size = Module::get_var("gallery", "page_size", 9);
     $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
       "ORDER BY `score` DESC ";
     $db = Database::instance();
@@ -142,8 +142,8 @@ class search_Core {
     if (!$current) {
       // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
       // the context and try again.
-      item::clear_display_context_callback();
-      url::redirect(url::current());
+      Item::clear_display_context_callback();
+      URL::redirect(URL::current());
     }
     $score = $current->score;
     if (strlen($score) > 7) {
