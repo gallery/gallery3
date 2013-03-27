@@ -24,7 +24,7 @@
  */
 class Gallery_Hook_Rest_Data {
   static function get($request) {
-    $item = rest::resolve($request->url);
+    $item = Rest::resolve($request->url);
     Access::required("view", $item);
 
     $p = $request->params;

@@ -36,7 +36,7 @@ class Gallery_Hook_Rest_Tree {
    *    Default is all fields.
    */
   static function get($request) {
-    $item = rest::resolve($request->url);
+    $item = Rest::resolve($request->url);
     Access::required("view", $item);
 
     $query_params = array();
@@ -59,14 +59,14 @@ class Gallery_Hook_Rest_Tree {
       $query_params[] = "fields={$p->fields}";
     }
 
-    $entity = array(array("url" => rest::url("item", $item),
+    $entity = array(array("url" => Rest::url("item", $item),
                            "entity" => $item->as_restful_array($fields)));
     $members = array();
     foreach ($item->viewable()->descendants(null, null, $where) as $child) {
-      $entity[] = array("url" => rest::url("item", $child),
+      $entity[] = array("url" => Rest::url("item", $child),
                         "entity" => $child->as_restful_array($fields));
       if (isset($lowest_depth) && $child->level == $lowest_depth) {
-        $members[] = URL::merge_querystring(rest::url("tree", $child), $query_params);
+        $members[] = URL::merge_querystring(Rest::url("tree", $child), $query_params);
       }
     }
 
@@ -74,7 +74,7 @@ class Gallery_Hook_Rest_Tree {
       "url" => $request->url,
       "entity" => $entity,
       "members" => $members,
-      "relationships" => rest::relationships("tree", $item));
+      "relationships" => Rest::relationships("tree", $item));
     return $result;
   }
 

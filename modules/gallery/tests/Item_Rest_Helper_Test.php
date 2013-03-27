@@ -24,7 +24,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resolve_test() {
     $album = test::random_album();
-    $resolved = rest::resolve(rest::url("item", $album));
+    $resolved = Rest::resolve(Rest::url("item", $album));
     $this->assert_equal($album->id, $resolved->id);
   }
 
@@ -37,55 +37,55 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     // No scope is the same as "direct"
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $this->assert_equal_array(
-      array("url" => rest::url("item", $album1),
+      array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => rest::url("item_comments", $album1)),
+                "url" => Rest::url("item_comments", $album1)),
               "tags" => array(
-                "url" => rest::url("item_tags", $album1),
+                "url" => Rest::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              rest::url("item", $photo1),
-              rest::url("item", $album2)),
+              Rest::url("item", $photo1),
+              Rest::url("item", $album2)),
             ),
       Hook_Rest_Item::get($request));
 
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params->scope = "direct";
     $this->assert_equal_array(
-      array("url" => rest::url("item", $album1),
+      array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => rest::url("item_comments", $album1)),
+                "url" => Rest::url("item_comments", $album1)),
               "tags" => array(
-                "url" => rest::url("item_tags", $album1),
+                "url" => Rest::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              rest::url("item", $photo1),
-              rest::url("item", $album2)),
+              Rest::url("item", $photo1),
+              Rest::url("item", $album2)),
             ),
       Hook_Rest_Item::get($request));
 
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params->scope = "all";
     $this->assert_equal_array(
-      array("url" => rest::url("item", $album1),
+      array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => rest::url("item_comments", $album1)),
+                "url" => Rest::url("item_comments", $album1)),
               "tags" => array(
-                "url" => rest::url("item_tags", $album1),
+                "url" => Rest::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              rest::url("item", $photo1),
-              rest::url("item", $album2),
-              rest::url("item", $photo2)),
+              Rest::url("item", $photo1),
+              Rest::url("item", $album2),
+              Rest::url("item", $photo2)),
             ),
       Hook_Rest_Item::get($request));
   }
@@ -99,20 +99,20 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1->reload();
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->name = "foo";
     $this->assert_equal_array(
-      array("url" => rest::url("item", $album1),
+      array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => rest::url("item_comments", $album1)),
+                "url" => Rest::url("item_comments", $album1)),
               "tags" => array(
-                "url" => rest::url("item_tags", $album1),
+                "url" => Rest::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              rest::url("item", $photo2)),
+              Rest::url("item", $photo2)),
             ),
       Hook_Rest_Item::get($request));
   }
@@ -124,20 +124,20 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1->reload();
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->type = "album";
     $this->assert_equal_array(
-      array("url" => rest::url("item", $album1),
+      array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => rest::url("item_comments", $album1)),
+                "url" => Rest::url("item_comments", $album1)),
               "tags" => array(
-                "url" => rest::url("item_tags", $album1),
+                "url" => Rest::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              rest::url("item", $album2)),
+              Rest::url("item", $album2)),
             ),
       Hook_Rest_Item::get($request));
   }
@@ -147,7 +147,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->title = "my new title";
@@ -161,7 +161,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->title = "my new title";
@@ -181,14 +181,14 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->type = "album";
     $request->params->entity->name = "my album";
     $request->params->entity->title = "my album";
     $response = Hook_Rest_Item::post($request);
-    $new_album = rest::resolve($response["url"]);
+    $new_album = Rest::resolve($response["url"]);
 
     $this->assert_true($new_album->is_album());
     $this->assert_equal($album1->id, $new_album->parent_id);
@@ -199,7 +199,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->type = "album";
@@ -222,14 +222,14 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->type = "photo";
     $request->params->entity->name = "my photo.jpg";
     $request->file = MODPATH . "gallery/tests/test.jpg";
     $response = Hook_Rest_Item::post($request);
-    $new_photo = rest::resolve($response["url"]);
+    $new_photo = Rest::resolve($response["url"]);
 
     $this->assert_true($new_photo->is_photo());
     $this->assert_equal($album1->id, $new_photo->parent_id);
@@ -240,7 +240,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     Hook_Rest_Item::delete($request);
 
     $album1->reload();
@@ -253,7 +253,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Identity::set_active_user(Identity::guest());
 
     $request = new stdClass();
-    $request->url = rest::url("item", $album1);
+    $request->url = Rest::url("item", $album1);
     try {
       Hook_Rest_Item::delete($request);
     } catch (Exception $e) {

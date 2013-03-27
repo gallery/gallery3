@@ -24,7 +24,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resolve_test() {
     $photo = test::random_photo();
-    $resolved = rest::resolve(rest::url("data", $photo, 640));
+    $resolved = Rest::resolve(Rest::url("data", $photo, 640));
     $this->assert_equal($photo->id, $resolved->id);
   }
 
@@ -48,7 +48,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo();
 
     $request = new stdClass();
-    $request->url = rest::url("data", $photo, "thumb");
+    $request->url = Rest::url("data", $photo, "thumb");
     $request->params = new stdClass();
 
     $request->params->size = "thumb";
@@ -70,7 +70,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     Identity::set_active_user(Identity::guest());
 
     $request = new stdClass();
-    $request->url = rest::url("data", $photo, "thumb");
+    $request->url = Rest::url("data", $photo, "thumb");
     $request->params = new stdClass();
     $request->params->size = "thumb";
 
@@ -86,7 +86,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo();
 
     $request = new stdClass();
-    $request->url = rest::url("data", $photo, "thumb");
+    $request->url = Rest::url("data", $photo, "thumb");
     $request->params = new stdClass();
     $request->params->size = "thumb";
 

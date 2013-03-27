@@ -1145,14 +1145,14 @@ class Gallery_Model_Item extends ORM_MPTT {
     // Convert item ids to rest URLs for consistency
     if (empty($fields) || isset($fields["parent"])) {
       if ($tmp = $this->parent()) {
-        $data["parent"] = rest::url("item", $tmp);
+        $data["parent"] = Rest::url("item", $tmp);
       }
       unset($data["parent_id"]);
     }
 
     if (empty($fields) || isset($fields["album_cover"])) {
       if ($tmp = $this->album_cover()) {
-        $data["album_cover"] = rest::url("item", $tmp);
+        $data["album_cover"] = Rest::url("item", $tmp);
       }
       unset($data["album_cover_item_id"]);
     }
@@ -1164,7 +1164,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     if (!$this->is_album()) {
       if (Access::can("view_full", $this)) {
         if (empty($fields) || isset($fields["file_url"])) {
-          $data["file_url"] = rest::url("data", $this, "full");
+          $data["file_url"] = Rest::url("data", $this, "full");
         }
         if (empty($fields) || isset($fields["file_size"])) {
           $data["file_size"] = filesize($this->file_path());
@@ -1179,7 +1179,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
     if ($this->is_photo()) {
       if (empty($fields) || isset($fields["resize_url"])) {
-        $data["resize_url"] = rest::url("data", $this, "resize");
+        $data["resize_url"] = Rest::url("data", $this, "resize");
       }
       if (empty($fields) || isset($fields["resize_size"])) {
         $data["resize_size"] = filesize($this->resize_path());
@@ -1193,7 +1193,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
     if ($this->has_thumb()) {
       if (empty($fields) || isset($fields["thumb_url"])) {
-        $data["thumb_url"] = rest::url("data", $this, "thumb");
+        $data["thumb_url"] = Rest::url("data", $this, "thumb");
       }
       if (empty($fields) || isset($fields["thumb_size"])) {
         $data["thumb_size"] = filesize($this->thumb_path());

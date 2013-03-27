@@ -17,14 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class registry_rest_Core {
-  static function get($request) {
-    $results = array();
-    foreach (module::active() as $module) {
-      foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
-        $results[] = str_replace("_rest.php", "", basename($filename));
-      }
+class Rest_Rest_Exception extends Kohana_Exception {
+  var $response = array();
+
+  public function __construct($message, $code, $response=array()) {
+    parent::__construct($message, null, $code);
+    $this->response = $response;
+  }
+
+  public function sendHeaders() {
+    if (!headers_sent()) {
+      header("HTTP/1.1 " . $this->getCode() . " " . $this->getMessage());
     }
-    return array_unique($results);
+  }
+
+  public function getTemplate() {
+    return "rest/error.json";
   }
 }

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rest_installer {
+class Rest_Hook_RestInstaller {
   static function install() {
     Database::instance()
       ->query("CREATE TABLE {user_access_keys} (
@@ -28,7 +28,7 @@ class rest_installer {
                 UNIQUE KEY(`access_key`),
                 UNIQUE KEY(`user_id`))
               DEFAULT CHARSET=utf8;");
-    module::set_var("rest", "allow_guest_access", false);
+    Module::set_var("rest", "allow_guest_access", false);
   }
 
   static function upgrade($version) {
@@ -37,12 +37,12 @@ class rest_installer {
       if (in_array("user_access_tokens", Database::instance()->list_tables())) {
         $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
       }
-      module::set_version("rest", $version = 2);
+      Module::set_version("rest", $version = 2);
     }
 
     if ($version == 2) {
-      module::set_var("rest", "allow_guest_access", false);
-      module::set_version("rest", $version = 3);
+      Module::set_var("rest", "allow_guest_access", false);
+      Module::set_version("rest", $version = 3);
     }
   }
 

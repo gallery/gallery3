@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rest_event {
+class Rest_Hook_RestEvent {
   /**
    * Called just before a user is deleted. This will remove the user from
    * the user_homes directory.
    */
   static function user_before_delete($user) {
-    db::build()
+    DB::build()
       ->delete("user_access_keys")
        ->where("id", "=", $user->id)
        ->execute();
@@ -31,7 +31,7 @@ class rest_event {
 
 
   static function change_provider($new_provider) {
-    db::build()
+    DB::build()
       ->delete("user_access_keys")
       ->execute();
   }
@@ -41,9 +41,9 @@ class rest_event {
    * on every add.
    */
   static function user_add_form_admin_completed($user, $form) {
-    $key = ORM::factory("user_access_key");
+    $key = ORM::factory("UserAccessKey");
     $key->user_id = $user->id;
-    $key->access_key = random::hash();
+    $key->access_key = Random::hash();
     $key->save();
   }
 
@@ -58,13 +58,13 @@ class rest_event {
    * Get the form fields for user edit
    */
   static function _get_access_key_form($user, $form) {
-    $key = ORM::factory("user_access_key")
+    $key = ORM::factory("UserAccessKey")
       ->where("user_id", "=", $user->id)
       ->find();
 
     if (!$key->loaded()) {
       $key->user_id = $user->id;
-      $key->access_key = random::hash();
+      $key->access_key = Random::hash();
       $key->save();
     }
 
@@ -77,23 +77,23 @@ class rest_event {
 
   static function show_user_profile($data) {
     // Guests can't see a REST key
-    if (identity::active_user()->guest) {
+    if (Identity::active_user()->guest) {
       return;
     }
 
     // Only logged in users can see their own REST key
-    if (identity::active_user()->id != $data->user->id) {
+    if (Identity::active_user()->id != $data->user->id) {
       return;
     }
 
-    $view = new View("user_profile_rest.html");
-    $key = ORM::factory("user_access_key")
+    $view = new View("rest/user_profile.html");
+    $key = ORM::factory("UserAccessKey")
       ->where("user_id", "=", $data->user->id)
       ->find();
 
     if (!$key->loaded()) {
       $key->user_id = $data->user->id;
-      $key->access_key = random::hash();
+      $key->access_key = Random::hash();
       $key->save();
     }
     $view->rest_key = $key->access_key;
