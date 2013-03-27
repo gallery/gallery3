@@ -19,33 +19,33 @@
  */
 class Tag_Hook_Rest_TagItem {
   static function get($request) {
-    list ($tag, $item) = rest::resolve($request->url);
+    list ($tag, $item) = Rest::resolve($request->url);
     return array(
       "url" => $request->url,
       "entity" => array(
-        "tag" => rest::url("tag", $tag),
-        "item" => rest::url("item", $item)));
+        "tag" => Rest::url("tag", $tag),
+        "item" => Rest::url("item", $item)));
   }
 
   static function delete($request) {
-    list ($tag, $item) = rest::resolve($request->url);
-    access::required("edit", $item);
+    list ($tag, $item) = Rest::resolve($request->url);
+    Access::required("edit", $item);
     $tag->remove($item);
     $tag->save();
   }
 
   static function resolve($tuple) {
     list ($tag_id, $item_id) = explode(",", $tuple);
-    $tag = ORM::factory("tag", $tag_id);
-    $item = ORM::factory("item", $item_id);
-    if (!$tag->loaded() || !$item->loaded() || !$tag->has($item) || !access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    $tag = ORM::factory("Tag", $tag_id);
+    $item = ORM::factory("Item", $item_id);
+    if (!$tag->loaded() || !$item->loaded() || !$tag->has($item) || !Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
 
     return array($tag, $item);
   }
 
   static function url($tag, $item) {
-    return url::abs_site("rest/tag_item/{$tag->id},{$item->id}");
+    return URL::abs_site("rest/tag_item/{$tag->id},{$item->id}");
   }
 }

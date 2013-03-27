@@ -29,12 +29,12 @@ class Tag_Hook_TagBlock {
       $block = new Block();
       $block->css_id = "g-tag";
       $block->title = t("Popular tags");
-      $block->content = new View("tag_block.html");
-      $block->content->cloud = tag::cloud(module::get_var("tag", "tag_cloud_size", 30));
+      $block->content = new View("tag/block.html");
+      $block->content->cloud = Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30));
 
-      if ($theme->item() && $theme->page_subtype() != "tag" && access::can("edit", $theme->item())) {
-        $controller = new Tags_Controller();
-        $block->content->form = tag::get_add_form($theme->item());
+      if ($theme->item() && $theme->page_subtype() != "tag" && Access::can("edit", $theme->item())) {
+        $controller = new Controller_Tags();
+        $block->content->form = Tag::get_add_form($theme->item());
       } else {
         $block->content->form = "";
       }

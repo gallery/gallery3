@@ -19,11 +19,11 @@
  */
 class Tag_Hook_Rest_Tag {
   static function get($request) {
-    $tag = rest::resolve($request->url);
+    $tag = Rest::resolve($request->url);
     $tag_items = array();
     foreach ($tag->items() as $item) {
-      if (access::can("view", $item)) {
-        $tag_items[] = rest::url("tag_item", $tag, $item);
+      if (Access::can("view", $item)) {
+        $tag_items[] = Rest::url("tag_item", $tag, $item);
       }
     }
 
@@ -32,17 +32,17 @@ class Tag_Hook_Rest_Tag {
       "entity" => $tag->as_array(),
       "relationships" => array(
         "items" => array(
-          "url" => rest::url("tag_items", $tag),
+          "url" => Rest::url("tag_items", $tag),
           "members" => $tag_items)));
   }
 
   static function put($request) {
     // Who can we allow to edit a tag name?  If we allow anybody to do it then any logged in
     // user can rename all your tags to something offensive.  Right now limit renaming to admins.
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
-    $tag = rest::resolve($request->url);
+    $tag = Rest::resolve($request->url);
     if (isset($request->params->entity->name)) {
       $tag->name = $request->params->entity->name;
       $tag->save();
@@ -52,10 +52,10 @@ class Tag_Hook_Rest_Tag {
   static function delete($request) {
     // Restrict deleting tags to admins.  Otherwise, a logged in user can do great harm to an
     // install.
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
-    $tag = rest::resolve($request->url);
+    $tag = Rest::resolve($request->url);
     $tag->delete();
   }
 
@@ -63,26 +63,26 @@ class Tag_Hook_Rest_Tag {
     switch ($resource_type) {
     case "item":
       $tags = array();
-      foreach (tag::item_tags($resource) as $tag) {
-        $tags[] = rest::url("tag_item", $tag, $resource);
+      foreach (Tag::item_tags($resource) as $tag) {
+        $tags[] = Rest::url("tag_item", $tag, $resource);
       }
       return array(
         "tags" => array(
-          "url" => rest::url("item_tags", $resource),
+          "url" => Rest::url("item_tags", $resource),
           "members" => $tags));
     }
   }
 
   static function resolve($id) {
-    $tag = ORM::factory("tag", $id);
+    $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     return $tag;
   }
 
   static function url($tag) {
-    return url::abs_site("rest/tag/{$tag->id}");
+    return URL::abs_site("rest/tag/{$tag->id}");
   }
 }

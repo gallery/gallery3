@@ -37,23 +37,23 @@ class Tag_Hook_Rest_Tags {
       $start = isset($p->start) ? (int)$p->start : 0;
     }
 
-    foreach (ORM::factory("tag")->find_all($num, $start) as $tag) {
-      $tags[] = rest::url("tag", $tag);
+    foreach (ORM::factory("Tag")->find_all($num, $start) as $tag) {
+      $tags[] = Rest::url("tag", $tag);
     }
-    return array("url" => rest::url("tags"),
+    return array("url" => Rest::url("tags"),
                  "members" => $tags);
   }
 
   static function post($request) {
     // The user must have some edit permission somewhere to create a tag.
-    if (!identity::active_user()->admin) {
-      $query = db::build()->from("access_caches")->and_open();
-      foreach (identity::active_user()->groups() as $group) {
-        $query->or_where("edit_{$group->id}", "=", access::ALLOW);
+    if (!Identity::active_user()->admin) {
+      $query = DB::build()->from("access_caches")->and_open();
+      foreach (Identity::active_user()->groups() as $group) {
+        $query->or_where("edit_{$group->id}", "=", Access::ALLOW);
       }
       $has_any_edit_perm = $query->close()->count_records();
       if (!$has_any_edit_perm) {
-        access::forbidden();
+        Access::forbidden();
       }
     }
 
@@ -61,17 +61,17 @@ class Tag_Hook_Rest_Tags {
       throw new Rest_Exception("Bad Request", 400);
     }
 
-    $tag = ORM::factory("tag")->where("name", "=", $request->params->entity->name)->find();
+    $tag = ORM::factory("Tag")->where("name", "=", $request->params->entity->name)->find();
     if (!$tag->loaded()) {
       $tag->name = $request->params->entity->name;
       $tag->count = 0;
       $tag->save();
     }
 
-    return array("url" => rest::url("tag", $tag));
+    return array("url" => Rest::url("tag", $tag));
   }
 
   static function url() {
-    return url::abs_site("rest/tags");
+    return URL::abs_site("rest/tags");
   }
 }

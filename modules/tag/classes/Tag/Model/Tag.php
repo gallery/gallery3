@@ -41,7 +41,7 @@ class Tag_Model_Tag extends ORM {
       // backwards compatibility
       $where = array(array("items.type", "=", $where));
     }
-    return ORM::factory("item")
+    return ORM::factory("Item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $this->id)
@@ -60,7 +60,7 @@ class Tag_Model_Tag extends ORM {
       // backwards compatibility
       $where = array(array("items.type", "=", $where));
     }
-    return $model = ORM::factory("item")
+    return $model = ORM::factory("Item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $this->id)
@@ -74,13 +74,13 @@ class Tag_Model_Tag extends ORM {
    */
   public function save() {
     // Check to see if another tag exists with the same name
-    $duplicate_tag = ORM::factory("tag")
+    $duplicate_tag = ORM::factory("Tag")
       ->where("name", "=", $this->name)
       ->where("id", "!=", $this->id)
       ->find();
     if ($duplicate_tag->loaded()) {
       // If so, tag its items with this tag so as to merge it
-      $duplicate_tag_items = ORM::factory("item")
+      $duplicate_tag_items = ORM::factory("Item")
         ->join("items_tags", "items.id", "items_tags.item_id")
         ->where("items_tags.tag_id", "=", $duplicate_tag->id)
         ->find_all();
@@ -104,8 +104,8 @@ class Tag_Model_Tag extends ORM {
     $result = parent::save();
 
     if (!empty($changed)) {
-      foreach (ORM::factory("item")->where("id", "IN", $changed)->find_all() as $item) {
-        module::event("item_related_update", $item);
+      foreach (ORM::factory("Item")->where("id", "IN", $changed)->find_all() as $item) {
+        Module::event("item_related_update", $item);
       }
     }
 
@@ -118,7 +118,7 @@ class Tag_Model_Tag extends ORM {
    */
   public function delete($ignored_id=null) {
     $related_item_ids = array();
-    foreach (db::build()
+    foreach (DB::build()
              ->select("item_id")
              ->from("items_tags")
              ->where("tag_id", "=", $this->id)
@@ -126,14 +126,14 @@ class Tag_Model_Tag extends ORM {
       $related_item_ids[$row->item_id] = 1;
     }
 
-    db::build()->delete("items_tags")->where("tag_id", "=", $this->id)->execute();
+    DB::build()->delete("items_tags")->where("tag_id", "=", $this->id)->execute();
     $result = parent::delete();
 
     if ($related_item_ids) {
-      foreach (ORM::factory("item")
+      foreach (ORM::factory("Item")
                ->where("id", "IN", array_keys($related_item_ids))
                ->find_all() as $item) {
-        module::event("item_related_update", $item);
+        Module::event("item_related_update", $item);
       }
     }
     return $result;
@@ -146,7 +146,7 @@ class Tag_Model_Tag extends ORM {
    * @param string $query the query string (eg "page=3")
    */
   public function url($query=null) {
-    $url = url::site("tag/{$this->id}/" . urlencode($this->name));
+    $url = URL::site("tag/{$this->id}/" . urlencode($this->name));
     if ($query) {
       $url .= "?$query";
     }
@@ -160,7 +160,7 @@ class Tag_Model_Tag extends ORM {
    * @param string $query the query string (eg "page=3")
    */
   public function abs_url($query=null) {
-    $url = url::abs_site("tag/{$this->id}/" . urlencode($this->name));
+    $url = URL::abs_site("tag/{$this->id}/" . urlencode($this->name));
     if ($query) {
       $url .= "?$query";
     }

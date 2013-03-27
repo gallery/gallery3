@@ -29,16 +29,16 @@ class Tag_Hook_TagRss {
 
   static function feed($feed_id, $offset, $limit, $id) {
     if ($feed_id == "tag") {
-      $tag = ORM::factory("tag", $id);
+      $tag = ORM::factory("Tag", $id);
       if (!$tag->loaded()) {
-        throw new Kohana_404_Exception();
+        throw new HTTP_Exception_404();
       }
 
       $feed = new stdClass();
       $feed->items = $tag->items($limit, $offset, "photo");
       $feed->max_pages = ceil($tag->count / $limit);
       $feed->title = t("%site_title - %tag_name",
-                       array("site_title" => item::root()->title, "tag_name" => $tag->name));
+                       array("site_title" => Item::root()->title, "tag_name" => $tag->name));
       $feed->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
 
       return $feed;

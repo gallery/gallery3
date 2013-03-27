@@ -19,10 +19,10 @@
  */
 class Tag_Hook_Rest_ItemTags {
   static function get($request) {
-    $item = rest::resolve($request->url);
+    $item = Rest::resolve($request->url);
     $tags = array();
-    foreach (tag::item_tags($item) as $tag) {
-      $tags[] = rest::url("tag_item", $tag, $item);
+    foreach (Tag::item_tags($item) as $tag) {
+      $tags[] = Rest::url("tag_item", $tag, $item);
     }
 
     return array(
@@ -31,36 +31,36 @@ class Tag_Hook_Rest_ItemTags {
   }
 
   static function post($request) {
-    $tag = rest::resolve($request->params->entity->tag);
-    $item = rest::resolve($request->params->entity->item);
-    access::required("view", $item);
+    $tag = Rest::resolve($request->params->entity->tag);
+    $item = Rest::resolve($request->params->entity->item);
+    Access::required("view", $item);
 
-    tag::add($item, $tag->name);
+    Tag::add($item, $tag->name);
     return array(
-      "url" => rest::url("tag_item", $tag, $item),
+      "url" => Rest::url("tag_item", $tag, $item),
       "members" => array(
-        rest::url("tag", $tag),
-        rest::url("item", $item)));
+        Rest::url("tag", $tag),
+        Rest::url("item", $item)));
   }
 
   static function delete($request) {
-    $item = rest::resolve($request->url);
-    access::required("edit", $item);
+    $item = Rest::resolve($request->url);
+    Access::required("edit", $item);
 
     // Deleting this collection means removing all tags associated with the item.
-    tag::clear_all($item);
+    Tag::clear_all($item);
   }
 
   static function resolve($id) {
-    $item = ORM::factory("item", $id);
-    if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    $item = ORM::factory("Item", $id);
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
 
     return $item;
   }
 
   static function url($item) {
-    return url::abs_site("rest/item_tags/{$item->id}");
+    return URL::abs_site("rest/item_tags/{$item->id}");
   }
 }

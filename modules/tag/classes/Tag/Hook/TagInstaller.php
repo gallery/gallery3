@@ -36,18 +36,18 @@ class Tag_Hook_TagInstaller {
                  KEY(`tag_id`, `id`),
                  KEY(`item_id`, `id`))
                DEFAULT CHARSET=utf8;");
-    module::set_var("tag", "tag_cloud_size", 30);
+    Module::set_var("tag", "tag_cloud_size", 30);
   }
 
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {tags} MODIFY COLUMN `name` VARCHAR(128)");
-      module::set_version("tag", $version = 2);
+      Module::set_version("tag", $version = 2);
     }
     if ($version == 2) {
-      module::set_var("tag", "tag_cloud_size", 30);
-      module::set_version("tag", $version = 3);
+      Module::set_var("tag", "tag_cloud_size", 30);
+      Module::set_version("tag", $version = 3);
     }
   }
 

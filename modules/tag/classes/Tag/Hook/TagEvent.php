@@ -22,7 +22,7 @@ class Tag_Hook_TagEvent {
    * Handle the creation of a new photo.
    * @todo Get tags from the XMP and/or IPTC data in the image
    *
-   * @param Item_Model $photo
+   * @param Model_Item $photo
    */
   static function item_created($photo) {
     $tags = array();
@@ -36,7 +36,7 @@ class Tag_Hook_TagEvent {
             $tag = str_replace("\0",  "", $tag);
             foreach (explode(",", $tag) as $word) {
               $word = trim($word);
-              $word = encoding::convert_to_utf8($word);
+              $word = Encoding::convert_to_utf8($word);
               $tags[$word] = 1;
             }
           }
@@ -47,9 +47,9 @@ class Tag_Hook_TagEvent {
     // @todo figure out how to read the keywords from xmp
     foreach(array_keys($tags) as $tag) {
       try {
-        tag::add($photo, $tag);
+        Tag::add($photo, $tag);
       } catch (Exception $e) {
-        Kohana_Log::add("error", "Error adding tag: $tag\n" .
+        Log::add("error", "Error adding tag: $tag\n" .
                     $e->getMessage() . "\n" . $e->getTraceAsString());
       }
     }
@@ -58,19 +58,19 @@ class Tag_Hook_TagEvent {
   }
 
   static function item_deleted($item) {
-    tag::clear_all($item);
-    if (!batch::in_progress()) {
-      tag::compact();
+    Tag::clear_all($item);
+    if (!Batch::in_progress()) {
+      Tag::compact();
     }
   }
 
   static function batch_complete() {
-    tag::compact();
+    Tag::compact();
   }
 
   static function item_edit_form($item, $form) {
     $tag_names = array();
-    foreach (tag::item_tags($item) as $tag) {
+    foreach (Tag::item_tags($item) as $tag) {
       $tag_names[] = $tag->name;
     }
     $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
@@ -80,14 +80,14 @@ class Tag_Hook_TagEvent {
   }
 
   static function item_edit_form_completed($item, $form) {
-    tag::clear_all($item);
+    Tag::clear_all($item);
     foreach (explode(",", $form->edit_item->tags->value) as $tag_name) {
       if ($tag_name) {
-        tag::add($item, trim($tag_name));
+        Tag::add($item, trim($tag_name));
       }
     }
-    module::event("item_related_update", $item);
-    tag::compact();
+    Module::event("item_related_update", $item);
+    Tag::compact();
   }
 
   static function admin_menu($menu, $theme) {
@@ -95,11 +95,11 @@ class Tag_Hook_TagEvent {
       ->append(Menu::factory("link")
                ->id("tags")
                ->label(t("Tags"))
-               ->url(url::site("admin/tags")));
+               ->url(URL::site("admin/tags")));
   }
 
   static function item_index_data($item, $data) {
-    foreach (tag::item_tags($item) as $tag) {
+    foreach (Tag::item_tags($item) as $tag) {
       $data[] = $tag->name;
     }
   }
@@ -120,16 +120,16 @@ class Tag_Hook_TagEvent {
     foreach (explode(",", $group->tags->value) as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {
-        $tag = tag::add($item, $tag_name);
+        $tag = Tag::add($item, $tag_name);
       }
     }
   }
 
   static function info_block_get_metadata($block, $item) {
     $tags = array();
-    foreach (tag::item_tags($item) as $tag) {
+    foreach (Tag::item_tags($item) as $tag) {
       $tags[] = "<a href=\"{$tag->url()}\">" .
-        html::clean($tag->name) . "</a>";
+        HTML::clean($tag->name) . "</a>";
     }
     if ($tags) {
       $info = $block->content->metadata;
@@ -142,7 +142,7 @@ class Tag_Hook_TagEvent {
   }
 
   private static function _get_autocomplete_js() {
-    $url = url::site("tags/autocomplete");
+    $url = URL::site("tags/autocomplete");
     return "$('input[name=\"tags\"]').gallery_autocomplete('$url', {multiple: true});";
   }
 }

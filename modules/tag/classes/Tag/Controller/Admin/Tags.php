@@ -21,12 +21,12 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
   public function index() {
     $filter = Input::instance()->get("filter");
 
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Manage tags");
-    $view->content = new View("admin_tags.html");
+    $view->content = new View("admin/tags.html");
     $view->content->filter = $filter;
 
-    $query = ORM::factory("tag");
+    $query = ORM::factory("Tag");
     if ($filter) {
       $query->like("name", $filter);
     }
@@ -35,35 +35,35 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
   }
 
   public function form_delete($id) {
-    $tag = ORM::factory("tag", $id);
+    $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
-      print tag::get_delete_form($tag);
+      print Tag::get_delete_form($tag);
     }
   }
 
   public function delete($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $tag = ORM::factory("tag", $id);
+    $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    $form = tag::get_delete_form($tag);
+    $form = Tag::get_delete_form($tag);
     if ($form->validate()) {
       $name = $tag->name;
       $tag->delete();
-      message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
-      log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
+      Message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
+      Log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
-      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
+      JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      JSON::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function form_rename($id) {
-    $tag = ORM::factory("tag", $id);
+    $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
       print InPlaceEdit::factory($tag->name)
         ->action("admin/tags/rename/$id")
@@ -72,11 +72,11 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
   }
 
   public function rename($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $tag = ORM::factory("tag", $id);
+    $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     $in_place_edit = InPlaceEdit::factory($tag->name)
@@ -100,19 +100,19 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
                      array("old_name" => $old_name, "new_name" => $tag->name));
       }
 
-      message::success($message);
-      log::success("tags", $message);
+      Message::success($message);
+      Log::success("tags", $message);
 
-      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
+      JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
-      json::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
+      JSON::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
     }
   }
 
   private function _copy_items_for_tags($tag, $tag_list) {
     foreach ($tag->items() as $item) {
       foreach ($tag_list as $new_tag_name) {
-        tag::add($item, trim($new_tag_name));
+        Tag::add($item, trim($new_tag_name));
       }
     }
   }

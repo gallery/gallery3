@@ -20,17 +20,17 @@
 class Tag_Hook_TagTask {
 
   static function available_tasks() {
-    $tasks[] = Task_Definition::factory()
-      ->callback("tag_task::clean_up_tags")
+    $tasks[] = TaskDefinition::factory()
+      ->callback("Hook_TagTask::clean_up_tags")
       ->name(t("Clean up tags"))
       ->description(t("Correct tag counts and remove tags with no items"))
-      ->severity(log::SUCCESS);
+      ->severity(Log::SUCCESS);
     return $tasks;
   }
 
   /**
    * Fix up tag counts and delete any tags that have no associated items.
-   * @param Task_Model the task
+   * @param Model_Task the task
    */
   static function clean_up_tags($task) {
     $errors = array();
@@ -42,7 +42,7 @@ class Tag_Hook_TagTask {
 
       switch ($task->get("mode", "init")) {
       case "init":
-        $task->set("total", ORM::factory("tag")->count_all());
+        $task->set("total", ORM::factory("Tag")->count_all());
         $task->set("mode", "clean_up_tags");
         $task->set("completed", 0);
         $task->set("last_tag_id", 0);
@@ -51,8 +51,8 @@ class Tag_Hook_TagTask {
         $completed = $task->get("completed");
         $total = $task->get("total");
         $last_tag_id = $task->get("last_tag_id");
-        $tags = ORM::factory("tag")->where("id", ">", $last_tag_id)->find_all(25);
-        Kohana_Log::add("error",print_r(Database::instance()->last_query(),1));
+        $tags = ORM::factory("Tag")->where("id", ">", $last_tag_id)->find_all(25);
+        Log::add("error",print_r(Database::instance()->last_query(),1));
         while ($current < $total && microtime(true) - $start < 1 && $tag = $tags->current()) {
           $last_tag_id = $tag->id;
           $real_count = $tag->items_count();
@@ -84,7 +84,7 @@ class Tag_Hook_TagTask {
         $task->percent_complete = 100;
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error",(string)$e);
+      Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();

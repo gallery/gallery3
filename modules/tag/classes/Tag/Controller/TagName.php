@@ -20,14 +20,14 @@
 class Tag_Controller_TagName extends Controller {
   public function __call($function, $args) {
     $tag_name = $function;
-    $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+    $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       // No matching tag was found. If this was an imported tag, this is probably a bug.
       // If the user typed the URL manually, it might just be wrong
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
-    url::redirect($tag->abs_url());
+    URL::redirect($tag->abs_url());
   }
 
 }

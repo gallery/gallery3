@@ -23,9 +23,9 @@ class Tag_Tag {
    *
    * @todo Write test.
    *
-   * @param Item_Model $item an item
+   * @param Model_Item $item an item
    * @param string     $tag_name a tag name
-   * @return Tag_Model
+   * @return Model_Tag
    * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
    */
   static function add($item, $tag_name) {
@@ -33,7 +33,7 @@ class Tag_Tag {
       throw new exception("@todo MISSING_TAG_NAME");
     }
 
-    $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+    $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       $tag->name = $tag_name;
     }
@@ -45,11 +45,11 @@ class Tag_Tag {
   /**
    * Return the N most popular tags.
    *
-   * @return ORM_Iterator of Tag_Model in descending tag count order
+   * @return ORM_Iterator of Model_Tag in descending tag count order
    */
   static function popular_tags($count) {
     $count = max($count, 1);
-    return ORM::factory("tag")
+    return ORM::factory("Tag")
       ->order_by("count", "DESC")
       ->limit($count)
       ->find_all();
@@ -62,9 +62,9 @@ class Tag_Tag {
    * @return View
    */
   static function cloud($count) {
-    $tags = tag::popular_tags($count)->as_array();
+    $tags = Tag::popular_tags($count)->as_array();
     if ($tags) {
-      $cloud = new View("tag_cloud.html");
+      $cloud = new View("tag/cloud.html");
       $cloud->max_count = $tags[0]->count;
       if (!$cloud->max_count) {
         return;
@@ -84,7 +84,7 @@ class Tag_Tag {
    * @return array
    */
   static function item_tags($item) {
-    return ORM::factory("tag")
+    return ORM::factory("Tag")
       ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
       ->where("items_tags.item_id", "=", $item->id)
       ->find_all();
@@ -95,7 +95,7 @@ class Tag_Tag {
    * @return array
    */
   static function tag_items($tag) {
-    return ORM::factory("item")
+    return ORM::factory("Item")
       ->join("items_tags", "items_tags.item_id", "items.id", "left")
       ->where("items_tags.tag_id", "=", $tag->id)
       ->find_all();
@@ -126,13 +126,13 @@ class Tag_Tag {
    * Delete all tags associated with an item
    */
   static function clear_all($item) {
-    db::build()
+    DB::build()
       ->update("tags")
-      ->set("count", db::expr("`count` - 1"))
+      ->set("count", DB::expr("`count` - 1"))
       ->where("count", ">", 0)
-      ->where("id", "IN", db::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
+      ->where("id", "IN", DB::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
       ->execute();
-    db::build()
+    DB::build()
       ->delete("items_tags")
       ->where("item_id", "=", $item->id)
       ->execute();
@@ -142,7 +142,7 @@ class Tag_Tag {
    * Remove all items from a tag
    */
   static function remove_items($tag) {
-    db::build()
+    DB::build()
       ->delete("items_tags")
       ->where("tag_id", "=", $tag->id)
       ->execute();
@@ -157,19 +157,19 @@ class Tag_Tag {
     // @todo There's a potential race condition here which we can solve by adding a lock around
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
-    db::build()->delete("tags")->where("count", "=", 0)->execute();
+    DB::build()->delete("tags")->where("count", "=", 0)->execute();
   }
 
   /**
    * Find the position of the given item in the tag collection.  The resulting
    * value is 1-indexed, so the first child in the album is at position 1.
    *
-   * @param Tag_Model  $tag
-   * @param Item_Model $item
+   * @param Model_Tag  $tag
+   * @param Model_Item $item
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
   static function get_position($tag, $item, $where=array()) {
-    return ORM::factory("item")
+    return ORM::factory("Item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $tag->id)
