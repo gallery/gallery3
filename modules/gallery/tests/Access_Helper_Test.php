@@ -153,7 +153,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function cant_reset_root_item_test() {
     try {
-      Access::reset(Identity::everybody(), "view", ORM::factory("item", 1));
+      Access::reset(Identity::everybody(), "view", ORM::factory("Item", 1));
     } catch (Exception $e) {
       return;
     }
@@ -169,7 +169,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "view", Item::root());
     $this->assert_true(Access::group_can(Identity::everybody(), "view", Item::root()));
 
-    $bogus = ORM::factory("item", -1);
+    $bogus = ORM::factory("Item", -1);
     $this->assert_false(Access::group_can(Identity::everybody(), "view", $bogus));
   }
 

@@ -114,7 +114,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
       Module::event("user_created", $this);
     } else {
       // Updated user
-      $original = ORM::factory("user", $this->id);
+      $original = ORM::factory("User", $this->id);
       parent::save();
       Module::event("user_updated", $original, $this);
     }

@@ -52,7 +52,7 @@ class Gallery_Hook_GalleryRss {
       return $feed;
 
     case "album":
-      $item = ORM::factory("item", $id);
+      $item = ORM::factory("Item", $id);
       Access::required("view", $item);
 
       $feed->items = $item

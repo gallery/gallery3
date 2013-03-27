@@ -82,7 +82,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   public function resume($task_id) {
     Access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
@@ -104,7 +104,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   public function show_log($task_id) {
     Access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
@@ -121,7 +121,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   public function save_log($task_id) {
     Access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }

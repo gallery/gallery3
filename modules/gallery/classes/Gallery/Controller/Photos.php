@@ -41,7 +41,7 @@ class Gallery_Controller_Photos extends Controller_Items {
 
   public function update($photo_id) {
     Access::verify_csrf();
-    $photo = ORM::factory("item", $photo_id);
+    $photo = ORM::factory("Item", $photo_id);
     Access::required("view", $photo);
     Access::required("edit", $photo);
 
@@ -82,7 +82,7 @@ class Gallery_Controller_Photos extends Controller_Items {
   }
 
   public function form_edit($photo_id) {
-    $photo = ORM::factory("item", $photo_id);
+    $photo = ORM::factory("Item", $photo_id);
     Access::required("view", $photo);
     Access::required("edit", $photo);
 

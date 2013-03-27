@@ -187,7 +187,7 @@ class Gallery_Hook_GalleryEvent {
     // first child as the new album cover.
     // NOTE: if the first child doesn't have an album cover, then this won't work.
     foreach (array_keys(Session::instance()->get("batch_missing_album_cover", array())) as $id) {
-      $item = ORM::factory("item", $id);
+      $item = ORM::factory("Item", $id);
       if ($item->loaded() && !$item->album_cover_item_id) {
         if ($child = $item->children(1)->current()) {
           Item::make_album_cover($child);

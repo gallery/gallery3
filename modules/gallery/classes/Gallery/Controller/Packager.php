@@ -110,7 +110,7 @@ class Gallery_Controller_Packager extends Controller {
 
     // Post-process the sql file
     $buf = "";
-    $root = ORM::factory("item", 1);
+    $root = ORM::factory("Item", 1);
     $root_created_timestamp = $root->created;
     $root_updated_timestamp = $root->updated;
     $table_name = "";

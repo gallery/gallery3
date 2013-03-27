@@ -20,7 +20,7 @@
 class Gallery_Controller_Quick extends Controller {
   public function rotate($id, $dir) {
     Access::verify_csrf();
-    $item = ModelCache::get("item", $id);
+    $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
 
@@ -59,7 +59,7 @@ class Gallery_Controller_Quick extends Controller {
   public function make_album_cover($id) {
     Access::verify_csrf();
 
-    $item = ModelCache::get("item", $id);
+    $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("view", $item->parent());
     Access::required("edit", $item->parent());
@@ -73,7 +73,7 @@ class Gallery_Controller_Quick extends Controller {
   }
 
   public function form_delete($id) {
-    $item = ModelCache::get("item", $id);
+    $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
 
@@ -85,7 +85,7 @@ class Gallery_Controller_Quick extends Controller {
 
   public function delete($id) {
     Access::verify_csrf();
-    $item = ModelCache::get("item", $id);
+    $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
 
@@ -118,7 +118,7 @@ class Gallery_Controller_Quick extends Controller {
   }
 
   public function form_edit($id) {
-    $item = ModelCache::get("item", $id);
+    $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
 

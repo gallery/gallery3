@@ -41,7 +41,7 @@ class Gallery_Controller_Movies extends Controller_Items {
 
   public function update($movie_id) {
     Access::verify_csrf();
-    $movie = ORM::factory("item", $movie_id);
+    $movie = ORM::factory("Item", $movie_id);
     Access::required("view", $movie);
     Access::required("edit", $movie);
 
@@ -82,7 +82,7 @@ class Gallery_Controller_Movies extends Controller_Items {
   }
 
   public function form_edit($movie_id) {
-    $movie = ORM::factory("item", $movie_id);
+    $movie = ORM::factory("Item", $movie_id);
     Access::required("view", $movie);
     Access::required("edit", $movie);
 

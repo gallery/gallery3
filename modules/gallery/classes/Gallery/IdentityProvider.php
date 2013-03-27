@@ -81,9 +81,9 @@ class Gallery_IdentityProvider {
 
       Module::set_var("gallery", "identity_provider", $new_provider);
 
-      if (class_exists(ucfirst(Inflector::camelize($new_provider)) . "Installer") &&
-          method_exists(ucfirst(Inflector::camelize($new_provider)) . "Installer", "initialize")) {
-        call_user_func(ucfirst(Inflector::camelize($new_provider)) . "Installer::initialize");
+      if (class_exists(Inflector::camelize($new_provider, true) . "Installer") &&
+          method_exists(Inflector::camelize($new_provider, true) . "Installer", "initialize")) {
+        call_user_func(Inflector::camelize($new_provider, true) . "Installer::initialize");
       }
 
       if (!$provider->admin_user()) {
@@ -147,7 +147,7 @@ class Gallery_IdentityProvider {
     }
 
     // Set driver name
-    $driver = "IdentityProvider_" . ucfirst($this->config["driver"]);
+    $driver = "IdentityProvider_" . Inflector::camelize($this->config["driver"], true);
 
     // Load the driver
     if ( ! Kohana::auto_load($driver)) {

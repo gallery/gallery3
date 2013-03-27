@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Permissions extends Controller {
   function browse($id) {
-    $item = ORM::factory("item", $id);
+    $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
 
@@ -37,7 +37,7 @@ class Gallery_Controller_Permissions extends Controller {
   }
 
   function form($id) {
-    $item = ORM::factory("item", $id);
+    $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
 
@@ -52,8 +52,8 @@ class Gallery_Controller_Permissions extends Controller {
     Access::verify_csrf();
 
     $group = Identity::lookup_group($group_id);
-    $perm = ORM::factory("permission", $perm_id);
-    $item = ORM::factory("item", $item_id);
+    $perm = ORM::factory("Permission", $perm_id);
+    $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Access::required("edit", $item);
 

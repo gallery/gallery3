@@ -103,7 +103,7 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : ModelCache::get("access_cache", $id, "item_id");
+      $item : ModelCache::get("AccessCache", $id, "item_id");
 
     foreach ($user->groups() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW) {
@@ -144,7 +144,7 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : ModelCache::get("access_cache", $id, "item_id");
+      $item : ModelCache::get("AccessCache", $id, "item_id");
 
     return $resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW;
   }
@@ -158,7 +158,7 @@ class Gallery_Access {
    * @return boolean     Access::ALLOW, Access::DENY or Access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
-    $intent = ModelCache::get("access_intent", $item->id, "item_id");
+    $intent = ModelCache::get("AccessIntent", $item->id, "item_id");
     return $intent->__get("{$perm_name}_{$group->id}");
   }
 
@@ -220,7 +220,7 @@ class Gallery_Access {
     if (!$album->is_album()) {
       throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
-    $access = ModelCache::get("access_intent", $album->id, "item_id");
+    $access = ModelCache::get("AccessIntent", $album->id, "item_id");
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
@@ -316,7 +316,7 @@ class Gallery_Access {
    * @return void
   */
   static function register_permission($name, $display_name) {
-    $permission = ORM::factory("permission", $name);
+    $permission = ORM::factory("Permission", $name);
     if ($permission->loaded()) {
       throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
     }
@@ -376,7 +376,7 @@ class Gallery_Access {
    * @return void
    */
   static function add_item($item) {
-    $access_intent = ORM::factory("access_intent", $item->id);
+    $access_intent = ORM::factory("AccessIntent", $item->id);
     if ($access_intent->loaded()) {
       throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
     }
