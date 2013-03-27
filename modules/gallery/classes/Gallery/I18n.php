@@ -51,7 +51,7 @@ class Gallery_I18n extends Kohana_I18n {
   private static $_instance;
   private $_config = array();
   private $_call_log = array();
-  private $_cache = array();
+  private $_message_cache = array();
 
   private function __construct($config) {
     $this->_config = $config;
@@ -149,14 +149,14 @@ class Gallery_I18n extends Kohana_I18n {
   }
 
   private function lookup($locale, $message) {
-    if (!isset($this->_cache[$locale])) {
-      $this->_cache[$locale] = self::load_translations($locale);
+    if (!isset($this->_message_cache[$locale])) {
+      $this->_message_cache[$locale] = self::load_translations($locale);
     }
 
     $key = self::get_message_key($message);
 
-    if (isset($this->_cache[$locale][$key])) {
-      return $this->_cache[$locale][$key];
+    if (isset($this->_message_cache[$locale][$key])) {
+      return $this->_message_cache[$locale][$key];
     } else {
       return null;
     }
