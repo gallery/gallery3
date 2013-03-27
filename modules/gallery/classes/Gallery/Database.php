@@ -27,7 +27,7 @@ abstract class Gallery_Database extends Kohana_Database {
    * @todo: add an upgrade path to modify var/database.php so that we can avoid doing this at
    *        runtime.
    */
-  protected function __construct(array $config) {
+  public function __construct(array $config) {
     if (!isset($config["connection"]["params"])) {
       $config["connection"]["params"] = null;
     }
@@ -41,11 +41,11 @@ abstract class Gallery_Database extends Kohana_Database {
    * Parse the query string and convert any strings of the form `\([a-zA-Z0-9_]*?)\]
    * table prefix . $1
    */
-  public function query($sql) {
+  public function query($type, $sql, $as_object=false, array $params=null) {
     if (!empty($sql)) {
       $sql = $this->add_table_prefixes($sql);
     }
-    return parent::query($sql);
+    return parent::query($type, $sql, $as_object, $params);
   }
 
   public function add_table_prefixes($sql) {
