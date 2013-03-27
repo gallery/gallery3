@@ -17,13 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class watermark_event_Core {
-  static function admin_menu($menu, $theme) {
-    $menu->get("content_menu")
-      ->append(
-        Menu::factory("link")
-        ->id("watermarks")
-        ->label(t("Watermarks"))
-        ->url(url::site("admin/watermarks")));
+class Watermark_Hook_WatermarkInstaller {
+  static function install() {
+    $db = Database::instance();
+    $db->query("CREATE TABLE IF NOT EXISTS {watermarks} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `name` varchar(32) NOT NULL,
+                 `width` int(9) NOT NULL,
+                 `height` int(9) NOT NULL,
+                 `active` boolean default 0,
+                 `position` boolean default 0,
+                 `mime_type` varchar(64) default NULL,
+                 PRIMARY KEY (`id`),
+                 UNIQUE KEY(`name`))
+               DEFAULT CHARSET=utf8;");
+
+    @mkdir(VARPATH . "modules/watermark");
+  }
+
+  static function uninstall() {
+    Database::instance()->query("DROP TABLE {watermarks}");
+    Encoding::unlink(VARPATH . "modules/watermark");
   }
 }

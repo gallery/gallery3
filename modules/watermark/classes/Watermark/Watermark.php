@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class watermark_Core {
+class Watermark_Watermark {
   static function get_add_form() {
     for ($i = 1; $i <= 100; $i++) {
       $range[$i] = "$i%";
@@ -48,10 +48,10 @@ class watermark_Core {
     $group = $form->group("edit_watermark")->label(t("Edit Watermark"));
     $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
-      ->selected(module::get_var("watermark", "position"));
+      ->selected(Module::get_var("watermark", "position"));
     $group->dropdown("transparency")->label(t("Transparency (100% = completely transparent)"))
       ->options($range)
-      ->selected(module::get_var("watermark", "transparency"));
+      ->selected(Module::get_var("watermark", "transparency"));
     $group->submit("")->value(t("Save"));
     return $form;
   }
