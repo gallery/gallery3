@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Albums extends Controller_Items {
   public function action_index() {
-    $this->show(ORM::factory("item", 1));
+    $this->show(ORM::factory("Item", 1));
   }
 
   public function show($album) {
@@ -36,7 +36,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     $show = $input->get("show");
 
     if ($show) {
-      $child = ORM::factory("item", $show);
+      $child = ORM::factory("Item", $show);
       $index = Item::get_position($child);
       if ($index) {
         $page = ceil($index / $page_size);
@@ -105,7 +105,7 @@ class Gallery_Controller_Albums extends Controller_Items {
 
   public function create($parent_id) {
     Access::verify_csrf();
-    $album = ORM::factory("item", $parent_id);
+    $album = ORM::factory("Item", $parent_id);
     Access::required("view", $album);
     Access::required("add", $album);
 
@@ -145,7 +145,7 @@ class Gallery_Controller_Albums extends Controller_Items {
 
   public function update($album_id) {
     Access::verify_csrf();
-    $album = ORM::factory("item", $album_id);
+    $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);
 
@@ -190,7 +190,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public function form_add($album_id) {
-    $album = ORM::factory("item", $album_id);
+    $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("add", $album);
 
@@ -198,7 +198,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public function form_edit($album_id) {
-    $album = ORM::factory("item", $album_id);
+    $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);
 
