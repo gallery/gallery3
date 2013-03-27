@@ -27,11 +27,11 @@ abstract class Gallery_Database extends Kohana_Database {
    * @todo: add an upgrade path to modify var/database.php so that we can avoid doing this at
    *        runtime.
    */
-  public function __construct(array $config) {
+  public function __construct($name, array $config) {
     if (!isset($config["connection"]["params"])) {
       $config["connection"]["params"] = null;
     }
-    parent::__construct($config);
+    parent::__construct($name, $config);
     if (Gallery::show_profiler()) {
       $this->config['benchmark'] = true;
     }
