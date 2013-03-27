@@ -155,14 +155,14 @@ Kohana::modules(
 // If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
 // and send users to the installer.
 if (!file_exists(VARPATH . "database.php")) {
-  url::redirect(url::abs_file("installer"));
+  URL::redirect(URL::abs_file("installer"));
 }
 
 // Simple and cheap test to make sure that the database config is ok.  Do this before we do
 // anything else database related.
 try {
   Database::instance()->connect();
-} catch (Kohana_PHP_Exception $e) {
+} catch (Database_Exception $e) {
   print "Database configuration error.  Please check var/database.php";
   exit;
 }
@@ -186,18 +186,16 @@ Cache::$default = "database";
 Cookie::$salt = "g3";
 
 // Initialize I18n support
-Gallery_I18n::instance();
+I18n::instance();
 
 Route::set("default", "(<controller>(/<action>))")
   ->defaults(array("controller" => "albums",
                    "action" => "index"));
 
 // Load all active modules.  This will trigger each module to load its own routes.
-module::load_modules();
+Module::load_modules();
 
 register_shutdown_function(array("gallery", "shutdown"));
 
 // Notify all modules that we're ready to serve
-gallery::ready();
-
-
+Gallery::ready();
