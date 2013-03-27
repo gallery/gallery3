@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rest_Core {
+class Rest_Rest {
   const API_VERSION = "3.0";
 
   static function reply($data=array()) {

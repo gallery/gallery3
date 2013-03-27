@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Exception_Core extends Kohana_Exception {
+class Rest_Rest_Exception extends Kohana_Exception {
   var $response = array();
 
   public function __construct($message, $code, $response=array()) {

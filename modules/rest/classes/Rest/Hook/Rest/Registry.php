@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class registry_rest_Core {
+class Rest_Hook_Rest_Registry {
   static function get($request) {
     $results = array();
     foreach (module::active() as $module) {
