@@ -57,7 +57,7 @@ class Gallery_ORM_MPTT extends ORM {
     }
 
     $this->lock();
-    $parent = ORM::factory("item", $this->parent_id);
+    $parent = ORM::factory("Item", $this->parent_id);
 
     try {
       // Make a hole in the parent for this new item

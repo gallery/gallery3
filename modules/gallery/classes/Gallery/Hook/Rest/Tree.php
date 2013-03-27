@@ -79,7 +79,7 @@ class Gallery_Hook_Rest_Tree {
   }
 
   static function resolve($id) {
-    $item = ORM::factory("item", $id);
+    $item = ORM::factory("Item", $id);
     if (!Access::can("view", $item)) {
       throw new HTTP_Exception_404();
     }

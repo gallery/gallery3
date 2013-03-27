@@ -66,7 +66,7 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
       Module::event("group_created", $this);
     } else {
       // Updated group
-      $original = ORM::factory("group", $this->id);
+      $original = ORM::factory("Group", $this->id);
       parent::save();
       Module::event("group_updated", $original, $this);
     }

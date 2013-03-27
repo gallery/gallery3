@@ -59,7 +59,7 @@ class Gallery_Task {
   }
 
   static function cancel($task_id) {
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
@@ -73,14 +73,14 @@ class Gallery_Task {
   }
 
   static function remove($task_id) {
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if ($task->loaded()) {
       $task->delete();
     }
   }
 
   static function run($task_id) {
-    $task = ORM::factory("task", $task_id);
+    $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
