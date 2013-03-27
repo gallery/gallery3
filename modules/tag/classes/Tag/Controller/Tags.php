@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tags_Controller extends Controller {
+class Tag_Controller_Tags extends Controller {
   public function index() {
     // Far from perfection, but at least require view permission for the root album
     $album = ORM::factory("item", 1);

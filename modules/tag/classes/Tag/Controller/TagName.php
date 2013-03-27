@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Name_Controller extends Controller {
+class Tag_Controller_TagName extends Controller {
   public function __call($function, $args) {
     $tag_name = $function;
     $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();

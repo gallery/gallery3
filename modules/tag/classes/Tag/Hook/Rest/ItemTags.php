@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class item_tags_rest_Core {
+class Tag_Hook_Rest_ItemTags {
   static function get($request) {
     $item = rest::resolve($request->url);
     $tags = array();

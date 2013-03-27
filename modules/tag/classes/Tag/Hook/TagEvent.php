@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_event_Core {
+class Tag_Hook_TagEvent {
   /**
    * Handle the creation of a new photo.
    * @todo Get tags from the XMP and/or IPTC data in the image
