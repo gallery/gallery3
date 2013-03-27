@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class search_event_Core {
+class Search_Hook_SearchEvent {
   static function item_created($item) {
     search::update($item);
   }

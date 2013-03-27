@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class search_theme_Core {
+class Search_Hook_SearchTheme {
   static function header_top($theme) {
     if ($theme->page_subtype() != "login") {
       $view = new View("search_link.html");

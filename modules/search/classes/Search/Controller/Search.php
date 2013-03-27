@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Search_Controller extends Controller {
+class Search_Controller_Search extends Controller {
   public function index() {
     $page_size = module::get_var("gallery", "page_size", 9);
     $q = Input::instance()->get("q");
