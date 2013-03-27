@@ -20,7 +20,7 @@
 class Rest_Hook_Rest_Registry {
   static function get($request) {
     $results = array();
-    foreach (module::active() as $module) {
+    foreach (Module::active() as $module) {
       foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
         $results[] = str_replace("_rest.php", "", basename($filename));
       }

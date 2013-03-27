@@ -46,7 +46,7 @@ class Gallery_Hook_Rest_Items {
       }
 
       foreach (json_decode($request->params->urls) as $url) {
-        $item = rest::resolve($url);
+        $item = Rest::resolve($url);
         if (!Access::can("view", $item)) {
           continue;
         }
@@ -56,7 +56,7 @@ class Gallery_Hook_Rest_Items {
         }
       }
     } else if (isset($request->params->ancestors_for)) {
-      $item = rest::resolve($request->params->ancestors_for);
+      $item = Rest::resolve($request->params->ancestors_for);
       if (!Access::can("view", $item)) {
         throw new HTTP_Exception_404();
       }
@@ -78,14 +78,14 @@ class Gallery_Hook_Rest_Items {
   }
 
   private static function _format_restful_item($item, $types) {
-    $item_rest = array("url" => rest::url("item", $item),
+    $item_rest = array("url" => Rest::url("item", $item),
                        "entity" => $item->as_restful_array(),
-                       "relationships" => rest::relationships("item", $item));
+                       "relationships" => Rest::relationships("item", $item));
     if ($item->type == "album") {
       $members = array();
       foreach ($item->viewable()->children() as $child) {
         if (empty($types) || in_array($child->type, $types)) {
-          $members[] = rest::url("item", $child);
+          $members[] = Rest::url("item", $child);
         }
       }
       $item_rest["members"] = $members;

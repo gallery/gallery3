@@ -465,8 +465,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $album->reload();
 
     $result = $album->as_restful_array();
-    $this->assert_same(rest::url("item", Item::root()), $result["parent"]);
-    $this->assert_same(rest::url("item", $photo), $result["album_cover"]);
+    $this->assert_same(Rest::url("item", Item::root()), $result["parent"]);
+    $this->assert_same(Rest::url("item", $photo), $result["album_cover"]);
     $this->assert_true(!array_key_exists("parent_id", $result));
     $this->assert_true(!array_key_exists("album_cover_item_id", $result));
   }

@@ -23,10 +23,10 @@ class Rest_Rest {
   static function reply($data=array()) {
     Session::instance()->abort_save();
 
-    header("X-Gallery-API-Version: " . rest::API_VERSION);
+    header("X-Gallery-API-Version: " . Rest::API_VERSION);
     switch (Input::instance()->get("output", "json")) {
     case "json":
-      json::reply($data);
+      JSON::reply($data);
       break;
 
     case "jsonp":
@@ -54,7 +54,7 @@ class Rest_Rest {
         $html = t("Empty response");
       }
       print "<pre>$html</pre>";
-      if (gallery::show_profiler()) {
+      if (Gallery::show_profiler()) {
         Profiler::enable();
         $profiler = new Profiler();
         $profiler->render();
@@ -68,15 +68,15 @@ class Rest_Rest {
 
   static function set_active_user($access_key) {
     if (empty($access_key)) {
-      if (module::get_var("rest", "allow_guest_access")) {
-        identity::set_active_user(identity::guest());
+      if (Module::get_var("rest", "allow_guest_access")) {
+        Identity::set_active_user(Identity::guest());
         return;
       } else {
         throw new Rest_Exception("Forbidden", 403);
       }
     }
 
-    $key = ORM::factory("user_access_key")
+    $key = ORM::factory("UserAccessKey")
       ->where("access_key", "=", $access_key)
       ->find();
 
@@ -84,32 +84,32 @@ class Rest_Rest {
       throw new Rest_Exception("Forbidden", 403);
     }
 
-    $user = identity::lookup_user($key->user_id);
+    $user = Identity::lookup_user($key->user_id);
     if (empty($user)) {
       throw new Rest_Exception("Forbidden", 403);
     }
 
-    identity::set_active_user($user);
+    Identity::set_active_user($user);
   }
 
   static function reset_access_key() {
-    $key = ORM::factory("user_access_key")
-      ->where("user_id", "=", identity::active_user()->id)
+    $key = ORM::factory("UserAccessKey")
+      ->where("user_id", "=", Identity::active_user()->id)
       ->find();
     if ($key->loaded()) {
       $key->delete();
     }
-    return rest::access_key();
+    return Rest::access_key();
   }
 
   static function access_key() {
-    $key = ORM::factory("user_access_key")
-      ->where("user_id", "=", identity::active_user()->id)
+    $key = ORM::factory("UserAccessKey")
+      ->where("user_id", "=", Identity::active_user()->id)
       ->find();
 
     if (!$key->loaded()) {
-      $key->user_id = identity::active_user()->id;
-      $key->access_key = md5(random::hash() . access::private_key());
+      $key->user_id = Identity::active_user()->id;
+      $key->access_key = md5(Random::hash() . Access::private_key());
       $key->save();
     }
 
@@ -119,30 +119,30 @@ class Rest_Rest {
   /**
    * Convert a REST url into an object.
    * Eg:
-   *   http://example.com/gallery3/index.php/rest/item/35          -> Item_Model
+   *   http://example.com/gallery3/index.php/rest/item/35          -> Model_Item
    *   http://example.com/gallery3/index.php/rest/tag/16           -> Tag_Model
-   *   http://example.com/gallery3/index.php/rest/tagged_item/1,16 -> [Tag_Model, Item_Model]
+   *   http://example.com/gallery3/index.php/rest/tagged_item/1,16 -> [Tag_Model, Model_Item]
    *
    * @param string  the fully qualified REST url
    * @return mixed  the corresponding object (usually a model of some kind)
    */
   static function resolve($url) {
     if ($suffix = Kohana::config('core.url_suffix')) {
-      $relative_url = substr($url, strlen(url::abs_site("rest")) - strlen($suffix));
+      $relative_url = substr($url, strlen(URL::abs_site("rest")) - strlen($suffix));
     } else {
-      $relative_url = substr($url, strlen(url::abs_site("rest")));
+      $relative_url = substr($url, strlen(URL::abs_site("rest")));
     }
 
     $path = parse_url($relative_url, PHP_URL_PATH);
     $components = explode("/", $path, 3);
 
     if (count($components) != 3) {
-      throw new Kohana_404_Exception($url);
+      throw new HTTP_Exception_404($url);
     }
 
     $class = "$components[1]_rest";
     if (!class_exists($class) || !method_exists($class, "resolve")) {
-      throw new Kohana_404_Exception($url);
+      throw new HTTP_Exception_404($url);
     }
 
     return call_user_func(array($class, "resolve"), !empty($components[2]) ? $components[2] : null);
@@ -175,7 +175,7 @@ class Rest_Rest {
 
   static function relationships($resource_type, $resource) {
     $results = array();
-    foreach (module::active() as $module) {
+    foreach (Module::active() as $module) {
       foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
         $class = str_replace(".php", "", basename($filename));
         if (class_exists($class) && method_exists($class, "relationships")) {

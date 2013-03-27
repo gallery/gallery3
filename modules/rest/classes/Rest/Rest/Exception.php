@@ -32,6 +32,6 @@ class Rest_Rest_Exception extends Kohana_Exception {
   }
 
   public function getTemplate() {
-    return "error_rest.json";
+    return "rest/error.json";
   }
 }

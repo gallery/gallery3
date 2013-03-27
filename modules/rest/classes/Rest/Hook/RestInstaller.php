@@ -28,7 +28,7 @@ class Rest_Hook_RestInstaller {
                 UNIQUE KEY(`access_key`),
                 UNIQUE KEY(`user_id`))
               DEFAULT CHARSET=utf8;");
-    module::set_var("rest", "allow_guest_access", false);
+    Module::set_var("rest", "allow_guest_access", false);
   }
 
   static function upgrade($version) {
@@ -37,12 +37,12 @@ class Rest_Hook_RestInstaller {
       if (in_array("user_access_tokens", Database::instance()->list_tables())) {
         $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
       }
-      module::set_version("rest", $version = 2);
+      Module::set_version("rest", $version = 2);
     }
 
     if ($version == 2) {
-      module::set_var("rest", "allow_guest_access", false);
-      module::set_version("rest", $version = 3);
+      Module::set_var("rest", "allow_guest_access", false);
+      Module::set_version("rest", $version = 3);
     }
   }
 
