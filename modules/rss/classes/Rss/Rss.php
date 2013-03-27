@@ -18,19 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class rss_Core {
+class Rss_Rss {
   /**
    * Convert a rss feed id into a rss feed url.
    */
   static function url($uri) {
-    return url::site("rss/feed/$uri");
+    return URL::site("rss/feed/$uri");
   }
 
   /**
    * Return a <link> element for a given rss feed id.
    */
   static function feed_link($uri) {
-    $url = url::site("rss/feed/$uri");
+    $url = URL::site("rss/feed/$uri");
     return "<link rel=\"alternate\" type=\"application/rss+xml\" href=\"$url\" />";
   }
 }

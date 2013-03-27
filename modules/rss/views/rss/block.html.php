@@ -3,9 +3,9 @@
 <? foreach($feeds as $url => $title): ?>
   <li style="clear: both;">
     <span class="ui-icon-left">
-    <a href="<?= rss::url($url) ?>">
+    <a href="<?= Rss::url($url) ?>">
       <span class="ui-icon ui-icon-signal-diag"></span>
-      <?= html::purify($title) ?>
+      <?= HTML::purify($title) ?>
     </a>
     </span>
   </li>
