@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class comment_Core {
+class Comment_Comment {
   static function get_add_form($item) {
     $form = new Forge("comments/create/{$item->id}", "", "post", array("id" => "g-comment-form"));
     $group = $form->group("add_comment")->label(t("Add comment"));
@@ -68,4 +68,3 @@ class comment_Core {
       module::get_var("comment", "access_permissions") == "everybody";
   }
 }
-

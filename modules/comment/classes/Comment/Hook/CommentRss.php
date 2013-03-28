@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class comment_rss_Core {
+class Comment_Hook_CommentRss {
   static function feed_visible($feed_id) {
     $visible = module::get_var("comment", "rss_visible");
     if (!in_array($feed_id, array("newest", "per_item"))) {

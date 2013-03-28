@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comments_Controller extends Controller {
+class Comment_Controller_Comments extends Controller {
   /**
    * Add a new comment to the collection.
    */

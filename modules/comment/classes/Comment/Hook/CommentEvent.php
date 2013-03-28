@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_event_Core {
+class Comment_Hook_CommentEvent {
   static function item_deleted($item) {
     db::build()
       ->delete("comments")

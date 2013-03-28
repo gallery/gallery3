@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class item_comments_rest_Core {
+class Comment_Hook_Rest_ItemComments {
   static function get($request) {
     $item = rest::resolve($request->url);
     access::required("view", $item);
