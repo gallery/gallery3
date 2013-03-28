@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class g2_import_task_Core {
+class G2Import_Hook_G2ImportTask {
   static function available_tasks() {
     $version = '';
     g2_import::lower_error_reporting();

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class g2_import_installer {
+class G2Import_Hook_G2ImportInstaller {
   static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (

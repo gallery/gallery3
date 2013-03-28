@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class g2_import_Core {
+class G2Import_G2Import {
   public static $init = false;
   public static $map = array();
   public static $g2_base_url = null;

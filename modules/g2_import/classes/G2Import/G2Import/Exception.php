@@ -22,7 +22,7 @@
  * A wrapper for exceptions to report more details in case
  * it's a ORM validation exception.
  */
-class G2_Import_Exception extends Exception {
+class G2Import_G2Import_Exception extends Exception {
   public function __construct($message, Exception $previous=null, $additional_messages=null) {
     if ($additional_messages) {
       $message .= "\n" . implode("\n", $additional_messages);

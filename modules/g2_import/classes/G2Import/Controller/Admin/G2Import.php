@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_g2_import_Controller extends Admin_Controller {
+class G2Import_Controller_Admin_G2Import extends Controller_Admin {
   public function index() {
     g2_import::lower_error_reporting();
     if (g2_import::is_configured()) {

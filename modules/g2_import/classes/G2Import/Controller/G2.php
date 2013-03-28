@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class G2_Controller extends Controller {
+class G2Import_Controller_G2 extends Controller {
   /**
    * Redirect Gallery 2 urls to their appropriate matching Gallery 3 url.
    *
