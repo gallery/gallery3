@@ -19,10 +19,10 @@
  */
 class Akismet_Hook_AkismetInstaller {
   static function activate() {
-    akismet::check_config();
+    Akismet::check_config();
   }
 
   static function deactivate() {
-    site_status::clear("akismet_config");
+    SiteStatus::clear("akismet_config");
   }
 }

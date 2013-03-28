@@ -19,14 +19,14 @@
  */
 class Akismet_Hook_AkismetEvent {
   static function comment_created($comment) {
-    if (!module::get_var("akismet", "api_key")) {
+    if (!Module::get_var("akismet", "api_key")) {
       return;
     }
 
-    switch(akismet::check_comment($comment)) {
+    switch(Akismet::check_comment($comment)) {
     case "spam":
       $comment->state = "spam";
-      module::incr_var("comment", "spam_caught");
+      Module::incr_var("comment", "spam_caught");
       break;
 
     case "ham":
@@ -41,14 +41,14 @@ class Akismet_Hook_AkismetEvent {
   }
 
   static function comment_updated($original, $new) {
-    if (!module::get_var("akismet", "api_key")) {
+    if (!Module::get_var("akismet", "api_key")) {
       return;
     }
 
     if ($original->state != "spam" && $new->state == "spam") {
-      akismet::submit_spam($new);
+      Akismet::submit_spam($new);
     } else if ($original->state == "spam" && $new->state != "spam") {
-      akismet::submit_ham($new);
+      Akismet::submit_ham($new);
     }
   }
 
@@ -57,14 +57,14 @@ class Akismet_Hook_AkismetEvent {
       ->append(Menu::factory("link")
                ->id("akismet")
                ->label(t("Akismet"))
-               ->url(url::site("admin/akismet")));
+               ->url(URL::site("admin/akismet")));
 
-    if (module::get_var("akismet", "api_key")) {
+    if (Module::get_var("akismet", "api_key")) {
       $menu->get("statistics_menu")
         ->append(Menu::factory("link")
                  ->id("akismet")
                  ->label(t("Akismet"))
-                 ->url(url::site("admin/akismet/stats")));
+                 ->url(URL::site("admin/akismet/stats")));
     }
   }
 }

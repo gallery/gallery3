@@ -19,49 +19,49 @@
  */
 class Akismet_Controller_Admin_Akismet extends Controller_Admin {
   public function index() {
-    $form = akismet::get_configure_form();
+    $form = Akismet::get_configure_form();
 
-    if (request::method() == "post") {
+    if (Request::method() == "post") {
       // @todo move the "post" handler part of this code into a separate function
-      access::verify_csrf();
+      Access::verify_csrf();
 
       if ($form->validate()) {
         $new_key = $form->configure_akismet->api_key->value;
-        $old_key = module::get_var("akismet", "api_key");
+        $old_key = Module::get_var("akismet", "api_key");
         if ($old_key && !$new_key) {
-          message::success(t("Your Akismet key has been cleared."));
+          Message::success(t("Your Akismet key has been cleared."));
         } else if ($old_key && $new_key && $old_key != $new_key) {
-          message::success(t("Your Akismet key has been changed."));
+          Message::success(t("Your Akismet key has been changed."));
         } else if (!$old_key && $new_key) {
-          message::success(t("Your Akismet key has been saved."));
+          Message::success(t("Your Akismet key has been saved."));
         }
 
-        log::success("akismet", t("Akismet key changed to %new_key",
+        Log::success("akismet", t("Akismet key changed to %new_key",
                                   array("new_key" => $new_key)));
-        module::set_var("akismet", "api_key", $new_key);
-        akismet::check_config();
-        url::redirect("admin/akismet");
+        Module::set_var("akismet", "api_key", $new_key);
+        Akismet::check_config();
+        URL::redirect("admin/akismet");
       } else {
         $valid_key = false;
       }
     } else {
-      $valid_key = module::get_var("akismet", "api_key") ? 1 : 0;
+      $valid_key = Module::get_var("akismet", "api_key") ? 1 : 0;
     }
 
-    akismet::check_config();
-    $view = new Admin_View("admin.html");
+    Akismet::check_config();
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Akismet spam filtering");
-    $view->content = new View("admin_akismet.html");
+    $view->content = new View("admin/akismet.html");
     $view->content->valid_key = $valid_key;
     $view->content->form = $form;
     print $view;
   }
 
   public function stats() {
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_akismet_stats.html");
-    $view->content->api_key = module::get_var("akismet", "api_key");
-    $view->content->blog_url = url::base(false, "http");
+    $view = new View_Admin("admin.html");
+    $view->content = new View("admin/akismet_stats.html");
+    $view->content->api_key = Module::get_var("akismet", "api_key");
+    $view->content->blog_url = URL::base(false, "http");
     print $view;
   }
 }

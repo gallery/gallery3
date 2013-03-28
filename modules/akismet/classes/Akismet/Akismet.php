@@ -23,8 +23,8 @@ class Akismet_Akismet {
   static function get_configure_form() {
     $form = new Forge("admin/akismet", "", "post", array("id" => "g-configure-akismet-form"));
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
-    $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"))
-      ->callback("akismet::validate_key")
+    $group->input("api_key")->label(t("API Key"))->value(Module::get_var("akismet", "api_key"))
+      ->callback("Akismet::validate_key")
       ->error_messages("invalid", t("The API key you provided is invalid."));
     $group->submit("")->value(t("Save"));
     return $form;
@@ -32,11 +32,11 @@ class Akismet_Akismet {
 
   /**
    * Check a comment against Akismet and return "spam", "ham" or "unknown".
-   * @param  Comment_Model  $comment  A comment to check
+   * @param  Model_Comment  $comment  A comment to check
    * @return $string "spam", "ham" or "unknown"
    */
   static function check_comment($comment) {
-    if (akismet::$test_mode) {
+    if (Akismet::$test_mode) {
       return;
     }
 
@@ -54,10 +54,10 @@ class Akismet_Akismet {
 
   /**
    * Tell Akismet that this comment is spam
-   * @param  Comment_Model  $comment  A comment to check
+   * @param  Model_Comment  $comment  A comment to check
    */
   static function submit_spam($comment) {
-    if (akismet::$test_mode) {
+    if (Akismet::$test_mode) {
       return;
     }
 
@@ -67,10 +67,10 @@ class Akismet_Akismet {
 
   /**
    * Tell Akismet that this comment is ham
-   * @param  Comment_Model  $comment  A comment to check
+   * @param  Model_Comment  $comment  A comment to check
    */
   static function submit_ham($comment) {
-    if (akismet::$test_mode) {
+    if (Akismet::$test_mode) {
       return;
     }
 
@@ -95,23 +95,23 @@ class Akismet_Akismet {
 
 
   static function check_config() {
-    $api_key = module::get_var("akismet", "api_key");
+    $api_key = Module::get_var("akismet", "api_key");
     if (empty($api_key)) {
-      site_status::warning(
+      SiteStatus::warning(
         t("Akismet is not quite ready!  Please provide an <a href=\"%url\">API Key</a>",
-          array("url" => html::mark_clean(url::site("admin/akismet")))),
+          array("url" => HTML::mark_clean(URL::site("admin/akismet")))),
         "akismet_config");
     } else {
-      site_status::clear("akismet_config");
+      SiteStatus::clear("akismet_config");
     }
   }
 
 
   static function _build_verify_request($api_key) {
-    $base_url = url::base(false, "http");
+    $base_url = URL::base(false, "http");
     $query_string = "key={$api_key}&blog=$base_url";
 
-    $version = module::get_version("akismet");
+    $version = Module::get_version("akismet");
     $http_request  = "POST /1.1/verify-key HTTP/1.0\r\n";
     $http_request .= "Host: rest.akismet.com\r\n";
     $http_request .= "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n";
@@ -136,13 +136,13 @@ class Akismet_Akismet {
     $comment_data["REMOTE_HOST"] = $comment->server_remote_host;
     $comment_data["REMOTE_PORT"] = $comment->server_remote_port;
     $comment_data["SERVER_HTTP_ACCEPT_CHARSET"] = $comment->server_http_accept_charset;
-    $comment_data["blog"] = url::base(false, "http");
+    $comment_data["blog"] = URL::base(false, "http");
     $comment_data["comment_author"] = $comment->author_name();
     $comment_data["comment_author_email"] = $comment->author_email();
     $comment_data["comment_author_url"] = $comment->author_url();
     $comment_data["comment_content"] = $comment->text;
     $comment_data["comment_type"] = "comment";
-    $comment_data["permalink"] = url::site("comments/{$comment->id}");
+    $comment_data["permalink"] = URL::site("comments/{$comment->id}");
     $comment_data["referrer"] = $comment->server_http_referer;
     $comment_data["user_agent"] = $comment->server_http_user_agent;
     $comment_data["user_ip"] = $comment->server_remote_addr;
@@ -153,9 +153,9 @@ class Akismet_Akismet {
     }
     $query_string = join("&", $query_string);
 
-    $version = module::get_version("akismet");
+    $version = Module::get_version("akismet");
     $http_request  = "POST /1.1/$function HTTP/1.0\r\n";
-    $http_request .= "Host: " . module::get_var("akismet", "api_key") . ".rest.akismet.com\r\n";
+    $http_request .= "Host: " . Module::get_var("akismet", "api_key") . ".rest.akismet.com\r\n";
     $http_request .= "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n";
     $http_request .= "Content-Length: " . strlen($query_string) . "\r\n";
     $http_request .= "User-Agent: Gallery/3 | Akismet/$version\r\n";
@@ -167,11 +167,11 @@ class Akismet_Akismet {
 
   private static function _http_post($http_request, $host=null) {
     if (!$host) {
-      $host = module::get_var("akismet", "api_key") . ".rest.akismet.com";
+      $host = Module::get_var("akismet", "api_key") . ".rest.akismet.com";
     }
     $response = "";
 
-    Kohana_Log::add("debug", "Send request\n" . print_r($http_request, 1));
+    Log::add("debug", "Send request\n" . print_r($http_request, 1));
     if (false !== ($fs = @fsockopen($host, 80, $errno, $errstr, 5))) {
       fwrite($fs, $http_request);
       while ( !feof($fs) ) {
@@ -186,7 +186,7 @@ class Akismet_Akismet {
     } else {
       throw new Exception("@todo CONNECTION TO SPAM SERVICE FAILED");
     }
-    Kohana_Log::add("debug", "Received response\n" . print_r($response, 1));
+    Log::add("debug", "Received response\n" . print_r($response, 1));
 
     return $response;
   }

@@ -22,14 +22,14 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function setup() {
     Input::instance()->ip_address = "1.1.1.1";
-    request::set_user_agent("Akismet_Helper_Test");
-    module::set_var("akismet", "api_key", "TEST_KEY");
+    Request::set_user_agent("Akismet_Helper_Test");
+    Module::set_var("akismet", "api_key", "TEST_KEY");
   }
 
   private function _make_comment() {
-    $comment = ORM::factory("comment");
-    $comment->item_id = item::root()->id;
-    $comment->author_id = identity::guest()->id;
+    $comment = ORM::factory("Comment");
+    $comment->item_id = Item::root()->id;
+    $comment->author_id = Identity::guest()->id;
     $comment->text = "This is a comment";
     $comment->guest_name = "John Doe";
     $comment->guest_email = "john@gallery2.org";
@@ -46,7 +46,7 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function build_verify_request_test() {
-    $request = akismet::_build_verify_request("TEST_KEY");
+    $request = Akismet::_build_verify_request("TEST_KEY");
     $expected =
       "POST /1.1/verify-key HTTP/1.0\r\n" .
       "Host: rest.akismet.com\r\n" .
@@ -59,7 +59,7 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function build_comment_check_request_test() {
     $comment = $this->_make_comment();
-    $request = akismet::_build_request("comment-check", $comment);
+    $request = Akismet::_build_request("comment-check", $comment);
     $expected = "POST /1.1/comment-check HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
       "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n" .
@@ -81,7 +81,7 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function build_submit_spam_request_test() {
     $comment = $this->_make_comment();
-    $request = akismet::_build_request("submit-spam", $comment);
+    $request = Akismet::_build_request("submit-spam", $comment);
     $expected =
       "POST /1.1/submit-spam HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
@@ -104,7 +104,7 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function build_submit_ham_request_test() {
     $comment = $this->_make_comment();
-    $request = akismet::_build_request("submit-ham", $comment);
+    $request = Akismet::_build_request("submit-ham", $comment);
     $expected =
       "POST /1.1/submit-ham HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
