@@ -20,22 +20,22 @@
 class Exif_Hook_ExifTask {
   static function available_tasks() {
     // Delete extra exif_records
-    db::build()
+    DB::build()
       ->delete("exif_records")
       ->where("item_id", "NOT IN",
-              db::build()->select("id")->from("items")->where("type", "=", "photo"))
+              DB::build()->select("id")->from("items")->where("type", "=", "photo"))
       ->execute();
 
-    list ($remaining, $total, $percent) = exif::stats();
-    return array(Task_Definition::factory()
-                 ->callback("exif_task::update_index")
+    list ($remaining, $total, $percent) = Exif::stats();
+    return array(TaskDefinition::factory()
+                 ->callback("Hook_ExifTask::update_index")
                  ->name(t("Extract Exif data"))
                  ->description($remaining
                                ? t2("1 photo needs to be scanned",
                                     "%count (%percent%) of your photos need to be scanned",
                                     $remaining, array("percent" => (100 - $percent)))
                                : t("Exif data is up-to-date"))
-                 ->severity($remaining ? log::WARNING : log::SUCCESS));
+                 ->severity($remaining ? Log::WARNING : Log::SUCCESS));
   }
 
   static function update_index($task) {
@@ -43,7 +43,7 @@ class Exif_Hook_ExifTask {
       $completed = $task->get("completed", 0);
 
       $start = microtime(true);
-      foreach (ORM::factory("item")
+      foreach (ORM::factory("Item")
                ->join("exif_records", "items.id", "exif_records.item_id", "left")
                ->where("type", "=", "photo")
                ->and_open()
@@ -57,7 +57,7 @@ class Exif_Hook_ExifTask {
           $start = microtime(true);
         }
 
-        exif::extract($item);
+        Exif::extract($item);
         $completed++;
 
         if (microtime(true) - $start > .75) {
@@ -65,12 +65,12 @@ class Exif_Hook_ExifTask {
         }
       }
 
-      list ($remaining, $total, $percent) = exif::stats();
+      list ($remaining, $total, $percent) = Exif::stats();
       $task->set("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {
         $task->done = true;
         $task->state = "success";
-        site_status::clear("exif_index_out_of_date");
+        SiteStatus::clear("exif_index_out_of_date");
         $task->percent_complete = 100;
       } else {
         $task->percent_complete = round(100 * $completed / ($remaining + $completed));

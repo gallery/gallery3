@@ -22,11 +22,11 @@ class Exif_Controller_Exif extends Controller {
    * Display the EXIF data for an item.
    */
   public function show($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
 
-    $view = new View("exif_dialog.html");
-    $view->details = exif::get($item);
+    $view = new View("exif/dialog.html");
+    $view->details = Exif::get($item);
 
     print $view;
   }

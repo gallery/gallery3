@@ -20,18 +20,18 @@
 class Exif_Hook_ExifEvent {
   static function item_created($item) {
     if (!$item->is_album()) {
-      exif::extract($item);
+      Exif::extract($item);
     }
   }
 
   static function item_updated_data_file($item) {
     if (!$item->is_album()) {
-      exif::extract($item);
+      Exif::extract($item);
     }
   }
 
   static function item_deleted($item) {
-    db::build()
+    DB::build()
       ->delete("exif_records")
       ->where("item_id", "=", $item->id)
       ->execute();

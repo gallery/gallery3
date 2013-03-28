@@ -30,13 +30,13 @@ class Exif_Exif {
     // Only try to extract EXIF from photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
       $data = array();
-      require_once(MODPATH . "exif/lib/exif.php");
+      require_once(MODPATH . "exif/vendor/exifer/exif.php");
       $exif_raw = read_exif_data_raw($item->file_path(), false);
       if (isset($exif_raw['ValidEXIFData'])) {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
-            $value = encoding::convert_to_utf8($value);
+            $value = Encoding::convert_to_utf8($value);
             $keys[$field] = Input::clean($value);
 
             if ($field == "DateTime") {
@@ -57,7 +57,7 @@ class Exif_Exif {
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
             $value = implode(" ", $iptc[$iptc_key]);
-            $value = encoding::convert_to_utf8($value);
+            $value = Encoding::convert_to_utf8($value);
             $keys[$keyword] = Input::clean($value);
 
             if ($keyword == "Caption" && !$item->description) {
@@ -69,7 +69,7 @@ class Exif_Exif {
     }
     $item->save();
 
-    $record = ORM::factory("exif_record")->where("item_id", "=", $item->id)->find();
+    $record = ORM::factory("ExifRecord")->where("item_id", "=", $item->id)->find();
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
@@ -81,7 +81,7 @@ class Exif_Exif {
 
   static function get($item) {
     $exif = array();
-    $record = ORM::factory("exif_record")
+    $record = ORM::factory("ExifRecord")
       ->where("item_id", "=", $item->id)
       ->find();
     if (!$record->loaded()) {
@@ -135,7 +135,7 @@ class Exif_Exif {
   }
 
   static function stats() {
-    $missing_exif = db::build()
+    $missing_exif = DB::build()
       ->select("items.id")
       ->from("items")
       ->join("exif_records", "items.id", "exif_records.item_id", "left")
@@ -147,7 +147,7 @@ class Exif_Exif {
       ->execute()
       ->count();
 
-    $total_items = ORM::factory("item")->where("type", "=", "photo")->count_all();
+    $total_items = ORM::factory("Item")->where("type", "=", "photo")->count_all();
     if (!$total_items) {
       return array(0, 0, 0);
     }
@@ -156,11 +156,11 @@ class Exif_Exif {
   }
 
   static function check_index() {
-    list ($remaining) = exif::stats();
+    list ($remaining) = Exif::stats();
     if ($remaining) {
-      site_status::warning(
+      SiteStatus::warning(
         t('Your Exif index needs to be updated.  <a href="%url" class="g-dialog-link">Fix this now</a>',
-          array("url" => html::mark_clean(url::site("admin/maintenance/start/exif_task::update_index?csrf=__CSRF__")))),
+          array("url" => HTML::mark_clean(URL::site("admin/maintenance/start/Hook_ExifTask::update_index?csrf=__CSRF__")))),
         "exif_index_out_of_date");
     }
   }

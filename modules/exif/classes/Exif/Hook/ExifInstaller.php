@@ -32,11 +32,11 @@ class Exif_Hook_ExifInstaller {
   }
 
   static function activate() {
-    exif::check_index();
+    Exif::check_index();
   }
 
   static function deactivate() {
-    site_status::clear("exif_index_out_of_date");
+    SiteStatus::clear("exif_index_out_of_date");
   }
 
   static function uninstall() {
