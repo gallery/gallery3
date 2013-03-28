@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class recaptcha_installer {
+class Recaptcha_Hook_RecaptchaInstaller {
   static function activate() {
-    recaptcha::check_config();
+    Recaptcha::check_config();
   }
 
   static function deactivate() {
-    site_status::clear("recaptcha_config");
+    SiteStatus::clear("recaptcha_config");
   }
 }
