@@ -393,7 +393,7 @@ class G2Import_G2Import {
             array("name" => $g2_user->getUserName(), "id" => $g2_user_id)),
           $e, $messages);
       }
-      if (class_exists("User_Model") && $user instanceof Model_User) {
+      if (class_exists("Model_User") && $user instanceof Model_User) {
         // This will work if G2's password is a PasswordHash password as well.
         $user->hashed_password = $g2_user->getHashedPassword();
       }
