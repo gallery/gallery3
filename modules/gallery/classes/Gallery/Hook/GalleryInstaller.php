@@ -747,7 +747,7 @@ class Gallery_Hook_GalleryInstaller {
     if ($version == 53) {
       // In v54, we changed how we check for name and slug conflicts in Model_Item.  Previously,
       // we checked the whole filename.  As a result, "foo.jpg" and "foo.png" were not considered
-      // conflicting if their slugs were different (a rare case in practice since server_add and
+      // conflicting if their slugs were different (a rare case in practice since ServerAdd and
       // uploader would give them both the same slug "foo").  Now, we check the filename without its
       // extension.  This upgrade stanza fixes any conflicts where they were previously allowed.
 
