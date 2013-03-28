@@ -45,6 +45,6 @@ class Exif_Test extends Gallery_Unit_Test_Case {
       array("caption" => "Scene Type", "value" => "0"),
       array("caption" => "Subject Distance", "value" => "0"),
     );
-    $this->assert_equal($expected, exif::get($photo));
+    $this->assert_equal($expected, Exif::get($photo));
   }
 }
