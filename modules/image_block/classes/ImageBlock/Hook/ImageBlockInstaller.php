@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class image_block_installer {
+class ImageBlock_Hook_ImageBlockInstaller {
 
   static function install() {
     module::set_var("image_block", "image_count", "1");
