@@ -19,7 +19,7 @@
  */
 class Recaptcha_Hook_RecaptchaEvent {
   static function captcha_protect_form($form) {
-    if (module::get_var("recaptcha", "public_key")) {
+    if (Module::get_var("recaptcha", "public_key")) {
       foreach ($form->inputs as $input) {
         if ($input instanceof Form_Group) {
           $input->recaptcha("recaptcha")->label("")->id("g-recaptcha");
@@ -37,6 +37,6 @@ class Recaptcha_Hook_RecaptchaEvent {
       ->append(Menu::factory("link")
                ->id("recaptcha")
                ->label(t("reCAPTCHA"))
-               ->url(url::site("admin/recaptcha")));
+               ->url(URL::site("admin/recaptcha")));
   }
 }

@@ -19,10 +19,10 @@
  */
 class Recaptcha_Hook_RecaptchaInstaller {
   static function activate() {
-    recaptcha::check_config();
+    Recaptcha::check_config();
   }
 
   static function deactivate() {
-    site_status::clear("recaptcha_config");
+    SiteStatus::clear("recaptcha_config");
   }
 }

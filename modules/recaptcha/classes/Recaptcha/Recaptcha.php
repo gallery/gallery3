@@ -24,14 +24,14 @@ class Recaptcha_Recaptcha {
       ->label(t("Configure reCAPTCHA"));
     $group->input("public_key")
       ->label(t("Public Key"))
-      ->value(module::get_var("recaptcha", "public_key"))
+      ->value(Module::get_var("recaptcha", "public_key"))
       ->rules("required")
       ->error_messages("required", t("You must enter a public key"))
       ->error_messages("invalid", t("This public key is invalid"));
     $group->input("private_key")
       ->label(t("Private Key"))
-      ->value(module::get_var("recaptcha", "private_key"))
-      ->callback("recaptcha::verify_key")
+      ->value(Module::get_var("recaptcha", "private_key"))
+      ->callback("Recaptcha::verify_key")
       ->error_messages("required", t("You must enter a private key"))
       ->error_messages("invalid", t("This private key is invalid"));
 
@@ -42,15 +42,15 @@ class Recaptcha_Recaptcha {
   }
 
   static function check_config() {
-    $public_key = module::get_var("recaptcha", "public_key");
-    $private_key = module::get_var("recaptcha", "private_key");
+    $public_key = Module::get_var("recaptcha", "public_key");
+    $private_key = Module::get_var("recaptcha", "private_key");
     if (empty($public_key) || empty($private_key)) {
-      site_status::warning(
+      SiteStatus::warning(
         t("reCAPTCHA is not quite ready!  Please configure the <a href=\"%url\">reCAPTCHA Keys</a>",
-          array("url" => html::mark_clean(url::site("admin/recaptcha")))),
+          array("url" => HTML::mark_clean(URL::site("admin/recaptcha")))),
         "recaptcha_config");
     } else {
-      site_status::clear("recaptcha_config");
+      SiteStatus::clear("recaptcha_config");
     }
   }
 

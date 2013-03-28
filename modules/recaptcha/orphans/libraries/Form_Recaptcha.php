@@ -33,13 +33,13 @@ class Form_Recaptcha_Core extends Form_Input {
   }
 
   public function render() {
-    $public_key = module::get_var("recaptcha", "public_key");
+    $public_key = Module::get_var("recaptcha", "public_key");
     if (empty($public_key)) {
       throw new Exception("@todo NEED KEY <a href=\"http://recaptcha.net/api/getkey\">" .
                           "http://recaptcha.net/api/getkey</a>");
     }
 
-    $view = new View("form_recaptcha.html");
+    $view = new View("recaptcha/form.html");
     $view->public_key = $public_key;
     return $view;
   }
@@ -54,8 +54,8 @@ class Form_Recaptcha_Core extends Form_Input {
     $challenge = $input->post("recaptcha_challenge_field", "", true);
     $response = $input->post("recaptcha_response_field", "", true);
     if (!empty($challenge)) {
-      $this->_error = recaptcha::is_recaptcha_valid(
-        $challenge, $response, module::get_var("recaptcha", "private_key"));
+      $this->_error = Recaptcha::is_recaptcha_valid(
+        $challenge, $response, Module::get_var("recaptcha", "private_key"));
       if (!empty($this->_error)) {
         $this->add_error($this->_error, 1);
       }
