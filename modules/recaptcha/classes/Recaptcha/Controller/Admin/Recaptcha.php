@@ -17,44 +17,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Recaptcha_Controller extends Admin_Controller {
+class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
   public function index() {
-    $form = recaptcha::get_configure_form();
-    if (request::method() == "post") {
+    $form = Recaptcha::get_configure_form();
+    if (Request::method() == "post") {
       // @todo move the "save" part of this into a separate controller function
-      access::verify_csrf();
-      $old_public_key = module::get_var("recaptcha", "public_key");
-      $old_private_key = module::get_var("recaptcha", "private_key");
+      Access::verify_csrf();
+      $old_public_key = Module::get_var("recaptcha", "public_key");
+      $old_private_key = Module::get_var("recaptcha", "private_key");
       if ($form->validate()) {
         $public_key = $form->configure_recaptcha->public_key->value;
         $private_key = $form->configure_recaptcha->private_key->value;
 
         if ($public_key && $private_key) {
-          module::set_var("recaptcha", "public_key", $public_key);
-          module::set_var("recaptcha", "private_key", $private_key);
-          message::success(t("reCAPTCHA configured!"));
-          log::success("recaptcha", t("reCAPTCHA public and private keys set"));
-          url::redirect("admin/recaptcha");
+          Module::set_var("recaptcha", "public_key", $public_key);
+          Module::set_var("recaptcha", "private_key", $private_key);
+          Message::success(t("reCAPTCHA configured!"));
+          Log::success("recaptcha", t("reCAPTCHA public and private keys set"));
+          URL::redirect("admin/recaptcha");
         } else if ($public_key && !$private_key) {
           $form->configure_recaptcha->private_key->add_error("invalid");
         } else if ($private_key && !$public_key) {
           $form->configure_recaptcha->public_key->add_error("invalid");
         } else {
-          module::set_var("recaptcha", "public_key", "");
-          module::set_var("recaptcha", "private_key", "");
-          message::success(t("No keys provided.  reCAPTCHA is disabled!"));
-          log::success("recaptcha", t("reCAPTCHA public and private keys cleared"));
-          url::redirect("admin/recaptcha");
+          Module::set_var("recaptcha", "public_key", "");
+          Module::set_var("recaptcha", "private_key", "");
+          Message::success(t("No keys provided.  reCAPTCHA is disabled!"));
+          Log::success("recaptcha", t("reCAPTCHA public and private keys cleared"));
+          URL::redirect("admin/recaptcha");
         }
       }
     }
 
-    recaptcha::check_config();
-    $view = new Admin_View("admin.html");
+    Recaptcha::check_config();
+    $view = new View_Admin("admin.html");
     $view->page_title = t("reCAPTCHA");
-    $view->content = new View("admin_recaptcha.html");
-    $view->content->public_key = module::get_var("recaptcha", "public_key");
-    $view->content->private_key = module::get_var("recaptcha", "private_key");
+    $view->content = new View("admin/recaptcha.html");
+    $view->content->public_key = Module::get_var("recaptcha", "public_key");
+    $view->content->private_key = Module::get_var("recaptcha", "private_key");
     $view->content->form = $form;
     print $view;
   }

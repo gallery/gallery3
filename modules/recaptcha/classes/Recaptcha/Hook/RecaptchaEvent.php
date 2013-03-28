@@ -17,12 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class recaptcha_theme_Core {
-  static function head($theme) {
-    return $theme->css("recaptcha.css");
+class Recaptcha_Hook_RecaptchaEvent {
+  static function captcha_protect_form($form) {
+    if (Module::get_var("recaptcha", "public_key")) {
+      foreach ($form->inputs as $input) {
+        if ($input instanceof Form_Group) {
+          $input->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+          return;
+        }
+      }
+
+      // If we haven't returned yet, then add the captcha at the end of the form
+      $form->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+    }
   }
 
-  static function admin_head($theme) {
-    return $theme->css("recaptcha.css");
+  static function admin_menu($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("recaptcha")
+               ->label(t("reCAPTCHA"))
+               ->url(URL::site("admin/recaptcha")));
   }
 }
