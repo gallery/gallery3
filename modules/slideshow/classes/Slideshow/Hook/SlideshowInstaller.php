@@ -19,23 +19,23 @@
  */
 class Slideshow_Hook_SlideshowInstaller {
   static function install() {
-    module::set_var("slideshow", "max_scale", 0);
+    Module::set_var("slideshow", "max_scale", 0);
   }
 
   static function upgrade($version) {
     if ($version == 1) {
-      module::set_var("slideshow", "max_scale", 0);
-      module::set_version("slideshow", $version = 2);
+      Module::set_var("slideshow", "max_scale", 0);
+      Module::set_version("slideshow", $version = 2);
     }
   }
 
   static function deactivate() {
-    site_status::clear("slideshow_needs_rss");
+    SiteStatus::clear("slideshow_needs_rss");
   }
 
   static function can_activate() {
     $messages = array();
-    if (!module::is_active("rss")) {
+    if (!Module::is_active("rss")) {
       $messages["warn"][] = t("The Slideshow module requires the RSS module.");
     }
     return $messages;

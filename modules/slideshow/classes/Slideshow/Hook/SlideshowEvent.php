@@ -25,18 +25,18 @@ class Slideshow_Hook_SlideshowEvent {
   }
 
   static function module_change($changes) {
-    if (!module::is_active("rss") || in_array("rss", $changes->deactivate)) {
-      site_status::warning(
+    if (!Module::is_active("rss") || in_array("rss", $changes->deactivate)) {
+      SiteStatus::warning(
         t("The Slideshow module requires the RSS module.  <a href=\"%url\">Activate the RSS module now</a>",
-          array("url" => html::mark_clean(url::site("admin/modules")))),
+          array("url" => HTML::mark_clean(URL::site("admin/modules")))),
         "slideshow_needs_rss");
     } else {
-      site_status::clear("slideshow_needs_rss");
+      SiteStatus::clear("slideshow_needs_rss");
     }
   }
 
   static function album_menu($menu, $theme) {
-    $max_scale = module::get_var("slideshow", "max_scale");
+    $max_scale = Module::get_var("slideshow", "max_scale");
     if ($theme->item()->descendants_count(array(array("type", "=", "photo")))) {
       $menu->append(Menu::factory("link")
                     ->id("slideshow")
@@ -48,7 +48,7 @@ class Slideshow_Hook_SlideshowEvent {
   }
 
   static function photo_menu($menu, $theme) {
-    $max_scale = module::get_var("slideshow", "max_scale");
+    $max_scale = Module::get_var("slideshow", "max_scale");
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
@@ -58,7 +58,7 @@ class Slideshow_Hook_SlideshowEvent {
   }
 
   static function tag_menu($menu, $theme) {
-    $max_scale = module::get_var("slideshow", "max_scale");
+    $max_scale = Module::get_var("slideshow", "max_scale");
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
@@ -72,9 +72,9 @@ class Slideshow_Hook_SlideshowEvent {
       if (!$item->is_album()) {
         $item = $item->parent();
       }
-      return rss::url("gallery/album/{$item->id}");
+      return Rss::url("gallery/album/{$item->id}");
     } else {
-      return rss::url("tag/tag/{$theme->tag()->id}");
+      return Rss::url("tag/tag/{$theme->tag()->id}");
     }
   }
 }
