@@ -55,7 +55,7 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
 
     // Try phpass first, since that's what we generate.
     if (strlen($valid) == 34) {
-      require_once(MODPATH . "user/lib/PasswordHash.php");
+      require_once(MODPATH . "user/vendor/phpass/PasswordHash.php");
       $hashGenerator = new PasswordHash(10, true);
       return $hashGenerator->CheckPassword($password, $valid);
     }

@@ -61,7 +61,7 @@ class User_User {
 
     // Try phpass first, since that's what we generate.
     if (strlen($valid) == 34) {
-      require_once(MODPATH . "user/lib/PasswordHash.php");
+      require_once(MODPATH . "user/vendor/phpass/PasswordHash.php");
       $hashGenerator = new PasswordHash(10, true);
       return $hashGenerator->CheckPassword($password, $valid);
     }
@@ -102,7 +102,7 @@ class User_User {
    * @return string hashed password
    */
   static function hash_password($password) {
-    require_once(MODPATH . "user/lib/PasswordHash.php");
+    require_once(MODPATH . "user/vendor/phpass/PasswordHash.php");
     $hashGenerator = new PasswordHash(10, true);
     return $hashGenerator->HashPassword($password);
   }

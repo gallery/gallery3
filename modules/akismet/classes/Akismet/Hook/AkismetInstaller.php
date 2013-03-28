@@ -17,20 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Event_Test extends Gallery_Unit_Test_Case {
-  public function deleting_an_item_deletes_its_comments_too_test() {
-    $album = test::random_album();
+class Akismet_Hook_AkismetInstaller {
+  static function activate() {
+    Akismet::check_config();
+  }
 
-    $comment = ORM::factory("Comment");
-    $comment->item_id = $album->id;
-    $comment->author_id = Identity::guest()->id;
-    $comment->guest_name = "test";
-    $comment->guest_email = "test@test.com";
-    $comment->text = "text";
-    $comment->save();
-
-    $album->delete();
-
-    $this->assert_false(ORM::factory("Comment", $comment->id)->loaded());
+  static function deactivate() {
+    SiteStatus::clear("akismet_config");
   }
 }

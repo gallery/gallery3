@@ -17,20 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Event_Test extends Gallery_Unit_Test_Case {
-  public function deleting_an_item_deletes_its_comments_too_test() {
-    $album = test::random_album();
+class Comment_Hook_Rest_ItemComments {
+  static function get($request) {
+    $item = Rest::resolve($request->url);
+    Access::required("view", $item);
 
-    $comment = ORM::factory("Comment");
-    $comment->item_id = $album->id;
-    $comment->author_id = Identity::guest()->id;
-    $comment->guest_name = "test";
-    $comment->guest_email = "test@test.com";
-    $comment->text = "text";
-    $comment->save();
+    $comments = array();
+    foreach (ORM::factory("Comment")
+             ->viewable()
+             ->where("item_id", "=", $item->id)
+             ->order_by("created", "DESC")
+             ->find_all() as $comment) {
+      $comments[] = Rest::url("comment", $comment);
+    }
 
-    $album->delete();
+    return array(
+      "url" => $request->url,
+      "members" => $comments);
+  }
 
-    $this->assert_false(ORM::factory("Comment", $comment->id)->loaded());
+  static function resolve($id) {
+    $item = ORM::factory("Item", $id);
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
+    }
+    return $item;
+  }
+
+  static function url($item) {
+    return URL::abs_site("rest/item_comments/{$item->id}");
   }
 }
