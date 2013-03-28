@@ -17,23 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Server_Add_Controller extends Admin_Controller {
+class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Add from server");
-    $view->content = new View("admin_server_add.html");
+    $view->content = new View("admin/server_add.html");
     $view->content->form = $this->_get_admin_form();
-    $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
+    $paths = unserialize(Module::get_var("server_add", "authorized_paths", "a:0:{}"));
     $view->content->paths = array_keys($paths);
 
     print $view;
   }
 
   public function add_path() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $form = $this->_get_admin_form();
-    $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
+    $paths = unserialize(Module::get_var("server_add", "authorized_paths", "a:0:{}"));
     if ($form->validate()) {
       $path = html_entity_decode($form->add_path->path->value);
       if (is_link($path)) {
@@ -42,32 +42,32 @@ class Admin_Server_Add_Controller extends Admin_Controller {
         $form->add_path->path->add_error("not_readable", 1);
       } else {
         $paths[$path] = 1;
-        module::set_var("server_add", "authorized_paths", serialize($paths));
-        message::success(t("Added path %path", array("path" => $path)));
-        server_add::check_config($paths);
-        url::redirect("admin/server_add");
+        Module::set_var("server_add", "authorized_paths", serialize($paths));
+        Message::success(t("Added path %path", array("path" => $path)));
+        ServerAdd::check_config($paths);
+        URL::redirect("admin/server_add");
       }
     }
 
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_server_add.html");
+    $view = new View_Admin("admin.html");
+    $view->content = new View("admin/server_add.html");
     $view->content->form = $form;
     $view->content->paths = array_keys($paths);
     print $view;
   }
 
   public function remove_path() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
     $path = Input::instance()->get("path");
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     if (isset($paths[$path])) {
       unset($paths[$path]);
-      message::success(t("Removed path %path", array("path" => $path)));
-      module::set_var("server_add", "authorized_paths", serialize($paths));
-      server_add::check_config($paths);
+      Message::success(t("Removed path %path", array("path" => $path)));
+      Module::set_var("server_add", "authorized_paths", serialize($paths));
+      ServerAdd::check_config($paths);
     }
-    url::redirect("admin/server_add");
+    URL::redirect("admin/server_add");
   }
 
   public function autocomplete() {
@@ -76,11 +76,11 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $path_prefix = Input::instance()->get("term");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
-        $directories[] = (string)html::clean($file);
+        $directories[] = (string)HTML::clean($file);
       }
     }
 
-    ajax::response(json_encode($directories));
+    Ajax::response(json_encode($directories));
   }
 
   private function _get_admin_form() {

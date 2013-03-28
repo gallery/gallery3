@@ -9,8 +9,8 @@
     <? foreach ($parents as $dir): ?>
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
-      <span class="g-directory" ref="<?= html::clean_attribute($dir) ?>">
-        <?= html::clean(basename($dir)) ?>
+      <span class="g-directory" ref="<?= HTML::clean_attribute($dir) ?>">
+        <?= HTML::clean(basename($dir)) ?>
       </span>
       <ul>
         <? endforeach ?>
@@ -19,8 +19,8 @@
         <li class="ui-icon-left">
           <span class="ui-icon <?= is_dir($file) ? "ui-icon-folder-collapsed" : "ui-icon-document" ?>"></span>
           <span class="<?= is_dir($file) ? "g-directory" : "g-file" ?>"
-                ref="<?= html::clean_attribute($file) ?>" >
-            <?= html::clean(basename($file)) ?>
+                ref="<?= HTML::clean_attribute($file) ?>" >
+            <?= HTML::clean(basename($file)) ?>
           </span>
         </li>
         <? endforeach ?>

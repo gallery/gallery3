@@ -1,20 +1,20 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  var GET_CHILDREN_URL = "<?= url::site("server_add/children?path=__PATH__") ?>";
-  var START_URL = "<?= url::site("server_add/start?item_id={$item->id}&csrf=$csrf") ?>";
+  var GET_CHILDREN_URL = "<?= URL::site("server_add/children?path=__PATH__") ?>";
+  var START_URL = "<?= URL::site("server_add/start?item_id={$item->id}&csrf=$csrf") ?>";
 </script>
 
 <div id="g-server-add">
-  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => html::purify($item->title))) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => HTML::purify($item->title))) ?></h1>
 
   <p id="g-description"><?= t("Photos will be added to album:") ?></p>
   <ul class="g-breadcrumbs">
     <? $i = 0 ?>
     <? foreach ($item->parents() as $parent): ?>
-    <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::purify($parent->title) ?> </li>
+    <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= HTML::purify($parent->title) ?> </li>
     <? $i++ ?>
     <? endforeach ?>
-    <li class="g-active"> <?= html::purify($item->title) ?> </li>
+    <li class="g-active"> <?= HTML::purify($item->title) ?> </li>
   </ul>
 
   <ul id="g-server-add-tree" class="g-checkbox-tree">

@@ -3,7 +3,7 @@
 <script type="text/javascript">
 $("document").ready(function() {
   $("#g-path").gallery_autocomplete(
-    "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/server_add/autocomplete"),
+    "<?= URL::site("__ARGS__") ?>".replace("__ARGS__", "admin/server_add/autocomplete"),
     {});
 });
 </script>
@@ -20,8 +20,8 @@ $("document").ready(function() {
 
       <? foreach ($paths as $id => $path): ?>
       <li>
-        <?= html::clean($path) ?>
-        <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=" . access::csrf_token()) ?>"
+        <?= HTML::clean($path) ?>
+        <a href="<?= URL::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=" . Access::csrf_token()) ?>"
            id="icon_<?= $id ?>"
            class="g-remove-dir g-button">
           <span class="ui-icon ui-icon-trash">

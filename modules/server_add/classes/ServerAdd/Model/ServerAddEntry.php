@@ -17,5 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Server_Add_Entry_Model_Core extends ORM {
+class ServerAdd_Model_ServerAddEntry extends ORM {
 }
