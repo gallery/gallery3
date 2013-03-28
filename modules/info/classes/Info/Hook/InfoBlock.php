@@ -31,50 +31,50 @@ class Info_Hook_InfoBlock {
         $block->css_id = "g-metadata";
         $block->title = $theme->item()->is_album() ? t("Album info") :
           ($theme->item()->is_movie() ? t("Movie info") : t("Photo info"));
-        $block->content = new View("info_block.html");
-        if ($theme->item->title && module::get_var("info", "show_title")) {
+        $block->content = new View("info/block.html");
+        if ($theme->item->title && Module::get_var("info", "show_title")) {
           $info["title"] = array(
             "label" => t("Title:"),
-            "value" => html::purify($theme->item->title)
+            "value" => HTML::purify($theme->item->title)
           );
         }
-        if ($theme->item->description && module::get_var("info", "show_description")) {
+        if ($theme->item->description && Module::get_var("info", "show_description")) {
           $info["description"] = array(
             "label" => t("Description:"),
-            "value" => nl2br(html::purify($theme->item->description))
+            "value" => nl2br(HTML::purify($theme->item->description))
           );
         }
-        if (!$theme->item->is_album() && module::get_var("info", "show_name")) {
+        if (!$theme->item->is_album() && Module::get_var("info", "show_name")) {
           $info["file_name"] = array(
             "label" => t("File name:"),
-            "value" => html::clean($theme->item->name)
+            "value" => HTML::clean($theme->item->name)
           );
         }
-        if ($theme->item->captured && module::get_var("info", "show_captured")) {
+        if ($theme->item->captured && Module::get_var("info", "show_captured")) {
           $info["captured"] = array(
             "label" => t("Captured:"),
-            "value" => gallery::date_time($theme->item->captured)
+            "value" => Gallery::date_time($theme->item->captured)
           );
         }
-        if ($theme->item->owner && module::get_var("info", "show_owner")) {
+        if ($theme->item->owner && Module::get_var("info", "show_owner")) {
           $display_name = $theme->item->owner->display_name();
           if ($theme->item->owner->url) {
             $info["owner"] = array(
               "label" => t("Owner:"),
-              "value" => html::anchor(
-                html::clean($theme->item->owner->url),
-                html::clean($display_name))
+              "value" => HTML::anchor(
+                HTML::clean($theme->item->owner->url),
+                HTML::clean($display_name))
             );
           } else {
             $info["owner"] = array(
               "label" => t("Owner:"),
-              "value" => html::clean($display_name)
+              "value" => HTML::clean($display_name)
             );
           }
         }
         $block->content->metadata = $info;
 
-        module::event("info_block_get_metadata", $block, $theme->item);
+        Module::event("info_block_get_metadata", $block, $theme->item);
       }
       break;
     }

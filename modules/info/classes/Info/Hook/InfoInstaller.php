@@ -19,21 +19,21 @@
  */
 class Info_Hook_InfoInstaller {
   static function install() {
-    module::set_var("info", "show_title", 1);
-    module::set_var("info", "show_description", 1);
-    module::set_var("info", "show_owner", 1);
-    module::set_var("info", "show_name", 1);
-    module::set_var("info", "show_captured", 1);
+    Module::set_var("info", "show_title", 1);
+    Module::set_var("info", "show_description", 1);
+    Module::set_var("info", "show_owner", 1);
+    Module::set_var("info", "show_name", 1);
+    Module::set_var("info", "show_captured", 1);
   }
 
   static function upgrade($version) {
     if ($version == 1) {
-      module::set_var("info", "show_title", 1);
-      module::set_var("info", "show_description", 1);
-      module::set_var("info", "show_owner", 1);
-      module::set_var("info", "show_name", 1);
-      module::set_var("info", "show_captured", 1);
-      module::set_version("info", $version = 2);
+      Module::set_var("info", "show_title", 1);
+      Module::set_var("info", "show_description", 1);
+      Module::set_var("info", "show_owner", 1);
+      Module::set_var("info", "show_name", 1);
+      Module::set_var("info", "show_captured", 1);
+      Module::set_version("info", $version = 2);
     }
   }
 }
