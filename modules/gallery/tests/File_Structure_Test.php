@@ -104,7 +104,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
                strpos($path, MODPATH . "gallery/vendor/joomla") === 0 ||
                strpos($path, MODPATH . "gallery_unit_test/vendor") === 0 ||
                strpos($path, MODPATH . "gallery/lib/HTMLPurifier") === 0 ||
-               $path == MODPATH . "user/lib/PasswordHash.php" ||
+               $path == MODPATH . "user/vendor/phpass/PasswordHash.php" ||
                $path == DOCROOT . "var/database.php") {
       // 3rd party module security-only preambles, similar to Gallery's
       $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct access allowed.\");\n");

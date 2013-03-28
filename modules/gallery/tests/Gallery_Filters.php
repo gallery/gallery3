@@ -42,7 +42,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
       strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_unit_test_cli.php") !== false ||
       strpos($path_name, MODPATH . "unit_test") !== false ||
       strpos($path_name, MODPATH . "exif/lib") !== false ||
-      strpos($path_name, MODPATH . "user/lib/PasswordHash") !== false ||
+      strpos($path_name, MODPATH . "user/vendor/phpass/PasswordHash") !== false ||
       strpos($path_name, SYSPATH) !== false ||
       strpos($path_name, MODPATH . "gallery/libraries/HTMLPurifier") !== false ||
       strpos($path_name, MODPATH . "gallery/vendor/joomla") !== false ||

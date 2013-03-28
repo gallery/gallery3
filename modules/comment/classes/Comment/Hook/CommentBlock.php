@@ -17,20 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Event_Test extends Gallery_Unit_Test_Case {
-  public function deleting_an_item_deletes_its_comments_too_test() {
-    $album = test::random_album();
+class Comment_Hook_CommentBlock {
+  static function get_admin_list() {
+    return array("recent_comments" => t("Recent comments"));
+  }
 
-    $comment = ORM::factory("Comment");
-    $comment->item_id = $album->id;
-    $comment->author_id = Identity::guest()->id;
-    $comment->guest_name = "test";
-    $comment->guest_email = "test@test.com";
-    $comment->text = "text";
-    $comment->save();
+  static function get($block_id) {
+    $block = new Block();
+    switch ($block_id) {
+    case "recent_comments":
+      $block->css_id = "g-recent-comments";
+      $block->title = t("Recent comments");
+      $block->content = new View("admin/block_recent_comments.html");
+      $block->content->comments =
+        ORM::factory("Comment")->order_by("created", "DESC")->limit(5)->find_all();
+      break;
+    }
 
-    $album->delete();
-
-    $this->assert_false(ORM::factory("Comment", $comment->id)->loaded());
+    return $block;
   }
 }
