@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class notification {
+class Notification_Notification {
   static function get_subscription($item_id, $user=null) {
     if (empty($user)) {
       $user = identity::active_user();

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class notification_event_Core {
+class Notification_Hook_NotificationEvent {
   // The assumption is that the exception was logged at a lower level, but we
   // don't want to screw up the processing that was generating the notification
   // so we don't pass the exception up the call stack
