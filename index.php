@@ -30,7 +30,7 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 }
 
 // PHP 5.4 requires a timezone - if one isn't set date functions aren't going to work properly.
-// We'll log this once the logging system is initialized (in the gallery_event::gallery_ready).
+// We'll log this once the logging system is initialized (in the Hook_GalleryEvent::gallery_ready).
 if (!ini_get("date.timezone")) {
   ini_set("date.timezone", "UTC");
 }
