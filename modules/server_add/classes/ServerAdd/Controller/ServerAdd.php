@@ -129,7 +129,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
 
   /**
    * This is the task code that adds photos and albums.  It first examines all the target files
-   * and creates a set of Server_Add_Entry_Models, then runs through the list of models and adds
+   * and creates a set of Model_ServerAddEntry models, then runs through the list of models and adds
    * them one at a time.
    */
   static function add($task) {
