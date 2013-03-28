@@ -21,8 +21,8 @@ class Organize_Hook_OrganizeInstaller {
   static function upgrade($version) {
     if ($version < 4) {
       // No longer necessary, make sure that it's cleared.
-      site_status::clear("organize_needs_rest");
-      module::set_version("organize", $version = 4);
+      SiteStatus::clear("organize_needs_rest");
+      Module::set_version("organize", $version = 4);
     }
   }
 }

@@ -1,15 +1,15 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/vendor/ext/css/ext-all.css") ?>" />
-<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/vendor/ext/css/ux-all.css") ?>" />
-<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize_frame.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/vendor/ext/css/ext-all.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/vendor/ext/css/ux-all.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/media/organize_frame.css") ?>" />
 <style type="text/css">
   .g-organize div.thumb-album div.icon {
-    background-image: url(<?= url::file("modules/organize/vendor/ext/images/default/tree/folder.gif") ?>);
+    background-image: url(<?= URL::file("modules/organize/vendor/ext/images/default/tree/folder.gif") ?>);
   }
 </style>
-<script type="text/javascript" src="<?= url::file("modules/organize/vendor/ext/js/ext-organize-bundle.js") ?>"></script>
+<script type="text/javascript" src="<?= URL::file("modules/organize/vendor/ext/js/ext-organize-bundle.js") ?>"></script>
 <script type="text/javascript">
-  Ext.BLANK_IMAGE_URL = "<?= url::file("modules/organize/vendor/ext/images/default/s.gif") ?>";
+  Ext.BLANK_IMAGE_URL = "<?= URL::file("modules/organize/vendor/ext/images/default/s.gif") ?>";
   Ext.Ajax.timeout = 1000000;  // something really large
   // I18N for dialog boxes.
   Ext.Msg.buttonText = {
@@ -53,7 +53,7 @@
         start_busy(<?= t("Loading...")->for_js() ?>);
       }
       Ext.Ajax.request({
-        url: '<?= url::site("organize/album_info/__ID__") ?>'.replace("__ID__", id),
+        url: '<?= URL::site("organize/album_info/__ID__") ?>'.replace("__ID__", id),
         success: function(xhr, opts) {
           stop_busy();
           var album_info = Ext.util.JSON.decode(xhr.responseText);
@@ -91,9 +91,9 @@
 
     var set_album_sort = function(params) {
       start_busy(<?= t("Changing sort...")->for_js() ?>);
-      params["csrf"] = '<?= access::csrf_token() ?>';
+      params["csrf"] = '<?= Access::csrf_token() ?>';
       Ext.Ajax.request({
-        url: '<?= url::site("organize/set_sort/__ID__") ?>'.replace("__ID__", current_album_id),
+        url: '<?= URL::site("organize/set_sort/__ID__") ?>'.replace("__ID__", current_album_id),
         method: "post",
         success: function() {
           stop_busy();
@@ -113,7 +113,7 @@
       }
       start_busy(<?= t("Tagging...")->for_js() ?>);
       Ext.Ajax.request({
-        url: '<?= url::site("organize/tag") ?>',
+        url: '<?= URL::site("organize/tag") ?>',
         method: "post",
         success: function() {
           stop_busy();
@@ -123,7 +123,7 @@
         params: {
           item_ids: item_ids.join(","),
           tag_names: tag,
-          csrf: '<?= access::csrf_token() ?>'
+          csrf: '<?= Access::csrf_token() ?>'
         }
       });
     };
@@ -137,7 +137,7 @@
       }
       start_busy(<?= t("Deleting...")->for_js() ?>);
       Ext.Ajax.request({
-        url: '<?= url::site("organize/delete") ?>',
+        url: '<?= URL::site("organize/delete") ?>',
         method: "post",
         success: function() {
           stop_busy();
@@ -146,7 +146,7 @@
         failure: show_generic_error,
         params: {
           item_ids: item_ids.join(","),
-          csrf: '<?= access::csrf_token() ?>'
+          csrf: '<?= Access::csrf_token() ?>'
         }
       });
     };
@@ -261,7 +261,7 @@
               start_busy(<?= t("Rearranging...")->for_js() ?>);
               target = Ext.fly(target);
               Ext.Ajax.request({
-                url: '<?= url::site("organize/rearrange") ?>',
+                url: '<?= URL::site("organize/rearrange") ?>',
                 method: "post",
                 success: function() {
                   stop_busy();
@@ -272,7 +272,7 @@
                   source_ids: source_ids.join(","),
                   target_id: get_id_from_node(target),
                   relative: this.drop_side, // calculated in onNodeOver
-                  csrf: '<?= access::csrf_token() ?>'
+                  csrf: '<?= Access::csrf_token() ?>'
                 }
               });
               return true;
@@ -428,7 +428,7 @@
             sort_order_combobox
           ]
         },
-<? if (module::is_active("tag")): ?>
+<? if (Module::is_active("tag")): ?>
         {
           xtype: "spacer",
           flex: 3
@@ -473,7 +473,7 @@
      * ********************************************************************************
      */
     var tree_loader = new Ext.tree.TreeLoader({
-      dataUrl: '<?= url::site("organize/tree/{$album->id}") ?>',
+      dataUrl: '<?= URL::site("organize/tree/{$album->id}") ?>',
       nodeParameter: "root_id",
       requestMethod: "post"
     });
@@ -531,7 +531,7 @@
             }
             start_busy(<?= t("Moving...")->for_js() ?>);
             Ext.Ajax.request({
-              url: '<?= url::site("organize/reparent") ?>',
+              url: '<?= URL::site("organize/reparent") ?>',
               method: "post",
               success: function() {
                 stop_busy();
@@ -554,7 +554,7 @@
               params: {
                 source_ids: source_ids.join(","),
                 target_id: target.node.id,
-                csrf: '<?= access::csrf_token() ?>'
+                csrf: '<?= Access::csrf_token() ?>'
               }
             });
             return true;
@@ -570,11 +570,11 @@
       width: 200,
 
       root: {
-        allowDrop: Boolean(<?= access::can("edit", item::root()) ?>),
+        allowDrop: Boolean(<?= Access::can("edit", Item::root()) ?>),
         nodeType: "async",
-        text: "<?= html::clean(item::root()->title) ?>",
+        text: "<?= HTML::clean(Item::root()->title) ?>",
         draggable: false,
-        id: "<?= item::root()->id ?>",
+        id: "<?= Item::root()->id ?>",
         expanded: true
       }
     });

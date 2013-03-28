@@ -21,25 +21,25 @@ class Organize_Hook_OrganizeEvent {
   static function site_menu($menu, $theme) {
     $item = $theme->item();
 
-    if ($item && $item->is_album() && access::can("edit", $item)) {
+    if ($item && $item->is_album() && Access::can("edit", $item)) {
       $menu->get("options_menu")
         ->append(Menu::factory("dialog")
                  ->id("organize")
                  ->label(t("Organize album"))
                  ->css_id("g-organize-link")
-                 ->url(url::site("organize/dialog/{$item->id}")));
+                 ->url(URL::site("organize/dialog/{$item->id}")));
     }
   }
 
   static function context_menu($menu, $theme, $item) {
-    if (access::can("edit", $item)) {
+    if (Access::can("edit", $item)) {
       if ($item->is_album()) {
         $menu->get("options_menu")
           ->append(Menu::factory("dialog")
                    ->id("organize")
                    ->label(t("Organize album"))
                    ->css_class("ui-icon-folder-open g-organize-link")
-                   ->url(url::site("organize/dialog/{$item->id}")));
+                   ->url(URL::site("organize/dialog/{$item->id}")));
       } else {
         $parent = $item->parent();
         $menu->get("options_menu")
@@ -47,7 +47,7 @@ class Organize_Hook_OrganizeEvent {
                    ->id("move")
                    ->label(t("Move to another album"))
                    ->css_class("ui-icon-folder-open g-organize-link")
-                   ->url(url::site("organize/dialog/{$parent->id}?selected_id={$item->id}")));
+                   ->url(URL::site("organize/dialog/{$parent->id}?selected_id={$item->id}")));
       }
     }
   }
