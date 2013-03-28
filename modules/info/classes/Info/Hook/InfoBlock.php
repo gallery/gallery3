@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class info_block_Core {
+class Info_Hook_InfoBlock {
   static function get_site_list() {
     return array("metadata" => t("Metadata"));
   }

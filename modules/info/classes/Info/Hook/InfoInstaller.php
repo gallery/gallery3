@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class info_installer {
-
+class Info_Hook_InfoInstaller {
   static function install() {
     module::set_var("info", "show_title", 1);
     module::set_var("info", "show_description", 1);

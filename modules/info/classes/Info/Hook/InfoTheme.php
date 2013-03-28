@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class info_theme_Core {
+class Info_Hook_InfoTheme {
   static function thumb_info($theme, $item) {
     $results = "";
     if ($item->view_count) {
