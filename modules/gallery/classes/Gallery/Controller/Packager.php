@@ -44,12 +44,12 @@ class Gallery_Controller_Packager extends Controller {
     }
 
     // Clean out data
-    Encoding::unlink(VARPATH . "uploads");
-    Encoding::unlink(VARPATH . "albums");
-    Encoding::unlink(VARPATH . "resizes");
-    Encoding::unlink(VARPATH . "thumbs");
-    Encoding::unlink(VARPATH . "modules");
-    Encoding::unlink(VARPATH . "tmp");
+    Dir::unlink(VARPATH . "uploads");
+    Dir::unlink(VARPATH . "albums");
+    Dir::unlink(VARPATH . "resizes");
+    Dir::unlink(VARPATH . "thumbs");
+    Dir::unlink(VARPATH . "modules");
+    Dir::unlink(VARPATH . "tmp");
 
     Database::instance()->clear_cache();
     Module::$modules = array();
