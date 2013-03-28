@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Server_Add_Controller extends Admin_Controller {
+class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->page_title = t("Add from server");
