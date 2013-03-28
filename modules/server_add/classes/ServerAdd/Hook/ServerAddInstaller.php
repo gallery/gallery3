@@ -30,7 +30,7 @@ class ServerAdd_Hook_ServerAddInstaller {
                   `task_id` int(9) NOT NULL,
                   PRIMARY KEY (`id`))
                 DEFAULT CHARSET=utf8;");
-    server_add::check_config();
+    ServerAdd::check_config();
   }
 
   static function upgrade($version) {
@@ -42,13 +42,13 @@ class ServerAdd_Hook_ServerAddInstaller {
                     `file` varchar(255) NOT NULL,
                     PRIMARY KEY (`id`))
                   DEFAULT CHARSET=utf8;");
-      module::set_version("server_add", $version = 2);
+      Module::set_version("server_add", $version = 2);
     }
 
     if ($version == 2) {
       $db->query("ALTER TABLE {server_add_files} ADD COLUMN `item_id` int(9)");
       $db->query("ALTER TABLE {server_add_files} ADD COLUMN `parent_id` int(9)");
-      module::set_version("server_add", $version = 3);
+      Module::set_version("server_add", $version = 3);
     }
 
     if ($version == 3) {
@@ -63,11 +63,11 @@ class ServerAdd_Hook_ServerAddInstaller {
                     `task_id` int(9) NOT NULL,
                     PRIMARY KEY (`id`))
                   DEFAULT CHARSET=utf8;");
-      module::set_version("server_add", $version = 4);
+      Module::set_version("server_add", $version = 4);
     }
   }
 
   static function deactivate() {
-    site_status::clear("server_add_configuration");
+    SiteStatus::clear("server_add_configuration");
   }
 }

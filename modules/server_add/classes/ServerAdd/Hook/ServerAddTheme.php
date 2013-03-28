@@ -19,7 +19,7 @@
  */
 class ServerAdd_Hook_ServerAddTheme {
   static function head($theme) {
-    if (identity::active_user()->admin) {
+    if (Identity::active_user()->admin) {
       return $theme->css("server_add.css")
         . $theme->script("server_add.js");
     }

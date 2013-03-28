@@ -19,21 +19,21 @@
  */
 class ServerAdd_Controller_ServerAdd extends Controller_Admin {
   public function browse($id) {
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     foreach (array_keys($paths) as $path) {
       $files[] = $path;
     }
 
     // Clean leftover task rows.  There really should be support for this in the task framework
-    db::build()
-      ->where("task_id", "NOT IN", db::build()->select("id")->from("tasks"))
+    DB::build()
+      ->where("task_id", "NOT IN", DB::build()->select("id")->from("tasks"))
       ->delete("server_add_entries")
       ->execute();
 
-    $item = ORM::factory("item", $id);
-    $view = new View("server_add_tree_dialog.html");
+    $item = ORM::factory("Item", $id);
+    $view = new View("server_add/tree_dialog.html");
     $view->item = $item;
-    $view->tree = new View("server_add_tree.html");
+    $view->tree = new View("server_add/tree.html");
     $view->tree->files = $files;
     $view->tree->parents = array();
     print $view;
@@ -42,15 +42,15 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
   public function children() {
     $path = Input::instance()->get("path");
 
-    $tree = new View("server_add_tree.html");
+    $tree = new View("server_add/tree.html");
     $tree->files = array();
     $tree->parents = array();
 
     // Make a tree with the parents back up to the authorized path, and all the children under the
     // current path.
-    if (server_add::is_valid_path($path)) {
+    if (ServerAdd::is_valid_path($path)) {
       $tree->parents[] = $path;
-      while (server_add::is_valid_path(dirname($tree->parents[0]))) {
+      while (ServerAdd::is_valid_path(dirname($tree->parents[0]))) {
         array_unshift($tree->parents, dirname($tree->parents[0]));
       }
 
@@ -61,7 +61,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         }
         if (!is_dir($file)) {
           $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-          if (!legal_file::get_extensions($ext)) {
+          if (!LegalFile::get_extensions($ext)) {
             continue;
           }
         }
@@ -70,7 +70,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       }
     } else {
       // Missing or invalid path; print out the list of authorized path
-      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
       foreach (array_keys($paths) as $path) {
         $tree->files[] = $path;
       }
@@ -82,18 +82,18 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
    * Begin the task of adding photos.
    */
   public function start() {
-    access::verify_csrf();
-    $item = ORM::factory("item", Input::instance()->get("item_id"));
+    Access::verify_csrf();
+    $item = ORM::factory("Item", Input::instance()->get("item_id"));
 
-    $task_def = Task_Definition::factory()
-      ->callback("Server_Add_Controller::add")
+    $task_def = TaskDefinition::factory()
+      ->callback("Controller_ServerAdd::add")
       ->description(t("Add photos or movies from the local server"))
       ->name(t("Add from server"));
-    $task = task::create($task_def, array("item_id" => $item->id));
+    $task = Task::create($task_def, array("item_id" => $item->id));
 
     foreach (Input::instance()->post("paths") as $path) {
-      if (server_add::is_valid_path($path)) {
-        $entry = ORM::factory("server_add_entry");
+      if (ServerAdd::is_valid_path($path)) {
+        $entry = ORM::factory("ServerAddEntry");
         $entry->path = $path;
         $entry->is_directory = intval(is_dir($path));
         $entry->parent_id = null;
@@ -102,27 +102,27 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       }
     }
 
-    json::reply(
+    JSON::reply(
       array("result" => "started",
             "status" => (string)$task->status,
-            "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
+            "url" => URL::site("server_add/run/$task->id?csrf=" . Access::csrf_token())));
   }
 
   /**
    * Run the task of adding photos
    */
   function run($task_id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
-    if (!$task->loaded() || $task->owner_id != identity::active_user()->id) {
-      access::forbidden();
+    $task = ORM::factory("Task", $task_id);
+    if (!$task->loaded() || $task->owner_id != Identity::active_user()->id) {
+      Access::forbidden();
     }
 
-    $task = task::run($task_id);
+    $task = Task::run($task_id);
     // Prevent the JavaScript code from breaking by forcing a period as
     // decimal separator for all locales with sprintf("%F", $value).
-    json::reply(array("done" => (bool)$task->done,
+    JSON::reply(array("done" => (bool)$task->done,
                       "status" => (string)$task->status,
                       "percent_complete" => sprintf("%F", $task->percent_complete)));
   }
@@ -142,19 +142,19 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       $task->set("dirs_scanned", 0);
       $task->percent_complete = 0;
       $task->status = t("Starting up");
-      batch::start();
+      Batch::start();
       break;
 
     case "build-file-list":  // 0% to 10%
       // We can't fit an arbitrary number of paths in a task, so store them in a separate table.
       // Don't use an iterator here because we can't get enough control over it when we're dealing
       // with a deep hierarchy and we don't want to go over our time quota.
-      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
       $dirs_scanned = $task->get("dirs_scanned");
       while (microtime(true) - $start < 0.5) {
         // Process every directory that doesn't yet have a parent id, these are the
         // paths that we're importing.
-        $entry = ORM::factory("server_add_entry")
+        $entry = ORM::factory("ServerAddEntry")
           ->where("task_id", "=", $task->id)
           ->where("is_directory", "=", 1)
           ->where("checked", "=", 0)
@@ -169,13 +169,13 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
           foreach ($child_paths as $child_path) {
             if (!is_dir($child_path)) {
               $ext = strtolower(pathinfo($child_path, PATHINFO_EXTENSION));
-              if (!legal_file::get_extensions($ext) || !filesize($child_path)) {
+              if (!LegalFile::get_extensions($ext) || !filesize($child_path)) {
                 // Not importable, skip it.
                 continue;
               }
             }
 
-            $child_entry = ORM::factory("server_add_entry");
+            $child_entry = ORM::factory("ServerAddEntry");
             $child_entry->task_id = $task->id;
             $child_entry->path = $child_path;
             $child_entry->parent_id = $entry->id;  // null if the parent was a staging dir
@@ -201,7 +201,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         $task->set("mode", "add-files");
         $task->set(
           "total_files",
-          ORM::factory("server_add_entry")->where("task_id", "=", $task->id)->count_all());
+          ORM::factory("ServerAddEntry")->where("task_id", "=", $task->id)->count_all());
         $task->percent_complete = 10;
       }
       break;
@@ -211,9 +211,9 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       $total_files = $task->get("total_files");
 
       // Ordering by id ensures that we add them in the order that we created the entries, which
-      // will create albums first.  Ignore entries which already have an Item_Model attached,
+      // will create albums first.  Ignore entries which already have an Model_Item attached,
       // they're done.
-      $entries = ORM::factory("server_add_entry")
+      $entries = ORM::factory("ServerAddEntry")
         ->where("task_id", "=", $task->id)
         ->where("item_id", "IS", null)
         ->order_by("id", "ASC")
@@ -224,7 +224,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         $task->set("mode", "done");
       }
 
-      $owner_id = identity::active_user()->id;
+      $owner_id = Identity::active_user()->id;
       foreach ($entries as $entry) {
         if (microtime(true) - $start > 0.5) {
           break;
@@ -232,17 +232,17 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
 
         // Look up the parent item for this entry.  By now it should exist, but if none was
         // specified, then this belongs as a child of the current item.
-        $parent_entry = ORM::factory("server_add_entry", $entry->parent_id);
+        $parent_entry = ORM::factory("ServerAddEntry", $entry->parent_id);
         if (!$parent_entry->loaded()) {
-          $parent = ORM::factory("item", $task->get("item_id"));
+          $parent = ORM::factory("Item", $task->get("item_id"));
         } else {
-          $parent = ORM::factory("item", $parent_entry->item_id);
+          $parent = ORM::factory("Item", $parent_entry->item_id);
         }
 
         $name = basename($entry->path);
-        $title = item::convert_filename_to_title($name);
+        $title = Item::convert_filename_to_title($name);
         if ($entry->is_directory) {
-          $album = ORM::factory("item");
+          $album = ORM::factory("Item");
           $album->type = "album";
           $album->parent_id = $parent->id;
           $album->name = $name;
@@ -255,8 +255,8 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         } else {
           try {
             $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-            if (legal_file::get_photo_extensions($extension)) {
-              $photo = ORM::factory("item");
+            if (LegalFile::get_photo_extensions($extension)) {
+              $photo = ORM::factory("Item");
               $photo->type = "photo";
               $photo->parent_id = $parent->id;
               $photo->set_data_file($entry->path);
@@ -265,8 +265,8 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
               $photo->owner_id = $owner_id;
               $photo->save();
               $entry->item_id = $photo->id;
-            } else if (legal_file::get_movie_extensions($extension)) {
-              $movie = ORM::factory("item");
+            } else if (LegalFile::get_movie_extensions($extension)) {
+              $movie = ORM::factory("Item");
               $movie->type = "movie";
               $movie->parent_id = $parent->id;
               $movie->set_data_file($entry->path);
@@ -300,14 +300,14 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       break;
 
     case "done":
-      batch::stop();
+      Batch::stop();
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
-      ORM::factory("server_add_entry")
+      ORM::factory("ServerAddEntry")
         ->where("task_id", "=", $task->id)
         ->delete_all();
-      message::info(t2("Successfully added one photo / album",
+      Message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos / albums",
                        $task->get("completed_files")));
     }

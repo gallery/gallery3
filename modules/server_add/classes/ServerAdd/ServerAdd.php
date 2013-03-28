@@ -20,15 +20,15 @@
 class ServerAdd_ServerAdd {
   static function check_config($paths=null) {
     if ($paths === null) {
-      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     }
     if (empty($paths)) {
-      site_status::warning(
+      SiteStatus::warning(
         t("Server Add needs configuration. <a href=\"%url\">Configure it now!</a>",
-          array("url" => html::mark_clean(url::site("admin/server_add")))),
+          array("url" => HTML::mark_clean(URL::site("admin/server_add")))),
         "server_add_configuration");
     } else {
-      site_status::clear("server_add_configuration");
+      SiteStatus::clear("server_add_configuration");
     }
   }
 
@@ -37,7 +37,7 @@ class ServerAdd_ServerAdd {
       return false;
     }
 
-    $authorized_paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $authorized_paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     foreach (array_keys($authorized_paths) as $valid_path) {
       if (strpos($path, $valid_path) === 0) {
         return true;
