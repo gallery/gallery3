@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow_theme_Core {
+class Slideshow_Hook_SlideshowTheme {
   static function page_bottom($theme) {
     $proto = request::protocol();
     return "<script src=\"$proto://e.cooliris.com/slideshow/v/37732/go.js\" " .

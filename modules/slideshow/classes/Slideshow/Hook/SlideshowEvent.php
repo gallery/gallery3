@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow_event_Core {
+class Slideshow_Hook_SlideshowEvent {
   static function pre_deactivate($data) {
     if ($data->module == "rss") {
       $data->messages["warn"][] = t("The Slideshow module requires the RSS module.");
