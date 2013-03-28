@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class exif_event_Core {
+class Exif_Hook_ExifEvent {
   static function item_created($item) {
     if (!$item->is_album()) {
       exif::extract($item);

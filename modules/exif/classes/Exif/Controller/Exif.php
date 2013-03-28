@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Exif_Controller extends Controller {
+class Exif_Controller_Exif extends Controller {
   /**
    * Display the EXIF data for an item.
    */

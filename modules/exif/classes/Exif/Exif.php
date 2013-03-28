@@ -21,7 +21,7 @@
 /**
  * This is the API for handling exif data.
  */
-class exif_Core {
+class Exif_Exif {
 
   protected static $exif_keys;
 
