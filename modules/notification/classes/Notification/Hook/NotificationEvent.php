@@ -23,35 +23,35 @@ class Notification_Hook_NotificationEvent {
   // so we don't pass the exception up the call stack
   static function item_created($item) {
     try {
-      notification::send_item_add($item);
+      Notification::send_item_add($item);
     } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::item_created() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "@todo Hook_NotificationEvent::item_created() failed");
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
   static function item_deleted($item) {
     try {
-      notification::send_item_deleted($item);
+      Notification::send_item_deleted($item);
 
-      if (notification::is_watching($item)) {
-        notification::remove_watch($item);
+      if (Notification::is_watching($item)) {
+        Notification::remove_watch($item);
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::item_deleted() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "@todo Hook_NotificationEvent::item_deleted() failed");
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
   static function user_deleted($user) {
-    db::build()
+    DB::build()
       ->delete("subscriptions")
       ->where("user_id", "=", $user->id)
       ->execute();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
-    db::build()
+    DB::build()
       ->delete("subscriptions")
       ->execute();
   }
@@ -59,52 +59,52 @@ class Notification_Hook_NotificationEvent {
   static function comment_created($comment) {
     try {
       if ($comment->state == "published") {
-        notification::send_comment_published($comment);
+        Notification::send_comment_published($comment);
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::comment_created() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "@todo Hook_NotificationEvent::comment_created() failed");
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
   static function comment_updated($original, $new) {
     try {
       if ($new->state == "published" && $original->state != "published") {
-        notification::send_comment_published($new);
+        Notification::send_comment_published($new);
       }
     } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::comment_updated() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "@todo Hook_NotificationEvent::comment_updated() failed");
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
   static function user_before_delete($user) {
     try {
-      db::build()
+      DB::build()
         ->delete("subscriptions")
         ->where("user_id", "=", $user->id)
         ->execute();
     } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::user_before_delete() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "@todo Hook_NotificationEvent::user_before_delete() failed");
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
   static function batch_complete() {
     try {
-      notification::send_pending_notifications();
+      Notification::send_pending_notifications();
     } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::batch_complete() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", "@todo Hook_NotificationEvent::batch_complete() failed");
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
   static function site_menu($menu, $theme) {
-    if (!identity::active_user()->guest) {
+    if (!Identity::active_user()->guest) {
       $item = $theme->item();
 
-      if ($item && $item->is_album() && access::can("view", $item)) {
-        $watching = notification::is_watching($item);
+      if ($item && $item->is_album() && Access::can("view", $item)) {
+        $watching = Notification::is_watching($item);
 
         $label = $watching ? t("Remove notifications") : t("Enable notifications");
 
@@ -113,28 +113,28 @@ class Notification_Hook_NotificationEvent {
                    ->id("watch")
                    ->label($label)
                    ->css_id("g-notify-link")
-                   ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
+                   ->url(URL::site("notification/watch/$item->id?csrf=" . Access::csrf_token())));
       }
     }
   }
 
   static function show_user_profile($data) {
     // Guests don't see comment listings
-    if (identity::active_user()->guest) {
+    if (Identity::active_user()->guest) {
       return;
     }
 
     // Only logged in users can see their comment listings
-    if (identity::active_user()->id != $data->user->id) {
+    if (Identity::active_user()->id != $data->user->id) {
       return;
     }
 
-    $view = new View("user_profile_notification.html");
+    $view = new View("notification/user_profile.html");
     $view->subscriptions = array();
-    foreach(ORM::factory("subscription")
+    foreach(ORM::factory("Subscription")
             ->where("user_id", "=", $data->user->id)
             ->find_all() as $subscription) {
-      $item = ORM::factory("item")
+      $item = ORM::factory("Item")
           ->where("id", "=", $subscription->item_id)
           ->find();
       if ($item->loaded()) {

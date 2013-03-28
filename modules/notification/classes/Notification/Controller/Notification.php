@@ -19,18 +19,18 @@
  */
 class Notification_Controller_Notification extends Controller {
   function watch($id) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $item = ORM::factory("item", $id);
-    access::required("view", $item);
+    $item = ORM::factory("Item", $id);
+    Access::required("view", $item);
 
-    if (notification::is_watching($item)) {
-      notification::remove_watch($item);
-      message::success(sprintf(t("You are no longer watching %s"), html::purify($item->title)));
+    if (Notification::is_watching($item)) {
+      Notification::remove_watch($item);
+      Message::success(sprintf(t("You are no longer watching %s"), HTML::purify($item->title)));
     } else {
-      notification::add_watch($item);
-      message::success(sprintf(t("You are now watching %s"), html::purify($item->title)));
+      Notification::add_watch($item);
+      Message::success(sprintf(t("You are now watching %s"), HTML::purify($item->title)));
     }
-    url::redirect($item->abs_url());
+    URL::redirect($item->abs_url());
   }
 }

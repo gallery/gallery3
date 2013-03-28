@@ -20,10 +20,10 @@
 class Notification_Notification {
   static function get_subscription($item_id, $user=null) {
     if (empty($user)) {
-      $user = identity::active_user();
+      $user = Identity::active_user();
     }
 
-    return ORM::factory("subscription")
+    return ORM::factory("Subscription")
       ->where("item_id", "=", $item_id)
       ->where("user_id", "=", $user->id)
       ->find();
@@ -31,10 +31,10 @@ class Notification_Notification {
 
   static function is_watching($item, $user=null) {
     if (empty($user)) {
-      $user = identity::active_user();
+      $user = Identity::active_user();
     }
 
-    return ORM::factory("subscription")
+    return ORM::factory("Subscription")
       ->where("item_id", "=", $item->id)
       ->where("user_id", "=", $user->id)
       ->find()
@@ -44,9 +44,9 @@ class Notification_Notification {
   static function add_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
-        $user = identity::active_user();
+        $user = Identity::active_user();
       }
-      $subscription = ORM::factory("subscription");
+      $subscription = ORM::factory("Subscription");
       $subscription->item_id = $item->id;
       $subscription->user_id = $user->id;
       $subscription->save();
@@ -56,10 +56,10 @@ class Notification_Notification {
   static function remove_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
-        $user = identity::active_user();
+        $user = Identity::active_user();
       }
 
-      $subscription = ORM::factory("subscription")
+      $subscription = ORM::factory("Subscription")
         ->where("item_id", "=", $item->id)
         ->where("user_id", "=", $user->id)
         ->find()->delete();
@@ -68,7 +68,7 @@ class Notification_Notification {
 
   static function get_subscribers($item) {
     $subscriber_ids = array();
-    foreach (ORM::factory("subscription")
+    foreach (ORM::factory("Subscription")
              ->select("user_id")
              ->join("items", "subscriptions.item_id", "items.id")
              ->where("items.left_ptr", "<=", $item->left_ptr)
@@ -81,11 +81,11 @@ class Notification_Notification {
     if (empty($subscriber_ids)) {
       return array();
     }
-    $users = identity::get_user_list($subscriber_ids);
+    $users = Identity::get_user_list($subscriber_ids);
 
     $subscribers = array();
     foreach ($users as $user) {
-      if (access::user_can($user, "view", $item) && !empty($user->email)) {
+      if (Access::user_can($user, "view", $item) && !empty($user->email)) {
         $subscribers[$user->email] = $user->locale;
       }
     }
@@ -94,7 +94,7 @@ class Notification_Notification {
 
   static function send_item_updated($original, $item) {
     foreach (self::get_subscribers($item) as $email => $locale) {
-      $v = new View("item_updated.html");
+      $v = new View("notification/item_updated.html");
       $v->original = $original;
       $v->item = $item;
       $v->subject = $item->is_album() ?
@@ -109,7 +109,7 @@ class Notification_Notification {
   static function send_item_add($item) {
     $parent = $item->parent();
     foreach (self::get_subscribers($item) as $email => $locale) {
-      $v = new View("item_added.html");
+      $v = new View("notification/item_added.html");
       $v->item = $item;
       $v->subject = $item->is_album() ?
         t("Album \"%title\" added to \"%parent_title\"",
@@ -126,7 +126,7 @@ class Notification_Notification {
   static function send_item_deleted($item) {
     $parent = $item->parent();
     foreach (self::get_subscribers($item) as $email => $locale) {
-      $v = new View("item_deleted.html");
+      $v = new View("notification/item_deleted.html");
       $v->item = $item;
       $v->subject = $item->is_album() ?
         t("Album \"%title\" removed from \"%parent_title\"",
@@ -144,7 +144,7 @@ class Notification_Notification {
   static function send_comment_published($comment) {
     $item = $comment->item();
     foreach (self::get_subscribers($item) as $email => $locale) {
-      $v = new View("comment_published.html");
+      $v = new View("notification/comment_published.html");
       $v->comment = $comment;
       $v->subject = $item->is_album() ?
         t("A new comment was published for album \"%title\"",
@@ -159,12 +159,12 @@ class Notification_Notification {
   }
 
   static function send_pending_notifications() {
-    foreach (db::build()
-             ->select(db::expr("DISTINCT `email`"))
+    foreach (DB::build()
+             ->select(DB::expr("DISTINCT `email`"))
              ->from("pending_notifications")
              ->execute() as $row) {
       $email = $row->email;
-      $result = ORM::factory("pending_notification")
+      $result = ORM::factory("PendingNotification")
         ->where("email", "=", $email)
         ->find_all();
       if ($result->count() == 1) {
@@ -188,7 +188,7 @@ class Notification_Notification {
         Sendmail::factory()
           ->to($email)
           ->subject(t("New activity for %site_name",
-                      array("site_name" => item::root()->title, "locale" => $locale)))
+                      array("site_name" => Item::root()->title, "locale" => $locale)))
           ->header("Mime-Version", "1.0")
           ->header("Content-Type", "text/html; charset=UTF-8")
           ->message($text)
@@ -198,7 +198,7 @@ class Notification_Notification {
   }
 
   private static function _notify($email, $locale, $item, $text, $subject) {
-    if (!batch::in_progress()) {
+    if (!Batch::in_progress()) {
       Sendmail::factory()
         ->to($email)
         ->subject($subject)
@@ -207,7 +207,7 @@ class Notification_Notification {
         ->message($text)
         ->send();
     } else {
-      $pending = ORM::factory("pending_notification");
+      $pending = ORM::factory("PendingNotification");
       $pending->subject = $subject;
       $pending->text = $text;
       $pending->email = $email;

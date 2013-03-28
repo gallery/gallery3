@@ -42,7 +42,7 @@ class Notification_Hook_NotificationInstaller {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {pending_notifications} ADD COLUMN `locale` char(10) default NULL");
-      module::set_version("notification", $version = 2);
+      Module::set_version("notification", $version = 2);
     }
   }
 

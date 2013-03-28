@@ -1,18 +1,18 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= html::clean($subject) ?> </title>
+    <title><?= HTML::clean($subject) ?> </title>
   </head>
   <body>
-    <h2> <?= html::clean($subject) ?> </h2>
+    <h2> <?= HTML::clean($subject) ?> </h2>
     <table>
       <tr>
         <? if ($original->title != $item->title): ?>
         <td><?= t("New title:") ?></td>
-        <td><?= html::clean($item->title) ?></td>
+        <td><?= HTML::clean($item->title) ?></td>
         <? else: ?>
         <td><?= t("Title:") ?></td>
-        <td><?= html::clean($item->title) ?></td>
+        <td><?= HTML::clean($item->title) ?></td>
         <? endif ?>
       </tr>
       <tr>
@@ -22,12 +22,12 @@
       <? if ($original->description != $item->description): ?>
       <tr>
         <td><?= t("New description:") ?></td>
-        <td><?= html::clean($item->description) ?></td>
+        <td><?= HTML::clean($item->description) ?></td>
       </tr>
       <? elseif (!empty($item->description)): ?>
       <tr>
         <td><?= t("Description:") ?></td>
-        <td><?= html::clean($item->description) ?></td>
+        <td><?= HTML::clean($item->description) ?></td>
       </tr>
       <? endif ?>
     </table>

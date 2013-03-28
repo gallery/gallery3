@@ -4,7 +4,7 @@
   <? foreach ($subscriptions as $subscription): ?>
   <li id="g-watch-<?= $subscription->id ?>">
     <a href="<?= $subscription->url ?>">
-      <?= html::purify($subscription->title) ?>
+      <?= HTML::purify($subscription->title) ?>
     </a>
   </li>
   <? endforeach ?>
