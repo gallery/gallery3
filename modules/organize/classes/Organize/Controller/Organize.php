@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Organize_Controller extends Controller {
+class Organize_Controller_Organize extends Controller {
   function frame($album_id) {
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
