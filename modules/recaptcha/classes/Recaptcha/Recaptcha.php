@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class recaptcha_Core {
+class Recaptcha_Recaptcha {
   static function get_configure_form() {
     $form = new Forge("admin/recaptcha", "", "post", array("id" => "g-configure-recaptcha-form"));
     $group = $form->group("configure_recaptcha")

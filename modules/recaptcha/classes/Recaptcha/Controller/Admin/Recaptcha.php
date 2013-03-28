@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Recaptcha_Controller extends Admin_Controller {
+class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
   public function index() {
     $form = recaptcha::get_configure_form();
     if (request::method() == "post") {
