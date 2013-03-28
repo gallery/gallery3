@@ -48,12 +48,15 @@ class Gallery_ORM extends Kohana_ORM {
    * Set the table name using our method.  Kohana finds it by getting the lowercase version of
    * the model name and adding plural if needed.  The problem is that it's not sensitive to
    * camelcase, which breaks how Gallery's DB is set up.  By setting $this->_table_name ahead
-   * of time, the parent function will use our value instead.
+   * of time, the parent function will use our value instead.  Note: can give odd results if you
+   * use a series of capital letters (see examples below).
    *
    * Examples: "Model_Item"                --> "items"
-   *           "Model_ORM_Example"         --> "orm_examples"
-   *           "Model_ORMExample"          --> "orm_examples", not "ormexamples"
    *           "Model_IncomingTranslation" --> "incoming_translations", not "incomingtranslations"
+   *           "Model_ORM_Example"         --> "orm_examples"
+   *           "Model_ORMExample"          --> "ormexamples"
+   *           "Model_ORMAnotherExample"   --> "ormanother_examples", not "ormanotherexamples"
+   *           "Model_AnotherORMExample"   --> "another_ormexamples", not "anotherormexamples"
    *
    * (see Kohana_ORM::_initialize())
    */
