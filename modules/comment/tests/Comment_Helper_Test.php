@@ -23,7 +23,7 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function setup() {
     $this->_ip_address = Input::instance()->ip_address;
-    $this->_user_agent = request::user_agent();
+    $this->_user_agent = Request::user_agent();
     $this->_save = $_SERVER;
 
     $_SERVER["HTTP_ACCEPT"] = "HTTP_ACCEPT";
@@ -38,20 +38,20 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
     $_SERVER["REMOTE_HOST"] = "REMOTE_HOST";
     $_SERVER["REMOTE_PORT"] = "REMOTE_PORT";
 
-    request::set_user_agent("HTTP_USER_AGENT");
+    Request::set_user_agent("HTTP_USER_AGENT");
   }
 
   public function teardown() {
     Input::instance()->ip_address = $this->_ip_address;
-    request::set_user_agent($this->_user_agent);
+    Request::set_user_agent($this->_user_agent);
     $_SERVER = $this->_save;
   }
 
   public function create_comment_for_guest_test() {
-    $comment = ORM::factory("comment");
-    $comment->item_id = item::root()->id;
+    $comment = ORM::factory("Comment");
+    $comment->item_id = Item::root()->id;
     $comment->text = "text";
-    $comment->author_id = identity::guest()->id;
+    $comment->author_id = Identity::guest()->id;
     $comment->guest_name = "name";
     $comment->guest_email = "email@email.com";
     $comment->guest_url = "http://url.com";
@@ -82,10 +82,10 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function create_comment_for_user_test() {
-    $admin = identity::admin_user();
+    $admin = Identity::admin_user();
 
-    $comment = ORM::factory("comment");
-    $comment->item_id = item::root()->id;
+    $comment = ORM::factory("Comment");
+    $comment->item_id = Item::root()->id;
     $comment->text = "text";
     $comment->author_id = $admin->id;
     $comment->save();

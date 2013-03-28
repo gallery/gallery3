@@ -33,10 +33,10 @@ class Comment_Hook_Rest_Comments {
     $num = isset($p->num) ? min((int)$p->num, 100) : 10;
     $start = isset($p->start) ? (int)$p->start : 0;
 
-    foreach (ORM::factory("comment")->viewable()->find_all($num, $start) as $comment) {
-      $comments[] = rest::url("comment", $comment);
+    foreach (ORM::factory("Comment")->viewable()->find_all($num, $start) as $comment) {
+      $comments[] = Rest::url("comment", $comment);
     }
-    return array("url" => rest::url("comments"),
+    return array("url" => Rest::url("comments"),
                  "members" => $comments);
   }
 
@@ -44,19 +44,19 @@ class Comment_Hook_Rest_Comments {
   static function post($request) {
     $entity = $request->params->entity;
 
-    $item = rest::resolve($entity->item);
-    access::required("edit", $item);
+    $item = Rest::resolve($entity->item);
+    Access::required("edit", $item);
 
-    $comment = ORM::factory("comment");
-    $comment->author_id = identity::active_user()->id;
+    $comment = ORM::factory("Comment");
+    $comment->author_id = Identity::active_user()->id;
     $comment->item_id = $item->id;
     $comment->text = $entity->text;
     $comment->save();
 
-    return array("url" => rest::url("comment", $comment));
+    return array("url" => Rest::url("comment", $comment));
   }
 
   static function url() {
-    return url::abs_site("rest/comments");
+    return URL::abs_site("rest/comments");
   }
 }

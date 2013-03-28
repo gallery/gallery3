@@ -19,23 +19,23 @@
  */
 class Comment_Controller_Admin_Comments extends Controller_Admin {
   public function index() {
-    $view = new Admin_View("admin.html");
+    $view = new View_Admin("admin.html");
     $view->page_title = t("Comment settings");
-    $view->content = new View("admin_comments.html");
+    $view->content = new View("admin/comments.html");
     $view->content->form = $this->_get_admin_form();
     print $view;
   }
 
   public function save() {
-    access::verify_csrf();
+    Access::verify_csrf();
     $form = $this->_get_admin_form();
     $form->validate();
-    module::set_var("comment", "access_permissions",
+    Module::set_var("comment", "access_permissions",
                     $form->comment_settings->access_permissions->value);
-    module::set_var("comment", "rss_visible",
+    Module::set_var("comment", "rss_visible",
                     $form->comment_settings->rss_visible->value);
-    message::success(t("Comment settings updated"));
-    url::redirect("admin/comments");
+    Message::success(t("Comment settings updated"));
+    URL::redirect("admin/comments");
   }
 
   private function _get_admin_form() {
@@ -46,13 +46,13 @@ class Comment_Controller_Admin_Comments extends Controller_Admin {
       ->label(t("Who can leave comments?"))
       ->options(array("everybody" => t("Everybody"),
                       "registered_users" => t("Only registered users")))
-      ->selected(module::get_var("comment", "access_permissions"));
+      ->selected(Module::get_var("comment", "access_permissions"));
     $comment_settings->dropdown("rss_visible")
       ->label(t("Which RSS feeds can users see?"))
       ->options(array("all" => t("All comment feeds"),
                       "newest" => t("New comments feed only"),
                       "per_item" => t("Comments on photos, movies and albums only")))
-      ->selected(module::get_var("comment", "rss_visible"));
+      ->selected(Module::get_var("comment", "rss_visible"));
     $comment_settings->submit("save")->value(t("Save"));
     return $form;
   }

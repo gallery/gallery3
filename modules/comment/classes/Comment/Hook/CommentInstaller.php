@@ -46,21 +46,21 @@ class Comment_Hook_CommentInstaller {
                PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
-    module::set_var("comment", "spam_caught", 0);
-    module::set_var("comment", "access_permissions", "everybody");
-    module::set_var("comment", "rss_visible", "all");
+    Module::set_var("comment", "spam_caught", 0);
+    Module::set_var("comment", "access_permissions", "everybody");
+    Module::set_var("comment", "rss_visible", "all");
   }
 
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
-      module::set_version("comment", $version = 2);
+      Module::set_version("comment", $version = 2);
     }
 
     if ($version == 2) {
-      module::set_var("comment", "access_permissions", "everybody");
-      module::set_version("comment", $version = 3);
+      Module::set_var("comment", "access_permissions", "everybody");
+      Module::set_version("comment", $version = 3);
     }
 
     if ($version == 3) {
@@ -73,31 +73,31 @@ class Comment_Hook_CommentInstaller {
         "ALTER TABLE {comments} CHANGE `server_remote_addr` `server_remote_addr` varchar(40)");
       $db->query(
         "ALTER TABLE {comments} CHANGE `server_remote_host` `server_remote_host` varchar(255)");
-      module::set_version("comment", $version = 4);
+      Module::set_version("comment", $version = 4);
     }
 
     if ($version == 4) {
-      module::set_var("comment", "rss_visible", "all");
-      module::set_version("comment", $version = 5);
+      Module::set_var("comment", "rss_visible", "all");
+      Module::set_version("comment", $version = 5);
     }
 
     // In version 5 we accidentally set the installer variable to rss_available when it should
     // have been rss_visible.  Migrate it over now, if necessary.
     if ($version == 5) {
-      if (!module::get_var("comment", "rss_visible")) {
-        module::set_var("comment", "rss_visible", module::get_var("comment", "rss_available"));
+      if (!Module::get_var("comment", "rss_visible")) {
+        Module::set_var("comment", "rss_visible", Module::get_var("comment", "rss_available"));
       }
-      module::clear_var("comment", "rss_available");
-      module::set_version("comment", $version = 6);
+      Module::clear_var("comment", "rss_available");
+      Module::set_version("comment", $version = 6);
     }
 
     // In version 6 we accidentally left the install value of "rss_visible" to "both" when it
     // should have been "all"
     if ($version == 6) {
-      if (module::get_var("comment", "rss_visible") == "both") {
-        module::set_var("comment", "rss_visible", "all");
+      if (Module::get_var("comment", "rss_visible") == "both") {
+        Module::set_var("comment", "rss_visible", "all");
       }
-      module::set_version("comment", $version = 7);
+      Module::set_version("comment", $version = 7);
     }
   }
 
@@ -108,10 +108,10 @@ class Comment_Hook_CommentInstaller {
     // inefficient for large uninstalls, and we could make it better by doing things like passing
     // a SQL fragment through so that the listeners could use subselects.  But by using a single,
     // simple event API we lighten the load on module developers.
-    foreach (ORM::factory("item")
+    foreach (ORM::factory("Item")
              ->join("comments", "items.id", "comments.item_id")
              ->find_all() as $item) {
-      module::event("item_related_update", $item);
+      Module::event("item_related_update", $item);
     }
     $db->query("DROP TABLE IF EXISTS {comments};");
   }

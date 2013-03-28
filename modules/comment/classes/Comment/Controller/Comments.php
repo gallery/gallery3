@@ -22,18 +22,18 @@ class Comment_Controller_Comments extends Controller {
    * Add a new comment to the collection.
    */
   public function create($id) {
-    $item = ORM::factory("item", $id);
-    access::required("view", $item);
-    if (!comment::can_comment()) {
-      access::forbidden();
+    $item = ORM::factory("Item", $id);
+    Access::required("view", $item);
+    if (!Comment::can_comment()) {
+      Access::forbidden();
     }
 
-    $form = comment::get_add_form($item);
+    $form = Comment::get_add_form($item);
     try {
       $valid = $form->validate();
-      $comment = ORM::factory("comment");
+      $comment = ORM::factory("Comment");
       $comment->item_id = $id;
-      $comment->author_id = identity::active_user()->id;
+      $comment->author_id = Identity::active_user()->id;
       $comment->text = $form->add_comment->text->value;
       $comment->guest_name = $form->add_comment->inputs["name"]->value;
       $comment->guest_email = $form->add_comment->email->value;
@@ -54,15 +54,15 @@ class Comment_Controller_Comments extends Controller {
 
     if ($valid) {
       $comment->save();
-      $view = new Theme_View("comment.html", "other", "comment-fragment");
+      $view = new View_Theme("comment/comment.html", "other", "comment-fragment");
       $view->comment = $comment;
 
-      json::reply(array("result" => "success",
+      JSON::reply(array("result" => "success",
                         "view" => (string)$view,
-                        "form" => (string)comment::get_add_form($item)));
+                        "form" => (string)Comment::get_add_form($item)));
     } else {
-      $form = comment::prefill_add_form($form);
-      json::reply(array("result" => "error", "form" => (string)$form));
+      $form = Comment::prefill_add_form($form);
+      JSON::reply(array("result" => "error", "form" => (string)$form));
     }
   }
 
@@ -70,12 +70,12 @@ class Comment_Controller_Comments extends Controller {
    * Present a form for adding a new comment to this item or editing an existing comment.
    */
   public function form_add($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-    if (!comment::can_comment()) {
-      access::forbidden();
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    if (!Comment::can_comment()) {
+      Access::forbidden();
     }
 
-    print comment::prefill_add_form(comment::get_add_form($item));
+    print Comment::prefill_add_form(Comment::get_add_form($item));
   }
 }

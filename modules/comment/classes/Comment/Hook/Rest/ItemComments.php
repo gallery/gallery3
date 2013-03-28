@@ -19,16 +19,16 @@
  */
 class Comment_Hook_Rest_ItemComments {
   static function get($request) {
-    $item = rest::resolve($request->url);
-    access::required("view", $item);
+    $item = Rest::resolve($request->url);
+    Access::required("view", $item);
 
     $comments = array();
-    foreach (ORM::factory("comment")
+    foreach (ORM::factory("Comment")
              ->viewable()
              ->where("item_id", "=", $item->id)
              ->order_by("created", "DESC")
              ->find_all() as $comment) {
-      $comments[] = rest::url("comment", $comment);
+      $comments[] = Rest::url("comment", $comment);
     }
 
     return array(
@@ -37,14 +37,14 @@ class Comment_Hook_Rest_ItemComments {
   }
 
   static function resolve($id) {
-    $item = ORM::factory("item", $id);
-    if (!access::can("view", $item)) {
-      throw new Kohana_404_Exception();
+    $item = ORM::factory("Item", $id);
+    if (!Access::can("view", $item)) {
+      throw new HTTP_Exception_404();
     }
     return $item;
   }
 
   static function url($item) {
-    return url::abs_site("rest/item_comments/{$item->id}");
+    return URL::abs_site("rest/item_comments/{$item->id}");
   }
 }

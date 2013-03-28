@@ -2,7 +2,7 @@
 <div class="g-block-content">
   <? if ($state == "spam"): ?>
   <div>
-    <? $spam_caught = module::get_var("comment", "spam_caught") ?>
+    <? $spam_caught = Module::get_var("comment", "spam_caught") ?>
     <? if ($spam_caught > 0): ?>
     <p>
       <?= t2("Gallery has caught %count spam for you since you installed spam filtering.",
@@ -18,7 +18,7 @@
     </p>
     <p>
       <a id="g-delete-all-spam"
-         href="<?= url::site("admin/manage_comments/delete_all_spam?csrf=$csrf") ?>">
+         href="<?= URL::site("admin/manage_comments/delete_all_spam?csrf=$csrf") ?>">
         <?= t("Delete all spam") ?>
       </a>
       <? else: ?>
@@ -52,19 +52,19 @@
       </th>
     </tr>
     <? foreach ($comments as $comment): ?>
-    <tr id="g-comment-<?= $comment->id ?>" class="<?= text::alternate("g-odd", "g-even") ?>">
+    <tr id="g-comment-<?= $comment->id ?>" class="<?= Text::alternate("g-odd", "g-even") ?>">
       <td>
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $fallback_avatar_url) ?>"
                class="g-avatar"
-               alt="<?= html::clean_attribute($comment->author_name()) ?>"
+               alt="<?= HTML::clean_attribute($comment->author_name()) ?>"
                width="40"
                height="40" />
         </a>
         <p>
-          <a href="mailto:<?= html::clean_attribute($comment->author_email()) ?>"
-             title="<?= html::clean_attribute($comment->author_email()) ?>">
-            <?= html::clean($comment->author_name()) ?>
+          <a href="mailto:<?= HTML::clean_attribute($comment->author_email()) ?>"
+             title="<?= HTML::clean_attribute($comment->author_email()) ?>">
+            <?= HTML::clean($comment->author_name()) ?>
           </a>
         </p>
       </td>
@@ -75,8 +75,8 @@
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
-                 alt="<?= html::purify($item->title)->for_html_attr() ?>"
-                 <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
+                 alt="<?= HTML::purify($item->title)->for_html_attr() ?>"
+                 <?= Photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
               <? else: ?>
               <?= t("No thumbnail") ?>
@@ -84,8 +84,8 @@
             </a>
           </div>
         </div>
-        <p><?= gallery::date($comment->created) ?></p>
-           <?= nl2br(html::purify($comment->text)) ?>
+        <p><?= Gallery::date($comment->created) ?></p>
+           <?= nl2br(HTML::purify($comment->text)) ?>
       </td>
       <td>
         <ul class="g-buttonset-vertical">

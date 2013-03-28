@@ -19,11 +19,11 @@
  */
 class Comment_Model_Comment extends ORM {
   function item() {
-    return ORM::factory("item", $this->item_id);
+    return ORM::factory("Item", $this->item_id);
   }
 
   function author() {
-    return identity::lookup_user($this->author_id);
+    return Identity::lookup_user($this->author_id);
   }
 
   function author_name() {
@@ -64,7 +64,7 @@ class Comment_Model_Comment extends ORM {
         "guest_email" => array("callbacks" => array(array($this, "valid_email"))),
         "guest_url"   => array("rules"     => array("url")),
         "item_id"     => array("callbacks" => array(array($this, "valid_item"))),
-        "state"       => array("rules"     => array("Comment_Model::valid_state")),
+        "state"       => array("rules"     => array("Model_Comment::valid_state")),
         "text"        => array("rules"     => array("required")),
       );
     }
@@ -105,19 +105,19 @@ class Comment_Model_Comment extends ORM {
 
       $visible_change = $this->state == "published";
       parent::save();
-      module::event("comment_created", $this);
+      Module::event("comment_created", $this);
     } else {
       // Updated comment
-      $original = ORM::factory("comment", $this->id);
+      $original = ORM::factory("Comment", $this->id);
       $visible_change = $original->state == "published" || $this->state == "published";
       parent::save();
-      module::event("comment_updated", $original, $this);
+      Module::event("comment_updated", $original, $this);
     }
 
     // We only notify on the related items if we're making a visible change.
     if ($visible_change) {
       $item = $this->item();
-      module::event("item_related_update", $item);
+      Module::event("item_related_update", $item);
     }
 
     return $this;
@@ -130,7 +130,7 @@ class Comment_Model_Comment extends ORM {
    */
   public function viewable() {
     $this->join("items", "items.id", "comments.item_id");
-    return item::viewable($this);
+    return Item::viewable($this);
   }
 
   /**
@@ -139,7 +139,7 @@ class Comment_Model_Comment extends ORM {
   public function valid_author(Validation $v, $field) {
     if (empty($this->author_id)) {
       $v->add_error("author_id", "required");
-    } else if ($this->author_id == identity::guest()->id && empty($this->guest_name)) {
+    } else if ($this->author_id == Identity::guest()->id && empty($this->guest_name)) {
       $v->add_error("guest_name", "required");
     }
   }
@@ -148,10 +148,10 @@ class Comment_Model_Comment extends ORM {
    * Make sure that the email address is legal.
    */
   public function valid_email(Validation $v, $field) {
-    if ($this->author_id == identity::guest()->id) {
+    if ($this->author_id == Identity::guest()->id) {
       if (empty($v->guest_email)) {
         $v->add_error("guest_email", "required");
-      } else if (!valid::email($v->guest_email)) {
+      } else if (!Valid::email($v->guest_email)) {
         $v->add_error("guest_email", "invalid");
       }
     }
@@ -161,7 +161,7 @@ class Comment_Model_Comment extends ORM {
    * Make sure we have a valid associated item id.
    */
   public function valid_item(Validation $v, $field) {
-    if (db::build()
+    if (DB::build()
         ->from("items")
         ->where("id", "=", $this->item_id)
         ->count_records() != 1) {
@@ -186,7 +186,7 @@ class Comment_Model_Comment extends ORM {
         $data[$key] = $value;
       }
     }
-    $data["item"] = rest::url("item", $this->item());
+    $data["item"] = Rest::url("item", $this->item());
     unset($data["item_id"]);
 
     return $data;

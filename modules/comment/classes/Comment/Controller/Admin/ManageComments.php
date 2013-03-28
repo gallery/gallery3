@@ -22,21 +22,21 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
 
   public function index() {
     // Get rid of old deleted/spam comments once in a while
-    db::build()
+    DB::build()
       ->delete("comments")
       ->where("state", "IN", array("deleted", "spam"))
-      ->where("updated", "<", db::expr("UNIX_TIMESTAMP() - 86400 * 7"))
+      ->where("updated", "<", DB::expr("UNIX_TIMESTAMP() - 86400 * 7"))
       ->execute();
 
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_manage_comments.html");
+    $view = new View_Admin("admin.html");
+    $view->content = new View("admin/manage_comments.html");
     $view->content->menu = $this->_menu($this->_counts());
     print $view;
   }
 
   public function menu_labels() {
     $menu = $this->_menu($this->_counts());
-    json::reply(array((string) $menu->get("unpublished")->label,
+    JSON::reply(array((string) $menu->get("unpublished")->label,
                       (string) $menu->get("published")->label,
                       (string) $menu->get("spam")->label,
                       (string) $menu->get("deleted")->label));
@@ -45,11 +45,11 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
   public function queue($state) {
     $page = max(Input::instance()->get("page"), 1);
 
-    $view = new Gallery_View("admin_manage_comments_queue.html");
+    $view = new View_Gallery("admin/manage_comments_queue.html");
     $view->counts = $this->_counts();
     $view->menu = $this->_menu($view->counts);
     $view->state = $state;
-    $view->comments = ORM::factory("comment")
+    $view->comments = ORM::factory("Comment")
       ->order_by("created", "DESC")
       ->order_by("id", "DESC")
       ->where("state", "=", $state)
@@ -58,9 +58,9 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->find_all();
 
     // This view is not themed so we can't use $theme->url() in the view and have to
-    // reproduce Gallery_View::url() logic here.
-    $atn = theme::$admin_theme_name;
-    $view->fallback_avatar_url = url::abs_file("themes/$atn/images/avatar.jpg");
+    // reproduce View_Gallery::url() logic here.
+    $atn = Theme::$admin_theme_name;
+    $view->fallback_avatar_url = URL::abs_file("themes/$atn/images/avatar.jpg");
 
     $view->page = $page;
     $view->page_type = "collection";
@@ -82,25 +82,25 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
                ->label(t2("Awaiting Moderation (%count)",
                           "Awaiting Moderation (%count)",
                           $counts->unpublished))
-               ->url(url::site("admin/manage_comments/queue/unpublished")))
+               ->url(URL::site("admin/manage_comments/queue/unpublished")))
       ->append(Menu::factory("link")
                ->id("published")
                ->label(t2("Approved (%count)",
                           "Approved (%count)",
                           $counts->published))
-               ->url(url::site("admin/manage_comments/queue/published")))
+               ->url(URL::site("admin/manage_comments/queue/published")))
       ->append(Menu::factory("link")
                ->id("spam")
                ->label(t2("Spam (%count)",
                           "Spam (%count)",
                           $counts->spam))
-               ->url(url::site("admin/manage_comments/queue/spam")))
+               ->url(URL::site("admin/manage_comments/queue/spam")))
       ->append(Menu::factory("link")
                ->id("deleted")
                ->label(t2("Recently Deleted (%count)",
                           "Recently Deleted (%count)",
                           $counts->deleted))
-               ->url(url::site("admin/manage_comments/queue/deleted")));
+               ->url(URL::site("admin/manage_comments/queue/deleted")));
   }
 
   private function _counts() {
@@ -109,7 +109,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $counts->published = 0;
     $counts->spam = 0;
     $counts->deleted = 0;
-    foreach (db::build()
+    foreach (DB::build()
              ->select("state")
              ->select(array("c" => 'COUNT("*")'))
              ->from("comments")
@@ -121,9 +121,9 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
   }
 
   public function set_state($id, $state) {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    $comment = ORM::factory("comment", $id);
+    $comment = ORM::factory("Comment", $id);
     $orig = clone $comment;
     if ($comment->loaded()) {
       $comment->state = $state;
@@ -132,12 +132,12 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
   }
 
   public function delete_all_spam() {
-    access::verify_csrf();
+    Access::verify_csrf();
 
-    db::build()
+    DB::build()
       ->delete("comments")
       ->where("state", "=", "spam")
       ->execute();
-    url::redirect("admin/manage_comments/queue/spam");
+    URL::redirect("admin/manage_comments/queue/spam");
   }
 }

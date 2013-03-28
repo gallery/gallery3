@@ -19,16 +19,16 @@
  */
 class Comment_Hook_CommentEvent {
   static function item_deleted($item) {
-    db::build()
+    DB::build()
       ->delete("comments")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
 
   static function user_deleted($user) {
-    $guest = identity::guest();
+    $guest = Identity::guest();
     if (!empty($guest)) {          // could be empty if there is not identity provider
-      db::build()
+      DB::build()
         ->update("comments")
         ->set("author_id", $guest->id)
         ->set("guest_email", null)
@@ -40,8 +40,8 @@ class Comment_Hook_CommentEvent {
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
-    $guest = identity::guest();
-    db::build()
+    $guest = Identity::guest();
+    DB::build()
       ->update("comments")
       ->set("author_id", $guest->id)
       ->set("guest_email", null)
@@ -55,13 +55,13 @@ class Comment_Hook_CommentEvent {
       ->append(Menu::factory("link")
                ->id("comment")
                ->label(t("Comments"))
-               ->url(url::site("admin/comments")));
+               ->url(URL::site("admin/comments")));
 
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("comments")
                ->label(t("Comments"))
-               ->url(url::site("admin/manage_comments")));
+               ->url(URL::site("admin/manage_comments")));
   }
 
   static function photo_menu($menu, $theme) {
@@ -74,7 +74,7 @@ class Comment_Hook_CommentEvent {
   }
 
   static function item_index_data($item, $data) {
-    foreach (db::build()
+    foreach (DB::build()
              ->select("text")
              ->from("comments")
              ->where("item_id", "=", $item->id)
@@ -84,8 +84,8 @@ class Comment_Hook_CommentEvent {
   }
 
   static function show_user_profile($data) {
-    $view = new View("user_profile_comments.html");
-    $view->comments = ORM::factory("comment")
+    $view = new View("comment/user_profile.html");
+    $view->comments = ORM::factory("Comment")
       ->order_by("created", "DESC")
       ->where("state", "=", "published")
       ->where("author_id", "=", $data->user->id)

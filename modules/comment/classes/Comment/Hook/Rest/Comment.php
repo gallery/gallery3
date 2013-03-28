@@ -19,34 +19,34 @@
  */
 class Comment_Hook_Rest_Comment {
   static function get($request) {
-    $comment = rest::resolve($request->url);
-    access::required("view", $comment->item());
+    $comment = Rest::resolve($request->url);
+    Access::required("view", $comment->item());
 
     return array(
       "url" => $request->url,
       "entity" => $comment->as_restful_array(),
-      "relationships" => rest::relationships("comment", $comment));
+      "relationships" => Rest::relationships("comment", $comment));
   }
 
   static function put($request) {
     // Only admins can edit comments, for now
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
 
-    $comment = rest::resolve($request->url);
-    $comment = ORM::factory("comment");
+    $comment = Rest::resolve($request->url);
+    $comment = ORM::factory("Comment");
     $comment->text = $request->params->text;
     $comment->save();
   }
 
   static function delete($request) {
-    if (!identity::active_user()->admin) {
-      access::forbidden();
+    if (!Identity::active_user()->admin) {
+      Access::forbidden();
     }
 
-    $comment = rest::resolve($request->url);
-    access::required("edit", $comment->item());
+    $comment = Rest::resolve($request->url);
+    Access::required("edit", $comment->item());
 
     $comment->delete();
   }
@@ -56,19 +56,19 @@ class Comment_Hook_Rest_Comment {
     case "item":
       return array(
         "comments" => array(
-          "url" => rest::url("item_comments", $resource)));
+          "url" => Rest::url("item_comments", $resource)));
     }
   }
 
   static function resolve($id) {
-    $comment = ORM::factory("comment", $id);
-    if (!access::can("view", $comment->item())) {
-      throw new Kohana_404_Exception();
+    $comment = ORM::factory("Comment", $id);
+    if (!Access::can("view", $comment->item())) {
+      throw new HTTP_Exception_404();
     }
     return $comment;
   }
 
   static function url($comment) {
-    return url::abs_site("rest/comment/{$comment->id}");
+    return URL::abs_site("rest/comment/{$comment->id}");
   }
 }

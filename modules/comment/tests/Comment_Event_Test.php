@@ -21,9 +21,9 @@ class Comment_Event_Test extends Gallery_Unit_Test_Case {
   public function deleting_an_item_deletes_its_comments_too_test() {
     $album = test::random_album();
 
-    $comment = ORM::factory("comment");
+    $comment = ORM::factory("Comment");
     $comment->item_id = $album->id;
-    $comment->author_id = identity::guest()->id;
+    $comment->author_id = Identity::guest()->id;
     $comment->guest_name = "test";
     $comment->guest_email = "test@test.com";
     $comment->text = "text";
@@ -31,6 +31,6 @@ class Comment_Event_Test extends Gallery_Unit_Test_Case {
 
     $album->delete();
 
-    $this->assert_false(ORM::factory("comment", $comment->id)->loaded());
+    $this->assert_false(ORM::factory("Comment", $comment->id)->loaded());
   }
 }

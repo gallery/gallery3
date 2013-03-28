@@ -6,9 +6,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>Gallery 3</generator>
-    <title><?= html::clean($feed->title) ?></title>
+    <title><?= HTML::clean($feed->title) ?></title>
     <link><?= $feed->uri ?></link>
-    <description><?= html::clean($feed->description) ?></description>
+    <description><?= HTML::clean($feed->description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -22,14 +22,14 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($feed->comments as $comment): ?>
     <item>
-      <title><?= html::purify($comment->title) ?></title>
-      <link><?= html::clean($comment->item_uri) ?></link>
-      <author><?= html::clean($comment->author) ?></author>
+      <title><?= HTML::purify($comment->title) ?></title>
+      <link><?= HTML::clean($comment->item_uri) ?></link>
+      <author><?= HTML::clean($comment->author) ?></author>
       <guid isPermaLink="true"><?= $comment->item_uri ?></guid>
       <pubDate><?= $comment->pub_date ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <p><?= nl2br(html::purify($comment->text)) ?></p>
+          <p><?= nl2br(HTML::purify($comment->text)) ?></p>
           <p>
             <img alt="" src="<?= $comment->thumb_url ?>"
                  height="<?= $comment->thumb_height ?>" width="<?= $comment->thumb_width ?>" />
