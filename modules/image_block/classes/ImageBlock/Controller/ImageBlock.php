@@ -19,9 +19,9 @@
  */
 class ImageBlock_Controller_ImageBlock extends Controller {
   public function random($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-    item::set_display_context_callback("Albums_Controller::get_display_context");
-    url::redirect($item->abs_url());
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    Item::set_display_context_callback("Controller_Albums::get_display_context");
+    URL::redirect($item->abs_url());
   }
 }
