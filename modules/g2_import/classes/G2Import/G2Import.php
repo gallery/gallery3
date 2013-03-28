@@ -26,32 +26,32 @@ class G2Import_G2Import {
   private static $error_reporting = null;
 
   static function is_configured() {
-    return module::get_var("g2_import", "embed_path");
+    return Module::get_var("g2_import", "embed_path");
   }
 
   static function is_initialized() {
-    return g2_import::$init == "ok";
+    return G2Import::$init == "ok";
   }
 
   static function init() {
-    if (g2_import::$init) {
+    if (G2Import::$init) {
       return;
     }
 
-    $embed_path = module::get_var("g2_import", "embed_path");
+    $embed_path = Module::get_var("g2_import", "embed_path");
     if (empty($embed_path)) {
       throw new Exception("@todo G2_IMPORT_NOT_CONFIGURED");
     }
 
-    g2_import::$init = g2_import::init_embed($embed_path);
+    G2Import::$init = G2Import::init_embed($embed_path);
   }
 
   static function is_valid_embed_path($embed_path) {
     $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
     if (file_exists($mod_path)) {
-      dir::unlink($mod_path);
+      Encoding::unlink($mod_path);
     }
-    return g2_import::init_embed($embed_path);
+    return G2Import::init_embed($embed_path);
   }
 
   /**
@@ -79,7 +79,7 @@ class G2Import_G2Import {
 
      $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
      if (!file_exists($mod_path) || !file_exists("$mod_path/embed.php")) {
-       @dir::unlink($mod_path);
+       @Encoding::unlink($mod_path);
        mkdir($mod_path);
 
        $config_dir = dirname($embed_path);
@@ -169,7 +169,7 @@ class G2Import_G2Import {
 
       $ret = GalleryEmbed::init();
       if ($ret) {
-        Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
+        Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
         return "broken";
       }
 
@@ -203,7 +203,7 @@ class G2Import_G2Import {
                 "useAuthToken" => false));
       }
     } catch (ErrorException $e) {
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "broken";
     }
 
@@ -244,14 +244,14 @@ class G2Import_G2Import {
     $stats["photos"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryPhotoItem"));
     $stats["movies"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryMovieItem"));
 
-    if (g2_import::g2_module_active("comment") && module::is_active("comment")) {
+    if (G2Import::g2_module_active("comment") && Module::is_active("comment")) {
       GalleryCoreApi::requireOnce("modules/comment/classes/GalleryCommentHelper.class");
       list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
     } else {
       $stats["comments"] = 0;
     }
 
-    if (g2_import::g2_module_active("tags") && module::is_active("tag")) {
+    if (G2Import::g2_module_active("tags") && Module::is_active("tag")) {
       $result =
         g2($gallery->search("SELECT COUNT(DISTINCT([TagItemMap::itemId])) FROM [TagItemMap]"))
         ->nextResult();
@@ -270,7 +270,7 @@ class G2Import_G2Import {
   static function g3_stats() {
     $g3_stats = array(
       "album" => 0, "comment" => 0, "item" => 0, "user" => 0, "group" => 0, "tag" => 0);
-    foreach (db::build()
+    foreach (DB::build()
              ->select("resource_type")
              ->select(array("C" => 'COUNT("*")'))
              ->from("g2_maps")
@@ -295,7 +295,7 @@ class G2Import_G2Import {
     try {
       $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
     } catch (Exception $e) {
-      throw new G2_Import_Exception(
+      throw new G2Import_Exception(
           t("Failed to import Gallery 2 group with id: %id,",
             array("id" => $g2_group_id)),
           $e);
@@ -304,17 +304,17 @@ class G2Import_G2Import {
     switch ($g2_group->getGroupType()) {
     case GROUP_NORMAL:
       try {
-        $group = identity::create_group($g2_group->getGroupName());
+        $group = Identity::create_group($g2_group->getGroupName());
         $messages[] = t("Group '%name' was imported",
                         array("name" => $g2_group->getGroupname()));
       } catch (Exception $e) {
         // Did it fail because of a duplicate group name?
-        $group = identity::lookup_group_by_name($g2_group->getGroupname());
+        $group = Identity::lookup_group_by_name($g2_group->getGroupname());
         if ($group) {
           $messages[] = t("Group '%name' was mapped to the existing group group of the same name.",
                           array("name" => $g2_group->getGroupname()));
         } else {
-          throw new G2_Import_Exception(
+          throw new G2Import_Exception(
               t("Failed to import group '%name'",
                 array("name" => $g2_group->getGroupname())),
               $e);
@@ -324,7 +324,7 @@ class G2Import_G2Import {
       break;
 
     case GROUP_ALL_USERS:
-      $group = identity::registered_users();
+      $group = Identity::registered_users();
       $messages[] = t("Group 'Registered' was converted to '%name'", array("name" => $group->name));
       break;
 
@@ -333,7 +333,7 @@ class G2Import_G2Import {
       break;  // This is not a group in G3
 
     case GROUP_EVERYBODY:
-      $group = identity::everybody();
+      $group = Identity::everybody();
       $messages[] = t("Group 'Everybody' was converted to '%name'", array("name" => $group->name));
       break;
     }
@@ -357,7 +357,7 @@ class G2Import_G2Import {
     }
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
-      self::set_map($g2_user_id, identity::guest()->id, "group");
+      self::set_map($g2_user_id, Identity::guest()->id, "group");
       return t("Skipping anonymous user");
     }
 
@@ -366,34 +366,34 @@ class G2Import_G2Import {
     try {
       $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
     } catch (Exception $e) {
-      throw new G2_Import_Exception(
+      throw new G2Import_Exception(
           t("Failed to import Gallery 2 user with id: %id\n%exception",
             array("id" => $g2_user_id, "exception" => (string)$e)),
           $e);
     }
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
 
-    $user = identity::lookup_user_by_name($g2_user->getUsername());
+    $user = Identity::lookup_user_by_name($g2_user->getUsername());
     if ($user) {
       $messages[] = t("Loaded existing user: '%name'.", array("name" => $user->name));
     } else {
       $email = $g2_user->getEmail();
-      if (empty($email) || !valid::email($email)) {
+      if (empty($email) || !Valid::email($email)) {
         $email = "unknown@unknown.com";
       }
       try {
-        $user = identity::create_user($g2_user->getUserName(), $g2_user->getFullName(),
+        $user = Identity::create_user($g2_user->getUserName(), $g2_user->getFullName(),
                                       // Note: The API expects a password in cleartext.
                                       // Just use the hashed password as an unpredictable
                                       // value here. The user will have to reset the password.
                                       $g2_user->getHashedPassword(), $email);
       } catch (Exception $e) {
-        throw new G2_Import_Exception(
+        throw new G2Import_Exception(
           t("Failed to create user: '%name' (id: %id)",
             array("name" => $g2_user->getUserName(), "id" => $g2_user_id)),
           $e, $messages);
       }
-      if (class_exists("User_Model") && $user instanceof User_Model) {
+      if (class_exists("User_Model") && $user instanceof Model_User) {
         // This will work if G2's password is a PasswordHash password as well.
         $user->hashed_password = $g2_user->getHashedPassword();
       }
@@ -410,7 +410,7 @@ class G2Import_G2Import {
         $user->admin = true;
         $messages[] = t("Added 'admin' flag to user");
       } else {
-        $group = identity::lookup_group(self::map($g2_group_id));
+        $group = Identity::lookup_group(self::map($g2_group_id));
         $user->add($group);
         $messages[] = t("Added user to group '%group'.", array("group" => $group->name));
       }
@@ -420,7 +420,7 @@ class G2Import_G2Import {
       $user->save();
       self::set_map($g2_user->getId(), $user->id, "user");
     } catch (Exception $e) {
-      throw new G2_Import_Exception(
+      throw new G2Import_Exception(
           t("Failed to create user: '%name'", array("name" => $user->name)),
           $e, $messages);
     }
@@ -457,20 +457,20 @@ class G2Import_G2Import {
     }
 
     if ($g2_album->getParentId() == null) {
-      $album = item::root();
+      $album = Item::root();
     } else {
-      $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
+      $parent_album = ORM::factory("Item", self::map($g2_album->getParentId()));
 
-      $album = ORM::factory("item");
+      $album = ORM::factory("Item");
       $album->type = "album";
       $album->parent_id = self::map($g2_album->getParentId());
 
-      g2_import::set_album_values($album, $g2_album);
+      G2Import::set_album_values($album, $g2_album);
 
       try {
         $album->save();
       } catch (Exception $e) {
-        throw new G2_Import_Exception(
+        throw new G2Import_Exception(
             t("Failed to import Gallery 2 album with id %id and name %name.",
               array("id" => $g2_album_id, "name" => $album->name)),
             $e);
@@ -565,8 +565,8 @@ class G2Import_G2Import {
       }
       $item_id = self::map($g2_source->getId());
       if ($item_id) {
-        $item = ORM::factory("item", $item_id);
-        $g3_album = ORM::factory("item", $g3_album_id);
+        $item = ORM::factory("Item", $item_id);
+        $g3_album = ORM::factory("Item", $g3_album_id);
         $g3_album->album_cover_item_id = $item->id;
         $g3_album->thumb_dirty = 1;
         try {
@@ -576,9 +576,9 @@ class G2Import_G2Import {
         }
         try {
           $g3_album->save();
-          graphics::generate($g3_album);
+          Graphics::generate($g3_album);
         } catch (Exception $e) {
-          return (string) new G2_Import_Exception(
+          return (string) new G2Import_Exception(
               t("Failed to generate an album highlight for album '%name'.",
                 array("name" => $g3_album->name)),
               $e);
@@ -610,7 +610,7 @@ class G2Import_G2Import {
                array("id" => $g2_item_id, "exception" => (string)$e));
     }
 
-    $parent = ORM::factory("item", self::map($g2_item->getParentId()));
+    $parent = ORM::factory("Item", self::map($g2_item->getParentId()));
 
     $g2_type = $g2_item->getEntityType();
     $corrupt = 0;
@@ -622,9 +622,9 @@ class G2Import_G2Import {
       //
       // Note that this will change movies to be photos, if there's a broken movie.  Hopefully
       // this case is rare enough that we don't need to take any heroic action here.
-      g2_import::log(
+      G2Import::log(
         t("%path missing in import; replacing it with a placeholder", array("path" => $g2_path)));
-      $g2_path = MODPATH . "g2_import/data/broken-image.gif";
+      $g2_path = MODPATH . "g2_import/media/broken-image.gif";
       $g2_type = "GalleryPhotoItem";
       $corrupt = 1;
     }
@@ -633,14 +633,14 @@ class G2Import_G2Import {
     switch ($g2_type) {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
-        Kohana_Log::add("alert", "$g2_path is an unsupported image type; using a placeholder gif");
+        Log::add("alert", "$g2_path is an unsupported image type; using a placeholder gif");
         $messages[] = t("'%path' is an unsupported image type, using a placeholder",
                         array("path" => $g2_path));
-        $g2_path = MODPATH . "g2_import/data/broken-image.gif";
+        $g2_path = MODPATH . "g2_import/media/broken-image.gif";
         $corrupt = 1;
       }
       try {
-        $item = ORM::factory("item");
+        $item = ORM::factory("Item");
         $item->type = "photo";
         $item->parent_id = $parent->id;
         $item->set_data_file($g2_path);
@@ -658,17 +658,17 @@ class G2Import_G2Import {
         if ($g2_preferred && $g2_preferred instanceof GalleryDerivative) {
           if (preg_match("/rotate\|(-?\d+)/", $g2_preferred->getDerivativeOperations(), $matches)) {
             $tmpfile = tempnam(TMPPATH, "rotate");
-            gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $matches[1]), $item);
+            GalleryGraphics::rotate($item->file_path(), $tmpfile, array("degrees" => $matches[1]), $item);
             $item->set_data_file($tmpfile);
             $item->save();
             unlink($tmpfile);
           }
         }
       } catch (Exception $e) {
-        $exception_info = (string) new G2_Import_Exception(
+        $exception_info = (string) new G2Import_Exception(
             t("Corrupt image '%path'", array("path" => $g2_path)),
             $e, $messages);
-        Kohana_Log::add("alert", "Corrupt image $g2_path\n" . $exception_info);
+        Log::add("alert", "Corrupt image $g2_path\n" . $exception_info);
         $messages[] = $exception_info;
         $corrupt = 1;
         $item = null;
@@ -679,7 +679,7 @@ class G2Import_G2Import {
       // @todo we should transcode other types into FLV
       if (in_array($g2_item->getMimeType(), array("video/mp4", "video/x-flv"))) {
         try {
-          $item = ORM::factory("item");
+          $item = ORM::factory("Item");
           $item->type = "movie";
           $item->parent_id = $parent->id;
           $item->set_data_file($g2_path);
@@ -690,16 +690,16 @@ class G2Import_G2Import {
           $item->owner_id = self::map($g2_item->getOwnerId());
           $item->save();
         } catch (Exception $e) {
-          $exception_info = (string) new G2_Import_Exception(
+          $exception_info = (string) new G2Import_Exception(
               t("Corrupt movie '%path'", array("path" => $g2_path)),
               $e, $messages);
-          Kohana_Log::add("alert", "Corrupt movie $g2_path\n" . $exception_info);
+          Log::add("alert", "Corrupt movie $g2_path\n" . $exception_info);
           $messages[] = $exception_info;
           $corrupt = 1;
           $item = null;
         }
       } else {
-        Kohana_Log::add("alert", "$g2_path is an unsupported movie type");
+        Log::add("alert", "$g2_path is an unsupported movie type");
         $messages[] = t("'%path' is an unsupported movie type", array("path" => $g2_path));
         $corrupt = 1;
       }
@@ -812,16 +812,16 @@ class G2Import_G2Import {
 
     if ($g2_album->getParentId() == null) {
       // Compare to current permissions, and change them if necessary.
-      $g3_parent_album = item::root();
+      $g3_parent_album = Item::root();
     } else {
       $g3_parent_album = $g3_album->parent();
     }
     $granted_parent_permissions = array();
     $perm_ids = array_unique(array_values(self::$_permission_map));
-    foreach (identity::groups() as $group) {
+    foreach (Identity::groups() as $group) {
       $granted_parent_permissions[$group->id] = array();
       foreach ($perm_ids as $perm_id) {
-        if (access::group_can($group, $perm_id, $g3_parent_album)) {
+        if (Access::group_can($group, $perm_id, $g3_parent_album)) {
           $granted_parent_permissions[$group->id][$perm_id] = 1;
         }
       }
@@ -832,21 +832,21 @@ class G2Import_G2Import {
     foreach ($granted_permissions as $group_id => $permissions) {
       if (!isset($granted_parent_permissions[$group_id])) {
         foreach (array_keys($permissions) as $perm_id) {
-          access::allow(identity::lookup_group($group_id), $perm_id, $g3_album);
+          Access::allow(Identity::lookup_group($group_id), $perm_id, $g3_album);
         }
       } else if ($permissions != $granted_parent_permissions[$group_id]) {
         $parent_permissions = $granted_parent_permissions[$group_id];
         // @todo Probably worth caching the group instances.
-        $group = identity::lookup_group($group_id);
+        $group = Identity::lookup_group($group_id);
         // Note: Cannot use array_diff_key.
         foreach (array_keys($permissions) as $perm_id) {
           if (!isset($parent_permissions[$perm_id])) {
-            access::allow($group, $perm_id, $g3_album);
+            Access::allow($group, $perm_id, $g3_album);
           }
         }
         foreach (array_keys($parent_permissions) as $perm_id) {
           if (!isset($permissions[$perm_id])) {
-            access::deny($group, $perm_id, $g3_album);
+            Access::deny($group, $perm_id, $g3_album);
           }
         }
       }
@@ -856,9 +856,9 @@ class G2Import_G2Import {
       if (isset($granted_permissions[$group_id])) {
         continue;  // handled above
       }
-      $group = identity::lookup_group($group_id);
+      $group = Identity::lookup_group($group_id);
       foreach (array_keys($parent_permissions) as $perm_id) {
-        access::deny($group, $perm_id, $g3_album);
+        Access::deny($group, $perm_id, $g3_album);
       }
     }
   }
@@ -908,7 +908,7 @@ class G2Import_G2Import {
     }
 
     if ($id = self::map($g2_comment->getId())) {
-      if (ORM::factory("comment", $id)->loaded()) {
+      if (ORM::factory("Comment", $id)->loaded()) {
         // Already imported and still exists
         return;
       }
@@ -927,10 +927,10 @@ class G2Import_G2Import {
 
     // Just import the fields we know about.  Do this outside of the comment API for now so that
     // we don't trigger spam filtering events
-    $comment = ORM::factory("comment");
+    $comment = ORM::factory("Comment");
     $comment->author_id = self::map($g2_comment->getCommenterId());
     $comment->guest_name = "";
-    if ($comment->author_id == identity::guest()->id) {
+    if ($comment->author_id == Identity::guest()->id) {
       $comment->guest_name = $g2_comment->getAuthor();
       $comment->guest_name or $comment->guest_name = (string) t("Anonymous coward");
       $comment->guest_email = "unknown@nobody.com";
@@ -942,7 +942,7 @@ class G2Import_G2Import {
     try {
       $comment->save();
     } catch (Exception $e) {
-      return (string) new G2_Import_Exception(
+      return (string) new G2Import_Exception(
           t("Failed to import comment with id: %id.",
             array("id" => $g2_comment_id)),
           $e);
@@ -951,10 +951,10 @@ class G2Import_G2Import {
     self::set_map($g2_comment->getId(), $comment->id, "comment");
 
     // Backdate the creation date.  We can't do this at creation time because
-    // Comment_Model::save() will override it.  Leave the updated date alone
+    // Model_Comment::save() will override it.  Leave the updated date alone
     // so that if the comments get marked as spam, they don't immediately get
     // flushed (see ticket #1736)
-    db::update("comments")
+    DB::update("comments")
       ->set("created", $g2_comment->getDate())
       ->where("id", "=", $comment->id)
       ->execute();
@@ -964,13 +964,13 @@ class G2Import_G2Import {
    * Import all the tags for a single item
    */
   static function import_tags_for_item(&$queue) {
-    if (!module::is_active("tag")) {
+    if (!Module::is_active("tag")) {
       return t("Gallery 3 tag module is inactive, no tags will be imported");
     }
 
     GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
     $g2_item_id = array_shift($queue);
-    $g3_item = ORM::factory("item", self::map($g2_item_id));
+    $g3_item = ORM::factory("Item", self::map($g2_item_id));
     if (!$g3_item->loaded()) {
       return;
     }
@@ -983,7 +983,7 @@ class G2Import_G2Import {
     }
 
     foreach ($tag_names as $tag_name) {
-      tag::add($g3_item, $tag_name);
+      Tag::add($g3_item, $tag_name);
     }
 
     // Tag operations are idempotent so we don't need to map them.  Which is good because we don't
@@ -1005,7 +1005,7 @@ class G2Import_G2Import {
     foreach (preg_split("/$delim/", $keywords) as $keyword) {
       $keyword = trim($keyword);
       if ($keyword) {
-        tag::add($item, $keyword);
+        Tag::add($item, $keyword);
       }
     }
   }
@@ -1024,7 +1024,7 @@ class G2Import_G2Import {
     // active then we'd have to do something a lot more sophisticated here.  For now, just skip
     // this step in those cases.
     // @todo we should probably use an API here, eventually.
-    if (module::is_active("watermark") && module::get_var("watermark", "name")) {
+    if (Module::is_active("watermark") && Module::get_var("watermark", "name")) {
       return;
     }
 
@@ -1038,8 +1038,8 @@ class G2Import_G2Import {
     $g2_item_id = self::$current_g2_item->getId();
     $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
 
-    $target_thumb_size = module::get_var("gallery", "thumb_size");
-    $target_resize_size = module::get_var("gallery", "resize_size");
+    $target_thumb_size = Module::get_var("gallery", "thumb_size");
+    $target_resize_size = Module::get_var("gallery", "resize_size");
     if (!empty($derivatives[$g2_item_id])) {
       foreach ($derivatives[$g2_item_id] as $derivative) {
         if ($derivative->getPostFilterOperations()) {
@@ -1073,7 +1073,7 @@ class G2Import_G2Import {
     try {
       $item->save();
     } catch (Exception $e) {
-      return (string) new G2_Import_Exception(
+      return (string) new G2Import_Exception(
           t("Failed to copy thumbnails and resizes for item '%name' (Gallery 2 id: %id)",
             array("name" => $item->name, "id" => $g2_item_id)),
           $e);
@@ -1285,7 +1285,7 @@ class G2Import_G2Import {
    */
   static function map($g2_id) {
     if (!array_key_exists($g2_id, self::$map)) {
-      $g2_map = ORM::factory("g2_map")->where("g2_id", "=", $g2_id)->find();
+      $g2_map = ORM::factory("G2Map")->where("g2_id", "=", $g2_id)->find();
       self::$map[$g2_id] = $g2_map->loaded() ? $g2_map->g3_id : null;
     }
 
@@ -1297,7 +1297,7 @@ class G2Import_G2Import {
    */
   static function set_map($g2_id, $g3_id, $resource_type, $g2_url=null) {
     self::clear_map($g2_id, $resource_type);
-    $g2_map = ORM::factory("g2_map");
+    $g2_map = ORM::factory("G2Map");
     $g2_map->g3_id = $g3_id;
     $g2_map->g2_id = $g2_id;
     $g2_map->resource_type = $resource_type;
@@ -1315,7 +1315,7 @@ class G2Import_G2Import {
    * Remove all map entries associated with the given Gallery 2 id.
    */
   static function clear_map($g2_id, $resource_type) {
-    db::build()
+    DB::build()
       ->delete("g2_maps")
       ->where("g2_id", "=", $g2_id)
       ->where("resource_type", "=", $resource_type)
@@ -1323,8 +1323,8 @@ class G2Import_G2Import {
   }
 
   static function log($msg) {
-    message::warning($msg);
-    Kohana_Log::add("alert", $msg);
+    Message::warning($msg);
+    Log::add("alert", $msg);
   }
 
   static function g2_url($params) {
@@ -1363,7 +1363,7 @@ function g2() {
   $args = func_get_arg(0);
   $ret = is_array($args) ? array_shift($args) : $args;
   if ($ret) {
-    Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
+    Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
     throw new Exception("@todo G2_FUNCTION_FAILED");
   }
   if (count($args) == 1) {

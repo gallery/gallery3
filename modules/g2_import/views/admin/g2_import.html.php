@@ -2,7 +2,7 @@
 <script type="text/javascript">
 $("document").ready(function() {
   $("form input[name=embed_path]").gallery_autocomplete(
-    "<?= url::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
+    "<?= URL::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
     {});
 });
 </script>
@@ -57,7 +57,7 @@ $("document").ready(function() {
           <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
                 array("g2_pixels" => $g2_sizes["thumb"]["size"],
                       "g3_pixels" => $thumb_size,
-                      "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
+                      "url" => HTML::mark_clean(URL::site("admin/theme_options")))) ?>
         </li>
         <? endif ?>
 
@@ -66,7 +66,7 @@ $("document").ready(function() {
           <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 intermediate size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
                 array("g2_pixels" => $g2_sizes["resize"]["size"],
                       "g3_pixels" => $resize_size,
-                      "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
+                      "url" => HTML::mark_clean(URL::site("admin/theme_options")))) ?>
         </li>
         <? endif ?>
 
@@ -105,7 +105,7 @@ $("document").ready(function() {
       </ul>
       <p>
         <a class="g-button g-dialog-link ui-state-default ui-corner-all"
-           href="<?= url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
+           href="<?= URL::site("admin/maintenance/start/Hook_G2ImportTask::import?csrf=$csrf") ?>">
           <?= t("Begin import!") ?>
         </a>
       </p>
@@ -127,9 +127,9 @@ $("document").ready(function() {
           <textarea id="g-g2-redirect-rules" rows="4" cols="60">&lt;IfModule mod_rewrite.c&gt;
       Options +FollowSymLinks
       RewriteEngine On
-      RewriteBase <?= html::clean(g2_import::$g2_base_url) ?>
+      RewriteBase <?= HTML::clean(G2Import::$g2_base_url) ?>
 
-      RewriteRule ^(.*)$ <?= url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
+      RewriteRule ^(.*)$ <?= URL::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
     &lt;/IfModule&gt;</textarea>
           <script type="text/javascript">
             $(document).ready(function() {

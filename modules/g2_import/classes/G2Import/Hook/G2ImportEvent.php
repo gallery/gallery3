@@ -19,14 +19,14 @@
  */
 class G2Import_Hook_G2ImportEvent {
   static function item_deleted($item) {
-    db::build()
+    DB::build()
       ->delete("g2_maps")
       ->where("g3_id", "=", $item->id)
       ->execute();
   }
 
   static function item_created($item) {
-    g2_import::copy_matching_thumbnails_and_resizes($item);
+    G2Import::copy_matching_thumbnails_and_resizes($item);
   }
 
   static function admin_menu($menu, $theme) {
@@ -35,6 +35,6 @@ class G2Import_Hook_G2ImportEvent {
       ->append(Menu::factory("link")
                ->id("g2_import")
                ->label(t("Gallery 2 import"))
-               ->url(url::site("admin/g2_import")));
+               ->url(URL::site("admin/g2_import")));
   }
 }

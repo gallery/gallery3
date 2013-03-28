@@ -40,11 +40,11 @@ class G2Import_Hook_G2ImportInstaller {
       $db->query("ALTER TABLE {g2_maps} ADD COLUMN `g2_url` VARCHAR(255)");
       $db->query("ALTER TABLE {g2_maps} ADD COLUMN `resource_type` VARCHAR(64)");
       $db->query("ALTER TABLE {g2_maps} ADD KEY `g2_url` (`g2_url`)");
-      module::set_version("g2_import", $version = 2);
+      Module::set_version("g2_import", $version = 2);
     }
   }
 
   static function uninstall() {
-    @dir::unlink(VARPATH . "modules/g2_import");
+    @Encoding::unlink(VARPATH . "modules/g2_import");
   }
 }

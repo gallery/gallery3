@@ -46,12 +46,12 @@ class G2Import_Controller_G2 extends Controller {
       }
 
       if (!$id) {
-        url::redirect("tag_name/$tag_name", 301);
+        URL::redirect("tag_name/$tag_name", 301);
       }
 
-      $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+      $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
       if ($tag->loaded()) {
-        item::set_display_context_callback("Tag_Controller::get_display_context", $tag->id);
+        Item::set_display_context_callback("Controller_Tag::get_display_context", $tag->id);
         // We want to show the item as part of the tag virtual album. Most of this code is below; we'll
         // change $path and $view to let it fall through
         $view = "";
@@ -73,49 +73,49 @@ class G2Import_Controller_G2 extends Controller {
       } else if ($path) {
         $where = array(array("g2_url", "IN", array($path, str_replace(" ", "+", $path))));
       } else {
-        throw new Kohana_404_Exception();
+        throw new HTTP_Exception_404();
       }
 
-      $g2_map = ORM::factory("g2_map")
+      $g2_map = ORM::factory("G2Map")
         ->merge_where($where)
         ->find();
 
       if (!$g2_map->loaded()) {
-        throw new Kohana_404_Exception();
+        throw new HTTP_Exception_404();
       }
 
-      $item = ORM::factory("item", $g2_map->g3_id);
+      $item = ORM::factory("Item", $g2_map->g3_id);
       if (!$item->loaded()) {
-        throw new Kohana_404_Exception();
+        throw new HTTP_Exception_404();
       }
       $resource_type = $g2_map->resource_type;
     } else {
-      $item = item::root();
+      $item = Item::root();
       $resource_type = "album";
     }
-    access::required("view", $item);
+    Access::required("view", $item);
 
 
     // Redirect the user to the new url
     switch ($resource_type) {
     case "thumbnail":
-      url::redirect($item->thumb_url(true), 301);
+      URL::redirect($item->thumb_url(true), 301);
 
     case "resize":
-      url::redirect($item->resize_url(true), 301);
+      URL::redirect($item->resize_url(true), 301);
 
     case "file":
     case "full":
-      url::redirect($item->file_url(true), 301);
+      URL::redirect($item->file_url(true), 301);
 
     case "item":
     case "album":
-      url::redirect($item->abs_url(), 301);
+      URL::redirect($item->abs_url(), 301);
 
     case "group":
     case "user":
     default:
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
   }
 }

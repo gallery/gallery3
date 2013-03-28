@@ -20,34 +20,34 @@
 class G2Import_Hook_G2ImportTask {
   static function available_tasks() {
     $version = '';
-    g2_import::lower_error_reporting();
-    if (g2_import::is_configured()) {
-      g2_import::init();
+    G2Import::lower_error_reporting();
+    if (G2Import::is_configured()) {
+      G2Import::init();
       // Guard from common case where the import has been
       // completed and the original files have been removed.
       if (class_exists("GalleryCoreApi")) {
-        $version = g2_import::version();
+        $version = G2Import::version();
       }
     }
-    g2_import::restore_error_reporting();
+    G2Import::restore_error_reporting();
 
-    if (g2_import::is_initialized()) {
-      return array(Task_Definition::factory()
-                   ->callback("g2_import_task::import")
+    if (G2Import::is_initialized()) {
+      return array(TaskDefinition::factory()
+                   ->callback("Hook_G2ImportTask::import")
                    ->name(t("Import from Gallery 2"))
                    ->description(
                      t("Gallery %version detected", array("version" => $version)))
-                   ->severity(log::SUCCESS));
+                   ->severity(Log::SUCCESS));
     }
 
     return array();
   }
 
   static function import($task) {
-    g2_import::lower_error_reporting();
+    G2Import::lower_error_reporting();
 
     $start = microtime(true);
-    g2_import::init();
+    G2Import::init();
 
     $stats = $task->get("stats");
     $done = $task->get("done");
@@ -56,7 +56,7 @@ class G2Import_Hook_G2ImportTask {
     $mode = $task->get("mode");
     $queue = $task->get("queue");
     if (!isset($mode)) {
-      $stats = g2_import::g2_stats();
+      $stats = G2Import::g2_stats();
       $stats["items"] = $stats["photos"] + $stats["movies"];
       unset($stats["photos"]);
       unset($stats["movies"]);
@@ -96,10 +96,10 @@ class G2Import_Hook_G2ImportTask {
       switch($modes[$mode]) {
       case "groups":
         if (empty($queue)) {
-          $task->set("queue", $queue = g2_import::get_group_ids($task->get("last_id", 0)));
+          $task->set("queue", $queue = G2Import::get_group_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        $log_message = g2_import::import_group($queue);
+        $log_message = G2Import::import_group($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -110,10 +110,10 @@ class G2Import_Hook_G2ImportTask {
 
       case "users":
         if (empty($queue)) {
-          $task->set("queue", $queue = g2_import::get_user_ids($task->get("last_id", 0)));
+          $task->set("queue", $queue = G2Import::get_user_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        $log_message = g2_import::import_user($queue);
+        $log_message = G2Import::import_user($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -129,12 +129,12 @@ class G2Import_Hook_G2ImportTask {
           $task->set("queue", $queue = array($g2_root_id => $tree));
 
           // Update the root album to reflect the Gallery2 root album.
-          $root_album = item::root();
-          g2_import::set_album_values(
+          $root_album = Item::root();
+          G2Import::set_album_values(
             $root_album, g2(GalleryCoreApi::loadEntitiesById($g2_root_id)));
           $root_album->save();
         }
-        $log_message = g2_import::import_album($queue);
+        $log_message = G2Import::import_album($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -145,10 +145,10 @@ class G2Import_Hook_G2ImportTask {
 
       case "items":
         if (empty($queue)) {
-          $task->set("queue", $queue = g2_import::get_item_ids($task->get("last_id", 0)));
+          $task->set("queue", $queue = G2Import::get_item_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        $log_message = g2_import::import_item($queue);
+        $log_message = G2Import::import_item($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -159,10 +159,10 @@ class G2Import_Hook_G2ImportTask {
 
       case "comments":
         if (empty($queue)) {
-          $task->set("queue", $queue = g2_import::get_comment_ids($task->get("last_id", 0)));
+          $task->set("queue", $queue = G2Import::get_comment_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        $log_message = g2_import::import_comment($queue);
+        $log_message = G2Import::import_comment($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -174,10 +174,10 @@ class G2Import_Hook_G2ImportTask {
 
       case "tags":
         if (empty($queue)) {
-          $task->set("queue", $queue = g2_import::get_tag_item_ids($task->get("last_id", 0)));
+          $task->set("queue", $queue = G2Import::get_tag_item_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        $log_message = g2_import::import_tags_for_item($queue);
+        $log_message = G2Import::import_tags_for_item($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -191,7 +191,7 @@ class G2Import_Hook_G2ImportTask {
         if (empty($queue)) {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
         }
-        $log_message = g2_import::set_album_highlight($queue);
+        $log_message = G2Import::set_album_highlight($queue);
         if ($log_message) {
           $task->log($log_message);
         }
@@ -220,6 +220,6 @@ class G2Import_Hook_G2ImportTask {
     $task->set("queue", $queue);
     $task->set("done", $done);
 
-    g2_import::restore_error_reporting();
+    G2Import::restore_error_reporting();
   }
 }
