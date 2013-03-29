@@ -310,7 +310,7 @@
      */
 
     sort_order_data = [];
-    <? foreach (album::get_sort_order_options() as $key => $value): ?>
+    <? foreach (Album::get_sort_order_options() as $key => $value): ?>
     sort_order_data.push(["<?= $key ?>", <?= $value->for_js() ?>]);
     <? endforeach ?>
     var sort_column_combobox = new Ext.form.ComboBox({

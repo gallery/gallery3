@@ -99,7 +99,7 @@ class Gallery_Album {
 
     $sort_order->dropdown("column", array("id" => "g-album-sort-column"))
       ->label(t("Sort by"))
-      ->options(album::get_sort_order_options())
+      ->options(Album::get_sort_order_options())
       ->selected($parent->sort_column);
     $sort_order->dropdown("direction", array("id" => "g-album-sort-direction"))
       ->label(t("Order"))
