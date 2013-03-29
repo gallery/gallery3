@@ -109,7 +109,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("add", $album);
 
-    $form = album::get_add_form($album);
+    $form = Album::get_add_form($album);
     try {
       $valid = $form->validate();
       $album = ORM::factory("Item");
@@ -149,7 +149,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    $form = album::get_edit_form($album);
+    $form = Album::get_edit_form($album);
     try {
       $valid = $form->validate();
       $album->title = $form->edit_item->title->value;
@@ -194,7 +194,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("add", $album);
 
-    print album::get_add_form($album);
+    print Album::get_add_form($album);
   }
 
   public function form_edit($album_id) {
@@ -202,6 +202,6 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    print album::get_edit_form($album);
+    print Album::get_edit_form($album);
   }
 }

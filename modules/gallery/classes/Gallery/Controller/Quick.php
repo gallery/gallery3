@@ -124,7 +124,7 @@ class Gallery_Controller_Quick extends Controller {
 
     switch ($item->type) {
     case "album":
-      $form = album::get_edit_form($item);
+      $form = Album::get_edit_form($item);
       break;
 
     case "photo":
