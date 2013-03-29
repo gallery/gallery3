@@ -4,21 +4,21 @@
 /*
 	Exifer
 	Extracts EXIF information from digital photos.
-	
+
 	Copyright © 2003 Jake Olefsky
 	http://www.offsky.com/software/exif/index.php
 	jake@olefsky.com
-	
+
 	Please see exif.php for the complete information about this software.
-	
+
 	------------
-	
-	This program is free software; you can redistribute it and/or modify it under the terms of 
-	the GNU General Public License as published by the Free Software Foundation; either version 2 
+
+	This program is free software; you can redistribute it and/or modify it under the terms of
+	the GNU General Public License as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+	This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 	See the GNU General Public License for more details. http://www.gnu.org/copyleft/gpl.html
 */
 //================================================================================================
@@ -46,7 +46,7 @@ function lookup_GPS_tag($tag) {
 		case "000a": $tag = "MeasurementMode";break;			//2D or 3D
 		case "000b": $tag = "MeasurementPrecision";break;		//positive rational number
 		case "000c": $tag = "SpeedUnit";break;					//KPH, MPH, knots
-		case "000d": $tag = "ReceiverSpeed";break;				//positive rational number	
+		case "000d": $tag = "ReceiverSpeed";break;				//positive rational number
 		case "000e": $tag = "MovementDirectionRef";break;		//true or magnetic north
 		case "000f": $tag = "MovementDirection";break;			//positive rational number
 		case "0010": $tag = "ImageDirectionRef";break;			//true or magnetic north
@@ -60,15 +60,15 @@ function lookup_GPS_tag($tag) {
 		case "0018": $tag = "DestinationBearing";break;			//positive rational number
 		case "0019": $tag = "DestDistanceRef";break;			//km, miles, knots
 		case "001a": $tag = "DestinationDistance";break;		//positive rational number
-		case "001b": $tag = "ProcessingMethod";break;			
+		case "001b": $tag = "ProcessingMethod";break;
 		case "001c": $tag = "AreaInformation";break;
 		case "001d": $tag = "Datestamp";break;					//text string 10 bytes long
 		case "001e": $tag = "DifferentialCorrection";break;		//integer in range 0-65535
-		
-		
+
+
 		default: $tag = "unknown:".$tag;break;
 	}
-	
+
 	return $tag;
 }
 
@@ -79,7 +79,7 @@ function formatGPSData($type,$tag,$intel,$data) {
 
 	if($type=="ASCII") {
 		if($tag=="0001" || $tag=="0003"){ // Latitude Reference, Longitude Reference
-			$data = ($data{1} == $data{2} && $data{1} == $data{3}) ? $data{0} : $data;
+			$data = ($data{1} == @$data{2} && @$data{1} == @$data{3}) ? $data{0} : $data;
 		}
 
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {
@@ -98,7 +98,7 @@ function formatGPSData($type,$tag,$intel,$data) {
 			}
 		} else {
 			$data = unRational($data,$type,$intel);
-			
+
 			if($tag=="0006"){
 				$data .= 'm';
 			}
@@ -115,7 +115,7 @@ function formatGPSData($type,$tag,$intel,$data) {
 		$data = bin2hex($data);
 		if($intel==1) $num = intel2Moto($data);
 
-			
+
 		if($tag=="0000") { // VersionID
 			$data =  hexdec(substr($data,0,2)) .
 												".". hexdec(substr($data,2,2)) .
@@ -142,11 +142,11 @@ function formatGPSData($type,$tag,$intel,$data) {
 // http://drewnoakes.com/code/exif/sampleOutput.html
 // http://www.geosnapper.com
 //====================================================================
-function parseGPS($block,&$result,$offset,$seek, $globalOffset) {	
-	
+function parseGPS($block,&$result,$offset,$seek, $globalOffset) {
+
 	if($result['Endien']=="Intel") $intel=1;
 	else $intel=0;
-		
+
 	$v = fseek($seek,$globalOffset+$offset);  //offsets are from TIFF header which is 12 bytes from the start of the file
 	if($v==-1) {
 		$result['Errors'] = $result['Errors']++;
@@ -163,28 +163,28 @@ function parseGPS($block,&$result,$offset,$seek, $globalOffset) {
 
 	$block = fread( $seek, $num*12 );
 	$place = 0;
-	
+
 	//loop thru all tags  Each field is 12 bytes
 	for($i=0;$i<$num;$i++) {
 			//2 byte tag
 		$tag = bin2hex(substr($block,$place,2));$place+=2;
 		if($intel==1) $tag = intel2Moto($tag);
 		$tag_name = lookup_GPS_tag($tag);
-		
+
 		//2 byte datatype
 		$type = bin2hex(substr($block,$place,2));$place+=2;
 		if($intel==1) $type = intel2Moto($type);
 		lookup_type($type,$size);
-		
+
 		//4 byte number of elements
 		$count = bin2hex(substr($block,$place,4));$place+=4;
 		if($intel==1) $count = intel2Moto($count);
-		$bytesofdata = $size*hexdec($count);
-		
+		$bytesofdata = validSize($size*hexdec($count));
+
 		//4 byte value or pointer to value if larger than 4 bytes
 		$value = substr($block,$place,4);$place+=4;
 		if($bytesofdata<=4) {
-			$data = $value;
+			$data = substr($value,0,$bytesofdata);
 		} else {
 			if (strpos('unknown',$tag_name) !== false || $bytesofdata > 1024) {
 				$result['Errors'] = $result['Errors']++;
