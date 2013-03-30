@@ -67,4 +67,18 @@ class Gallery_URL extends Kohana_URL {
       return $url . "&$qs";
     }
   }
+
+  /**
+   * Just like URL::base except we force it to use SERVER_NAME instead of HTTP_HOST.
+   * Note that K3 handles the port separately, so we don't have to worry about
+   * losing non-standard ports when using SERVER_NAME instead as we did for K2.
+   * Ref: http://github.com/gallery/gallery3/pull/201
+   */
+  public static function base($protocol=null, $index=false) {
+    if (isset($_SERVER["SERVER_NAME"])) {
+      // If we unset HTTP_HOST, URL::base will use SERVER_NAME instead.
+      unset($_SERVER["HTTP_HOST"]);
+    }
+    return parent::base($protocol, $index);
+  }
 }
