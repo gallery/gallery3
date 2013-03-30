@@ -73,7 +73,7 @@ class G2Import_Controller_G2 extends Controller {
       } else if ($path) {
         $where = array(array("g2_url", "IN", array($path, str_replace(" ", "+", $path))));
       } else {
-        throw new HTTP_Exception_404();
+        throw HTTP_Exception::factory(404);
       }
 
       $g2_map = ORM::factory("G2Map")
@@ -81,12 +81,12 @@ class G2Import_Controller_G2 extends Controller {
         ->find();
 
       if (!$g2_map->loaded()) {
-        throw new HTTP_Exception_404();
+        throw HTTP_Exception::factory(404);
       }
 
       $item = ORM::factory("Item", $g2_map->g3_id);
       if (!$item->loaded()) {
-        throw new HTTP_Exception_404();
+        throw HTTP_Exception::factory(404);
       }
       $resource_type = $g2_map->resource_type;
     } else {
@@ -115,7 +115,7 @@ class G2Import_Controller_G2 extends Controller {
     case "group":
     case "user":
     default:
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
   }
 }

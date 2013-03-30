@@ -137,12 +137,12 @@ class Rest_Rest {
     $components = explode("/", $path, 3);
 
     if (count($components) != 3) {
-      throw new HTTP_Exception_404($url);
+      throw HTTP_Exception::factory(404, $url);
     }
 
     $class = "Hook_Rest_" . Inflector::camelize($components[1], true);
     if (!class_exists($class) || !method_exists($class, "resolve")) {
-      throw new HTTP_Exception_404($url);
+      throw HTTP_Exception::factory(404, $url);
     }
 
     return call_user_func(array($class, "resolve"), !empty($components[2]) ? $components[2] : null);

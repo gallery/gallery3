@@ -24,7 +24,7 @@ class Tag_Controller_TagName extends Controller {
     if (!$tag->loaded()) {
       // No matching tag was found. If this was an imported tag, this is probably a bug.
       // If the user typed the URL manually, it might just be wrong
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     HTTP::redirect($tag->abs_url());

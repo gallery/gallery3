@@ -58,7 +58,7 @@ class Gallery_Hook_Rest_Items {
     } else if (isset($request->params->ancestors_for)) {
       $item = Rest::resolve($request->params->ancestors_for);
       if (!Access::can("view", $item)) {
-        throw new HTTP_Exception_404();
+        throw HTTP_Exception::factory(404);
       }
       $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
       while (($item = $item->parent()) != null) {
@@ -72,7 +72,7 @@ class Gallery_Hook_Rest_Items {
   static function resolve($id) {
     $item = ORM::factory("Item", $id);
     if (!Access::can("view", $item)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
     return $item;
   }
