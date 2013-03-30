@@ -49,14 +49,6 @@ class Gallery_Hook_Rest_Data {
 
     header("Content-Length: " . filesize($file));
 
-    if (isset($p->m)) {
-      header("Pragma:");
-      // Check that the content hasn't expired or it wasn't changed since cached
-      expires::check(2592000, $item->updated);
-
-      expires::set(2592000, $item->updated);  // 30 days
-    }
-
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
