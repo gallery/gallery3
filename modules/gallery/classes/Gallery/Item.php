@@ -141,7 +141,7 @@ class Gallery_Item {
     if (class_exists("transliterate")) {
       $result = transliterate::utf8_to_ascii($result);
     } else {
-      $result = Text::transliterate_to_ascii($result);
+      $result = UTF8::transliterate_to_ascii($result);
     }
     $result = preg_replace("/[^A-Za-z0-9-_]+/", "-", $result);
     $result = preg_replace("/-+/", "-", $result);
