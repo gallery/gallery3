@@ -53,11 +53,6 @@ ini_set("unserialize_callback_func", "spl_autoload_call");
 // -- Configuration and initialization -----------------------------------------
 
 /**
- * Set the default language
- */
-I18n::lang('en-us');
-
-/**
  * Set Kohana::$environment if a 'KOHANA_ENV' environment variable has been supplied.
  *
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
@@ -185,15 +180,16 @@ Cache::$default = "database";
 // to the domain?
 Cookie::$salt = "g3";
 
-// Initialize I18n support
-I18n::instance();
-
 Route::set("default", "(<controller>(/<action>))")
   ->defaults(array("controller" => "albums",
                    "action" => "index"));
 
 // Load all active modules.  This will trigger each module to load its own routes.
 Module::load_modules();
+
+// Initialize I18n support
+I18n::lang('en-us');
+I18n::instance();
 
 register_shutdown_function(array("gallery", "shutdown"));
 
