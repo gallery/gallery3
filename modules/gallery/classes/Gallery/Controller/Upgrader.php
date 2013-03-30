@@ -63,7 +63,7 @@ class Gallery_Controller_Upgrader extends Controller {
       try {
         Access::verify_csrf();
       } catch (Exception $e) {
-        URL::redirect("upgrader");
+        HTTP::redirect("upgrader");
       }
     }
 
@@ -109,9 +109,9 @@ class Gallery_Controller_Upgrader extends Controller {
       }
     } else {
       if ($failed) {
-        URL::redirect("upgrader?failed=" . join(",", $failed));
+        HTTP::redirect("upgrader?failed=" . join(",", $failed));
       } else {
-        URL::redirect("upgrader");
+        HTTP::redirect("upgrader");
       }
     }
   }

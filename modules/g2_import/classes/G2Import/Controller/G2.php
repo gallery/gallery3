@@ -46,7 +46,7 @@ class G2Import_Controller_G2 extends Controller {
       }
 
       if (!$id) {
-        URL::redirect("tag_name/$tag_name", 301);
+        HTTP::redirect("tag_name/$tag_name", 301);
       }
 
       $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
@@ -99,18 +99,18 @@ class G2Import_Controller_G2 extends Controller {
     // Redirect the user to the new url
     switch ($resource_type) {
     case "thumbnail":
-      URL::redirect($item->thumb_url(true), 301);
+      HTTP::redirect($item->thumb_url(true), 301);
 
     case "resize":
-      URL::redirect($item->resize_url(true), 301);
+      HTTP::redirect($item->resize_url(true), 301);
 
     case "file":
     case "full":
-      URL::redirect($item->file_url(true), 301);
+      HTTP::redirect($item->file_url(true), 301);
 
     case "item":
     case "album":
-      URL::redirect($item->abs_url(), 301);
+      HTTP::redirect($item->abs_url(), 301);
 
     case "group":
     case "user":

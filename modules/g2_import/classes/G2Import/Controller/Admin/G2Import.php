@@ -86,7 +86,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
       if (($g2_init_error = G2Import::is_valid_embed_path($embed_path)) == "ok") {
         Message::success(t("Gallery 2 path saved"));
         Module::set_var("g2_import", "embed_path", $embed_path);
-        URL::redirect("admin/g2_import");
+        HTTP::redirect("admin/g2_import");
       } else {
         $form->configure_g2_import->embed_path->add_error($g2_init_error, 1);
       }

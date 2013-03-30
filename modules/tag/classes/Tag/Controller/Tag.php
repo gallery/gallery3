@@ -32,7 +32,7 @@ class Tag_Controller_Tag extends Controller {
       if ($index) {
         $page = ceil($index / $page_size);
         $uri = "tag/$tag_id/" . urlencode($tag->name);
-        URL::redirect($uri . ($page == 1 ? "" : "?page=$page"));
+        HTTP::redirect($uri . ($page == 1 ? "" : "?page=$page"));
       }
     } else {
       $page = (int) $input->get("page", "1");
@@ -44,9 +44,9 @@ class Tag_Controller_Tag extends Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      URL::redirect(URL::merge(array("page" => 1)));
+      HTTP::redirect(URL::merge(array("page" => 1)));
     } else if ($page > $max_pages) {
-      URL::redirect(URL::merge(array("page" => $max_pages)));
+      HTTP::redirect(URL::merge(array("page" => $max_pages)));
     }
 
     $root = Item::root();

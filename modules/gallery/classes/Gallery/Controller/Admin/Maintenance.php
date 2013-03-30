@@ -141,7 +141,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     Task::cancel($task_id);
 
     Message::success(t("Task cancelled"));
-    URL::redirect("admin/maintenance");
+    HTTP::redirect("admin/maintenance");
   }
 
   public function cancel_running_tasks() {
@@ -153,7 +153,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
       ->where("done", "=", 0)
       ->execute();
     Message::success(t("All running tasks cancelled"));
-    URL::redirect("admin/maintenance");
+    HTTP::redirect("admin/maintenance");
   }
 
   /**
@@ -166,7 +166,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     Task::remove($task_id);
 
     Message::success(t("Task removed"));
-    URL::redirect("admin/maintenance");
+    HTTP::redirect("admin/maintenance");
   }
 
   public function remove_finished_tasks() {
@@ -180,7 +180,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
       Task::remove($task->id);
     }
     Message::success(t("All finished tasks removed"));
-    URL::redirect("admin/maintenance");
+    HTTP::redirect("admin/maintenance");
   }
 
   /**
@@ -238,6 +238,6 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   public function maintenance_mode($value) {
     Access::verify_csrf();
     Module::set_var("gallery", "maintenance_mode", $value);
-    URL::redirect("admin/maintenance");
+    HTTP::redirect("admin/maintenance");
   }
 }

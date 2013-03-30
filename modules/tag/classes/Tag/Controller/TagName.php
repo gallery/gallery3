@@ -27,7 +27,7 @@ class Tag_Controller_TagName extends Controller {
       throw new HTTP_Exception_404();
     }
 
-    URL::redirect($tag->abs_url());
+    HTTP::redirect($tag->abs_url());
   }
 
 }

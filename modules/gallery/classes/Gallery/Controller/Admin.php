@@ -24,7 +24,7 @@ class Gallery_Controller_Admin extends Controller {
     if (!Identity::active_user()->admin) {
       if (Identity::active_user()->guest) {
         Session::instance()->set("continue_url", URL::abs_current(true));
-        URL::redirect("login");
+        HTTP::redirect("login");
       } else {
         Access::forbidden();
       }
@@ -88,7 +88,7 @@ class Gallery_Controller_Admin extends Controller {
     }
     // Save the is_ajax value as we lose it, if set, when we redirect
     Session::instance()->set("is_ajax_request", Request::is_ajax());
-    URL::redirect("reauthenticate");
+    HTTP::redirect("reauthenticate");
   }
 }
 

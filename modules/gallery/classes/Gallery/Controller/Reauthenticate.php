@@ -26,7 +26,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
         // for non-admins.
         Access::forbidden();
       } else {
-        URL::redirect(Item::root()->abs_url());
+        HTTP::redirect(Item::root()->abs_url());
       }
     }
 
@@ -56,7 +56,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       if (!Request::is_ajax()) {
         Message::success(t("Successfully re-authenticated!"));
       }
-      URL::redirect(Session::instance()->get_once("continue_url"));
+      HTTP::redirect(Session::instance()->get_once("continue_url"));
     } else {
       $name = $user->name;
       Log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));

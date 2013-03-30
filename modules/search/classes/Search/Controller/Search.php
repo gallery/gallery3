@@ -35,7 +35,7 @@ class Search_Controller_Search extends Controller {
       $index = Search::get_position_within_album($child, $q_with_more_terms, $album);
       if ($index) {
         $page = ceil($index / $page_size);
-        URL::redirect(URL::abs_site("search" .
+        HTTP::redirect(URL::abs_site("search" .
           "?q=" . urlencode($q) .
           "&album=" . urlencode($album->id) .
           ($page == 1 ? "" : "&page=$page")));

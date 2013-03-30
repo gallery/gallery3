@@ -69,7 +69,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     } else {
       return $this->_save_api_key($form);
     }
-    URL::redirect("admin/languages");
+    HTTP::redirect("admin/languages");
   }
 
   private function _save_api_key($form) {
@@ -97,7 +97,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
         }
 
         Log::success(t("gallery"), t("l10n_client API key changed."));
-        URL::redirect("admin/languages");
+        HTTP::redirect("admin/languages");
     } else {
       // Show the page with form errors
       $this->index($form);

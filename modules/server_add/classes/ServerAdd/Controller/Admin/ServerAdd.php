@@ -45,7 +45,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
         Module::set_var("server_add", "authorized_paths", serialize($paths));
         Message::success(t("Added path %path", array("path" => $path)));
         ServerAdd::check_config($paths);
-        URL::redirect("admin/server_add");
+        HTTP::redirect("admin/server_add");
       }
     }
 
@@ -67,7 +67,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
       Module::set_var("server_add", "authorized_paths", serialize($paths));
       ServerAdd::check_config($paths);
     }
-    URL::redirect("admin/server_add");
+    HTTP::redirect("admin/server_add");
   }
 
   public function autocomplete() {

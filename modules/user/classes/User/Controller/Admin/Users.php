@@ -46,9 +46,9 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      URL::redirect(URL::merge(array("page" => 1)));
+      HTTP::redirect(URL::merge(array("page" => 1)));
     } else if ($page > $view->content->pager->total_pages) {
-      URL::redirect(URL::merge(array("page" => $view->content->pager->total_pages)));
+      HTTP::redirect(URL::merge(array("page" => $view->content->pager->total_pages)));
     }
 
     // Join our users against the items table so that we can get a count of their items

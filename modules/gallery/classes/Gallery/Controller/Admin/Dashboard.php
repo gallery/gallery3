@@ -50,7 +50,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
             array("title" => $available["$module_name:$id"])));
       }
     }
-    URL::redirect("admin/dashboard");
+    HTTP::redirect("admin/dashboard");
   }
 
   public function remove_block($id) {
@@ -73,7 +73,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
       Message::success(t("Removed <b>%title</b> block", array("title" => $title)));
     }
 
-    URL::redirect("admin");
+    HTTP::redirect("admin");
   }
 
   public function reorder() {

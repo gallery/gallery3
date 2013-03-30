@@ -91,7 +91,7 @@ class Gallery_Identity {
       } catch (Exception $e) {
         // We don't care if there was a problem destroying the session.
       }
-      URL::redirect(Item::root()->abs_url());
+      HTTP::redirect(Item::root()->abs_url());
     }
   }
 

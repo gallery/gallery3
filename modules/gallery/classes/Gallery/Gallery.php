@@ -41,7 +41,7 @@ class Gallery_Gallery {
           // At this point we're in the admin theme and it doesn't have a themed login page, so
           // we can't just swap in the login controller and have it work.  So redirect back to the
           // root item where we'll run this code again with the site theme.
-          URL::redirect(Item::root()->abs_url());
+          HTTP::redirect(Item::root()->abs_url());
         } else {
           Session::instance()->set("continue_url", URL::abs_site("admin/maintenance"));
           Route::$controller = "login";
@@ -71,7 +71,7 @@ class Gallery_Gallery {
           // At this point we're in the admin theme and it doesn't have a themed login page, so
           // we can't just swap in the login controller and have it work.  So redirect back to the
           // root item where we'll run this code again with the site theme.
-          URL::redirect(Item::root()->abs_url());
+          HTTP::redirect(Item::root()->abs_url());
         } else {
           Session::instance()->set("continue_url", URL::abs_current());
           Route::$controller = "login";

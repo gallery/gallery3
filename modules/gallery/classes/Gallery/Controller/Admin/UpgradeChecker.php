@@ -30,16 +30,16 @@ class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
     } else {
       SiteStatus::clear("upgrade_checker");
     }
-    URL::redirect("admin/dashboard");
+    HTTP::redirect("admin/dashboard");
   }
 
   function remind_me_later() {
     Access::verify_csrf();
     SiteStatus::clear("upgrade_checker");
     if ($referer = Input::instance()->server("HTTP_REFERER")) {
-      URL::redirect($referer);
+      HTTP::redirect($referer);
     } else {
-      URL::redirect(Item::root()->abs_url());
+      HTTP::redirect(Item::root()->abs_url());
     }
   }
 
@@ -52,6 +52,6 @@ class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
     } else {
       Message::success(t("Automatic upgrade checking is disabled."));
     }
-    URL::redirect("admin/dashboard");
+    HTTP::redirect("admin/dashboard");
   }
 }

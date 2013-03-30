@@ -22,8 +22,8 @@ class Gallery_Controller_Logout extends Controller {
     Access::verify_csrf();
     Auth::logout();
     if ($continue_url = Input::instance()->get("continue_url")) {
-      URL::redirect($continue_url);
+      HTTP::redirect($continue_url);
     }
-    URL::redirect(Item::root()->abs_url());
+    HTTP::redirect(Item::root()->abs_url());
   }
 }

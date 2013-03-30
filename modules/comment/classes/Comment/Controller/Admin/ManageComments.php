@@ -138,6 +138,6 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->delete("comments")
       ->where("state", "=", "spam")
       ->execute();
-    URL::redirect("admin/manage_comments/queue/spam");
+    HTTP::redirect("admin/manage_comments/queue/spam");
   }
 }
