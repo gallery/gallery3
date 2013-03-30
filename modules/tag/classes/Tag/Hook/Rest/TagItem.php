@@ -39,7 +39,7 @@ class Tag_Hook_Rest_TagItem {
     $tag = ORM::factory("Tag", $tag_id);
     $item = ORM::factory("Item", $item_id);
     if (!$tag->loaded() || !$item->loaded() || !$tag->has($item) || !Access::can("view", $item)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     return array($tag, $item);

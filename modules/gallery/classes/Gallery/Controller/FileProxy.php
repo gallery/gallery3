@@ -49,7 +49,7 @@ class Gallery_Controller_FileProxy extends Controller {
     // Make sure that the request is for a file inside var
     $offset = strpos(rawurldecode($request_uri), $var_uri);
     if ($offset !== 0) {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 1;
       throw $e;
     }
@@ -61,7 +61,7 @@ class Gallery_Controller_FileProxy extends Controller {
     // path: foo/bar.jpg
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 2;
       throw $e;
     }
@@ -70,28 +70,28 @@ class Gallery_Controller_FileProxy extends Controller {
     $item = Item::find_by_path($path, $type);
 
     if (!$item->loaded()) {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 3;
       throw $e;
     }
 
     // Make sure we have access to the item
     if (!Access::can("view", $item)) {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 4;
       throw $e;
     }
 
     // Make sure we have view_full access to the original
     if ($type == "albums" && !Access::can("view_full", $item)) {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 5;
       throw $e;
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 6;
       throw $e;
     }
@@ -108,7 +108,7 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     if (!file_exists($file)) {
-      $e = new HTTP_Exception_404();
+      $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 7;
       throw $e;
     }

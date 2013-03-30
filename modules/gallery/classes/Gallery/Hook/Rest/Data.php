@@ -44,7 +44,7 @@ class Gallery_Hook_Rest_Data {
     }
 
     if (!file_exists($file)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     header("Content-Length: " . filesize($file));
@@ -87,7 +87,7 @@ class Gallery_Hook_Rest_Data {
   static function resolve($id) {
     $item = ORM::factory("Item", $id);
     if (!Access::can("view", $item)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
     return $item;
   }
@@ -101,7 +101,7 @@ class Gallery_Hook_Rest_Data {
       $file = $item->thumb_path();
     }
     if (!file_exists($file)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     return URL::abs_site("rest/data/{$item->id}?size=$size&m=" . filemtime($file));

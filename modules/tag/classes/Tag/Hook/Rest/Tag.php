@@ -76,7 +76,7 @@ class Tag_Hook_Rest_Tag {
   static function resolve($id) {
     $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     return $tag;

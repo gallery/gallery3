@@ -46,7 +46,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
 
     $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     $form = Tag::get_delete_form($tag);
@@ -76,7 +76,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
 
     $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     $in_place_edit = InPlaceEdit::factory($tag->name)

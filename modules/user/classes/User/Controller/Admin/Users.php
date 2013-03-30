@@ -107,7 +107,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     $user = User::lookup($id);
     if (empty($user)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     $form = $this->_get_user_delete_form_admin($user);
@@ -127,7 +127,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   public function delete_user_form($id) {
     $user = User::lookup($id);
     if (empty($user)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
     $v = new View("admin/users_delete_user.html");
     $v->user = $user;
@@ -140,7 +140,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     $user = User::lookup($id);
     if (empty($user)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     $form = $this->_get_user_edit_form_admin($user);
@@ -180,7 +180,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   public function edit_user_form($id) {
     $user = User::lookup($id);
     if (empty($user)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     print $this->_get_user_edit_form_admin($user);
@@ -244,7 +244,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     $group = Group::lookup($id);
     if (empty($group)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     $form = $this->_get_group_delete_form_admin($group);
@@ -264,7 +264,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   public function delete_group_form($id) {
     $group = Group::lookup($id);
     if (empty($group)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     print $this->_get_group_delete_form_admin($group);
@@ -275,7 +275,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     $group = Group::lookup($id);
     if (empty($group)) {
-       throw new HTTP_Exception_404();
+       throw HTTP_Exception::factory(404);
     }
 
     $form = $this->_get_group_edit_form_admin($group);
@@ -307,7 +307,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   public function edit_group_form($id) {
     $group = Group::lookup($id);
     if (empty($group)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     print $this->_get_group_edit_form_admin($group);

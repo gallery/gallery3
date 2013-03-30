@@ -56,7 +56,7 @@ class Gallery_Controller_Admin extends Controller {
     }
 
     if (!class_exists($controller_name) || !method_exists($controller_name, $method)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     call_user_func_array(array(new $controller_name, $method), $args);
