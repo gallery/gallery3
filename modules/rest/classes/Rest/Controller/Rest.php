@@ -102,6 +102,12 @@ class Rest_Controller_Rest extends Controller {
         throw new Rest_Exception("Bad Request", 400);
       }
 
+      if (($handler_class == "Hook_Rest_Data") && isset($request->params->m)) {
+        // Set the cache buster value as the etag, use to check if cache needs refreshing.
+        // This is easiest to do at the controller level, hence why it's here.
+        $this->check_cache($request->params->m);
+      }
+
       $response = call_user_func(array($handler_class, $handler_method), $request);
       if ($handler_method == "post") {
         // post methods must return a response containing a URI.
