@@ -22,7 +22,7 @@ class Gallery_Controller_Movies extends Controller_Items {
     if (!is_object($movie)) {
       // show() must be public because we route to it in URL::parse_url(), so make
       // sure that we're actually receiving an object
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     Access::required("view", $movie);

@@ -63,7 +63,7 @@ class Comment_Hook_Rest_Comment {
   static function resolve($id) {
     $comment = ORM::factory("Comment", $id);
     if (!Access::can("view", $comment->item())) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
     return $comment;
   }

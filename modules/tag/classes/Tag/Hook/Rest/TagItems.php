@@ -38,7 +38,7 @@ class Tag_Hook_Rest_TagItems {
     Access::required("view", $item);
 
     if (!$tag->loaded()) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     Tag::add($item, $tag->name);

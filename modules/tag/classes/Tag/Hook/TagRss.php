@@ -31,7 +31,7 @@ class Tag_Hook_TagRss {
     if ($feed_id == "tag") {
       $tag = ORM::factory("Tag", $id);
       if (!$tag->loaded()) {
-        throw new HTTP_Exception_404();
+        throw HTTP_Exception::factory(404);
       }
 
       $feed = new stdClass();

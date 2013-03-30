@@ -21,7 +21,7 @@ class Gallery_Controller_Items extends Controller {
   public function __call($function, $args) {
     $item = ORM::factory("Item", (int)$function);
     if (!$item->loaded()) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     // Redirect to the more specific resource type, since it will render differently.  We can't

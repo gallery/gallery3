@@ -39,7 +39,7 @@ class Rss_Controller_Rss extends Controller {
       }
     }
     if (empty($feed)) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {

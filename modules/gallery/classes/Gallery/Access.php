@@ -124,7 +124,7 @@ class Gallery_Access {
     if (!Access::can($perm_name, $item)) {
       if ($perm_name == "view") {
         // Treat as if the item didn't exist, don't leak any information.
-        throw new HTTP_Exception_404();
+        throw HTTP_Exception::factory(404);
       } else {
         Access::forbidden();
       }
