@@ -133,7 +133,7 @@ class Gallery_Item {
    * @param string $filename
    */
   static function convert_filename_to_slug($filename) {
-    $result = str_replace("&", "-" . t("and") . "-", $filename);
+    $result = str_replace("&", "-and-", $filename);  // @todo: add "and" as module variable
     $result = str_replace(" ", "-", $result);
     $result = UTF8::transliterate_to_ascii($result);
     $result = preg_replace("/[^A-Za-z0-9-_]+/", "-", $result);
