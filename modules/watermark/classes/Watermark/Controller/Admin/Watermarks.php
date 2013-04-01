@@ -56,7 +56,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       JSON::reply(array("result" => "error", "html" => (string)$form));
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
-    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
+    header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
   public function form_delete() {
@@ -86,7 +86,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       JSON::reply(array("result" => "error", "html" => (string)$form));
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
-    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
+    header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
   public function form_add() {
@@ -133,7 +133,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       JSON::reply(array("result" => "error", "html" => (string)$form));
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
-    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
+    header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
   private function _update_graphics_rules() {
