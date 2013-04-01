@@ -198,7 +198,7 @@
               </p>
 
               <div class="source">
-                <? if (Kohana_Exception::$source_output and $source_code = Kohana_Exception::debug_source($file, $line)): ?><code><? foreach ($source_code as $num => $row): ?><span class="line <?= ($num == $line) ? "highlight" : ""?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><? endforeach ?></code>
+                <? if (Kohana_Exception::$source_output and $source_code = Kohana_Exception::debug_source($file, $line)): ?><code><? foreach ($source_code as $num => $row): ?><span class="line <?= ($num == $line) ? "highlight" : ""?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::$charset) ?></span><? endforeach ?></code>
                 <? endif ?>
               </div>
             </li>
@@ -240,7 +240,7 @@
               </div>
               <? endif?>
               <? if (Kohana_Exception::$source_output and $step["source"] and isset($source_id)): ?>
-              <pre id="<?= $source_id ?>" class="source collapsed"><code><? foreach ($step["source"] as $num => $row): ?><span class="line <?= ($num == $step["line"]) ? "highlight" : "" ?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><? endforeach ?></code></pre>
+              <pre id="<?= $source_id ?>" class="source collapsed"><code><? foreach ($step["source"] as $num => $row): ?><span class="line <?= ($num == $step["line"]) ? "highlight" : "" ?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::$charset) ?></span><? endforeach ?></code></pre>
               <? endif?>
             </li>
             <? unset($args_id, $source_id) ?>

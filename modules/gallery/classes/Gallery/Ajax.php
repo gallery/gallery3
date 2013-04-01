@@ -24,7 +24,7 @@ class Gallery_Ajax {
    * @param  string $message string to print
    */
   static function response($content) {
-    header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
+    header("Content-Type: text/plain; charset=" . Kohana::$charset);
     print "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n";
     print $content;
   }

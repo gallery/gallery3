@@ -143,7 +143,7 @@ modules/gallery/views/error_admin.html.php                   196 DIRTY    Kohana
 modules/gallery/views/error_admin.html.php                   196 DIRTY    $line
 modules/gallery/views/error_admin.html.php                   201 DIRTY_ATTR ($num==$line)?"highlight":""
 modules/gallery/views/error_admin.html.php                   201 DIRTY    $num
-modules/gallery/views/error_admin.html.php                   201 DIRTY    htmlspecialchars($row,ENT_NOQUOTES,Kohana::CHARSET)
+modules/gallery/views/error_admin.html.php                   201 DIRTY    htmlspecialchars($row,ENT_NOQUOTES,Kohana::$charset)
 modules/gallery/views/error_admin.html.php                   213 DIRTY_ATTR $source_id
 modules/gallery/views/error_admin.html.php                   213 DIRTY_JS $source_id
 modules/gallery/views/error_admin.html.php                   213 DIRTY    Kohana_Exception::debug_path($step["file"])
@@ -159,7 +159,7 @@ modules/gallery/views/error_admin.html.php                   235 DIRTY    Kohana
 modules/gallery/views/error_admin.html.php                   243 DIRTY_ATTR $source_id
 modules/gallery/views/error_admin.html.php                   243 DIRTY_ATTR ($num==$step["line"])?"highlight":""
 modules/gallery/views/error_admin.html.php                   243 DIRTY    $num
-modules/gallery/views/error_admin.html.php                   243 DIRTY    htmlspecialchars($row,ENT_NOQUOTES,Kohana::CHARSET)
+modules/gallery/views/error_admin.html.php                   243 DIRTY    htmlspecialchars($row,ENT_NOQUOTES,Kohana::$charset)
 modules/gallery/views/error_admin.html.php                   253 DIRTY_ATTR $env_id=$error_id."environment"
 modules/gallery/views/error_admin.html.php                   253 DIRTY_JS $env_id
 modules/gallery/views/error_admin.html.php                   255 DIRTY_ATTR $env_id
