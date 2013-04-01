@@ -28,7 +28,7 @@ class Rss_Hook_RssBlock {
     case "rss_feeds":
       $feeds = array();
       foreach (Module::active() as $module) {
-        $class_name = "Hook_" . Inflector::camelize($module->name, true) . "Rss";
+        $class_name = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Rss";
         if (class_exists($class_name) && method_exists($class_name, "available_feeds")) {
           $feeds = array_merge($feeds,
             call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));

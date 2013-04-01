@@ -140,7 +140,7 @@ class Rest_Rest {
       throw HTTP_Exception::factory(404, $url);
     }
 
-    $class = "Hook_Rest_" . Inflector::camelize($components[1], true);
+    $class = "Hook_Rest_" . Inflector::convert_module_to_class_name($components[1]);
     if (!class_exists($class) || !method_exists($class, "resolve")) {
       throw HTTP_Exception::factory(404, $url);
     }
@@ -157,7 +157,7 @@ class Rest_Rest {
     $args = func_get_args();
     $resource_type = array_shift($args);
 
-    $class = "Hook_Rest_" . Inflector::camelize($resource_type, true);
+    $class = "Hook_Rest_" . Inflector::convert_module_to_class_name($resource_type);
     if (!class_exists($class) || !method_exists($class, "url")) {
       throw new Rest_Exception("Bad Request", 400);
     }
