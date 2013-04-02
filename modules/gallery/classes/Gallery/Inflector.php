@@ -19,33 +19,43 @@
  */
 class Gallery_Inflector extends Kohana_Inflector {
   /**
-   * Makes a phrase camel case. Spaces and underscores will be removed.
+   * Converts a module/model name to its corresponding class name (e.g. "foo_bar" --> "FooBar").
+   * This is similar to Inflector::camelize($name) except that it capitalizes the first letter
+   * and assumes the input has no \n\r\t\v, which lets it skip regex for efficiency.
+   * @todo: add unit tests for this function.
    *
-   * We extend Kohana's implementation by adding a second argument which specifies
-   * whether or not to capitalize the first letter, too.  This is useful when converting
-   * between module names and their corresponding classes ("foo_bar" --> "FooBar").
+   *   $name = Inflector::convert_module_to_class_name("gallery");     // "Gallery"
+   *   $name = Inflector::convert_module_to_class_name("foo_bar");     // "FooBar"
+   *   $name = Inflector::convert_module_to_class_name("g2_import");   // "G2Import"
+   *   $name = Inflector::convert_module_to_class_name("m4v_module");  // "M4vModule"
+   *   $name = Inflector::convert_module_to_class_name("j_s_bach");    // "JSBach"
+   *   $name = Inflector::convert_module_to_class_name("orm_example"); // "OrmExample"
    *
-   *     $str = Inflector::camelize('mother cat');     // "motherCat"
-   *     $str = Inflector::camelize('kittens in bed'); // "kittensInBed"
-   *     $str = Inflector::camelize('foo_bar');        // "fooBar"
-   *     $str = Inflector::camelize('foo_bar', true);  // "FooBar"
-   *
-   * @param   string  $str      phrase to camelize
-   * @param   boolean $ucfirst  flag to capitalize the first letter as well (default: false)
-   * @return  string
+   * @param   string  $name  module_or_model_name
+   * @return  string        ClassName
    */
-  public static function camelize($str, $ucfirst=false) {
-    if ($ucfirst) {
-      // This is strongly based on See Kohana_Inflector::camelize() and should give the same result
-      // as ucfirst(Inflector::camelize($str)), but is more direct.  This is because Kohana
-      // prepends a dummy character, runs ucwords, then removes the (now capitalized) dummy
-      // character to get the first letter lowercase.  We simply don't add that dummy character.
-      $str = strtolower(trim($str));
-      $str = ucwords(preg_replace('/[\s_]+/', ' ', $str));
-      return str_replace(' ', '', $str);
-    } else {
-      // Same as default Kohana case.
-      return parent::camelize($str);
-    }
+  public static function convert_module_to_class_name($name) {
+    return str_replace(" ", "", ucwords(strtolower(str_replace("_", " ", $name))));
+  }
+
+  /**
+   * Converts a class name to its corresponding module/model name (e.g. "FooBar" --> "foo_bar").
+   * This is similar to Inflector::decamelize($name, "_") except that it considers every capital
+   * letter the start of a new word, even if it follows a number or another capital letter.  This
+   * ensures that it's the reverse transformation of Inflector::module_to_class_name($name).
+   * @todo: add unit tests for this function.
+   *
+   *   $name = Inflector::convert_class_to_module_name("Gallery");    // "gallery"
+   *   $name = Inflector::convert_class_to_module_name("FooBar");     // "foo_bar"
+   *   $name = Inflector::convert_class_to_module_name("G2Import");   // "g2_import"
+   *   $name = Inflector::convert_class_to_module_name("M4vModule");  // "m4v_module"
+   *   $name = Inflector::convert_class_to_module_name("JSBach");     // "j_s_bach"
+   *   $name = Inflector::convert_class_to_module_name("OrmExample"); // "orm_example"
+   *
+   * @param   string  $name  ClassName
+   * @return  string        module_or_model_name
+   */
+  public static function convert_class_to_module_name($name) {
+    return strtolower(preg_replace("/([^_])([A-Z])/", "$1_$2", trim($name, "_")));
   }
 }
