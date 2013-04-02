@@ -142,7 +142,7 @@ class Gallery_IdentityProvider {
     }
 
     // Test the config group name
-    if (($this->config = Kohana::config("identity." . $config)) === NULL) {
+    if (($this->config = Kohana::$config->load("identity." . $config)) === NULL) {
       throw new Exception("@todo NO_USER_LIBRARY_CONFIGURATION_FOR: $config");
     }
 
