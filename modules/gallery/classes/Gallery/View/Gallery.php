@@ -98,14 +98,15 @@ class Gallery_View_Gallery extends View {
    * @param $group the group of scripts to combine this with.  defaults to "core"
    */
   public function script($file, $group="core") {
-    if (($path = Gallery::find_file("assets", $file, false))) {
+    if ((!$path = Gallery::find_file("assets", $file, false)) &&
+        (!$path = Gallery::find_file("vendor", $file, false))) {
+      Log::add("error", "Can't find script file: $file");
+    } else {
       if (isset($this->combine_queue["script"])) {
         $this->combine_queue["script"][$group][$path] = 1;
       } else {
         return HTML::script($path);
       }
-    } else {
-      Log::add("error", "Can't find script file: $file");
     }
   }
 
@@ -120,14 +121,15 @@ class Gallery_View_Gallery extends View {
    * @param $group the group of css to combine this with.  defaults to "core"
    */
   public function css($file, $group="core") {
-    if (($path = Gallery::find_file("assets", $file, false))) {
+    if ((!$path = Gallery::find_file("assets", $file, false)) &&
+        (!$path = Gallery::find_file("vendor", $file, false))) {
+      Log::add("error", "Can't find css file: $file");
+    } else {
       if (isset($this->combine_queue["css"])) {
         $this->combine_queue["css"][$group][$path] = 1;
       } else {
         return HTML::stylesheet($path);
       }
-    } else {
-      Log::add("error", "Can't find css file: $file");
     }
   }
 
