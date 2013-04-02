@@ -60,7 +60,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     // This view is not themed so we can't use $theme->url() in the view and have to
     // reproduce View_Gallery::url() logic here.
     $atn = Theme::$admin_theme_name;
-    $view->fallback_avatar_url = URL::abs_file("themes/$atn/images/avatar.jpg");
+    $view->fallback_avatar_url = URL::abs_file("themes/$atn/assets/required/avatar.jpg");
 
     $view->page = $page;
     $view->page_type = "collection";
