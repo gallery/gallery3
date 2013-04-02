@@ -37,6 +37,7 @@ if (installer::already_installed()) {
                     "password" => $_POST["dbpass"],
                     "dbname" => $_POST["dbname"],
                     "prefix" => $_POST["prefix"],
+                    "g3_password" => "",
                     "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
     list ($config["host"], $config["port"]) = explode(":", $config["host"] . ":");
     foreach ($config as $k => $v) {
