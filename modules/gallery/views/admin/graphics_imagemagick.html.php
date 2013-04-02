@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="imagemagick" class="g-block<?= $is_active ? " g-selected" : "" ?><?= $tk->installed ? "  g-installed-toolkit" : " g-unavailable" ?>">
-  <img class="logo" width="114" height="118" src="<?= URL::file("modules/gallery/media/graphics/imagemagick.jpg"); ?>" alt="<? t("Visit the ImageMagick project site") ?>" />
+  <img class="logo" width="114" height="118" src="<?= URL::file("modules/gallery/assets/graphics/imagemagick.jpg"); ?>" alt="<? t("Visit the ImageMagick project site") ?>" />
   <h3> <?= t("ImageMagick") ?> </h3>
   <p>
     <?= t("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"%url\">ImageMagick website</a> for more information.",

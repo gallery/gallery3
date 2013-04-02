@@ -74,7 +74,7 @@
 /* Password strength meter ~~~~~~~~~~~~~~~ */
 
 .g-password-strength0 {
-  background: url(../media/progress_bars.png) no-repeat 0 0;
+  background: url(../assets/progress_bars.png) no-repeat 0 0;
   width: 138px;
   height: 7px;
 }

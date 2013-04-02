@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/vendor/ext/css/ext-all.css") ?>" />
 <link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/vendor/ext/css/ux-all.css") ?>" />
-<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/media/organize_frame.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/assets/organize_frame.css") ?>" />
 <style type="text/css">
   .g-organize div.thumb-album div.icon {
     background-image: url(<?= URL::file("modules/organize/vendor/ext/images/default/tree/folder.gif") ?>);

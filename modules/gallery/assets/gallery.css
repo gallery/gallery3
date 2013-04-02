@@ -165,7 +165,7 @@
 }
 
 .ui-autocomplete-loading {
-  background: #e8e8e8 url('../media/loading-small.gif') no-repeat center center;
+  background: #e8e8e8 url('../assets/loading-small.gif') no-repeat center center;
 }
 
 /** *******************************************************************

@@ -506,8 +506,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(768, $photo->height);
     $this->assert_equal(6232, filesize($photo->file_path()));
 
-    // Random photo is gallery/media/graphics/imagemagick.jpg is 114x118 and 20337 bytes
-    $photo->set_data_file(MODPATH . "gallery/media/graphics/imagemagick.jpg");
+    // Random photo is gallery/assets/graphics/imagemagick.jpg is 114x118 and 20337 bytes
+    $photo->set_data_file(MODPATH . "gallery/assets/graphics/imagemagick.jpg");
     $photo->save();
 
     $this->assert_equal(114, $photo->width);
@@ -524,8 +524,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("image/jpeg", $photo->mime_type);
     $orig_name = $photo->name;
 
-    // Random photo is gallery/media/graphics/graphicsmagick.png is 104x76 and 1486 bytes
-    $photo->set_data_file(MODPATH . "gallery/media/graphics/graphicsmagick.png");
+    // Random photo is gallery/assets/graphics/graphicsmagick.png is 104x76 and 1486 bytes
+    $photo->set_data_file(MODPATH . "gallery/assets/graphics/graphicsmagick.png");
     $photo->save();
 
     $this->assert_equal(104, $photo->width);
@@ -795,7 +795,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $item2_orig_slug = $item2->slug;
     $item3_orig_slug = $item3->slug;
 
-    $item2->set_data_file(MODPATH . "gallery/media/graphics/graphicsmagick.png");
+    $item2->set_data_file(MODPATH . "gallery/assets/graphics/graphicsmagick.png");
     $item2->name = "{$item1_orig_base}.png";
     $item2->save();
 

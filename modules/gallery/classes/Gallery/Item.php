@@ -155,7 +155,7 @@ class Gallery_Item {
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     $form->script("")
-      ->url(URL::abs_file("modules/gallery/media/item_form_delete.js"));
+      ->url(URL::abs_file("modules/gallery/assets/item_form_delete.js"));
     return $form;
   }
 
