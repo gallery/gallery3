@@ -63,7 +63,7 @@ class Gallery_ORM extends Kohana_ORM {
   protected function _initialize() {
     if (empty($this->_table_name)) {
       // Get the table name by using Inflector::decamelize() instead of strtolower()
-      $this->_table_name = Inflector::decamelize(substr(get_class($this), 6), "_");
+      $this->_table_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
       // Make the table name plural (if specified)
       if ($this->_table_names_plural === true) {
         $this->_table_name = Inflector::plural($this->_table_name);

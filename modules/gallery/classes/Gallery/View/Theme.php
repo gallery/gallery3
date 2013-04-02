@@ -252,7 +252,7 @@ class Gallery_View_Theme extends View_Gallery {
         if ($module->name == "gallery") {
           continue;
         }
-        $helper_class = "Hook_" . Inflector::camelize($module->name, true) . "Theme";
+        $helper_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
@@ -260,7 +260,7 @@ class Gallery_View_Theme extends View_Gallery {
         }
       }
 
-      $helper_class = "Hook_" . Inflector::camelize(Theme::$site_theme_name, true) . "Theme";
+      $helper_class = "Hook_" . Inflector::convert_module_to_class_name(Theme::$site_theme_name) . "Theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
           array($helper_class, $function),
