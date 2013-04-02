@@ -22,7 +22,7 @@ class Gallery_URL extends Kohana_URL {
    * Just like URL::file() except that it returns an absolute URI
    */
   static function abs_file($path) {
-    return URL::base(false, Request::protocol()) . $path;
+    return URL::base(true, false) . $path;
   }
 
   /**
@@ -30,7 +30,7 @@ class Gallery_URL extends Kohana_URL {
    * doesn't take a protocol parameter.
    */
   static function abs_site($path) {
-    return URL::site($path, Request::protocol());
+    return URL::site($path, true);
   }
 
   /**

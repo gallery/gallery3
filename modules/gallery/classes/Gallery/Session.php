@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 abstract class Gallery_Session extends Kohana_Session {
-  protected static $_abort_save = false;
+  protected $_abort_save = false;
 
   /**
    * Do not save this session.  This is a performance feature only.

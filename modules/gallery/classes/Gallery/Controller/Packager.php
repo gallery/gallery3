@@ -86,7 +86,7 @@ class Gallery_Controller_Packager extends Controller {
       ->where("id", "in", array(1, 2))
       ->execute();
 
-    $dbconfig = Kohana::config('database.default');
+    $dbconfig = Kohana::$config->load('database.default');
     $conn = $dbconfig["connection"];
     $sql_file = DOCROOT . "installer/install.sql";
     if (!is_writable($sql_file)) {

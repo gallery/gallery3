@@ -30,8 +30,10 @@
  *  allow_updates - Flag to indicate that the back end allows updates.
  *  params        - Driver parameters, specific to each driver.
  */
-$config["user"] = array (
-  "driver"        => "gallery",
-  "allow_updates" => true,
-  "params"        => array(),
+return array(
+  "user" => array(
+    "driver"        => "gallery",
+    "allow_updates" => true,
+    "params"        => array(),
+  )
 );
