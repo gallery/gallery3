@@ -709,18 +709,18 @@ li.g-error select {
 .g-denied,
 tr.g-error td.g-error,
 #g-add-photos-status .g-error {
-  background: #f6cbca url('../images/ico-error.png') no-repeat .4em 50%;
+  background: #f6cbca url('../assets/ico-error.png') no-repeat .4em 50%;
   color: #f00;
 }
 
 .g-info {
-  background: #e8e8e8 url('../images/ico-info.png') no-repeat .4em 50%;
+  background: #e8e8e8 url('../assets/ico-info.png') no-repeat .4em 50%;
 }
 
 .g-success,
 .g-allowed,
 #g-add-photos-status .g-success {
-  background: #d9efc2 url('../images/ico-success.png') no-repeat .4em 50%;
+  background: #d9efc2 url('../assets/required/ico-success.png') no-repeat .4em 50%;
 }
 
 tr.g-success {
@@ -728,12 +728,12 @@ tr.g-success {
 }
 
 tr.g-success td.g-success {
-  background-image: url('../images/ico-success.png');
+  background-image: url('../assets/required/ico-success.png');
 }
 
 .g-warning,
 tr.g-warning td.g-warning {
-  background: #fcf9ce url('../images/ico-warning.png') no-repeat .4em 50%;
+  background: #fcf9ce url('../assets/ico-warning.png') no-repeat .4em 50%;
 }
 
 form .g-error {
@@ -776,11 +776,11 @@ form .g-error {
 
 .g-loading-large,
 .g-dialog-loading-large {
-  background: #e8e8e8 url('../images/loading-large.gif') no-repeat center center !important;
+  background: #e8e8e8 url('../assets/loading-large.gif') no-repeat center center !important;
 }
 
 .g-loading-small {
-  background: #e8e8e8 url('../images/loading-small.gif') no-repeat center center !important;
+  background: #e8e8e8 url('../assets/loading-small.gif') no-repeat center center !important;
 }
 
 /** *******************************************************************
@@ -944,7 +944,7 @@ div#g-action-status {
 }
 
 .g-breadcrumbs li {
-  background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
+  background: transparent url('../assets/ico-separator.gif') no-repeat scroll left center;
   float: left;
   padding: 1em 8px 1em 18px;
 }

@@ -11,8 +11,8 @@
   </div>
 
   <div id="g-info">
-    <h1><?= html::purify($item->title) ?></h1>
-    <div><?= nl2br(html::purify($item->description)) ?></div>
+    <h1><?= HTML::purify($item->title) ?></h1>
+    <div><?= nl2br(HTML::purify($item->description)) ?></div>
   </div>
 
   <?= $theme->photo_bottom() ?>
