@@ -28,7 +28,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->where("updated", "<", DB::expr("UNIX_TIMESTAMP() - 86400 * 7"))
       ->execute();
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/manage_comments.html");
     $view->content->menu = $this->_menu($this->_counts());
     print $view;

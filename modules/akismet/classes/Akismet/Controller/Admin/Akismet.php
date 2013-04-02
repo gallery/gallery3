@@ -49,7 +49,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
     }
 
     Akismet::check_config();
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Akismet spam filtering");
     $view->content = new View("admin/akismet.html");
     $view->content->valid_key = $valid_key;
@@ -58,7 +58,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
   }
 
   public function stats() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/akismet_stats.html");
     $view->content->api_key = Module::get_var("akismet", "api_key");
     $view->content->blog_url = URL::base(false, "http");

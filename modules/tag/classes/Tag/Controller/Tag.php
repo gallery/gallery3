@@ -50,7 +50,7 @@ class Tag_Controller_Tag extends Controller {
     }
 
     $root = Item::root();
-    $template = new View_Theme("page.html", "collection", "tag");
+    $template = new View_Theme("required/page.html", "collection", "tag");
     $template->set_global(
       array("page" => $page,
             "max_pages" => $max_pages,
@@ -62,7 +62,7 @@ class Tag_Controller_Tag extends Controller {
               Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),
                                    $tag->url())->set_last()),
             "children_count" => $children_count));
-    $template->content = new View("dynamic.html");
+    $template->content = new View("required/dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
     print $template;
 

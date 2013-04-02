@@ -56,7 +56,7 @@ class Search_Controller_Search extends Controller {
 
     $max_pages = max(ceil($count / $page_size), 1);
 
-    $template = new View_Theme("page.html", "collection", "search");
+    $template = new View_Theme("required/page.html", "collection", "search");
     $root = Item::root();
     $template->set_global(
       array("page" => $page,

@@ -30,7 +30,7 @@ class Gallery_Controller_UserProfile extends Controller {
       throw HTTP_Exception::factory(404);
     }
 
-    $v = new View_Theme("page.html", "other", "profile");
+    $v = new View_Theme("required/page.html", "other", "profile");
     $v->page_title = t("%name Profile", array("name" => $user->display_name()));
     $v->content = new View("gallery/user_profile.html");
 

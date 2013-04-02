@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
   public function index() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Manage sidebar");
     $view->content = new View("admin/sidebar.html");
     $view->content->csrf = Access::csrf_token();
