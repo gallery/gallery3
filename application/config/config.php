@@ -60,11 +60,6 @@ $config["site_protocol"] = "";
 $config["index_page"] = isset($_GET["kohana_uri"]) ? "" : "index.php";
 
 /**
- * Fake file extension that will be added to all generated URLs. Example: .html
- */
-$config["url_suffix"] = "";
-
-/**
  * Length of time of the internal cache in seconds. 0 or FALSE means no caching.
  * The internal cache stores file paths and config entries across requests and
  * can give significant speed improvements at the expense of delayed updating.

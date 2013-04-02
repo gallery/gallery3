@@ -42,12 +42,6 @@ class Gallery_Theme {
     $config = Config::instance();
     $modules = $config->get("core.modules");
 
-    // Normally Route::find_uri() strips off the url suffix for us, but we're working off of the
-    // PATH_INFO here so we need to strip it off manually
-    if ($suffix = Kohana::config("core.url_suffix")) {
-      $path = preg_replace("#" . preg_quote($suffix) . "$#u", "", $path);
-    }
-
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
     self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
