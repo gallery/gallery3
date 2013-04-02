@@ -28,7 +28,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->where("updated", "<", DB::expr("UNIX_TIMESTAMP() - 86400 * 7"))
       ->execute();
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/manage_comments.html");
     $view->content->menu = $this->_menu($this->_counts());
     print $view;
@@ -60,7 +60,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     // This view is not themed so we can't use $theme->url() in the view and have to
     // reproduce View_Gallery::url() logic here.
     $atn = Theme::$admin_theme_name;
-    $view->fallback_avatar_url = URL::abs_file("themes/$atn/images/avatar.jpg");
+    $view->fallback_avatar_url = URL::abs_file("themes/$atn/assets/required/avatar.jpg");
 
     $view->page = $page;
     $view->page_type = "collection";

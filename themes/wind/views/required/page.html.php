@@ -10,19 +10,19 @@
         <?= $page_title ?>
       <? else: ?>
         <? if ($theme->item()): ?>
-          <?= html::purify($theme->item()->title) ?>
+          <?= HTML::purify($theme->item()->title) ?>
         <? elseif ($theme->tag()): ?>
           <?= t("Photos tagged with %tag_title", array("tag_title" => $theme->tag()->name)) ?>
         <? else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
-          <?= html::purify(item::root()->title) ?>
+          <?= HTML::purify(Item::root()->title) ?>
         <? endif ?>
       <? endif ?>
     </title>
     <link rel="shortcut icon"
-          href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>"
+          href="<?= URL::file(Module::get_var("gallery", "favicon_url")) ?>"
           type="image/x-icon" />
     <link rel="apple-touch-icon-precomposed"
-          href="<?= url::file(module::get_var("gallery", "apple_touch_icon_url")) ?>" />
+          href="<?= URL::file(Module::get_var("gallery", "apple_touch_icon_url")) ?>" />
     <? if ($theme->page_type == "collection"): ?>
       <? if (($thumb_proportion = $theme->thumb_proportion($theme->item(), 100, "width")) != 1): ?>
         <? $new_width = round($thumb_proportion * 213) ?>
@@ -61,11 +61,11 @@
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("screen.css") ?>
-    <? if (locales::is_rtl()): ?>
+    <? if (Locales::is_rtl()): ?>
     <?= $theme->css("screen-rtl.css") ?>
     <? endif; ?>
     <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("assets/screen-fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
 
@@ -79,11 +79,11 @@
       <?= $theme->site_status() ?>
       <div id="g-header" class="ui-helper-clearfix">
         <div id="g-banner">
-          <? if ($header_text = module::get_var("gallery", "header_text")): ?>
+          <? if ($header_text = Module::get_var("gallery", "header_text")): ?>
           <?= $header_text ?>
           <? else: ?>
-          <a id="g-logo" class="g-left" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
-            <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= url::file("lib/images/logo.png") ?>" />
+          <a id="g-logo" class="g-left" href="<?= Item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
+            <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= URL::file("lib/images/logo.png") ?>" />
           </a>
           <? endif ?>
           <?= $theme->user_menu() ?>
@@ -104,7 +104,7 @@
            <li class="<?= $breadcrumb->last ? "g-active" : "" ?>
                       <?= $breadcrumb->first ? "g-first" : "" ?>">
             <? if (!$breadcrumb->last): ?> <a href="<?= $breadcrumb->url ?>"><? endif ?>
-            <?= html::purify(text::limit_chars($breadcrumb->title, module::get_var("gallery", "visible_title_length"))) ?>
+            <?= HTML::purify(Text::limit_chars($breadcrumb->title, Module::get_var("gallery", "visible_title_length"))) ?>
             <? if (!$breadcrumb->last): ?></a><? endif ?>
            </li>
           <? endforeach ?>
@@ -122,17 +122,17 @@
         </div>
         <div id="g-sidebar" class="yui-b">
           <? if (!in_array($theme->page_subtype, array("login", "error"))): ?>
-          <?= new View("sidebar.html") ?>
+          <?= new View("wind/sidebar.html") ?>
           <? endif ?>
         </div>
       </div>
       <div id="g-footer" class="ui-helper-clearfix">
         <?= $theme->footer() ?>
-        <? if ($footer_text = module::get_var("gallery", "footer_text")): ?>
+        <? if ($footer_text = Module::get_var("gallery", "footer_text")): ?>
         <?= $footer_text ?>
         <? endif ?>
 
-        <? if (module::get_var("gallery", "show_credits")): ?>
+        <? if (Module::get_var("gallery", "show_credits")): ?>
         <ul id="g-credits" class="g-inline">
           <?= $theme->credits() ?>
         </ul>

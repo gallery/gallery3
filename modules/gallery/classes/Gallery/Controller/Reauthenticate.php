@@ -73,7 +73,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
   }
 
   private static function _show_form($form) {
-    $view = new View_Theme("page.html", "other", "reauthenticate");
+    $view = new View_Theme("required/page.html", "other", "reauthenticate");
     $view->page_title = t("Re-authenticate");
     $view->content = new View("gallery/reauthenticate.html");
     $view->content->form = $form;

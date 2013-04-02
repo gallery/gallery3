@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Admin_Languages extends Controller_Admin {
   public function index($share_translations_form=null) {
-    $v = new View_Admin("admin.html");
+    $v = new View_Admin("required/admin.html");
     $v->page_title = t("Languages and translations");
     $v->content = new View("admin/languages.html");
                 $v->content->available_locales = Locales::available();

@@ -19,7 +19,7 @@
  */
 class Comment_Controller_Admin_Comments extends Controller_Admin {
   public function index() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Comment settings");
     $view->content = new View("admin/comments.html");
     $view->content->form = $this->_get_admin_form();

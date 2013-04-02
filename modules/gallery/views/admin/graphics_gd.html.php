@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gd" class="g-block<?= $is_active ? " g-selected" : "" ?><?= $tk->installed ? " g-installed-toolkit" : " g-unavailable" ?>">
-  <img class="logo" width="170" height="110" src="<?= URL::file("modules/gallery/media/graphics/gd.png"); ?>" alt="<? t("Visit the GD lib project site") ?>" />
+  <img class="logo" width="170" height="110" src="<?= URL::file("modules/gallery/assets/graphics/gd.png"); ?>" alt="<? t("Visit the GD lib project site") ?>" />
   <h3> <?= t("GD") ?> </h3>
   <p>
     <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the <a href=\"%url\">GD website</a> for more information.",

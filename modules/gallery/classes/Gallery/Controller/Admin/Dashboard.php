@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
   public function index() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Dashboard");
     $view->content = new View("admin/dashboard.html");
     $view->content->blocks = BlockManager::get_html("dashboard_center");

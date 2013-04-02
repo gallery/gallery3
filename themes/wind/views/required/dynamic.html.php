@@ -3,7 +3,7 @@
   <div id="g-album-header-buttons">
     <?= $theme->dynamic_top() ?>
   </div>
-  <h1><?= html::purify($title) ?></h1>
+  <h1><?= HTML::purify($title) ?></h1>
 </div>
 
 <ul id="g-album-grid" class="ui-helper-clearfix">
@@ -16,7 +16,7 @@
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>
-    <h2><?= html::purify($child->title) ?></h2>
+    <h2><?= HTML::purify($child->title) ?></h2>
     <?= $theme->thumb_bottom($child) ?>
     <ul class="g-metadata">
       <?= $theme->thumb_info($child) ?>

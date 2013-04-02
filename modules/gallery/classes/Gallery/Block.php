@@ -25,6 +25,6 @@ class Gallery_Block {
   public $anchor = null;
 
   public function __toString() {
-    return View::factory("block.html", get_object_vars($this))->__toString();
+    return View::factory("required/block.html", get_object_vars($this))->__toString();
   }
 }

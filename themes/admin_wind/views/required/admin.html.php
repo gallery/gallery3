@@ -13,10 +13,10 @@
       <? endif ?>
     </title>
     <link rel="shortcut icon"
-          href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>"
+          href="<?= URL::file(Module::get_var("gallery", "favicon_url")) ?>"
           type="image/x-icon" />
     <link rel="apple-touch-icon-precomposed"
-          href="<?= url::file(module::get_var("gallery", "apple_touch_icon_url")) ?>" />
+          href="<?= URL::file(Module::get_var("gallery", "apple_touch_icon_url")) ?>" />
 
     <?= $theme->script("jquery.js") ?>
     <?= $theme->script("jquery.form.js") ?>
@@ -39,11 +39,11 @@
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("screen.css") ?>
-    <? if (locales::is_rtl()): ?>
+    <? if (Locales::is_rtl()): ?>
     <?= $theme->css("screen-rtl.css") ?>
     <? endif; ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("assets/screen-fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
 
@@ -61,7 +61,7 @@
       <?= $theme->site_status() ?>
       <div id="g-header" class="ui-helper-clearfix">
         <?= $theme->admin_header_top() ?>
-        <a id="g-logo" class="g-left" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
+        <a id="g-logo" class="g-left" href="<?= Item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
         </a>
         <?= $theme->user_menu() ?>
@@ -89,7 +89,7 @@
       </div>
       <div id="g-footer" class="g-inline ui-helper-clearfix">
         <?= $theme->admin_footer() ?>
-        <? if (module::get_var("gallery", "show_credits")): ?>
+        <? if (Module::get_var("gallery", "show_credits")): ?>
         <ul id="g-credits" class="g-inline">
           <?= $theme->admin_credits() ?>
         </ul>

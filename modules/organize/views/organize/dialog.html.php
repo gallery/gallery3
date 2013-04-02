@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/media/organize_dialog.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?= URL::file("modules/organize/assets/organize_dialog.css") ?>" />
 <script type="text/javascript">
   var ORGANIZE_TITLE =
     <?= t("Organize :: %album_title", array("album_title" => "__TITLE__"))->for_js() ?>;
