@@ -22,7 +22,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     // If modules need upgrading, this will get recreated in Module::available()
     SiteStatus::clear("upgrade_now");
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Modules");
     $view->content = new View("admin/modules.html");
     $view->content->available = Module::available();

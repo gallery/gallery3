@@ -100,7 +100,7 @@ class User_Controller_Password extends Controller {
   }
 
   private function _new_password_form($hash=null) {
-    $template = new View_Theme("page.html", "other", "reset");
+    $template = new View_Theme("required/page.html", "other", "reset");
 
     $form = new Forge("password/do_reset", "", "post", array("id" => "g-change-password-form"));
     $group = $form->group("reset")->label(t("Change Password"));

@@ -39,7 +39,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
                      array("url" => HTML::mark_clean(URL::site("admin/maintenance")))));
     }
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Maintenance tasks");
     $view->content = new View("admin/maintenance.html");
     $view->content->task_definitions = Task::get_definitions();

@@ -41,7 +41,7 @@ class Gallery_Controller_Login extends Controller {
   }
 
   public function html() {
-    $view = new View_Theme("page.html", "other", "login");
+    $view = new View_Theme("required/page.html", "other", "login");
     $view->page_title = t("Log in to Gallery");
     $view->content = new View("gallery/login_ajax.html");
     $view->content->form = Auth::get_login_form("login/auth_html");
@@ -56,7 +56,7 @@ class Gallery_Controller_Login extends Controller {
       $continue_url = $form->continue_url->value;
       HTTP::redirect($continue_url ? $continue_url : Item::root()->abs_url());
     } else {
-      $view = new View_Theme("page.html", "other", "login");
+      $view = new View_Theme("required/page.html", "other", "login");
       $view->page_title = t("Log in to Gallery");
       $view->content = new View("gallery/login_ajax.html");
       $view->content->form = $form;

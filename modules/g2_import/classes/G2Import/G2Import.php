@@ -624,7 +624,7 @@ class G2Import_G2Import {
       // this case is rare enough that we don't need to take any heroic action here.
       G2Import::log(
         t("%path missing in import; replacing it with a placeholder", array("path" => $g2_path)));
-      $g2_path = MODPATH . "g2_import/media/broken-image.gif";
+      $g2_path = MODPATH . "g2_import/assets/broken-image.gif";
       $g2_type = "GalleryPhotoItem";
       $corrupt = 1;
     }
@@ -636,7 +636,7 @@ class G2Import_G2Import {
         Log::add("alert", "$g2_path is an unsupported image type; using a placeholder gif");
         $messages[] = t("'%path' is an unsupported image type, using a placeholder",
                         array("path" => $g2_path));
-        $g2_path = MODPATH . "g2_import/media/broken-image.gif";
+        $g2_path = MODPATH . "g2_import/assets/broken-image.gif";
         $corrupt = 1;
       }
       try {

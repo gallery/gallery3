@@ -2,8 +2,8 @@
 <? // @todo Set hover on AlbumGrid list items for guest users ?>
 <div id="g-info">
   <?= $theme->album_top() ?>
-  <h1><?= html::purify($item->title) ?></h1>
-  <div class="g-description"><?= nl2br(html::purify($item->description)) ?></div>
+  <h1><?= HTML::purify($item->title) ?></h1>
+  <div class="g-description"><?= nl2br(HTML::purify($item->description)) ?></div>
 </div>
 
 <ul id="g-album-grid" class="ui-helper-clearfix">
@@ -26,17 +26,17 @@
     <?= $theme->thumb_bottom($child) ?>
     <?= $theme->context_menu($child, "#g-item-id-{$child->id} .g-thumbnail") ?>
     <h2><span class="<?= $item_class ?>"></span>
-      <a href="<?= $child->url() ?>"><?= html::purify($child->title) ?></a></h2>
+      <a href="<?= $child->url() ?>"><?= HTML::purify($child->title) ?></a></h2>
     <ul class="g-metadata">
       <?= $theme->thumb_info($child) ?>
     </ul>
   </li>
   <? endforeach ?>
 <? else: ?>
-  <? if ($user->admin || access::can("add", $item)): ?>
-  <? $addurl = url::site("uploader/index/$item->id") ?>
+  <? if ($user->admin || Access::can("add", $item)): ?>
+  <? $addurl = URL::site("uploader/index/$item->id") ?>
   <li><?= t("There aren't any photos here yet! <a %attrs>Add some</a>.",
-            array("attrs" => html::mark_clean("href=\"$addurl\" class=\"g-dialog-link\""))) ?></li>
+            array("attrs" => HTML::mark_clean("href=\"$addurl\" class=\"g-dialog-link\""))) ?></li>
   <? else: ?>
   <li><?= t("There aren't any photos here yet!") ?></li>
   <? endif; ?>

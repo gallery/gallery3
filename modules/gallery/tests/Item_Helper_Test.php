@@ -220,7 +220,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   public function find_by_path_with_png_test() {
     $parent = test::random_album();
     $png = test::random_photo_unsaved($parent);
-    $png->set_data_file(MODPATH . "gallery/media/graphics/graphicsmagick.png");
+    $png->set_data_file(MODPATH . "gallery/assets/graphics/graphicsmagick.png");
     $png->save();
 
     $png_path = "{$parent->name}/{$png->name}";

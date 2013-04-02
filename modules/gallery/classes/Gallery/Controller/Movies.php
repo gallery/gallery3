@@ -27,12 +27,12 @@ class Gallery_Controller_Movies extends Controller_Items {
 
     Access::required("view", $movie);
 
-    $template = new View_Theme("page.html", "item", "movie");
+    $template = new View_Theme("required/page.html", "item", "movie");
     $template->set_global(array("item" => $movie,
                                 "children" => array(),
                                 "children_count" => 0));
     $template->set_global(Item::get_display_context($movie));
-    $template->content = new View("movie.html");
+    $template->content = new View("required/movie.html");
 
     $movie->increment_view_count();
 

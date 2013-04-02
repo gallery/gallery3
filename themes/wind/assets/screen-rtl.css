@@ -83,7 +83,7 @@ input[type=radio] {
 }
 
 .g-breadcrumbs li {
-  background: transparent url('../images/ico-separator-rtl.gif') no-repeat scroll right center;
+  background: transparent url('../assets/ico-separator-rtl.gif') no-repeat scroll right center;
   padding: 1em 18px 1em 8px;
 }
 
@@ -319,7 +319,7 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 #g-view-menu #g-slideshow-link {
-  background-image: url('../images/ico-view-slideshow-rtl.png');
+  background-image: url('../assets/ico-view-slideshow-rtl.png');
 }
 
 #g-sidebar .g-block-content {

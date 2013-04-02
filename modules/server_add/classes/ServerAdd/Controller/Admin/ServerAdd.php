@@ -19,7 +19,7 @@
  */
 class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function index() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Add from server");
     $view->content = new View("admin/server_add.html");
     $view->content->form = $this->_get_admin_form();
@@ -49,7 +49,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
       }
     }
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/server_add.html");
     $view->content->form = $form;
     $view->content->paths = array_keys($paths);

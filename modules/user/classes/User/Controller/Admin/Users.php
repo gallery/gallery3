@@ -19,7 +19,7 @@
  */
 class User_Controller_Admin_Users extends Controller_Admin {
   public function index() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Users and groups");
     $view->page_type = "collection";
     $view->page_subtype = "admin_users";

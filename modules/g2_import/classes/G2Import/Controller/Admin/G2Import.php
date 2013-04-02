@@ -24,7 +24,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
       G2Import::init();
     }
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Gallery 2 import");
     $view->content = new View("admin/g2_import.html");
 
@@ -92,7 +92,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
       }
     }
 
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/g2_import.html");
     $view->content->form = $form;
     G2Import::restore_error_reporting();

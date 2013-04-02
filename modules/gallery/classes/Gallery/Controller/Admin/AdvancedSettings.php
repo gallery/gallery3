@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
   public function index() {
-    $view = new View_Admin("admin.html");
+    $view = new View_Admin("required/admin.html");
     $view->page_title = t("Advanced settings");
     $view->content = new View("admin/advanced_settings.html");
     $view->content->vars = ORM::factory("Var")

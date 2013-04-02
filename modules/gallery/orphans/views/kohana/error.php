@@ -28,7 +28,7 @@ if ($e instanceof HTTP_Exception_404) {
   if (Route::$controller == "file_proxy") {
     print "File not found";
   } else {
-    $view = new View_Theme("page.html", "other", "error");
+    $view = new View_Theme("required/page.html", "other", "error");
     $view->page_title = t("Dang...  Page not found!");
     $view->content = new View("error/404.html");
     $user = Identity::active_user();

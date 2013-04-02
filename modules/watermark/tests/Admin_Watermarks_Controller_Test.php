@@ -30,7 +30,7 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
   public function add_watermark_test() {
     // Source is a jpg file, watermark path has extension jpg
     $name = test::random_name();
-    $source_path = MODPATH . "gallery/media/graphics/imagemagick.jpg";
+    $source_path = MODPATH . "gallery/assets/graphics/imagemagick.jpg";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);
 
@@ -80,7 +80,7 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
   public function add_watermark_rename_legal_file_with_illegal_extension_test() {
     // Source is a jpg file, watermark path has extension php
     $name = test::random_name();
-    $source_path = MODPATH . "gallery/media/graphics/imagemagick.jpg";
+    $source_path = MODPATH . "gallery/assets/graphics/imagemagick.jpg";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
 
