@@ -64,7 +64,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
 
     if (Input::instance()->post("share")) {
-      L10n_Client::submit_translations();
+      L10nClient::submit_translations();
       Message::success(t("Translations submitted"));
     } else {
       return $this->_save_api_key($form);
@@ -75,7 +75,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
   private function _save_api_key($form) {
     $new_key = $form->sharing->api_key->value;
     if ($new_key) {
-      list($connected, $valid) = L10n_Client::validate_api_key($new_key);
+      list($connected, $valid) = L10nClient::validate_api_key($new_key);
       if (!$valid) {
         $form->sharing->api_key->add_error($connected ? "invalid" : "no_connection", 1);
       }
@@ -84,8 +84,8 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
 
     if ($valid) {
-        $old_key = L10n_Client::api_key();
-        L10n_Client::api_key($new_key);
+        $old_key = L10nClient::api_key();
+        L10nClient::api_key($new_key);
         if ($old_key && !$new_key) {
           Message::success(t("Your API key has been cleared."));
         } else if ($old_key && $new_key && $old_key != $new_key) {
@@ -112,8 +112,8 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     $form = new Forge("admin/languages/share", "", "post", array("id" => "g-share-translations-form"));
     $group = $form->group("sharing")
       ->label("Translations API Key");
-    $api_key = L10n_Client::api_key();
-    $server_link = L10n_Client::server_api_key_url();
+    $api_key = L10nClient::api_key();
+    $server_link = L10nClient::server_api_key_url();
     $group->input("api_key")
       ->label(empty($api_key)
               ? t("This is a unique key that will allow you to send translations to the remote

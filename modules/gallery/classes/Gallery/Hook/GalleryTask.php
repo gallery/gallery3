@@ -208,11 +208,11 @@ class Gallery_Hook_GalleryTask {
           $file = DOCROOT . $file;
           switch (pathinfo($file, PATHINFO_EXTENSION)) {
           case "php":
-            L10n_Scanner::scan_php_file($file, $cache);
+            L10nScanner::scan_php_file($file, $cache);
             break;
 
           case "info":
-            L10n_Scanner::scan_info_file($file, $cache);
+            L10nScanner::scan_info_file($file, $cache);
             break;
           }
         }
@@ -231,7 +231,7 @@ class Gallery_Hook_GalleryTask {
 
       case "fetch_updates":  // 70% - 100%
         // Send fetch requests in batches until we're done
-        $num_remaining = L10n_Client::fetch_updates($num_fetched);
+        $num_remaining = L10nClient::fetch_updates($num_fetched);
         if ($num_remaining) {
           $total = $num_fetched + $num_remaining;
           $task->percent_complete = 70 + 30 * ((float) $num_fetched / $total);
