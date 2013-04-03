@@ -153,8 +153,8 @@ class Gallery_SafeString {
    * Purify the string, removing any potentially malicious or unsafe HTML / JavaScript.
    */
   private static function _purify_for_html($dirty_html) {
-    if (class_exists("purifier") && method_exists("purifier", "purify")) {
-      return purifier::purify($dirty_html);
+    if (class_exists("Purifier") && method_exists("Purifier", "purify")) {
+      return Purifier::purify($dirty_html);
     } else {
       return self::_escape_for_html($dirty_html);
     }
