@@ -18,10 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
-  private $_comment;
-
   public function setup() {
-    Input::instance()->ip_address = "1.1.1.1";
+    Request::$client_ip = "1.1.1.1";
     Request::set_user_agent("Akismet_Helper_Test");
     Module::set_var("akismet", "api_key", "TEST_KEY");
   }
