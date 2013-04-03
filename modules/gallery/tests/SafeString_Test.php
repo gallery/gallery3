@@ -91,7 +91,7 @@ class SafeString_Test extends Gallery_Unit_Test_Case {
 
   public function purify_test() {
     $safe_string = SafeString::purify("hello <p  >world</p>");
-    $expected = (class_exists("purifier") && method_exists("purifier", "purify"))
+    $expected = (class_exists("Purifier") && method_exists("Purifier", "purify"))
       ? "hello <p>world</p>"
       : "hello &lt;p  &gt;world&lt;/p&gt;";
     $this->assert_equal($expected, $safe_string);
@@ -100,7 +100,7 @@ class SafeString_Test extends Gallery_Unit_Test_Case {
   public function purify_twice_test() {
     $safe_string = SafeString::purify("hello <p  >world</p>");
     $safe_string_2 = SafeString::purify($safe_string);
-    $expected = (class_exists("purifier") && method_exists("purifier", "purify"))
+    $expected = (class_exists("Purifier") && method_exists("Purifier", "purify"))
       ? "hello <p>world</p>"
       : "hello &lt;p  &gt;world&lt;/p&gt;";
     $this->assert_equal($expected, $safe_string_2);
