@@ -18,11 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Helper_Test extends Gallery_Unit_Test_Case {
-  private $_ip_address;
+  private $_client_ip;
   private $_user_agent;
+  private $_save;
 
   public function setup() {
-    $this->_ip_address = Input::instance()->ip_address;
+    $this->_client_ip = Request::$client_ip;
     $this->_user_agent = Request::user_agent();
     $this->_save = $_SERVER;
 
@@ -42,7 +43,7 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function teardown() {
-    Input::instance()->ip_address = $this->_ip_address;
+    Request::$client_ip = $this->_client_ip;
     Request::set_user_agent($this->_user_agent);
     $_SERVER = $this->_save;
   }
