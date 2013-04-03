@@ -21,7 +21,7 @@
 /**
  * Scans all source code for messages that need to be localized.
  */
-class Gallery_L10n_Scanner {
+class Gallery_L10nScanner {
   // Based on Drupal's potx module, originally written by:
   // Gbor Hojtsy http://drupal.org/user/4166
   public static $cache;
@@ -74,7 +74,7 @@ class Gallery_L10n_Scanner {
     unset($raw_tokens);
 
     if (!empty($func_token_list["t"])) {
-      $errors = L10n_Scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
+      $errors = L10nScanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
       foreach ($errors as $line => $error) {
         Log::add(
           "error", "Translation scanner error.  " .
@@ -83,7 +83,7 @@ class Gallery_L10n_Scanner {
     }
 
     if (!empty($func_token_list["t2"])) {
-      $errors = L10n_Scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
+      $errors = L10nScanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
       foreach ($errors as $line => $error) {
         Log::add(
           "error", "Translation scanner error.  " .
@@ -96,7 +96,7 @@ class Gallery_L10n_Scanner {
     $info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
     foreach (array('name', 'description') as $property) {
       if (isset($info->$property)) {
-        L10n_Scanner::process_message($info->$property, $cache);
+        L10nScanner::process_message($info->$property, $cache);
       }
     }
   }
@@ -113,7 +113,7 @@ class Gallery_L10n_Scanner {
         if (in_array($next_token, array(")", ","))
             && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {
           $message = self::_escape_quoted_string($first_param[1]);
-          L10n_Scanner::process_message($message, $cache);
+          L10nScanner::process_message($message, $cache);
         } else {
           if (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING)) {
             // Malformed string literals; escalate this
@@ -144,7 +144,7 @@ class Gallery_L10n_Scanner {
             && is_array($second_param) && $second_param[0] == T_CONSTANT_ENCAPSED_STRING) {
           $singular = self::_escape_quoted_string($first_param[1]);
           $plural = self::_escape_quoted_string($second_param[1]);
-          L10n_Scanner::process_message(array("one" => $singular, "other" => $plural), $cache);
+          L10nScanner::process_message(array("one" => $singular, "other" => $plural), $cache);
         } else {
           if (is_array($first_param) && $first_param[0] == T_CONSTANT_ENCAPSED_STRING) {
             $errors[$first_param[2]] = var_export(

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_L10n_Client extends Controller {
+class Gallery_Controller_L10nClient extends Controller {
   public function save() {
     Access::verify_csrf();
     if (!Identity::active_user()->admin) {
@@ -40,7 +40,7 @@ class Gallery_Controller_L10n_Client extends Controller {
 
     $is_empty = true;
     if ($is_plural) {
-      $plural_forms = L10n_Client::plural_forms($locale);
+      $plural_forms = L10nClient::plural_forms($locale);
       $translation = array();
       foreach($plural_forms as $plural_form) {
         $value = $input->post("l10n-edit-plural-translation-$plural_form");
@@ -158,7 +158,7 @@ class Gallery_Controller_L10n_Client extends Controller {
       foreach ($calls as $key => $call) {
         list ($message, $options) = $call;
         // Ensure that the message is in the DB
-        L10n_Scanner::process_message($message, $cache);
+        L10nScanner::process_message($message, $cache);
         // Note: Not interpolating placeholders for the actual translation input field.
         // TODO: Might show a preview w/ interpolations (using $options)
         $translation = isset($translations[$key]) ? $translations[$key] : '';
@@ -170,7 +170,7 @@ class Gallery_Controller_L10n_Client extends Controller {
       $v = new View('gallery/l10n_client.html');
       $v->string_list = $string_list;
       $v->l10n_search_form = self::_l10n_client_search_form();
-      $v->plural_forms = L10n_Client::plural_forms($locale);
+      $v->plural_forms = L10nClient::plural_forms($locale);
       return $v;
     }
 
