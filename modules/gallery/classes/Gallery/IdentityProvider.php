@@ -150,9 +150,8 @@ class Gallery_IdentityProvider {
     $driver = "IdentityProvider_" . Inflector::convert_module_to_class_name($this->config["driver"]);
 
     // Load the driver
-    if ( ! Kohana::auto_load($driver)) {
-      throw new Kohana_Exception("core.driver_not_found", $this->config["driver"],
-                                 get_class($this));
+    if (!class_exists($driver)) {
+      throw new Kohana_Exception("@TODO Missing IdentityProvider: $driver");
     }
 
     // Initialize the driver
@@ -164,7 +163,7 @@ class Gallery_IdentityProvider {
                                  get_class($this), "IdentityProvider_Driver");
     }
 
-    Log::add("debug", "Identity Library initialized");
+    Log::instance()->add(Log::DEBUG, "Identity Library initialized");
   }
 
   /**
