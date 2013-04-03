@@ -180,9 +180,29 @@ Cache::$default = "database";
 // to the domain?
 Cookie::$salt = "g3";
 
+// Set our admin and default routes.  Since these are the only two controller directories we use, we
+// can remove all other underscores.  In Route::matches(), this filter is called *after* ucwords, so
+// "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and
+// "file_proxy" maps to "Controller_FileProxy".
+Route::set("admin", "<directory>(/<controller>(/<action>))", array("directory" => "admin"))
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      return $params;
+    })
+  ->defaults(array(
+      "controller" => "dashboard",
+      "action" => "index"
+    ));
+
 Route::set("default", "(<controller>(/<action>))")
-  ->defaults(array("controller" => "albums",
-                   "action" => "index"));
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      return $params;
+    })
+  ->defaults(array(
+      "controller" => "albums",
+      "action" => "index"
+    ));
 
 // Load all active modules.  This will trigger each module to load its own routes.
 Module::load_modules();
