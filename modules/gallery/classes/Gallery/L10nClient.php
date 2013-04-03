@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_L10n_Client {
+class Gallery_L10nClient {
 
   private static function _server_url($path) {
     return "http://galleryproject.org/translations/$path";
@@ -39,14 +39,14 @@ class Gallery_L10n_Client {
   }
 
   static function server_uid($api_key=null) {
-    $api_key = $api_key == null ? L10n_Client::api_key() : $api_key;
+    $api_key = $api_key == null ? L10nClient::api_key() : $api_key;
     $parts = explode(":", $api_key);
     return empty($parts) ? 0 : $parts[0];
   }
 
   private static function _sign($payload, $api_key=null) {
-    $api_key = $api_key == null ? L10n_Client::api_key() : $api_key;
-    return md5($api_key . $payload . L10n_Client::client_token());
+    $api_key = $api_key == null ? L10nClient::api_key() : $api_key;
+    return md5($api_key . $payload . L10nClient::client_token());
   }
 
   static function validate_api_key($api_key) {
@@ -57,9 +57,9 @@ class Gallery_L10n_Client {
     try {
       list ($response_data, $response_status) = Remote::post(
         $url, array("version" => $version,
-                    "client_token" => L10n_Client::client_token(),
+                    "client_token" => L10nClient::client_token(),
                     "signature" => $signature,
-                    "uid" => L10n_Client::server_uid($api_key)));
+                    "uid" => L10nClient::server_uid($api_key)));
     } catch (ErrorException $e) {
       // Log the error, but then return a "can't make connection" error
       Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
@@ -223,9 +223,9 @@ class Gallery_L10n_Client {
 
     list ($response_data, $response_status) = Remote::post(
       $url, array("data" => $request_data,
-                  "client_token" => L10n_Client::client_token(),
+                  "client_token" => L10nClient::client_token(),
                   "signature" => $signature,
-                  "uid" => L10n_Client::server_uid()));
+                  "uid" => L10nClient::server_uid()));
 
     if (!Remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_SUBMISSION_FAILED " . $response_status);

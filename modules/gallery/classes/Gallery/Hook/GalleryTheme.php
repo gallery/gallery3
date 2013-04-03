@@ -70,7 +70,7 @@ class Gallery_Hook_GalleryTheme {
     }
     $content = "";
     if ($session->get("l10n_mode", false)) {
-      $content .= Controller_L10n_Client::l10n_form();
+      $content .= Controller_L10nClient::l10n_form();
     }
 
     if ($session->get_once("after_install")) {
@@ -116,7 +116,7 @@ class Gallery_Hook_GalleryTheme {
     }
 
     if ($session->get("l10n_mode", false)) {
-      $content .= "\n" . Controller_L10n_Client::l10n_form();
+      $content .= "\n" . Controller_L10nClient::l10n_form();
     }
     return $content;
   }
