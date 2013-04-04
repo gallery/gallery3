@@ -179,6 +179,13 @@ Session::instance();
 // that we provide.
 Cache::$default = "database";
 
+// Setup our cookie configuration.
+// An empty $domain should restrict cookie access to the current domain (and, for some browsers,
+// its subdomains).  Change this only if you want to keep the same cookie across multiple domains.
+Cookie::$domain = "";
+Cookie::$httponly = true;
+Cookie::$secure = !empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on");
+
 // Pick a salt for our cookies.
 // @todo: should this be something different for each system?  Perhaps something tied
 // to the domain?
