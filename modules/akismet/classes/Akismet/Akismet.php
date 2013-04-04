@@ -108,7 +108,7 @@ class Akismet_Akismet {
 
 
   static function _build_verify_request($api_key) {
-    $base_url = URL::base(false, "http");
+    $base_url = URL::base("http", false);
     $query_string = "key={$api_key}&blog=$base_url";
 
     $version = Module::get_version("akismet");
@@ -136,7 +136,7 @@ class Akismet_Akismet {
     $comment_data["REMOTE_HOST"] = $comment->server_remote_host;
     $comment_data["REMOTE_PORT"] = $comment->server_remote_port;
     $comment_data["SERVER_HTTP_ACCEPT_CHARSET"] = $comment->server_http_accept_charset;
-    $comment_data["blog"] = URL::base(false, "http");
+    $comment_data["blog"] = URL::base("http", false);
     $comment_data["comment_author"] = $comment->author_name();
     $comment_data["comment_author_email"] = $comment->author_email();
     $comment_data["comment_author_url"] = $comment->author_url();
