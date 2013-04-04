@@ -59,17 +59,21 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
     parent::validate($array);
   }
 
-  public function save() {
-    if (!$this->loaded()) {
-      // New group
-      parent::save();
-      Module::event("group_created", $this);
-    } else {
-      // Updated group
-      $original = ORM::factory("Group", $this->id);
-      parent::save();
-      Module::event("group_updated", $original, $this);
-    }
+  public function create(Validation $validation=null) {
+
+    Module::event("group_before_create", $this);
+    parent::create($validation);
+    Module::event("group_created", $this);
+
+    $this->users_cache = null;
+    return $this;
+  }
+
+  public function update(Validation $validation=null) {
+    Module::event("group_before_update", $this);
+    $original = ORM::factory("Group", $this->id);
+    parent::update($validation);
+    Module::event("group_updated", $original, $this);
 
     $this->users_cache = null;
     return $this;

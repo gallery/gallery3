@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
-  protected $has_and_belongs_to_many = array("groups");
+  protected $_has_many = array("group" => array("foreign_key" => "id"));
   protected $password_length = null;
   protected $groups_cache = null;
 
@@ -93,31 +93,47 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   }
 
   /**
-   * Handle any business logic necessary to create or update a user.
-   * @see ORM::save()
+   * Handle any business logic necessary to create a user.
+   * @see ORM::create()
    *
    * @return ORM Model_User
    */
-  public function save() {
+  public function create(Validation $validation=null) {
     if ($this->full_name === null) {
       $this->full_name = "";
     }
 
-    if (!$this->loaded()) {
-      // New user
-      $this->add(Group::everybody());
-      if (!$this->guest) {
-        $this->add(Group::registered_users());
-      }
+    Module::event("user_before_create");
 
-      parent::save();
-      Module::event("user_created", $this);
-    } else {
-      // Updated user
-      $original = ORM::factory("User", $this->id);
-      parent::save();
-      Module::event("user_updated", $original, $this);
+    $this->add(Group::everybody());
+    if (!$this->guest) {
+      $this->add(Group::registered_users());
     }
+
+    parent::save($validation);
+    Module::event("user_created", $this);
+
+    $this->groups_cache = null;
+    return $this;
+  }
+
+  /**
+   * Handle any business logic necessary to update a user.
+   * @see ORM::update()
+   *
+   * @return ORM Model_User
+   */
+  public function update(Validation $validation=null) {
+    if ($this->full_name === null) {
+      $this->full_name = "";
+    }
+
+    Module::event("user_before_update");
+
+    // Updated user
+    $original = ORM::factory("User", $this->id);
+    parent::save();
+    Module::event("user_updated", $original, $this);
 
     $this->groups_cache = null;
     return $this;
