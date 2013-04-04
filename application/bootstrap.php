@@ -208,7 +208,7 @@ Route::set("admin_forms", "form/<type>/<directory>/<controller>",
     });
 
 Route::set("site_forms", "form/<type>/<controller>",
-           array("type" => "(edit|add)")
+           array("type" => "(edit|add)"))
   ->filter(function($route, $params, $request) {
       $params["controller"] = str_replace("_", "", $params["controller"]);
       $params["action"] = "form_" . $params["type"];
