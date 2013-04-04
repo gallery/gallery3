@@ -81,13 +81,14 @@ Kohana::init(
   array(
     /**
      * Base path of the web site. If this includes a domain, eg: localhost/kohana/
-     * then a full URL will be used, eg: http://localhost/kohana/. If it only includes
-     * the path, and a site_protocol is specified, the domain will be auto-detected.
+     * then a full URL will be used, eg: http://localhost/kohana/.
+     *
+     * If you'd like to force a site protocol (e.g. https), include it in the base_url.
      *
      * Here we do our best to autodetect the base path to Gallery.  If your url is something like:
      *   http://example.com/gallery3/index.php/album73/photo5.jpg?param=value
      *
-     * We want the site_domain to be:
+     * We want the base_url to be:
      *   /gallery3
      *
      * In the above example, $_SERVER["SCRIPT_NAME"] contains "/gallery3/index.php" so
@@ -120,8 +121,10 @@ Kohana::init(
 
 /**
  * Attach the file write to logging. Multiple writers are supported.
+ * The second parameter is the log threshold, which uses the standard
+ * PHP constants (see http://php.net/manual/en/function.syslog.php).
  */
-Kohana::$log->attach(new Log_File(VARPATH . "logs"));
+Kohana::$log->attach(new Log_File(VARPATH . "logs"), LOG_NOTICE);
 
 /**
  * Attach a file reader to config. Multiple readers are supported.
@@ -168,6 +171,10 @@ isset($_GET["g3sid"]) && $_COOKIE["g3sid"] = $_GET["g3sid"];
 isset($_POST["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_POST["user_agent"];
 isset($_GET["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_GET["user_agent"];
 
+// Setup our file upload configuration.
+Upload::$remove_spaces = false;
+Upload::$default_directory = VARPATH . "uploads";
+
 // Initialize our session support
 Session::instance();
 
@@ -175,16 +182,41 @@ Session::instance();
 // that we provide.
 Cache::$default = "database";
 
+// Setup our cookie configuration.
+// An empty $domain should restrict cookie access to the current domain (and, for some browsers,
+// its subdomains).  Change this only if you want to keep the same cookie across multiple domains.
+Cookie::$domain = "";
+Cookie::$httponly = true;
+Cookie::$secure = !empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on");
+
 // Pick a salt for our cookies.
 // @todo: should this be something different for each system?  Perhaps something tied
 // to the domain?
 Cookie::$salt = "g3";
 
-// Set our admin and default routes.  Since these are the only two controller directories we use, we
+// Set our routes.  Since there are the only two controller directories we use (root and admin), we
 // can remove all other underscores.  In Route::matches(), this filter is called *after* ucwords, so
 // "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and
 // "file_proxy" maps to "Controller_FileProxy".
-Route::set("admin", "<directory>(/<controller>(/<action>))", array("directory" => "admin"))
+
+Route::set("admin_forms", "form/<type>/<directory>/<controller>",
+           array("type" => "(edit|add)", "directory" => "admin"))
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      $params["action"] = "form_" . $params["type"];
+      return $params;
+    });
+
+Route::set("site_forms", "form/<type>/<controller>",
+           array("type" => "(edit|add)")
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      $params["action"] = "form_" . $params["type"];
+      return $params;
+    });
+
+Route::set("admin", "<directory>(/<controller>(/<action>))",
+           array("directory" => "admin"))
   ->filter(function($route, $params, $request) {
       $params["controller"] = str_replace("_", "", $params["controller"]);
       return $params;
@@ -194,8 +226,12 @@ Route::set("admin", "<directory>(/<controller>(/<action>))", array("directory" =
       "action" => "index"
     ));
 
-Route::set("default", "(<controller>(/<action>))")
+Route::set("site", "(<controller>(/<action>))")
   ->filter(function($route, $params, $request) {
+      if (substr($params["controller"], 0, 6) == "Admin_") {
+        // Admin controllers are not available, except via /admin
+        return false;
+      }
       $params["controller"] = str_replace("_", "", $params["controller"]);
       return $params;
     })
