@@ -194,11 +194,29 @@ Cookie::$secure = !empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on");
 // to the domain?
 Cookie::$salt = "g3";
 
-// Set our admin and default routes.  Since these are the only two controller directories we use, we
+// Set our routes.  Since there are the only two controller directories we use (root and admin), we
 // can remove all other underscores.  In Route::matches(), this filter is called *after* ucwords, so
 // "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and
 // "file_proxy" maps to "Controller_FileProxy".
-Route::set("admin", "<directory>(/<controller>(/<action>))", array("directory" => "admin"))
+
+Route::set("admin_forms", "form/<type>/<directory>/<controller>",
+           array("type" => "(edit|add)", "directory" => "admin"))
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      $params["action"] = "form_" . $params["type"];
+      return $params;
+    });
+
+Route::set("site_forms", "form/<type>/<controller>",
+           array("type" => "(edit|add)")
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      $params["action"] = "form_" . $params["type"];
+      return $params;
+    });
+
+Route::set("admin", "<directory>(/<controller>(/<action>))",
+           array("directory" => "admin"))
   ->filter(function($route, $params, $request) {
       $params["controller"] = str_replace("_", "", $params["controller"]);
       return $params;
@@ -208,8 +226,12 @@ Route::set("admin", "<directory>(/<controller>(/<action>))", array("directory" =
       "action" => "index"
     ));
 
-Route::set("default", "(<controller>(/<action>))")
+Route::set("site", "(<controller>(/<action>))")
   ->filter(function($route, $params, $request) {
+      if (substr($params["controller"], 0, 6) == "Admin_") {
+        // Admin controllers are not available, except via /admin
+        return false;
+      }
       $params["controller"] = str_replace("_", "", $params["controller"]);
       return $params;
     })
