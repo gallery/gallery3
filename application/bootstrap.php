@@ -81,13 +81,14 @@ Kohana::init(
   array(
     /**
      * Base path of the web site. If this includes a domain, eg: localhost/kohana/
-     * then a full URL will be used, eg: http://localhost/kohana/. If it only includes
-     * the path, and a site_protocol is specified, the domain will be auto-detected.
+     * then a full URL will be used, eg: http://localhost/kohana/.
+     *
+     * If you'd like to force a site protocol (e.g. https), include it in the base_url.
      *
      * Here we do our best to autodetect the base path to Gallery.  If your url is something like:
      *   http://example.com/gallery3/index.php/album73/photo5.jpg?param=value
      *
-     * We want the site_domain to be:
+     * We want the base_url to be:
      *   /gallery3
      *
      * In the above example, $_SERVER["SCRIPT_NAME"] contains "/gallery3/index.php" so
@@ -120,8 +121,10 @@ Kohana::init(
 
 /**
  * Attach the file write to logging. Multiple writers are supported.
+ * The second parameter is the log threshold, which uses the standard
+ * PHP constants (see http://php.net/manual/en/function.syslog.php).
  */
-Kohana::$log->attach(new Log_File(VARPATH . "logs"));
+Kohana::$log->attach(new Log_File(VARPATH . "logs"), LOG_NOTICE);
 
 /**
  * Attach a file reader to config. Multiple readers are supported.
