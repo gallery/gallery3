@@ -168,6 +168,10 @@ isset($_GET["g3sid"]) && $_COOKIE["g3sid"] = $_GET["g3sid"];
 isset($_POST["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_POST["user_agent"];
 isset($_GET["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_GET["user_agent"];
 
+// Setup our file upload configuration.
+Upload::$remove_spaces = false;
+Upload::$default_directory = VARPATH . "uploads";
+
 // Initialize our session support
 Session::instance();
 
