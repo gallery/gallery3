@@ -61,7 +61,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
     $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/akismet_stats.html");
     $view->content->api_key = Module::get_var("akismet", "api_key");
-    $view->content->blog_url = URL::base(false, "http");
+    $view->content->blog_url = URL::base("http", false);
     print $view;
   }
 }
