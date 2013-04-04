@@ -674,7 +674,7 @@ class Gallery_Access {
       $dirs[] = dirname($album->thumb_path());
     }
 
-    $base_url = URL::base(true);
+    $base_url = URL::base(null, true);
     $sep = "?";
     if (strpos($base_url, "?") !== false) {
       $sep = "&";
