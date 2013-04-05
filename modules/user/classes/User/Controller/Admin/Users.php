@@ -314,7 +314,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   }
 
   /* User Form Definitions */
-  static function _get_user_edit_form_admin($user) {
+  private static function _get_user_edit_form_admin($user) {
     $form = new Forge(
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit user"));
@@ -351,7 +351,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  static function _get_user_add_form_admin() {
+  private static function _get_user_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
     $group = $form->group("add_user")->label(t("Add user"));
     $group->input("name")->label(t("Username"))->id("g-username")

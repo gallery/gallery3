@@ -110,7 +110,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     return $form;
   }
 
-  function _validate_page_size($input) {
+  public function _validate_page_size($input) {
     if ($input->value < 1) {
       $input->add_error("valid_min_value", true);
     }

@@ -78,7 +78,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Item::set_display_context_callback("Controller_Albums::get_display_context");
   }
 
-  static function get_display_context($item) {
+  public static function get_display_context($item) {
     $where = array(array("type", "!=", "album"));
     $position = Item::get_position($item, $where);
     if ($position > 1) {
@@ -98,7 +98,7 @@ class Gallery_Controller_Albums extends Controller_Items {
                  "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
   }
 
-  static function get_siblings($item, $limit=null, $offset=null) {
+  public static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Model_Item::siblings() if we use this more broadly.
     return $item->parent()->viewable()->children($limit, $offset);
   }
