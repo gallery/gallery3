@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Dashboard");
     $view->content = new View("admin/dashboard.html");
@@ -30,7 +30,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
     print $view;
   }
 
-  public function add_block() {
+  public function action_add_block() {
     Access::verify_csrf();
 
     $form = Hook_GalleryBlock::get_add_block_form();
@@ -53,7 +53,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
     HTTP::redirect("admin/dashboard");
   }
 
-  public function remove_block($id) {
+  public function action_remove_block($id) {
     Access::verify_csrf();
 
     $blocks_center = BlockManager::get_active("dashboard_center");
@@ -76,7 +76,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
     HTTP::redirect("admin");
   }
 
-  public function reorder() {
+  public function action_reorder() {
     Access::verify_csrf();
 
     $active_set = array();

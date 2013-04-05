@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Movies extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     // Print screen from new form.
     $form = $this->_get_admin_form();
     $this->_print_view($form);
   }
 
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
     $form = $this->_get_admin_form();
     if ($form->validate()) {

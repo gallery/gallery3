@@ -34,12 +34,12 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);
 
-    // Setup and run Controller_Admin_Watermarks::add
+    // Setup and run Controller_Admin_Watermarks::action_add
     $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
     $_POST["csrf"] = Access::csrf_token();
     ob_start();
-    $controller->add();
+    $controller->action_add();
     $results = ob_get_clean();
 
     // Add should be successful
@@ -60,12 +60,12 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
 
-    // Setup and run Controller_Admin_Watermarks::add
+    // Setup and run Controller_Admin_Watermarks::action_add
     $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
     $_POST["csrf"] = Access::csrf_token();
     ob_start();
-    $controller->add();
+    $controller->action_add();
     $results = ob_get_clean();
 
     // Delete all files marked using System::delete_later (from Hook_GalleryEvent::gallery_shutdown)
@@ -84,12 +84,12 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
 
-    // Setup and run Controller_Admin_Watermarks::add
+    // Setup and run Controller_Admin_Watermarks::action_add
     $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
     $_POST["csrf"] = Access::csrf_token();
     ob_start();
-    $controller->add();
+    $controller->action_add();
     $results = ob_get_clean();
 
     // Add should be successful with file renamed as jpg
@@ -110,12 +110,12 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);
 
-    // Setup and run Controller_Admin_Watermarks::add
+    // Setup and run Controller_Admin_Watermarks::action_add
     $controller = new Controller_Admin_Watermarks();
     $_POST["file"] = $watermark_path;
     $_POST["csrf"] = Access::csrf_token();
     ob_start();
-    $controller->add();
+    $controller->action_add();
     $results = ob_get_clean();
 
     // Delete all files marked using System::delete_later (from Hook_GalleryEvent::gallery_shutdown)

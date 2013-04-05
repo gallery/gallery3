@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $name = Module::get_var("watermark", "name");
 
     $view = new View_Admin("required/admin.html");
@@ -34,11 +34,11 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
     print $view;
   }
 
-  public function form_edit() {
+  public function action_form_edit() {
     print Watermark::get_edit_form();
   }
 
-  public function edit() {
+  public function action_edit() {
     Access::verify_csrf();
 
     $form = Watermark::get_edit_form();
@@ -59,11 +59,11 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
     header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
-  public function form_delete() {
+  public function action_form_delete() {
     print Watermark::get_delete_form();
   }
 
-  public function delete() {
+  public function action_delete() {
     Access::verify_csrf();
 
     $form = Watermark::get_delete_form();
@@ -89,11 +89,11 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
     header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
-  public function form_add() {
+  public function action_form_add() {
     print Watermark::get_add_form();
   }
 
-  public function add() {
+  public function action_add() {
     Access::verify_csrf();
 
     $form = Watermark::get_add_form();

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Themes extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Theme choice");
     $view->content = new View("admin/themes.html");
@@ -46,7 +46,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
     return $themes;
   }
 
-  public function preview($type, $theme_name) {
+  public function action_preview($type, $theme_name) {
     $view = new View("admin/themes_preview.html");
     $view->info = Theme::get_info($theme_name);
     $view->theme_name = t($theme_name);
@@ -59,7 +59,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
     print $view;
   }
 
-  public function choose($type, $theme_name) {
+  public function action_choose($type, $theme_name) {
     Access::verify_csrf();
 
     $info = Theme::get_info($theme_name);

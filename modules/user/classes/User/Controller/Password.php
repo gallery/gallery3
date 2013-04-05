@@ -21,7 +21,7 @@ class User_Controller_Password extends Controller {
   const ALLOW_MAINTENANCE_MODE = true;
   const ALLOW_PRIVATE_GALLERY = true;
 
-  public function reset() {
+  public function action_reset() {
     $form = self::_reset_form();
     if (Request::method() == "post") {
       // @todo separate the post from get parts of this function
@@ -37,7 +37,7 @@ class User_Controller_Password extends Controller {
     }
   }
 
-  public function do_reset() {
+  public function action_do_reset() {
     if (Request::method() == "post") {
       $this->_change_password();
     } else {

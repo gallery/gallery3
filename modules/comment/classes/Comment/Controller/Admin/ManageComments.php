@@ -20,7 +20,7 @@
 class Comment_Controller_Admin_ManageComments extends Controller_Admin {
   private static $items_per_page = 20;
 
-  public function index() {
+  public function action_index() {
     // Get rid of old deleted/spam comments once in a while
     DB::build()
       ->delete("comments")
@@ -34,7 +34,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     print $view;
   }
 
-  public function menu_labels() {
+  public function action_menu_labels() {
     $menu = $this->_menu($this->_counts());
     JSON::reply(array((string) $menu->get("unpublished")->label,
                       (string) $menu->get("published")->label,
@@ -42,7 +42,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
                       (string) $menu->get("deleted")->label));
   }
 
-  public function queue($state) {
+  public function action_queue($state) {
     $page = max(Input::instance()->get("page"), 1);
 
     $view = new View_Gallery("admin/manage_comments_queue.html");
@@ -120,7 +120,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     return $counts;
   }
 
-  public function set_state($id, $state) {
+  public function action_set_state($id, $state) {
     Access::verify_csrf();
 
     $comment = ORM::factory("Comment", $id);
@@ -131,7 +131,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     }
   }
 
-  public function delete_all_spam() {
+  public function action_delete_all_spam() {
     Access::verify_csrf();
 
     DB::build()
