@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Controller_Admin_Akismet extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $form = Akismet::get_configure_form();
 
     if (Request::method() == "post") {
@@ -57,7 +57,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
     print $view;
   }
 
-  public function stats() {
+  public function action_stats() {
     $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/akismet_stats.html");
     $view->content->api_key = Module::get_var("akismet", "api_key");

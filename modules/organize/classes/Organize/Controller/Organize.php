@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Organize_Controller_Organize extends Controller {
-  public function frame($album_id) {
+  public function action_frame($album_id) {
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);
@@ -28,7 +28,7 @@ class Organize_Controller_Organize extends Controller {
     print $v;
   }
 
-  public function dialog($album_id) {
+  public function action_dialog($album_id) {
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);
@@ -38,7 +38,7 @@ class Organize_Controller_Organize extends Controller {
     print $v;
   }
 
-  public function tree($selected_album_id) {
+  public function action_tree($selected_album_id) {
     $root = ORM::factory("Item", Input::instance()->post("root_id", 1));
     $selected_album = ORM::factory("Item", $selected_album_id);
     Access::required("view", $root);
@@ -48,7 +48,7 @@ class Organize_Controller_Organize extends Controller {
     JSON::reply($tree);
   }
 
-  public function album_info($album_id) {
+  public function action_album_info($album_id) {
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
 
@@ -72,7 +72,7 @@ class Organize_Controller_Organize extends Controller {
     JSON::reply($data);
   }
 
-  public function reparent() {
+  public function action_reparent() {
     Access::verify_csrf();
 
     $input = Input::instance();
@@ -98,7 +98,7 @@ class Organize_Controller_Organize extends Controller {
     JSON::reply(null);
   }
 
-  public function set_sort($album_id) {
+  public function action_set_sort($album_id) {
     Access::verify_csrf();
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
@@ -114,7 +114,7 @@ class Organize_Controller_Organize extends Controller {
     JSON::reply(null);
   }
 
-  public function rearrange() {
+  public function action_rearrange() {
     Access::verify_csrf();
 
     $input = Input::instance();
@@ -163,7 +163,7 @@ class Organize_Controller_Organize extends Controller {
     JSON::reply(null);
   }
 
-  public function delete() {
+  public function action_delete() {
     Access::verify_csrf();
 
     $input = Input::instance();
@@ -178,7 +178,7 @@ class Organize_Controller_Organize extends Controller {
     JSON::reply(null);
   }
 
-  public function tag() {
+  public function action_tag() {
     Access::verify_csrf();
     $input = Input::instance();
 

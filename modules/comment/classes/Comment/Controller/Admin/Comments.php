@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Controller_Admin_Comments extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Comment settings");
     $view->content = new View("admin/comments.html");
@@ -26,7 +26,7 @@ class Comment_Controller_Admin_Comments extends Controller_Admin {
     print $view;
   }
 
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
     $form = $this->_get_admin_form();
     $form->validate();

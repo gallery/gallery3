@@ -22,7 +22,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     $this->show(ORM::factory("Item", 1));
   }
 
-  public function show($album) {
+  public function action_show($album) {
     if (!is_object($album)) {
       // show() must be public because we route to it in URL::parse_url(), so make
       // sure that we're actually receiving an object
@@ -78,7 +78,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Item::set_display_context_callback("Controller_Albums::get_display_context");
   }
 
-  public static function get_display_context($item) {
+  public static function action_get_display_context($item) {
     $where = array(array("type", "!=", "album"));
     $position = Item::get_position($item, $where);
     if ($position > 1) {
@@ -98,12 +98,12 @@ class Gallery_Controller_Albums extends Controller_Items {
                  "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
   }
 
-  public static function get_siblings($item, $limit=null, $offset=null) {
+  public static function action_get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Model_Item::siblings() if we use this more broadly.
     return $item->parent()->viewable()->children($limit, $offset);
   }
 
-  public function create($parent_id) {
+  public function action_create($parent_id) {
     Access::verify_csrf();
     $album = ORM::factory("Item", $parent_id);
     Access::required("view", $album);
@@ -143,7 +143,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     }
   }
 
-  public function update($album_id) {
+  public function action_update($album_id) {
     Access::verify_csrf();
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
@@ -189,7 +189,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     }
   }
 
-  public function form_add($album_id) {
+  public function action_form_add($album_id) {
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("add", $album);
@@ -197,7 +197,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     print Album::get_add_form($album);
   }
 
-  public function form_edit($album_id) {
+  public function action_form_edit($album_id) {
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);

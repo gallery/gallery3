@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Add from server");
     $view->content = new View("admin/server_add.html");
@@ -29,7 +29,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     print $view;
   }
 
-  public function add_path() {
+  public function action_add_path() {
     Access::verify_csrf();
 
     $form = $this->_get_admin_form();
@@ -56,7 +56,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     print $view;
   }
 
-  public function remove_path() {
+  public function action_remove_path() {
     Access::verify_csrf();
 
     $path = Input::instance()->get("path");
@@ -70,7 +70,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     HTTP::redirect("admin/server_add");
   }
 
-  public function autocomplete() {
+  public function action_autocomplete() {
     $directories = array();
 
     $path_prefix = Input::instance()->get("term");

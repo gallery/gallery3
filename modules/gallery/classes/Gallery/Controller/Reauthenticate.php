@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Reauthenticate extends Controller {
-  public function index() {
+  public function action_index() {
     $is_ajax = Session::instance()->get_once("is_ajax_request", Request::is_ajax());
     if (!Identity::active_user()->admin) {
       if ($is_ajax) {
@@ -42,7 +42,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     }
   }
 
-  public function auth() {
+  public function action_auth() {
     if (!Identity::active_user()->admin) {
       Access::forbidden();
     }
@@ -97,7 +97,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     return $form;
   }
 
-  public static function valid_password($password_input) {
+  public static function action_valid_password($password_input) {
     if (!Identity::is_correct_password(Identity::active_user(), $password_input->value)) {
       $password_input->add_error("invalid_password", 1);
     }

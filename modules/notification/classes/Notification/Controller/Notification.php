@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Notification_Controller_Notification extends Controller {
-  public function watch($id) {
+  public function action_watch($id) {
     Access::verify_csrf();
 
     $item = ORM::factory("Item", $id);

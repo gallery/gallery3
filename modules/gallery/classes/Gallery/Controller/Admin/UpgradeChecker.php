@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
-  public function check_now() {
+  public function action_check_now() {
     Access::verify_csrf();
     UpgradeChecker::fetch_version_info();
     $message = UpgradeChecker::get_upgrade_message();
@@ -33,7 +33,7 @@ class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
     HTTP::redirect("admin/dashboard");
   }
 
-  public function remind_me_later() {
+  public function action_remind_me_later() {
     Access::verify_csrf();
     SiteStatus::clear("upgrade_checker");
     if ($referer = Input::instance()->server("HTTP_REFERER")) {
@@ -43,7 +43,7 @@ class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
     }
   }
 
-  public function set_auto($val) {
+  public function action_set_auto($val) {
     Access::verify_csrf();
     Module::set_var("gallery", "upgrade_checker_auto_enabled", (bool)$val);
 

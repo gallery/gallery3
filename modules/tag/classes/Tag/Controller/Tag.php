@@ -69,7 +69,7 @@ class Tag_Controller_Tag extends Controller {
     Item::set_display_context_callback("Controller_Tag::get_display_context", $tag->id);
   }
 
-  public static function get_display_context($item, $tag_id) {
+  public static function action_get_display_context($item, $tag_id) {
     $tag = ORM::factory("Tag", $tag_id);
     $where = array(array("type", "!=", "album"));
 

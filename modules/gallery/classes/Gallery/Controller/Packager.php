@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Packager extends Controller {
-  public function package() {
+  public function action_package() {
     if (PHP_SAPI != "cli") {
       Access::forbidden();
     }

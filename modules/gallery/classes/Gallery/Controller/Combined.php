@@ -24,14 +24,14 @@ class Gallery_Controller_Combined extends Controller {
   /**
    * Return the combined Javascript bundle associated with the given key.
    */
-  public function javascript($key) {
+  public function action_javascript($key) {
     return $this->_emit("javascript", $key);
   }
 
   /**
    * Return the combined CSS bundle associated with the given key.
    */
-  public function css($key) {
+  public function action_css($key) {
     return $this->_emit("css", $key);
   }
 

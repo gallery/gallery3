@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ServerAdd_Controller_ServerAdd extends Controller_Admin {
-  public function browse($id) {
+  public function action_browse($id) {
     $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     foreach (array_keys($paths) as $path) {
       $files[] = $path;
@@ -39,7 +39,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
     print $view;
   }
 
-  public function children() {
+  public function action_children() {
     $path = Input::instance()->get("path");
 
     $tree = new View("server_add/tree.html");
@@ -81,7 +81,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
   /**
    * Begin the task of adding photos.
    */
-  public function start() {
+  public function action_start() {
     Access::verify_csrf();
     $item = ORM::factory("Item", Input::instance()->get("item_id"));
 
@@ -111,7 +111,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
   /**
    * Run the task of adding photos
    */
-  public function run($task_id) {
+  public function action_run($task_id) {
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -132,7 +132,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
    * and creates a set of Model_ServerAddEntry models, then runs through the list of models and adds
    * them one at a time.
    */
-  public static function add($task) {
+  public static function action_add($task) {
     $mode = $task->get("mode", "init");
     $start = microtime(true);
 

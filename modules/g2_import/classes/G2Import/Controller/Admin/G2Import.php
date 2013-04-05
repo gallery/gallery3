@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class G2Import_Controller_Admin_G2Import extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     G2Import::lower_error_reporting();
     if (G2Import::is_configured()) {
       G2Import::init();
@@ -72,7 +72,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
     print $view;
   }
 
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
     G2Import::lower_error_reporting();
 
@@ -99,7 +99,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
     print $view;
   }
 
-  public function autocomplete() {
+  public function action_autocomplete() {
     $directories = array();
     $path_prefix = Input::instance()->get("term");
     foreach (glob("{$path_prefix}*") as $file) {

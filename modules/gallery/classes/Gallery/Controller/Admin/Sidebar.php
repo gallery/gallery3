@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Manage sidebar");
     $view->content = new View("admin/sidebar.html");
@@ -29,7 +29,7 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     print $view;
   }
 
-  public function update() {
+  public function action_update() {
     Access::verify_csrf();
 
     $available_blocks = BlockManager::get_available_site_blocks();

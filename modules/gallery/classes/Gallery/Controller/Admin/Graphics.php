@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Graphics extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Graphics settings");
     $view->content = new View("admin/graphics.html");
@@ -27,7 +27,7 @@ class Gallery_Controller_Admin_Graphics extends Controller_Admin {
     print $view;
   }
 
-  public function choose($toolkit_id) {
+  public function action_choose($toolkit_id) {
     Access::verify_csrf();
 
     if ($toolkit_id != Module::get_var("gallery", "graphics_toolkit")) {

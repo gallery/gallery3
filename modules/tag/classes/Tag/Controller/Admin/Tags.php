@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Admin_Tags extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $filter = Input::instance()->get("filter");
 
     $view = new View_Admin("required/admin.html");
@@ -34,14 +34,14 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     print $view;
   }
 
-  public function form_delete($id) {
+  public function action_form_delete($id) {
     $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
       print Tag::get_delete_form($tag);
     }
   }
 
-  public function delete($id) {
+  public function action_delete($id) {
     Access::verify_csrf();
 
     $tag = ORM::factory("Tag", $id);
@@ -62,7 +62,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     }
   }
 
-  public function form_rename($id) {
+  public function action_form_rename($id) {
     $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
       print InPlaceEdit::factory($tag->name)
@@ -71,7 +71,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     }
   }
 
-  public function rename($id) {
+  public function action_rename($id) {
     Access::verify_csrf();
 
     $tag = ORM::factory("Tag", $id);

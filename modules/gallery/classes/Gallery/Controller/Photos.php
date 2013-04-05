@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Photos extends Controller_Items {
-  public function show($photo) {
+  public function action_show($photo) {
     if (!is_object($photo)) {
       // show() must be public because we route to it in URL::parse_url(), so make
       // sure that we're actually receiving an object
@@ -39,7 +39,7 @@ class Gallery_Controller_Photos extends Controller_Items {
     print $template;
   }
 
-  public function update($photo_id) {
+  public function action_update($photo_id) {
     Access::verify_csrf();
     $photo = ORM::factory("Item", $photo_id);
     Access::required("view", $photo);
@@ -81,7 +81,7 @@ class Gallery_Controller_Photos extends Controller_Items {
     }
   }
 
-  public function form_edit($photo_id) {
+  public function action_form_edit($photo_id) {
     $photo = ORM::factory("Item", $photo_id);
     Access::required("view", $photo);
     Access::required("edit", $photo);

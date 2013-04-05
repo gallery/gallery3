@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Movies extends Controller_Items {
-  public function show($movie) {
+  public function action_show($movie) {
     if (!is_object($movie)) {
       // show() must be public because we route to it in URL::parse_url(), so make
       // sure that we're actually receiving an object
@@ -39,7 +39,7 @@ class Gallery_Controller_Movies extends Controller_Items {
     print $template;
   }
 
-  public function update($movie_id) {
+  public function action_update($movie_id) {
     Access::verify_csrf();
     $movie = ORM::factory("Item", $movie_id);
     Access::required("view", $movie);
@@ -81,7 +81,7 @@ class Gallery_Controller_Movies extends Controller_Items {
     }
   }
 
-  public function form_edit($movie_id) {
+  public function action_form_edit($movie_id) {
     $movie = ORM::factory("Item", $movie_id);
     Access::required("view", $movie);
     Access::required("edit", $movie);

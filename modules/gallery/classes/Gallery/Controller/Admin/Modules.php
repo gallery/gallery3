@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Modules extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     // If modules need upgrading, this will get recreated in Module::available()
     SiteStatus::clear("upgrade_now");
 
@@ -31,7 +31,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
   }
 
 
-  public function confirm() {
+  public function action_confirm() {
     Access::verify_csrf();
 
     $messages = array("error" => array(), "warn" => array());
@@ -64,7 +64,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     JSON::reply($result);
   }
 
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
 
     $this->_do_save();
