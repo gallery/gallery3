@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Controller_Users extends Controller {
-  public function update($id) {
+  public function action_update($id) {
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -61,7 +61,7 @@ class User_Controller_Users extends Controller {
     }
   }
 
-  public function change_password($id) {
+  public function action_change_password($id) {
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -96,7 +96,7 @@ class User_Controller_Users extends Controller {
     }
   }
 
-  public function change_email($id) {
+  public function action_change_email($id) {
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -130,7 +130,7 @@ class User_Controller_Users extends Controller {
     }
   }
 
-  public function form_edit($id) {
+  public function action_form_edit($id) {
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -139,7 +139,7 @@ class User_Controller_Users extends Controller {
     print $this->_get_edit_form($user);
   }
 
-  public function form_change_password($id) {
+  public function action_form_change_password($id) {
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -148,7 +148,7 @@ class User_Controller_Users extends Controller {
     print $this->_get_change_password_form($user);
   }
 
-  public function form_change_email($id) {
+  public function action_form_change_email($id) {
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();

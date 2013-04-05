@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_L10nClient extends Controller {
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
     if (!Identity::active_user()->admin) {
       Access::forbidden();
@@ -94,7 +94,7 @@ class Gallery_Controller_L10nClient extends Controller {
     JSON::reply(new stdClass());
   }
 
-  public function toggle_l10n_mode() {
+  public function action_toggle_l10n_mode() {
     Access::verify_csrf();
     if (!Identity::active_user()->admin) {
       Access::forbidden();

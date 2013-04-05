@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Languages extends Controller_Admin {
-  public function index($share_translations_form=null) {
+  public function action_index($share_translations_form=null) {
     $v = new View_Admin("required/admin.html");
     $v->page_title = t("Languages and translations");
     $v->content = new View("admin/languages.html");
@@ -34,7 +34,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     print $v;
   }
 
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
 
     $input = Input::instance();
@@ -54,13 +54,13 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     JSON::reply(array("result" => "success"));
   }
 
-  public function share() {
+  public function action_share() {
     Access::verify_csrf();
 
     $form = $this->_share_translations_form();
     if (!$form->validate()) {
       // Show the page with form errors
-      return $this->index($form);
+      return $this->action_index($form);
     }
 
     if (Input::instance()->post("share")) {
@@ -100,7 +100,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
         HTTP::redirect("admin/languages");
     } else {
       // Show the page with form errors
-      $this->index($form);
+      $this->action_index($form);
     }
   }
 

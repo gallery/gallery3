@@ -20,7 +20,7 @@
 class Rest_Controller_Rest extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
 
-  public function index() {
+  public function action_index() {
     $username = Input::instance()->post("user");
     $password = Input::instance()->post("password");
 
@@ -39,7 +39,7 @@ class Rest_Controller_Rest extends Controller {
     Rest::reply(Rest::access_key());
   }
 
-  public function reset_api_key_confirm() {
+  public function action_reset_api_key_confirm() {
     $form = new Forge("rest/reset_api_key", "", "post", array("id" => "g-reset-api-key"));
     $group = $form->group("confirm_reset")->label(t("Confirm resetting your REST API key"));
     $group->submit("")->value(t("Reset"));
@@ -48,7 +48,7 @@ class Rest_Controller_Rest extends Controller {
     print $v;
   }
 
-  public function reset_api_key() {
+  public function action_reset_api_key() {
     Access::verify_csrf();
     Rest::reset_access_key();
     Message::success(t("Your REST API key has been reset."));

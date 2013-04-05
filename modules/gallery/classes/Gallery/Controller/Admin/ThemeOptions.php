@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Theme options");
     $view->content = new View("admin/theme_options.html");
@@ -26,7 +26,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     print $view;
   }
 
-  public function save() {
+  public function action_save() {
     Access::verify_csrf();
 
     $form = $this->_get_edit_form_admin();
@@ -76,7 +76,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     $group = $form->group("edit_theme")->label(t("Theme layout"));
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
-      ->callback(array($this, "_validate_page_size"))
+      ->callback(array($this, "validate_page_size"))
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->error_messages("valid_min_value", t("The value must be greater than zero"))
@@ -110,7 +110,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     return $form;
   }
 
-  function _validate_page_size($input) {
+  public function validate_page_size($input) {
     if ($input->value < 1) {
       $input->add_error("valid_min_value", true);
     }

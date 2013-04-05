@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_WelcomeMessage extends Controller {
-  public function index() {
+  public function action_index() {
     if (!Identity::active_user()->admin) {
       HTTP::redirect(Item::root()->abs_url());
     }

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Search_Controller_Search extends Controller {
-  public function index() {
+  public function action_index() {
     $page_size = Module::get_var("gallery", "page_size", 9);
     $q = Input::instance()->get("q");
     $q_with_more_terms = Search::add_query_terms($q);
@@ -78,7 +78,7 @@ class Search_Controller_Search extends Controller {
     Item::set_display_context_callback("Controller_Search::get_display_context", $album, $q);
   }
 
-  static function get_display_context($item, $album, $q) {
+  public static function get_display_context($item, $album, $q) {
     $q_with_more_terms = Search::add_query_terms($q);
     $position = Search::get_position_within_album($item, $q_with_more_terms, $album);
 
@@ -110,7 +110,7 @@ class Search_Controller_Search extends Controller {
                    Breadcrumb::instance($item->title, $item->url())->set_last()));
   }
 
-  static function get_siblings($q, $album, $limit, $offset) {
+  public static function get_siblings($q, $album, $limit, $offset) {
     if (!isset($limit)) {
       $limit = 100;
     }

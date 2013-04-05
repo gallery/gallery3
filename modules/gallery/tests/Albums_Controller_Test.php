@@ -43,7 +43,7 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", Item::root());
 
     ob_start();
-    $controller->update($album->id);
+    $controller->action_update($album->id);
     $album->reload();
     $results = ob_get_contents();
     ob_end_clean();
@@ -64,7 +64,7 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", Item::root());
 
     try {
-      $controller->update($album->id);
+      $controller->action_update($album->id);
       $this->assert_true(false, "This should fail");
     } catch (Exception $e) {
       // pass

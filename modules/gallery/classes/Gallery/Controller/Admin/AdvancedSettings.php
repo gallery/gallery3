@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Advanced settings");
     $view->content = new View("admin/advanced_settings.html");
@@ -29,7 +29,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
     print $view;
   }
 
-  public function edit($module_name, $var_name) {
+  public function action_edit($module_name, $var_name) {
     if (Module::is_installed($module_name)) {
       $value = Module::get_var($module_name, $var_name);
       $form = new Forge("admin/advanced_settings/save/$module_name/$var_name", "", "post");
@@ -42,7 +42,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
     }
   }
 
-  public function save($module_name, $var_name) {
+  public function action_save($module_name, $var_name) {
     Access::verify_csrf();
 
     if (Module::is_installed($module_name)) {

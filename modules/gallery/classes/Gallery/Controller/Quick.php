@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Quick extends Controller {
-  public function rotate($id, $dir) {
+  public function action_rotate($id, $dir) {
     Access::verify_csrf();
     $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
@@ -56,7 +56,7 @@ class Gallery_Controller_Quick extends Controller {
     }
   }
 
-  public function make_album_cover($id) {
+  public function action_make_album_cover($id) {
     Access::verify_csrf();
 
     $item = ModelCache::get("Item", $id);
@@ -72,7 +72,7 @@ class Gallery_Controller_Quick extends Controller {
     JSON::reply(array("result" => "success", "reload" => 1));
   }
 
-  public function form_delete($id) {
+  public function action_form_delete($id) {
     $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
@@ -83,7 +83,7 @@ class Gallery_Controller_Quick extends Controller {
     print $v;
   }
 
-  public function delete($id) {
+  public function action_delete($id) {
     Access::verify_csrf();
     $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
@@ -117,7 +117,7 @@ class Gallery_Controller_Quick extends Controller {
     }
   }
 
-  public function form_edit($id) {
+  public function action_form_edit($id) {
     $item = ModelCache::get("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
