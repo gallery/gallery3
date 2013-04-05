@@ -132,7 +132,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
    * and creates a set of Model_ServerAddEntry models, then runs through the list of models and adds
    * them one at a time.
    */
-  public static function action_add($task) {
+  public static function add($task) {
     $mode = $task->get("mode", "init");
     $start = microtime(true);
 

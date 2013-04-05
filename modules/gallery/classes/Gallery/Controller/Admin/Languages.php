@@ -60,7 +60,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     $form = $this->_share_translations_form();
     if (!$form->validate()) {
       // Show the page with form errors
-      return $this->index($form);
+      return $this->action_index($form);
     }
 
     if (Input::instance()->post("share")) {
@@ -100,7 +100,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
         HTTP::redirect("admin/languages");
     } else {
       // Show the page with form errors
-      $this->index($form);
+      $this->action_index($form);
     }
   }
 

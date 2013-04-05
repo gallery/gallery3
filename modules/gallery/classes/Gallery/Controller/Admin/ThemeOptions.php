@@ -76,7 +76,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     $group = $form->group("edit_theme")->label(t("Theme layout"));
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
-      ->callback(array($this, "_validate_page_size"))
+      ->callback(array($this, "validate_page_size"))
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->error_messages("valid_min_value", t("The value must be greater than zero"))
@@ -110,7 +110,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     return $form;
   }
 
-  public function action__validate_page_size($input) {
+  public function validate_page_size($input) {
     if ($input->value < 1) {
       $input->add_error("valid_min_value", true);
     }

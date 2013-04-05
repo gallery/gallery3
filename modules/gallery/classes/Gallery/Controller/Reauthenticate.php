@@ -97,7 +97,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     return $form;
   }
 
-  public static function action_valid_password($password_input) {
+  public static function valid_password($password_input) {
     if (!Identity::is_correct_password(Identity::active_user(), $password_input->value)) {
       $password_input->add_error("invalid_password", 1);
     }
