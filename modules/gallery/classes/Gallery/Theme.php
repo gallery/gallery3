@@ -33,14 +33,12 @@ class Gallery_Theme {
    * active for any given request.
    */
   static function load_themes() {
-    $input = Input::instance();
-    $path = $input->server("PATH_INFO");
+    $path = Input::server("PATH_INFO");
     if (empty($path)) {
-      $path = "/" . $input->get("kohana_uri");
+      $path = "/" . Input::get("kohana_uri");
     }
 
-    $config = Config::instance();
-    $modules = $config->get("core.modules");
+    $modules = Kohana::modules();
 
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
     self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
@@ -63,35 +61,39 @@ class Gallery_Theme {
         Module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
       }
 
-      array_unshift($modules, THEMEPATH . self::$admin_theme_name);
+      $modules = array_merge(
+        array(self::$admin_theme_name => THEMEPATH . self::$admin_theme_name), $modules);
 
       // If the site theme has an admin subdir, load that as a module so that
       // themes can provide their own code.
       if (file_exists(THEMEPATH . self::$site_theme_name . "/admin")) {
-        array_unshift($modules, THEMEPATH . self::$site_theme_name . "/admin");
+        $modules = array_merge(
+          array(self::$site_theme_name => THEMEPATH . self::$site_theme_name . "/admin"), $modules);
       }
       // Admins can override the site theme, temporarily.  This lets us preview themes.
-      if (Identity::active_user()->admin && $override = $input->get("theme")) {
+      if (Identity::active_user()->admin && $override = Input::get("theme")) {
         if (file_exists(THEMEPATH . $override)) {
           self::$admin_theme_name = $override;
-          array_unshift($modules, THEMEPATH . self::$admin_theme_name);
+          $modules = array_merge(
+            array(self::$admin_theme_name => THEMEPATH . self::$admin_theme_name), $modules);
         } else {
           Log::add("error", "Missing override admin theme: '$override'");
         }
       }
     } else {
       // Admins can override the site theme, temporarily.  This lets us preview themes.
-      if (Identity::active_user()->admin && $override = $input->get("theme")) {
+      if (Identity::active_user()->admin && $override = Input::get("theme")) {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {
           Log::add("error", "Missing override site theme: '$override'");
         }
       }
-      array_unshift($modules, THEMEPATH . self::$site_theme_name);
+      $modules = array_merge(
+        array(self::$site_theme_name => THEMEPATH . self::$site_theme_name), $modules);
     }
 
-    $config->set("core.modules", $modules);
+    Kohana::modules($modules);
   }
 
   static function get_info($theme_name) {
