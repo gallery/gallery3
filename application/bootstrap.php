@@ -134,21 +134,22 @@ Kohana::$config->attach(new Config_File);
 /**
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
-Kohana::modules(
-  array_merge(
-    (TEST_MODE ?
-     array() :
-     array(
-       "gallery_unit_test" => MODPATH . "gallery_unit_test",
-       "unit_test" => MODPATH . "unit_test")),
+Kohana::modules(array_merge(
+  (TEST_MODE ?
     array(
-      // gallery should be first here so that it can override classes
-      // in the other official Kohana modules
-      "gallery" => MODPATH . "gallery",
-      "database" => MODPATH . "database",
-      "orm" => MODPATH . "orm",
-      "cache" => MODPATH . "cache"))
-);
+      "gallery_unit_test" => MODPATH . "gallery_unit_test",
+      "unit_test"         => MODPATH . "unit_test") :
+    array()),
+  array(
+    // gallery should be first here so that it can override classes
+    // in the other official Kohana modules
+    "gallery"     => MODPATH . "gallery",
+    "database"    => MODPATH . "database",
+    "orm"         => MODPATH . "orm",
+    "cache"       => MODPATH . "cache",
+    "formo"       => MODPATH . "formo",
+    "pagination"  => MODPATH . "pagination")
+));
 
 // If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
 // and send users to the installer.
