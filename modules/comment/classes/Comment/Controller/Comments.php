@@ -21,7 +21,7 @@ class Comment_Controller_Comments extends Controller {
   /**
    * Add a new comment to the collection.
    */
-  public function create($id) {
+  public function action_create($id) {
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     if (!Comment::can_comment()) {
@@ -69,7 +69,7 @@ class Comment_Controller_Comments extends Controller {
   /**
    * Present a form for adding a new comment to this item or editing an existing comment.
    */
-  public function form_add($item_id) {
+  public function action_form_add($item_id) {
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     if (!Comment::can_comment()) {

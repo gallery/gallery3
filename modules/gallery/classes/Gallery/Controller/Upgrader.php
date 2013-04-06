@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Upgrader extends Controller {
-  public function index() {
+  public function action_index() {
     $session = Session::instance();
 
     // Make sure we have an upgrade token
@@ -50,7 +50,7 @@ class Gallery_Controller_Upgrader extends Controller {
     print $view;
   }
 
-  public function upgrade() {
+  public function action_upgrade() {
     if (php_sapi_name() == "cli") {
       // @todo this may screw up some module installers, but we don't have a better answer at
       // this time.

@@ -39,7 +39,7 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", Item::root());
 
     ob_start();
-    $controller->update($photo->id);
+    $controller->action_update($photo->id);
     $photo->reload();
     $results = ob_get_contents();
     ob_end_clean();
@@ -62,7 +62,7 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
     Access::allow(Identity::everybody(), "edit", Item::root());
 
     try {
-      $controller->update($photo);
+      $controller->action_update($photo);
       $this->assert_true(false, "This should fail");
     } catch (Exception $e) {
       // pass

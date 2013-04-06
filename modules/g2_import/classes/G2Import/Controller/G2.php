@@ -29,7 +29,7 @@ class G2Import_Controller_G2 extends Controller {
    *   /g2/map?path=v/Family/Wedding.jpg.html
    *   /g2/map?g2_view=core.ShowItem&g2_itemId=1931
    */
-  public function map() {
+  public function action_map() {
     $input = Input::instance();
     $path = $input->get("path");
     $id = $input->get("g2_itemId");

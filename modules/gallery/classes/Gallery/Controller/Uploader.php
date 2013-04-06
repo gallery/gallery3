@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Uploader extends Controller {
-  public function index($id) {
+  public function action_index($id) {
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("add", $item);
@@ -29,12 +29,12 @@ class Gallery_Controller_Uploader extends Controller {
     print $this->_get_add_form($item);
   }
 
-  public function start() {
+  public function action_start() {
     Access::verify_csrf();
     Batch::start();
   }
 
-  public function add_photo($id) {
+  public function action_add_photo($id) {
     $album = ORM::factory("Item", $id);
     Access::required("view", $album);
     Access::required("add", $album);
@@ -99,7 +99,7 @@ class Gallery_Controller_Uploader extends Controller {
     }
   }
 
-  public function status($success_count, $error_count) {
+  public function action_status($success_count, $error_count) {
     if ($error_count) {
       // The "errors" won't be properly pluralized :-/
       print t2("Uploaded %count photo (%error errors)",
@@ -110,7 +110,7 @@ class Gallery_Controller_Uploader extends Controller {
       print t2("Uploaded %count photo", "Uploaded %count photos", $success_count);}
   }
 
-  public function finish() {
+  public function action_finish() {
     Access::verify_csrf();
 
     Batch::stop();

@@ -21,7 +21,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   /**
    * Show a list of all available, running and finished tasks.
    */
-  public function index() {
+  public function action_index() {
     $query = DB::build()
       ->update("tasks")
       ->set("state", "stalled")
@@ -62,7 +62,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Start a new task
    * @param string $task_callback
    */
-  public function start($task_callback) {
+  public function action_start($task_callback) {
     Access::verify_csrf();
 
     $task = Task::start($task_callback);
@@ -79,7 +79,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Resume a stalled task
    * @param string $task_id
    */
-  public function resume($task_id) {
+  public function action_resume($task_id) {
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -101,7 +101,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Show the task log
    * @param string $task_id
    */
-  public function show_log($task_id) {
+  public function action_show_log($task_id) {
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -118,7 +118,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Save the task log
    * @param string $task_id
    */
-  public function save_log($task_id) {
+  public function action_save_log($task_id) {
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -135,7 +135,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Cancel a task.
    * @param string $task_id
    */
-  public function cancel($task_id) {
+  public function action_cancel($task_id) {
     Access::verify_csrf();
 
     Task::cancel($task_id);
@@ -144,7 +144,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     HTTP::redirect("admin/maintenance");
   }
 
-  public function cancel_running_tasks() {
+  public function action_cancel_running_tasks() {
     Access::verify_csrf();
     DB::build()
       ->update("tasks")
@@ -160,7 +160,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Remove a task.
    * @param string $task_id
    */
-  public function remove($task_id) {
+  public function action_remove($task_id) {
     Access::verify_csrf();
 
     Task::remove($task_id);
@@ -169,7 +169,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     HTTP::redirect("admin/maintenance");
   }
 
-  public function remove_finished_tasks() {
+  public function action_remove_finished_tasks() {
     Access::verify_csrf();
 
     // Do it the long way so we can call delete and remove the cache.
@@ -188,7 +188,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * back with status on the task.
    * @param string $task_id
    */
-  public function run($task_id) {
+  public function action_run($task_id) {
     Access::verify_csrf();
 
     try {
@@ -235,7 +235,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     }
   }
 
-  public function maintenance_mode($value) {
+  public function action_maintenance_mode($value) {
     Access::verify_csrf();
     Module::set_var("gallery", "maintenance_mode", $value);
     HTTP::redirect("admin/maintenance");

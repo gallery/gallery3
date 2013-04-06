@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
-  public function index() {
+  public function action_index() {
     $form = Recaptcha::get_configure_form();
     if (Request::method() == "post") {
       // @todo move the "save" part of this into a separate controller function

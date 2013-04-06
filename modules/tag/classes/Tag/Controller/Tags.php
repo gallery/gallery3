@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Tags extends Controller {
-  public function index() {
+  public function action_index() {
     // Far from perfection, but at least require view permission for the root album
     $album = ORM::factory("Item", 1);
     Access::required("view", $album);
@@ -26,7 +26,7 @@ class Tag_Controller_Tags extends Controller {
     print Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30));
   }
 
-  public function create($item_id) {
+  public function action_create($item_id) {
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Access::required("edit", $item);
@@ -46,7 +46,7 @@ class Tag_Controller_Tags extends Controller {
     }
   }
 
-  public function autocomplete() {
+  public function action_autocomplete() {
     $tags = array();
     $tag_parts = explode(",", Input::instance()->get("term"));
     $tag_part = ltrim(end($tag_parts));

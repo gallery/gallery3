@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Logout extends Controller {
-  public function index() {
+  public function action_index() {
     Access::verify_csrf();
     Auth::logout();
     if ($continue_url = Input::instance()->get("continue_url")) {

@@ -21,13 +21,13 @@ class Gallery_Controller_Login extends Controller {
   const ALLOW_MAINTENANCE_MODE = true;
   const ALLOW_PRIVATE_GALLERY = true;
 
-  public function ajax() {
+  public function action_ajax() {
     $view = new View("gallery/login_ajax.html");
     $view->form = Auth::get_login_form("login/auth_ajax");
     print $view;
   }
 
-  public function auth_ajax() {
+  public function action_auth_ajax() {
     Access::verify_csrf();
 
     list ($valid, $form) = $this->_auth("login/auth_ajax");
@@ -40,7 +40,7 @@ class Gallery_Controller_Login extends Controller {
     }
   }
 
-  public function html() {
+  public function action_html() {
     $view = new View_Theme("required/page.html", "other", "login");
     $view->page_title = t("Log in to Gallery");
     $view->content = new View("gallery/login_ajax.html");
@@ -48,7 +48,7 @@ class Gallery_Controller_Login extends Controller {
     print $view;
   }
 
-  public function auth_html() {
+  public function action_auth_html() {
     Access::verify_csrf();
 
     list ($valid, $form) = $this->_auth("login/auth_html");
