@@ -28,7 +28,7 @@ class Form_Uploadify_Core extends Form_Input {
     parent::__construct($name);
     $this->data["script_data"] = array(
       "g3sid" => Session::instance()->id(),
-      "user_agent" => Input::instance()->server("HTTP_USER_AGENT"),
+      "user_agent" => $_SERVER["HTTP_USER_AGENT"],
       "csrf" => Access::csrf_token());
   }
 

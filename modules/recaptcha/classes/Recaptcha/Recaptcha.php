@@ -65,7 +65,7 @@ class Recaptcha_Recaptcha {
       return;
     }
 
-    $remote_ip = Input::instance()->server("REMOTE_ADDR");
+    $remote_ip = $_SERVER["REMOTE_ADDR"];
     $response = self::_http_post("api-verify.recaptcha.net", "/verify",
                                  array("privatekey" => $private_key_input->value,
                                        "remoteip" => $remote_ip,
@@ -85,8 +85,7 @@ class Recaptcha_Recaptcha {
    * @return string error message or null
    */
   static function is_recaptcha_valid($challenge, $response, $private_key) {
-    $input = Input::instance();
-    $remote_ip = $input->server("REMOTE_ADDR");
+    $remote_ip = $_SERVER["REMOTE_ADDR"];
 
     // discard spam submissions
     if (empty($challenge) || empty($response)) {

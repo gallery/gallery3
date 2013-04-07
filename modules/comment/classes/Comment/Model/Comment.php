@@ -88,19 +88,18 @@ class Comment_Model_Comment extends ORM {
       // check each one to see if it already exists before setting it, so just use server_http_host
       // as a semaphore for now (we use that in g2_import.php)
       if (empty($this->server_http_host)) {
-        $input = Input::instance();
-        $this->server_http_accept = substr($input->server("HTTP_ACCEPT"), 0, 128);
-        $this->server_http_accept_charset = substr($input->server("HTTP_ACCEPT_CHARSET"), 0, 64);
-        $this->server_http_accept_encoding = substr($input->server("HTTP_ACCEPT_ENCODING"), 0, 64);
-        $this->server_http_accept_language = substr($input->server("HTTP_ACCEPT_LANGUAGE"), 0, 64);
-        $this->server_http_connection = substr($input->server("HTTP_CONNECTION"), 0, 64);
-        $this->server_http_host = substr($input->server("HTTP_HOST"), 0, 64);
-        $this->server_http_referer = substr($input->server("HTTP_REFERER"), 0, 255);
-        $this->server_http_user_agent = substr($input->server("HTTP_USER_AGENT"), 0, 128);
-        $this->server_query_string = substr($input->server("QUERY_STRING"), 0, 64);
-        $this->server_remote_addr = substr($input->server("REMOTE_ADDR"), 0, 40);
-        $this->server_remote_host = substr($input->server("REMOTE_HOST"), 0, 255);
-        $this->server_remote_port = substr($input->server("REMOTE_PORT"), 0, 16);
+        $this->server_http_accept = substr($_SERVER["HTTP_ACCEPT"], 0, 128);
+        $this->server_http_accept_charset = substr($_SERVER["HTTP_ACCEPT_CHARSET"], 0, 64);
+        $this->server_http_accept_encoding = substr($_SERVER["HTTP_ACCEPT_ENCODING"], 0, 64);
+        $this->server_http_accept_language = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 64);
+        $this->server_http_connection = substr($_SERVER["HTTP_CONNECTION"], 0, 64);
+        $this->server_http_host = substr($_SERVER["HTTP_HOST"], 0, 64);
+        $this->server_http_referer = substr($_SERVER["HTTP_REFERER"], 0, 255);
+        $this->server_http_user_agent = substr($_SERVER["HTTP_USER_AGENT"], 0, 128);
+        $this->server_query_string = substr($_SERVER["QUERY_STRING"], 0, 64);
+        $this->server_remote_addr = substr($_SERVER["REMOTE_ADDR"], 0, 40);
+        $this->server_remote_host = substr($_SERVER["REMOTE_HOST"], 0, 255);
+        $this->server_remote_port = substr($_SERVER["REMOTE_PORT"], 0, 16);
       }
 
       $visible_change = $this->state == "published";
