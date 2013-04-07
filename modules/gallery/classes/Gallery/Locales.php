@@ -150,12 +150,11 @@ class Gallery_Locales {
    * @todo replace this with Request::accepts_language() when we upgrade to Kohana 2.4
    */
   static function locale_from_http_request() {
-    $http_accept_language = Input::server("HTTP_ACCEPT_LANGUAGE");
-    if ($http_accept_language) {
+    if ($_SERVER["HTTP_ACCEPT_LANGUAGE"]) {
       // Parse the HTTP header and build a preference list
       // Example value: "de,en-us;q=0.7,en-uk,fr-fr;q=0.2"
       $locale_preferences = array();
-      foreach (explode(",", $http_accept_language) as $code) {
+      foreach (explode(",", $_SERVER["HTTP_ACCEPT_LANGUAGE"]) as $code) {
         list ($requested_locale, $qvalue) = explode(";", $code . ";");
         $requested_locale = trim($requested_locale);
         $qvalue = trim($qvalue);

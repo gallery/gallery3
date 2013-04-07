@@ -41,13 +41,11 @@ class Gallery_Controller_Combined extends Controller {
    * @param string   the key (typically an md5 sum)
    */
   private function _emit($type, $key) {
-    $input = Input::instance();
-
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
     // Our data is immutable, so if they already have a copy then it needs no updating.
-    if ($input->server("HTTP_IF_MODIFIED_SINCE")) {
+    if ($_SERVER["HTTP_IF_MODIFIED_SINCE"]) {
       header('HTTP/1.0 304 Not Modified');
       header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
       header("Cache-Control: public,max-age=2678400");
@@ -62,7 +60,7 @@ class Gallery_Controller_Combined extends Controller {
 
     $cache = Cache::instance();
     $use_gzip = function_exists("gzencode") &&
-      stripos($input->server("HTTP_ACCEPT_ENCODING"), "gzip") !== false &&
+      stripos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false &&
       (int) ini_get("zlib.output_compression") === 0;
 
     if ($use_gzip && $content = $cache->get("{$key}_gz")) {

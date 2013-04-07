@@ -36,7 +36,7 @@ class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
   public function action_remind_me_later() {
     Access::verify_csrf();
     SiteStatus::clear("upgrade_checker");
-    if ($referer = Input::instance()->server("HTTP_REFERER")) {
+    if ($referer = $_SERVER["HTTP_REFERER"]) {
       HTTP::redirect($referer);
     } else {
       HTTP::redirect(Item::root()->abs_url());

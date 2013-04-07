@@ -60,7 +60,7 @@ class Rest_Controller_Rest extends Controller {
       $input = Input::instance();
       $request = new stdClass();
 
-      switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
+      switch ($method = strtolower($_SERVER["REQUEST_METHOD"])) {
       case "get":
         $request->params = (object) $input->get();
         break;
@@ -81,8 +81,8 @@ class Rest_Controller_Rest extends Controller {
         $request->params->members = json_decode($request->params->members);
       }
 
-      $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
-      $request->access_key = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
+      $request->method = strtolower(Arr::get($_SERVER, "HTTP_X_GALLERY_REQUEST_METHOD", $method));
+      $request->access_key = $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"];
 
       if (empty($request->access_key) && !empty($request->params->access_key)) {
         $request->access_key = $request->params->access_key;

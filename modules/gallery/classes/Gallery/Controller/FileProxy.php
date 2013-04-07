@@ -37,7 +37,7 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
-    $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
+    $request_uri = rawurldecode($_SERVER["REQUEST_URI"]);
 
     // get rid of query parameters
     // request_uri: gallery3/var/albums/foo/bar.jpg
