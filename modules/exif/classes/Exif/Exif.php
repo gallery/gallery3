@@ -36,8 +36,9 @@ class Exif_Exif {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
+            // @todo: is Encoding::convert_to_utf8() needed if we do UTF8::clean()?
             $value = Encoding::convert_to_utf8($value);
-            $keys[$field] = Input::clean($value);
+            $keys[$field] = UTF8::clean($value);
 
             if ($field == "DateTime") {
               $time = strtotime($value);
@@ -57,8 +58,9 @@ class Exif_Exif {
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
             $value = implode(" ", $iptc[$iptc_key]);
+            // @todo: is Encoding::convert_to_utf8() needed if we do UTF8::clean()?
             $value = Encoding::convert_to_utf8($value);
-            $keys[$keyword] = Input::clean($value);
+            $keys[$keyword] = UTF8::clean($value);
 
             if ($keyword == "Caption" && !$item->description) {
               $item->description = $value;

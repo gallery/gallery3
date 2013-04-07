@@ -33,7 +33,7 @@ class Gallery_Theme {
    * active for any given request.
    */
   static function load_themes() {
-    $path = Input::server("PATH_INFO");
+    $path = $_SERVER["PATH_INFO"];
     if (empty($path)) {
       $path = "/" . Input::get("kohana_uri");
     }
