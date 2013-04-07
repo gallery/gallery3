@@ -245,7 +245,7 @@ class Gallery_Locales {
   }
 
   static function cookie_locale() {
-    // Can't use Input framework for client side cookies since
+    // Can't use Request or Cookie objects for client side cookies since
     // they're not signed.
     $cookie_data = isset($_COOKIE["g_locale"]) ? $_COOKIE["g_locale"] : null;
     $locale = null;
