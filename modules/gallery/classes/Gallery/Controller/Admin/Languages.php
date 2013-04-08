@@ -63,7 +63,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
       return $this->action_index($form);
     }
 
-    if (Input::instance()->post("share")) {
+    if (Request::$current->post("share")) {
       L10nClient::submit_translations();
       Message::success(t("Translations submitted"));
     } else {

@@ -91,7 +91,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       ->name(t("Add from server"));
     $task = Task::create($task_def, array("item_id" => $item->id));
 
-    foreach (Input::instance()->post("paths") as $path) {
+    foreach (Request::$current->post("paths") as $path) {
       if (ServerAdd::is_valid_path($path)) {
         $entry = ORM::factory("ServerAddEntry");
         $entry->path = $path;

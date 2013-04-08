@@ -39,7 +39,7 @@ class Organize_Controller_Organize extends Controller {
   }
 
   public function action_tree($selected_album_id) {
-    $root = ORM::factory("Item", Input::instance()->post("root_id", 1));
+    $root = ORM::factory("Item", Arr::get(Request::$current->post(), "root_id", 1));
     $selected_album = ORM::factory("Item", $selected_album_id);
     Access::required("view", $root);
     Access::required("view", $selected_album);
@@ -105,7 +105,7 @@ class Organize_Controller_Organize extends Controller {
     Access::required("edit", $album);
 
     foreach (array("sort_column", "sort_order") as $key) {
-      if ($val = Input::instance()->post($key)) {
+      if ($val = Request::$current->post($key)) {
         $album->$key = $val;
       }
     }

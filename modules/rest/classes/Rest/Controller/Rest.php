@@ -21,8 +21,8 @@ class Rest_Controller_Rest extends Controller {
   const ALLOW_PRIVATE_GALLERY = true;
 
   public function action_index() {
-    $username = Input::instance()->post("user");
-    $password = Input::instance()->post("password");
+    $username = Request::$current->post("user");
+    $password = Request::$current->post("password");
 
     if (empty($username) || Auth::too_many_failures($username)) {
       throw new Rest_Exception("Forbidden", 403);
