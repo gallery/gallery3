@@ -57,16 +57,15 @@ class Rest_Controller_Rest extends Controller {
 
   public function __call($function, $args) {
     try {
-      $input = Input::instance();
       $request = new stdClass();
 
       switch ($method = strtolower($_SERVER["REQUEST_METHOD"])) {
       case "get":
-        $request->params = (object) $input->get();
+        $request->params = (object) Request::$current->query();
         break;
 
       default:
-        $request->params = (object) $input->post();
+        $request->params = (object) Request::$current->post();
         if (isset($_FILES["file"])) {
           $request->file = Upload::save("file");
           System::delete_later($request->file);

@@ -420,8 +420,8 @@ class Gallery_Access {
    * Verify our Cross Site Request Forgery token is valid, else throw an exception.
    */
   static function verify_csrf() {
-    $input = Input::instance();
-    if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
+    if (Arr::get(Request::$current->post(), "csrf", Request::$current->query("csrf")) !==
+        Session::instance()->get("csrf")) {
       Access::forbidden();
     }
   }

@@ -32,8 +32,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
 
     $page_size = Module::get_var("gallery", "page_size", 9);
-    $input = Input::instance();
-    $show = $input->get("show");
+    $show = Request::$current->query("show");
 
     if ($show) {
       $child = ORM::factory("Item", $show);
@@ -48,7 +47,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       }
     }
 
-    $page = $input->get("page", "1");
+    $page = Arr::get(Request::$current->query(), "page", "1");
     $children_count = $album->viewable()->children_count();
     $offset = ($page - 1) * $page_size;
     $max_pages = max(ceil($children_count / $page_size), 1);
