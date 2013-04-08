@@ -36,7 +36,7 @@ class Recaptcha_Recaptcha {
       ->error_messages("invalid", t("This private key is invalid"));
 
     $group->submit("")->value(t("Save"));
-    $site_domain = urlencode(stripslashes($_SERVER["HTTP_HOST"]));
+    $site_domain = urlencode(stripslashes($_SERVER["SERVER_NAME"]));
     $form->get_key_url = "http://www.google.com/recaptcha/admin/create?domains=$site_domain&app=Gallery3";
     return $form;
   }

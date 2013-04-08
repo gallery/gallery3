@@ -54,7 +54,7 @@ class Gallery_Controller_Upgrader extends Controller {
     if (php_sapi_name() == "cli") {
       // @todo this may screw up some module installers, but we don't have a better answer at
       // this time.
-      $_SERVER["HTTP_HOST"] = "example.com";
+      $_SERVER["SERVER_NAME"] = "example.com";
     } else {
       if (!Identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
         Access::forbidden();
