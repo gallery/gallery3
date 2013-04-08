@@ -121,7 +121,7 @@ class Gallery_Controller_L10nClient extends Controller {
   }
 
   public static function l10n_form() {
-    if (Input::instance()->get("show_all_l10n_messages")) {
+    if (Request::$current->query("show_all_l10n_messages")) {
       $calls = array();
       foreach (DB::build()
                ->select("key", "message")

@@ -19,7 +19,7 @@
  */
 class Tag_Controller_Admin_Tags extends Controller_Admin {
   public function action_index() {
-    $filter = Input::instance()->get("filter");
+    $filter = Request::$current->query("filter");
 
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Manage tags");

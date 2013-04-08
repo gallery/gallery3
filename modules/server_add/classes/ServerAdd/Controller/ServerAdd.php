@@ -40,7 +40,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
   }
 
   public function action_children() {
-    $path = Input::instance()->get("path");
+    $path = Request::$current->query("path");
 
     $tree = new View("server_add/tree.html");
     $tree->files = array();
@@ -83,7 +83,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
    */
   public function action_start() {
     Access::verify_csrf();
-    $item = ORM::factory("Item", Input::instance()->get("item_id"));
+    $item = ORM::factory("Item", Request::$current->query("item_id"));
 
     $task_def = TaskDefinition::factory()
       ->callback("Controller_ServerAdd::add")

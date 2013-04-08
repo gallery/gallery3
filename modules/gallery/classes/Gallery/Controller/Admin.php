@@ -34,7 +34,7 @@ class Gallery_Controller_Admin extends Controller {
   }
 
   public function __call($controller_name, $args) {
-    if (Input::instance()->get("reauth_check")) {
+    if (Request::$current->query("reauth_check")) {
       return self::_reauth_check();
     }
     if (Auth::must_reauth_for_admin_area()) {

@@ -59,7 +59,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function action_remove_path() {
     Access::verify_csrf();
 
-    $path = Input::instance()->get("path");
+    $path = Request::$current->query("path");
     $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     if (isset($paths[$path])) {
       unset($paths[$path]);
@@ -73,7 +73,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function action_autocomplete() {
     $directories = array();
 
-    $path_prefix = Input::instance()->get("term");
+    $path_prefix = Request::$current->query("term");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
         $directories[] = (string)HTML::clean($file);

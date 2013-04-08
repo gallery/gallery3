@@ -48,7 +48,7 @@ class Tag_Controller_Tags extends Controller {
 
   public function action_autocomplete() {
     $tags = array();
-    $tag_parts = explode(",", Input::instance()->get("term"));
+    $tag_parts = explode(",", Request::$current->query("term"));
     $tag_part = ltrim(end($tag_parts));
     $tag_list = ORM::factory("Tag")
       ->where("name", "LIKE", Database::escape_for_like($tag_part) . "%")
