@@ -75,7 +75,6 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sendmail_wrapped_message_test() {
-    $domain = $_SERVER["HTTP_HOST"];
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
                 "Reply-To: reply_to@gallery3.com\r\n" .

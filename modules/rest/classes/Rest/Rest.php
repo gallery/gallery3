@@ -24,13 +24,13 @@ class Rest_Rest {
     Session::instance()->abort_save();
 
     header("X-Gallery-API-Version: " . Rest::API_VERSION);
-    switch (Input::instance()->get("output", "json")) {
+    switch (Arr::get(Request::$current->query(), "output", "json")) {
     case "json":
       JSON::reply($data);
       break;
 
     case "jsonp":
-      if (!($callback = Input::instance()->get("callback", ""))) {
+      if (!($callback = Request::$current->query("callback"))) {
         throw new Rest_Exception(
           "Bad Request", 400, array("errors" => array("callback" => "missing")));
       }
@@ -159,7 +159,7 @@ class Rest_Rest {
     }
 
     $url = call_user_func_array(array($class, "url"), $args);
-    if (Input::instance()->get("output") == "html") {
+    if (Request::$current->query("output") == "html") {
       if (strpos($url, "?") === false) {
         $url .= "?output=html";
       } else {

@@ -32,12 +32,12 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
     $_SERVER["HTTP_ACCEPT_ENCODING"] = "HTTP_ACCEPT_ENCODING";
     $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "HTTP_ACCEPT_LANGUAGE";
     $_SERVER["HTTP_CONNECTION"] = "HTTP_CONNECTION";
-    $_SERVER["HTTP_HOST"] = "HTTP_HOST";
     $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
     $_SERVER["QUERY_STRING"] = "QUERY_STRING";
     $_SERVER["REMOTE_ADDR"] = "REMOTE_ADDR";
     $_SERVER["REMOTE_HOST"] = "REMOTE_HOST";
     $_SERVER["REMOTE_PORT"] = "REMOTE_PORT";
+    $_SERVER["SERVER_NAME"] = "SERVER_NAME";
 
     Request::set_user_agent("HTTP_USER_AGENT");
   }
@@ -71,9 +71,9 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("HTTP_ACCEPT_ENCODING", $comment->server_http_accept_encoding);
     $this->assert_equal("HTTP_ACCEPT_LANGUAGE", $comment->server_http_accept_language);
     $this->assert_equal("HTTP_CONNECTION", $comment->server_http_connection);
-    $this->assert_equal("HTTP_HOST", $comment->server_http_host);
     $this->assert_equal("HTTP_REFERER", $comment->server_http_referer);
     $this->assert_equal("HTTP_USER_AGENT", $comment->server_http_user_agent);
+    $this->assert_equal("SERVER_NAME", $comment->server_name);
     $this->assert_equal("QUERY_STRING", $comment->server_query_string);
     $this->assert_equal("REMOTE_ADDR", $comment->server_remote_addr);
     $this->assert_equal("REMOTE_HOST", $comment->server_remote_host);
@@ -104,9 +104,9 @@ class Comment_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("HTTP_ACCEPT_ENCODING", $comment->server_http_accept_encoding);
     $this->assert_equal("HTTP_ACCEPT_LANGUAGE", $comment->server_http_accept_language);
     $this->assert_equal("HTTP_CONNECTION", $comment->server_http_connection);
-    $this->assert_equal("HTTP_HOST", $comment->server_http_host);
     $this->assert_equal("HTTP_REFERER", $comment->server_http_referer);
     $this->assert_equal("HTTP_USER_AGENT", $comment->server_http_user_agent);
+    $this->assert_equal("SERVER_NAME", $comment->server_name);
     $this->assert_equal("QUERY_STRING", $comment->server_query_string);
     $this->assert_equal("REMOTE_ADDR", $comment->server_remote_addr);
     $this->assert_equal("REMOTE_HOST", $comment->server_remote_host);

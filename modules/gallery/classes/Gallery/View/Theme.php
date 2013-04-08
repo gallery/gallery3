@@ -33,7 +33,7 @@ class Gallery_View_Theme extends View_Gallery {
 
     $this->theme_name = Module::get_var("gallery", "active_site_theme");
     if (Identity::active_user()->admin) {
-      $theme_name = Input::instance()->get("theme");
+      $theme_name = Request::$current->query("theme");
       if ($theme_name &&
           file_exists(THEMEPATH . $theme_name) &&
           strpos(realpath(THEMEPATH . $theme_name), THEMEPATH) == 0) {

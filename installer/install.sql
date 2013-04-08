@@ -63,9 +63,9 @@ CREATE TABLE {comments} (
   `server_http_accept_language` varchar(64) DEFAULT NULL,
   `server_http_accept` varchar(128) DEFAULT NULL,
   `server_http_connection` varchar(64) DEFAULT NULL,
-  `server_http_host` varchar(64) DEFAULT NULL,
   `server_http_referer` varchar(255) DEFAULT NULL,
   `server_http_user_agent` varchar(128) DEFAULT NULL,
+  `server_name` varchar(64) DEFAULT NULL,
   `server_query_string` varchar(64) DEFAULT NULL,
   `server_remote_addr` varchar(40) DEFAULT NULL,
   `server_remote_host` varchar(255) DEFAULT NULL,
@@ -247,7 +247,7 @@ CREATE TABLE {modules} (
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {modules} VALUES (1,1,'gallery',58,1);
 INSERT INTO {modules} VALUES (2,1,'user',4,2);
-INSERT INTO {modules} VALUES (3,1,'comment',7,3);
+INSERT INTO {modules} VALUES (3,1,'comment',8,3);
 INSERT INTO {modules} VALUES (4,1,'organize',4,4);
 INSERT INTO {modules} VALUES (5,1,'info',2,5);
 INSERT INTO {modules} VALUES (6,1,'rss',1,6);

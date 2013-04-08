@@ -50,9 +50,8 @@ class Form_Recaptcha_Core extends Form_Input {
    * @return  bool
    */
   public function validate() {
-    $input = Input::instance();
-    $challenge = $input->post("recaptcha_challenge_field", "", true);
-    $response = $input->post("recaptcha_response_field", "", true);
+    $challenge = (string) Request::$current->post("recaptcha_challenge_field");
+    $response = (string) Request::$current->post("recaptcha_response_field");
     if (!empty($challenge)) {
       $this->_error = Recaptcha::is_recaptcha_valid(
         $challenge, $response, Module::get_var("recaptcha", "private_key"));
