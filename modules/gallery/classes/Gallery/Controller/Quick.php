@@ -137,7 +137,7 @@ class Gallery_Controller_Quick extends Controller {
     }
 
     // Pass on the source item where this form was generated, so we have an idea where to return to.
-    $form->hidden("from_id")->value((int) Arr::get(Request::$current->query(), "from_id", 0));
+    $form->hidden("from_id")->value((int) Request::$current->query("from_id"));
 
     print $form;
   }

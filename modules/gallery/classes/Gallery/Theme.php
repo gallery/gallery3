@@ -35,7 +35,7 @@ class Gallery_Theme {
   static function load_themes() {
     // We haven't executed the request yet, so we use $initial instead of $current.
     $path = Request::$initial->uri();
-    $override = Arr::get(Request::$initial->query(), "theme");
+    $override = Request::$initial->query("theme");
 
     $modules = Kohana::modules();
 
