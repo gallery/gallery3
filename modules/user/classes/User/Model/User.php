@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
-  protected $_has_many = array("groups" => array("foreign_key" => "id"));
+  protected $_has_many = array("group" => array("foreign_key" => "id"));
   protected $password_length = null;
   protected $groups_cache = null;
 
@@ -65,7 +65,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
 
   public function groups() {
     if (!$this->groups_cache) {
-      $this->groups_cache = $this->groups->find_all()->as_array();
+      $this->groups_cache = $this->group->find_all()->as_array();
     }
     return $this->groups_cache;
   }
