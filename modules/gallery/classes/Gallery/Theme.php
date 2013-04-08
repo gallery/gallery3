@@ -33,10 +33,8 @@ class Gallery_Theme {
    * active for any given request.
    */
   static function load_themes() {
-    $path = $_SERVER["PATH_INFO"];
-    if (empty($path)) {
-      $path = "/" . Input::get("kohana_uri");
-    }
+    // We haven't executed the request yet, so we use $initial instead of $current.
+    $path = Request::$initial->uri();
 
     $modules = Kohana::modules();
 
