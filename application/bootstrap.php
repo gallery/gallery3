@@ -278,6 +278,3 @@ I18n::lang('en-us');
 I18n::instance();
 
 register_shutdown_function(array("gallery", "shutdown"));
-
-// Notify all modules that we're ready to serve
-Gallery::ready();
