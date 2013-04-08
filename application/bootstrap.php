@@ -132,6 +132,33 @@ Kohana::$log->attach(new Log_File(VARPATH . "logs"), LOG_NOTICE);
 Kohana::$config->attach(new Config_File);
 
 /**
+ * Protect against XSS.  This cleans $_GET, $_POST, and $_COOKIE and stores their raw values in
+ * RAW::$_GET, RAW::$_POST, and RAW::$_COOKIE, respectively.  It also runs UTF8::clean() on
+ * $_SERVER to remove control characters and convert to UTF8 if needed.
+ *
+ * This is run after Kohana's init (which calls Kohana::sanitize()), and requires that
+ * we load *only* our purifier module.  For more details, see Purifier::clean_input_array().
+ */
+Kohana::modules(array("purifier" => MODPATH . "purifier"));
+
+class RAW {
+  public static $_GET;
+  public static $_POST;
+  public static $_COOKIE;
+}
+
+list ($_GET,    RAW::$_GET)    = Purifier::clean_input_array($_GET);
+list ($_POST,   RAW::$_POST)   = Purifier::clean_input_array($_POST);
+list ($_COOKIE, RAW::$_COOKIE) = Purifier::clean_input_array($_COOKIE);
+
+if (isset($_SERVER["SERVER_NAME"])) {
+  // HTTP_HOST comes from the client and is untrustworthy.
+  // Clear it here to force the use of SERVER_NAME instead.
+  unset($_SERVER["HTTP_HOST"]);
+}
+$_SERVER = UTF8::clean($_SERVER);
+
+/**
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array_merge(
@@ -141,8 +168,10 @@ Kohana::modules(array_merge(
       "unit_test"         => MODPATH . "unit_test") :
     array()),
   array(
-    // gallery should be first here so that it can override classes
-    // in the other official Kohana modules
+    // The purifier module should always be first since it cannot be overridden.
+    // Since no other modules are activated yet, gallery goes next.  The other
+    // Kohana and 3rd-party modules go last so gallery can override them.
+    "purifier"    => MODPATH . "purifier",
     "gallery"     => MODPATH . "gallery",
     "database"    => MODPATH . "database",
     "orm"         => MODPATH . "orm",
