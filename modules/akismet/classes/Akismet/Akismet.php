@@ -129,13 +129,13 @@ class Akismet_Akismet {
     $comment_data["HTTP_ACCEPT_ENCODING"] = $comment->server_http_accept_encoding;
     $comment_data["HTTP_ACCEPT_LANGUAGE"] = $comment->server_http_accept_language;
     $comment_data["HTTP_CONNECTION"] = $comment->server_http_connection;
-    $comment_data["HTTP_HOST"] = $comment->server_http_host;
     $comment_data["HTTP_USER_AGENT"] = $comment->server_http_user_agent;
     $comment_data["QUERY_STRING"] = $comment->server_query_string;
     $comment_data["REMOTE_ADDR"] = $comment->server_remote_addr;
     $comment_data["REMOTE_HOST"] = $comment->server_remote_host;
     $comment_data["REMOTE_PORT"] = $comment->server_remote_port;
     $comment_data["SERVER_HTTP_ACCEPT_CHARSET"] = $comment->server_http_accept_charset;
+    $comment_data["SERVER_NAME"] = $comment->server_name;
     $comment_data["blog"] = URL::base("http", false);
     $comment_data["comment_author"] = $comment->author_name();
     $comment_data["comment_author_email"] = $comment->author_email();

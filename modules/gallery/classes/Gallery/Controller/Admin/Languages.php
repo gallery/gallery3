@@ -37,11 +37,10 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
   public function action_save() {
     Access::verify_csrf();
 
-    $input = Input::instance();
-    Locales::update_installed($input->post("installed_locales"));
+    Locales::update_installed(Request::$current->post("installed_locales"));
 
     $installed_locales = array_keys(Locales::installed());
-    $new_default_locale = $input->post("default_locale");
+    $new_default_locale = Request::$current->post("default_locale");
     if (!in_array($new_default_locale, $installed_locales)) {
       if (!empty($installed_locales)) {
         $new_default_locale = $installed_locales[0];
@@ -63,7 +62,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
       return $this->action_index($form);
     }
 
-    if (Input::instance()->post("share")) {
+    if (Request::$current->post("share")) {
       L10nClient::submit_translations();
       Message::success(t("Translations submitted"));
     } else {

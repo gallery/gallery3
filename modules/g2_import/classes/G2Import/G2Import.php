@@ -938,7 +938,7 @@ class G2Import_G2Import {
     $comment->item_id = $item_id;
     $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
-    $comment->server_http_host = $g2_comment->getHost();
+    $comment->server_name = $g2_comment->getHost();
     try {
       $comment->save();
     } catch (Exception $e) {

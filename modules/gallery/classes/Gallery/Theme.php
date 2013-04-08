@@ -33,10 +33,9 @@ class Gallery_Theme {
    * active for any given request.
    */
   static function load_themes() {
-    $path = $_SERVER["PATH_INFO"];
-    if (empty($path)) {
-      $path = "/" . Input::get("kohana_uri");
-    }
+    // We haven't executed the request yet, so we use $initial instead of $current.
+    $path = Request::$initial->uri();
+    $override = Request::$initial->query("theme");
 
     $modules = Kohana::modules();
 
@@ -71,7 +70,7 @@ class Gallery_Theme {
           array(self::$site_theme_name => THEMEPATH . self::$site_theme_name . "/admin"), $modules);
       }
       // Admins can override the site theme, temporarily.  This lets us preview themes.
-      if (Identity::active_user()->admin && $override = Input::get("theme")) {
+      if (Identity::active_user()->admin && $override) {
         if (file_exists(THEMEPATH . $override)) {
           self::$admin_theme_name = $override;
           $modules = array_merge(
@@ -82,7 +81,7 @@ class Gallery_Theme {
       }
     } else {
       // Admins can override the site theme, temporarily.  This lets us preview themes.
-      if (Identity::active_user()->admin && $override = Input::get("theme")) {
+      if (Identity::active_user()->admin && $override) {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {

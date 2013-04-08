@@ -205,9 +205,6 @@ isset($_GET["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_GET["user_agent"];
 Upload::$remove_spaces = false;
 Upload::$default_directory = VARPATH . "uploads";
 
-// Initialize our session support
-Session::instance();
-
 // Set the default driver for caching.  Gallery_Cache_Database is the implementation
 // that we provide.
 Cache::$default = "database";
@@ -277,7 +274,7 @@ Module::load_modules();
 I18n::lang('en-us');
 I18n::instance();
 
-register_shutdown_function(array("gallery", "shutdown"));
+// Initialize our session support
+Session::instance();
 
-// Notify all modules that we're ready to serve
-Gallery::ready();
+register_shutdown_function(array("gallery", "shutdown"));

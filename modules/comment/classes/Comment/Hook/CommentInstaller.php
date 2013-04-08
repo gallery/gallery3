@@ -33,9 +33,9 @@ class Comment_Hook_CommentInstaller {
                  `server_http_accept_language` varchar(64) default NULL,
                  `server_http_accept` varchar(128) default NULL,
                  `server_http_connection` varchar(64) default NULL,
-                 `server_http_host` varchar(64) default NULL,
                  `server_http_referer` varchar(255) default NULL,
                  `server_http_user_agent` varchar(128) default NULL,
+                 `server_name` varchar(64) default NULL,
                  `server_query_string` varchar(64) default NULL,
                  `server_remote_addr` varchar(40) default NULL,
                  `server_remote_host` varchar(255) default NULL,
@@ -98,6 +98,14 @@ class Comment_Hook_CommentInstaller {
         Module::set_var("comment", "rss_visible", "all");
       }
       Module::set_version("comment", $version = 7);
+    }
+
+    if ($version == 7) {
+      // In version 8 we started using SERVER_NAME instead of HTTP_HOST to be more robust
+      // against potential XSS attacks.
+      $db->query(
+        "ALTER TABLE {comments} CHANGE `server_http_host` `server_name` varchar(64) default NULL");
+      Module::set_version("comment", $version = 8);
     }
   }
 

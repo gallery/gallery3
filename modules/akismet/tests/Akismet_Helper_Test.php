@@ -65,10 +65,9 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "HTTP_ACCEPT=http_accept&HTTP_ACCEPT_ENCODING=http_accept_encoding&" .
       "HTTP_ACCEPT_LANGUAGE=http_accept_language&HTTP_CONNECTION=http_connection&" .
-      "HTTP_HOST=http_host&HTTP_USER_AGENT=http_user_agent&" .
-      "QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
+      "HTTP_USER_AGENT=http_user_agent&QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
       "REMOTE_HOST=remote_host&REMOTE_PORT=remote_port&" .
-      "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&" .
+      "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&SERVER_NAME=name&" .
       "blog=http%3A%2F%2F.%2F&comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
       "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
@@ -88,10 +87,9 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "HTTP_ACCEPT=http_accept&HTTP_ACCEPT_ENCODING=http_accept_encoding&" .
       "HTTP_ACCEPT_LANGUAGE=http_accept_language&HTTP_CONNECTION=http_connection&" .
-      "HTTP_HOST=http_host&HTTP_USER_AGENT=http_user_agent&" .
-      "QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
+      "HTTP_USER_AGENT=http_user_agent&QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
       "REMOTE_HOST=remote_host&REMOTE_PORT=remote_port&" .
-      "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&" .
+      "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&SERVER_NAME=name&" .
       "blog=http%3A%2F%2F.%2F&comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
       "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
@@ -111,10 +109,9 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "HTTP_ACCEPT=http_accept&HTTP_ACCEPT_ENCODING=http_accept_encoding&" .
       "HTTP_ACCEPT_LANGUAGE=http_accept_language&HTTP_CONNECTION=http_connection&" .
-      "HTTP_HOST=http_host&HTTP_USER_AGENT=http_user_agent&" .
-      "QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
+      "HTTP_USER_AGENT=http_user_agent&QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
       "REMOTE_HOST=remote_host&REMOTE_PORT=remote_port&" .
-      "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&blog=http%3A%2F%2F.%2F&" .
+      "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&SERVER_NAME=name&" .
       "comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
       "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .

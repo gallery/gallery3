@@ -23,7 +23,7 @@ class Gallery_Controller_Packager extends Controller {
       Access::forbidden();
     }
 
-    $_SERVER["HTTP_HOST"] = "example.com";
+    $_SERVER["SERVER_NAME"] = "example.com";
 
     try {
       $this->_reset();                // empty and reinstall the standard modules

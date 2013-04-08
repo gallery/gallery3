@@ -27,7 +27,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     // @todo: add this as a config option
     $page_size = Module::get_var("user", "page_size", 10);
-    $page = Input::instance()->get("page", "1");
+    $page = Arr::get(Request::$current->query(), "page", "1");
     $builder = DB::build();
     $user_count = $builder->from("users")->count_records();
 

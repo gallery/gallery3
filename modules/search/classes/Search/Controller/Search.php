@@ -20,11 +20,11 @@
 class Search_Controller_Search extends Controller {
   public function action_index() {
     $page_size = Module::get_var("gallery", "page_size", 9);
-    $q = Input::instance()->get("q");
+    $q = Request::$current->query("q");
     $q_with_more_terms = Search::add_query_terms($q);
-    $show = Input::instance()->get("show");
+    $show = Request::$current->query("show");
 
-    $album_id = Input::instance()->get("album", Item::root()->id);
+    $album_id = Arr::get(Request::$current->query(), "album", Item::root()->id);
     $album = ORM::factory("Item", $album_id);
     if (!Access::can("view", $album) || !$album->is_album()) {
       $album = Item::root();
@@ -42,7 +42,7 @@ class Search_Controller_Search extends Controller {
       }
     }
 
-    $page = Input::instance()->get("page", 1);
+    $page = Arr::get(Request::$current->query(), "page", 1);
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
