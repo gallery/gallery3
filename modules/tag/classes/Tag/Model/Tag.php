@@ -47,7 +47,7 @@ class Tag_Model_Tag extends ORM {
       ->where("items_tags.tag_id", "=", $this->id)
       ->merge_where($where)
       ->order_by("item.id")
-      ->find_all($limit, $offset);
+      ->limit($limit)->offset($offset)->find_all();
   }
 
   /**

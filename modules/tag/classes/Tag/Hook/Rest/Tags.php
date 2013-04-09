@@ -37,7 +37,7 @@ class Tag_Hook_Rest_Tags {
       $start = isset($p->start) ? (int)$p->start : 0;
     }
 
-    foreach (ORM::factory("Tag")->find_all($num, $start) as $tag) {
+    foreach (ORM::factory("Tag")->limit($num)->offset($start)->find_all() as $tag) {
       $tags[] = Rest::url("tag", $tag);
     }
     return array("url" => Rest::url("tags"),

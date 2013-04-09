@@ -461,7 +461,7 @@ class Gallery_Hook_GalleryTask {
         $conflicts = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("slug", "=", $slug)
-          ->find_all(1, 1);
+          ->limit(1)->offset(1)->find_all();
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
           DB::update("items")
@@ -508,7 +508,7 @@ class Gallery_Hook_GalleryTask {
         $conflicts = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("name", "=", $name)
-          ->find_all(1, 1);
+          ->limit(1)->offset(1)->find_all();
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
           if (!$conflict->is_album() && preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
@@ -564,7 +564,7 @@ class Gallery_Hook_GalleryTask {
           ->where("parent_id", "=", $parent_id)
           ->where("name", "LIKE", "{$base_name_escaped}.%")
           ->where("type", "<>", "album")
-          ->find_all(1, 1);
+          ->limit(1)->offset(1)->find_all();
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
           if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {

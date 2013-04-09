@@ -54,7 +54,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     // in the same query.
     $view->content->users = ORM::factory("User")
       ->order_by("user.name", "ASC")
-      ->find_all($page_size, $view->content->pager->sql_offset);
+      ->limit($page_size)->offset($view->content->pager->sql_offset)->find_all();
     $view->content->groups = ORM::factory("Group")->order_by("name", "ASC")->find_all();
 
     print $view;
