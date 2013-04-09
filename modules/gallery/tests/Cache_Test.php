@@ -36,8 +36,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
     $this->assert_false($this->_exists("test_key"), "test_key should not be defined");
 
     $id = Random::hash();
-    DB::build()
-      ->insert("caches")
+    DB::insert("caches")
       ->columns("key", "tags", "expiration", "cache")
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
@@ -48,8 +47,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   public function cache_get_test() {
     $id = Random::hash();
 
-    DB::build()
-      ->insert("caches")
+    DB::insert("caches")
       ->columns("key", "tags", "expiration", "cache")
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
