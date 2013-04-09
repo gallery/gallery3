@@ -23,16 +23,14 @@ class Rest_Hook_RestEvent {
    * the user_homes directory.
    */
   static function user_before_delete($user) {
-    DB::build()
-      ->delete("user_access_keys")
+    DB::delete("user_access_keys")
        ->where("id", "=", $user->id)
        ->execute();
   }
 
 
   static function change_provider($new_provider) {
-    DB::build()
-      ->delete("user_access_keys")
+    DB::delete("user_access_keys")
       ->execute();
   }
 

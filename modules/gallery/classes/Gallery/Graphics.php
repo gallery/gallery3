@@ -60,8 +60,7 @@ class Gallery_Graphics {
    * @param string  $operation   the name of the operation(<defining class>::method)
    */
   static function remove_rule($module_name, $target, $operation) {
-    DB::build()
-      ->delete("graphics_rules")
+    DB::delete("graphics_rules")
       ->where("module_name", "=", $module_name)
       ->where("target", "=", $target)
       ->where("operation", "=", $operation)
@@ -75,8 +74,7 @@ class Gallery_Graphics {
    * @param string $module_name
    */
   static function remove_rules($module_name) {
-    $status = DB::build()
-      ->delete("graphics_rules")
+    $status = DB::delete("graphics_rules")
       ->where("module_name", "=", $module_name)
       ->execute();
     if (count($status)) {
@@ -90,8 +88,7 @@ class Gallery_Graphics {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function activate_rules($module_name) {
-    DB::build()
-      ->update("graphics_rules")
+    DB::update("graphics_rules")
       ->set("active", true)
       ->where("module_name", "=", $module_name)
       ->execute();
@@ -103,8 +100,7 @@ class Gallery_Graphics {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function deactivate_rules($module_name) {
-    DB::build()
-      ->update("graphics_rules")
+    DB::update("graphics_rules")
       ->set("active", false)
       ->where("module_name", "=", $module_name)
       ->execute();
@@ -314,19 +310,19 @@ class Gallery_Graphics {
    * @return Database_Result Query result
    */
   static function find_dirty_images_query() {
-    return DB::build()
+    return DB::select()
       ->from("items")
-      ->and_open()
+      ->and_where_open()
       ->where("thumb_dirty", "=", 1)
-      ->and_open()
+      ->and_where_open()
       ->where("type", "<>", "album")
       ->or_where("album_cover_item_id", "IS NOT", null)
-      ->close()
-      ->or_open()
+      ->and_where_close()
+      ->or_where_open()
       ->where("resize_dirty", "=", 1)
       ->where("type", "=", "photo")
-      ->close()
-      ->close();
+      ->or_where_close()
+      ->and_where_close();
   }
 
   /**
@@ -335,8 +331,7 @@ class Gallery_Graphics {
    */
   static function mark_dirty($thumbs, $resizes, $type=null, $mime_type=null) {
     if ($thumbs || $resizes) {
-      $db = DB::build()
-        ->update("items");
+      $db = DB::update("items");
       if ($type) {
         $db->where("type", "=", $type);
       }
@@ -352,7 +347,7 @@ class Gallery_Graphics {
       $db->execute();
     }
 
-    $count = Graphics::find_dirty_images_query()->count_records();
+    $count = Graphics::find_dirty_images_query()->execute()->count();
     if ($count) {
       SiteStatus::warning(
         t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",

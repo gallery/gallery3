@@ -81,7 +81,7 @@ class Gallery_Controller_Packager extends Controller {
     Database::instance()->query("TRUNCATE {caches}");
     Database::instance()->query("TRUNCATE {sessions}");
     Database::instance()->query("TRUNCATE {logs}");
-    DB::build()->update("users")
+    DB::update("users")
       ->set(array("password" => ""))
       ->where("id", "in", array(1, 2))
       ->execute();

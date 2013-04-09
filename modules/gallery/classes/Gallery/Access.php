@@ -181,9 +181,9 @@ class Gallery_Access {
     $lock = ORM::factory("Item")
       ->where("left_ptr", "<=", $item->left_ptr)
       ->where("right_ptr", ">=", $item->right_ptr)
-      ->where("items.id", "<>", $item->id)
-      ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", "=", Access::DENY)
+      ->where("item.id", "<>", $item->id)
+      ->join("access_intents", "item.id", "access_intent.item_id")
+      ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
       ->limit(1)
       ->find();
@@ -494,8 +494,7 @@ class Gallery_Access {
       "ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
     Database::instance()->query(
       "ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
-    DB::build()
-      ->update("access_intents")
+    DB::update("access_intents")
       ->set($field, Access::DENY)
       ->where("item_id", "=", 1)
       ->execute();
@@ -529,8 +528,8 @@ class Gallery_Access {
       $tmp_item = ORM::factory("Item")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
-        ->join("access_intents", "access_intents.item_id", "items.id")
-        ->where("access_intents.$field", "=", Access::DENY)
+        ->join("access_intents", "access_intent.item_id", "item.id")
+        ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -543,27 +542,25 @@ class Gallery_Access {
     // access_caches table will already contain DENY values and we won't be able to overwrite
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set($field, Access::UNKNOWN)
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->execute();
 
     $query = ORM::factory("AccessIntent")
-      ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"))
-      ->join("items", "items.id", "access_intents.item_id")
+      ->select(array("access_intent.$field", "item.left_ptr", "item.right_ptr", "item.id"))
+      ->join("items", "item.id", "access_intent.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where("type", "=", "album")
-      ->where("access_intents.$field", "IS NOT", Access::INHERIT)
+      ->where("access_intent.$field", "IS NOT", Access::INHERIT)
       ->order_by("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
       if ($row->$field == Access::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
-        DB::build()
-          ->update("items")
+        DB::update("items")
           ->set($field, $row->$field)
           ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
           ->where("left_ptr", ">=", $row->left_ptr)
@@ -571,8 +568,7 @@ class Gallery_Access {
           ->execute();
       } else if ($row->$field == Access::DENY) {
         // DENY overwrites everything below it
-        DB::build()
-          ->update("items")
+        DB::update("items")
           ->set($field, $row->$field)
           ->where("left_ptr", ">=", $row->left_ptr)
           ->where("right_ptr", "<=", $row->right_ptr)
@@ -583,8 +579,7 @@ class Gallery_Access {
     // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set($field, Access::ALLOW)
       ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
       ->where("left_ptr", ">=", $item->left_ptr)
@@ -615,7 +610,7 @@ class Gallery_Access {
     //       propagate from here with the parent's intent.
     if ($access->$field === Access::INHERIT) {
       $tmp_item = ORM::factory("Item")
-        ->join("access_intents", "items.id", "access_intents.item_id")
+        ->join("access_intents", "item.id", "access_intent.item_id")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
         ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
@@ -630,8 +625,8 @@ class Gallery_Access {
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
     $query = ORM::factory("AccessIntent")
-      ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr"))
-      ->join("items", "items.id", "access_intents.item_id")
+      ->select(array("access_intent.$field", "item.left_ptr", "item.right_ptr"))
+      ->join("items", "item.id", "access_intent.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where($field, "IS NOT", Access::INHERIT)
@@ -639,12 +634,10 @@ class Gallery_Access {
       ->find_all();
     foreach ($query as $row) {
       $value = ($row->$field === Access::ALLOW) ? true : false;
-      DB::build()
-        ->update("access_caches")
+      DB::update("access_caches")
         ->set($field, $value)
         ->where("item_id", "IN",
-                DB::build()
-                ->select("id")
+                DB::select("id")
                 ->from("items")
                 ->where("left_ptr", ">=", $row->left_ptr)
                 ->where("right_ptr", "<=", $row->right_ptr))

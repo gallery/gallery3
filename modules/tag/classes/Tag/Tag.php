@@ -85,7 +85,7 @@ class Tag_Tag {
    */
   static function item_tags($item) {
     return ORM::factory("Tag")
-      ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
+      ->join("items_tags", "tag.id", "items_tags.tag_id", "left")
       ->where("items_tags.item_id", "=", $item->id)
       ->find_all();
   }
@@ -96,7 +96,7 @@ class Tag_Tag {
    */
   static function tag_items($tag) {
     return ORM::factory("Item")
-      ->join("items_tags", "items_tags.item_id", "items.id", "left")
+      ->join("items_tags", "items_tags.item_id", "item.id", "left")
       ->where("items_tags.tag_id", "=", $tag->id)
       ->find_all();
   }
@@ -126,14 +126,12 @@ class Tag_Tag {
    * Delete all tags associated with an item
    */
   static function clear_all($item) {
-    DB::build()
-      ->update("tags")
+    DB::update("tags")
       ->set("count", DB::expr("`count` - 1"))
       ->where("count", ">", 0)
-      ->where("id", "IN", DB::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
+      ->where("id", "IN", DB::select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
       ->execute();
-    DB::build()
-      ->delete("items_tags")
+    DB::delete("items_tags")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
@@ -142,8 +140,7 @@ class Tag_Tag {
    * Remove all items from a tag
    */
   static function remove_items($tag) {
-    DB::build()
-      ->delete("items_tags")
+    DB::delete("items_tags")
       ->where("tag_id", "=", $tag->id)
       ->execute();
     $tag->count = 0;
@@ -157,7 +154,7 @@ class Tag_Tag {
     // @todo There's a potential race condition here which we can solve by adding a lock around
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
-    DB::build()->delete("tags")->where("count", "=", 0)->execute();
+    DB::delete("tags")->where("count", "=", 0)->execute();
   }
 
   /**
@@ -171,11 +168,11 @@ class Tag_Tag {
   static function get_position($tag, $item, $where=array()) {
     return ORM::factory("Item")
       ->viewable()
-      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->join("items_tags", "item.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $tag->id)
-      ->where("items.id", "<=", $item->id)
+      ->where("item.id", "<=", $item->id)
       ->merge_where($where)
-      ->order_by("items.id")
+      ->order_by("item.id")
       ->count_all();
   }
 }

@@ -27,8 +27,7 @@ class Search_Hook_SearchEvent {
   }
 
   static function item_deleted($item) {
-    DB::build()
-      ->delete("search_records")
+    DB::delete("search_records")
       ->where("item_id", "=", $item->id)
       ->execute();
   }

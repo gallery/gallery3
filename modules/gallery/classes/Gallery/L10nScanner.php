@@ -28,8 +28,7 @@ class Gallery_L10nScanner {
 
   static function process_message($message, &$cache) {
     if (empty($cache)) {
-      foreach (DB::build()
-               ->select("key")
+      foreach (DB::select("key")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
                ->execute() as $row) {

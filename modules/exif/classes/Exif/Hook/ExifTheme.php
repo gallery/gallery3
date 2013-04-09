@@ -21,8 +21,7 @@ class Exif_Hook_ExifTheme {
   static function sidebar_bottom($theme) {
     $item = $theme->item();
     if ($item && $item->is_photo()) {
-      $record = DB::build()
-        ->select("key_count")
+      $record = DB::select("key_count")
         ->from("exif_records")
         ->where("item_id", "=", $item->id)
         ->execute()

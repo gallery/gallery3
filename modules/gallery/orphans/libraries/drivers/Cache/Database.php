@@ -65,8 +65,7 @@ class Cache_Database_Driver extends Cache_Driver {
    * @return  array    cached data
    */
   public function get_tag($tags) {
-    $db = DB::build()
-      ->select()
+    $db = DB::select()
       ->from("caches");
     foreach ($tags as $tag) {
       $db->where("tags", "LIKE", "%" . Database::escape_for_like("<$tag>") . "%");
@@ -98,8 +97,7 @@ class Cache_Database_Driver extends Cache_Driver {
    */
   public function get($keys, $single=false) {
     $data = null;
-    $result = DB::build()
-      ->select()
+    $result = DB::select()
       ->from("caches")
       ->where("key", "IN", $keys)
       ->execute();
@@ -133,8 +131,7 @@ class Cache_Database_Driver extends Cache_Driver {
    * @return bool
    */
   public function delete($keys, $is_tag=false) {
-    $db = DB::build()
-      ->delete("caches");
+    $db = DB::delete("caches");
     if ($keys === true) {
       // Delete all caches
     } else if ($is_tag === true) {

@@ -20,24 +20,24 @@
 class Cache_Test extends Gallery_Unit_Test_Case {
   private $_driver;
   public function setup() {
-    DB::build()->delete("caches")->execute();
+    DB::delete("caches")->execute();
     $this->_driver = new Cache_Database();
   }
 
   private function _exists($id) {
-    return DB::build()
+    return DB::select()
+      ->from("caches")
       ->where("key", "=", $id)
       ->where("expiration", ">=", time())
       ->limit("1")
-      ->count_records("caches") > 0;
+      ->execute()->count() > 0;
   }
 
   public function cache_exists_test_helper_function_test() {
     $this->assert_false($this->_exists("test_key"), "test_key should not be defined");
 
     $id = Random::hash();
-    DB::build()
-      ->insert("caches")
+    DB::insert("caches")
       ->columns("key", "tags", "expiration", "cache")
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
@@ -48,8 +48,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   public function cache_get_test() {
     $id = Random::hash();
 
-    DB::build()
-      ->insert("caches")
+    DB::insert("caches")
       ->columns("key", "tags", "expiration", "cache")
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();

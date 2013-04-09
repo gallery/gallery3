@@ -67,11 +67,11 @@ class Comment_Model_Test extends Gallery_Unit_Test_Case {
     // We can see the comment when permissions are granted on the album
     Access::allow(Identity::everybody(), "view", $album);
     $this->assert_true(
-      ORM::factory("Comment")->viewable()->where("comments.id", "=", $comment->id)->count_all());
+      ORM::factory("Comment")->viewable()->where("comment.id", "=", $comment->id)->count_all());
 
     // We can't see the comment when permissions are denied on the album
     Access::deny(Identity::everybody(), "view", $album);
     $this->assert_false(
-      ORM::factory("Comment")->viewable()->where("comments.id", "=", $comment->id)->count_all());
+      ORM::factory("Comment")->viewable()->where("comment.id", "=", $comment->id)->count_all());
   }
 }

@@ -168,8 +168,7 @@ class Gallery_I18n extends Kohana_I18n {
     $translations = $cache->get($cache_key);
     if (!isset($translations) || !is_array($translations)) {
       $translations = array();
-      foreach (DB::build()
-               ->select("key", "translation")
+      foreach (DB::select("key", "translation")
                ->from("incoming_translations")
                ->where("locale", "=", $locale)
                ->execute() as $row) {
@@ -177,8 +176,7 @@ class Gallery_I18n extends Kohana_I18n {
       }
 
       // Override incoming with outgoing...
-      foreach (DB::build()
-               ->select("key", "translation")
+      foreach (DB::select("key", "translation")
                ->from("outgoing_translations")
                ->where("locale", "=", $locale)
                ->execute() as $row) {

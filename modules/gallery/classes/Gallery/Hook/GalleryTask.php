@@ -35,7 +35,7 @@ class Gallery_Hook_GalleryTask {
   const FIX_STATE_DONE = 14;
 
   static function available_tasks() {
-    $dirty_count = Graphics::find_dirty_images_query()->count_records();
+    $dirty_count = Graphics::find_dirty_images_query()->execute()->count();
     $tasks = array();
     $tasks[] = TaskDefinition::factory()
                  ->callback("Hook_GalleryTask::rebuild_dirty_images")
@@ -347,14 +347,14 @@ class Gallery_Hook_GalleryTask {
 
     $total = $task->get("total");
     if (empty($total)) {
-      $item_count = DB::build()->count_records("items");
+      $item_count = DB::select()->from("items")->execute()->count();
       $total = 0;
 
       // mptt: 2 operations for every item
       $total += 2 * $item_count;
 
       // album audit (permissions and bogus album covers): 1 operation for every album
-      $total += DB::build()->where("type", "=", "album")->count_records("items");
+      $total += DB::select()->from("items")->where("type", "=", "album")->execute()->count();
 
       // one operation for each dupe slug, dupe name, dupe base name, and missing access cache
       foreach (array("find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
@@ -408,14 +408,12 @@ class Gallery_Hook_GalleryTask {
         list ($id, $ptr_mode) = explode(":", array_pop($stack));
         if ($ptr_mode == "L") {
           $stack[] = "$id:R";
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("left_ptr", $ptr++)
             ->where("id", "=", $id)
             ->execute();
 
-          foreach (DB::build()
-                   ->select(array("id"))
+          foreach (DB::select("id")
                    ->from("items")
                    ->where("parent_id", "=", $id)
                    ->order_by("left_ptr", "ASC")
@@ -423,8 +421,7 @@ class Gallery_Hook_GalleryTask {
             array_push($stack, "{$child->id}:L");
           }
         } else if ($ptr_mode == "R") {
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("right_ptr", $ptr++)
             ->set("relative_path_cache", null)
             ->set("relative_url_cache", null)
@@ -467,8 +464,7 @@ class Gallery_Hook_GalleryTask {
           ->find_all(1, 1);
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("slug", $slug . "-" . (string)rand(1000, 9999))
             ->where("id", "=", $conflict->id)
             ->execute();
@@ -522,8 +518,7 @@ class Gallery_Hook_GalleryTask {
             $item_base_name = $conflict->name;
             $item_extension = "";
           }
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
             ->where("id", "=", $conflict->id)
             ->execute();
@@ -589,8 +584,7 @@ class Gallery_Hook_GalleryTask {
             $conflict->save();
           } catch (Exception $e) {
             // Didn't work.  Edit database directly without fixing file system.
-            DB::build()
-              ->update("items")
+            DB::update("items")
               ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
               ->where("id", "=", $conflict->id)
               ->execute();
@@ -613,8 +607,7 @@ class Gallery_Hook_GalleryTask {
 
       case self::FIX_STATE_START_ALBUMS:
         $stack = array();
-        foreach (DB::build()
-                 ->select("id")
+        foreach (DB::select("id")
                  ->from("items")
                  ->where("type", "=", "album")
                  ->execute() as $row) {
@@ -742,9 +735,9 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_dupe_slugs() {
-    return DB::build()
-      ->select_distinct(
+    return DB::select(
         array("parent_slug" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
+      ->distinct(true)
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -755,9 +748,9 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_names() {
     // looking for photos, movies, and albums
-    return DB::build()
-      ->select_distinct(
+    return DB::select(
         array("parent_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
+      ->distinct(true)
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -768,9 +761,9 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_base_names() {
     // looking for photos or movies, not albums
-    return DB::build()
-      ->select_distinct(
+    return DB::select(
         array("parent_base_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+      ->distinct(true)
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -781,8 +774,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_empty_item_caches($limit) {
-    return DB::build()
-      ->select("items.id")
+    return DB::select("item.id")
       ->from("items")
       ->where("relative_path_cache", "is", null)
       ->or_where("relative_url_cache", "is", null)
@@ -795,11 +787,10 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_missing_access_caches_limited($limit) {
-    return DB::build()
-      ->select("items.id")
+    return DB::select("item.id")
       ->from("items")
-      ->join("access_caches", "items.id", "access_caches.item_id", "left")
-      ->where("access_caches.id", "is", null)
+      ->join("access_caches", "item.id", "access_cache.item_id", "left")
+      ->where("access_cache.id", "is", null)
       ->limit($limit)
       ->execute();
   }

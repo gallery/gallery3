@@ -517,8 +517,7 @@ class Gallery_Module {
    * @param string $increment (optional, default is 1)
    */
   static function incr_var($module_name, $name, $increment=1) {
-    DB::build()
-      ->update("vars")
+    DB::update("vars")
       ->set("value", DB::expr("`value` + $increment"))
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)
@@ -534,8 +533,7 @@ class Gallery_Module {
    * @param string $name
    */
   static function clear_var($module_name, $name) {
-    DB::build()
-      ->delete("vars")
+    DB::delete("vars")
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)
       ->execute();
@@ -549,8 +547,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function clear_all_vars($module_name) {
-    DB::build()
-      ->delete("vars")
+    DB::delete("vars")
       ->where("module_name", "=", $module_name)
       ->execute();
 
