@@ -782,7 +782,7 @@ class Gallery_Hook_GalleryTask {
 
   static function find_empty_item_caches($limit) {
     return DB::build()
-      ->select("items.id")
+      ->select("item.id")
       ->from("items")
       ->where("relative_path_cache", "is", null)
       ->or_where("relative_url_cache", "is", null)
@@ -796,10 +796,10 @@ class Gallery_Hook_GalleryTask {
 
   static function find_missing_access_caches_limited($limit) {
     return DB::build()
-      ->select("items.id")
+      ->select("item.id")
       ->from("items")
-      ->join("access_caches", "items.id", "access_caches.item_id", "left")
-      ->where("access_caches.id", "is", null)
+      ->join("access_caches", "item.id", "access_cache.item_id", "left")
+      ->where("access_cache.id", "is", null)
       ->limit($limit)
       ->execute();
   }

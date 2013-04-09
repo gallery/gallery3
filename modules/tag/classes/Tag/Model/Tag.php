@@ -39,14 +39,14 @@ class Tag_Model_Tag extends ORM {
   public function items($limit=null, $offset=null, $where=array()) {
     if (is_scalar($where)) {
       // backwards compatibility
-      $where = array(array("items.type", "=", $where));
+      $where = array(array("item.type", "=", $where));
     }
     return ORM::factory("Item")
       ->viewable()
-      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->join("items_tags", "item.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $this->id)
       ->merge_where($where)
-      ->order_by("items.id")
+      ->order_by("item.id")
       ->find_all($limit, $offset);
   }
 
@@ -58,11 +58,11 @@ class Tag_Model_Tag extends ORM {
   public function items_count($where=array()) {
     if (is_scalar($where)) {
       // backwards compatibility
-      $where = array(array("items.type", "=", $where));
+      $where = array(array("item.type", "=", $where));
     }
     return $model = ORM::factory("Item")
       ->viewable()
-      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->join("items_tags", "item.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $this->id)
       ->merge_where($where)
       ->count_all();
@@ -81,7 +81,7 @@ class Tag_Model_Tag extends ORM {
     if ($duplicate_tag->loaded()) {
       // If so, tag its items with this tag so as to merge it
       $duplicate_tag_items = ORM::factory("Item")
-        ->join("items_tags", "items.id", "items_tags.item_id")
+        ->join("items_tags", "item.id", "items_tags.item_id")
         ->where("items_tags.tag_id", "=", $duplicate_tag->id)
         ->find_all();
       foreach ($duplicate_tag_items as $item) {

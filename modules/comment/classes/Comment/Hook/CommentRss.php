@@ -48,14 +48,14 @@ class Comment_Hook_CommentRss {
 
     $comments = ORM::factory("Comment")
       ->viewable()
-      ->where("comments.state", "=", "published")
-      ->order_by("comments.created", "DESC");
+      ->where("comment.state", "=", "published")
+      ->order_by("comment.created", "DESC");
 
     if ($feed_id == "item") {
       $item = ORM::factory("Item", $id);
       $comments
-        ->where("items.left_ptr", ">=", $item->left_ptr)
-        ->where("items.right_ptr", "<=", $item->right_ptr);
+        ->where("item.left_ptr", ">=", $item->left_ptr)
+        ->where("item.right_ptr", "<=", $item->right_ptr);
     }
 
     $feed = new stdClass();

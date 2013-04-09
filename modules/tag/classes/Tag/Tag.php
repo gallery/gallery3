@@ -85,7 +85,7 @@ class Tag_Tag {
    */
   static function item_tags($item) {
     return ORM::factory("Tag")
-      ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
+      ->join("items_tags", "tag.id", "items_tags.tag_id", "left")
       ->where("items_tags.item_id", "=", $item->id)
       ->find_all();
   }
@@ -96,7 +96,7 @@ class Tag_Tag {
    */
   static function tag_items($tag) {
     return ORM::factory("Item")
-      ->join("items_tags", "items_tags.item_id", "items.id", "left")
+      ->join("items_tags", "items_tags.item_id", "item.id", "left")
       ->where("items_tags.tag_id", "=", $tag->id)
       ->find_all();
   }
@@ -171,11 +171,11 @@ class Tag_Tag {
   static function get_position($tag, $item, $where=array()) {
     return ORM::factory("Item")
       ->viewable()
-      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->join("items_tags", "item.id", "items_tags.item_id")
       ->where("items_tags.tag_id", "=", $tag->id)
-      ->where("items.id", "<=", $item->id)
+      ->where("item.id", "<=", $item->id)
       ->merge_where($where)
-      ->order_by("items.id")
+      ->order_by("item.id")
       ->count_all();
   }
 }

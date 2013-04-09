@@ -182,7 +182,7 @@ class Gallery_Item {
     $view_restrictions = array();
     if (!Identity::active_user()->admin) {
       foreach (Identity::group_ids_for_active_user() as $id) {
-        $view_restrictions[] = array("items.view_$id", "=", Access::ALLOW);
+        $view_restrictions[] = array("item.view_$id", "=", Access::ALLOW);
       }
     }
 

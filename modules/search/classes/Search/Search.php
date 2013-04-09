@@ -113,10 +113,10 @@ class Search_Search {
   static function stats() {
     $remaining = DB::build()
       ->from("items")
-      ->join("search_records", "items.id", "search_records.item_id", "left")
+      ->join("search_records", "item.id", "search_record.item_id", "left")
       ->and_where_open()
-      ->where("search_records.item_id", "IS", null)
-      ->or_where("search_records.dirty", "=", 1)
+      ->where("search_record.item_id", "IS", null)
+      ->or_where("search_record.dirty", "=", 1)
       ->and_where_close()
       ->count_records();
 
