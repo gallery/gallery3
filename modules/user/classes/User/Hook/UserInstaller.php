@@ -38,10 +38,10 @@ class User_Hook_UserInstaller {
         ->update("users")
         ->set("email", "unknown@unknown.com")
         ->where("guest", "=", 0)
-        ->and_open()
+        ->and_where_open()
         ->where("email", "IS", null)
         ->or_where("email", "=", "")
-        ->close()
+        ->and_where_close()
         ->execute();
       Module::set_version("user", $version = 3);
     }

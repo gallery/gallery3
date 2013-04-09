@@ -1048,10 +1048,10 @@ class Gallery_Model_Item extends ORM_MPTT {
 
       // If this is an existing item, make sure the new parent is not part of our hierarchy
       if ($this->loaded()) {
-        $query->and_open()
+        $query->and_where_open()
           ->where("left_ptr", "<", $this->left_ptr)
           ->or_where("right_ptr", ">", $this->right_ptr)
-          ->close();
+          ->and_where_close();
       }
 
       if ($query->count_records() != 1) {

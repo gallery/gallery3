@@ -316,17 +316,17 @@ class Gallery_Graphics {
   static function find_dirty_images_query() {
     return DB::build()
       ->from("items")
-      ->and_open()
+      ->and_where_open()
       ->where("thumb_dirty", "=", 1)
-      ->and_open()
+      ->and_where_open()
       ->where("type", "<>", "album")
       ->or_where("album_cover_item_id", "IS NOT", null)
-      ->close()
-      ->or_open()
+      ->and_where_close()
+      ->or_where_open()
       ->where("resize_dirty", "=", 1)
       ->where("type", "=", "photo")
-      ->close()
-      ->close();
+      ->or_where_close()
+      ->and_where_close();
   }
 
   /**

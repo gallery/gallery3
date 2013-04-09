@@ -138,10 +138,10 @@ class Exif_Exif {
       ->from("items")
       ->join("exif_records", "items.id", "exif_records.item_id", "left")
       ->where("type", "=", "photo")
-      ->and_open()
+      ->and_where_open()
       ->where("exif_records.item_id", "IS", null)
       ->or_where("exif_records.dirty", "=", 1)
-      ->close()
+      ->and_where_close()
       ->execute()
       ->count();
 

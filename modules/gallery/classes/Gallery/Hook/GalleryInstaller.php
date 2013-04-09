@@ -547,10 +547,10 @@ class Gallery_Hook_GalleryInstaller {
       DB::build()
         ->update("items")
         ->set("title", DB::expr("`name`"))
-        ->and_open()
+        ->and_where_open()
         ->where("title", "IS", null)
         ->or_where("title", "=", "")
-        ->close()
+        ->and_where_close()
         ->execute();
       Module::set_version("gallery", $version = 26);
     }

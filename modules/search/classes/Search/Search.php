@@ -114,10 +114,10 @@ class Search_Search {
     $remaining = DB::build()
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
-      ->and_open()
+      ->and_where_open()
       ->where("search_records.item_id", "IS", null)
       ->or_where("search_records.dirty", "=", 1)
-      ->close()
+      ->and_where_close()
       ->count_records();
 
     $total = ORM::factory("Item")->count_all();

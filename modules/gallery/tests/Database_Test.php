@@ -40,10 +40,10 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $sql = DB::build("mock")
       ->select()
       ->where("outer1", "=", 1)
-      ->and_open()
+      ->and_where_open()
       ->where("inner1", "=", 1)
       ->or_where("inner2", "=", 2)
-      ->close()
+      ->and_where_close()
       ->where("outer2", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
@@ -55,10 +55,10 @@ class Database_Test extends Gallery_Unit_Test_Case {
   function group_first_test() {
     $sql = DB::build("mock")
       ->select()
-      ->and_open()
+      ->and_where_open()
       ->where("inner1", "=", 1)
       ->or_where("inner2", "=", 2)
-      ->close()
+      ->and_where_close()
       ->where("outer1", "=", 1)
       ->where("outer2", "=", 2)
       ->compile();
@@ -72,11 +72,11 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $sql = DB::build("mock")
       ->select()
       ->where("outer1", "=", 1)
-      ->and_open()
+      ->and_where_open()
       ->where("inner1", "=", 1)
       ->or_where("inner2", "=", 2)
       ->or_where("inner3", "=", 3)
-      ->close()
+      ->and_where_close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
@@ -88,9 +88,9 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $sql = DB::build("mock")
       ->select()
       ->where("outer1", "=", 1)
-      ->or_open()
+      ->or_where_open()
       ->where("inner1", "NOT LIKE", "%1%")
-      ->close()
+      ->or_where_close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(

@@ -187,7 +187,7 @@ class Gallery_Item {
     }
 
     if (count($view_restrictions)) {
-      $model->and_open()->merge_or_where($view_restrictions)->close();
+      $model->and_where_open()->merge_or_where($view_restrictions)->and_where_close();
     }
 
     return $model;
