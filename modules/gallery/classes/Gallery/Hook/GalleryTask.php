@@ -415,7 +415,7 @@ class Gallery_Hook_GalleryTask {
             ->execute();
 
           foreach (DB::build()
-                   ->select(array("id"))
+                   ->select("id")
                    ->from("items")
                    ->where("parent_id", "=", $id)
                    ->order_by("left_ptr", "ASC")
