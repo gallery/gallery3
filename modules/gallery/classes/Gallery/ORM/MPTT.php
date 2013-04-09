@@ -32,11 +32,12 @@
  * and licensing issues so I've reimplemented just the features that we need.
  */
 class Gallery_ORM_MPTT extends ORM {
-  private $model_name = null;
+  private $_model_name = null;
 
-  function __construct($id=null) {
-    parent::__construct($id);
-    $this->model_name = Inflector::singular($this->table_name());
+  function _initialize() {
+    parent::_initialize();
+    // Similar to how parent::_initialize() gets $_object_name.
+    $this->_model_name = substr(get_class($this), 6);
   }
 
   /**
@@ -152,7 +153,7 @@ class Gallery_ORM_MPTT extends ORM {
     if (!$this->parent_id) {
       return null;
     }
-    return ModelCache::get($this->model_name, $this->parent_id);
+    return ModelCache::get($this->_model_name, $this->parent_id);
   }
 
   /**
