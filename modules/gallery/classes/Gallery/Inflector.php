@@ -22,7 +22,6 @@ class Gallery_Inflector extends Kohana_Inflector {
    * Converts a module/model name to its corresponding class name (e.g. "foo_bar" --> "FooBar").
    * This is similar to Inflector::camelize($name) except that it capitalizes the first letter
    * and assumes the input has no \n\r\t\v, which lets it skip regex for efficiency.
-   * @todo: add unit tests for this function.
    *
    *   $name = Inflector::convert_module_to_class_name("gallery");     // "Gallery"
    *   $name = Inflector::convert_module_to_class_name("foo_bar");     // "FooBar"
@@ -43,7 +42,6 @@ class Gallery_Inflector extends Kohana_Inflector {
    * This is similar to Inflector::decamelize($name, "_") except that it considers every capital
    * letter the start of a new word, even if it follows a number or another capital letter.  This
    * ensures that it's the reverse transformation of Inflector::module_to_class_name($name).
-   * @todo: add unit tests for this function.
    *
    *   $name = Inflector::convert_class_to_module_name("Gallery");    // "gallery"
    *   $name = Inflector::convert_class_to_module_name("FooBar");     // "foo_bar"
