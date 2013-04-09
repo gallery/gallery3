@@ -243,17 +243,18 @@ CREATE TABLE {modules} (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `weight` (`weight`)
-) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {modules} VALUES (1,1,'gallery',58,1);
-INSERT INTO {modules} VALUES (2,1,'user',4,2);
-INSERT INTO {modules} VALUES (3,1,'comment',8,3);
-INSERT INTO {modules} VALUES (4,1,'organize',4,4);
-INSERT INTO {modules} VALUES (5,1,'info',2,5);
-INSERT INTO {modules} VALUES (6,1,'rss',1,6);
-INSERT INTO {modules} VALUES (7,1,'search',1,7);
-INSERT INTO {modules} VALUES (8,1,'slideshow',2,8);
-INSERT INTO {modules} VALUES (9,1,'tag',3,9);
+INSERT INTO {modules} VALUES (2,1,'purifier',3,2);
+INSERT INTO {modules} VALUES (3,1,'user',4,3);
+INSERT INTO {modules} VALUES (4,1,'comment',8,4);
+INSERT INTO {modules} VALUES (5,1,'organize',4,5);
+INSERT INTO {modules} VALUES (6,1,'info',2,6);
+INSERT INTO {modules} VALUES (7,1,'rss',1,7);
+INSERT INTO {modules} VALUES (8,1,'search',1,8);
+INSERT INTO {modules} VALUES (9,1,'slideshow',2,9);
+INSERT INTO {modules} VALUES (10,1,'tag',3,10);
 DROP TABLE IF EXISTS {outgoing_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
