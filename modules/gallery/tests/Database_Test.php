@@ -26,18 +26,18 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function simple_where_test() {
-    $sql = DB::build("mock")
+    $sql = DB::build()
       ->select("some_column")
       ->from("some_table")
       ->where("a", "=", 1)
       ->where("b", "=", 2)
-      ->compile();
+      ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same("SELECT [some_column] FROM [some_table] WHERE [a] = [1] AND [b] = [2]", $sql);
   }
 
   function compound_where_test() {
-    $sql = DB::build("mock")
+    $sql = DB::build()
       ->select()
       ->where("outer1", "=", 1)
       ->and_where_open()
@@ -45,7 +45,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       ->or_where("inner2", "=", 2)
       ->and_where_close()
       ->where("outer2", "=", 2)
-      ->compile();
+      ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
       "SELECT [*] WHERE [outer1] = [1] AND ([inner1] = [1] OR [inner2] = [2]) AND [outer2] = [2]",
@@ -53,7 +53,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function group_first_test() {
-    $sql = DB::build("mock")
+    $sql = DB::build()
       ->select()
       ->and_where_open()
       ->where("inner1", "=", 1)
@@ -61,7 +61,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       ->and_where_close()
       ->where("outer1", "=", 1)
       ->where("outer2", "=", 2)
-      ->compile();
+      ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
       "SELECT [*] WHERE ([inner1] = [1] OR [inner2] = [2]) AND [outer1] = [1] AND [outer2] = [2]",
@@ -69,7 +69,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function where_array_test() {
-    $sql = DB::build("mock")
+    $sql = DB::build()
       ->select()
       ->where("outer1", "=", 1)
       ->and_where_open()
@@ -77,7 +77,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       ->or_where("inner2", "=", 2)
       ->or_where("inner3", "=", 3)
       ->and_where_close()
-      ->compile();
+      ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
       "SELECT [*] WHERE [outer1] = [1] AND ([inner1] = [1] OR [inner2] = [2] OR [inner3] = [3])",
@@ -85,13 +85,13 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function notlike_test() {
-    $sql = DB::build("mock")
+    $sql = DB::build()
       ->select()
       ->where("outer1", "=", 1)
       ->or_where_open()
       ->where("inner1", "NOT LIKE", "%1%")
       ->or_where_close()
-      ->compile();
+      ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
       "SELECT [*] WHERE [outer1] = [1] OR ([inner1] NOT LIKE [%1%])",
@@ -138,12 +138,12 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function prefix_no_replacement_test() {
-    $sql = DB::build("mock")
+    $sql = DB::build()
       ->from("test_tables")
       ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))
       ->update()
-      ->compile();
+      ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
   }
