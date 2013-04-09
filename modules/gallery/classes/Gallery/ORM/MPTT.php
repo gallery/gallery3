@@ -162,7 +162,7 @@ class Gallery_ORM_MPTT extends ORM {
    * @return array ORM
    */
   function parents($where=null) {
-    return $this
+    return ORM::factory($this->_model_name)
       ->merge_where($where)
       ->where("left_ptr", "<=", $this->left_ptr)
       ->where("right_ptr", ">=", $this->right_ptr)
@@ -182,7 +182,7 @@ class Gallery_ORM_MPTT extends ORM {
    * @return array ORM
    */
   function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return $this
+    return ORM::factory($this->_model_name)
       ->merge_where($where)
       ->where("parent_id", "=", $this->id)
       ->merge_order_by($order_by)
@@ -213,7 +213,7 @@ class Gallery_ORM_MPTT extends ORM {
    * @return object ORM_Iterator
    */
   function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return $this
+    return ORM::factory($this->_model_name)
       ->merge_where($where)
       ->where("left_ptr", ">", $this->left_ptr)
       ->where("right_ptr", "<=", $this->right_ptr)
