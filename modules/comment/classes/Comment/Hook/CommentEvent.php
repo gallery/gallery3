@@ -19,8 +19,7 @@
  */
 class Comment_Hook_CommentEvent {
   static function item_deleted($item) {
-    DB::build()
-      ->delete("comments")
+    DB::delete("comments")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
@@ -28,8 +27,7 @@ class Comment_Hook_CommentEvent {
   static function user_deleted($user) {
     $guest = Identity::guest();
     if (!empty($guest)) {          // could be empty if there is not identity provider
-      DB::build()
-        ->update("comments")
+      DB::update("comments")
         ->set("author_id", $guest->id)
         ->set("guest_email", null)
         ->set("guest_name", "guest")
@@ -41,8 +39,7 @@ class Comment_Hook_CommentEvent {
 
   static function identity_provider_changed($old_provider, $new_provider) {
     $guest = Identity::guest();
-    DB::build()
-      ->update("comments")
+    DB::update("comments")
       ->set("author_id", $guest->id)
       ->set("guest_email", null)
       ->set("guest_name", "guest")
@@ -74,8 +71,7 @@ class Comment_Hook_CommentEvent {
   }
 
   static function item_index_data($item, $data) {
-    foreach (DB::build()
-             ->select("text")
+    foreach (DB::select("text")
              ->from("comments")
              ->where("item_id", "=", $item->id)
              ->execute() as $row) {

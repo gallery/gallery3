@@ -133,15 +133,14 @@ class Exif_Exif {
   }
 
   static function stats() {
-    $missing_exif = DB::build()
-      ->select("items.id")
+    $missing_exif = DB::select("item.id")
       ->from("items")
-      ->join("exif_records", "items.id", "exif_records.item_id", "left")
+      ->join("exif_records", "item.id", "exif_record.item_id", "left")
       ->where("type", "=", "photo")
-      ->and_open()
-      ->where("exif_records.item_id", "IS", null)
-      ->or_where("exif_records.dirty", "=", 1)
-      ->close()
+      ->and_where_open()
+      ->where("exif_record.item_id", "IS", null)
+      ->or_where("exif_record.dirty", "=", 1)
+      ->and_where_close()
       ->execute()
       ->count();
 

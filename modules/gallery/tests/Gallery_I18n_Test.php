@@ -28,8 +28,7 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
         'locale_dir' => VARPATH . 'locale/');
     $this->i18n = I18n::instance($config);
 
-    DB::build()
-      ->delete("incoming_translations")
+    DB::delete("incoming_translations")
       ->where("locale", "=", "te_ST")
       ->execute();
 

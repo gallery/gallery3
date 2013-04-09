@@ -374,7 +374,7 @@ modules/user/views/admin_users.html.php                      72  DIRTY_ATTR $use
 modules/user/views/admin_users.html.php                      73  DIRTY_ATTR $user->id
 modules/user/views/admin_users.html.php                      74  DIRTY_ATTR $user->avatar_url(20,$theme->url(,true))
 modules/user/views/admin_users.html.php                      88  DIRTY    ($user->last_login==0)?"":gallery::date($user->last_login)
-modules/user/views/admin_users.html.php                      91  DIRTY    db::build()->from("items")->where("owner_id","=",$user->id)->count_records()
+modules/user/views/admin_users.html.php                      91  DIRTY    DB::select()->from("items")->where("owner_id","=",$user->id)->execute()->count()
 modules/user/views/admin_users.html.php                      113 DIRTY    $theme->paginator()
 modules/user/views/admin_users.html.php                      132 DIRTY_ATTR $group->id
 modules/user/views/admin_users.html.php                      132 DIRTY_ATTR ($group->special?"g-default-group":"")

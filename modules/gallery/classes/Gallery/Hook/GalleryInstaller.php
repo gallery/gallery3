@@ -232,7 +232,7 @@ class Gallery_Hook_GalleryInstaller {
 
     // Hardcode the first item to sidestep ORM validation rules
     $now = time();
-    DB::build()->insert(
+    DB::insert(
       "items",
       array("created" => $now,
             "description" => "",
@@ -506,17 +506,15 @@ class Gallery_Hook_GalleryInstaller {
     // Update slug values to be legal.  We should have done this in the 11->12 upgrader, but I was
     // lazy.  Mea culpa!
     if ($version == 22) {
-      foreach (DB::build()
+      foreach (DB::select("id", "slug")
                ->from("items")
-               ->select("id", "slug")
                ->where(DB::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
                ->execute() as $row) {
         $new_slug = Item::convert_filename_to_slug($row->slug);
         if (empty($new_slug)) {
           $new_slug = Random::int();
         }
-        DB::build()
-          ->update("items")
+        DB::update("items")
           ->set("slug", $new_slug)
           ->set("relative_url_cache", null)
           ->where("id", "=", $row->id)
@@ -544,13 +542,12 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 25) {
-      DB::build()
-        ->update("items")
+      DB::update("items")
         ->set("title", DB::expr("`name`"))
-        ->and_open()
+        ->and_where_open()
         ->where("title", "IS", null)
         ->or_where("title", "=", "")
-        ->close()
+        ->and_where_close()
         ->execute();
       Module::set_version("gallery", $version = 26);
     }
@@ -701,9 +698,8 @@ class Gallery_Hook_GalleryInstaller {
       // change those files (eg. as a side effect of getting the url or file path) it fails to
       // validate.  Fix those here.  This might be slow, but if it times out it can just pick up
       // where it left off.
-      foreach (DB::build()
+      foreach (DB::select("id")
                ->from("items")
-               ->select("id")
                ->where("type", "<>", "album")
                ->where(DB::expr("`name` REGEXP '\\\\..*\\\\.'"), "=", 1)
                ->order_by("id", "asc")
@@ -729,8 +725,7 @@ class Gallery_Hook_GalleryInstaller {
       // extensions to their mime types (and allow extension of the list by other modules).  During
       // this process, we correctly mapped m4v files to video/x-m4v, correcting a previous error
       // where they were mapped to video/mp4.  This corrects the existing items.
-      DB::build()
-        ->update("items")
+      DB::update("items")
         ->set("mime_type", "video/x-m4v")
         ->where("name", "REGEXP", "\.m4v$") // case insensitive since name column is utf8_general_ci
         ->execute();
@@ -755,9 +750,9 @@ class Gallery_Hook_GalleryInstaller {
 
       // Find and loop through each conflict (e.g. "foo.jpg", "foo.png", and "foo.flv" are one
       // conflict; "bar.jpg", "bar.png", and "bar.flv" are another)
-      foreach (DB::build()
-               ->select_distinct(array("parent_base_name" =>
+      foreach (DB::select(array("parent_base_name" =>
                  DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+               ->distinct(true)
                ->select(array("C" => "COUNT(\"*\")"))
                ->from("items")
                ->where("type", "<>", "album")
@@ -767,9 +762,8 @@ class Gallery_Hook_GalleryInstaller {
         list ($parent_id, $base_name) = explode(":", $conflict->parent_base_name, 2);
         $base_name_escaped = Database::escape_for_like($base_name);
         // Loop through the items for each conflict
-        foreach (DB::build()
+        foreach (DB::select("id")
                  ->from("items")
-                 ->select("id")
                  ->where("type", "<>", "album")
                  ->where("parent_id", "=", $parent_id)
                  ->where("name", "LIKE", "{$base_name_escaped}.%")
@@ -802,8 +796,7 @@ class Gallery_Hook_GalleryInstaller {
       // Cleanup possible instances where resize_dirty of albums or movies was set to 0.  This is
       // unlikely to have occurred, and doesn't currently matter much since albums and movies don't
       // have resize images anyway.  However, it may be useful to be consistent here going forward.
-      DB::build()
-        ->update("items")
+      DB::update("items")
         ->set("resize_dirty", 1)
         ->where("type", "<>", "photo")
         ->execute();
@@ -816,9 +809,8 @@ class Gallery_Hook_GalleryInstaller {
       // pretty unlikely, as having backslashes would have probably already caused other issues for
       // users, but we should check anyway.  This might be slow, but if it times out it can just
       // pick up where it left off.
-      foreach (DB::build()
+      foreach (DB::select("id")
                ->from("items")
-               ->select("id")
                ->where(DB::expr("`name` REGEXP '\\\\\\\\'"), "=", 1)  // one \, 3x escaped
                ->order_by("id", "asc")
                ->execute() as $row) {

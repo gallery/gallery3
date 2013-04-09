@@ -34,14 +34,13 @@ class User_Hook_UserInstaller {
     }
 
     if ($version == 2) {
-      DB::build()
-        ->update("users")
+      DB::update("users")
         ->set("email", "unknown@unknown.com")
         ->where("guest", "=", 0)
-        ->and_open()
+        ->and_where_open()
         ->where("email", "IS", null)
         ->or_where("email", "=", "")
-        ->close()
+        ->and_where_close()
         ->execute();
       Module::set_version("user", $version = 3);
     }

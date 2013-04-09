@@ -270,8 +270,7 @@ class G2Import_G2Import {
   static function g3_stats() {
     $g3_stats = array(
       "album" => 0, "comment" => 0, "item" => 0, "user" => 0, "group" => 0, "tag" => 0);
-    foreach (DB::build()
-             ->select("resource_type")
+    foreach (DB::select("resource_type")
              ->select(array("C" => 'COUNT("*")'))
              ->from("g2_maps")
              ->where("resource_type", "IN", array("album", "comment", "item", "user", "group"))
@@ -1315,8 +1314,7 @@ class G2Import_G2Import {
    * Remove all map entries associated with the given Gallery 2 id.
    */
   static function clear_map($g2_id, $resource_type) {
-    DB::build()
-      ->delete("g2_maps")
+    DB::delete("g2_maps")
       ->where("g2_id", "=", $g2_id)
       ->where("resource_type", "=", $resource_type)
       ->execute();

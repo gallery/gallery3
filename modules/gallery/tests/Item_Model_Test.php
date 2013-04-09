@@ -32,8 +32,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $item = test::random_photo();
 
     // Force the creation date to something well known
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set("created", 0)
       ->set("updated", 0)
       ->where("id", "=", $item->id)
@@ -52,8 +51,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(0, $item->view_count);
 
     // Force the updated date to something well known
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set("updated", 0)
       ->where("id", "=", $item->id)
       ->execute();

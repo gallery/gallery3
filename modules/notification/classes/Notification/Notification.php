@@ -70,9 +70,9 @@ class Notification_Notification {
     $subscriber_ids = array();
     foreach (ORM::factory("Subscription")
              ->select("user_id")
-             ->join("items", "subscriptions.item_id", "items.id")
-             ->where("items.left_ptr", "<=", $item->left_ptr)
-             ->where("items.right_ptr", ">", $item->right_ptr)
+             ->join("items", "subscription.item_id", "item.id")
+             ->where("item.left_ptr", "<=", $item->left_ptr)
+             ->where("item.right_ptr", ">", $item->right_ptr)
              ->find_all()
              ->as_array() as $subscriber) {
       $subscriber_ids[] = $subscriber->user_id;
@@ -159,8 +159,7 @@ class Notification_Notification {
   }
 
   static function send_pending_notifications() {
-    foreach (DB::build()
-             ->select(DB::expr("DISTINCT `email`"))
+    foreach (DB::select(DB::expr("DISTINCT `email`"))
              ->from("pending_notifications")
              ->execute() as $row) {
       $email = $row->email;

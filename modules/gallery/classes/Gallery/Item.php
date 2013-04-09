@@ -166,8 +166,7 @@ class Gallery_Item {
     // Guard against an empty result when we create the first item.  It's unfortunate that we
     // have to check this every time.
     // @todo: figure out a better way to bootstrap the weight.
-    $result = DB::build()
-      ->select("weight")->from("items")
+    $result = DB::select("weight")->from("items")
       ->order_by("weight", "desc")->limit(1)
       ->execute()->current();
     return ($result ? $result->weight : 0) + 1;
@@ -182,12 +181,12 @@ class Gallery_Item {
     $view_restrictions = array();
     if (!Identity::active_user()->admin) {
       foreach (Identity::group_ids_for_active_user() as $id) {
-        $view_restrictions[] = array("items.view_$id", "=", Access::ALLOW);
+        $view_restrictions[] = array("item.view_$id", "=", Access::ALLOW);
       }
     }
 
     if (count($view_restrictions)) {
-      $model->and_open()->merge_or_where($view_restrictions)->close();
+      $model->and_where_open()->merge_or_where($view_restrictions)->and_where_close();
     }
 
     return $model;

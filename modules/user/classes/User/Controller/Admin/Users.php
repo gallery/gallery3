@@ -28,8 +28,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     // @todo: add this as a config option
     $page_size = Module::get_var("user", "page_size", 10);
     $page = Arr::get(Request::$current->query(), "page", "1");
-    $builder = DB::build();
-    $user_count = $builder->from("users")->count_records();
+    $user_count = DB::select()->from("users")->execute()->count();
 
     // Pagination info
     $view->page = $page;
@@ -54,7 +53,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     // Join our users against the items table so that we can get a count of their items
     // in the same query.
     $view->content->users = ORM::factory("User")
-      ->order_by("users.name", "ASC")
+      ->order_by("user.name", "ASC")
       ->find_all($page_size, $view->content->pager->sql_offset);
     $view->content->groups = ORM::factory("Group")->order_by("name", "ASC")->find_all();
 

@@ -322,8 +322,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
 
   private function _remove_relative_path_caches() {
     // This gets used *many* times in the find_by_path tests above to check the fallback code.
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set("relative_path_cache", null)
       ->execute();
   }
@@ -354,8 +353,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_same(Item::root()->id, Item::find_by_relative_url("")->id);
 
     // Verify that we don't get confused by the part slugs, using the fallback code.
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set(array("relative_url_cache" => null))
       ->where("id", "IN", array($level3->id, $level3b->id))
       ->execute();

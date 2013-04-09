@@ -20,10 +20,9 @@
 class Exif_Hook_ExifTask {
   static function available_tasks() {
     // Delete extra exif_records
-    DB::build()
-      ->delete("exif_records")
+    DB::delete("exif_records")
       ->where("item_id", "NOT IN",
-              DB::build()->select("id")->from("items")->where("type", "=", "photo"))
+              DB::select("id")->from("items")->where("type", "=", "photo"))
       ->execute();
 
     list ($remaining, $total, $percent) = Exif::stats();
@@ -44,12 +43,12 @@ class Exif_Hook_ExifTask {
 
       $start = microtime(true);
       foreach (ORM::factory("Item")
-               ->join("exif_records", "items.id", "exif_records.item_id", "left")
+               ->join("exif_records", "item.id", "exif_record.item_id", "left")
                ->where("type", "=", "photo")
-               ->and_open()
-               ->where("exif_records.item_id", "IS", null)
-               ->or_where("exif_records.dirty", "=", 1)
-               ->close()
+               ->and_where_open()
+               ->where("exif_record.item_id", "IS", null)
+               ->or_where("exif_record.dirty", "=", 1)
+               ->and_where_close()
                ->find_all(100) as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.
