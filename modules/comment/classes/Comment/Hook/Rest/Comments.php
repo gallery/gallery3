@@ -33,7 +33,7 @@ class Comment_Hook_Rest_Comments {
     $num = isset($p->num) ? min((int)$p->num, 100) : 10;
     $start = isset($p->start) ? (int)$p->start : 0;
 
-    foreach (ORM::factory("Comment")->viewable()->find_all($num, $start) as $comment) {
+    foreach (ORM::factory("Comment")->viewable()->limit($num)->offset($start)->find_all() as $comment) {
       $comments[] = Rest::url("comment", $comment);
     }
     return array("url" => Rest::url("comments"),

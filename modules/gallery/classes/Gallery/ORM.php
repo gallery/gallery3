@@ -45,6 +45,19 @@ class Gallery_ORM extends Kohana_ORM {
   }
 
   /**
+   * Merge in a series of order by column-direction pairs and call order_by() on each one.
+   * @chainable
+   */
+  public function merge_order_by($pairs) {
+    if ($pairs) {
+      foreach ($pairs as $column => $direction) {
+        $this->order_by($column, $direction);
+      }
+    }
+    return $this;
+  }
+
+  /**
    * Set the table name using our method.  Kohana finds it by getting the lowercase version of
    * the model name and adding plural if needed.  The problem is that it's not sensitive to
    * camelcase, which breaks how Gallery's DB is set up.  By setting $this->_table_name ahead

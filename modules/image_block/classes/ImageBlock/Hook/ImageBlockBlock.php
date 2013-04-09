@@ -35,7 +35,7 @@ class ImageBlock_Hook_ImageBlockBlock {
         $attempts = 0;
         $item = null;
         do {
-          $item = Item::random_query()->where("type", "!=", "album")->find_all(1)->current();
+          $item = Item::random_query()->where("type", "!=", "album")->find();
         } while (!$item && $attempts++ < 3);
         if ($item) {
           $items[] = $item;
