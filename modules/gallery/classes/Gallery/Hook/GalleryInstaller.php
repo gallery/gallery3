@@ -232,7 +232,7 @@ class Gallery_Hook_GalleryInstaller {
 
     // Hardcode the first item to sidestep ORM validation rules
     $now = time();
-    DB::build()->insert(
+    DB::insert(
       "items",
       array("created" => $now,
             "description" => "",
@@ -750,9 +750,9 @@ class Gallery_Hook_GalleryInstaller {
 
       // Find and loop through each conflict (e.g. "foo.jpg", "foo.png", and "foo.flv" are one
       // conflict; "bar.jpg", "bar.png", and "bar.flv" are another)
-      foreach (DB::build()
-               ->select_distinct(array("parent_base_name" =>
+      foreach (DB::select(array("parent_base_name" =>
                  DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+               ->distinct(true)
                ->select(array("C" => "COUNT(\"*\")"))
                ->from("items")
                ->where("type", "<>", "album")

@@ -25,11 +25,12 @@ class Cache_Test extends Gallery_Unit_Test_Case {
   }
 
   private function _exists($id) {
-    return DB::build()
+    return DB::select()
+      ->from("caches")
       ->where("key", "=", $id)
       ->where("expiration", ">=", time())
       ->limit("1")
-      ->count_records("caches") > 0;
+      ->execute()->count() > 0;
   }
 
   public function cache_exists_test_helper_function_test() {

@@ -347,14 +347,14 @@ class Gallery_Hook_GalleryTask {
 
     $total = $task->get("total");
     if (empty($total)) {
-      $item_count = DB::build()->count_records("items");
+      $item_count = DB::select()->from("items")->execute()->count();
       $total = 0;
 
       // mptt: 2 operations for every item
       $total += 2 * $item_count;
 
       // album audit (permissions and bogus album covers): 1 operation for every album
-      $total += DB::build()->where("type", "=", "album")->count_records("items");
+      $total += DB::select()->from("items")->where("type", "=", "album")->execute()->count();
 
       // one operation for each dupe slug, dupe name, dupe base name, and missing access cache
       foreach (array("find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
@@ -735,9 +735,9 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_dupe_slugs() {
-    return DB::build()
-      ->select_distinct(
+    return DB::select(
         array("parent_slug" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
+      ->distinct(true)
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -748,9 +748,9 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_names() {
     // looking for photos, movies, and albums
-    return DB::build()
-      ->select_distinct(
+    return DB::select(
         array("parent_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
+      ->distinct(true)
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
@@ -761,9 +761,9 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_base_names() {
     // looking for photos or movies, not albums
-    return DB::build()
-      ->select_distinct(
+    return DB::select(
         array("parent_base_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+      ->distinct(true)
       ->select("id")
       ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")

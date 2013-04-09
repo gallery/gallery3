@@ -25,9 +25,8 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
     }
 
     // Clean leftover task rows.  There really should be support for this in the task framework
-    DB::build()
+    DB::delete("server_add_entries")
       ->where("task_id", "NOT IN", DB::select("id")->from("tasks"))
-      ->delete("server_add_entries")
       ->execute();
 
     $item = ORM::factory("Item", $id);
