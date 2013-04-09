@@ -27,7 +27,7 @@ class Exif_Exif {
 
   static function extract($item) {
     $keys = array();
-    // Only try to extract EXIF from photos
+    // Only try to extract EXIF from JPEG photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
       $data = array();
       require_once(MODPATH . "exif/vendor/exifer/exif.php");
@@ -36,9 +36,7 @@ class Exif_Exif {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
-            // @todo: is Encoding::convert_to_utf8() needed if we do UTF8::clean()?
-            $value = Encoding::convert_to_utf8($value);
-            $keys[$field] = UTF8::clean($value);
+            $keys[$field] = Encoding::convert_to_utf8($value);
 
             if ($field == "DateTime") {
               $time = strtotime($value);
@@ -58,9 +56,7 @@ class Exif_Exif {
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
             $value = implode(" ", $iptc[$iptc_key]);
-            // @todo: is Encoding::convert_to_utf8() needed if we do UTF8::clean()?
-            $value = Encoding::convert_to_utf8($value);
-            $keys[$keyword] = UTF8::clean($value);
+            $keys[$keyword] = Encoding::convert_to_utf8($value);
 
             if ($keyword == "Caption" && !$item->description) {
               $item->description = $value;
