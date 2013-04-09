@@ -22,7 +22,7 @@ class Search_Hook_SearchTask {
     // Delete extra search_records
     DB::build()
       ->delete("search_records")
-      ->where("item_id", "NOT IN", DB::build()->select("id")->from("items"))
+      ->where("item_id", "NOT IN", DB::select("id")->from("items"))
       ->execute();
 
     list ($remaining, $total, $percent) = Search::stats();

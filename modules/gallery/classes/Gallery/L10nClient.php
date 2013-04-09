@@ -97,8 +97,7 @@ class Gallery_L10nClient {
     // number as a good limit for #locales * #messages.
     $max_messages = 2000 / count($locales);
     $num_messages = 0;
-    $rows = DB::build()
-        ->select("key", "locale", "revision", "translation")
+    $rows = DB::select("key", "locale", "revision", "translation")
         ->from("incoming_translations")
         ->order_by("key")
         ->limit(1000000)  // ignore, just there to satisfy SQL syntax
@@ -203,8 +202,7 @@ class Gallery_L10nClient {
     // @todo Batch requests (max request size)
     // @todo include base_revision in submission / how to handle resubmissions / edit fights?
     $request = new stdClass();
-    foreach (DB::build()
-             ->select("key", "message", "locale", "base_revision", "translation")
+    foreach (DB::select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
              ->execute() as $row) {
       $key = $row->key;

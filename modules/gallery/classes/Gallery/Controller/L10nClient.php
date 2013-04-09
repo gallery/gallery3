@@ -122,8 +122,7 @@ class Gallery_Controller_L10nClient extends Controller {
   public static function l10n_form() {
     if (Request::$current->query("show_all_l10n_messages")) {
       $calls = array();
-      foreach (DB::build()
-               ->select("key", "message")
+      foreach (DB::select("key", "message")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
                ->execute() as $row) {
@@ -136,16 +135,14 @@ class Gallery_Controller_L10nClient extends Controller {
 
     if ($calls) {
       $translations = array();
-      foreach (DB::build()
-               ->select("key", "translation")
+      foreach (DB::select("key", "translation")
                ->from("incoming_translations")
                ->where("locale", "=", $locale)
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
       // Override incoming with outgoing...
-      foreach (DB::build()
-               ->select("key", "translation")
+      foreach (DB::select("key", "translation")
                ->from("outgoing_translations")
                ->where("locale", "=", $locale)
                ->execute() as $row) {

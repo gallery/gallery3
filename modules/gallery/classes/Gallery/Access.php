@@ -643,8 +643,7 @@ class Gallery_Access {
         ->update("access_caches")
         ->set($field, $value)
         ->where("item_id", "IN",
-                DB::build()
-                ->select("id")
+                DB::select("id")
                 ->from("items")
                 ->where("left_ptr", ">=", $row->left_ptr)
                 ->where("right_ptr", "<=", $row->right_ptr))

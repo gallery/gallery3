@@ -118,8 +118,7 @@ class Tag_Model_Tag extends ORM {
    */
   public function delete($ignored_id=null) {
     $related_item_ids = array();
-    foreach (DB::build()
-             ->select("item_id")
+    foreach (DB::select("item_id")
              ->from("items_tags")
              ->where("tag_id", "=", $this->id)
              ->execute() as $row) {

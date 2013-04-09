@@ -130,7 +130,7 @@ class Tag_Tag {
       ->update("tags")
       ->set("count", DB::expr("`count` - 1"))
       ->where("count", ">", 0)
-      ->where("id", "IN", DB::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
+      ->where("id", "IN", DB::select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
       ->execute();
     DB::build()
       ->delete("items_tags")

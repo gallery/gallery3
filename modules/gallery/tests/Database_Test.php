@@ -26,8 +26,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function simple_where_test() {
-    $sql = DB::build()
-      ->select("some_column")
+    $sql = DB::select("some_column")
       ->from("some_table")
       ->where("a", "=", 1)
       ->where("b", "=", 2)
@@ -37,8 +36,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function compound_where_test() {
-    $sql = DB::build()
-      ->select()
+    $sql = DB::select()
       ->where("outer1", "=", 1)
       ->and_where_open()
       ->where("inner1", "=", 1)
@@ -53,8 +51,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function group_first_test() {
-    $sql = DB::build()
-      ->select()
+    $sql = DB::select()
       ->and_where_open()
       ->where("inner1", "=", 1)
       ->or_where("inner2", "=", 2)
@@ -69,8 +66,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function where_array_test() {
-    $sql = DB::build()
-      ->select()
+    $sql = DB::select()
       ->where("outer1", "=", 1)
       ->and_where_open()
       ->where("inner1", "=", 1)
@@ -85,8 +81,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function notlike_test() {
-    $sql = DB::build()
-      ->select()
+    $sql = DB::select()
       ->where("outer1", "=", 1)
       ->or_where_open()
       ->where("inner1", "NOT LIKE", "%1%")

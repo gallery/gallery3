@@ -23,7 +23,7 @@ class Exif_Hook_ExifTask {
     DB::build()
       ->delete("exif_records")
       ->where("item_id", "NOT IN",
-              DB::build()->select("id")->from("items")->where("type", "=", "photo"))
+              DB::select("id")->from("items")->where("type", "=", "photo"))
       ->execute();
 
     list ($remaining, $total, $percent) = Exif::stats();

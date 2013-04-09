@@ -74,8 +74,7 @@ class Comment_Hook_CommentEvent {
   }
 
   static function item_index_data($item, $data) {
-    foreach (DB::build()
-             ->select("text")
+    foreach (DB::select("text")
              ->from("comments")
              ->where("item_id", "=", $item->id)
              ->execute() as $row) {

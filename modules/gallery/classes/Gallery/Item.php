@@ -166,8 +166,7 @@ class Gallery_Item {
     // Guard against an empty result when we create the first item.  It's unfortunate that we
     // have to check this every time.
     // @todo: figure out a better way to bootstrap the weight.
-    $result = DB::build()
-      ->select("weight")->from("items")
+    $result = DB::select("weight")->from("items")
       ->order_by("weight", "desc")->limit(1)
       ->execute()->current();
     return ($result ? $result->weight : 0) + 1;

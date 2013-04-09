@@ -270,8 +270,7 @@ class G2Import_G2Import {
   static function g3_stats() {
     $g3_stats = array(
       "album" => 0, "comment" => 0, "item" => 0, "user" => 0, "group" => 0, "tag" => 0);
-    foreach (DB::build()
-             ->select("resource_type")
+    foreach (DB::select("resource_type")
              ->select(array("C" => 'COUNT("*")'))
              ->from("g2_maps")
              ->where("resource_type", "IN", array("album", "comment", "item", "user", "group"))

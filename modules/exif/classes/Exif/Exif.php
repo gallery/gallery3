@@ -133,8 +133,7 @@ class Exif_Exif {
   }
 
   static function stats() {
-    $missing_exif = DB::build()
-      ->select("item.id")
+    $missing_exif = DB::select("item.id")
       ->from("items")
       ->join("exif_records", "item.id", "exif_record.item_id", "left")
       ->where("type", "=", "photo")

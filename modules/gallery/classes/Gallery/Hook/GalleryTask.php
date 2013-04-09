@@ -414,8 +414,7 @@ class Gallery_Hook_GalleryTask {
             ->where("id", "=", $id)
             ->execute();
 
-          foreach (DB::build()
-                   ->select("id")
+          foreach (DB::select("id")
                    ->from("items")
                    ->where("parent_id", "=", $id)
                    ->order_by("left_ptr", "ASC")
@@ -613,8 +612,7 @@ class Gallery_Hook_GalleryTask {
 
       case self::FIX_STATE_START_ALBUMS:
         $stack = array();
-        foreach (DB::build()
-                 ->select("id")
+        foreach (DB::select("id")
                  ->from("items")
                  ->where("type", "=", "album")
                  ->execute() as $row) {
@@ -781,8 +779,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_empty_item_caches($limit) {
-    return DB::build()
-      ->select("item.id")
+    return DB::select("item.id")
       ->from("items")
       ->where("relative_path_cache", "is", null)
       ->or_where("relative_url_cache", "is", null)
@@ -795,8 +792,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_missing_access_caches_limited($limit) {
-    return DB::build()
-      ->select("item.id")
+    return DB::select("item.id")
       ->from("items")
       ->join("access_caches", "item.id", "access_cache.item_id", "left")
       ->where("access_cache.id", "is", null)
