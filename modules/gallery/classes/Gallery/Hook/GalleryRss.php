@@ -39,7 +39,7 @@ class Gallery_Hook_GalleryRss {
         ->viewable()
         ->where("type", "<>", "album")
         ->order_by("created", "DESC")
-        ->find_all($limit, $offset);
+        ->limit($limit)->offset($offset)->find_all();
 
       $all_items = ORM::factory("Item")
         ->viewable()

@@ -48,7 +48,7 @@ class Gallery_Hook_GalleryBlock {
       $block->title = t("Photo stream");
       $block->content = new View("admin/block_photo_stream.html");
       $block->content->photos = ORM::factory("Item")
-        ->where("type", "=", "photo")->order_by("created", "DESC")->find_all(10);
+        ->where("type", "=", "photo")->order_by("created", "DESC")->limit(10)->find_all();
       break;
 
     case "log_entries":
@@ -56,7 +56,7 @@ class Gallery_Hook_GalleryBlock {
       $block->title = t("Log entries");
       $block->content = new View("admin/block_log_entries.html");
       $block->content->entries = ORM::factory("Log")
-        ->order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
+        ->merge_order_by(array("timestamp" => "DESC", "id" => "DESC"))->limit(5)->find_all();
       break;
 
     case "stats":

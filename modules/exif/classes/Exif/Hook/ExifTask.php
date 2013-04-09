@@ -49,7 +49,7 @@ class Exif_Hook_ExifTask {
                ->where("exif_record.item_id", "IS", null)
                ->or_where("exif_record.dirty", "=", 1)
                ->and_where_close()
-               ->find_all(100) as $item) {
+               ->limit(100)->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.
         if (!isset($start)) {

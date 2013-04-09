@@ -77,7 +77,7 @@ class Gallery_Hook_Rest_Item {
     if ($item->sort_column != "id") {
       $order_by["id"] = "ASC";
     }
-    $orm->order_by($order_by);
+    $orm->merge_order_by($order_by);
 
     $result = array(
       "url" => $request->url,

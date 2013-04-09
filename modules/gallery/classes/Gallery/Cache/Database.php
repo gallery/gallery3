@@ -129,7 +129,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
         0 :
         (Arr::get($this->_config, "default_expire", Cache::DEFAULT_EXPIRE) + time());
     } else {
-      $lifetime = (0 === $lifetime) ? 0 : ($lifetime + time());
+      $lifetime = (0 === $lifetime) ? 0 : ((int) $lifetime + time());
     }
 
     // In Kohana 2 we also had an "ON DUPLICATE KEY UPDATE" stanza here.  Elided

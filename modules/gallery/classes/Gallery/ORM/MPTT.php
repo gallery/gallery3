@@ -32,11 +32,12 @@
  * and licensing issues so I've reimplemented just the features that we need.
  */
 class Gallery_ORM_MPTT extends ORM {
-  private $model_name = null;
+  private $_model_name = null;
 
-  function __construct($id=null) {
-    parent::__construct($id);
-    $this->model_name = Inflector::singular($this->table_name());
+  function _initialize() {
+    parent::_initialize();
+    // Similar to how parent::_initialize() gets $_object_name.
+    $this->_model_name = substr(get_class($this), 6);
   }
 
   /**
@@ -152,7 +153,7 @@ class Gallery_ORM_MPTT extends ORM {
     if (!$this->parent_id) {
       return null;
     }
-    return ModelCache::get($this->model_name, $this->parent_id);
+    return ModelCache::get($this->_model_name, $this->parent_id);
   }
 
   /**
@@ -161,7 +162,7 @@ class Gallery_ORM_MPTT extends ORM {
    * @return array ORM
    */
   function parents($where=null) {
-    return $this
+    return ORM::factory($this->_model_name)
       ->merge_where($where)
       ->where("left_ptr", "<=", $this->left_ptr)
       ->where("right_ptr", ">=", $this->right_ptr)
@@ -181,11 +182,11 @@ class Gallery_ORM_MPTT extends ORM {
    * @return array ORM
    */
   function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return $this
+    return ORM::factory($this->_model_name)
       ->merge_where($where)
       ->where("parent_id", "=", $this->id)
-      ->order_by($order_by)
-      ->find_all($limit, $offset);
+      ->merge_order_by($order_by)
+      ->limit($limit)->offset($offset)->find_all();
   }
 
   /**
@@ -212,12 +213,12 @@ class Gallery_ORM_MPTT extends ORM {
    * @return object ORM_Iterator
    */
   function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return $this
+    return ORM::factory($this->_model_name)
       ->merge_where($where)
       ->where("left_ptr", ">", $this->left_ptr)
       ->where("right_ptr", "<=", $this->right_ptr)
-      ->order_by($order_by)
-      ->find_all($limit, $offset);
+      ->merge_order_by($order_by)
+      ->limit($limit)->offset($offset)->find_all();
   }
 
   /**

@@ -390,7 +390,7 @@ class Gallery_Item {
                ->where("parent_id", "=", $album->id)
                ->where($sort_column, "=", $item->$sort_column)
                ->merge_where($where)
-               ->order_by(array("id" => "ASC"))
+               ->order_by("id", "ASC")
                ->find_all() as $row) {
         $position++;
         if ($row->id == $item->id) {
@@ -417,7 +417,7 @@ class Gallery_Item {
                ->select("id")
                ->where("parent_id", "=", $album->id)
                ->merge_where($where)
-               ->order_by($order_by)
+               ->merge_order_by($order_by)
                ->find_all() as $row) {
         $position++;
         if ($row->id == $item->id) {

@@ -61,7 +61,7 @@ class Comment_Hook_CommentRss {
     $feed = new stdClass();
     $feed->view = "comment/feed.mrss";
     $feed->comments = array();
-    foreach ($comments->find_all($limit, $offset) as $comment) {
+    foreach ($comments->limit($limit)->offset($offset)->find_all() as $comment) {
       $item = $comment->item();
       $feed->comments[] = new ArrayObject(
         array("pub_date" => date("D, d M Y H:i:s O", $comment->created),

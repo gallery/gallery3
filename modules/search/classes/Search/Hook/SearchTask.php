@@ -46,7 +46,7 @@ class Search_Hook_SearchTask {
                ->join("search_records", "item.id", "search_record.item_id", "left")
                ->where("search_record.item_id", "IS", null)
                ->or_where("search_record.dirty", "=", 1)
-               ->find_all(100) as $item) {
+               ->limit(100)->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.
         if (!isset($start)) {
