@@ -90,8 +90,7 @@ class Gallery_Graphics {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function activate_rules($module_name) {
-    DB::build()
-      ->update("graphics_rules")
+    DB::update("graphics_rules")
       ->set("active", true)
       ->where("module_name", "=", $module_name)
       ->execute();
@@ -103,8 +102,7 @@ class Gallery_Graphics {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function deactivate_rules($module_name) {
-    DB::build()
-      ->update("graphics_rules")
+    DB::update("graphics_rules")
       ->set("active", false)
       ->where("module_name", "=", $module_name)
       ->execute();
@@ -335,8 +333,7 @@ class Gallery_Graphics {
    */
   static function mark_dirty($thumbs, $resizes, $type=null, $mime_type=null) {
     if ($thumbs || $resizes) {
-      $db = DB::build()
-        ->update("items");
+      $db = DB::update("items");
       if ($type) {
         $db->where("type", "=", $type);
       }

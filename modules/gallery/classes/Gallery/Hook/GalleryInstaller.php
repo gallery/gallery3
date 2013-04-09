@@ -515,8 +515,7 @@ class Gallery_Hook_GalleryInstaller {
         if (empty($new_slug)) {
           $new_slug = Random::int();
         }
-        DB::build()
-          ->update("items")
+        DB::update("items")
           ->set("slug", $new_slug)
           ->set("relative_url_cache", null)
           ->where("id", "=", $row->id)
@@ -544,8 +543,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 25) {
-      DB::build()
-        ->update("items")
+      DB::update("items")
         ->set("title", DB::expr("`name`"))
         ->and_where_open()
         ->where("title", "IS", null)
@@ -729,8 +727,7 @@ class Gallery_Hook_GalleryInstaller {
       // extensions to their mime types (and allow extension of the list by other modules).  During
       // this process, we correctly mapped m4v files to video/x-m4v, correcting a previous error
       // where they were mapped to video/mp4.  This corrects the existing items.
-      DB::build()
-        ->update("items")
+      DB::update("items")
         ->set("mime_type", "video/x-m4v")
         ->where("name", "REGEXP", "\.m4v$") // case insensitive since name column is utf8_general_ci
         ->execute();
@@ -802,8 +799,7 @@ class Gallery_Hook_GalleryInstaller {
       // Cleanup possible instances where resize_dirty of albums or movies was set to 0.  This is
       // unlikely to have occurred, and doesn't currently matter much since albums and movies don't
       // have resize images anyway.  However, it may be useful to be consistent here going forward.
-      DB::build()
-        ->update("items")
+      DB::update("items")
         ->set("resize_dirty", 1)
         ->where("type", "<>", "photo")
         ->execute();

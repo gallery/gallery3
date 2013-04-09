@@ -517,8 +517,7 @@ class Gallery_Module {
    * @param string $increment (optional, default is 1)
    */
   static function incr_var($module_name, $name, $increment=1) {
-    DB::build()
-      ->update("vars")
+    DB::update("vars")
       ->set("value", DB::expr("`value` + $increment"))
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)

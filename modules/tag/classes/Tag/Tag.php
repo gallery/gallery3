@@ -126,8 +126,7 @@ class Tag_Tag {
    * Delete all tags associated with an item
    */
   static function clear_all($item) {
-    DB::build()
-      ->update("tags")
+    DB::update("tags")
       ->set("count", DB::expr("`count` - 1"))
       ->where("count", ">", 0)
       ->where("id", "IN", DB::select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))

@@ -28,8 +28,7 @@ class Comment_Hook_CommentEvent {
   static function user_deleted($user) {
     $guest = Identity::guest();
     if (!empty($guest)) {          // could be empty if there is not identity provider
-      DB::build()
-        ->update("comments")
+      DB::update("comments")
         ->set("author_id", $guest->id)
         ->set("guest_email", null)
         ->set("guest_name", "guest")
@@ -41,8 +40,7 @@ class Comment_Hook_CommentEvent {
 
   static function identity_provider_changed($old_provider, $new_provider) {
     $guest = Identity::guest();
-    DB::build()
-      ->update("comments")
+    DB::update("comments")
       ->set("author_id", $guest->id)
       ->set("guest_email", null)
       ->set("guest_name", "guest")

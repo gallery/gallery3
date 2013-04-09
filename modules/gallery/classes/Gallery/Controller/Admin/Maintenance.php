@@ -22,8 +22,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Show a list of all available, running and finished tasks.
    */
   public function action_index() {
-    $query = DB::build()
-      ->update("tasks")
+    $query = DB::update("tasks")
       ->set("state", "stalled")
       ->where("done", "=", 0)
       ->where("state", "<>", "stalled")
@@ -146,8 +145,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
   public function action_cancel_running_tasks() {
     Access::verify_csrf();
-    DB::build()
-      ->update("tasks")
+    DB::update("tasks")
       ->set("done", 1)
       ->set("state", "cancelled")
       ->where("done", "=", 0)

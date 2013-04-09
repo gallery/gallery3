@@ -408,8 +408,7 @@ class Gallery_Hook_GalleryTask {
         list ($id, $ptr_mode) = explode(":", array_pop($stack));
         if ($ptr_mode == "L") {
           $stack[] = "$id:R";
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("left_ptr", $ptr++)
             ->where("id", "=", $id)
             ->execute();
@@ -422,8 +421,7 @@ class Gallery_Hook_GalleryTask {
             array_push($stack, "{$child->id}:L");
           }
         } else if ($ptr_mode == "R") {
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("right_ptr", $ptr++)
             ->set("relative_path_cache", null)
             ->set("relative_url_cache", null)
@@ -466,8 +464,7 @@ class Gallery_Hook_GalleryTask {
           ->find_all(1, 1);
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("slug", $slug . "-" . (string)rand(1000, 9999))
             ->where("id", "=", $conflict->id)
             ->execute();
@@ -521,8 +518,7 @@ class Gallery_Hook_GalleryTask {
             $item_base_name = $conflict->name;
             $item_extension = "";
           }
-          DB::build()
-            ->update("items")
+          DB::update("items")
             ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
             ->where("id", "=", $conflict->id)
             ->execute();
@@ -588,8 +584,7 @@ class Gallery_Hook_GalleryTask {
             $conflict->save();
           } catch (Exception $e) {
             // Didn't work.  Edit database directly without fixing file system.
-            DB::build()
-              ->update("items")
+            DB::update("items")
               ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
               ->where("id", "=", $conflict->id)
               ->execute();

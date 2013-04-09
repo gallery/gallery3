@@ -34,8 +34,7 @@ class User_Hook_UserInstaller {
     }
 
     if ($version == 2) {
-      DB::build()
-        ->update("users")
+      DB::update("users")
         ->set("email", "unknown@unknown.com")
         ->where("guest", "=", 0)
         ->and_where_open()

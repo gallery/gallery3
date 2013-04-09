@@ -494,8 +494,7 @@ class Gallery_Access {
       "ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
     Database::instance()->query(
       "ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
-    DB::build()
-      ->update("access_intents")
+    DB::update("access_intents")
       ->set($field, Access::DENY)
       ->where("item_id", "=", 1)
       ->execute();
@@ -543,8 +542,7 @@ class Gallery_Access {
     // access_caches table will already contain DENY values and we won't be able to overwrite
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set($field, Access::UNKNOWN)
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
@@ -562,8 +560,7 @@ class Gallery_Access {
     foreach ($query as $row) {
       if ($row->$field == Access::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
-        DB::build()
-          ->update("items")
+        DB::update("items")
           ->set($field, $row->$field)
           ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
           ->where("left_ptr", ">=", $row->left_ptr)
@@ -571,8 +568,7 @@ class Gallery_Access {
           ->execute();
       } else if ($row->$field == Access::DENY) {
         // DENY overwrites everything below it
-        DB::build()
-          ->update("items")
+        DB::update("items")
           ->set($field, $row->$field)
           ->where("left_ptr", ">=", $row->left_ptr)
           ->where("right_ptr", "<=", $row->right_ptr)
@@ -583,8 +579,7 @@ class Gallery_Access {
     // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
-    DB::build()
-      ->update("items")
+    DB::update("items")
       ->set($field, Access::ALLOW)
       ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
       ->where("left_ptr", ">=", $item->left_ptr)
@@ -639,8 +634,7 @@ class Gallery_Access {
       ->find_all();
     foreach ($query as $row) {
       $value = ($row->$field === Access::ALLOW) ? true : false;
-      DB::build()
-        ->update("access_caches")
+      DB::update("access_caches")
         ->set($field, $value)
         ->where("item_id", "IN",
                 DB::select("id")
