@@ -31,8 +31,8 @@ if (file_exists(VARPATH . "database.php")) {
       "type" => "MySQL", // Kohana 3 doesn't have a MySQLi module yet
       "connection" => array(
         "hostname" => (
-          !empty($default["connection"]["hostname"]) ?
-          $default["connection"]["hostname"] :
+          !empty($default["connection"]["host"]) ?
+          $default["connection"]["host"] :
           $default["connection"]["socket"]),
         "database" => $default["connection"]["database"],
         "username" => $default["connection"]["user"],
