@@ -30,6 +30,19 @@ class Gallery_Module {
   public static $available = array();
 
   /**
+   * Setup some module constants.  Modules are loaded in the following order:
+   *   1. Unit test modules (if in TEST_MODE).  These do not have module.info files.
+   *   2. First module.  This is "purifier", which *cannot* be overridden.
+   *   3. User-selected active modules.
+   *   4. Last module.  This is "gallery", which *can* be overridden.
+   *   5. Third-party modules.  These do not have module.info files.
+   */
+  private static $_unit_test_modules = array("gallery_unit_test", "unit_test");
+  private static $_first_module = "purifier";
+  private static $_last_module = "gallery";
+  private static $_third_party_modules = array("formo", "pagination", "cache", "orm", "database");
+
+  /**
    * Set the version of the corresponding Model_Module
    * @param string  $module_name
    * @param integer $version
@@ -38,7 +51,8 @@ class Gallery_Module {
     $module = Module::get($module_name);
     if (!$module->loaded()) {
       $module->name = $module_name;
-      $module->active = $module_name == "gallery";  // only gallery is active by default
+      // Only the pre-defined first and last modules are active by default.
+      $module->active = in_array($module_name, array(self::$_first_module, self::$_last_module));
     }
     $module->version = $version;
     $module->save();
@@ -106,9 +120,10 @@ class Gallery_Module {
       }
 
       // Lock certain modules
-      $modules->gallery->locked = true;
       $identity_module = Module::get_var("gallery", "identity_provider", "user");
       $modules->$identity_module->locked = true;
+      $modules->{self::$_first_module}->locked = true;
+      $modules->{self::$_last_module}->locked = true;
 
       $modules->uasort(array("module", "module_comparator"));
       self::$available = $modules;
@@ -125,7 +140,7 @@ class Gallery_Module {
   }
 
   /**
-   * Return a list of all the active modules in no particular order.
+   * Return a list of all the active modules in order of priority.
    */
   static function active() {
     return self::$active;
@@ -187,33 +202,32 @@ class Gallery_Module {
       $module->weight = $module->id;
       $module->save();
     }
+    // Calling load_modules() will add the module to self::$modules and, since it's not active,
+    // remove it from the path.
     Module::load_modules();
-
-    // Now the module is installed but inactive, so don't leave it in the active path
-    Module::_remove_from_path($module_name);
 
     Log::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
   }
 
+  /**
+   * Add a module path to Kohana's list.  This is used to temporarily add a module path
+   * to the top of the list during activation, installation, etc.
+   */
   private static function _add_to_path($module_name) {
-    $config = Config::instance();
-    $kohana_modules = $config->get("core.modules");
-    array_unshift($kohana_modules, MODPATH . $module_name);
-    $config->set("core.modules",  $kohana_modules);
-    // Rebuild the include path so the module installer can benefit from auto loading
-    Kohana::include_paths(true);
+    $kohana_modules = Kohana::modules();
+    Arr::unshift($kohana_modules, $module_name, MODPATH . $module_name);
+    Kohana::modules($kohana_modules);
   }
 
+  /**
+   * Remove a module path from Kohana's list.  This is used to remove a module path
+   * temporarily added with _add_to_path().
+   */
   private static function _remove_from_path($module_name) {
-    $config = Config::instance();
-    $kohana_modules = $config->get("core.modules");
-    if (($key = array_search(MODPATH . $module_name, $kohana_modules)) !== false) {
-      unset($kohana_modules[$key]);
-      $kohana_modules = array_values($kohana_modules); // reindex
-    }
-    $config->set("core.modules",  $kohana_modules);
-    Kohana::include_paths(true);
+    $kohana_modules = Kohana::modules();
+    unset($kohana_modules[$module_name]);
+    Kohana::modules($kohana_modules);
   }
 
   /**
@@ -350,41 +364,58 @@ class Gallery_Module {
   }
 
   /**
-   * Load the active modules.  This is called at bootstrap time.
+   * Load (or refresh) all installed modules.  This:
+   *   - rebuilds self::$modules with all installed modules
+   *   - rebuilds self::$active with all active modules
+   *   - reinitializes Kohana's module list (including unit test and third-party modules)
+   *   - causes Kohana to run any init.php files it may find
+   *
+   * It is called at bootstrap time as well as during module install, uninstall, activate,
+   * deactivate, or upgrade events.
    */
   static function load_modules() {
     self::$modules = array();
     self::$active = array();
-    $kohana_modules = array();
 
     // In version 32 we introduced a weight column so we can specify the module order
     // If we try to use that blindly, we'll break earlier versions before they can even
     // run the upgrader.
     $modules = Module::get_version("gallery") < 32 ?
-      ORM::factory("Module")->find_all():
+      ORM::factory("Module")->find_all() :
       ORM::factory("Module")->order_by("weight")->find_all();
 
+    // Rebuild installed and active module lists
     foreach ($modules as $module) {
       self::$modules[$module->name] = $module;
-      if (!$module->active) {
+      // Skip inactive or missing modules.  Kohana 3 will not let us load a module that's missing.
+      // Kohana 2 would, so it was possible to have an active, deleted module in Gallery 3.0.x.
+      if (!$module->active || !is_dir(MODPATH . $module->name)) {
         continue;
       }
 
-      // Kohana 3 will not let us load a module that's missing.  Kohana 2 would, so it was
-      // possible to have an active, deleted module.  Skip them.
-      if (!is_dir(MODPATH . $module->name)) {
-        continue;
-      }
-
-      if ($module->name == "gallery") {
-        $gallery = $module;
+      if ($module->name == self::$_first_module) {
+        $first_module = array($module->name => $module);
+      } else if ($module->name == self::$_last_module) {
+        $last_module = array($module->name => $module);
       } else {
-        self::$active[] = $module;
-        $kohana_modules[$module->name] = MODPATH . $module->name;
+        self::$active[$module->name] = $module;
       }
     }
-    self::$active[] = $gallery;  // put gallery last in the module list to match core.modules
-    Kohana::modules(Arr::merge($kohana_modules, Kohana::modules()));
+    self::$active = array_merge($first_module, self::$active, $last_module);
+
+    // Build the complete list of module names, including unit test and third-party modules.
+    $module_names = array_merge(
+      (TEST_MODE ? self::$_unit_test_modules : array()),
+      array_keys(self::$active),
+      self::$_third_party_modules
+    );
+
+    // Format the module names and paths as needed for Kohana, then send it off.
+    $kohana_modules = array();
+    foreach ($module_names as $module_name) {
+      $kohana_modules[$module_name] = MODPATH . $module_name;
+    }
+    Kohana::modules($kohana_modules);
   }
 
   /**
