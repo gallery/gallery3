@@ -161,10 +161,10 @@ class Comment_Model_Comment extends ORM {
    * Make sure we have a valid associated item id.
    */
   public function valid_item(Validation $v, $field) {
-    if (DB::build()
+    if (DB::select()
         ->from("items")
         ->where("id", "=", $this->item_id)
-        ->count_records() != 1) {
+        ->execute()->count() != 1) {
       $v->add_error("item_id", "invalid");
     }
   }

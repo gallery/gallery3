@@ -589,7 +589,7 @@ class Gallery_Model_Item extends ORM_MPTT {
              ->or_where("slug", "=", "{$this->slug}{$suffix}")
              ->and_where_close()
              ->execute($this->_db)
-             ->count_records()) {
+             ->execute()->count()) {
         $suffix = "-" . (($suffix_num <= 99) ? sprintf("%02d", $suffix_num++) : Random::int());
       }
       if ($suffix) {
@@ -619,7 +619,7 @@ class Gallery_Model_Item extends ORM_MPTT {
              ->or_where("slug", "=", "{$this->slug}{$suffix}")
              ->and_where_close()
              ->execute($this->_db)
-             ->count_records()) {
+             ->execute()->count()) {
         $suffix = "-" . (($suffix_num <= 99) ? sprintf("%02d", $suffix_num++) : Random::int());
       }
       if ($suffix) {
@@ -930,12 +930,12 @@ class Gallery_Model_Item extends ORM_MPTT {
       $v->add_error("slug", "not_url_safe");
     }
 
-    if (DB::build()
+    if (DB::select()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("id", "<>", $this->id)
         ->where("slug", "=", $this->slug)
-        ->count_records()) {
+        ->execute()->count()) {
       $v->add_error("slug", "conflict");
     }
 
@@ -991,12 +991,12 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     if ($this->is_album()) {
-      if (DB::build()
+      if (DB::select()
           ->from("items")
           ->where("parent_id", "=", $this->parent_id)
           ->where("name", "=", $this->name)
           ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-          ->count_records()) {
+          ->execute()->count()) {
         $v->add_error("name", "conflict");
         return;
       }
@@ -1007,12 +1007,12 @@ class Gallery_Model_Item extends ORM_MPTT {
         $base_name = $this->name;
       }
       $base_name_escaped = Database::escape_for_like($base_name);
-      if (DB::build()
+      if (DB::select()
           ->from("items")
           ->where("parent_id", "=", $this->parent_id)
           ->where("name", "LIKE", "{$base_name_escaped}.%")
           ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-          ->count_records()) {
+          ->execute()->count()) {
         $v->add_error("name", "conflict");
         return;
       }
@@ -1041,7 +1041,7 @@ class Gallery_Model_Item extends ORM_MPTT {
         $v->add_error("parent_id", "invalid");
       }
     } else {
-      $query = DB::build()
+      $query = DB::select()
         ->from("items")
         ->where("id", "=", $this->parent_id)
         ->where("type", "=", "album");
@@ -1054,7 +1054,7 @@ class Gallery_Model_Item extends ORM_MPTT {
           ->and_where_close();
       }
 
-      if ($query->count_records() != 1) {
+      if ($query->execute()->count() != 1) {
         $v->add_error("parent_id", "invalid");
       }
     }
@@ -1069,11 +1069,11 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     if ($this->album_cover_item_id && ($this->is_photo() || $this->is_movie() ||
-        DB::build()
+        DB::select()
         ->from("items")
         ->where("id", "=", $this->album_cover_item_id)
         ->where("type", "<>", "album")
-        ->count_records() != 1)) {
+        ->execute()->count() != 1)) {
       $v->add_error("album_cover_item_id", "invalid_item");
     }
   }

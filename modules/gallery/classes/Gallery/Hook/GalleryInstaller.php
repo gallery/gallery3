@@ -506,9 +506,8 @@ class Gallery_Hook_GalleryInstaller {
     // Update slug values to be legal.  We should have done this in the 11->12 upgrader, but I was
     // lazy.  Mea culpa!
     if ($version == 22) {
-      foreach (DB::build()
+      foreach (DB::select("id", "slug")
                ->from("items")
-               ->select("id", "slug")
                ->where(DB::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
                ->execute() as $row) {
         $new_slug = Item::convert_filename_to_slug($row->slug);
@@ -699,9 +698,8 @@ class Gallery_Hook_GalleryInstaller {
       // change those files (eg. as a side effect of getting the url or file path) it fails to
       // validate.  Fix those here.  This might be slow, but if it times out it can just pick up
       // where it left off.
-      foreach (DB::build()
+      foreach (DB::select("id")
                ->from("items")
-               ->select("id")
                ->where("type", "<>", "album")
                ->where(DB::expr("`name` REGEXP '\\\\..*\\\\.'"), "=", 1)
                ->order_by("id", "asc")
@@ -764,9 +762,8 @@ class Gallery_Hook_GalleryInstaller {
         list ($parent_id, $base_name) = explode(":", $conflict->parent_base_name, 2);
         $base_name_escaped = Database::escape_for_like($base_name);
         // Loop through the items for each conflict
-        foreach (DB::build()
+        foreach (DB::select("id")
                  ->from("items")
-                 ->select("id")
                  ->where("type", "<>", "album")
                  ->where("parent_id", "=", $parent_id)
                  ->where("name", "LIKE", "{$base_name_escaped}.%")
@@ -812,9 +809,8 @@ class Gallery_Hook_GalleryInstaller {
       // pretty unlikely, as having backslashes would have probably already caused other issues for
       // users, but we should check anyway.  This might be slow, but if it times out it can just
       // pick up where it left off.
-      foreach (DB::build()
+      foreach (DB::select("id")
                ->from("items")
-               ->select("id")
                ->where(DB::expr("`name` REGEXP '\\\\\\\\'"), "=", 1)  // one \, 3x escaped
                ->order_by("id", "asc")
                ->execute() as $row) {

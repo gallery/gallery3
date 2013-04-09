@@ -47,11 +47,11 @@ class Tag_Hook_Rest_Tags {
   static function post($request) {
     // The user must have some edit permission somewhere to create a tag.
     if (!Identity::active_user()->admin) {
-      $query = DB::build()->from("access_caches")->and_where_open();
+      $query = DB::select()->from("access_caches")->and_where_open();
       foreach (Identity::active_user()->groups() as $group) {
         $query->or_where("edit_{$group->id}", "=", Access::ALLOW);
       }
-      $has_any_edit_perm = $query->and_where_close()->count_records();
+      $has_any_edit_perm = $query->and_where_close()->execute()->count();
       if (!$has_any_edit_perm) {
         Access::forbidden();
       }

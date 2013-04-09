@@ -310,7 +310,7 @@ class Gallery_Graphics {
    * @return Database_Result Query result
    */
   static function find_dirty_images_query() {
-    return DB::build()
+    return DB::select()
       ->from("items")
       ->and_where_open()
       ->where("thumb_dirty", "=", 1)
@@ -347,7 +347,7 @@ class Gallery_Graphics {
       $db->execute();
     }
 
-    $count = Graphics::find_dirty_images_query()->count_records();
+    $count = Graphics::find_dirty_images_query()->execute()->count();
     if ($count) {
       SiteStatus::warning(
         t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",

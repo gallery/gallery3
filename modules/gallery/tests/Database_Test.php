@@ -133,7 +133,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
   }
 
   function prefix_no_replacement_test() {
-    $sql = DB::build()
+    $sql = DB::select()
       ->from("test_tables")
       ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))

@@ -82,10 +82,10 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
    * Validate the user name.  Make sure there are no conflicts.
    */
   public function valid_name(Validation $v, $field) {
-    if (DB::build()->from("groups")
+    if (DB::select()->from("groups")
         ->where("name", "=", $this->name)
         ->where("id", "<>", $this->id)
-        ->count_records() == 1) {
+        ->execute()->count() == 1) {
       $v->add_error("name", "conflict");
     }
   }

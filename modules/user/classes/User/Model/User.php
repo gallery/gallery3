@@ -151,10 +151,10 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    * Validate the user name.  Make sure there are no conflicts.
    */
   public function valid_name(Validation $v, $field) {
-    if (DB::build()->from("users")
+    if (DB::select()->from("users")
         ->where("name", "=", $this->name)
         ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-        ->count_records() == 1) {
+        ->execute()->count() == 1) {
       $v->add_error("name", "conflict");
     }
   }

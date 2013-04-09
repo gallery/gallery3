@@ -111,14 +111,14 @@ class Search_Search {
   }
 
   static function stats() {
-    $remaining = DB::build()
+    $remaining = DB::select()
       ->from("items")
       ->join("search_records", "item.id", "search_record.item_id", "left")
       ->and_where_open()
       ->where("search_record.item_id", "IS", null)
       ->or_where("search_record.dirty", "=", 1)
       ->and_where_close()
-      ->count_records();
+      ->execute()->count();
 
     $total = ORM::factory("Item")->count_all();
     $percent = round(100 * ($total - $remaining) / $total);

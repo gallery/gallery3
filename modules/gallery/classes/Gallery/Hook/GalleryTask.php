@@ -35,7 +35,7 @@ class Gallery_Hook_GalleryTask {
   const FIX_STATE_DONE = 14;
 
   static function available_tasks() {
-    $dirty_count = Graphics::find_dirty_images_query()->count_records();
+    $dirty_count = Graphics::find_dirty_images_query()->execute()->count();
     $tasks = array();
     $tasks[] = TaskDefinition::factory()
                  ->callback("Hook_GalleryTask::rebuild_dirty_images")

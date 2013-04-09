@@ -29,7 +29,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $page_size = Module::get_var("user", "page_size", 10);
     $page = Arr::get(Request::$current->query(), "page", "1");
     $builder = DB::build();
-    $user_count = $builder->from("users")->count_records();
+    $user_count = $builder->from("users")->execute()->count();
 
     // Pagination info
     $view->page = $page;
