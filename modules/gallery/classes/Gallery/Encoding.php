@@ -30,6 +30,10 @@ class Gallery_Encoding {
         }
       }
     }
+
+    // Remove control and invalid characters
+    $value = UTF8::clean($value);
+
     return $value;
   }
 }
