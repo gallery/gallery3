@@ -49,8 +49,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     print $view;
 
     // Do some maintenance while we're in here
-    DB::build()
-      ->delete("caches")
+    DB::delete("caches")
       ->where("expiration", "<>", 0)
       ->where("expiration", "<=", time())
       ->execute();

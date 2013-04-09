@@ -125,7 +125,7 @@ class Tag_Model_Tag extends ORM {
       $related_item_ids[$row->item_id] = 1;
     }
 
-    DB::build()->delete("items_tags")->where("tag_id", "=", $this->id)->execute();
+    DB::delete("items_tags")->where("tag_id", "=", $this->id)->execute();
     $result = parent::delete();
 
     if ($related_item_ids) {

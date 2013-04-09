@@ -20,8 +20,7 @@
 class Exif_Hook_ExifTask {
   static function available_tasks() {
     // Delete extra exif_records
-    DB::build()
-      ->delete("exif_records")
+    DB::delete("exif_records")
       ->where("item_id", "NOT IN",
               DB::select("id")->from("items")->where("type", "=", "photo"))
       ->execute();

@@ -44,8 +44,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
     Module::event("user_before_delete", $this);
     parent::delete($id);
 
-    DB::build()
-      ->delete("groups_users")
+    DB::delete("groups_users")
       ->where("user_id", "=", empty($id) ? $old->id : $id)
       ->execute();
 

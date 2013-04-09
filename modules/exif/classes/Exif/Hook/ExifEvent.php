@@ -31,8 +31,7 @@ class Exif_Hook_ExifEvent {
   }
 
   static function item_deleted($item) {
-    DB::build()
-      ->delete("exif_records")
+    DB::delete("exif_records")
       ->where("item_id", "=", $item->id)
       ->execute();
   }

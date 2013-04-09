@@ -60,8 +60,7 @@ class Gallery_Graphics {
    * @param string  $operation   the name of the operation(<defining class>::method)
    */
   static function remove_rule($module_name, $target, $operation) {
-    DB::build()
-      ->delete("graphics_rules")
+    DB::delete("graphics_rules")
       ->where("module_name", "=", $module_name)
       ->where("target", "=", $target)
       ->where("operation", "=", $operation)
@@ -75,8 +74,7 @@ class Gallery_Graphics {
    * @param string $module_name
    */
   static function remove_rules($module_name) {
-    $status = DB::build()
-      ->delete("graphics_rules")
+    $status = DB::delete("graphics_rules")
       ->where("module_name", "=", $module_name)
       ->execute();
     if (count($status)) {

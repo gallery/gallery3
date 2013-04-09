@@ -1314,8 +1314,7 @@ class G2Import_G2Import {
    * Remove all map entries associated with the given Gallery 2 id.
    */
   static function clear_map($g2_id, $resource_type) {
-    DB::build()
-      ->delete("g2_maps")
+    DB::delete("g2_maps")
       ->where("g2_id", "=", $g2_id)
       ->where("resource_type", "=", $resource_type)
       ->execute();

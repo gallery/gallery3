@@ -131,8 +131,7 @@ class Tag_Tag {
       ->where("count", ">", 0)
       ->where("id", "IN", DB::select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
       ->execute();
-    DB::build()
-      ->delete("items_tags")
+    DB::delete("items_tags")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
@@ -141,8 +140,7 @@ class Tag_Tag {
    * Remove all items from a tag
    */
   static function remove_items($tag) {
-    DB::build()
-      ->delete("items_tags")
+    DB::delete("items_tags")
       ->where("tag_id", "=", $tag->id)
       ->execute();
     $tag->count = 0;
@@ -156,7 +154,7 @@ class Tag_Tag {
     // @todo There's a potential race condition here which we can solve by adding a lock around
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
-    DB::build()->delete("tags")->where("count", "=", 0)->execute();
+    DB::delete("tags")->where("count", "=", 0)->execute();
   }
 
   /**

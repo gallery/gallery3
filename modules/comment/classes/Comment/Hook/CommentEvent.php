@@ -19,8 +19,7 @@
  */
 class Comment_Hook_CommentEvent {
   static function item_deleted($item) {
-    DB::build()
-      ->delete("comments")
+    DB::delete("comments")
       ->where("item_id", "=", $item->id)
       ->execute();
   }

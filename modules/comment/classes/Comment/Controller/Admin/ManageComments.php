@@ -22,8 +22,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
 
   public function action_index() {
     // Get rid of old deleted/spam comments once in a while
-    DB::build()
-      ->delete("comments")
+    DB::delete("comments")
       ->where("state", "IN", array("deleted", "spam"))
       ->where("updated", "<", DB::expr("UNIX_TIMESTAMP() - 86400 * 7"))
       ->execute();
@@ -133,8 +132,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
   public function action_delete_all_spam() {
     Access::verify_csrf();
 
-    DB::build()
-      ->delete("comments")
+    DB::delete("comments")
       ->where("state", "=", "spam")
       ->execute();
     HTTP::redirect("admin/manage_comments/queue/spam");

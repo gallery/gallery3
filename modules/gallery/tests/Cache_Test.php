@@ -20,7 +20,7 @@
 class Cache_Test extends Gallery_Unit_Test_Case {
   private $_driver;
   public function setup() {
-    DB::build()->delete("caches")->execute();
+    DB::delete("caches")->execute();
     $this->_driver = new Cache_Database();
   }
 

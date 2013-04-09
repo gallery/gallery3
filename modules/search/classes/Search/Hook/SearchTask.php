@@ -20,8 +20,7 @@
 class Search_Hook_SearchTask {
   static function available_tasks() {
     // Delete extra search_records
-    DB::build()
-      ->delete("search_records")
+    DB::delete("search_records")
       ->where("item_id", "NOT IN", DB::select("id")->from("items"))
       ->execute();
 

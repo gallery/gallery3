@@ -44,15 +44,13 @@ class Notification_Hook_NotificationEvent {
   }
 
   static function user_deleted($user) {
-    DB::build()
-      ->delete("subscriptions")
+    DB::delete("subscriptions")
       ->where("user_id", "=", $user->id)
       ->execute();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
-    DB::build()
-      ->delete("subscriptions")
+    DB::delete("subscriptions")
       ->execute();
   }
 
@@ -80,8 +78,7 @@ class Notification_Hook_NotificationEvent {
 
   static function user_before_delete($user) {
     try {
-      DB::build()
-        ->delete("subscriptions")
+      DB::delete("subscriptions")
         ->where("user_id", "=", $user->id)
         ->execute();
     } catch (Exception $e) {

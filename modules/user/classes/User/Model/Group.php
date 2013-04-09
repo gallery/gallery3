@@ -29,8 +29,7 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
     Module::event("group_before_delete", $this);
     parent::delete($id);
 
-    DB::build()
-      ->delete("groups_users")
+    DB::delete("groups_users")
       ->where("group_id", "=", empty($id) ? $old->id : $id)
       ->execute();
 

@@ -131,8 +131,7 @@ class Cache_Database_Driver extends Cache_Driver {
    * @return bool
    */
   public function delete($keys, $is_tag=false) {
-    $db = DB::build()
-      ->delete("caches");
+    $db = DB::delete("caches");
     if ($keys === true) {
       // Delete all caches
     } else if ($is_tag === true) {

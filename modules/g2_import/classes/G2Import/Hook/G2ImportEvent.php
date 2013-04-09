@@ -19,8 +19,7 @@
  */
 class G2Import_Hook_G2ImportEvent {
   static function item_deleted($item) {
-    DB::build()
-      ->delete("g2_maps")
+    DB::delete("g2_maps")
       ->where("g3_id", "=", $item->id)
       ->execute();
   }
