@@ -56,7 +56,7 @@ class Gallery_Hook_GalleryBlock {
       $block->title = t("Log entries");
       $block->content = new View("admin/block_log_entries.html");
       $block->content->entries = ORM::factory("Log")
-        ->order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
+        ->merge_order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
       break;
 
     case "stats":

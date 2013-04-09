@@ -185,7 +185,7 @@ class Gallery_ORM_MPTT extends ORM {
     return $this
       ->merge_where($where)
       ->where("parent_id", "=", $this->id)
-      ->order_by($order_by)
+      ->merge_order_by($order_by)
       ->find_all($limit, $offset);
   }
 
@@ -217,7 +217,7 @@ class Gallery_ORM_MPTT extends ORM {
       ->merge_where($where)
       ->where("left_ptr", ">", $this->left_ptr)
       ->where("right_ptr", "<=", $this->right_ptr)
-      ->order_by($order_by)
+      ->merge_order_by($order_by)
       ->find_all($limit, $offset);
   }
 
