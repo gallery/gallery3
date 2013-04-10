@@ -647,7 +647,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 41) {
-      $db->query("TRUNCATE TABLE {caches}");
+      $db->query(Database::TRUNCATE, "TRUNCATE TABLE {caches}");
       $db->query(Database::ALTER, "ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
       Module::set_version("gallery", $version = 42);
     }

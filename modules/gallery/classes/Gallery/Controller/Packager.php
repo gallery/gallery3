@@ -78,9 +78,9 @@ class Gallery_Controller_Packager extends Controller {
       Module::set_var("gallery", "blocks_{$key}", serialize($blocks));
     }
 
-    Database::instance()->query("TRUNCATE {caches}");
-    Database::instance()->query("TRUNCATE {sessions}");
-    Database::instance()->query("TRUNCATE {logs}");
+    Database::instance()->query(Database::TRUNCATE, "TRUNCATE {caches}");
+    Database::instance()->query(Database::TRUNCATE, "TRUNCATE {sessions}");
+    Database::instance()->query(Database::TRUNCATE, "TRUNCATE {logs}");
     DB::update("users")
       ->set(array("password" => ""))
       ->where("id", "in", array(1, 2))

@@ -158,6 +158,6 @@ class Cache_Database_Driver extends Cache_Driver {
    * Empty the cache
    */
   public function delete_all() {
-    Database::instance()->query("TRUNCATE {caches}");
+    Database::instance()->query(Database::TRUNCATE, "TRUNCATE {caches}");
   }
 }

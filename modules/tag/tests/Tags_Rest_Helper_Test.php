@@ -20,8 +20,8 @@
 class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function setup() {
     try {
-      Database::instance()->query("TRUNCATE {tags}");
-      Database::instance()->query("TRUNCATE {items_tags}");
+      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
+      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {items_tags}");
     } catch (Exception $e) {
     }
   }
