@@ -211,7 +211,7 @@ Cookie::$secure = !empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on");
 Cookie::$salt = "g3";
 
 // Initialize I18n support
-I18n::lang('en-us');
+I18n::lang("en-us");
 I18n::instance();
 
 // Enable the complete set of all active modules.  This will trigger each module to load its own
