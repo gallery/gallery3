@@ -872,7 +872,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   array    additional where clauses
-   * @return object ORM_Iterator
+   * @return object Database_Result
    */
   function descendants($limit=null, $offset=null, $where=array(), $order_by=null) {
     if (empty($order_by)) {

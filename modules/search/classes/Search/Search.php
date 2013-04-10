@@ -45,10 +45,10 @@ class Search_Search {
       "ORDER BY `score` DESC " .
       "LIMIT $limit OFFSET " . (int)$offset;
 
-    $data = $db->query(Database::SELECT, $query);
+    $data = $db->query(Database::SELECT, $query, "Model_Item");
     $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c", true)->current()->c;
 
-    return array($count, new ORM_Iterator(ORM::factory("Item"), $data));
+    return array($count, $data);
   }
 
   private static function _build_query_base($q, $album, $where=array()) {
