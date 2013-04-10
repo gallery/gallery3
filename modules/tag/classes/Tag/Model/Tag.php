@@ -34,7 +34,7 @@ class Tag_Model_Tag extends ORM {
    * @param integer  $limit  number of rows to limit result to
    * @param integer  $offset offset in result to start returning rows from
    * @param string   $where   an array of arrays, each compatible with ORM::where()
-   * @return ORM_Iterator
+   * @return Database_Result
    */
   public function items($limit=null, $offset=null, $where=array()) {
     if (is_scalar($where)) {

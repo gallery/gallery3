@@ -451,7 +451,7 @@ class Gallery_Access {
   /**
    * Internal method to get all available groups.
    *
-   * @return ORM_Iterator
+   * @return Database_Result
    */
   private static function _get_all_groups() {
     // When we build the gallery package, it's possible that there is no identity provider
