@@ -20,7 +20,7 @@
 class G2Import_Hook_G2ImportInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {g2_maps} (
                  `id` int(9) NOT NULL auto_increment,
                  `g2_id` int(9) NOT NULL,
                  `g3_id` int(9) NOT NULL,

@@ -20,14 +20,14 @@
 class Gallery_Hook_GalleryInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE {access_caches} (
+    $db->query(Database::CREATE, "CREATE TABLE {access_caches} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  PRIMARY KEY (`id`),
                  KEY (`item_id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {access_intents} (
+    $db->query(Database::CREATE, "CREATE TABLE {access_intents} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  PRIMARY KEY (`id`))
@@ -37,7 +37,7 @@ class Gallery_Hook_GalleryInstaller {
     // key column to avoid handling of concurrency issues
     // on insert. Thus allowing concurrent inserts on the
     // same cache key, as does Memcache / xcache.
-    $db->query("CREATE TABLE {caches} (
+    $db->query(Database::CREATE, "CREATE TABLE {caches} (
                 `id` int(9) NOT NULL auto_increment,
                 `key` varchar(255) NOT NULL,
                 `tags` varchar(255),
@@ -48,7 +48,7 @@ class Gallery_Hook_GalleryInstaller {
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {failed_auths} (
+    $db->query(Database::CREATE, "CREATE TABLE {failed_auths} (
                 `id` int(9) NOT NULL auto_increment,
                 `count` int(9) NOT NULL,
                 `name` varchar(255) NOT NULL,
@@ -56,7 +56,7 @@ class Gallery_Hook_GalleryInstaller {
                 PRIMARY KEY (`id`))
                 DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {graphics_rules} (
+    $db->query(Database::CREATE, "CREATE TABLE {graphics_rules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
                  `args` varchar(255) default NULL,
@@ -67,7 +67,7 @@ class Gallery_Hook_GalleryInstaller {
                  PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {incoming_translations} (
+    $db->query(Database::CREATE, "CREATE TABLE {incoming_translations} (
                  `id` int(9) NOT NULL auto_increment,
                  `key` char(32) NOT NULL,
                  `locale` char(10) NOT NULL,
@@ -79,7 +79,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY `locale_key` (`locale`, `key`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {items} (
+    $db->query(Database::CREATE, "CREATE TABLE {items} (
                  `id` int(9) NOT NULL auto_increment,
                  `album_cover_item_id` int(9) default NULL,
                  `captured` int(9) default NULL,
@@ -120,7 +120,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY `relative_path_cache` (`relative_path_cache`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {logs} (
+    $db->query(Database::CREATE, "CREATE TABLE {logs} (
                  `id` int(9) NOT NULL auto_increment,
                  `category` varchar(64) default NULL,
                  `html` varchar(255) default NULL,
@@ -133,7 +133,7 @@ class Gallery_Hook_GalleryInstaller {
                  PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {messages} (
+    $db->query(Database::CREATE, "CREATE TABLE {messages} (
                  `id` int(9) NOT NULL auto_increment,
                  `key` varchar(255) default NULL,
                  `severity` varchar(32) default NULL,
@@ -142,7 +142,7 @@ class Gallery_Hook_GalleryInstaller {
                  UNIQUE KEY(`key`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {modules} (
+    $db->query(Database::CREATE, "CREATE TABLE {modules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
                  `name` varchar(64) default NULL,
@@ -153,7 +153,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY (`weight`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {outgoing_translations} (
+    $db->query(Database::CREATE, "CREATE TABLE {outgoing_translations} (
                  `id` int(9) NOT NULL auto_increment,
                  `base_revision` int(9) DEFAULT NULL,
                  `key` char(32) NOT NULL,
@@ -165,7 +165,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY `locale_key` (`locale`, `key`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {permissions} (
+    $db->query(Database::CREATE, "CREATE TABLE {permissions} (
                  `id` int(9) NOT NULL auto_increment,
                  `display_name` varchar(64) default NULL,
                  `name` varchar(64) default NULL,
@@ -173,14 +173,14 @@ class Gallery_Hook_GalleryInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {sessions} (
+    $db->query(Database::CREATE, "CREATE TABLE {sessions} (
                 `session_id` varchar(127) NOT NULL,
                 `data` text NOT NULL,
                 `last_activity` int(10) UNSIGNED NOT NULL,
                 PRIMARY KEY (`session_id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {tasks} (
+    $db->query(Database::CREATE, "CREATE TABLE {tasks} (
                 `id` int(9) NOT NULL auto_increment,
                 `callback` varchar(128) default NULL,
                 `context` text NOT NULL,
@@ -195,7 +195,7 @@ class Gallery_Hook_GalleryInstaller {
                 KEY (`owner_id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {themes} (
+    $db->query(Database::CREATE, "CREATE TABLE {themes} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(64) default NULL,
                  `version` int(9) default NULL,
@@ -203,7 +203,7 @@ class Gallery_Hook_GalleryInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {vars} (
+    $db->query(Database::CREATE, "CREATE TABLE {vars} (
                 `id` int(9) NOT NULL auto_increment,
                 `module_name` varchar(64) NOT NULL,
                 `name` varchar(64) NOT NULL,
@@ -333,7 +333,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 3) {
-      $db->query("CREATE TABLE {caches} (
+      $db->query(Database::CREATE, "CREATE TABLE {caches} (
                  `id` varchar(255) NOT NULL,
                  `tags` varchar(255),
                  `expiration` int(9) NOT NULL,
@@ -524,7 +524,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 23) {
-      $db->query("CREATE TABLE {failed_logins} (
+      $db->query(Database::CREATE, "CREATE TABLE {failed_logins} (
                   `id` int(9) NOT NULL auto_increment,
                   `count` int(9) NOT NULL,
                   `name` varchar(255) NOT NULL,

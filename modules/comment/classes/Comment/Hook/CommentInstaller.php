@@ -20,7 +20,7 @@
 class Comment_Hook_CommentInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {comments} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {comments} (
                  `author_id` int(9) default NULL,
                  `created` int(9) NOT NULL,
                  `guest_email` varchar(128) default NULL,

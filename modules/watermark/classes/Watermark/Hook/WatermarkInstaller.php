@@ -20,7 +20,7 @@
 class Watermark_Hook_WatermarkInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {watermarks} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {watermarks} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(32) NOT NULL,
                  `width` int(9) NOT NULL,

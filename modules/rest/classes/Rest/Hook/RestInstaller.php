@@ -20,7 +20,7 @@
 class Rest_Hook_RestInstaller {
   static function install() {
     Database::instance()
-      ->query("CREATE TABLE {user_access_keys} (
+      ->query(Database::CREATE, "CREATE TABLE {user_access_keys} (
                 `id` int(9) NOT NULL auto_increment,
                 `user_id` int(9) NOT NULL,
                 `access_key` char(32) NOT NULL,

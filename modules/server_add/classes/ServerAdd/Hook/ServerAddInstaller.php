@@ -20,7 +20,7 @@
 class ServerAdd_Hook_ServerAddInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE {server_add_entries} (
+    $db->query(Database::CREATE, "CREATE TABLE {server_add_entries} (
                   `id` int(9) NOT NULL auto_increment,
                   `checked` boolean default 0,
                   `is_directory` boolean default 0,
@@ -36,7 +36,7 @@ class ServerAdd_Hook_ServerAddInstaller {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("CREATE TABLE {server_add_files} (
+      $db->query(Database::CREATE, "CREATE TABLE {server_add_files} (
                     `id` int(9) NOT NULL auto_increment,
                     `task_id` int(9) NOT NULL,
                     `file` varchar(255) NOT NULL,
@@ -53,7 +53,7 @@ class ServerAdd_Hook_ServerAddInstaller {
 
     if ($version == 3) {
       $db->query("DROP TABLE {server_add_files}");
-      $db->query("CREATE TABLE {server_add_entries} (
+      $db->query(Database::CREATE, "CREATE TABLE {server_add_entries} (
                     `id` int(9) NOT NULL auto_increment,
                     `checked` boolean default 0,
                     `is_directory` boolean default 0,

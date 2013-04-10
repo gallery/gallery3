@@ -20,7 +20,7 @@
 class Notification_Hook_NotificationInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {subscriptions} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {subscriptions} (
                `id` int(9) NOT NULL auto_increment,
                `item_id` int(9) NOT NULL,
                `user_id` int(9) NOT NULL,
@@ -28,7 +28,7 @@ class Notification_Hook_NotificationInstaller {
                UNIQUE KEY (`item_id`, `user_id`),
                UNIQUE KEY (`user_id`, `item_id`))
                DEFAULT CHARSET=utf8;");
-    $db->query("CREATE TABLE IF NOT EXISTS {pending_notifications} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {pending_notifications} (
                `id` int(9) NOT NULL auto_increment,
                `locale` char(10) default NULL,
                `email` varchar(128) NOT NULL,

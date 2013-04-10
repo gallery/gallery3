@@ -20,7 +20,7 @@
 class Exif_Hook_ExifInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {exif_records} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {exif_records} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` INTEGER(9) NOT NULL,
                  `key_count` INTEGER(9) default 0,
