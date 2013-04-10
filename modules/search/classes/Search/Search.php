@@ -46,7 +46,7 @@ class Search_Search {
       "LIMIT $limit OFFSET " . (int)$offset;
 
     $data = $db->query(Database::SELECT, $query);
-    $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c")->current()->c;
+    $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c", true)->current()->c;
 
     return array($count, new ORM_Iterator(ORM::factory("Item"), $data));
   }
@@ -74,9 +74,9 @@ class Search_Search {
 
     return
       "SELECT SQL_CALC_FOUND_ROWS {items}.*, " .
-      "  MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
+      "  MATCH({search_records}.`data`) AGAINST ($q) AS `score` " .
       "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
-      "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
+      "WHERE MATCH({search_records}.`data`) AGAINST ($q IN BOOLEAN MODE) " .
       $album_sql .
       (empty($where) ? "" : " AND " . join(" AND ", $where)) .
       $access_sql .
