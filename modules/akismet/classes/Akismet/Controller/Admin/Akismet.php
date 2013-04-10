@@ -21,7 +21,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
   public function action_index() {
     $form = Akismet::get_configure_form();
 
-    if (Request::method() == "post") {
+    if (Request::$current->method() == "POST") {
       // @todo move the "post" handler part of this code into a separate function
       Access::verify_csrf();
 

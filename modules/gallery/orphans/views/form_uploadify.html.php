@@ -161,7 +161,7 @@
     <?= t("Your browser must have Adobe Flash Player version %flash_minimum_version or greater installed to use this feature.", array("flash_minimum_version" => $flash_minimum_version)) ?>
   </p>
   <a href="http://www.adobe.com/go/getflashplayer">
-    <img src="<?= Request::protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+    <img src="<?= Request::$current->protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
          alt=<?= t("Get Adobe Flash Player")->for_js() ?> />
   </a>
 </div>
