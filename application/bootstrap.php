@@ -210,17 +210,18 @@ Cookie::$secure = !empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on");
 // to the domain?
 Cookie::$salt = "g3";
 
-/**
- * Enable the complete set of all active modules.  This will trigger each module to load its own
- * init.php file which can, among other things, load its own routes which can override those below.
- */
+// Initialize I18n support
+I18n::lang('en-us');
+I18n::instance();
+
+// Enable the complete set of all active modules.  This will trigger each module to load its own
+// init.php file which can, among other things, load its own routes which can override those below.
 Module::load_modules();
 
 // Set our routes.  Since there are the only two controller directories we use (root and admin), we
 // can remove all other underscores.  In Route::matches(), this filter is called *after* ucwords, so
 // "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and
 // "file_proxy" maps to "Controller_FileProxy".
-
 Route::set("admin_forms", "form/<type>/<directory>/<controller>",
            array("type" => "(edit|add)", "directory" => "admin"))
   ->filter(function($route, $params, $request) {
@@ -261,10 +262,6 @@ Route::set("site", "(<controller>(/<action>))")
       "controller" => "albums",
       "action" => "index"
     ));
-
-// Initialize I18n support
-I18n::lang('en-us');
-I18n::instance();
 
 // Initialize our session support
 Session::instance();
