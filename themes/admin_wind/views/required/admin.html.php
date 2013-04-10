@@ -34,7 +34,7 @@
     <?= $theme->admin_head() ?>
 
     <? /* Theme specific CSS/JS goes last so that it can override module CSS/JS */ ?>
-    <?= $theme->script("ui.init.js") ?>
+    <?= $theme->script("screen.js") ?>
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
