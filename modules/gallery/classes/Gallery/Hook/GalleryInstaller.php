@@ -554,7 +554,7 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 26) {
       if (in_array("failed_logins", Database::instance()->list_tables())) {
-        $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
+        $db->query(Database::RENAME, "RENAME TABLE {failed_logins} TO {failed_auths}");
       }
       Module::set_version("gallery", $version = 27);
     }

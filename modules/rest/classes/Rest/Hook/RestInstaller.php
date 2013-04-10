@@ -35,7 +35,7 @@ class Rest_Hook_RestInstaller {
     $db = Database::instance();
     if ($version == 1) {
       if (in_array("user_access_tokens", Database::instance()->list_tables())) {
-        $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
+        $db->query(Database::RENAME, "RENAME TABLE {user_access_tokens} TO {user_access_keys}");
       }
       Module::set_version("rest", $version = 2);
     }

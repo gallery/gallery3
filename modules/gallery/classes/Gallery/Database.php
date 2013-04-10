@@ -33,6 +33,7 @@ abstract class Gallery_Database extends Kohana_Database {
   const ALTER    = null;
   const CREATE   = null;
   const DROP     = null;
+  const RENAME   = null;
   const TRUNCATE = null;
 
   /**
