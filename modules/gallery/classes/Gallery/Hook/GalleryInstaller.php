@@ -405,10 +405,10 @@ class Gallery_Hook_GalleryInstaller {
 
       // This is imperfect since some of the slugs may contain invalid characters, but it'll do
       // for now because we don't want a lengthy operation here.
-      $db->query("UPDATE {items} SET `slug` = `name`");
+      $db->query(Database::UPDATE, "UPDATE {items} SET `slug` = `name`");
 
       // Flush all path caches because we're going to start urlencoding them.
-      $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
+      $db->query(Database::UPDATE, "UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       Module::set_version("gallery", $version = 12);
     }
 
@@ -424,7 +424,7 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 13) {
       // Add rules for generating our thumbnails and resizes
-      Database::instance()->query(
+      Database::instance()->query(Database::UPDATE,
         "UPDATE {graphics_rules} SET `operation` = CONCAT('GalleryGraphics::', `operation`);");
       Module::set_version("gallery", $version = 14);
     }
