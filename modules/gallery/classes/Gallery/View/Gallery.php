@@ -21,6 +21,10 @@ class Gallery_View_Gallery extends View {
   protected $theme_name = null;
   protected $combine_queue = array();
 
+  // Attributes added to each CSS and JS link
+  public $css_attrs = array("media" => "screen,print,projection");
+  public $script_attrs = array();
+
   /**
    * Provide a url to a resource within the current theme.  This allows us to refer to theme
    * resources without naming the theme itself which makes themes easier to copy.
@@ -100,12 +104,12 @@ class Gallery_View_Gallery extends View {
   public function script($file, $group="core") {
     if ((!$path = Gallery::find_file("assets", $file, false)) &&
         (!$path = Gallery::find_file("vendor", $file, false))) {
-      Log::add("error", "Can't find script file: $file");
+      Log::instance()->add(Log::ERROR, "Can't find script file: $file");
     } else {
       if (isset($this->combine_queue["script"])) {
         $this->combine_queue["script"][$group][$path] = 1;
       } else {
-        return HTML::script($path);
+        return HTML::script($path, $this->script_attrs, null, false);
       }
     }
   }
@@ -123,12 +127,12 @@ class Gallery_View_Gallery extends View {
   public function css($file, $group="core") {
     if ((!$path = Gallery::find_file("assets", $file, false)) &&
         (!$path = Gallery::find_file("vendor", $file, false))) {
-      Log::add("error", "Can't find css file: $file");
+      Log::instance()->add(Log::ERROR, "Can't find css file: $file");
     } else {
       if (isset($this->combine_queue["css"])) {
         $this->combine_queue["css"][$group][$path] = 1;
       } else {
-        return HTML::stylesheet($path);
+        return HTML::style($path, $this->css_attrs, null, false);
       }
     }
   }
@@ -202,17 +206,17 @@ class Gallery_View_Gallery extends View {
         }
 
         if ($type == "css") {
-          $buf .= HTML::stylesheet("combined/css/$key", "screen,print,projection", true);
+          $buf .= HTML::style("combined/css/$key", $this->css_attrs, null, true);
         } else {
-          $buf .= HTML::script("combined/javascript/$key", true);
+          $buf .= HTML::script("combined/javascript/$key", $this->script_attrs, null, true);
         }
       } else {
         // Don't combine - just return the CSS and JS links (with the key as a cache buster).
         foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
           if ($type == "css") {
-            $buf .= HTML::stylesheet("$path?m=$key", "screen,print,projection", false);
+            $buf .= HTML::style("$path?m=$key", $this->css_attrs, null, false);
           } else {
-            $buf .= HTML::script("$path?m=$key", false);
+            $buf .= HTML::script("$path?m=$key", $this->script_attrs, null, false);
           }
         }
       }
@@ -243,7 +247,7 @@ class Gallery_View_Gallery extends View {
           $search[] = $match[0];
           $replace[] = "url('" . URL::abs_file($relative) . "')";
         } else {
-          Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+          Log::instance()->add(Log::ERROR, "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
 
         }
       }

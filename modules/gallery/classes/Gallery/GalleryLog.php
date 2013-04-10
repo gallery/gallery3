@@ -17,7 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Log {
+class Gallery_GalleryLog {
+  // @todo: consider using constants from Kohana's Log class (e.g. DEBUG, INFO, WARNING, ERROR)
   const SUCCESS = 1;
   const INFO    = 2;
   const WARNING = 3;
@@ -30,7 +31,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function success($category, $message, $html="") {
-    self::_add($category, $message, $html, Log::SUCCESS);
+    self::_add($category, $message, $html, GalleryLog::SUCCESS);
   }
 
   /**
@@ -40,7 +41,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function info($category, $message, $html="") {
-    self::_add($category, $message, $html, Log::INFO);
+    self::_add($category, $message, $html, GalleryLog::INFO);
   }
 
   /**
@@ -50,7 +51,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function warning($category, $message, $html="") {
-    self::_add($category, $message, $html, Log::WARNING);
+    self::_add($category, $message, $html, GalleryLog::WARNING);
   }
 
   /**
@@ -60,7 +61,7 @@ class Gallery_Log {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function error($category, $message, $html="") {
-    self::_add($category, $message, $html, Log::ERROR);
+    self::_add($category, $message, $html, GalleryLog::ERROR);
   }
 
   /**
@@ -92,16 +93,16 @@ class Gallery_Log {
    */
   static function severity_class($severity) {
     switch($severity) {
-    case Log::SUCCESS:
+    case GalleryLog::SUCCESS:
       return "g-success";
 
-    case Log::INFO:
+    case GalleryLog::INFO:
       return "g-info";
 
-    case Log::WARNING:
+    case GalleryLog::WARNING:
       return "g-warning";
 
-    case Log::ERROR:
+    case GalleryLog::ERROR:
       return "g-error";
     }
   }

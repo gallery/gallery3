@@ -20,7 +20,7 @@
 class Tag_Hook_TagInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {tags} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {tags} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(128) NOT NULL,
                  `count` int(10) unsigned NOT NULL DEFAULT 0,
@@ -28,7 +28,7 @@ class Tag_Hook_TagInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE IF NOT EXISTS {items_tags} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {items_tags} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9) NOT NULL,
                  `tag_id` int(9) NOT NULL,
@@ -42,7 +42,7 @@ class Tag_Hook_TagInstaller {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("ALTER TABLE {tags} MODIFY COLUMN `name` VARCHAR(128)");
+      $db->query(Database::ALTER, "ALTER TABLE {tags} MODIFY COLUMN `name` VARCHAR(128)");
       Module::set_version("tag", $version = 2);
     }
     if ($version == 2) {
@@ -53,7 +53,7 @@ class Tag_Hook_TagInstaller {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {tags};");
-    $db->query("DROP TABLE IF EXISTS {items_tags};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {tags};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {items_tags};");
   }
 }

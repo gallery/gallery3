@@ -54,7 +54,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       $name = $tag->name;
       $tag->delete();
       Message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
-      Log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
+      GalleryLog::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
       JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
@@ -101,7 +101,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       }
 
       Message::success($message);
-      Log::success("tags", $message);
+      GalleryLog::success("tags", $message);
 
       JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {

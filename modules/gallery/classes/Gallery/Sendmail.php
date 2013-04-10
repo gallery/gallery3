@@ -53,7 +53,7 @@ class Gallery_Sendmail {
       break;
     case  "header":
       if (count($value) != 2) {
-        Log::add("error", wordwrap("Invalid header parameters\n" . Kohana::debug($value)));
+        Log::instance()->add(Log::ERROR, wordwrap("Invalid header parameters\n" . Kohana::debug($value)));
         throw new Exception("@todo INVALID_HEADER_PARAMETERS");
       }
       $this->headers[$value[0]] = $value[1];
@@ -72,7 +72,7 @@ class Gallery_Sendmail {
 
   public function send() {
     if (empty($this->to)) {
-      Log::add("error", wordwrap("Sending mail failed:\nNo to address specified"));
+      Log::instance()->add(Log::ERROR, wordwrap("Sending mail failed:\nNo to address specified"));
       throw new Exception("@todo TO_IS_REQUIRED_FOR_MAIL");
     }
     $to = implode(", ", $this->to);

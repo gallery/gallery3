@@ -64,14 +64,14 @@ class User_Hook_UserInstaller {
     }
 
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {users};");
-    $db->query("DROP TABLE IF EXISTS {groups};");
-    $db->query("DROP TABLE IF EXISTS {groups_users};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {users};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {groups};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {groups_users};");
   }
 
   static function initialize() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {users} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {users} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(32) NOT NULL,
                  `full_name` varchar(255) NOT NULL,
@@ -89,7 +89,7 @@ class User_Hook_UserInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE IF NOT EXISTS {groups} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {groups} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` char(64) default NULL,
                  `special` BOOLEAN default 0,
@@ -97,7 +97,7 @@ class User_Hook_UserInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE IF NOT EXISTS {groups_users} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {groups_users} (
                  `group_id` int(9) NOT NULL,
                  `user_id` int(9) NOT NULL,
                  PRIMARY KEY (`group_id`, `user_id`),

@@ -1227,7 +1227,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * that we do this with math, otherwise concurrent accesses will damage accuracy.
    */
   public function increment_view_count() {
-    DB::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $this->id")
+    DB::query(Database::UPDATE, "UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $this->id")
       ->execute($this->_db);
   }
 

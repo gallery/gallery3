@@ -45,25 +45,25 @@ class Gallery_Hook_GalleryTask {
                                   "You have %count out of date photos",
                                   $dirty_count)
                                : t("All your photos are up to date"))
-      ->severity($dirty_count ? Log::WARNING : Log::SUCCESS);
+      ->severity($dirty_count ? GalleryLog::WARNING : GalleryLog::SUCCESS);
 
     $tasks[] = TaskDefinition::factory()
                  ->callback("Hook_GalleryTask::update_l10n")
                  ->name(t("Update translations"))
                  ->description(t("Download new and updated translated strings"))
-      ->severity(Log::SUCCESS);
+      ->severity(GalleryLog::SUCCESS);
 
     $tasks[] = TaskDefinition::factory()
                  ->callback("Hook_GalleryTask::file_cleanup")
                  ->name(t("Remove old files"))
                  ->description(t("Remove expired files from the logs and tmp directory"))
-      ->severity(Log::SUCCESS);
+      ->severity(GalleryLog::SUCCESS);
 
     $tasks[] = TaskDefinition::factory()
       ->callback("Hook_GalleryTask::fix")
       ->name(t("Fix your Gallery"))
       ->description(t("Fix a variety of problems that might cause your Gallery to act strangely.  Requires maintenance mode."))
-      ->severity(Log::SUCCESS);
+      ->severity(GalleryLog::SUCCESS);
 
     return $tasks;
   }
@@ -146,7 +146,7 @@ class Gallery_Hook_GalleryTask {
         SiteStatus::clear("graphics_dirty");
       }
     } catch (Exception $e) {
-      Log::add("error",(string)$e);
+      Log::instance()->add(Log::ERROR,(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -253,7 +253,7 @@ class Gallery_Hook_GalleryTask {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }
     } catch (Exception $e) {
-      Log::add("error",(string)$e);
+      Log::instance()->add(Log::ERROR,(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -331,7 +331,7 @@ class Gallery_Hook_GalleryTask {
         $task->percent_complete = 100;
       }
     } catch (Exception $e) {
-      Log::add("error",(string)$e);
+      Log::instance()->add(Log::ERROR,(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();

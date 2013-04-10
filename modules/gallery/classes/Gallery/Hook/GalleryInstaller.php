@@ -20,14 +20,14 @@
 class Gallery_Hook_GalleryInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE {access_caches} (
+    $db->query(Database::CREATE, "CREATE TABLE {access_caches} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  PRIMARY KEY (`id`),
                  KEY (`item_id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {access_intents} (
+    $db->query(Database::CREATE, "CREATE TABLE {access_intents} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  PRIMARY KEY (`id`))
@@ -37,7 +37,7 @@ class Gallery_Hook_GalleryInstaller {
     // key column to avoid handling of concurrency issues
     // on insert. Thus allowing concurrent inserts on the
     // same cache key, as does Memcache / xcache.
-    $db->query("CREATE TABLE {caches} (
+    $db->query(Database::CREATE, "CREATE TABLE {caches} (
                 `id` int(9) NOT NULL auto_increment,
                 `key` varchar(255) NOT NULL,
                 `tags` varchar(255),
@@ -48,7 +48,7 @@ class Gallery_Hook_GalleryInstaller {
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {failed_auths} (
+    $db->query(Database::CREATE, "CREATE TABLE {failed_auths} (
                 `id` int(9) NOT NULL auto_increment,
                 `count` int(9) NOT NULL,
                 `name` varchar(255) NOT NULL,
@@ -56,7 +56,7 @@ class Gallery_Hook_GalleryInstaller {
                 PRIMARY KEY (`id`))
                 DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {graphics_rules} (
+    $db->query(Database::CREATE, "CREATE TABLE {graphics_rules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
                  `args` varchar(255) default NULL,
@@ -67,7 +67,7 @@ class Gallery_Hook_GalleryInstaller {
                  PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {incoming_translations} (
+    $db->query(Database::CREATE, "CREATE TABLE {incoming_translations} (
                  `id` int(9) NOT NULL auto_increment,
                  `key` char(32) NOT NULL,
                  `locale` char(10) NOT NULL,
@@ -79,7 +79,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY `locale_key` (`locale`, `key`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {items} (
+    $db->query(Database::CREATE, "CREATE TABLE {items} (
                  `id` int(9) NOT NULL auto_increment,
                  `album_cover_item_id` int(9) default NULL,
                  `captured` int(9) default NULL,
@@ -120,7 +120,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY `relative_path_cache` (`relative_path_cache`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {logs} (
+    $db->query(Database::CREATE, "CREATE TABLE {logs} (
                  `id` int(9) NOT NULL auto_increment,
                  `category` varchar(64) default NULL,
                  `html` varchar(255) default NULL,
@@ -133,7 +133,7 @@ class Gallery_Hook_GalleryInstaller {
                  PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {messages} (
+    $db->query(Database::CREATE, "CREATE TABLE {messages} (
                  `id` int(9) NOT NULL auto_increment,
                  `key` varchar(255) default NULL,
                  `severity` varchar(32) default NULL,
@@ -142,7 +142,7 @@ class Gallery_Hook_GalleryInstaller {
                  UNIQUE KEY(`key`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {modules} (
+    $db->query(Database::CREATE, "CREATE TABLE {modules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
                  `name` varchar(64) default NULL,
@@ -153,7 +153,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY (`weight`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {outgoing_translations} (
+    $db->query(Database::CREATE, "CREATE TABLE {outgoing_translations} (
                  `id` int(9) NOT NULL auto_increment,
                  `base_revision` int(9) DEFAULT NULL,
                  `key` char(32) NOT NULL,
@@ -165,7 +165,7 @@ class Gallery_Hook_GalleryInstaller {
                  KEY `locale_key` (`locale`, `key`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {permissions} (
+    $db->query(Database::CREATE, "CREATE TABLE {permissions} (
                  `id` int(9) NOT NULL auto_increment,
                  `display_name` varchar(64) default NULL,
                  `name` varchar(64) default NULL,
@@ -173,14 +173,14 @@ class Gallery_Hook_GalleryInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {sessions} (
+    $db->query(Database::CREATE, "CREATE TABLE {sessions} (
                 `session_id` varchar(127) NOT NULL,
                 `data` text NOT NULL,
                 `last_activity` int(10) UNSIGNED NOT NULL,
                 PRIMARY KEY (`session_id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {tasks} (
+    $db->query(Database::CREATE, "CREATE TABLE {tasks} (
                 `id` int(9) NOT NULL auto_increment,
                 `callback` varchar(128) default NULL,
                 `context` text NOT NULL,
@@ -195,7 +195,7 @@ class Gallery_Hook_GalleryInstaller {
                 KEY (`owner_id`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {themes} (
+    $db->query(Database::CREATE, "CREATE TABLE {themes} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(64) default NULL,
                  `version` int(9) default NULL,
@@ -203,7 +203,7 @@ class Gallery_Hook_GalleryInstaller {
                  UNIQUE KEY(`name`))
                DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {vars} (
+    $db->query(Database::CREATE, "CREATE TABLE {vars} (
                 `id` int(9) NOT NULL auto_increment,
                 `module_name` varchar(64) NOT NULL,
                 `name` varchar(64) NOT NULL,
@@ -333,7 +333,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 3) {
-      $db->query("CREATE TABLE {caches} (
+      $db->query(Database::CREATE, "CREATE TABLE {caches} (
                  `id` varchar(255) NOT NULL,
                  `tags` varchar(255),
                  `expiration` int(9) NOT NULL,
@@ -346,15 +346,15 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 4) {
       Cache::instance()->delete_all();
-      $db->query("ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
       Module::set_version("gallery", $version = 5);
     }
 
     if ($version == 5) {
       Cache::instance()->delete_all();
-      $db->query("ALTER TABLE {caches} DROP COLUMN `id`");
-      $db->query("ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
-      $db->query("ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} DROP COLUMN `id`");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
       Module::set_version("gallery", $version = 6);
     }
 
@@ -369,12 +369,12 @@ class Gallery_Hook_GalleryInstaller {
       foreach($groups as $group) {
         foreach($permissions as $permission) {
           // Update access intents
-          $db->query("ALTER TABLE {access_intents} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT NULL");
+          $db->query(Database::ALTER, "ALTER TABLE {access_intents} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT NULL");
           // Update access cache
           if ($permission->name === "view") {
-            $db->query("ALTER TABLE {items} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT FALSE");
+            $db->query(Database::ALTER, "ALTER TABLE {items} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT FALSE");
           } else {
-            $db->query("ALTER TABLE {access_caches} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) NOT NULL DEFAULT FALSE");
+            $db->query(Database::ALTER, "ALTER TABLE {access_caches} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) NOT NULL DEFAULT FALSE");
           }
         }
       }
@@ -382,13 +382,13 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 8) {
-      $db->query("ALTER TABLE {items} CHANGE COLUMN `left`  `left_ptr`  INT(9) NOT NULL;");
-      $db->query("ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE COLUMN `left`  `left_ptr`  INT(9) NOT NULL;");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
       Module::set_version("gallery", $version = 9);
     }
 
     if ($version == 9) {
-      $db->query("ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
 
       Module::set_version("gallery", $version = 10);
     }
@@ -400,15 +400,15 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 11) {
-      $db->query("ALTER TABLE {items} ADD COLUMN `relative_url_cache` varchar(255) DEFAULT NULL");
-      $db->query("ALTER TABLE {items} ADD COLUMN `slug` varchar(255) DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD COLUMN `relative_url_cache` varchar(255) DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD COLUMN `slug` varchar(255) DEFAULT NULL");
 
       // This is imperfect since some of the slugs may contain invalid characters, but it'll do
       // for now because we don't want a lengthy operation here.
-      $db->query("UPDATE {items} SET `slug` = `name`");
+      $db->query(Database::UPDATE, "UPDATE {items} SET `slug` = `name`");
 
       // Flush all path caches because we're going to start urlencoding them.
-      $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
+      $db->query(Database::UPDATE, "UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       Module::set_version("gallery", $version = 12);
     }
 
@@ -424,7 +424,7 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 13) {
       // Add rules for generating our thumbnails and resizes
-      Database::instance()->query(
+      Database::instance()->query(Database::UPDATE,
         "UPDATE {graphics_rules} SET `operation` = CONCAT('GalleryGraphics::', `operation`);");
       Module::set_version("gallery", $version = 14);
     }
@@ -524,7 +524,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 23) {
-      $db->query("CREATE TABLE {failed_logins} (
+      $db->query(Database::CREATE, "CREATE TABLE {failed_logins} (
                   `id` int(9) NOT NULL auto_increment,
                   `count` int(9) NOT NULL,
                   `name` varchar(255) NOT NULL,
@@ -554,7 +554,7 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 26) {
       if (in_array("failed_logins", Database::instance()->list_tables())) {
-        $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
+        $db->query(Database::RENAME, "RENAME TABLE {failed_logins} TO {failed_auths}");
       }
       Module::set_version("gallery", $version = 27);
     }
@@ -571,7 +571,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 29) {
-      $db->query("ALTER TABLE {caches} ADD KEY (`key`);");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} ADD KEY (`key`);");
       Module::set_version("gallery", $version = 30);
     }
 
@@ -581,8 +581,8 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 31) {
-      $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
-      $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
+      $db->query(Database::ALTER, "ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {modules} ADD KEY (`weight`)");
       DB::update("modules")
         ->set("weight", DB::expr("`id`"))
         ->execute();
@@ -590,12 +590,12 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 32) {
-      $db->query("ALTER TABLE {items} ADD KEY (`left_ptr`)");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD KEY (`left_ptr`)");
       Module::set_version("gallery", $version = 33);
     }
 
     if ($version == 33) {
-      $db->query("ALTER TABLE {access_caches} ADD KEY (`item_id`)");
+      $db->query(Database::ALTER, "ALTER TABLE {access_caches} ADD KEY (`item_id`)");
       Module::set_version("gallery", $version = 34);
     }
 
@@ -647,23 +647,23 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 41) {
-      $db->query("TRUNCATE TABLE {caches}");
-      $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
+      $db->query(Database::TRUNCATE, "TRUNCATE TABLE {caches}");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
       Module::set_version("gallery", $version = 42);
     }
 
     if ($version == 42) {
-      $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
       Module::set_version("gallery", $version = 43);
     }
 
     if ($version == 43) {
-      $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
       Module::set_version("gallery", $version = 44);
     }
 
     if ($version == 44) {
-      $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
       Module::set_version("gallery", $version = 45);
     }
 
@@ -780,7 +780,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 54) {
-      $db->query("ALTER TABLE {items} ADD KEY `relative_path_cache` (`relative_path_cache`)");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD KEY `relative_path_cache` (`relative_path_cache`)");
       Module::set_version("gallery", $version = 55);
     }
 
@@ -825,21 +825,21 @@ class Gallery_Hook_GalleryInstaller {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {access_caches}");
-    $db->query("DROP TABLE IF EXISTS {access_intents}");
-    $db->query("DROP TABLE IF EXISTS {graphics_rules}");
-    $db->query("DROP TABLE IF EXISTS {incoming_translations}");
-    $db->query("DROP TABLE IF EXISTS {failed_auths}");
-    $db->query("DROP TABLE IF EXISTS {items}");
-    $db->query("DROP TABLE IF EXISTS {logs}");
-    $db->query("DROP TABLE IF EXISTS {modules}");
-    $db->query("DROP TABLE IF EXISTS {outgoing_translations}");
-    $db->query("DROP TABLE IF EXISTS {permissions}");
-    $db->query("DROP TABLE IF EXISTS {sessions}");
-    $db->query("DROP TABLE IF EXISTS {tasks}");
-    $db->query("DROP TABLE IF EXISTS {themes}");
-    $db->query("DROP TABLE IF EXISTS {vars}");
-    $db->query("DROP TABLE IF EXISTS {caches}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {access_caches}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {access_intents}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {graphics_rules}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {incoming_translations}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {failed_auths}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {items}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {logs}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {modules}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {outgoing_translations}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {permissions}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {sessions}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {tasks}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {themes}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {vars}");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {caches}");
     foreach (array("albums", "resizes", "thumbs", "uploads",
                    "modules", "logs", "database.php") as $entry) {
       system("/bin/rm -rf " . VARPATH . $entry);

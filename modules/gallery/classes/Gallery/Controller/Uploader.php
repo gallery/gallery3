@@ -68,24 +68,24 @@ class Gallery_Controller_Uploader extends Controller {
             LegalFile::get_movie_extensions($path_info["extension"])) {
           $item->type = "movie";
           $item->save();
-          Log::success("content", t("Added a movie"),
+          GalleryLog::success("content", t("Added a movie"),
                        HTML::anchor("movies/$item->id", t("view movie")));
         } else {
           $item->type = "photo";
           $item->save();
-          Log::success("content", t("Added a photo"),
+          GalleryLog::success("content", t("Added a photo"),
                        HTML::anchor("photos/$item->id", t("view photo")));
         }
 
         Module::event("add_photos_form_completed", $item, $form);
       } catch (Exception $e) {
         // The Flash uploader has no good way of reporting complex errors, so just keep it simple.
-        Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+        Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
 
         // Ugh.  I hate to use instanceof, But this beats catching the exception separately since
         // we mostly want to treat it the same way as all other exceptions
         if ($e instanceof ORM_Validation_Exception) {
-          Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+          Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->validation->errors(), 1));
         }
 
         header("HTTP/1.1 500 Internal Server Error");

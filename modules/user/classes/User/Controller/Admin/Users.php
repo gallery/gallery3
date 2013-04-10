@@ -118,7 +118,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     }
 
     $message = t("Deleted user %user_name", array("user_name" => $name));
-    Log::success("user", $message);
+    GalleryLog::success("user", $message);
     Message::success($message);
     JSON::reply(array("result" => "success"));
   }
@@ -255,7 +255,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     }
 
     $message = t("Deleted group %group_name", array("group_name" => $name));
-    Log::success("group", $message);
+    GalleryLog::success("group", $message);
     Message::success($message);
     JSON::reply(array("result" => "success"));
   }

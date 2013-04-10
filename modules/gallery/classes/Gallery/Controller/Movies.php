@@ -65,7 +65,7 @@ class Gallery_Controller_Movies extends Controller_Items {
       $movie->save();
       Module::event("item_edit_form_completed", $movie, $form);
 
-      Log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
+      GalleryLog::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
       Message::success(
         t("Saved movie %movie_title", array("movie_title" => $movie->title)));
 

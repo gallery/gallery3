@@ -17,22 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Model_Log extends ORM {
+class Gallery_Database_MySQL extends Kohana_Database_MySQL {
   /**
-   * @see ORM::__get()
+   * Parse the query string and add table prefixes where
+   * braces are found (e.g. {foo} --> `prefix_foo`)
    */
-  public function __get($column) {
-    if ($column == "user") {
-      // This relationship depends on an outside module, which may not be present so handle
-      // failures gracefully.
-      try {
-        return Identity::lookup_user($this->user_id);
-      } catch (Exception $e) {
-        Log::instance()->add(Log::ALERT, "Unable to load user with id $this->user_id");
-        return null;
-      }
-    } else {
-      return parent::__get($column);
+  public function query($type, $sql, $as_object=false, array $params=null) {
+    if (!empty($sql)) {
+      $sql = $this->add_table_prefixes($sql);
     }
+    return parent::query($type, $sql, $as_object, $params);
   }
 }

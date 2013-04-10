@@ -85,7 +85,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       // Clean out the database
       if ($tables = $db->list_tables()) {
         foreach ($db->list_tables() as $table) {
-          $db->query("DROP TABLE {{$table}}");
+          $db->query(Database::DROP, "DROP TABLE {{$table}}");
         }
       }
 

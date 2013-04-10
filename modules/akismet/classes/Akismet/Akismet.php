@@ -171,7 +171,7 @@ class Akismet_Akismet {
     }
     $response = "";
 
-    Log::add("debug", "Send request\n" . print_r($http_request, 1));
+    Log::instance()->add(Log::DEBUG, "Send request\n" . print_r($http_request, 1));
     if (false !== ($fs = @fsockopen($host, 80, $errno, $errstr, 5))) {
       fwrite($fs, $http_request);
       while ( !feof($fs) ) {
@@ -186,7 +186,7 @@ class Akismet_Akismet {
     } else {
       throw new Exception("@todo CONNECTION TO SPAM SERVICE FAILED");
     }
-    Log::add("debug", "Received response\n" . print_r($response, 1));
+    Log::instance()->add(Log::DEBUG, "Received response\n" . print_r($response, 1));
 
     return $response;
   }

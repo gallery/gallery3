@@ -75,8 +75,8 @@ class Gallery_L10nScanner {
     if (!empty($func_token_list["t"])) {
       $errors = L10nScanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
       foreach ($errors as $line => $error) {
-        Log::add(
-          "error", "Translation scanner error.  " .
+        Log::instance()->add(
+          Log::ERROR, "Translation scanner error.  " .
           "file: " . substr($file, strlen(DOCROOT)) . ", line: $line, context: $error");
       }
     }
@@ -84,8 +84,8 @@ class Gallery_L10nScanner {
     if (!empty($func_token_list["t2"])) {
       $errors = L10nScanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
       foreach ($errors as $line => $error) {
-        Log::add(
-          "error", "Translation scanner error.  " .
+        Log::instance()->add(
+          Log::ERROR, "Translation scanner error.  " .
           "file: " . substr($file, strlen(DOCROOT)) . ", line: $line, context: $error");
       }
     }

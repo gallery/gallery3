@@ -40,7 +40,7 @@ class Gallery_Auth {
       $user->last_login = time();
       $user->save();
     }
-    Log::info("user", t("User %name logged in", array("name" => $user->name)));
+    GalleryLog::info("user", t("User %name logged in", array("name" => $user->name)));
     Module::event("user_login", $user);
   }
 
@@ -50,11 +50,11 @@ class Gallery_Auth {
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
-        Log::add("error", $e);
+        Log::instance()->add(Log::ERROR, $e);
       }
       Module::event("user_logout", $user);
     }
-    Log::info("user", t("User %name logged out", array("name" => $user->name)),
+    GalleryLog::info("user", t("User %name logged out", array("name" => $user->name)),
               t('<a href="%url">%user_name</a>',
                 array("url" => UserProfile::url($user->id),
                       "user_name" => HTML::clean($user->name))));

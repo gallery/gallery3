@@ -62,7 +62,7 @@ class Gallery_L10nClient {
                     "uid" => L10nClient::server_uid($api_key)));
     } catch (ErrorException $e) {
       // Log the error, but then return a "can't make connection" error
-      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
     if (!isset($response_data) && !isset($response_status)) {
       return array(false, false);

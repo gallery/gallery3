@@ -50,7 +50,7 @@ class Cache_Database_Driver extends Cache_Driver {
     foreach ($items as $id => $data) {
       $id = $db->escape($id);
       $data = $db->escape(serialize($data));
-      $db->query("INSERT INTO {caches} (`key`, `tags`, `expiration`, `cache`)
+      $db->query(Database::INSERT, "INSERT INTO {caches} (`key`, `tags`, `expiration`, `cache`)
                   VALUES ('$id', '$tags', $lifetime, '$data')
                   ON DUPLICATE KEY UPDATE `tags` = VALUES(tags), `expiration` = VALUES(expiration),
                   `cache` = VALUES(cache)");
@@ -158,6 +158,6 @@ class Cache_Database_Driver extends Cache_Driver {
    * Empty the cache
    */
   public function delete_all() {
-    Database::instance()->query("TRUNCATE {caches}");
+    Database::instance()->query(Database::TRUNCATE, "TRUNCATE {caches}");
   }
 }

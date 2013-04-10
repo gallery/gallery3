@@ -49,7 +49,7 @@ class Tag_Hook_TagEvent {
       try {
         Tag::add($photo, $tag);
       } catch (Exception $e) {
-        Log::add("error", "Error adding tag: $tag\n" .
+        Log::instance()->add(Log::ERROR, "Error adding tag: $tag\n" .
                     $e->getMessage() . "\n" . $e->getTraceAsString());
       }
     }

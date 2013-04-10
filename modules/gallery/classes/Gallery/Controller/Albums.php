@@ -131,7 +131,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     if ($valid) {
       $album->save();
       Module::event("album_add_form_completed", $album, $form);
-      Log::success("content", "Created an album",
+      GalleryLog::success("content", "Created an album",
                    HTML::anchor("albums/$album->id", "view album"));
       Message::success(t("Created album %album_title",
                          array("album_title" => HTML::purify($album->title))));
@@ -172,7 +172,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       $album->save();
       Module::event("item_edit_form_completed", $album, $form);
 
-      Log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
+      GalleryLog::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       Message::success(t("Saved album %album_title",
                          array("album_title" => HTML::purify($album->title))));
 
