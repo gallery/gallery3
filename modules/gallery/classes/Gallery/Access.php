@@ -549,7 +549,7 @@ class Gallery_Access {
       ->execute();
 
     $query = ORM::factory("AccessIntent")
-      ->select(array("access_intent.$field", "item.left_ptr", "item.right_ptr", "item.id"))
+      ->select("access_intent.$field", "item.left_ptr", "item.right_ptr", "item.id")
       ->join("items", "item.id", "access_intent.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
@@ -625,7 +625,7 @@ class Gallery_Access {
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
     $query = ORM::factory("AccessIntent")
-      ->select(array("access_intent.$field", "item.left_ptr", "item.right_ptr"))
+      ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
       ->join("items", "item.id", "access_intent.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
