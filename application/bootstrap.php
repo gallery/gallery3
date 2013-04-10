@@ -269,4 +269,4 @@ I18n::instance();
 // Initialize our session support
 Session::instance();
 
-register_shutdown_function(array("gallery", "shutdown"));
+register_shutdown_function(array("Gallery", "shutdown"));
