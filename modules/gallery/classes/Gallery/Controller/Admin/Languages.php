@@ -95,7 +95,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
           Message::info(t("Your API key was not changed."));
         }
 
-        Log::success(t("gallery"), t("l10n_client API key changed."));
+        GalleryLog::success(t("gallery"), t("l10n_client API key changed."));
         HTTP::redirect("admin/languages");
     } else {
       // Show the page with form errors

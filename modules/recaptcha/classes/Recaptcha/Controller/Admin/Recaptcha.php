@@ -33,7 +33,7 @@ class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
           Module::set_var("recaptcha", "public_key", $public_key);
           Module::set_var("recaptcha", "private_key", $private_key);
           Message::success(t("reCAPTCHA configured!"));
-          Log::success("recaptcha", t("reCAPTCHA public and private keys set"));
+          GalleryLog::success("recaptcha", t("reCAPTCHA public and private keys set"));
           HTTP::redirect("admin/recaptcha");
         } else if ($public_key && !$private_key) {
           $form->configure_recaptcha->private_key->add_error("invalid");
@@ -43,7 +43,7 @@ class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
           Module::set_var("recaptcha", "public_key", "");
           Module::set_var("recaptcha", "private_key", "");
           Message::success(t("No keys provided.  reCAPTCHA is disabled!"));
-          Log::success("recaptcha", t("reCAPTCHA public and private keys cleared"));
+          GalleryLog::success("recaptcha", t("reCAPTCHA public and private keys cleared"));
           HTTP::redirect("admin/recaptcha");
         }
       }

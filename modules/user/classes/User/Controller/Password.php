@@ -68,16 +68,16 @@ class User_Controller_Password extends Controller {
         ->message($message->render())
         ->send();
 
-      Log::success(
+      GalleryLog::success(
         "user",
         t("Password reset email sent for user %name", array("name" => $user->name)));
     } else if (!$user) {
       // Don't include the username here until you're sure that it's XSS safe
-      Log::warning(
+      GalleryLog::warning(
                    "user", t("Password reset email requested for user %user_name, which does not exist.",
                              array("user_name" => $user_name)));
     } else  {
-      Log::warning(
+      GalleryLog::warning(
           "user", t("Password reset failed for %user_name (has no email address on record).",
                     array("user_name" => $user->name)));
     }

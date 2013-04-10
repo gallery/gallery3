@@ -34,7 +34,7 @@ class Search_Hook_SearchTask {
                         "%count (%percent%) of your photos and albums need to be scanned",
                         $remaining, array("percent" => (100 - $percent)))
                    : t("Search data is up-to-date"))
-                 ->severity($remaining ? Log::WARNING : Log::SUCCESS));
+                 ->severity($remaining ? GalleryLog::WARNING : GalleryLog::SUCCESS));
   }
 
   static function update_index($task) {

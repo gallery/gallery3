@@ -89,7 +89,7 @@ class User_Controller_Users extends Controller {
       JSON::reply(array("result" => "success",
                         "resource" => URL::site("users/{$user->id}")));
     } else {
-      Log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
+      GalleryLog::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
       Module::event("user_auth_failed", $name);
       JSON::reply(array("result" => "error", "html" => (string)$form));
@@ -123,7 +123,7 @@ class User_Controller_Users extends Controller {
       JSON::reply(array("result" => "success",
                         "resource" => URL::site("users/{$user->id}")));
     } else {
-      Log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
+      GalleryLog::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
       Module::event("user_auth_failed", $name);
       JSON::reply(array("result" => "error", "html" => (string)$form));

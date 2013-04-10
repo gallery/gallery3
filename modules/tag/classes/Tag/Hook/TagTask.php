@@ -24,7 +24,7 @@ class Tag_Hook_TagTask {
       ->callback("Hook_TagTask::clean_up_tags")
       ->name(t("Clean up tags"))
       ->description(t("Correct tag counts and remove tags with no items"))
-      ->severity(Log::SUCCESS);
+      ->severity(GalleryLog::SUCCESS);
     return $tasks;
   }
 

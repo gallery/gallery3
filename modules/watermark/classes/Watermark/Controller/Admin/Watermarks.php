@@ -47,7 +47,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       Module::set_var("watermark", "transparency", $form->edit_watermark->transparency->value);
       $this->_update_graphics_rules();
 
-      Log::success("watermark", t("Watermark changed"));
+      GalleryLog::success("watermark", t("Watermark changed"));
       Message::success(t("Watermark changed"));
       JSON::reply(
         array("result" => "success",
@@ -78,7 +78,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
         Module::clear_var("watermark", "position");
         $this->_update_graphics_rules();
 
-        Log::success("watermark", t("Watermark deleted"));
+        GalleryLog::success("watermark", t("Watermark deleted"));
         Message::success(t("Watermark deleted"));
       }
       JSON::reply(array("result" => "success", "location" => URL::site("admin/watermarks")));
@@ -127,7 +127,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       System::delete_later($file);
 
       Message::success(t("Watermark saved"));
-      Log::success("watermark", t("Watermark saved"));
+      GalleryLog::success("watermark", t("Watermark saved"));
       JSON::reply(array("result" => "success", "location" => URL::site("admin/watermarks")));
     } else {
       JSON::reply(array("result" => "error", "html" => (string)$form));

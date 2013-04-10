@@ -30,7 +30,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
       ->execute();
     $stalled_count = $query->count();
     if ($stalled_count) {
-      Log::warning("tasks",
+      GalleryLog::warning("tasks",
                    t2("One task is stalled",
                       "%count tasks are stalled",
                       $stalled_count),
@@ -67,7 +67,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     $view = new View("admin/maintenance_task.html");
     $view->task = $task;
 
-    Log::info("tasks", t("Task %task_name started (task id %task_id)",
+    GalleryLog::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               HTML::anchor("admin/maintenance", t("maintenance")));
     print $view;
@@ -89,7 +89,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     $task->log(t("Task %task_name resumed (task id %task_id)",
                  array("task_name" => $task->name, "task_id" => $task->id)));
-    Log::info("tasks", t("Task %task_name resumed (task id %task_id)",
+    GalleryLog::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               HTML::anchor("admin/maintenance", t("maintenance")));
     print $view;
@@ -202,14 +202,14 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     if ($task->done) {
       switch ($task->state) {
       case "success":
-        Log::success("tasks", t("Task %task_name completed (task id %task_id)",
+        GalleryLog::success("tasks", t("Task %task_name completed (task id %task_id)",
                                 array("task_name" => $task->name, "task_id" => $task->id)),
                      HTML::anchor("admin/maintenance", t("maintenance")));
         Message::success(t("Task completed successfully"));
         break;
 
       case "error":
-        Log::error("tasks", t("Task %task_name failed (task id %task_id)",
+        GalleryLog::error("tasks", t("Task %task_name failed (task id %task_id)",
                               array("task_name" => $task->name, "task_id" => $task->id)),
                    HTML::anchor("admin/maintenance", t("maintenance")));
         Message::success(t("Task failed"));

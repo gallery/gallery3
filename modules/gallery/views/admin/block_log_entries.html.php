@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <? foreach ($entries as $entry): ?>
-  <li class="<?= Log::severity_class($entry->severity) ?>" style="direction: ltr">
+  <li class="<?= GalleryLog::severity_class($entry->severity) ?>" style="direction: ltr">
     <? if ($entry->user->guest): ?>
     </span><?= HTML::clean($entry->user->name) ?></span>
     <? else: ?>

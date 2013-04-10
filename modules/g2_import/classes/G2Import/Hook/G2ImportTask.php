@@ -37,7 +37,7 @@ class G2Import_Hook_G2ImportTask {
                    ->name(t("Import from Gallery 2"))
                    ->description(
                      t("Gallery %version detected", array("version" => $version)))
-                   ->severity(Log::SUCCESS));
+                   ->severity(GalleryLog::SUCCESS));
     }
 
     return array();

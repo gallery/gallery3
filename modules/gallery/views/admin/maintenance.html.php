@@ -39,8 +39,8 @@
           </th>
         </tr>
         <? foreach ($task_definitions as $task): ?>
-        <tr class="<?= Text::alternate("g-odd", "g-even") ?> <?= Log::severity_class($task->severity) ?>">
-          <td class="<?= Log::severity_class($task->severity) ?>">
+        <tr class="<?= Text::alternate("g-odd", "g-even") ?> <?= GalleryLog::severity_class($task->severity) ?>">
+          <td class="<?= GalleryLog::severity_class($task->severity) ?>">
             <?= $task->name ?>
           </td>
           <td>

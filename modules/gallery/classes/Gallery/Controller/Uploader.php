@@ -68,12 +68,12 @@ class Gallery_Controller_Uploader extends Controller {
             LegalFile::get_movie_extensions($path_info["extension"])) {
           $item->type = "movie";
           $item->save();
-          Log::success("content", t("Added a movie"),
+          GalleryLog::success("content", t("Added a movie"),
                        HTML::anchor("movies/$item->id", t("view movie")));
         } else {
           $item->type = "photo";
           $item->save();
-          Log::success("content", t("Added a photo"),
+          GalleryLog::success("content", t("Added a photo"),
                        HTML::anchor("photos/$item->id", t("view photo")));
         }
 

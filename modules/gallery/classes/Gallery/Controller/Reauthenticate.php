@@ -59,7 +59,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       HTTP::redirect(Session::instance()->get_once("continue_url"));
     } else {
       $name = $user->name;
-      Log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
+      GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
       Module::event("user_auth_failed", $name);
       if (Request::is_ajax()) {
         $v = new View("gallery/reauthenticate.html");

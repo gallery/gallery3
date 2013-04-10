@@ -72,7 +72,7 @@ class Gallery_Controller_Login extends Controller {
       if (empty($user) || !Identity::is_correct_password($user, $form->login->password->value)) {
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $name = $form->login->inputs["name"]->value;
-        Log::warning("user", t("Failed login for %name", array("name" => $name)));
+        GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
         Module::event("user_auth_failed", $name);
         $valid = false;
       }

@@ -206,7 +206,7 @@ class Gallery_Module {
     // remove it from the path.
     Module::load_modules();
 
-    Log::success(
+    GalleryLog::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
   }
 
@@ -253,7 +253,7 @@ class Gallery_Module {
 
     $version_after = Module::get_version($module_name);
     if ($version_before != $version_after) {
-      Log::success(
+      GalleryLog::success(
         "module", t("Upgraded module %module_name from %version_before to %version_after",
                     array("module_name" => $module_name,
                           "version_before" => $version_before,
@@ -290,7 +290,7 @@ class Gallery_Module {
 
     BlockManager::activate_blocks($module_name);
 
-    Log::success(
+    GalleryLog::success(
       "module", t("Activated module %module_name", array("module_name" => $module_name)));
   }
 
@@ -318,10 +318,10 @@ class Gallery_Module {
     BlockManager::deactivate_blocks($module_name);
 
     if (Module::info($module_name)) {
-      Log::success(
+      GalleryLog::success(
         "module", t("Deactivated module %module_name", array("module_name" => $module_name)));
     } else {
-      Log::success(
+      GalleryLog::success(
         "module", t("Deactivated missing module %module_name", array("module_name" => $module_name)));
     }
   }
@@ -359,7 +359,7 @@ class Gallery_Module {
     // We could delete the module vars here too, but it's nice to leave them around
     // in case the module gets reinstalled.
 
-    Log::success(
+    GalleryLog::success(
       "module", t("Uninstalled module %module_name", array("module_name" => $module_name)));
   }
 
