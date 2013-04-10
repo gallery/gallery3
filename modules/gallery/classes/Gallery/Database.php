@@ -21,6 +21,21 @@ abstract class Gallery_Database extends Kohana_Database {
   protected $_table_names;
 
   /**
+   * Additional query types.  The main Database class only defines SELECT, INSERT, DELETE, and
+   * INSERT.  References indicate that, at least currently, specifying anything other than SELECT or
+   * INSERT is superfluous.  Nevertheless, in the name of futureproofing, let's define a few more
+   * types to keep our code consistent.  They're mapped to null for now, but if that should change,
+   * we can adapt by changing one line of code instead of combing the entire codebase.
+   *
+   * http://forum.kohanaframework.org/discussion/8358/solved-how-to-do-raw-sql-or-advanced-database-stuff-in-ko3/p1
+   * http://forum.kohanaframework.org/discussion/5239/ko3-why-is-the-query-type-required-for-dbquery/p1
+   */
+  const ALTER    = null;
+  const CREATE   = null;
+  const DROP     = null;
+  const TRUNCATE = null;
+
+  /**
    * Kohana 2.4 introduces a new connection parameter.  If it's not specified, make sure that we
    * define it here to avoid an error later on.
    *
