@@ -113,7 +113,7 @@ class Search_Search {
   static function stats() {
     $remaining = DB::select()
       ->from("items")
-      ->join("search_records", "item.id", "search_record.item_id", "left")
+      ->join("search_records", "left")->on("item.id", "=", "search_record.item_id")
       ->and_where_open()
       ->where("search_record.item_id", "IS", null)
       ->or_where("search_record.dirty", "=", 1)

@@ -70,7 +70,7 @@ class Notification_Notification {
     $subscriber_ids = array();
     foreach (ORM::factory("Subscription")
              ->select("user_id")
-             ->join("items", "subscription.item_id", "item.id")
+             ->join("items")->on("subscription.item_id", "=", "item.id")
              ->where("item.left_ptr", "<=", $item->left_ptr)
              ->where("item.right_ptr", ">", $item->right_ptr)
              ->find_all()

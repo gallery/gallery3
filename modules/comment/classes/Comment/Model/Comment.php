@@ -129,7 +129,7 @@ class Comment_Model_Comment extends ORM {
    * @chainable
    */
   public function viewable() {
-    $this->join("items", "item.id", "comment.item_id");
+    $this->join("items")->on("item.id", "=", "comment.item_id");
     return Item::viewable($this);
   }
 
