@@ -182,7 +182,7 @@ class Gallery_Access {
       ->where("left_ptr", "<=", $item->left_ptr)
       ->where("right_ptr", ">=", $item->right_ptr)
       ->where("item.id", "<>", $item->id)
-      ->join("access_intents", "item.id", "access_intent.item_id")
+      ->join("access_intents")->on("item.id", "=", "access_intent.item_id")
       ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
       ->limit(1)
@@ -528,7 +528,7 @@ class Gallery_Access {
       $tmp_item = ORM::factory("Item")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
-        ->join("access_intents", "access_intent.item_id", "item.id")
+        ->join("access_intents")->on("access_intent.item_id", "=", "item.id")
         ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
@@ -549,8 +549,8 @@ class Gallery_Access {
       ->execute();
 
     $query = ORM::factory("AccessIntent")
-      ->select(array("access_intent.$field", "item.left_ptr", "item.right_ptr", "item.id"))
-      ->join("items", "item.id", "access_intent.item_id")
+      ->select("access_intent.$field", "item.left_ptr", "item.right_ptr", "item.id")
+      ->join("items")->on("item.id", "=", "access_intent.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where("type", "=", "album")
@@ -610,7 +610,7 @@ class Gallery_Access {
     //       propagate from here with the parent's intent.
     if ($access->$field === Access::INHERIT) {
       $tmp_item = ORM::factory("Item")
-        ->join("access_intents", "item.id", "access_intent.item_id")
+        ->join("access_intents")->on("item.id", "=", "access_intent.item_id")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
         ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
@@ -625,8 +625,8 @@ class Gallery_Access {
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
     $query = ORM::factory("AccessIntent")
-      ->select(array("access_intent.$field", "item.left_ptr", "item.right_ptr"))
-      ->join("items", "item.id", "access_intent.item_id")
+      ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
+      ->join("items")->on("item.id", "=", "access_intent.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where($field, "IS NOT", Access::INHERIT)

@@ -79,7 +79,7 @@ class Gallery_GalleryLog {
     $log->severity = $severity;
     $log->html = $html;
     $log->url = substr(URL::abs_current(true), 0, 255);
-    $log->referer = Request::referrer(null);
+    $log->referer = Request::$current->referrer();
     $log->timestamp = time();
     $log->user_id = Identity::active_user()->id;
     $log->save();

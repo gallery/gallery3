@@ -117,7 +117,7 @@ class Comment_Hook_CommentInstaller {
     // a SQL fragment through so that the listeners could use subselects.  But by using a single,
     // simple event API we lighten the load on module developers.
     foreach (ORM::factory("Item")
-             ->join("comments", "item.id", "comment.item_id")
+             ->join("comments")->on("item.id", "=", "comment.item_id")
              ->find_all() as $item) {
       Module::event("item_related_update", $item);
     }

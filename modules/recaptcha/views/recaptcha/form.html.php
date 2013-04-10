@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="g-recaptcha"></div>
-<script type="text/javascript" src="<?= Request::protocol() ?>://www.google.com/recaptcha/api/js/recaptcha_ajax.js">
+<script type="text/javascript" src="<?= Request::$current->protocol() ?>://www.google.com/recaptcha/api/js/recaptcha_ajax.js">
 </script>
 <script type="text/javascript">
   setTimeout(function() {

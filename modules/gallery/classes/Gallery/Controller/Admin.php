@@ -41,7 +41,7 @@ class Gallery_Controller_Admin extends Controller {
       return self::_prompt_for_reauth($controller_name, $args);
     }
 
-    if (Request::method() == "post") {
+    if (Request::$current->method() == "POST") {
       Access::verify_csrf();
     }
 
@@ -82,12 +82,12 @@ class Gallery_Controller_Admin extends Controller {
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {
-    if (Request::method() == "get") {
+    if (Request::$current->method() == "GET") {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", URL::abs_current(true));
     }
     // Save the is_ajax value as we lose it, if set, when we redirect
-    Session::instance()->set("is_ajax_request", Request::is_ajax());
+    Session::instance()->set("is_ajax_request", Request::$current->is_ajax());
     HTTP::redirect("reauthenticate");
   }
 }
