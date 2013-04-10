@@ -36,7 +36,7 @@ class Search_Hook_SearchInstaller {
     // Update the root item.  This is a quick hack because the search module is activated as part
     // of the official install, so this way we don't start off with a "your index is out of date"
     // banner.
-    Search::update(ModelCache::get("Item", 1));
+    Search::update(ORM::factory("Item", 1));
     Search::check_index();
   }
 

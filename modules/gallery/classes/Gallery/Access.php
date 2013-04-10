@@ -103,7 +103,7 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : ModelCache::get("AccessCache", $id, "item_id");
+      $item : ORM::factory("AccessCache", $id, "item_id");
 
     foreach ($user->groups() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW) {
@@ -144,7 +144,7 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : ModelCache::get("AccessCache", $id, "item_id");
+      $item : ORM::factory("AccessCache", $id, "item_id");
 
     return $resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW;
   }
@@ -158,7 +158,7 @@ class Gallery_Access {
    * @return boolean     Access::ALLOW, Access::DENY or Access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
-    $intent = ModelCache::get("AccessIntent", $item->id, "item_id");
+    $intent = ORM::factory("AccessIntent", $item->id, "item_id");
     return $intent->__get("{$perm_name}_{$group->id}");
   }
 
@@ -220,7 +220,7 @@ class Gallery_Access {
     if (!$album->is_album()) {
       throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
-    $access = ModelCache::get("AccessIntent", $album->id, "item_id");
+    $access = ORM::factory("AccessIntent", $album->id, "item_id");
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
@@ -231,7 +231,6 @@ class Gallery_Access {
     }
 
     Access::update_htaccess_files($album, $group, $perm_name, $value);
-    ModelCache::clear();
   }
 
   /**
@@ -283,7 +282,6 @@ class Gallery_Access {
         }
       }
     }
-    ModelCache::clear();
   }
 
   /**
@@ -305,7 +303,6 @@ class Gallery_Access {
     }
     $photo_access_cache->save();
     $photo->save();
-    ModelCache::clear();
   }
 
   /**
@@ -475,7 +472,6 @@ class Gallery_Access {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     Database::instance()->query(Database::ALTER, "ALTER TABLE {{$cache_table}} DROP `$field`");
     Database::instance()->query(Database::ALTER, "ALTER TABLE {access_intents} DROP `$field`");
-    ModelCache::clear();
     ORM::factory("AccessIntent")->clear_cache();
   }
 
@@ -498,7 +494,6 @@ class Gallery_Access {
       ->set($field, Access::DENY)
       ->where("item_id", "=", 1)
       ->execute();
-    ModelCache::clear();
     ORM::factory("AccessIntent")->clear_cache();
   }
 

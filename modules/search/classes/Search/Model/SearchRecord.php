@@ -19,6 +19,6 @@
  */
 class Search_Model_SearchRecord extends ORM {
   function item() {
-    return ModelCache::get("Item", $this->item_id);
+    return ORM::factory("Item", $this->item_id);
   }
 }

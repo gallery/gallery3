@@ -153,7 +153,7 @@ class Gallery_ORM_MPTT extends ORM {
     if (!$this->parent_id) {
       return null;
     }
-    return ModelCache::get($this->_model_name, $this->parent_id);
+    return ORM::factory($this->_model_name, $this->parent_id);
   }
 
   /**

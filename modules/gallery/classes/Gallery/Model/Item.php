@@ -679,7 +679,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     try {
-      return ModelCache::get("Item", $this->album_cover_item_id);
+      return ORM::factory("Item", $this->album_cover_item_id);
     } catch (Exception $e) {
       // It's possible (unlikely) that the item was deleted, if so keep going.
       return null;

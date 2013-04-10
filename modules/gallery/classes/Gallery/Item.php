@@ -78,7 +78,6 @@ class Gallery_Item {
 
     $old_album_cover_id = $parent->album_cover_item_id;
 
-    ModelCache::clear();
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
     $parent->save();
     Graphics::generate($parent);
@@ -110,7 +109,6 @@ class Gallery_Item {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    ModelCache::clear();
     $album->album_cover_item_id = null;
     $album->save();
     Graphics::generate($album);
@@ -319,7 +317,7 @@ class Gallery_Item {
    * @return Model_Item
    */
   static function root() {
-    return ModelCache::get("Item", 1);
+    return ORM::factory("Item", 1);
   }
 
   /**

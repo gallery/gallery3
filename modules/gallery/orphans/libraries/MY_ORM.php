@@ -30,7 +30,6 @@ class ORM extends ORM_Core {
   }
 
   public function save() {
-    ModelCache::clear();
     return parent::save();
   }
 }

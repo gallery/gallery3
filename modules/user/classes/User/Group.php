@@ -30,7 +30,7 @@ class User_Group {
    * @return IdentityProvider_GroupDefinition the group object
    */
   static function everybody() {
-    return ModelCache::get("Group", 1);
+    return ORM::factory("Group", 1);
   }
 
   /**
@@ -39,7 +39,7 @@ class User_Group {
    * @return IdentityProvider_GroupDefinition the group object
    */
   static function registered_users() {
-    return ModelCache::get("Group", 2);
+    return ORM::factory("Group", 2);
   }
 
   /**
@@ -68,7 +68,7 @@ class User_Group {
    */
   private static function _lookup_by_field($field_name, $value) {
     try {
-      $group = ModelCache::get("Group", $value, $field_name);
+      $group = ORM::factory("Group", $value, $field_name);
       if ($group->loaded()) {
         return $group;
       }
