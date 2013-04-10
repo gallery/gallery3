@@ -142,9 +142,9 @@ class Gallery_Gallery {
    * @return  string   if the file is found (relative to the DOCROOT)
    * @return  false    if the file is not found
    */
-  static function find_file($directory, $file, $required=false) {
+  static function find_file($directory, $file) {
     $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
-    $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
+    $file_name = Kohana::find_file($directory, $file_name, substr($ext, 1));
     if (!$file_name) {
       if (file_exists(DOCROOT . "lib/$directory/$file")) {
         return "lib/$directory/$file";

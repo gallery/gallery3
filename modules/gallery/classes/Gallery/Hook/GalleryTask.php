@@ -789,7 +789,7 @@ class Gallery_Hook_GalleryTask {
   static function find_missing_access_caches_limited($limit) {
     return DB::select("item.id")
       ->from("items")
-      ->join("access_caches", "item.id", "access_cache.item_id", "left")
+      ->join("access_caches", "left")->on("item.id", "=", "access_cache.item_id")
       ->where("access_cache.id", "is", null)
       ->limit($limit)
       ->execute();

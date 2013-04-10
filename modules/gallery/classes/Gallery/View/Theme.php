@@ -40,14 +40,14 @@ class Gallery_View_Theme extends View_Gallery {
         $this->theme_name = $theme_name;
       }
     }
-    $this->item = null;
-    $this->tag = null;
     $this->set_global(array("theme" => $this,
                             "theme_info" => Theme::get_info($this->theme_name),
                             "user" => Identity::active_user(),
                             "page_type" => $page_type,
                             "page_subtype" => $page_subtype,
-                            "page_title" => null));
+                            "page_title" => null,
+                            "item" => null,
+                            "tag" => null));
 
     if (Module::get_var("gallery", "maintenance_mode", 0)) {
       if (Identity::active_user()->admin) {
