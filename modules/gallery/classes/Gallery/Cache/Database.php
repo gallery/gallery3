@@ -150,13 +150,16 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
       $lifetime = (0 === $lifetime) ? 0 : ((int) $lifetime + time());
     }
 
-    // In Kohana 2 we also had an "ON DUPLICATE KEY UPDATE" stanza here.  Elided
-    // for simplicity - we might want it back.
-    return (bool) DB::insert(
-      "caches",
-      array("key", "tags", "expiration", "cache"))
-      ->values(array($id, $tags, $lifetime, $data))
-      ->execute();
+    $cache = ORM::factory("Cache")->where("key", "=", $id)->find();
+    $cache->tags = $tags;
+    $cache->expiration = $lifetime;
+    $cache->cache = $data;
+    if ($cache->loaded()) {
+      return (bool) $cache->update();
+    } else {
+      $cache->key = $id;
+      return (bool) $cache->save();
+    }
   }
 
   /**
