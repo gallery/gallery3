@@ -24,7 +24,7 @@ class Gallery_Hook_GalleryEvent {
   static function gallery_ready() {
     if (!get_cfg_var("date.timezone")) {
       if (!(rand() % 4)) {
-        Log::add("error", "date.timezone setting not detected in " .
+        Log::instance()->add(Log::ERROR, "date.timezone setting not detected in " .
                         get_cfg_var("cfg_file_path") . " falling back to UTC.  " .
                         "Consult http://php.net/manual/function.get-cfg-var.php for help.");
       }
@@ -121,7 +121,7 @@ class Gallery_Hook_GalleryEvent {
       GalleryLog::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
                                array("item_title" => $item->title)),
                  HTML::anchor($item->abs_url(), t("details")));
-      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 
     if ($item->is_photo() || $item->is_movie()) {

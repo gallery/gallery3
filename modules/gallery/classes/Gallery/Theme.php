@@ -76,7 +76,7 @@ class Gallery_Theme {
           $modules = array_merge(
             array(self::$admin_theme_name => THEMEPATH . self::$admin_theme_name), $modules);
         } else {
-          Log::add("error", "Missing override admin theme: '$override'");
+          Log::instance()->add(Log::ERROR, "Missing override admin theme: '$override'");
         }
       }
     } else {
@@ -85,7 +85,7 @@ class Gallery_Theme {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {
-          Log::add("error", "Missing override site theme: '$override'");
+          Log::instance()->add(Log::ERROR, "Missing override site theme: '$override'");
         }
       }
       $modules = array_merge(

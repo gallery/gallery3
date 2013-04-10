@@ -67,7 +67,7 @@ class Gallery_UpgradeChecker {
         $result->status = "error";
       }
     } catch (Exception $e) {
-      Log::add("error",
+      Log::instance()->add(Log::ERROR,
                       sprintf("%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),
                               $e->getLine(), $e->getTraceAsString()));
     }

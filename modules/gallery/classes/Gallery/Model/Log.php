@@ -28,7 +28,7 @@ class Gallery_Model_Log extends ORM {
       try {
         return Identity::lookup_user($this->user_id);
       } catch (Exception $e) {
-        Log::add("alert", "Unable to load user with id $this->user_id");
+        Log::instance()->add(Log::ALERT, "Unable to load user with id $this->user_id");
         return null;
       }
     } else {

@@ -56,7 +56,7 @@ class Gallery_Module {
     }
     $module->version = $version;
     $module->save();
-    Log::add("debug", "$module_name: version is now $version");
+    Log::instance()->add(Log::DEBUG, "$module_name: version is now $version");
   }
 
   /**

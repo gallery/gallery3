@@ -100,7 +100,7 @@ class Gallery_View_Gallery extends View {
   public function script($file, $group="core") {
     if ((!$path = Gallery::find_file("assets", $file, false)) &&
         (!$path = Gallery::find_file("vendor", $file, false))) {
-      Log::add("error", "Can't find script file: $file");
+      Log::instance()->add(Log::ERROR, "Can't find script file: $file");
     } else {
       if (isset($this->combine_queue["script"])) {
         $this->combine_queue["script"][$group][$path] = 1;
@@ -123,7 +123,7 @@ class Gallery_View_Gallery extends View {
   public function css($file, $group="core") {
     if ((!$path = Gallery::find_file("assets", $file, false)) &&
         (!$path = Gallery::find_file("vendor", $file, false))) {
-      Log::add("error", "Can't find css file: $file");
+      Log::instance()->add(Log::ERROR, "Can't find css file: $file");
     } else {
       if (isset($this->combine_queue["css"])) {
         $this->combine_queue["css"][$group][$path] = 1;
@@ -243,7 +243,7 @@ class Gallery_View_Gallery extends View {
           $search[] = $match[0];
           $replace[] = "url('" . URL::abs_file($relative) . "')";
         } else {
-          Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+          Log::instance()->add(Log::ERROR, "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
 
         }
       }

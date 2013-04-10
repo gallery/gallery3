@@ -50,7 +50,7 @@ class Gallery_Auth {
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
-        Log::add("error", $e);
+        Log::instance()->add(Log::ERROR, $e);
       }
       Module::event("user_logout", $user);
     }

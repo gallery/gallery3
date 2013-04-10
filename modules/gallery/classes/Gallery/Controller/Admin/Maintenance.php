@@ -191,8 +191,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     try {
       $task = Task::run($task_id);
     } catch (Exception $e) {
-      Log::add(
-        "error",
+      Log::instance()->add(
+        Log::ERROR,
         sprintf(
           "%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),
           $e->getLine(), $e->getTraceAsString()));

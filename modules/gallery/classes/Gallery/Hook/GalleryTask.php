@@ -146,7 +146,7 @@ class Gallery_Hook_GalleryTask {
         SiteStatus::clear("graphics_dirty");
       }
     } catch (Exception $e) {
-      Log::add("error",(string)$e);
+      Log::instance()->add(Log::ERROR,(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -253,7 +253,7 @@ class Gallery_Hook_GalleryTask {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }
     } catch (Exception $e) {
-      Log::add("error",(string)$e);
+      Log::instance()->add(Log::ERROR,(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -331,7 +331,7 @@ class Gallery_Hook_GalleryTask {
         $task->percent_complete = 100;
       }
     } catch (Exception $e) {
-      Log::add("error",(string)$e);
+      Log::instance()->add(Log::ERROR,(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
