@@ -46,7 +46,7 @@ class Search_Search {
       "LIMIT $limit OFFSET " . (int)$offset;
 
     $data = $db->query($query);
-    $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
+    $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c")->current()->c;
 
     return array($count, new ORM_Iterator(ORM::factory("Item"), $data));
   }
