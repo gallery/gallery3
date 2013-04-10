@@ -20,7 +20,7 @@
 class Notification_Hook_NotificationInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {subscriptions} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {subscriptions} (
                `id` int(9) NOT NULL auto_increment,
                `item_id` int(9) NOT NULL,
                `user_id` int(9) NOT NULL,
@@ -28,7 +28,7 @@ class Notification_Hook_NotificationInstaller {
                UNIQUE KEY (`item_id`, `user_id`),
                UNIQUE KEY (`user_id`, `item_id`))
                DEFAULT CHARSET=utf8;");
-    $db->query("CREATE TABLE IF NOT EXISTS {pending_notifications} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {pending_notifications} (
                `id` int(9) NOT NULL auto_increment,
                `locale` char(10) default NULL,
                `email` varchar(128) NOT NULL,
@@ -41,14 +41,14 @@ class Notification_Hook_NotificationInstaller {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("ALTER TABLE {pending_notifications} ADD COLUMN `locale` char(10) default NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {pending_notifications} ADD COLUMN `locale` char(10) default NULL");
       Module::set_version("notification", $version = 2);
     }
   }
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {subscriptions};");
-    $db->query("DROP TABLE IF EXISTS {pending_notifications};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {subscriptions};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {pending_notifications};");
   }
 }

@@ -20,7 +20,7 @@
 class Rest_Hook_RestInstaller {
   static function install() {
     Database::instance()
-      ->query("CREATE TABLE {user_access_keys} (
+      ->query(Database::CREATE, "CREATE TABLE {user_access_keys} (
                 `id` int(9) NOT NULL auto_increment,
                 `user_id` int(9) NOT NULL,
                 `access_key` char(32) NOT NULL,
@@ -35,7 +35,7 @@ class Rest_Hook_RestInstaller {
     $db = Database::instance();
     if ($version == 1) {
       if (in_array("user_access_tokens", Database::instance()->list_tables())) {
-        $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
+        $db->query(Database::RENAME, "RENAME TABLE {user_access_tokens} TO {user_access_keys}");
       }
       Module::set_version("rest", $version = 2);
     }
@@ -47,6 +47,6 @@ class Rest_Hook_RestInstaller {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {user_access_keys}");
+    Database::instance()->query(Database::DROP, "DROP TABLE IF EXISTS {user_access_keys}");
   }
 }

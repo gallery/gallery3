@@ -1,5 +1,23 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2013 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/**
  * Gallery Cache Database Driver
  */
 class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_GarbageCollect {
@@ -132,13 +150,16 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
       $lifetime = (0 === $lifetime) ? 0 : ((int) $lifetime + time());
     }
 
-    // In Kohana 2 we also had an "ON DUPLICATE KEY UPDATE" stanza here.  Elided
-    // for simplicity - we might want it back.
-    return (bool) DB::insert(
-      "caches",
-      array("key", "tags", "expiration", "cache"))
-      ->values(array($id, $tags, $lifetime, $data))
-      ->execute();
+    $cache = ORM::factory("Cache")->where("key", "=", $id)->find();
+    $cache->tags = $tags;
+    $cache->expiration = $lifetime;
+    $cache->cache = $data;
+    if ($cache->loaded()) {
+      return (bool) $cache->update();
+    } else {
+      $cache->key = $id;
+      return (bool) $cache->save();
+    }
   }
 
   /**

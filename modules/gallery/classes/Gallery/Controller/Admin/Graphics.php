@@ -39,7 +39,7 @@ class Gallery_Controller_Admin_Graphics extends Controller_Admin {
 
       $msg = t("Changed graphics toolkit to: %toolkit", array("toolkit" => $tk->$toolkit_id->name));
       Message::success($msg);
-      Log::success("graphics", $msg);
+      GalleryLog::success("graphics", $msg);
 
       Module::event("graphics_toolkit_change", $toolkit_id);
     }

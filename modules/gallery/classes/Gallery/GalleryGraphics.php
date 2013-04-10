@@ -177,7 +177,7 @@ class Gallery_GalleryGraphics {
       // the watermark fails, we'd still like the image resized, just without its watermark.
       // If the exception isn't caught here, Graphics::generate will replace it with a
       // placeholder.
-      Log::add("error", $e->getMessage());
+      Log::instance()->add(Log::ERROR, $e->getMessage());
     }
   }
 }

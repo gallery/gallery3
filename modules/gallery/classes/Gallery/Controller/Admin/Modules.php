@@ -101,7 +101,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
       } catch (Exception $e) {
         Message::warning(t("An error occurred while installing the <b>%module_name</b> module",
                            array("module_name" => $info->name)));
-        Log::add("error", (string)$e);
+        Log::instance()->add(Log::ERROR, (string)$e);
       }
     }
 

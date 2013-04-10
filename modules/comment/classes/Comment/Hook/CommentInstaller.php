@@ -20,7 +20,7 @@
 class Comment_Hook_CommentInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {comments} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {comments} (
                  `author_id` int(9) default NULL,
                  `created` int(9) NOT NULL,
                  `guest_email` varchar(128) default NULL,
@@ -54,7 +54,7 @@ class Comment_Hook_CommentInstaller {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
+      $db->query(Database::ALTER, "ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
       Module::set_version("comment", $version = 2);
     }
 
@@ -69,9 +69,9 @@ class Comment_Hook_CommentInstaller {
       //
       // 255 bytes for server_remote_host is enough to swallow the longest
       // legit DNS entry, with a few bytes to spare.
-      $db->query(
+      $db->query(Database::ALTER,
         "ALTER TABLE {comments} CHANGE `server_remote_addr` `server_remote_addr` varchar(40)");
-      $db->query(
+      $db->query(Database::ALTER,
         "ALTER TABLE {comments} CHANGE `server_remote_host` `server_remote_host` varchar(255)");
       Module::set_version("comment", $version = 4);
     }
@@ -103,7 +103,7 @@ class Comment_Hook_CommentInstaller {
     if ($version == 7) {
       // In version 8 we started using SERVER_NAME instead of HTTP_HOST to be more robust
       // against potential XSS attacks.
-      $db->query(
+      $db->query(Database::ALTER,
         "ALTER TABLE {comments} CHANGE `server_http_host` `server_name` varchar(64) default NULL");
       Module::set_version("comment", $version = 8);
     }
@@ -121,6 +121,6 @@ class Comment_Hook_CommentInstaller {
              ->find_all() as $item) {
       Module::event("item_related_update", $item);
     }
-    $db->query("DROP TABLE IF EXISTS {comments};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {comments};");
   }
 }

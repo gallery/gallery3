@@ -65,7 +65,7 @@ class Gallery_Controller_Photos extends Controller_Items {
       $photo->save();
       Module::event("item_edit_form_completed", $photo, $form);
 
-      Log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
+      GalleryLog::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
       Message::success(
         t("Saved photo %photo_title", array("photo_title" => HTML::purify($photo->title))));
 

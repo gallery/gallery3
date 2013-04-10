@@ -45,8 +45,8 @@ class Search_Search {
       "ORDER BY `score` DESC " .
       "LIMIT $limit OFFSET " . (int)$offset;
 
-    $data = $db->query($query);
-    $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
+    $data = $db->query(Database::SELECT, $query);
+    $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c")->current()->c;
 
     return array($count, new ORM_Iterator(ORM::factory("Item"), $data));
   }
@@ -138,7 +138,7 @@ class Search_Search {
 
     // Truncate the score by two decimal places as this resolves the issues
     // that arise due to inexact numeric conversions.
-    $current = $db->query($query)->current();
+    $current = $db->query(Database::SELECT, $query)->current();
     if (!$current) {
       // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
       // the context and try again.
@@ -152,8 +152,8 @@ class Search_Search {
 
     // Redo the query but only look for results greater than or equal to our current location
     // then seek backwards until we find our item.
-    $data = $db->query(self::_build_query_base($q, $album) . " HAVING `score` >= " . $score .
-                       "ORDER BY `score` DESC ");
+    $data = $db->query(Database::SELECT, self::_build_query_base($q, $album) .
+                       " HAVING `score` >= " . $score . " ORDER BY `score` DESC ");
     $data->seek($data->count() - 1);
 
     while ($data->get("id") != $item->id && $data->prev()->valid()) {

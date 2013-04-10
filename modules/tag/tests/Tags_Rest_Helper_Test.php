@@ -20,8 +20,8 @@
 class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function setup() {
     try {
-      Database::instance()->query("TRUNCATE {tags}");
-      Database::instance()->query("TRUNCATE {items_tags}");
+      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
+      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {items_tags}");
     } catch (Exception $e) {
     }
   }
@@ -58,7 +58,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function post_fails_without_permissions_test() {
     // We have to remove edit permissions from everywhere
-    Database::instance()->query("UPDATE {access_caches} SET edit_1=0");
+    Database::instance()->query(Database::UPDATE, "UPDATE {access_caches} SET edit_1=0");
     Identity::set_active_user(Identity::guest());
 
     try {

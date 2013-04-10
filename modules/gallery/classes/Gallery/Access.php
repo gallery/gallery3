@@ -473,8 +473,8 @@ class Gallery_Access {
   private static function _drop_columns($perm_name, $group) {
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
-    Database::instance()->query("ALTER TABLE {{$cache_table}} DROP `$field`");
-    Database::instance()->query("ALTER TABLE {access_intents} DROP `$field`");
+    Database::instance()->query(Database::ALTER, "ALTER TABLE {{$cache_table}} DROP `$field`");
+    Database::instance()->query(Database::ALTER, "ALTER TABLE {access_intents} DROP `$field`");
     ModelCache::clear();
     ORM::factory("AccessIntent")->clear_cache();
   }
@@ -490,9 +490,9 @@ class Gallery_Access {
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $not_null = $cache_table == "items" ? "" : "NOT NULL";
-    Database::instance()->query(
+    Database::instance()->query(Database::ALTER,
       "ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
-    Database::instance()->query(
+    Database::instance()->query(Database::ALTER,
       "ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
     DB::update("access_intents")
       ->set($field, Access::DENY)

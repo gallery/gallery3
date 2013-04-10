@@ -34,7 +34,7 @@ class Exif_Hook_ExifTask {
                                     "%count (%percent%) of your photos need to be scanned",
                                     $remaining, array("percent" => (100 - $percent)))
                                : t("Exif data is up-to-date"))
-                 ->severity($remaining ? Log::WARNING : Log::SUCCESS));
+                 ->severity($remaining ? GalleryLog::WARNING : GalleryLog::SUCCESS));
   }
 
   static function update_index($task) {

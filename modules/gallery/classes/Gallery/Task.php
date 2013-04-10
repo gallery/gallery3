@@ -93,12 +93,12 @@ class Gallery_Task {
       }
       $task->save();
     } catch (Exception $e) {
-      Log::add("error", (string)$e);
+      Log::instance()->add(Log::ERROR, (string)$e);
 
       // Ugh.  I hate to use instanceof, But this beats catching the exception separately since
       // we mostly want to treat it the same way as all other exceptions
       if ($e instanceof ORM_Validation_Exception) {
-        Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+        Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->validation->errors(), 1));
       }
 
       $task->log((string)$e);

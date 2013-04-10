@@ -20,7 +20,7 @@
 class G2Import_Hook_G2ImportInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (
+    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {g2_maps} (
                  `id` int(9) NOT NULL auto_increment,
                  `g2_id` int(9) NOT NULL,
                  `g3_id` int(9) NOT NULL,
@@ -37,9 +37,9 @@ class G2Import_Hook_G2ImportInstaller {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("ALTER TABLE {g2_maps} ADD COLUMN `g2_url` VARCHAR(255)");
-      $db->query("ALTER TABLE {g2_maps} ADD COLUMN `resource_type` VARCHAR(64)");
-      $db->query("ALTER TABLE {g2_maps} ADD KEY `g2_url` (`g2_url`)");
+      $db->query(Database::ALTER, "ALTER TABLE {g2_maps} ADD COLUMN `g2_url` VARCHAR(255)");
+      $db->query(Database::ALTER, "ALTER TABLE {g2_maps} ADD COLUMN `resource_type` VARCHAR(64)");
+      $db->query(Database::ALTER, "ALTER TABLE {g2_maps} ADD KEY `g2_url` (`g2_url`)");
       Module::set_version("g2_import", $version = 2);
     }
   }

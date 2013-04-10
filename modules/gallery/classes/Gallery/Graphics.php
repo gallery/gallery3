@@ -203,7 +203,7 @@ class Gallery_Graphics {
         if (file_exists($item->thumb_path())) {
           $item->thumb_dirty = 0;
         } else {
-          Log::add("error", "Failed to rebuild thumb image: $item->title");
+          Log::instance()->add(Log::ERROR, "Failed to rebuild thumb image: $item->title");
           Graphics::_replace_image_with_placeholder($item, "thumb");
         }
       }
@@ -212,7 +212,7 @@ class Gallery_Graphics {
         if (file_exists($item->resize_path())) {
           $item->resize_dirty = 0;
         } else {
-          Log::add("error", "Failed to rebuild resize image: $item->title");
+          Log::instance()->add(Log::ERROR, "Failed to rebuild resize image: $item->title");
           Graphics::_replace_image_with_placeholder($item, "resize");
         }
       }
@@ -221,7 +221,7 @@ class Gallery_Graphics {
     } catch (Exception $e) {
       // Something went wrong rebuilding the image.  Replace with the placeholder images,
       // leave it dirty and move on.
-      Log::add("error", "Caught exception rebuilding images: {$item->title}\n" .
+      Log::instance()->add(Log::ERROR, "Caught exception rebuilding images: {$item->title}\n" .
                       $e->getMessage() . "\n" . $e->getTraceAsString());
       if ($item->is_photo()) {
         Graphics::_replace_image_with_placeholder($item, "resize");
@@ -277,7 +277,7 @@ class Gallery_Graphics {
       // a non-jpg extension).  This is less than ideal, but it's better than putting nothing
       // there and causing theme views to act strangely because a file is missing.
       // @todo we should handle this better.
-      Log::add("error", "Caught exception converting placeholder for missing image: " .
+      Log::instance()->add(Log::ERROR, "Caught exception converting placeholder for missing image: " .
                       $item->title . "\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
       copy($input_path, $output_path);
     }
@@ -285,7 +285,7 @@ class Gallery_Graphics {
     if (!file_exists($output_path)) {
       // Copy/convert/resize didn't throw an exception, but still didn't work - do the same as above.
       // @todo we should handle this better.
-      Log::add("error", "Failed to convert placeholder for missing image: $item->title");
+      Log::instance()->add(Log::ERROR, "Failed to convert placeholder for missing image: $item->title");
       copy($input_path, $output_path);
     }
   }

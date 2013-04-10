@@ -20,7 +20,7 @@
 class Search_Hook_SearchInstaller {
   static function install() {
     $db = Database::instance();
-    $db->query("CREATE TABLE {search_records} (
+    $db->query(Database::CREATE, "CREATE TABLE {search_records} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  `dirty` boolean default 1,
@@ -45,6 +45,6 @@ class Search_Hook_SearchInstaller {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE {search_records}");
+    Database::instance()->query(Database::DROP, "DROP TABLE {search_records}");
   }
 }

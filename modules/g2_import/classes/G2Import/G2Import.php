@@ -169,7 +169,7 @@ class G2Import_G2Import {
 
       $ret = GalleryEmbed::init();
       if ($ret) {
-        Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
+        Log::instance()->add(Log::ERROR, "Gallery 2 call failed with: " . $ret->getAsText());
         return "broken";
       }
 
@@ -203,7 +203,7 @@ class G2Import_G2Import {
                 "useAuthToken" => false));
       }
     } catch (ErrorException $e) {
-      Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
       return "broken";
     }
 
@@ -632,7 +632,7 @@ class G2Import_G2Import {
     switch ($g2_type) {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
-        Log::add("alert", "$g2_path is an unsupported image type; using a placeholder gif");
+        Log::instance()->add(Log::ALERT, "$g2_path is an unsupported image type; using a placeholder gif");
         $messages[] = t("'%path' is an unsupported image type, using a placeholder",
                         array("path" => $g2_path));
         $g2_path = MODPATH . "g2_import/assets/broken-image.gif";
@@ -667,7 +667,7 @@ class G2Import_G2Import {
         $exception_info = (string) new G2Import_Exception(
             t("Corrupt image '%path'", array("path" => $g2_path)),
             $e, $messages);
-        Log::add("alert", "Corrupt image $g2_path\n" . $exception_info);
+        Log::instance()->add(Log::ALERT, "Corrupt image $g2_path\n" . $exception_info);
         $messages[] = $exception_info;
         $corrupt = 1;
         $item = null;
@@ -692,13 +692,13 @@ class G2Import_G2Import {
           $exception_info = (string) new G2Import_Exception(
               t("Corrupt movie '%path'", array("path" => $g2_path)),
               $e, $messages);
-          Log::add("alert", "Corrupt movie $g2_path\n" . $exception_info);
+          Log::instance()->add(Log::ALERT, "Corrupt movie $g2_path\n" . $exception_info);
           $messages[] = $exception_info;
           $corrupt = 1;
           $item = null;
         }
       } else {
-        Log::add("alert", "$g2_path is an unsupported movie type");
+        Log::instance()->add(Log::ALERT, "$g2_path is an unsupported movie type");
         $messages[] = t("'%path' is an unsupported movie type", array("path" => $g2_path));
         $corrupt = 1;
       }
@@ -1322,7 +1322,7 @@ class G2Import_G2Import {
 
   static function log($msg) {
     Message::warning($msg);
-    Log::add("alert", $msg);
+    Log::instance()->add(Log::ALERT, $msg);
   }
 
   static function g2_url($params) {
@@ -1361,7 +1361,7 @@ function g2() {
   $args = func_get_arg(0);
   $ret = is_array($args) ? array_shift($args) : $args;
   if ($ret) {
-    Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
+    Log::instance()->add(Log::ERROR, "Gallery 2 call failed with: " . $ret->getAsText());
     throw new Exception("@todo G2_FUNCTION_FAILED");
   }
   if (count($args) == 1) {

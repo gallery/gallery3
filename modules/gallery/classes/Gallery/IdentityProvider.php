@@ -106,7 +106,7 @@ class Gallery_IdentityProvider {
         try {
           Module::uninstall($new_provider);
         } catch (Exception $e2) {
-          Log::add("error", "Error uninstalling failed new provider\n" .
+          Log::instance()->add(Log::ERROR, "Error uninstalling failed new provider\n" .
                           $e2->getMessage() . "\n" . $e2->getTraceAsString());
         }
 
@@ -117,7 +117,7 @@ class Gallery_IdentityProvider {
           IdentityProvider::change_provider($current_provider);
           Module::activate($current_provider);
         } catch (Exception $e2) {
-          Log::add("error", "Error restoring original identity provider\n" .
+          Log::instance()->add(Log::ERROR, "Error restoring original identity provider\n" .
                           $e2->getMessage() . "\n" . $e2->getTraceAsString());
         }
 

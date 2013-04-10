@@ -36,7 +36,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
           Message::success(t("Your Akismet key has been saved."));
         }
 
-        Log::success("akismet", t("Akismet key changed to %new_key",
+        GalleryLog::success("akismet", t("Akismet key changed to %new_key",
                                   array("new_key" => $new_key)));
         Module::set_var("akismet", "api_key", $new_key);
         Akismet::check_config();

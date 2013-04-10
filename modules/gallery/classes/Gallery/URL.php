@@ -19,6 +19,13 @@
  */
 class Gallery_URL extends Kohana_URL {
   /**
+   * Returns a relative URI of the specified path
+   */
+  static function file($path) {
+    return URL::base(null, false) . $path;
+  }
+
+  /**
    * Just like URL::file() except that it returns an absolute URI
    */
   static function abs_file($path) {
