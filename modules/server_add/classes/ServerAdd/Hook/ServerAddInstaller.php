@@ -46,8 +46,8 @@ class ServerAdd_Hook_ServerAddInstaller {
     }
 
     if ($version == 2) {
-      $db->query("ALTER TABLE {server_add_files} ADD COLUMN `item_id` int(9)");
-      $db->query("ALTER TABLE {server_add_files} ADD COLUMN `parent_id` int(9)");
+      $db->query(Database::ALTER, "ALTER TABLE {server_add_files} ADD COLUMN `item_id` int(9)");
+      $db->query(Database::ALTER, "ALTER TABLE {server_add_files} ADD COLUMN `parent_id` int(9)");
       Module::set_version("server_add", $version = 3);
     }
 

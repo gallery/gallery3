@@ -42,7 +42,7 @@ class Tag_Hook_TagInstaller {
   static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
-      $db->query("ALTER TABLE {tags} MODIFY COLUMN `name` VARCHAR(128)");
+      $db->query(Database::ALTER, "ALTER TABLE {tags} MODIFY COLUMN `name` VARCHAR(128)");
       Module::set_version("tag", $version = 2);
     }
     if ($version == 2) {

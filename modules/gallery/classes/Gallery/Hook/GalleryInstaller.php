@@ -346,15 +346,15 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 4) {
       Cache::instance()->delete_all();
-      $db->query("ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
       Module::set_version("gallery", $version = 5);
     }
 
     if ($version == 5) {
       Cache::instance()->delete_all();
-      $db->query("ALTER TABLE {caches} DROP COLUMN `id`");
-      $db->query("ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
-      $db->query("ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} DROP COLUMN `id`");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
       Module::set_version("gallery", $version = 6);
     }
 
@@ -369,12 +369,12 @@ class Gallery_Hook_GalleryInstaller {
       foreach($groups as $group) {
         foreach($permissions as $permission) {
           // Update access intents
-          $db->query("ALTER TABLE {access_intents} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT NULL");
+          $db->query(Database::ALTER, "ALTER TABLE {access_intents} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT NULL");
           // Update access cache
           if ($permission->name === "view") {
-            $db->query("ALTER TABLE {items} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT FALSE");
+            $db->query(Database::ALTER, "ALTER TABLE {items} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT FALSE");
           } else {
-            $db->query("ALTER TABLE {access_caches} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) NOT NULL DEFAULT FALSE");
+            $db->query(Database::ALTER, "ALTER TABLE {access_caches} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) NOT NULL DEFAULT FALSE");
           }
         }
       }
@@ -382,13 +382,13 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 8) {
-      $db->query("ALTER TABLE {items} CHANGE COLUMN `left`  `left_ptr`  INT(9) NOT NULL;");
-      $db->query("ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE COLUMN `left`  `left_ptr`  INT(9) NOT NULL;");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
       Module::set_version("gallery", $version = 9);
     }
 
     if ($version == 9) {
-      $db->query("ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
 
       Module::set_version("gallery", $version = 10);
     }
@@ -400,8 +400,8 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 11) {
-      $db->query("ALTER TABLE {items} ADD COLUMN `relative_url_cache` varchar(255) DEFAULT NULL");
-      $db->query("ALTER TABLE {items} ADD COLUMN `slug` varchar(255) DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD COLUMN `relative_url_cache` varchar(255) DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD COLUMN `slug` varchar(255) DEFAULT NULL");
 
       // This is imperfect since some of the slugs may contain invalid characters, but it'll do
       // for now because we don't want a lengthy operation here.
@@ -571,7 +571,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 29) {
-      $db->query("ALTER TABLE {caches} ADD KEY (`key`);");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} ADD KEY (`key`);");
       Module::set_version("gallery", $version = 30);
     }
 
@@ -581,8 +581,8 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 31) {
-      $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
-      $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
+      $db->query(Database::ALTER, "ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {modules} ADD KEY (`weight`)");
       DB::update("modules")
         ->set("weight", DB::expr("`id`"))
         ->execute();
@@ -590,12 +590,12 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 32) {
-      $db->query("ALTER TABLE {items} ADD KEY (`left_ptr`)");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD KEY (`left_ptr`)");
       Module::set_version("gallery", $version = 33);
     }
 
     if ($version == 33) {
-      $db->query("ALTER TABLE {access_caches} ADD KEY (`item_id`)");
+      $db->query(Database::ALTER, "ALTER TABLE {access_caches} ADD KEY (`item_id`)");
       Module::set_version("gallery", $version = 34);
     }
 
@@ -648,22 +648,22 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 41) {
       $db->query("TRUNCATE TABLE {caches}");
-      $db->query("ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
+      $db->query(Database::ALTER, "ALTER TABLE {caches} DROP INDEX `key`, ADD UNIQUE `key` (`key`)");
       Module::set_version("gallery", $version = 42);
     }
 
     if ($version == 42) {
-      $db->query("ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE `description` `description` text DEFAULT NULL");
       Module::set_version("gallery", $version = 43);
     }
 
     if ($version == 43) {
-      $db->query("ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
+      $db->query(Database::ALTER, "ALTER TABLE {items} CHANGE `rand_key` `rand_key` DECIMAL(11, 10)");
       Module::set_version("gallery", $version = 44);
     }
 
     if ($version == 44) {
-      $db->query("ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
+      $db->query(Database::ALTER, "ALTER TABLE {messages} CHANGE `value` `value` text default NULL");
       Module::set_version("gallery", $version = 45);
     }
 
@@ -780,7 +780,7 @@ class Gallery_Hook_GalleryInstaller {
     }
 
     if ($version == 54) {
-      $db->query("ALTER TABLE {items} ADD KEY `relative_path_cache` (`relative_path_cache`)");
+      $db->query(Database::ALTER, "ALTER TABLE {items} ADD KEY `relative_path_cache` (`relative_path_cache`)");
       Module::set_version("gallery", $version = 55);
     }
 
