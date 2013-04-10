@@ -45,7 +45,7 @@ class Tag_Tag {
   /**
    * Return the N most popular tags.
    *
-   * @return ORM_Iterator of Model_Tag in descending tag count order
+   * @return Database_Result of Model_Tag in descending tag count order
    */
   static function popular_tags($count) {
     $count = max($count, 1);

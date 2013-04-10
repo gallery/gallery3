@@ -34,19 +34,3 @@ class ORM extends ORM_Core {
     return parent::save();
   }
 }
-
-/**
- * Slide this in here for convenience.  We won't ever be overloading ORM_Iterator without ORM.
- */
-class ORM_Iterator extends ORM_Iterator_Core {
-  /**
-   * Cache the result row
-   */
-  public function current() {
-    $row = parent::current();
-    if (is_object($row)) {
-      ModelCache::set($row);
-    }
-    return $row;
-  }
-}
