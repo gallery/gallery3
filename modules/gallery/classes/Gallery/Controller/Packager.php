@@ -40,7 +40,7 @@ class Gallery_Controller_Packager extends Controller {
   private function _reset() {
     // Drop all tables
     foreach (Database::instance()->list_tables() as $table) {
-      Database::instance()->query("DROP TABLE IF EXISTS {{$table}}");
+      Database::instance()->query(Database::DROP, "DROP TABLE IF EXISTS {{$table}}");
     }
 
     // Clean out data

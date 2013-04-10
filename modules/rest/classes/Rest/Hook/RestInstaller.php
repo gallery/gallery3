@@ -47,6 +47,6 @@ class Rest_Hook_RestInstaller {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {user_access_keys}");
+    Database::instance()->query(Database::DROP, "DROP TABLE IF EXISTS {user_access_keys}");
   }
 }

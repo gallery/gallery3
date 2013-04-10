@@ -121,6 +121,6 @@ class Comment_Hook_CommentInstaller {
              ->find_all() as $item) {
       Module::event("item_related_update", $item);
     }
-    $db->query("DROP TABLE IF EXISTS {comments};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {comments};");
   }
 }

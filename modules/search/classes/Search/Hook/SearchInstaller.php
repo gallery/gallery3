@@ -45,6 +45,6 @@ class Search_Hook_SearchInstaller {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE {search_records}");
+    Database::instance()->query(Database::DROP, "DROP TABLE {search_records}");
   }
 }

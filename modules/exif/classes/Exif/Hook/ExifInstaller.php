@@ -40,6 +40,6 @@ class Exif_Hook_ExifInstaller {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {exif_records};");
+    Database::instance()->query(Database::DROP, "DROP TABLE IF EXISTS {exif_records};");
   }
 }

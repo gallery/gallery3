@@ -64,9 +64,9 @@ class User_Hook_UserInstaller {
     }
 
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {users};");
-    $db->query("DROP TABLE IF EXISTS {groups};");
-    $db->query("DROP TABLE IF EXISTS {groups_users};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {users};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {groups};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {groups_users};");
   }
 
   static function initialize() {

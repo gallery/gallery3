@@ -52,7 +52,7 @@ class ServerAdd_Hook_ServerAddInstaller {
     }
 
     if ($version == 3) {
-      $db->query("DROP TABLE {server_add_files}");
+      $db->query(Database::DROP, "DROP TABLE {server_add_files}");
       $db->query(Database::CREATE, "CREATE TABLE {server_add_entries} (
                     `id` int(9) NOT NULL auto_increment,
                     `checked` boolean default 0,

@@ -53,7 +53,7 @@ class Tag_Hook_TagInstaller {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {tags};");
-    $db->query("DROP TABLE IF EXISTS {items_tags};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {tags};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {items_tags};");
   }
 }

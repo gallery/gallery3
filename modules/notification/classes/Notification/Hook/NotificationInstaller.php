@@ -48,7 +48,7 @@ class Notification_Hook_NotificationInstaller {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {subscriptions};");
-    $db->query("DROP TABLE IF EXISTS {pending_notifications};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {subscriptions};");
+    $db->query(Database::DROP, "DROP TABLE IF EXISTS {pending_notifications};");
   }
 }
