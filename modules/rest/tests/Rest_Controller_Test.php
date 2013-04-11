@@ -65,7 +65,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   public function get_test() {
     unset($_SERVER["HTTP_X_GALLERY_REQUEST_KEY"]);
 
-    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
     $_GET["key"] = "value";
 
     try {
@@ -79,7 +79,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_with_access_key_test() {
-    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
     $_GET["key"] = "value";
 
     $this->assert_array_equal_to_json(
@@ -91,7 +91,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function post_test() {
-    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_POST["key"] = "value";
 
     $this->assert_array_equal_to_json(
@@ -103,7 +103,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function put_test() {
-    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "put";
     $_POST["key"] = "value";
 
@@ -116,7 +116,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function delete_test() {
-    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "delete";
     $_POST["key"] = "value";
 
@@ -129,7 +129,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function bogus_method_test() {
-    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
     try {
       test::call_and_capture(array(new Controller_Rest(), "mock"));

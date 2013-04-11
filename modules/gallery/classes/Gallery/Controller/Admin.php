@@ -38,7 +38,7 @@ class Gallery_Controller_Admin extends Controller {
       return self::_prompt_for_reauth($controller_name, $args);
     }
 
-    if (Request::$current->method() == "POST") {
+    if (Request::$current->method() == HTTP_Request::POST) {
       Access::verify_csrf();
     }
   }
@@ -63,7 +63,7 @@ class Gallery_Controller_Admin extends Controller {
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {
-    if (Request::$current->method() == "GET") {
+    if (Request::$current->method() == HTTP_Request::GET) {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", URL::abs_current(true));
     }
