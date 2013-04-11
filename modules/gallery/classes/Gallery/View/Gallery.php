@@ -206,17 +206,17 @@ class Gallery_View_Gallery extends View {
         }
 
         if ($type == "css") {
-          $buf .= HTML::style("combined/css/$key", $this->css_attrs, null, true);
+          $buf .= HTML::style("combined/css/$key", $this->css_attrs, null, true) . "\n";
         } else {
-          $buf .= HTML::script("combined/javascript/$key", $this->script_attrs, null, true);
+          $buf .= HTML::script("combined/javascript/$key", $this->script_attrs, null, true) . "\n";
         }
       } else {
         // Don't combine - just return the CSS and JS links (with the key as a cache buster).
         foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
           if ($type == "css") {
-            $buf .= HTML::style("$path?m=$key", $this->css_attrs, null, false);
+            $buf .= HTML::style("$path?m=$key", $this->css_attrs, null, false) . "\n";
           } else {
-            $buf .= HTML::script("$path?m=$key", $this->script_attrs, null, false);
+            $buf .= HTML::script("$path?m=$key", $this->script_attrs, null, false) . "\n";
           }
         }
       }
