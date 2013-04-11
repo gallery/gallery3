@@ -210,7 +210,7 @@ class Gallery_ORM_MPTT extends ORM {
    * @param   integer  SQL offset
    * @param   array    additional where clauses
    * @param   array    order_by
-   * @return object ORM_Iterator
+   * @return object Database_Result
    */
   function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
     return ORM::factory($this->_model_name)
