@@ -24,4 +24,16 @@ class System_Helper_Test extends Gallery_Unit_Test_Case {
     unlink($filename);
     $this->assert_pattern($filename, "|/file.*\\.ext$|");
   }
+
+  public function remove_album_test() {
+    $dirname = (VARPATH . "albums/testdir");
+    mkdir($dirname, 0777, true);
+
+    $filename = tempnam($dirname, "file");
+    touch($filename);
+
+    System::unlink_dir($dirname);
+    $this->assert_boolean(!file_exists($filename), "File not deleted");
+    $this->assert_boolean(!file_exists($dirname), "Directory not deleted");
+  }
 }
