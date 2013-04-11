@@ -37,6 +37,6 @@ class Watermark_Hook_WatermarkInstaller {
 
   static function uninstall() {
     Database::instance()->query(Database::DROP, "DROP TABLE {watermarks}");
-    Dir::unlink(VARPATH . "modules/watermark");
+    System::unlink_dir(VARPATH . "modules/watermark");
   }
 }
