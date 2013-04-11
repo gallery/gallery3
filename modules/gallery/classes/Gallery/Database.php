@@ -42,10 +42,8 @@ abstract class Gallery_Database extends Kohana_Database {
    */
   public function add_table_prefixes($sql) {
     if (strpos($sql, "SHOW TABLES") === 0) {
-      /*
-       * Don't ignore "show tables", otherwise we could have a infinite
-       * @todo this may have to be changed if we support more than mysql
-       */
+      // Don't ignore "show tables", otherwise we could have a infinite loop
+      // @todo this may have to be changed if we support more than mysql
       return $sql;
     } else if (strpos($sql, "CREATE TABLE") === 0) {
       // Creating a new table; add it to the table cache.
