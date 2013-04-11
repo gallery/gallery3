@@ -67,7 +67,7 @@ class Gallery_Controller_Movies extends Controller_Items {
 
       GalleryLog::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
       Message::success(
-        t("Saved movie %movie_title", array("movie_title" => $movie->title)));
+        t("Saved movie %movie_title", array("movie_title" => HTML::purify($movie->title))));
 
       if ($form->from_id->value == $movie->id) {
         // Use the new URL; it might have changed.
