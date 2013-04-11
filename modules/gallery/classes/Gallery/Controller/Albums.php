@@ -19,16 +19,10 @@
  */
 class Gallery_Controller_Albums extends Controller_Items {
   public function action_index() {
-    $this->action_show(ORM::factory("Item", 1));
+    $this->show(ORM::factory("Item", 1));
   }
 
-  public function action_show($album) {
-    if (!is_object($album)) {
-      // show() must be public because we route to it in URL::parse_url(), so make
-      // sure that we're actually receiving an object
-      throw HTTP_Exception::factory(404);
-    }
-
+  public function show($album) {
     Access::required("view", $album);
 
     $page_size = Module::get_var("gallery", "page_size", 9);

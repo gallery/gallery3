@@ -18,13 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Movies extends Controller_Items {
-  public function action_show($movie) {
-    if (!is_object($movie)) {
-      // show() must be public because we route to it in URL::parse_url(), so make
-      // sure that we're actually receiving an object
-      throw HTTP_Exception::factory(404);
-    }
-
+  public function show($movie) {
     Access::required("view", $movie);
 
     $template = new View_Theme("required/page.html", "item", "movie");
