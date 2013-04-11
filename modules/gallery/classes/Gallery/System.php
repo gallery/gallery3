@@ -110,4 +110,25 @@ class Gallery_System {
       @unlink($filename);
     }
   }
+
+  /**
+   * Recursively delete a directory and all files/subdirectories in it.
+   */
+  static function unlink_dir($path) {
+    if (is_dir($path) && is_writable($path)) {
+      foreach (new DirectoryIterator($path) as $resource) {
+        if ($resource->isDot()) {
+          unset($resource);
+          continue;
+        } else if ($resource->isFile()) {
+          unlink($resource->getPathName());
+        } else if ($resource->isDir()) {
+          System::unlink_dir($resource->getRealPath());
+        }
+        unset($resource);
+      }
+      return @rmdir($path);
+    }
+    return false;
+  }
 }

@@ -736,10 +736,10 @@ class Gallery_Access {
         Remote::do_request(URL::abs_file("var/security_test/verify"), HTTP_Request::GET, $headers);
       $works = ($status == "HTTP/1.1 200 OK") && ($body == "success");
     } catch (Exception $e) {
-      @Dir::unlink(VARPATH . "security_test");
+      @System::unlink_dir(VARPATH . "security_test");
       throw $e;
     }
-    @Dir::unlink(VARPATH . "security_test");
+    @System::unlink_dir(VARPATH . "security_test");
 
     return $works;
   }

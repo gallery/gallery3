@@ -45,6 +45,6 @@ class G2Import_Hook_G2ImportInstaller {
   }
 
   static function uninstall() {
-    @Dir::unlink(VARPATH . "modules/g2_import");
+    @System::unlink_dir(VARPATH . "modules/g2_import");
   }
 }
