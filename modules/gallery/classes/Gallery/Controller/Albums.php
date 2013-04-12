@@ -18,11 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Albums extends Controller_Items {
-  public function action_index() {
-    $this->show(ORM::factory("Item", 1));
-  }
-
-  public function show($album) {
+  public function action_show() {
+    $album = $this->request->param("item");
+    if (!is_object($album)) {
+      // action_show() must be a public action because we route to it in the bootstrap,
+      // so make sure that we're actually receiving an object
+      throw HTTP_Exception::factory(404);
+    }
     Access::required("view", $album);
 
     $page_size = Module::get_var("gallery", "page_size", 9);
