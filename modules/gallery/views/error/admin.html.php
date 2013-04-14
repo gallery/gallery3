@@ -289,7 +289,7 @@
               <tr>
                 <td class="key">
                   <code>
-                    <?= $key?>
+                    <?= html::purify($key) ?>
                   </code>
                 </td>
                 <td class="value">
