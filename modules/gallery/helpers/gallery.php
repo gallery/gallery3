@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_Core {
-  const VERSION = "3.0.6";
-  const CODE_NAME = "Rive Gauche";
+  const VERSION = "3.0.7";
+  const CODE_NAME = "Rive Droite";
   const RELEASE_CHANNEL = "git";
   const RELEASE_BRANCH = "3.0.x";
 
