@@ -177,7 +177,6 @@ modules/gallery/views/error_admin.html.php                   284 DIRTY_ATTR $env
 modules/gallery/views/error_admin.html.php                   285 DIRTY_JS $env_id
 modules/gallery/views/error_admin.html.php                   285 DIRTY    $var
 modules/gallery/views/error_admin.html.php                   286 DIRTY_ATTR $env_id
-modules/gallery/views/error_admin.html.php                   292 DIRTY    $key
 modules/gallery/views/error_admin.html.php                   296 DIRTY    Kohana_Exception::safe_dump($value,$key)
 modules/gallery/views/form_uploadify.html.php                16  DIRTY_JS url::site("uploader/status/_S/_E")
 modules/gallery/views/form_uploadify.html.php                24  DIRTY_JS $flash_minimum_version
