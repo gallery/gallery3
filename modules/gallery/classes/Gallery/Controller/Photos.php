@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Photos extends Controller_Items {
-  public function action_show($photo) {
+  public function action_show() {
+    $photo = $this->request->param("item");
     if (!is_object($photo)) {
-      // show() must be public because we route to it in URL::parse_url(), so make
-      // sure that we're actually receiving an object
+      // action_show() must be a public action because we route to it in the bootstrap,
+      // so make sure that we're actually receiving an object
       throw HTTP_Exception::factory(404);
     }
-
     Access::required("view", $photo);
 
     $template = new View_Theme("required/page.html", "item", "photo");

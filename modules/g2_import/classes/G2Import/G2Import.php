@@ -49,7 +49,7 @@ class G2Import_G2Import {
   static function is_valid_embed_path($embed_path) {
     $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
     if (file_exists($mod_path)) {
-      Dir::unlink($mod_path);
+      System::unlink_dir($mod_path);
     }
     return G2Import::init_embed($embed_path);
   }
@@ -79,7 +79,7 @@ class G2Import_G2Import {
 
      $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
      if (!file_exists($mod_path) || !file_exists("$mod_path/embed.php")) {
-       @Dir::unlink($mod_path);
+       @System::unlink_dir($mod_path);
        mkdir($mod_path);
 
        $config_dir = dirname($embed_path);

@@ -106,9 +106,9 @@ class Gallery_Model_Item extends ORM_MPTT {
         throw new Exception(
           "@todo DELETING_TOO_MUCH ($delete_resize_path, $delete_thumb_path, $path)");
       }
-      @Dir::unlink($path);
-      @Dir::unlink($delete_resize_path);
-      @Dir::unlink($delete_thumb_path);
+      @System::unlink_dir($path);
+      @System::unlink_dir($delete_resize_path);
+      @System::unlink_dir($delete_thumb_path);
     } else {
       @unlink($path);
       @unlink($resize_path);

@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin extends Controller {
-  private $theme;
+  public function before() {
+    parent::before();
 
-  public function __construct($theme=null) {
     if (!Identity::active_user()->admin) {
       if (Identity::active_user()->guest) {
         Session::instance()->set("continue_url", URL::abs_current(true));
@@ -30,36 +30,17 @@ class Gallery_Controller_Admin extends Controller {
       }
     }
 
-    parent::__construct();
-  }
-
-  public function __call($controller_name, $args) {
     if (Request::$current->query("reauth_check")) {
       return self::_reauth_check();
     }
+
     if (Auth::must_reauth_for_admin_area()) {
       return self::_prompt_for_reauth($controller_name, $args);
     }
 
-    if (Request::$current->method() == "POST") {
+    if (Request::$current->method() == HTTP_Request::POST) {
       Access::verify_csrf();
     }
-
-    if ($controller_name == "index") {
-      $controller_name = "dashboard";
-    }
-    $controller_name = "Controller_Admin_{$controller_name}";
-    if ($args) {
-      $method = array_shift($args);
-    } else {
-      $method = "index";
-    }
-
-    if (!class_exists($controller_name) || !method_exists($controller_name, $method)) {
-      throw HTTP_Exception::factory(404);
-    }
-
-    call_user_func_array(array(new $controller_name, $method), $args);
   }
 
   private static function _reauth_check() {
@@ -82,7 +63,7 @@ class Gallery_Controller_Admin extends Controller {
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {
-    if (Request::$current->method() == "GET") {
+    if (Request::$current->method() == HTTP_Request::GET) {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", URL::abs_current(true));
     }

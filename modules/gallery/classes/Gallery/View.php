@@ -20,23 +20,12 @@
 class Gallery_View extends Kohana_View {
 
   /**
-   * Override Kohana_View::__construct so that we can set the csrf value into all views.
+   * Override Kohana_View::__construct to set the csrf value in all views.
    *
    * @see Kohana_View::__construct
    */
-  public function __construct($name = NULL, $data = NULL, $type = NULL) {
-    parent::__construct($name, $data, $type);
+  public function __construct($file=null, array $data=null) {
+    parent::__construct($file, $data);
     $this->set_global("csrf", Access::csrf_token());
-  }
-
-  /**
-   * Override View::render so that we trap errors stemming from bad PHP includes and show a
-   * visible stack trace to help developers.
-   *
-   * @see View::render
-   */
-  public function render($file=null) {
-    $this->_data = array_merge(View::$_global_data, $this->_data);
-    return parent::render($file);
   }
 }

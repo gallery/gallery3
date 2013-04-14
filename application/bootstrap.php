@@ -218,10 +218,14 @@ I18n::instance();
 // init.php file which can, among other things, load its own routes which can override those below.
 Module::load_modules();
 
-// Set our routes.  Since there are the only two controller directories we use (root and admin), we
-// can remove all other underscores.  In Route::matches(), this filter is called *after* ucwords, so
-// "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and
-// "file_proxy" maps to "Controller_FileProxy".
+/**
+ * Set our five routes.  This will match all valid Gallery URLs (including the empty root URL).
+ *
+ * Since there are the only two controller directories we use (root and admin), we can remove all
+ * other underscores.  In Route::matches(), filters are called *after* ucwords, so
+ * "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and "file_proxy" maps to
+ * "Controller_FileProxy".
+ */
 Route::set("admin_forms", "form/<type>/<directory>/<controller>",
            array("type" => "(edit|add)", "directory" => "admin"))
   ->filter(function($route, $params, $request) {
@@ -249,7 +253,7 @@ Route::set("admin", "<directory>(/<controller>(/<action>))",
       "action" => "index"
     ));
 
-Route::set("site", "(<controller>(/<action>))")
+Route::set("site", "<controller>(/<action>)")
   ->filter(function($route, $params, $request) {
       if (substr($params["controller"], 0, 6) == "Admin_") {
         // Admin controllers are not available, except via /admin
@@ -259,9 +263,27 @@ Route::set("site", "(<controller>(/<action>))")
       return $params;
     })
   ->defaults(array(
-      "controller" => "albums",
       "action" => "index"
     ));
+
+Route::set("item", "(<item_url>)",
+           array("item" => "[^A-Za-z0-9-_/]++")) // Ref: Model_Item::valid_slug, Route::REGEX_SEGMENT
+  ->filter(function($route, $params, $request) {
+      // Note: at this point, item_url has matched against the regex above, so it's XSS-free.
+      if (empty($params["item_url"])) {
+        $item = Item::root();
+      } else {
+        $item = Item::find_by_relative_url($params["item_url"]);
+        if (!$item->loaded()) {
+          // Nothing found - abort match.
+          return false;
+        }
+      }
+      $params["controller"] = ucfirst($item->type) . "s";
+      $params["action"] = "show";
+      $params["item"] = $item;
+      return $params;
+    });
 
 // Initialize our session support
 Session::instance();
