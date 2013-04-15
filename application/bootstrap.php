@@ -34,74 +34,65 @@ if (is_file(APPPATH . "classes/Kohana.php")) {
 // Kohana default bootstrap normally sets the default timezone and locale
 // here, but we take care of that in the gallery module.
 
-/**
- * Enable the Kohana auto-loader.
- *
- * @link http://kohanaframework.org/guide/using.autoloading
- * @link http://www.php.net/manual/function.spl-autoload-register
- */
+// Enable the Kohana auto-loader.
+//
+// @link http://kohanaframework.org/guide/using.autoloading
+// @link http://www.php.net/manual/function.spl-autoload-register
 spl_autoload_register(array("Kohana", "auto_load"));
 
-/**
- * Enable the Kohana auto-loader for unserialization.
- *
- * @link http://www.php.net/manual/function.spl-autoload-call
- * @link http://www.php.net/manual/var.configuration#unserialize-callback-func
- */
+
+// Enable the Kohana auto-loader for unserialization.
+//
+// @link http://www.php.net/manual/function.spl-autoload-call
+// @link http://www.php.net/manual/var.configuration#unserialize-callback-func
 ini_set("unserialize_callback_func", "spl_autoload_call");
 
 // -- Configuration and initialization -----------------------------------------
 
-/**
- * Set Kohana::$environment if a 'KOHANA_ENV' environment variable has been supplied.
- *
- * Note: If you supply an invalid environment name, a PHP warning will be thrown
- * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
- */
+// Set Kohana::$environment if a 'KOHANA_ENV' environment variable has been supplied.
+//
+// Note: If you supply an invalid environment name, a PHP warning will be thrown
+// saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
 if (isset($_SERVER["KOHANA_ENV"])) {
   Kohana::$environment = constant("Kohana::" . strtoupper($_SERVER["KOHANA_ENV"]));
 }
 
-/**
- * Initialize Kohana, setting the default options.
- *
- * The following options are available:
- *
- * - string   base_url    path, and optionally domain, of your application   NULL
- * - string   index_file  name of your index file, usually "index.php"       index.php
- * - string   charset     internal character set used for input and output   utf-8
- * - string   cache_dir   set the internal cache directory                   APPPATH/cache
- * - integer  cache_life  lifetime, in seconds, of items cached              60
- * - boolean  errors      enable or disable error handling                   TRUE
- * - boolean  profile     enable or disable internal profiling               TRUE
- * - boolean  caching     enable or disable internal caching                 FALSE
- * - boolean  expose      set the X-Powered-By header                        FALSE
- */
+// Initialize Kohana, setting the default options.
+//
+// The following options are available:
+//
+// - string   base_url    path, and optionally domain, of your application   NULL
+// - string   index_file  name of your index file, usually "index.php"       index.php
+// - string   charset     internal character set used for input and output   utf-8
+// - string   cache_dir   set the internal cache directory                   APPPATH/cache
+// - integer  cache_life  lifetime, in seconds, of items cached              60
+// - boolean  errors      enable or disable error handling                   TRUE
+// - boolean  profile     enable or disable internal profiling               TRUE
+// - boolean  caching     enable or disable internal caching                 FALSE
+// - boolean  expose      set the X-Powered-By header                        FALSE
 Kohana::init(
   array(
-    /**
-     * Base path of the web site. If this includes a domain, eg: localhost/kohana/
-     * then a full URL will be used, eg: http://localhost/kohana/.
-     *
-     * If you'd like to force a site protocol (e.g. https), include it in the base_url.
-     *
-     * Here we do our best to autodetect the base path to Gallery.  If your url is something like:
-     *   http://example.com/gallery3/index.php/album73/photo5.jpg?param=value
-     *
-     * We want the base_url to be:
-     *   /gallery3
-     *
-     * In the above example, $_SERVER["SCRIPT_NAME"] contains "/gallery3/index.php" so
-     * dirname($_SERVER["SCRIPT_NAME"]) is what we need.  Except some low end hosts (namely 1and1.com)
-     * break SCRIPT_NAME and it contains the extra path info, so in the above example it'd be:
-     *   /gallery3/index.php/album73/photo5.jpg
-     *
-     * So dirname doesn't work.  So we do a tricky workaround where we look up the SCRIPT_FILENAME (in
-     * this case it'd be "index.php" and we delete from that part onwards.  If you work at 1and1 and
-     * you're reading this, please fix this bug!
-     *
-     * Rawurlencode each of the elements to avoid breaking the page layout.
-     */
+    // Base path of the web site. If this includes a domain, eg: localhost/kohana/
+    // then a full URL will be used, eg: http://localhost/kohana/.
+    //
+    // If you'd like to force a site protocol (e.g. https), include it in the base_url.
+    //
+    // Here we do our best to autodetect the base path to Gallery.  If your url is something like:
+    //   http://example.com/gallery3/index.php/album73/photo5.jpg?param=value
+    //
+    // We want the base_url to be:
+    //   /gallery3
+    //
+    // In the above example, $_SERVER["SCRIPT_NAME"] contains "/gallery3/index.php" so
+    // dirname($_SERVER["SCRIPT_NAME"]) is what we need.  Except some low end hosts (namely 1and1.com)
+    // break SCRIPT_NAME and it contains the extra path info, so in the above example it'd be:
+    //   /gallery3/index.php/album73/photo5.jpg
+    //
+    // So dirname doesn't work.  So we do a tricky workaround where we look up the SCRIPT_FILENAME (in
+    // this case it'd be "index.php" and we delete from that part onwards.  If you work at 1and1 and
+    // you're reading this, please fix this bug!
+    //
+    // Rawurlencode each of the elements to avoid breaking the page layout.
     "base_url" => implode(
       "/", array_map(
         "rawurlencode", explode(
@@ -119,23 +110,18 @@ Kohana::init(
     "expose" => false
 ));
 
-/**
- * Attach the file write to logging. Multiple writers are supported.
- * The second parameter is the log threshold, which uses the standard
- * PHP constants (see http://php.net/manual/en/function.syslog.php).
- */
+// Attach the file write to logging. Multiple writers are supported.
+// The second parameter is the log threshold, which uses the standard
+// PHP constants (see http://php.net/manual/en/function.syslog.php).
+//
 Kohana::$log->attach(new Log_File(VARPATH . "logs"), LOG_NOTICE);
 
-/**
- * Attach a file reader to config. Multiple readers are supported.
- */
+// Attach a file reader to config. Multiple readers are supported.
 Kohana::$config->attach(new Config_File);
 
-/**
- * Enable some core modules that are needed for the bootstrap.  We'll load the complete set later.
- * Modules are referenced by a relative or absolute path.  Note that none of these modules
- * have init.php files, so nothing should interfere with XSS cleaning happening first.
- */
+// Enable some core modules that are needed for the bootstrap.  We'll load the complete set later.
+// Modules are referenced by a relative or absolute path.  Note that none of these modules
+// have init.php files, so nothing should interfere with XSS cleaning happening first.
 Kohana::modules(array(
   "purifier"    => MODPATH . "purifier",
   "gallery"     => MODPATH . "gallery",
@@ -144,14 +130,12 @@ Kohana::modules(array(
   "database"    => MODPATH . "database"
 ));
 
-/**
- * Protect against XSS.  This cleans $_GET, $_POST, and $_COOKIE and stores their raw values in
- * RAW::$_GET, RAW::$_POST, and RAW::$_COOKIE, respectively.  It also runs UTF8::clean() on
- * $_SERVER to remove control characters and convert to UTF8 if needed.
- *
- * This is run after Kohana's init (which calls Kohana::sanitize()).  For more details,
- * see Purifier::clean_input_array().
- */
+// Protect against XSS.  This cleans $_GET, $_POST, and $_COOKIE and stores their raw values in
+// RAW::$_GET, RAW::$_POST, and RAW::$_COOKIE, respectively.  It also runs UTF8::clean() on
+// $_SERVER to remove control characters and convert to UTF8 if needed.
+//
+// This is run after Kohana's init (which calls Kohana::sanitize()).  For more details,
+// see Purifier::clean_input_array().
 class RAW {
   public static $_GET;
   public static $_POST;
@@ -218,14 +202,12 @@ I18n::instance();
 // init.php file which can, among other things, load its own routes which can override those below.
 Module::load_modules();
 
-/**
- * Set our five routes.  This will match all valid Gallery URLs (including the empty root URL).
- *
- * Since there are the only two controller directories we use (root and admin), we can remove all
- * other underscores.  In Route::matches(), filters are called *after* ucwords, so
- * "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and "file_proxy" maps to
- * "Controller_FileProxy".
- */
+// Set our five routes.  This will match all valid Gallery URLs (including the empty root URL).
+//
+// Since there are the only two controller directories we use (root and admin), we can remove all
+// other underscores.  In Route::matches(), filters are called *after* ucwords, so
+// "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and "file_proxy" maps to
+// "Controller_FileProxy".
 Route::set("admin_forms", "form/<type>/<directory>/<controller>",
            array("type" => "(edit|add)", "directory" => "admin"))
   ->filter(function($route, $params, $request) {
