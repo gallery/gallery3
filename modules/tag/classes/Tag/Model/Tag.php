@@ -70,9 +70,9 @@ class Tag_Model_Tag extends ORM {
 
   /**
    * Overload ORM::save() to trigger an item_related_update event for all items that are related
-   * to this tag.
+   * to this tag and to combine duplicate tags.
    */
-  public function save() {
+  public function save(Validation $validation=null) {
     // Check to see if another tag exists with the same name
     $duplicate_tag = ORM::factory("Tag")
       ->where("name", "=", $this->name)
@@ -101,7 +101,7 @@ class Tag_Model_Tag extends ORM {
       $this->count = count($this->object_relations["items"]) + count($added) - count($removed);
     }
 
-    $result = parent::save();
+    parent::save($validation);
 
     if (!empty($changed)) {
       foreach (ORM::factory("Item")->where("id", "IN", $changed)->find_all() as $item) {
@@ -109,14 +109,14 @@ class Tag_Model_Tag extends ORM {
       }
     }
 
-    return $result;
+    return $this;
   }
 
   /**
    * Overload ORM::delete() to trigger an item_related_update event for all items that are
    * related to this tag, and delete all items_tags relationships.
    */
-  public function delete($ignored_id=null) {
+  public function delete() {
     $related_item_ids = array();
     foreach (DB::select("item_id")
              ->from("items_tags")

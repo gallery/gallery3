@@ -25,7 +25,7 @@ class Gallery_Controller_L10nClient extends Controller {
     }
 
     $locale = I18n::instance()->locale();
-    $key = Request::$current->post("l10n-message-key");
+    $key = Request::current()->post("l10n-message-key");
 
     $root_message = ORM::factory("IncomingTranslation")
       ->where("key", "=", $key)
@@ -42,7 +42,7 @@ class Gallery_Controller_L10nClient extends Controller {
       $plural_forms = L10nClient::plural_forms($locale);
       $translation = array();
       foreach($plural_forms as $plural_form) {
-        $value = Request::$current->post("l10n-edit-plural-translation-$plural_form");
+        $value = Request::current()->post("l10n-edit-plural-translation-$plural_form");
         if (null === $value || !is_string($value)) {
           throw new Exception("@todo bad request data");
         }
@@ -50,7 +50,7 @@ class Gallery_Controller_L10nClient extends Controller {
         $is_empty = $is_empty && empty($value);
       }
     } else {
-      $translation = Request::$current->post("l10n-edit-translation");
+      $translation = Request::current()->post("l10n-edit-translation");
       $is_empty = empty($translation);
       if (null === $translation || !is_string($translation)) {
         throw new Exception("@todo bad request data");
@@ -120,7 +120,7 @@ class Gallery_Controller_L10nClient extends Controller {
   }
 
   public static function l10n_form() {
-    if (Request::$current->query("show_all_l10n_messages")) {
+    if (Request::current()->query("show_all_l10n_messages")) {
       $calls = array();
       foreach (DB::select("key", "message")
                ->from("incoming_translations")

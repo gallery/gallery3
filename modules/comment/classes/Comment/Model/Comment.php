@@ -73,52 +73,67 @@ class Comment_Model_Comment extends ORM {
   }
 
   /**
+   * Handle any business logic necessary to save (i.e. create or update) a comment.
    * @see ORM::save()
    */
-  public function save() {
+  public function save(Validation $validation=null) {
     $this->updated = time();
-    if (!$this->loaded()) {
-      // New comment
-      $this->created = $this->updated;
-      if (empty($this->state)) {
-        $this->state = "published";
-      }
+    $original_state = Arr::get($this->original_values(), "state");
 
-      // These values are useful for spam fighting, so save them with the comment.  It's painful to
-      // check each one to see if it already exists before setting it, so just use server_name
-      // as a semaphore for now (we use that in G2Import.php)
-      if (empty($this->server_name)) {
-        $this->server_http_accept = substr($_SERVER["HTTP_ACCEPT"], 0, 128);
-        $this->server_http_accept_charset = substr($_SERVER["HTTP_ACCEPT_CHARSET"], 0, 64);
-        $this->server_http_accept_encoding = substr($_SERVER["HTTP_ACCEPT_ENCODING"], 0, 64);
-        $this->server_http_accept_language = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 64);
-        $this->server_http_connection = substr($_SERVER["HTTP_CONNECTION"], 0, 64);
-        $this->server_http_referer = substr($_SERVER["HTTP_REFERER"], 0, 255);
-        $this->server_http_user_agent = substr($_SERVER["HTTP_USER_AGENT"], 0, 128);
-        $this->server_name = substr((isset($_SERVER["SERVER_NAME"]) ?
-          $_SERVER["SERVER_NAME"] : $_SERVER["HTTP_HOST"]), 0, 64);
-        $this->server_query_string = substr($_SERVER["QUERY_STRING"], 0, 64);
-        $this->server_remote_addr = substr($_SERVER["REMOTE_ADDR"], 0, 40);
-        $this->server_remote_host = substr($_SERVER["REMOTE_HOST"], 0, 255);
-        $this->server_remote_port = substr($_SERVER["REMOTE_PORT"], 0, 16);
-      }
-
-      $visible_change = $this->state == "published";
-      parent::save();
-      Module::event("comment_created", $this);
-    } else {
-      // Updated comment
-      $original = ORM::factory("Comment", $this->id);
-      $visible_change = $original->state == "published" || $this->state == "published";
-      parent::save();
-      Module::event("comment_updated", $original, $this);
-    }
+    parent::save($validation);
 
     // We only notify on the related items if we're making a visible change.
-    if ($visible_change) {
+    if (($this->state == "published") || ($original_state == "published")) {
       $item = $this->item();
       Module::event("item_related_update", $item);
     }
+
+    return $this;
+  }
+
+  /**
+   * Handle any business logic necessary to create a comment.
+   * @see ORM::save()
+   */
+  public function create(Validation $validation=null) {
+    $this->created = $this->updated;
+    if (empty($this->state)) {
+      $this->state = "published";
+    }
+
+    // These values are useful for spam fighting, so save them with the comment.  It's painful to
+    // check each one to see if it already exists before setting it, so just use server_name
+    // as a semaphore for now (we use that in G2Import.php)
+    if (empty($this->server_name)) {
+      $this->server_http_accept = substr($_SERVER["HTTP_ACCEPT"], 0, 128);
+      $this->server_http_accept_charset = substr($_SERVER["HTTP_ACCEPT_CHARSET"], 0, 64);
+      $this->server_http_accept_encoding = substr($_SERVER["HTTP_ACCEPT_ENCODING"], 0, 64);
+      $this->server_http_accept_language = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 64);
+      $this->server_http_connection = substr($_SERVER["HTTP_CONNECTION"], 0, 64);
+      $this->server_http_referer = substr($_SERVER["HTTP_REFERER"], 0, 255);
+      $this->server_http_user_agent = substr($_SERVER["HTTP_USER_AGENT"], 0, 128);
+      $this->server_name = substr((isset($_SERVER["SERVER_NAME"]) ?
+        $_SERVER["SERVER_NAME"] : $_SERVER["HTTP_HOST"]), 0, 64);
+      $this->server_query_string = substr($_SERVER["QUERY_STRING"], 0, 64);
+      $this->server_remote_addr = substr($_SERVER["REMOTE_ADDR"], 0, 40);
+      $this->server_remote_host = substr($_SERVER["REMOTE_HOST"], 0, 255);
+      $this->server_remote_port = substr($_SERVER["REMOTE_PORT"], 0, 16);
+    }
+
+    parent::create($validation);
+    Module::event("comment_created", $this);
+
+    return $this;
+  }
+
+  /**
+   * Handle any business logic necessary to update a comment.
+   * @see ORM::save()
+   */
+  public function update(Validation $validation=null) {
+    $original = ORM::factory("Comment", $this->id);
+    parent::update($validation);
+    Module::event("comment_updated", $original, $this);
 
     return $this;
   }

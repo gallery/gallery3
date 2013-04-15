@@ -91,7 +91,7 @@ class Gallery_ORM_MPTT extends ORM {
   /**
    * Overload ORM::delete to delete all of this node's children.
    */
-  public function delete($ignored_id=null) {
+  public function delete() {
     if (!$this->_loaded) {
       throw new Kohana_Exception("Cannot delete :model model because it is not loaded.",
                                  array(':model' => $this->_object_name));

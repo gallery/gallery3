@@ -52,8 +52,8 @@ class Purifier {
    *   Purifier::add_config_group("my_config", $my_settings);
    *   $my_get  = Purifier::clean_html(RAW::$_GET,  "my_config");
    *   $my_post = Purifier::clean_html(RAW::$_POST, "my_config");
-   *   Request::$current->query($my_get);
-   *   Request::$current->post($my_post);
+   *   Request::current()->query($my_get);
+   *   Request::current()->post($my_post);
    *
    * @param   string $config_group  config group name
    * @param   array  $settings      config group HTMLPurifier settings

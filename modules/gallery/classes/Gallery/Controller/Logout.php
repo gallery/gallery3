@@ -21,7 +21,7 @@ class Gallery_Controller_Logout extends Controller {
   public function action_index() {
     Access::verify_csrf();
     Auth::logout();
-    if ($continue_url = Request::$current->query("continue_url")) {
+    if ($continue_url = Request::current()->query("continue_url")) {
       HTTP::redirect($continue_url);
     }
     HTTP::redirect(Item::root()->abs_url());

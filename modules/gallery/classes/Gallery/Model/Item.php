@@ -19,7 +19,6 @@
  */
 class Gallery_Model_Item extends ORM_MPTT {
   protected $children = "items";
-  protected $sorting = array();
   public $data_file = null;
   private $data_file_error = null;
 
@@ -71,7 +70,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     return $this->type == 'movie';
   }
 
-  public function delete($ignored_id=null) {
+  public function delete() {
     if (!$this->loaded()) {
       // Concurrent deletes may result in this item already being gone.  Ignore it.
       return;
