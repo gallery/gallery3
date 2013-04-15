@@ -33,14 +33,11 @@ class Gallery_Theme {
    * active for any given request.
    */
   static function load_themes() {
-    // We haven't executed the request yet, so we use $initial instead of $current.
-    $path = Request::$initial->uri();
-    $override = Request::$initial->query("theme");
+    $override = Request::$current->query("theme");
+    self::$is_admin = Request::$current->param("is_admin", false);
+    self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
     $modules = Kohana::modules();
-
-    self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
-    self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
     // If the site theme doesn't exist, fall back to wind.
     if (!file_exists(THEMEPATH . self::$site_theme_name . "/theme.info")) {
