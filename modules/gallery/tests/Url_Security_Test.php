@@ -37,7 +37,7 @@ class Url_Security_Test extends Gallery_Unit_Test_Case {
     Route::$current_uri = "foo/<xss>/bar";
     Route::$complete_uri = "foo/<xss>/bar?foo=bar";
     $_GET = array("foo" => "bar");
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", URL::merge(array()));
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", URL::merge(array("a" => "b")));
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", URL::query(array()));
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", URL::query(array("a" => "b")));
   }
 }

@@ -43,9 +43,9 @@ class Tag_Controller_Tag extends Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      HTTP::redirect(URL::merge(array("page" => 1)));
+      HTTP::redirect(URL::query(array("page" => 1)));
     } else if ($page > $max_pages) {
-      HTTP::redirect(URL::merge(array("page" => $max_pages)));
+      HTTP::redirect(URL::query(array("page" => $max_pages)));
     }
 
     $root = Item::root();

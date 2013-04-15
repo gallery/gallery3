@@ -48,10 +48,10 @@ class Gallery_URL extends Kohana_URL {
   }
 
   /**
-   * Just like URL::merge except that it escapes any XSS in the path.
+   * Just like URL::query except that it escapes any XSS in the path.
    */
-  static function merge(array $arguments) {
-    return htmlspecialchars(parent::merge($arguments));
+  static function query(array $params=null, $use_get=true) {
+    return htmlspecialchars(parent::query($params, $use_get));
   }
 
   /**
