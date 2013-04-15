@@ -154,12 +154,10 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
     $cache->tags = $tags;
     $cache->expiration = $lifetime;
     $cache->cache = $data;
-    if ($cache->loaded()) {
-      return (bool) $cache->update();
-    } else {
+    if (!$cache->loaded()) {
       $cache->key = $id;
-      return (bool) $cache->save();
     }
+    return (bool) $cache->save();
   }
 
   /**
