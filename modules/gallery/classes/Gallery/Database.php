@@ -64,8 +64,10 @@ abstract class Gallery_Database extends Kohana_Database {
       // This should only run once on the first query
       $this->_prefixed_table_names = array();
       $prefix_len = strlen($this->table_prefix());
+      // $name is the already-prefixed name; $this->_identifier is ` for MySQL.
       foreach($this->list_tables() as $name) {
-        $this->_prefixed_table_names["{" . substr($name, $prefix_len) . "}"] = $name;
+        $this->_prefixed_table_names["{" . substr($name, $prefix_len) . "}"] =
+          $this->_identifier . $name . $this->_identifier;
       }
     }
 
