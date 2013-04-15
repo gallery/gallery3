@@ -93,10 +93,12 @@ class Comment_Model_Comment extends ORM {
 
   /**
    * Handle any business logic necessary to create a comment.
-   * @see ORM::save()
+   * @see ORM::create()
    */
   public function create(Validation $validation=null) {
     $this->created = $this->updated;
+    Module::event("comment_before_create", $this);
+
     if (empty($this->state)) {
       $this->state = "published";
     }
@@ -128,9 +130,10 @@ class Comment_Model_Comment extends ORM {
 
   /**
    * Handle any business logic necessary to update a comment.
-   * @see ORM::save()
+   * @see ORM::update()
    */
   public function update(Validation $validation=null) {
+    Module::event("comment_before_update", $this);
     $original = ORM::factory("Comment", $this->id);
     parent::update($validation);
     Module::event("comment_updated", $original, $this);
