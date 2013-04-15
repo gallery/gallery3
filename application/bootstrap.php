@@ -40,7 +40,6 @@ if (is_file(APPPATH . "classes/Kohana.php")) {
 // @link http://www.php.net/manual/function.spl-autoload-register
 spl_autoload_register(array("Kohana", "auto_load"));
 
-
 // Enable the Kohana auto-loader for unserialization.
 //
 // @link http://www.php.net/manual/function.spl-autoload-call
@@ -130,6 +129,15 @@ Kohana::modules(array(
   "database"    => MODPATH . "database"
 ));
 
+// Set the default driver for caching.  Gallery_Cache_Database is the implementation
+// that we provide.
+Cache::$default = "database";
+
+// Initialize I18n support.  We have to do this after we add the gallery module to the module list
+// because we want the gallery I18n, not the Kohana one.
+I18n::lang("en-us");
+I18n::instance();
+
 // Protect against XSS.  This cleans $_GET, $_POST, and $_COOKIE and stores their raw values in
 // RAW::$_GET, RAW::$_POST, and RAW::$_COOKIE, respectively.  It also runs UTF8::clean() on
 // $_SERVER to remove control characters and convert to UTF8 if needed.
@@ -178,10 +186,6 @@ isset($_GET["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_GET["user_agent"];
 Upload::$remove_spaces = false;
 Upload::$default_directory = VARPATH . "uploads";
 
-// Set the default driver for caching.  Gallery_Cache_Database is the implementation
-// that we provide.
-Cache::$default = "database";
-
 // Setup our cookie configuration.
 // An empty $domain should restrict cookie access to the current domain (and, for some browsers,
 // its subdomains).  Change this only if you want to keep the same cookie across multiple domains.
@@ -193,10 +197,6 @@ Cookie::$secure = !empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on");
 // @todo: should this be something different for each system?  Perhaps something tied
 // to the domain?
 Cookie::$salt = "g3";
-
-// Initialize I18n support
-I18n::lang("en-us");
-I18n::instance();
 
 // Enable the complete set of all active modules.  This will trigger each module to load its own
 // init.php file which can, among other things, load its own routes which can override those below.
