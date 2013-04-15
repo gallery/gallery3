@@ -33,14 +33,14 @@ class Gallery_Model_Task extends ORM {
     $this->context = serialize($context);
   }
 
-  public function save() {
+  public function save(Validation $validation=null) {
     if (!empty($this->changed)) {
       $this->updated = time();
     }
-    return parent::save();
+    return parent::save($validation);
   }
 
-  public function delete($ignored_id=null) {
+  public function delete() {
     Cache::instance()->delete($this->_cache_key());
     return parent::delete();
   }

@@ -24,13 +24,13 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
   /**
    * @see ORM::delete()
    */
-  public function delete($id=null) {
+  public function delete() {
     $old = clone $this;
     Module::event("group_before_delete", $this);
-    parent::delete($id);
+    parent::delete();
 
     DB::delete("groups_users")
-      ->where("group_id", "=", empty($id) ? $old->id : $id)
+      ->where("group_id", "=", $old->id)
       ->execute();
 
     Module::event("group_deleted", $old);

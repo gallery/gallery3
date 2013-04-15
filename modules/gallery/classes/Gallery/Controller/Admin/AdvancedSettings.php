@@ -46,7 +46,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
     Access::verify_csrf();
 
     if (Module::is_installed($module_name)) {
-      Module::set_var($module_name, $var_name, Request::$current->post("value"));
+      Module::set_var($module_name, $var_name, Request::current()->post("value"));
       Message::success(
         t("Saved value for %var (%module_name)",
           array("var" => $var_name, "module_name" => $module_name)));

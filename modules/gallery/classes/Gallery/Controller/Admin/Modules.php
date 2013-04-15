@@ -41,7 +41,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
         continue;
       }
 
-      if ($desired = Request::$current->post($module_name) == 1) {
+      if ($desired = Request::current()->post($module_name) == 1) {
         $desired_list[] = $module_name;
       }
       if ($info->active && !$desired && Module::is_active($module_name)) {
@@ -83,7 +83,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
       }
 
       try {
-        $desired = Request::$current->post($module_name) == 1;
+        $desired = Request::current()->post($module_name) == 1;
         if ($info->active && !$desired && Module::is_active($module_name)) {
           Module::deactivate($module_name);
           $changes->deactivate[] = $module_name;

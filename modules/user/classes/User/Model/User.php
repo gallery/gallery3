@@ -39,13 +39,13 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   /**
    * @see ORM::delete()
    */
-  public function delete($id=null) {
+  public function delete() {
     $old = clone $this;
     Module::event("user_before_delete", $this);
-    parent::delete($id);
+    parent::delete();
 
     DB::delete("groups_users")
-      ->where("user_id", "=", empty($id) ? $old->id : $id)
+      ->where("user_id", "=", $old->id)
       ->execute();
 
     Module::event("user_deleted", $old);

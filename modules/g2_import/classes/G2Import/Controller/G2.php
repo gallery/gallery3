@@ -30,9 +30,9 @@ class G2Import_Controller_G2 extends Controller {
    *   /g2/map?g2_view=core.ShowItem&g2_itemId=1931
    */
   public function action_map() {
-    $path = Request::$current->query("path");
-    $id = Request::$current->query("g2_itemId");
-    $view = Request::$current->query("g2_view");
+    $path = Request::current()->query("path");
+    $id = Request::current()->query("g2_itemId");
+    $view = Request::current()->query("g2_view");
 
     // Tags did not have mappings created, so we need to catch them first. However, if a g2_itemId was
     // passed, we'll want to show lookup the mapping anyway
@@ -41,7 +41,7 @@ class G2Import_Controller_G2 extends Controller {
         $tag_name = substr($path, 4);
       }
       if ($view == "tags.VirtualAlbum") {
-        $tag_name = Request::$current->query("g2_tagName");
+        $tag_name = Request::current()->query("g2_tagName");
       }
 
       if (!$id) {

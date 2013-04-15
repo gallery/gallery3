@@ -42,7 +42,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
   }
 
   public function action_queue($state) {
-    $page = max(Request::$current->query("page"), 1);
+    $page = max(Request::current()->query("page"), 1);
 
     $view = new View_Gallery("admin/manage_comments_queue.html");
     $view->counts = $this->_counts();
