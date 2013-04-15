@@ -33,8 +33,8 @@ class Gallery_Theme {
    * active for any given request.
    */
   static function load_themes() {
-    $override = Request::$current->query("theme");
-    self::$is_admin = Request::$current->param("is_admin", false);
+    $override = Request::current()->query("theme");
+    self::$is_admin = Request::current()->param("is_admin", false);
     self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
     $modules = Kohana::modules();

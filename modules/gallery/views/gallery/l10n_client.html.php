@@ -7,7 +7,7 @@
          href="<?= HTML::clean_attribute(URL::site("l10n_client/toggle_l10n_mode?csrf=".Access::csrf_token())) ?>">X</a>
     </span>
     <div class="label strings"><h2><?= t("Page text") ?>
-    <? if (!Request::$current->query('show_all_l10n_messages')): ?>
+    <? if (!Request::current()->query('show_all_l10n_messages')): ?>
       <a style="background-color:#fff" href="<?= URL::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show all)") ?></a>
     <? endif; ?>
     </h2></div>

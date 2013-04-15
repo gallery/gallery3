@@ -145,8 +145,8 @@ class Gallery_Item {
    * @return string form
    */
   static function get_delete_form($item) {
-    $page_type = Request::$current->query("page_type");
-    $from_id = Request::$current->query("from_id");
+    $page_type = Request::current()->query("page_type");
+    $from_id = Request::current()->query("from_id");
     $form = new Forge(
       "quick/delete/$item->id?page_type=$page_type&from_id=$from_id", "",
       "post", array("id" => "g-confirm-delete"));

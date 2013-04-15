@@ -39,7 +39,7 @@ class Organize_Controller_Organize extends Controller {
   }
 
   public function action_tree($selected_album_id) {
-    $root = ORM::factory("Item", Arr::get(Request::$current->post(), "root_id", 1));
+    $root = ORM::factory("Item", Arr::get(Request::current()->post(), "root_id", 1));
     $selected_album = ORM::factory("Item", $selected_album_id);
     Access::required("view", $root);
     Access::required("view", $selected_album);
@@ -75,10 +75,10 @@ class Organize_Controller_Organize extends Controller {
   public function action_reparent() {
     Access::verify_csrf();
 
-    $new_parent = ORM::factory("Item", Request::$current->post("target_id"));
+    $new_parent = ORM::factory("Item", Request::current()->post("target_id"));
     Access::required("edit", $new_parent);
 
-    foreach (explode(",", Request::$current->post("source_ids")) as $source_id) {
+    foreach (explode(",", Request::current()->post("source_ids")) as $source_id) {
       $source = ORM::factory("Item", $source_id);
       if (!$source->loaded()) {
         continue;
@@ -104,7 +104,7 @@ class Organize_Controller_Organize extends Controller {
     Access::required("edit", $album);
 
     foreach (array("sort_column", "sort_order") as $key) {
-      if ($val = Request::$current->post($key)) {
+      if ($val = Request::current()->post($key)) {
         $album->$key = $val;
       }
     }
@@ -116,7 +116,7 @@ class Organize_Controller_Organize extends Controller {
   public function action_rearrange() {
     Access::verify_csrf();
 
-    $target = ORM::factory("Item", Request::$current->post("target_id"));
+    $target = ORM::factory("Item", Request::current()->post("target_id"));
     if (!$target->loaded()) {
       JSON::reply(null);
       return;
@@ -134,9 +134,9 @@ class Organize_Controller_Organize extends Controller {
       $album->save();
     }
 
-    $source_ids = explode(",", Request::$current->post("source_ids"));
+    $source_ids = explode(",", Request::current()->post("source_ids"));
     $base_weight = $target->weight;
-    if (Request::$current->post("relative") == "after") {
+    if (Request::current()->post("relative") == "after") {
       $base_weight++;
     }
 
@@ -163,7 +163,7 @@ class Organize_Controller_Organize extends Controller {
   public function action_delete() {
     Access::verify_csrf();
 
-    foreach (explode(",", Request::$current->post("item_ids")) as $item_id) {
+    foreach (explode(",", Request::current()->post("item_ids")) as $item_id) {
       $item = ORM::factory("Item", $item_id);
       if (Access::can("edit", $item)) {
         $item->delete();
@@ -176,13 +176,13 @@ class Organize_Controller_Organize extends Controller {
   public function action_tag() {
     Access::verify_csrf();
 
-    foreach (explode(",", Request::$current->post("item_ids")) as $item_id) {
+    foreach (explode(",", Request::current()->post("item_ids")) as $item_id) {
       $item = ORM::factory("Item", $item_id);
       if (Access::can("edit", $item)) {
         // Assuming the user can view/edit the current item, loop
         // through each tag that was submitted and apply it to
         // the current item.
-        foreach (explode(",", Request::$current->post("tag_names")) as $tag_name) {
+        foreach (explode(",", Request::current()->post("tag_names")) as $tag_name) {
           $tag_name = trim($tag_name);
           if ($tag_name) {
             Tag::add($item, $tag_name);

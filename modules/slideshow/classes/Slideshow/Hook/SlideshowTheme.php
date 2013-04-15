@@ -19,7 +19,7 @@
  */
 class Slideshow_Hook_SlideshowTheme {
   static function page_bottom($theme) {
-    $proto = Request::$current->protocol();
+    $proto = Request::current()->protocol();
     return "<script src=\"$proto://e.cooliris.com/slideshow/v/37732/go.js\" " .
       "type=\"text/javascript\"></script>";
   }

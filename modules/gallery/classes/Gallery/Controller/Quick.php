@@ -43,7 +43,7 @@ class Gallery_Controller_Quick extends Controller {
       $item->save();
     }
 
-    if (Request::$current->query("page_type") == "collection") {
+    if (Request::current()->query("page_type") == "collection") {
       JSON::reply(
         array("src" => $item->thumb_url(),
               "width" => $item->thumb_width,
@@ -108,8 +108,8 @@ class Gallery_Controller_Quick extends Controller {
     }
     Message::success($msg);
 
-    $from_id = Request::$current->query("from_id");
-    if (Request::$current->query("page_type") == "collection" &&
+    $from_id = Request::current()->query("from_id");
+    if (Request::current()->query("page_type") == "collection" &&
         $from_id != $id /* deleted the item we were viewing */) {
       JSON::reply(array("result" => "success", "reload" => 1));
     } else {
@@ -137,7 +137,7 @@ class Gallery_Controller_Quick extends Controller {
     }
 
     // Pass on the source item where this form was generated, so we have an idea where to return to.
-    $form->hidden("from_id")->value((int) Request::$current->query("from_id"));
+    $form->hidden("from_id")->value((int) Request::current()->query("from_id"));
 
     print $form;
   }
