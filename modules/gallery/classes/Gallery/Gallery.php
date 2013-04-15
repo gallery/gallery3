@@ -27,27 +27,21 @@ class Gallery_Gallery {
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
    * down for maintenance" page.
    */
-  static function maintenance_mode() {
+  static function maintenance_mode($allowed) {
     if (Module::get_var("gallery", "maintenance_mode", 0) &&
-        !Identity::active_user()->admin) {
-      try {
-        $class = new ReflectionClass('Controller_'.ucfirst(Route::$controller));
-        $allowed = $class->getConstant("ALLOW_MAINTENANCE_MODE") === true;
-      } catch (ReflectionClass $e) {
-        $allowed = false;
-      }
-      if (!$allowed) {
-        if (Route::$controller == "admin") {
-          // At this point we're in the admin theme and it doesn't have a themed login page, so
-          // we can't just swap in the login controller and have it work.  So redirect back to the
-          // root item where we'll run this code again with the site theme.
-          HTTP::redirect(Item::root()->abs_url());
-        } else {
-          Session::instance()->set("continue_url", URL::abs_site("admin/maintenance"));
-          Route::$controller = "login";
-          Route::$controller_path = MODPATH . "gallery/controllers/login.php";
-          Route::$method = "html";
-        }
+        !Identity::active_user()->admin &&
+        !$allowed) {
+      if (Theme::$is_admin) {
+        // At this point we're in the admin theme and it doesn't have a themed login page, so
+        // we can't just swap in the login controller and have it work.  So redirect back to the
+        // root item where we'll run this code again with the site theme.
+        HTTP::redirect(Item::root()->abs_url());
+      } else {
+        //@todo: for K3, fix this with something like Request::factory("login/html")->execute();
+        Session::instance()->set("continue_url", URL::abs_site("admin/maintenance"));
+        Route::$controller = "login";
+        Route::$controller_path = MODPATH . "gallery/controllers/login.php";
+        Route::$method = "html";
       }
     }
   }
@@ -56,28 +50,22 @@ class Gallery_Gallery {
    * If the gallery is only available to registered users and the user is not logged in, present
    * the login page.
    */
-  static function private_gallery() {
+  static function private_gallery($allowed) {
     if (Identity::active_user()->guest &&
         !Access::user_can(Identity::guest(), "view", Item::root()) &&
-        php_sapi_name() != "cli") {
-      try {
-        $class = new ReflectionClass('Controller_'.ucfirst(Route::$controller));
-        $allowed = $class->getConstant("ALLOW_PRIVATE_GALLERY") === true;
-      } catch (ReflectionClass $e) {
-        $allowed = false;
-      }
-      if (!$allowed) {
-        if (Route::$controller == "admin") {
-          // At this point we're in the admin theme and it doesn't have a themed login page, so
-          // we can't just swap in the login controller and have it work.  So redirect back to the
-          // root item where we'll run this code again with the site theme.
-          HTTP::redirect(Item::root()->abs_url());
-        } else {
-          Session::instance()->set("continue_url", URL::abs_current());
-          Route::$controller = "login";
-          Route::$controller_path = MODPATH . "gallery/controllers/login.php";
-          Route::$method = "html";
-        }
+        (php_sapi_name() != "cli") &&
+        !allowed) {
+      if (Theme::$is_admin) {
+        // At this point we're in the admin theme and it doesn't have a themed login page, so
+        // we can't just swap in the login controller and have it work.  So redirect back to the
+        // root item where we'll run this code again with the site theme.
+        HTTP::redirect(Item::root()->abs_url());
+      } else {
+        //@todo: for K3, fix this with something like Request::factory("login/html")->execute();
+        Session::instance()->set("continue_url", URL::abs_current());
+        Route::$controller = "login";
+        Route::$controller_path = MODPATH . "gallery/controllers/login.php";
+        Route::$method = "html";
       }
     }
   }

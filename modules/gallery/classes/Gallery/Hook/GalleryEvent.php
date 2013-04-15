@@ -248,7 +248,7 @@ class Gallery_Hook_GalleryEvent {
                       ->url(UserProfile::url($user->id))
                       ->label($user->display_name()));
 
-        if (Route::$controller == "admin") {
+        if (Theme::$is_admin) {
           $continue_url = URL::abs_site("");
         } else if ($item = $theme->item()) {
           if (Access::user_can(Identity::guest(), "view", $theme->item)) {

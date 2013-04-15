@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Controller_Rest extends Controller {
-  const ALLOW_PRIVATE_GALLERY = true;
+  public $allow_private_gallery = true;
 
   public function action_index() {
     $username = Request::$current->post("user");
