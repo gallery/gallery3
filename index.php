@@ -35,13 +35,13 @@ if (!ini_get("date.timezone")) {
 // Gallery requires short_tags to be on
 !ini_get("short_open_tag") and exit("Gallery requires short_open_tag to be on.");
 
-// Set the PHP error reporting level.  We keep error reporting on even in production so that we
-// can catch errors and serve a nice error page rather than a blank white screen.  Recommendations
-// are E_ALL | E_STRICT for development and E_ALL & ~E_NOTICE for production (default).  For more
-// information on how to debug Gallery 3, see:
+// Suppress errors.  For information on how to debug Gallery 3, see:
 // http://codex.galleryproject.org/Gallery3:FAQ#How_do_I_see_debug_information.3F
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set("display_errors", true);
+error_reporting(0);
+
+// Disabling display_errors will  effectively disable Kohana error display
+// and logging. You can turn off Kohana errors in the Kohana::init() call in bootstrap.
+ini_set("display_errors", false);
 
 // Turn off session.use_trans_sid -- that feature attempts to inject session ids
 // into generated URLs and forms, but it doesn't interoperate will with Gallery's
