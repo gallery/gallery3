@@ -27,7 +27,8 @@
  * input is sanitized against the database before we perform any file I/O.
  */
 class Gallery_Controller_FileProxy extends Controller {
-  const ALLOW_PRIVATE_GALLERY = true;
+  public $allow_private_gallery = true;
+
   public function __call($function, $args) {
 
     // Force zlib compression off.  Image and movie files are already compressed and

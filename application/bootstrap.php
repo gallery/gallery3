@@ -213,6 +213,7 @@ Route::set("admin_forms", "form/<type>/<directory>/<controller>",
   ->filter(function($route, $params, $request) {
       $params["controller"] = str_replace("_", "", $params["controller"]);
       $params["action"] = "form_" . $params["type"];
+      $params["is_admin"] = true;
       return $params;
     });
 
@@ -228,6 +229,7 @@ Route::set("admin", "<directory>(/<controller>(/<action>))",
            array("directory" => "admin"))
   ->filter(function($route, $params, $request) {
       $params["controller"] = str_replace("_", "", $params["controller"]);
+      $params["is_admin"] = true;
       return $params;
     })
   ->defaults(array(
