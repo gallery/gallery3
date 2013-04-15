@@ -19,7 +19,6 @@
  */
 class Gallery_Model_Item extends ORM_MPTT {
   protected $children = "items";
-  protected $sorting = array();
   public $data_file = null;
   private $data_file_error = null;
 
