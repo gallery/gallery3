@@ -385,6 +385,8 @@ class Gallery_Module {
       ORM::factory("Module")->order_by("weight")->find_all();
 
     // Rebuild installed and active module lists
+    $first_module = array();
+    $last_module = array();
     foreach ($modules as $module) {
       self::$modules[$module->name] = $module;
       // Skip inactive or missing modules.  Kohana 3 will not let us load a module that's missing.
