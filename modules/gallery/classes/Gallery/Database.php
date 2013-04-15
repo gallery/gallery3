@@ -63,8 +63,9 @@ abstract class Gallery_Database extends Kohana_Database {
     if (!isset($this->_prefixed_table_names)) {
       // This should only run once on the first query
       $this->_prefixed_table_names = array();
+      $prefix_len = strlen($this->table_prefix());
       foreach($this->list_tables() as $name) {
-        $this->_prefixed_table_names["{{$name}}"] = $this->quote_table($name);
+        $this->_prefixed_table_names["{" . substr($name, $prefix_len) . "}"] = $name;
       }
     }
 
