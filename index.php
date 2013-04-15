@@ -17,12 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-// Set this to true to disable demo/debugging controllers
-define("IN_PRODUCTION", true);
-
-// Gallery requires PHP 5.2+
-version_compare(PHP_VERSION, "5.2.3", "<") and
-  exit("Gallery requires PHP 5.2.3 or newer (you're using " . PHP_VERSION  . ")");
+// Gallery 3.1+ requires PHP 5.3.3+
+version_compare(PHP_VERSION, "5.3.3", "<") and
+  exit("Gallery requires PHP 5.3.3 or newer (you're using " . PHP_VERSION  . ")");
 
 // Gallery is not supported on Windows.
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -38,13 +35,13 @@ if (!ini_get("date.timezone")) {
 // Gallery requires short_tags to be on
 !ini_get("short_open_tag") and exit("Gallery requires short_open_tag to be on.");
 
-// Suppress errors.  For information on how to debug Gallery 3, see:
+// Set the PHP error reporting level.  We keep error reporting on even in production so that we
+// can catch errors and serve a nice error page rather than a blank white screen.  Recommendations
+// are E_ALL | E_STRICT for development and E_ALL & ~E_NOTICE for production (default).  For more
+// information on how to debug Gallery 3, see:
 // http://codex.galleryproject.org/Gallery3:FAQ#How_do_I_see_debug_information.3F
-error_reporting(0);
-
-// Disabling display_errors will  effectively disable Kohana error display
-// and logging. You can turn off Kohana errors in application/config/config.php
-ini_set("display_errors", false);
+error_reporting(E_ALL & ~E_NOTICE);
+ini_set("display_errors", true);
 
 // Turn off session.use_trans_sid -- that feature attempts to inject session ids
 // into generated URLs and forms, but it doesn't interoperate will with Gallery's
@@ -56,7 +53,6 @@ header("X-Frame-Options: SAMEORIGIN");
 
 define("EXT", ".php");
 define("DOCROOT", getcwd() . "/");
-define("KOHANA",  "index.php");
 
 // If the front controller is a symlink, change to the real docroot
 is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
@@ -68,9 +64,8 @@ define("THEMEPATH", realpath("themes") . "/");
 define("SYSPATH", realpath("system") . "/");
 
 // For profiling
-define('KOHANA_START_TIME', microtime(TRUE));
+define('KOHANA_START_TIME', microtime(true));
 define('KOHANA_START_MEMORY', memory_get_usage());
-
 
 // We only accept a few controllers on the command line
 if (PHP_SAPI == "cli") {
