@@ -22,7 +22,6 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Manage sidebar");
     $view->content = new View("admin/sidebar.html");
-    $view->content->csrf = Access::csrf_token();
     $view->content->available = new View("admin/sidebar_blocks.html");
     $view->content->active = new View("admin/sidebar_blocks.html");
     list($view->content->available->blocks, $view->content->active->blocks) = $this->_get_blocks();
