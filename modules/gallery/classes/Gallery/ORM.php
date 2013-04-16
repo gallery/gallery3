@@ -71,7 +71,7 @@ class Gallery_ORM extends Kohana_ORM {
    *           "Model_ORMAnotherExample"   --> "ormanother_examples", not "ormanotherexamples"
    *           "Model_AnotherORMExample"   --> "another_ormexamples", not "anotherormexamples"
    *
-   * (see Kohana_ORM::_initialize())
+   * @see ORM::_initialize()
    */
   protected function _initialize() {
     if (empty($this->_table_name)) {
@@ -83,5 +83,33 @@ class Gallery_ORM extends Kohana_ORM {
       }
     }
     parent::_initialize();
+  }
+
+  /**
+   * Implements the "delete_through" argument of a has_many relationship, which removes the pivot
+   * table rows corresponding to the model at the same time as the model itself.  By default,
+   * Kohana's ORM does not do this, so the pivot table (defined by "through") remains populated
+   * with rows corresponding to deleted models.
+   *
+   * Example: users can belong to one or more groups, related by the pivot table "groups_users".
+   * In Model_User, we have:
+   *   protected $_has_many = array("groups" =>
+   *                                array("through" => "groups_users", "delete_through" => true)
+   * In Model_Group, we have:
+   *   protected $_has_many = array("users" =>
+   *                                array("through" => "groups_users", "delete_through" => true)
+   * Now, when either a group or user is deleted, all rows in "groups_users" are also deleted.
+   *
+   * @see ORM::delete()
+   */
+  public function delete() {
+    if (!empty($this->_has_many)) {
+      foreach ($this->_has_many as $column => $details) {
+        if (!empty($details["delete_through"])) {
+          $this->remove($column);
+        }
+      }
+    }
+    return parent::delete();
   }
 }
