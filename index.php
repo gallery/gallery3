@@ -64,8 +64,8 @@ define("THEMEPATH", realpath("themes") . "/");
 define("SYSPATH", realpath("system") . "/");
 
 // For profiling
-define('KOHANA_START_TIME', microtime(true));
-define('KOHANA_START_MEMORY', memory_get_usage());
+define("KOHANA_START_TIME", microtime(true));
+define("KOHANA_START_MEMORY", memory_get_usage());
 
 // We only accept a few controllers on the command line
 if (PHP_SAPI == "cli") {
@@ -73,6 +73,7 @@ if (PHP_SAPI == "cli") {
   case "install":
     include("installer/index.php");
     exit(0);
+
   case "upgrade":
   case "package":
     $_SERVER["argv"] = array("index.php", "{$arg_1}r/$arg_1");
@@ -106,6 +107,7 @@ if (PHP_SAPI == "cli") {
   define("TEST_MODE", 0);
   define("VARPATH", realpath("var") . "/");
 }
+
 define("TMPPATH", VARPATH . "tmp/");
 
 if (file_exists("local.php")) {
