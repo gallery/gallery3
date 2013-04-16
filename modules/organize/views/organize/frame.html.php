@@ -91,7 +91,7 @@
 
     var set_album_sort = function(params) {
       start_busy(<?= t("Changing sort...")->for_js() ?>);
-      params["csrf"] = '<?= Access::csrf_token() ?>';
+      params["csrf"] = '<?= $csrf ?>';
       Ext.Ajax.request({
         url: '<?= URL::site("organize/set_sort/__ID__") ?>'.replace("__ID__", current_album_id),
         method: "post",
@@ -123,7 +123,7 @@
         params: {
           item_ids: item_ids.join(","),
           tag_names: tag,
-          csrf: '<?= Access::csrf_token() ?>'
+          csrf: '<?= $csrf ?>'
         }
       });
     };
@@ -146,7 +146,7 @@
         failure: show_generic_error,
         params: {
           item_ids: item_ids.join(","),
-          csrf: '<?= Access::csrf_token() ?>'
+          csrf: '<?= $csrf ?>'
         }
       });
     };
@@ -272,7 +272,7 @@
                   source_ids: source_ids.join(","),
                   target_id: get_id_from_node(target),
                   relative: this.drop_side, // calculated in onNodeOver
-                  csrf: '<?= Access::csrf_token() ?>'
+                  csrf: '<?= $csrf ?>'
                 }
               });
               return true;
@@ -554,7 +554,7 @@
               params: {
                 source_ids: source_ids.join(","),
                 target_id: target.node.id,
-                csrf: '<?= Access::csrf_token() ?>'
+                csrf: '<?= $csrf ?>'
               }
             });
             return true;
