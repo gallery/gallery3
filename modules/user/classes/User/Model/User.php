@@ -18,9 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
-  protected $_has_many = array("group" => array("foreign_key" => "id"));
+  protected $_has_many = array("groups" =>
+                               array("through" => "groups_users", "delete_through" => true));
+
   protected $password_length = null;
-  protected $groups_cache = null;
 
   public function __set($column, $value) {
     switch ($column) {
@@ -43,13 +44,9 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
     $old = clone $this;
     Module::event("user_before_delete", $this);
     parent::delete();
-
-    DB::delete("groups_users")
-      ->where("user_id", "=", $old->id)
-      ->execute();
-
     Module::event("user_deleted", $old);
-    $this->groups_cache = null;
+
+    return $this;
   }
 
   /**
@@ -63,10 +60,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   }
 
   public function groups() {
-    if (!$this->groups_cache) {
-      $this->groups_cache = $this->group->find_all()->as_array();
-    }
-    return $this->groups_cache;
+    return $this->groups->find_all()->as_array();
   }
 
   /**
@@ -92,27 +86,36 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   }
 
   /**
+   * Handle any business logic necessary to save (i.e. create or update) a user.
+   * @see ORM::save()
+   *
+   * @return ORM Model_User
+   */
+  public function save(Validation $validation=null) {
+    if ($this->full_name === null) {
+      $this->full_name = "";
+    }
+
+    return parent::save($validation);
+  }
+
+  /**
    * Handle any business logic necessary to create a user.
    * @see ORM::create()
    *
    * @return ORM Model_User
    */
   public function create(Validation $validation=null) {
-    if ($this->full_name === null) {
-      $this->full_name = "";
-    }
-
     Module::event("user_before_create");
 
-    $this->add(Group::everybody());
+    $this->add("groups", Group::everybody());
     if (!$this->guest) {
-      $this->add(Group::registered_users());
+      $this->add("groups", Group::registered_users());
     }
 
-    parent::save($validation);
+    parent::create($validation);
     Module::event("user_created", $this);
 
-    $this->groups_cache = null;
     return $this;
   }
 
@@ -123,18 +126,11 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    * @return ORM Model_User
    */
   public function update(Validation $validation=null) {
-    if ($this->full_name === null) {
-      $this->full_name = "";
-    }
-
     Module::event("user_before_update");
-
-    // Updated user
     $original = ORM::factory("User", $this->id);
-    parent::save();
+    parent::update();
     Module::event("user_updated", $original, $this);
 
-    $this->groups_cache = null;
     return $this;
   }
 

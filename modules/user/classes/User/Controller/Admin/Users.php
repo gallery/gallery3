@@ -189,7 +189,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     Access::verify_csrf();
     $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
-    $group->add($user);
+    $group->add("users", $user);
     $group->save();
   }
 
@@ -197,7 +197,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     Access::verify_csrf();
     $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
-    $group->remove($user);
+    $group->remove("users", $user);
     $group->save();
   }
 
