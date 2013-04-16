@@ -96,7 +96,7 @@
                array("default_locale" => Locales::display_name())) ?></li>
           <li><?= t("Start the translation mode and the translation interface will appear at the bottom of each Gallery page.") ?></li>
         </ol>
-        <a href="<?= URL::site("l10n_client/toggle_l10n_mode?csrf=".Access::csrf_token()) ?>"
+        <a href="<?= URL::site("l10n_client/toggle_l10n_mode?csrf=".$csrf) ?>"
            class="g-button ui-state-default ui-corner-all ui-icon-left">
           <span class="ui-icon ui-icon-power"></span>
           <? if (Session::instance()->get("l10n_mode", false)): ?>

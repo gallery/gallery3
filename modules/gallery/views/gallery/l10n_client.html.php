@@ -4,7 +4,7 @@
     <span id="l10n-client-toggler">
       <a id="g-minimize-l10n">_</a>
       <a id="g-close-l10n" title="<?= t("Stop the translation mode")->for_html_attr() ?>"
-         href="<?= HTML::clean_attribute(URL::site("l10n_client/toggle_l10n_mode?csrf=".Access::csrf_token())) ?>">X</a>
+         href="<?= HTML::clean_attribute(URL::site("l10n_client/toggle_l10n_mode?csrf=".$csrf)) ?>">X</a>
     </span>
     <div class="label strings"><h2><?= t("Page text") ?>
     <? if (!Request::current()->query('show_all_l10n_messages')): ?>
@@ -77,6 +77,6 @@
     var l10n_client_data = <?= json_encode($string_list) ?>;
     var plural_forms = <?= json_encode($plural_forms) ?>;
     var toggle_l10n_mode_url = <?= HTML::js_string(URL::site("l10n_client/toggle_l10n_mode")) ?>;
-    var csrf = <?= HTML::js_string(Access::csrf_token()) ?>;
+    var csrf = <?= HTML::js_string($csrf) ?>;
   </script>
 </div>

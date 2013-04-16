@@ -84,7 +84,7 @@
         </div>
         <? else: ?>
         <div id="upgrade_button" class="button button-active">
-          <a id="upgrade_link" href="<?= URL::site("upgrader/upgrade?csrf=" . Access::csrf_token()) ?>">
+          <a id="upgrade_link" href="<?= URL::site("upgrader/upgrade?csrf=" . $csrf) ?>">
             <?= t("Upgrade all") ?>
           </a>
         </div>
