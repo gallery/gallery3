@@ -23,7 +23,7 @@ class User_Groups_Test extends Gallery_Unit_Test_Case {
     $user = test::random_user();
     $group = test::random_group();
 
-    $group->add($user);
+    $group->add("users", $user);
     $group->save();
 
     $this->assert_true($user->has($group));

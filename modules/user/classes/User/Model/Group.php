@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
-  protected $has_and_belongs_to_many = array("users");
-  protected $users_cache = null;
+  protected $_has_many = array("users" =>
+                               array("through" => "groups_users", "delete_through" => true));
 
   /**
    * @see ORM::delete()
@@ -28,20 +28,13 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
     $old = clone $this;
     Module::event("group_before_delete", $this);
     parent::delete();
-
-    DB::delete("groups_users")
-      ->where("group_id", "=", $old->id)
-      ->execute();
-
     Module::event("group_deleted", $old);
-    $this->users_cache = null;
+
+    return $this;
   }
 
   public function users() {
-    if (!$this->users_cache) {
-      $this->users_cache = $this->users->find_all()->as_array();
-    }
-    return $this->users_cache;
+    return $this->users->find_all()->as_array();
   }
 
   /**
@@ -58,23 +51,32 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
     parent::validate($array);
   }
 
+  /**
+   * Handle any business logic necessary to create a group.
+   * @see ORM::create()
+   *
+   * @return ORM Model_Group
+   */
   public function create(Validation $validation=null) {
-
     Module::event("group_before_create", $this);
     parent::create($validation);
     Module::event("group_created", $this);
 
-    $this->users_cache = null;
     return $this;
   }
 
+  /**
+   * Handle any business logic necessary to update a group.
+   * @see ORM::update()
+   *
+   * @return ORM Model_Group
+   */
   public function update(Validation $validation=null) {
     Module::event("group_before_update", $this);
     $original = ORM::factory("Group", $this->id);
     parent::update($validation);
     Module::event("group_updated", $original, $this);
 
-    $this->users_cache = null;
     return $this;
   }
 
