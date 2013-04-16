@@ -149,7 +149,7 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::add_user_to_group.
    */
   public function add_user_to_group($user, $group) {
-    $group->add($user);
+    $group->add("users", $user);
     $group->save();
   }
 
@@ -157,7 +157,7 @@ class User_IdentityProvider_Gallery implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::remove_user_to_group.
    */
   public function remove_user_from_group($user, $group) {
-    $group->remove($user);
+    $group->remove("users", $user);
     $group->save();
   }
 } // End Identity Gallery Driver

@@ -75,7 +75,7 @@ class Gallery_Identity {
       // Cache the group ids for a day to trade off performance for security updates.
       if (!$session->get("group_ids") || $session->get("group_ids_timeout", 0) < time()) {
         $ids = array();
-        foreach ($user->group->find_all() as $group) {
+        foreach ($user->groups() as $group) {
           $ids[] = $group->id;
         }
         $session->set("group_ids", $ids);

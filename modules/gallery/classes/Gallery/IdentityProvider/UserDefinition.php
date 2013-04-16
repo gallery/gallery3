@@ -17,4 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-interface Gallery_IdentityProvider_UserDefinition {}
+interface Gallery_IdentityProvider_UserDefinition {
+  /**
+   * List the groups to which the user belongs
+   */
+  public function groups();
+}
