@@ -19,7 +19,7 @@
  */
 class GalleryUnittest_Request extends Kohana_Request {
   static function set_user_agent($value) {
-    self::$user_agent = null;
+    self::$user_agent = $value;
     $_SERVER["HTTP_USER_AGENT"] = $value;
   }
 }
