@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Test extends Gallery_Unit_Test_Case {
+class Tag_Test extends Unittest_Testcase {
   public function setup() {
     ORM::factory("Tag")->delete_all();
   }
 
   public function create_tag_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     Tag::add($album, "tag1");
     $tag = ORM::factory("Tag")->where("name", "=", "tag1")->find();
@@ -33,13 +33,13 @@ class Tag_Test extends Gallery_Unit_Test_Case {
     Tag::add($album, "tag1");
     $this->assert_equal(1, $tag->reload()->count);
 
-    Tag::add(test::random_album(), "tag1");
+    Tag::add(Test::random_album(), "tag1");
     $this->assert_equal(2, $tag->reload()->count);
   }
 
   public function rename_merge_tag_test() {
-    $album1 = test::random_album();
-    $album2 = test::random_album();
+    $album1 = Test::random_album();
+    $album2 = Test::random_album();
 
     Tag::add($album1, "tag1");
     Tag::add($album2, "tag2");
@@ -58,7 +58,7 @@ class Tag_Test extends Gallery_Unit_Test_Case {
   }
 
   public function rename_merge_tag_with_same_items_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     Tag::add($album, "tag1");
     Tag::add($album, "tag2");

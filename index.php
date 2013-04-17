@@ -82,7 +82,7 @@ if (PHP_SAPI == "cli") {
     break;
 
   case "test":
-    array_splice($_SERVER["argv"], 1, 1, "gallery_unit_test");
+    array_splice($_SERVER["argv"], 1, 1, "gallery_unittest");
     define("TEST_MODE", 1);
     if (!is_dir("test/var")) {
       @mkdir("test/var", 0777, true);

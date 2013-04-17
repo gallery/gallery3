@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
+class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
   public function setup() {
     try {
       Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
@@ -60,7 +60,7 @@ class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function resolve_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
     $tag = Tag::add($album, "tag1")->reload();
 
     $tuple = Rest::resolve(Rest::url("tag_item", $tag, $album));

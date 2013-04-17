@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
+class Legal_File_Helper_Test extends Unittest_Testcase {
   public function get_photo_types_by_extension_test() {
     $this->assert_equal("image/jpeg", LegalFile::get_photo_types_by_extension("jpg")); // regular
     $this->assert_equal("image/jpeg", LegalFile::get_photo_types_by_extension("JPG")); // all caps

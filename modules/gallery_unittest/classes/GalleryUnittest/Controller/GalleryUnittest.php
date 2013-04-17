@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Unit_Test_Controller extends Controller {
-  function index() {
+class GalleryUnittest_Controller_GalleryUnittest extends Controller {
+  public function action_index() {
     if (!TEST_MODE) {
-      throw new Kohana_404_Exception();
+      throw HTTP_Exception::factory(404);
     }
 
     // Force strict behavior to flush out bugs early
@@ -34,7 +34,7 @@ class Gallery_Unit_Test_Controller extends Controller {
     $_SERVER["SCRIPT_FILENAME"] = "index.php";
     $_SERVER["SCRIPT_NAME"] = "./index.php";
 
-    $config = Kohana_Config::instance();
+    $config = Config::instance();
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
@@ -42,7 +42,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       return;
     } else {
       copy($original_config, $test_config);
-      $db_config = Kohana::config('database');
+      $db_config = Kohana::$config->load('database');
       if (empty($db_config['unit_test'])) {
         $default = $db_config['default'];
         $conn = $default['connection'];
@@ -60,7 +60,7 @@ class Gallery_Unit_Test_Controller extends Controller {
         $config->set('database.unit_test.object', $default['object']);
         $config->set('database.unit_test.cache', $default['cache']);
         $config->set('database.unit_test.escape', $default['escape']);
-        $db_config = Kohana::config('database');
+        $db_config = Kohana::$config->load('database');
       }
 
       if ($db_config['default']['connection']['database'] ==
@@ -95,12 +95,12 @@ class Gallery_Unit_Test_Controller extends Controller {
       @system("rm -rf test/var");
       @mkdir('test/var/logs', 0777, true);
 
-      $active_modules = module::$active;
+      $active_modules = Module::$active;
 
       // Reset our caches
-      module::$modules = array();
-      module::$active = array();
-      module::$var_cache = array();
+      Module::$modules = array();
+      Module::$active = array();
+      Module::$var_cache = array();
       $db->clear_cache();
 
       // Rest the cascading class path
@@ -108,28 +108,28 @@ class Gallery_Unit_Test_Controller extends Controller {
 
       // Install the active modules
       // Force gallery and user to be installed first to resolve dependencies.
-      module::install("gallery");
-      module::load_modules();
+      Module::install("gallery");
+      Module::load_modules();
 
-      module::install("user");
-      module::activate("user");
+      Module::install("user");
+      Module::activate("user");
       $modules = $paths = array();
-      foreach (module::available() as $module_name => $unused) {
+      foreach (Module::available() as $module_name => $unused) {
         if (in_array($module_name, array("gallery", "user"))) {
           $paths[] = MODPATH . "{$module_name}/tests";
           continue;
         }
         if (file_exists($path = MODPATH . "{$module_name}/tests")) {
           $paths[] = $path;
-          module::install($module_name);
-          module::activate($module_name);
+          Module::install($module_name);
+          Module::activate($module_name);
         }
       }
 
       $config->set('unit_test.paths', $paths);
 
-      // Trigger late-binding install actions (defined in gallery_event::user_login)
-      graphics::choose_default_toolkit();
+      // Trigger late-binding install actions (defined in Hook_GalleryEvent::user_login)
+      Graphics::choose_default_toolkit();
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
       $unit_test = new Unit_Test($modules, $filter);

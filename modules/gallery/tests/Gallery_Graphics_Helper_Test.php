@@ -17,11 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
+class Gallery_Graphics_Helper_Test extends Unittest_Testcase {
   public function rotate_jpg_test() {
     // Input is a 1024x768 jpg, output is rotated 90 degrees
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     $options = array("degrees" => 90);
     GalleryGraphics::rotate($input_file, $output_file, $options, null);
 
@@ -31,8 +31,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function rotate_jpg_without_options_test() {
     // Input is a 1024x768 jpg, output options undefined
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     GalleryGraphics::rotate($input_file, $output_file, null, null);
 
     // Output is not rotated, still a 1024x768 jpg
@@ -41,10 +41,10 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function rotate_bad_jpg_test() {
     // Input is a garbled jpg, output is jpg autofit to 300x300
-    $input_file = TMPPATH . test::random_name() . ".jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = TMPPATH . Test::random_name() . ".jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     $options = array("degrees" => 90);
-    file_put_contents($input_file, test::lorem_ipsum(200));
+    file_put_contents($input_file, Test::lorem_ipsum(200));
 
     // Should get passed to Image library and throw an exception
     try {
@@ -57,8 +57,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_jpg_test() {
     // Input is a 1024x768 jpg, output is jpg autofit to 300x300
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     $options = array("width" => 300, "height" => 300, "master" => Image::AUTO);
     GalleryGraphics::resize($input_file, $output_file, $options, null);
 
@@ -68,8 +68,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_jpg_to_png_test() {
     // Input is a 1024x768 jpg, output is png autofit to 300x300
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".png";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".png";
     $options = array("width" => 300, "height" => 300, "master" => Image::AUTO);
     GalleryGraphics::resize($input_file, $output_file, $options, null);
 
@@ -79,8 +79,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_jpg_with_no_upscale_test() {
     // Input is a 1024x768 jpg, output is jpg autofit to 1200x1200 - should not upscale
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     $options = array("width" => 1200, "height" => 1200, "master" => Image::AUTO);
     GalleryGraphics::resize($input_file, $output_file, $options, null);
 
@@ -90,8 +90,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_jpg_to_png_with_no_upscale_test() {
     // Input is a 1024x768 jpg, output is png autofit to 1200x1200 - should not upscale
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".png";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".png";
     $options = array("width" => 1200, "height" => 1200, "master" => Image::AUTO);
     GalleryGraphics::resize($input_file, $output_file, $options, null);
 
@@ -101,8 +101,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_jpg_without_options_test() {
     // Input is a 1024x768 jpg, output is jpg without options - should not attempt resize
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     GalleryGraphics::resize($input_file, $output_file, null, null);
 
     // Output is copied directly from input
@@ -111,8 +111,8 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_jpg_to_png_without_options_test() {
     // Input is a 1024x768 jpg, output is png without options - should not attempt resize
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".png";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".png";
     GalleryGraphics::resize($input_file, $output_file, null, null);
 
     // Output is converted from input without resize
@@ -121,10 +121,10 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resize_bad_jpg_test() {
     // Input is a garbled jpg, output is jpg autofit to 300x300
-    $input_file = TMPPATH . test::random_name() . ".jpg";
-    $output_file = TMPPATH . test::random_name() . ".jpg";
+    $input_file = TMPPATH . Test::random_name() . ".jpg";
+    $output_file = TMPPATH . Test::random_name() . ".jpg";
     $options = array("width" => 300, "height" => 300, "master" => Image::AUTO);
-    file_put_contents($input_file, test::lorem_ipsum(200));
+    file_put_contents($input_file, Test::lorem_ipsum(200));
 
     // Should get passed to Image library and throw an exception
     try {

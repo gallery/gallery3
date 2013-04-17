@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Exif_Test extends Gallery_Unit_Test_Case {
+class Exif_Test extends Unittest_Testcase {
   public function exif_extract_test() {
-    $photo = test::random_photo_unsaved()
+    $photo = Test::random_photo_unsaved()
       ->set_data_file(MODPATH . "exif/tests/data/image.jpg")
       ->save();
 

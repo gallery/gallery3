@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
+class Gallery_I18n_Test extends Unittest_Testcase {
   private $i18n;
 
   public function setup() {

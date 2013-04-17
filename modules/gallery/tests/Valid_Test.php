@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Valid_Test extends Gallery_Unit_Test_Case {
+class Valid_Test extends Unittest_Testcase {
   public function url_test() {
     $this->assert_true(Valid::url("http://foo.bar.com"));
     $this->assert_true(Valid::url("https://foo.bar.com"));

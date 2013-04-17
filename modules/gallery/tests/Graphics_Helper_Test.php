@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
+class Graphics_Helper_Test extends Unittest_Testcase {
   public function generate_photo_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     // Check that the images were correctly resized
     $this->assert_equal(array(640, 480, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($photo->resize_path()));
@@ -34,7 +34,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function generate_movie_test() {
-    $movie = test::random_movie();
+    $movie = Test::random_movie();
     // Check that the image was correctly resized
     $this->assert_equal(array(200, 160, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($movie->thumb_path()));
@@ -45,8 +45,8 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function generate_album_cover_test() {
-    $album = test::random_album();
-    $photo = test::random_unique_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_unique_photo($album);
     $album->reload();
     // Check that the image was copied directly from item thumb
     $this->assert_equal(file_get_contents($photo->thumb_path()),
@@ -58,12 +58,12 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function generate_album_cover_from_png_test() {
-    $input_file = MODPATH . "gallery/tests/test.jpg";
-    $output_file = TMPPATH . test::random_name() . ".png";
+    $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
+    $output_file = TMPPATH . Test::random_name() . ".png";
     GalleryGraphics::resize($input_file, $output_file, null, null);
 
-    $album = test::random_album();
-    $photo = test::random_photo_unsaved($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo_unsaved($album);
     $photo->set_data_file($output_file);
     $photo->name = "album_cover_from_png.png";
     $photo->save();
@@ -78,7 +78,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function generate_album_cover_for_empty_album_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
     // Check that the album cover is the missing image placeholder
     $this->assert_same(file_get_contents(MODPATH . "gallery/assets/graphics/missing_album_cover.jpg"),
                        file_get_contents($album->thumb_path()));
@@ -89,9 +89,9 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function generate_bad_photo_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     // At this point, the photo is valid and has a valid resize and thumb.  Make it garble.
-    file_put_contents($photo->file_path(), test::lorem_ipsum(200));
+    file_put_contents($photo->file_path(), Test::lorem_ipsum(200));
     // Regenerate
     $photo->resize_dirty = 1;
     $photo->thumb_dirty = 1;
@@ -116,9 +116,9 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function generate_bad_movie_test() {
     // Unlike photos, its ok to have missing movies - no thrown exceptions, thumb_dirty can be reset.
-    $movie = test::random_movie();
+    $movie = Test::random_movie();
     // At this point, the movie is valid and has a valid thumb.  Make it garble.
-    file_put_contents($movie->file_path(), test::lorem_ipsum(200));
+    file_put_contents($movie->file_path(), Test::lorem_ipsum(200));
     // Regenerate
     $movie->thumb_dirty = 1;
     Graphics::generate($movie);
@@ -132,11 +132,11 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function generate_album_cover_from_bad_photo_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     $album->reload();
     // At this point, the photo is valid and has a valid resize and thumb.  Make it garble.
-    file_put_contents($photo->file_path(), test::lorem_ipsum(200));
+    file_put_contents($photo->file_path(), Test::lorem_ipsum(200));
     // Regenerate album from garbled photo.
     $photo->thumb_dirty = 1;
     $photo->save();

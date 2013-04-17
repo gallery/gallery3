@@ -37,7 +37,7 @@ class Gallery_Module {
    *   4. Last module.  This is "gallery", which *can* be overridden.
    *   5. Third-party modules.  These do not have module.info files.
    */
-  private static $_unit_test_modules = array("gallery_unit_test", "unit_test");
+  private static $_unittest_modules = array("gallery_unittest", "unittest");
   private static $_first_module = "purifier";
   private static $_last_module = "gallery";
   private static $_third_party_modules = array("formo", "pagination", "cache", "orm", "database");
@@ -407,7 +407,7 @@ class Gallery_Module {
 
     // Build the complete list of module names, including unit test and third-party modules.
     $module_names = array_merge(
-      (TEST_MODE ? self::$_unit_test_modules : array()),
+      (TEST_MODE ? self::$_unittest_modules : array()),
       array_keys(self::$active),
       self::$_third_party_modules
     );
