@@ -17,22 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
+class Item_Rest_Helper_Test extends Unittest_Testcase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
   }
 
   public function resolve_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
     $resolved = Rest::resolve(Rest::url("item", $album));
     $this->assert_equal($album->id, $resolved->id);
   }
 
   public function get_scope_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
-    $photo2 = test::random_photo($album2);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
+    $photo2 = Test::random_photo($album2);
     $album1->reload();
 
     // No scope is the same as "direct"
@@ -91,9 +91,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_children_like_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $photo2 = test::random_photo_unsaved($album1);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $photo2 = Test::random_photo_unsaved($album1);
     $photo2->name = "foo.jpg";
     $photo2->save();
     $album1->reload();
@@ -118,9 +118,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_children_type_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
     $album1->reload();
 
     $request = new stdClass();
@@ -143,7 +143,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function update_album_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
@@ -157,7 +157,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function update_album_illegal_value_fails_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
@@ -177,7 +177,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function add_album_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
@@ -195,7 +195,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function add_album_illegal_value_fails_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
@@ -218,7 +218,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
 
   public function add_photo_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
@@ -227,7 +227,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity = new stdClass();
     $request->params->entity->type = "photo";
     $request->params->entity->name = "my photo.jpg";
-    $request->file = MODPATH . "gallery/tests/test.jpg";
+    $request->file = MODPATH . "gallery_unittest/assets/test.jpg";
     $response = Hook_Rest_Item::post($request);
     $new_photo = Rest::resolve($response["url"]);
 
@@ -236,7 +236,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function delete_album_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
@@ -248,7 +248,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function delete_album_fails_without_permission_test() {
-    $album1 = test::random_album();
+    $album1 = Test::random_album();
     Access::deny(Identity::everybody(), "edit", $album1);
     Identity::set_active_user(Identity::guest());
 

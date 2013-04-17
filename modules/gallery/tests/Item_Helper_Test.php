@@ -17,14 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Helper_Test extends Gallery_Unit_Test_Case {
+class Item_Helper_Test extends Unittest_Testcase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
   }
 
   public function viewable_test() {
-    $album = test::random_album();
-    $item = test::random_photo($album);
+    $album = Test::random_album();
+    $item = Test::random_photo($album);
     $album->reload();
     Identity::set_active_user(Identity::guest());
 
@@ -56,8 +56,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_test() {
-    $photo = test::random_photo(Item::root());
-    $dst_album = test::random_album();
+    $photo = Test::random_photo(Item::root());
+    $dst_album = Test::random_album();
 
     Item::move($photo, $dst_album);
     $this->assert_same($dst_album->id, $photo->parent_id);
@@ -65,13 +65,13 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function move_updates_album_covers_test() {
     // 2 photos in the source album
-    $src_album = test::random_album();
-    $photo1 = test::random_photo($src_album);
-    $photo2 = test::random_photo($src_album);
+    $src_album = Test::random_album();
+    $photo1 = Test::random_photo($src_album);
+    $photo2 = Test::random_photo($src_album);
     $src_album->reload();
 
     // destination album
-    $dst_album = test::random_album();
+    $dst_album = Test::random_album();
 
     Item::move($photo1, $dst_album);
 
@@ -86,8 +86,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_leaves_empty_album_with_no_album_cover_test() {
-    $src_album = test::random_album();
-    $photo = test::random_photo($src_album);
+    $src_album = Test::random_album();
+    $photo = Test::random_photo($src_album);
 
     Item::move($photo, Item::root());
 
@@ -97,13 +97,13 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function move_conflicts_result_in_a_rename_test() {
     $rand = Random::int();
-    $photo1 = test::random_photo_unsaved(Item::root());
+    $photo1 = Test::random_photo_unsaved(Item::root());
     $photo1->name = "{$rand}.jpg";
     $photo1->slug = (string)$rand;
     $photo1->save();
 
-    $src_album = test::random_album();
-    $photo2 = test::random_photo_unsaved($src_album);
+    $src_album = Test::random_album();
+    $photo2 = Test::random_photo_unsaved($src_album);
     $photo2->name = "{$rand}.jpg";
     $photo2->slug = (string)$rand;
     $photo2->save();
@@ -116,12 +116,12 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function delete_cover_photo_picks_new_album_cover_test() {
-    $parent = test::random_album();
-    $album = test::random_album($parent);
-    $photo1 = test::random_photo($album);
+    $parent = Test::random_album();
+    $album = Test::random_album($parent);
+    $photo1 = Test::random_photo($album);
     // At this point, $photo1 is the album cover.  We verify this in
     // Item_Model_Test::first_photo_becomes_album_cover
-    $photo2 = test::random_photo($album);
+    $photo2 = Test::random_photo($album);
     $photo1->delete();
     $album->reload();
     $parent->reload();
@@ -131,17 +131,17 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function find_by_path_test() {
-    $level1 = test::random_album();
-    $level2 = test::random_album_unsaved($level1);
+    $level1 = Test::random_album();
+    $level2 = Test::random_album_unsaved($level1);
     $level2->name = "plus + space";
     $level2->save()->reload();
 
-    $level3 = test::random_photo_unsaved($level2);
+    $level3 = Test::random_photo_unsaved($level2);
     $level3->name = "same.jpg";
     $level3->save()->reload();
 
-    $level2b = test::random_album($level1);
-    $level3b = test::random_photo_unsaved($level2b);
+    $level2b = Test::random_album($level1);
+    $level3b = Test::random_photo_unsaved($level2b);
     $level3b->name = "same.jpg";
     $level3b->save()->reload();
 
@@ -181,8 +181,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function find_by_path_with_jpg_test() {
-    $parent = test::random_album();
-    $jpg = test::random_photo($parent);
+    $parent = Test::random_album();
+    $jpg = Test::random_photo($parent);
 
     $jpg_path = "{$parent->name}/{$jpg->name}";
     $flv_path = LegalFile::change_extension($jpg_path, "flv");
@@ -218,8 +218,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function find_by_path_with_png_test() {
-    $parent = test::random_album();
-    $png = test::random_photo_unsaved($parent);
+    $parent = Test::random_album();
+    $png = Test::random_photo_unsaved($parent);
     $png->set_data_file(MODPATH . "gallery/assets/graphics/graphicsmagick.png");
     $png->save();
 
@@ -257,8 +257,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function find_by_path_with_flv_test() {
-    $parent = test::random_album();
-    $flv = test::random_movie($parent);
+    $parent = Test::random_album();
+    $flv = Test::random_movie($parent);
 
     $flv_path = "{$parent->name}/{$flv->name}";
     $jpg_path = LegalFile::change_extension($flv_path, "jpg");
@@ -289,8 +289,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function find_by_path_with_album_test() {
-    $parent = test::random_album();
-    $album = test::random_movie($parent);
+    $parent = Test::random_album();
+    $album = Test::random_movie($parent);
 
     $album_path = "{$parent->name}/{$album->name}";
     $thumb_path = "{$album_path}/.album.jpg";
@@ -328,14 +328,14 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function find_by_relative_url_test() {
-    $level1 = test::random_album();
-    $level2 = test::random_album($level1);
-    $level3 = test::random_photo_unsaved($level2);
+    $level1 = Test::random_album();
+    $level2 = Test::random_album($level1);
+    $level3 = Test::random_photo_unsaved($level2);
     $level3->slug = "same";
     $level3->save()->reload();
 
-    $level2b = test::random_album($level1);
-    $level3b = test::random_photo_unsaved($level2b);
+    $level2b = Test::random_album($level1);
+    $level3b = Test::random_photo_unsaved($level2b);
     $level3b->slug = "same";
     $level3b->save()->reload();
 
@@ -376,12 +376,12 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function resequence_child_weights_test() {
-    $album = test::random_album_unsaved();
+    $album = Test::random_album_unsaved();
     $album->sort_column = "id";
     $album->save();
 
-    $photo1 = test::random_photo($album);
-    $photo2 = test::random_photo($album);
+    $photo1 = Test::random_photo($album);
+    $photo2 = Test::random_photo($album);
     $this->assert_true($photo2->weight > $photo1->weight);
 
     $album->reload();

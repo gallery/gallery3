@@ -17,19 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Model_Test extends Gallery_Unit_Test_Case {
+class Item_Model_Test extends Unittest_Testcase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
   }
 
   public function saving_sets_created_and_updated_dates_test() {
-    $item = test::random_photo();
+    $item = Test::random_photo();
     $this->assert_true(!empty($item->created));
     $this->assert_true(!empty($item->updated));
   }
 
   public function updating_doesnt_change_created_date_test() {
-    $item = test::random_photo();
+    $item = Test::random_photo();
 
     // Force the creation date to something well known
     DB::update("items")
@@ -46,7 +46,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function updating_view_count_only_doesnt_change_updated_date_test() {
-    $item = test::random_photo();
+    $item = Test::random_photo();
     $item->reload();
     $this->assert_equal(0, $item->view_count);
 
@@ -64,7 +64,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function rename_photo_test() {
-    $item = test::random_unique_photo();
+    $item = Test::random_unique_photo();
     $original_name = $item->name;
 
     $thumb_file = file_get_contents($item->thumb_path());
@@ -72,7 +72,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $fullsize_file = file_get_contents($item->file_path());
 
     // Now rename it
-    $item->name = ($new_name = test::random_name($item));
+    $item->name = ($new_name = Test::random_name($item));
     $item->save();
 
     // Expected: the name changed, the name is now baked into all paths, and all files were moved.
@@ -86,8 +86,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function rename_album_test() {
-    $album = test::random_album();
-    $photo = test::random_unique_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_unique_photo($album);
     $album->reload();
 
     $thumb_file = file_get_contents($photo->thumb_path());
@@ -96,7 +96,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
     $original_album_name = $album->name;
     $original_photo_name = $photo->name;
-    $new_album_name = test::random_name();
+    $new_album_name = Test::random_name();
 
     // Now rename the album
     $album->name = $new_album_name;
@@ -113,9 +113,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal($new_album_name, basename(dirname($album->thumb_path())));
     $this->assert_equal($new_album_name, basename(dirname($album->resize_path())));
 
-    $this->assert_true(test::starts_with($photo->file_path(), $album->file_path()));
-    $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album->thumb_path())));
-    $this->assert_true(test::starts_with($photo->resize_path(), dirname($album->resize_path())));
+    $this->assert_true(Test::starts_with($photo->file_path(), $album->file_path()));
+    $this->assert_true(Test::starts_with($photo->thumb_path(), dirname($album->thumb_path())));
+    $this->assert_true(Test::starts_with($photo->resize_path(), dirname($album->resize_path())));
 
     $this->assert_equal($thumb_file, file_get_contents($photo->thumb_path()));
     $this->assert_equal($resize_file, file_get_contents($photo->resize_path()));
@@ -123,7 +123,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function photo_rename_wont_accept_slash_test() {
-    $item = test::random_photo_unsaved();
+    $item = Test::random_photo_unsaved();
     $item->name = "/no_slashes/allowed/";
     // Should fail on validate.
     try {
@@ -143,7 +143,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function photo_rename_wont_accept_backslash_test() {
-    $item = test::random_photo_unsaved();
+    $item = Test::random_photo_unsaved();
     $item->name = "\\no_backslashes\\allowed\\";
     // Should fail on validate.
     try {
@@ -163,7 +163,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function photo_rename_wont_accept_trailing_period_test() {
-    $item = test::random_photo_unsaved();
+    $item = Test::random_photo_unsaved();
     $item->name = "no_trailing_period_allowed.";
     // Should fail on validate.
     try {
@@ -183,7 +183,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function album_rename_wont_accept_slash_test() {
-    $item = test::random_album_unsaved();
+    $item = Test::random_album_unsaved();
     $item->name = "/no_album_slashes/allowed/";
     // Should fail on validate.
     try {
@@ -203,7 +203,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function album_rename_wont_accept_backslash_test() {
-    $item = test::random_album_unsaved();
+    $item = Test::random_album_unsaved();
     $item->name = "\\no_album_backslashes\\allowed\\";
     // Should fail on validate.
     try {
@@ -223,7 +223,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function album_rename_wont_accept_trailing_period_test() {
-    $item = test::random_album_unsaved();
+    $item = Test::random_album_unsaved();
     $item->name = ".no_trailing_period.allowed.";
     // Should fail on validate.
     try {
@@ -243,9 +243,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_album_test() {
-    $album2 = test::random_album();
-    $album1 = test::random_album($album2);
-    $photo = test::random_unique_photo($album1);
+    $album2 = Test::random_album();
+    $album1 = Test::random_album($album2);
+    $photo = Test::random_unique_photo($album1);
 
     $thumb_file = file_get_contents($photo->thumb_path());
     $resize_file = file_get_contents($photo->resize_path());
@@ -261,10 +261,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     // * the photo's paths are all inside the albums paths
     // * the photo files are all still intact and accessible
 
-    $this->assert_false(test::starts_with($album2->file_path(), $album1->file_path()));
-    $this->assert_true(test::starts_with($photo->file_path(), $album1->file_path()));
-    $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album1->thumb_path())));
-    $this->assert_true(test::starts_with($photo->resize_path(), dirname($album1->resize_path())));
+    $this->assert_false(Test::starts_with($album2->file_path(), $album1->file_path()));
+    $this->assert_true(Test::starts_with($photo->file_path(), $album1->file_path()));
+    $this->assert_true(Test::starts_with($photo->thumb_path(), dirname($album1->thumb_path())));
+    $this->assert_true(Test::starts_with($photo->resize_path(), dirname($album1->resize_path())));
 
     $this->assert_equal($thumb_file, file_get_contents($photo->thumb_path()));
     $this->assert_equal($resize_file, file_get_contents($photo->resize_path()));
@@ -272,10 +272,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_photo_test() {
-    $album1 = test::random_album();
-    $photo  = test::random_unique_photo($album1);
+    $album1 = Test::random_album();
+    $photo  = Test::random_unique_photo($album1);
 
-    $album2 = test::random_album();
+    $album2 = Test::random_album();
 
     $thumb_file = file_get_contents($photo->thumb_path());
     $resize_file = file_get_contents($photo->resize_path());
@@ -289,9 +289,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     // * the photo's paths are inside the album2 not album1
     // * the photo files are all still intact and accessible
 
-    $this->assert_true(test::starts_with($photo->file_path(), $album2->file_path()));
-    $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album2->thumb_path())));
-    $this->assert_true(test::starts_with($photo->resize_path(), dirname($album2->resize_path())));
+    $this->assert_true(Test::starts_with($photo->file_path(), $album2->file_path()));
+    $this->assert_true(Test::starts_with($photo->thumb_path(), dirname($album2->thumb_path())));
+    $this->assert_true(Test::starts_with($photo->resize_path(), dirname($album2->resize_path())));
 
     $this->assert_equal($thumb_file, file_get_contents($photo->thumb_path()));
     $this->assert_equal($resize_file, file_get_contents($photo->resize_path()));
@@ -299,8 +299,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_album_with_conflicting_target_gets_uniquified_test() {
-    $album = test::random_album();
-    $source = test::random_album_unsaved($album);
+    $album = Test::random_album();
+    $source = Test::random_album_unsaved($album);
     $source->name = $album->name;
     $source->save();
 
@@ -316,8 +316,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_album_fails_wrong_target_type_test() {
-    $album = test::random_album();
-    $photo = test::random_photo();
+    $album = Test::random_album();
+    $photo = Test::random_photo();
 
     // $source and $album have the same name, so if we move $source into the root they should
     // conflict.
@@ -333,9 +333,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_photo_with_conflicting_target_gets_uniquified_test() {
-    $photo1 = test::random_photo();
-    $album = test::random_album();
-    $photo2 = test::random_photo_unsaved($album);
+    $photo1 = Test::random_photo();
+    $album = Test::random_album();
+    $photo2 = Test::random_photo_unsaved($album);
     $photo2->name = $photo1->name;
     $photo2->save();
 
@@ -353,9 +353,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_album_inside_descendent_fails_test() {
-    $album1 = test::random_album();
-    $album2 = test::random_album($album1);
-    $album3 = test::random_album($album2);
+    $album1 = Test::random_album();
+    $album2 = Test::random_album($album1);
+    $album3 = Test::random_album($album2);
 
     try {
       $album1->parent_id = $album3->id;
@@ -399,7 +399,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function slug_is_url_safe_test() {
     try {
-      $album = test::random_album_unsaved();
+      $album = Test::random_album_unsaved();
       $album->slug = "illegal chars! !@#@#$!@~";
       $album->save();
       $this->assert_true(false, "Shouldn't be able to save");
@@ -413,13 +413,13 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function name_with_only_invalid_chars_is_still_valid_test() {
-    $album = test::random_album_unsaved();
+    $album = Test::random_album_unsaved();
     $album->name = "[]";
     $album->save();
   }
 
   public function cant_change_item_type_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     try {
       $photo->type = "movie";
       $photo->mime_type = "video/x-flv";
@@ -434,14 +434,14 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function photo_files_must_have_an_extension_test() {
-    $photo = test::random_photo_unsaved();
+    $photo = Test::random_photo_unsaved();
     $photo->name = "no_extension_photo";
     $photo->save();
     $this->assert_equal("no_extension_photo.jpg", $photo->name);
   }
 
   public function movie_files_must_have_an_extension_test() {
-    $movie = test::random_movie_unsaved();
+    $movie = Test::random_movie_unsaved();
     $movie->name = "no_extension_movie";
     $movie->save();
     $this->assert_equal("no_extension_movie.flv", $movie->name);
@@ -458,8 +458,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function as_restful_array_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     $album->reload();
 
     $result = $album->as_restful_array();
@@ -490,16 +490,16 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function first_photo_becomes_album_cover_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     $album->reload();
 
     $this->assert_same($photo->id, $album->album_cover_item_id);
   }
 
   public function replace_data_file_test() {
-    // Random photo is modules/gallery/tests/test.jpg which is 1024x768 and 6232 bytes.
-    $photo = test::random_photo();
+    // Random photo is modules/gallery_unittest/assets/test.jpg which is 1024x768 and 6232 bytes.
+    $photo = Test::random_photo();
     $this->assert_equal(1024, $photo->width);
     $this->assert_equal(768, $photo->height);
     $this->assert_equal(6232, filesize($photo->file_path()));
@@ -514,8 +514,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function replace_data_file_type_test() {
-    // Random photo is modules/gallery/tests/test.jpg
-    $photo = test::random_photo();
+    // Random photo is modules/gallery_unittest/assets/test.jpg
+    $photo = Test::random_photo();
     $this->assert_equal(1024, $photo->width);
     $this->assert_equal(768, $photo->height);
     $this->assert_equal(6232, filesize($photo->file_path()));
@@ -536,7 +536,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function unsafe_data_file_replacement_test() {
     try {
-      $photo = test::random_photo();
+      $photo = Test::random_photo();
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
@@ -550,7 +550,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $temp_file = TMPPATH . "masquerading_php.jpg";
     copy(MODPATH . "gallery/tests/Item_Model_Test.php", $temp_file);
     try {
-      $photo = test::random_photo();
+      $photo = Test::random_photo();
       $photo->set_data_file($temp_file);
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
@@ -561,7 +561,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function urls_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $this->assert_true(
       preg_match("|http://./var/resizes/name_\w+\.jpg\?m=\d+|", $photo->resize_url()),
       $photo->resize_url() . " is malformed");
@@ -572,12 +572,12 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       preg_match("|http://./var/albums/name_\w+\.jpg\?m=\d+|", $photo->file_url()),
       $photo->file_url() . " is malformed");
 
-    $album = test::random_album();
+    $album = Test::random_album();
     $this->assert_true(
       preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
 
-    $photo = test::random_photo($album);
+    $photo = Test::random_photo($album);
     $this->assert_true(
       preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
       $album->thumb_url() . " is malformed");
@@ -591,8 +591,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function legal_extension_that_does_match_gets_used_test() {
     foreach (array("jpg", "JPG", "Jpg", "jpeg") as $extension) {
-      $photo = test::random_photo_unsaved(Item::root());
-      $photo->name = test::random_name() . ".{$extension}";
+      $photo = Test::random_photo_unsaved(Item::root());
+      $photo->name = Test::random_name() . ".{$extension}";
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
       $this->assert_equal($extension, pathinfo($photo->name, PATHINFO_EXTENSION));
@@ -602,7 +602,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function illegal_extension_test() {
     foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
                    "test.pl", "test.php.png") as $name) {
-      $photo = test::random_photo_unsaved(Item::root());
+      $photo = Test::random_photo_unsaved(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -613,7 +613,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   public function cant_rename_to_illegal_extension_test() {
     foreach (array("test.php.test", "test.php", "test.PHP",
                    "test.php5", "test.php4", "test.pl") as $name) {
-      $photo = test::random_photo(Item::root());
+      $photo = Test::random_photo(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -623,7 +623,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function legal_extension_that_doesnt_match_gets_fixed_test() {
     foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
-      $photo = test::random_photo_unsaved(Item::root());
+      $photo = Test::random_photo_unsaved(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -633,7 +633,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
   public function rename_to_legal_extension_that_doesnt_match_gets_fixed_test() {
     foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
-      $photo = test::random_photo(Item::root());
+      $photo = Test::random_photo(Item::root());
       $photo->name = $name;
       $photo->save();
       // Should get renamed with the correct jpg extension of the data file.
@@ -642,16 +642,16 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function albums_can_have_two_dots_in_name_test() {
-    $album = test::random_album_unsaved(Item::root());
+    $album = Test::random_album_unsaved(Item::root());
     $album->name = $album->name . ".foo.bar";
     $album->save();
   }
 
   public function no_conflict_when_parents_different_test() {
-    $parent1 = test::random_album();
-    $parent2 = test::random_album();
-    $photo1 = test::random_photo($parent1);
-    $photo2 = test::random_photo($parent2);
+    $parent1 = Test::random_album();
+    $parent2 = Test::random_album();
+    $photo1 = Test::random_photo($parent1);
+    $photo2 = Test::random_photo($parent2);
 
     $photo2->name = $photo1->name;
     $photo2->slug = $photo1->slug;
@@ -663,9 +663,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_names_identical_test() {
-    $parent = test::random_album();
-    $photo1 = test::random_photo($parent);
-    $photo2 = test::random_photo($parent);
+    $parent = Test::random_album();
+    $photo1 = Test::random_photo($parent);
+    $photo2 = Test::random_photo($parent);
 
     $photo1_orig_base = pathinfo($photo1->name, PATHINFO_FILENAME);
     $photo2_orig_slug = $photo2->slug;
@@ -679,9 +679,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_slugs_identical_test() {
-    $parent = test::random_album();
-    $photo1 = test::random_photo($parent);
-    $photo2 = test::random_photo($parent);
+    $parent = Test::random_album();
+    $photo1 = Test::random_photo($parent);
+    $photo2 = Test::random_photo($parent);
 
     $photo2_orig_base = pathinfo($photo2->name, PATHINFO_FILENAME);
 
@@ -694,10 +694,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function no_conflict_when_parents_different_for_albums_test() {
-    $parent1 = test::random_album();
-    $parent2 = test::random_album();
-    $album1 = test::random_album($parent1);
-    $album2 = test::random_album($parent2);
+    $parent1 = Test::random_album();
+    $parent2 = Test::random_album();
+    $album1 = Test::random_album($parent1);
+    $album2 = Test::random_album($parent2);
 
     $album2->name = $album1->name;
     $album2->slug = $album1->slug;
@@ -709,9 +709,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_names_identical_for_albums_test() {
-    $parent = test::random_album();
-    $album1 = test::random_album($parent);
-    $album2 = test::random_album($parent);
+    $parent = Test::random_album();
+    $album1 = Test::random_album($parent);
+    $album2 = Test::random_album($parent);
 
     $album2_orig_slug = $album2->slug;
 
@@ -724,9 +724,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_slugs_identical_for_albums_test() {
-    $parent = test::random_album();
-    $album1 = test::random_album($parent);
-    $album2 = test::random_album($parent);
+    $parent = Test::random_album();
+    $album1 = Test::random_album($parent);
+    $album2 = Test::random_album($parent);
 
     $album2_orig_name = $album2->name;
 
@@ -739,9 +739,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function no_conflict_when_base_names_identical_between_album_and_photo_test() {
-    $parent = test::random_album();
-    $album = test::random_album($parent);
-    $photo = test::random_photo($parent);
+    $parent = Test::random_album();
+    $album = Test::random_album($parent);
+    $photo = Test::random_photo($parent);
 
     $photo_orig_slug = $photo->slug;
 
@@ -754,9 +754,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_full_names_identical_between_album_and_photo_test() {
-    $parent = test::random_album();
-    $photo = test::random_photo($parent);
-    $album = test::random_album($parent);
+    $parent = Test::random_album();
+    $photo = Test::random_photo($parent);
+    $album = Test::random_album($parent);
 
     $album_orig_slug = $album->slug;
 
@@ -769,9 +769,9 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_slugs_identical_between_album_and_photo_test() {
-    $parent = test::random_album();
-    $album = test::random_album($parent);
-    $photo = test::random_photo($parent);
+    $parent = Test::random_album();
+    $album = Test::random_album($parent);
+    $photo = Test::random_photo($parent);
 
     $photo_orig_base = pathinfo($photo->name, PATHINFO_FILENAME);
 
@@ -784,10 +784,10 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function fix_conflict_when_base_names_identical_between_jpg_png_flv_test() {
-    $parent = test::random_album();
-    $item1 = test::random_photo($parent);
-    $item2 = test::random_photo($parent);
-    $item3 = test::random_movie($parent);
+    $parent = Test::random_album();
+    $item1 = Test::random_photo($parent);
+    $item2 = Test::random_photo($parent);
+    $item3 = Test::random_movie($parent);
 
     $item1_orig_base = pathinfo($item1->name, PATHINFO_FILENAME);
     $item2_orig_slug = $item2->slug;

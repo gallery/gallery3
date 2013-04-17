@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photo_Helper_Test extends Gallery_Unit_Test_Case {
+class Photo_Helper_Test extends Unittest_Testcase {
   public function get_file_metadata_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($photo->file_path()));
   }
@@ -34,7 +34,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_file_metadata_with_no_extension_test() {
-    copy(MODPATH . "gallery/tests/test.jpg", TMPPATH . "test_jpg_with_no_extension");
+    copy(MODPATH . "gallery_unittest/assets/test.jpg", TMPPATH . "test_jpg_with_no_extension");
     $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
                         Photo::get_file_metadata(TMPPATH . "test_jpg_with_no_extension"));
     unlink(TMPPATH . "test_jpg_with_no_extension");
@@ -54,7 +54,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     // themselves are valid.  This is needed to ensure that issues similar to those corrected by
     // ticket #1855, where an image that looked valid (header said jpg) with a php extension was
     // previously accepted without changing its extension, do not arise and cause security issues.
-    copy(MODPATH . "gallery/tests/test.jpg", TMPPATH . "test_jpg_with_php_extension.php");
+    copy(MODPATH . "gallery_unittest/assets/test.jpg", TMPPATH . "test_jpg_with_php_extension.php");
     $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
                         Photo::get_file_metadata(TMPPATH . "test_jpg_with_php_extension.php"));
     unlink(TMPPATH . "test_jpg_with_php_extension.php");

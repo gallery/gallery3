@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Database_Test extends Gallery_Unit_Test_Case {
+class Database_Test extends Unittest_Testcase {
   function setup() {
     $config = Config::instance();
     $config->set("database.mock.connection.type", "mock");

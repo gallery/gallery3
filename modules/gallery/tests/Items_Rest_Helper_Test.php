@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
+class Items_Rest_Helper_Test extends Unittest_Testcase {
   public function get_url_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
-    $photo2 = test::random_photo($album2);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
+    $photo2 = Test::random_photo($album2);
     $album1->reload();
     $album2->reload();
 
@@ -55,10 +55,10 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_url_filter_album_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
-    $photo2 = test::random_photo($album2);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
+    $photo2 = Test::random_photo($album2);
     $album1->reload();
     $album2->reload();
 
@@ -84,10 +84,10 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_url_filter_photo_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
-    $photo2 = test::random_photo($album2);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
+    $photo2 = Test::random_photo($album2);
     $album1->reload();
     $album2->reload();
 
@@ -111,10 +111,10 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_url_filter_albums_photos_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
-    $photo2 = test::random_photo($album2);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
+    $photo2 = Test::random_photo($album2);
     $album1->reload();
     $album2->reload();
 
@@ -148,10 +148,10 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_ancestors_test() {
-    $album1 = test::random_album();
-    $photo1 = test::random_photo($album1);
-    $album2 = test::random_album($album1);
-    $photo2 = test::random_photo($album2);
+    $album1 = Test::random_album();
+    $photo1 = Test::random_photo($album1);
+    $album2 = Test::random_album($album1);
+    $photo2 = Test::random_photo($album2);
     $album1->reload();
     $album2->reload();
 

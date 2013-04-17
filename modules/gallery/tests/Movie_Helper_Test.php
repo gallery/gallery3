@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Movie_Helper_Test extends Gallery_Unit_Test_Case {
+class Movie_Helper_Test extends Unittest_Testcase {
   public function seconds_to_hhmmssdd_test() {
     $times = array("00:00:00.50" => 0.5,
                    "00:00:06.00" => 6,
@@ -48,7 +48,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_file_metadata_test() {
-    $movie = test::random_movie();
+    $movie = Test::random_movie();
     $this->assert_equal(array(360, 288, "video/x-flv", "flv", 6.00),
                         Movie::get_file_metadata($movie->file_path()));
   }
@@ -63,7 +63,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_file_metadata_with_no_extension_test() {
-    copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_no_extension");
+    copy(MODPATH . "gallery_unittest/assets/test.flv", TMPPATH . "test_flv_with_no_extension");
     // Since mime type and extension are based solely on the filename, this is considered invalid.
     try {
       $metadata = Movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension");
@@ -84,7 +84,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_file_metadata_with_illegal_extension_but_valid_file_contents_test() {
-    copy(MODPATH . "gallery/tests/test.flv", TMPPATH . "test_flv_with_php_extension.php");
+    copy(MODPATH . "gallery_unittest/assets/test.flv", TMPPATH . "test_flv_with_php_extension.php");
     // Since mime type and extension are based solely on the filename, this is considered invalid.
     try {
       $metadata = Movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php");

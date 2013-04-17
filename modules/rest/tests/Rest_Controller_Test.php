@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Controller_Test extends Gallery_Unit_Test_Case {
+class Rest_Controller_Test extends Unittest_Testcase {
   public function setup() {
     $this->_save = array($_GET, $_POST, $_SERVER);
 
@@ -30,7 +30,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function login_test() {
-    $user = test::random_user("password");
+    $user = Test::random_user("password");
 
     // There's no access key at first
     $this->assert_false(
@@ -39,7 +39,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     $_POST["user"] = $user->name;
     $_POST["password"] = "password";
 
-    $response = test::call_and_capture(array(new Controller_Rest(), "index"));
+    $response = Test::call_and_capture(array(new Controller_Rest(), "index"));
     $expected =
       ORM::factory("UserAccessKey")->where("user_id", "=", $user->id)->find()->access_key;
 
@@ -48,12 +48,12 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function login_failed_test() {
-    $user = test::random_user("password");
+    $user = Test::random_user("password");
 
     try {
       $_POST["user"] = $user->name;
       $_POST["password"] = "WRONG PASSWORD";
-      test::call_and_capture(array(new Controller_Rest(), "index"));
+      Test::call_and_capture(array(new Controller_Rest(), "index"));
     } catch (Rest_Exception $e) {
       $this->assert_equal(403, $e->getCode());
       return;
@@ -69,7 +69,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     $_GET["key"] = "value";
 
     try {
-      test::call_and_capture(array(new Controller_Rest(), "mock"));
+      Test::call_and_capture(array(new Controller_Rest(), "mock"));
     } catch (Rest_Exception $e) {
       $this->assert_same(403, $e->getCode());
       return;
@@ -87,7 +87,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
             "method" => "get",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      test::call_and_capture(array(new Controller_Rest(), "mock")));
+      Test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
   public function post_test() {
@@ -99,7 +99,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
             "method" => "post",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      test::call_and_capture(array(new Controller_Rest(), "mock")));
+      Test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
   public function put_test() {
@@ -112,7 +112,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
             "method" => "put",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      test::call_and_capture(array(new Controller_Rest(), "mock")));
+      Test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
   public function delete_test() {
@@ -125,14 +125,14 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
             "method" => "delete",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      test::call_and_capture(array(new Controller_Rest(), "mock")));
+      Test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
   public function bogus_method_test() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
     try {
-      test::call_and_capture(array(new Controller_Rest(), "mock"));
+      Test::call_and_capture(array(new Controller_Rest(), "mock"));
     } catch (Exception $e) {
       $this->assert_equal(400, $e->getCode());
       return;

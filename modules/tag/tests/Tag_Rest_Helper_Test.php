@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
+class Tag_Rest_Helper_Test extends Unittest_Testcase {
   public function setup() {
     try {
       Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
@@ -53,7 +53,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_with_no_relationships_test() {
-    $tag = test::random_tag();
+    $tag = Test::random_tag();
 
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
@@ -68,7 +68,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function put_test() {
-    $tag = test::random_tag();
+    $tag = Test::random_tag();
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
     $request->params = new stdClass();
@@ -80,7 +80,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function delete_tag_test() {
-    $tag = test::random_tag();
+    $tag = Test::random_tag();
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
     Hook_Rest_Tag::delete($request);
@@ -89,7 +89,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function resolve_test() {
-    $tag = test::random_tag();
+    $tag = Test::random_tag();
 
     $this->assert_equal(
       $tag->as_array(),

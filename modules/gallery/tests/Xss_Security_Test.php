@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Xss_Security_Test extends Gallery_Unit_Test_Case {
+class Xss_Security_Test extends Unittest_Testcase {
   public function find_unescaped_variables_in_views_test() {
     $found = array();
     foreach (glob("*/*/views/*/*.php") as $view) {

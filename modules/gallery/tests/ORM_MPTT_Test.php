@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
+class ORM_MPTT_Test extends Unittest_Testcase {
 
   public function add_to_parent_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $this->assert_equal($album->parent()->right_ptr - 2, $album->left_ptr);
     $this->assert_equal($album->parent()->right_ptr - 1, $album->right_ptr);
@@ -29,11 +29,11 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function add_hierarchy_test() {
-    $album1 = test::random_album();
-    $album1_1 = test::random_album($album1);
-    $album1_2 = test::random_album($album1);
-    $album1_1_1 = test::random_album($album1_1);
-    $album1_1_2 = test::random_album($album1_1);
+    $album1 = Test::random_album();
+    $album1_1 = Test::random_album($album1);
+    $album1_2 = Test::random_album($album1);
+    $album1_1_1 = Test::random_album($album1_1);
+    $album1_1_2 = Test::random_album($album1_1);
 
     $album1->reload();
     $this->assert_equal(9, $album1->right_ptr - $album1->left_ptr);
@@ -43,11 +43,11 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function delete_hierarchy_test() {
-    $album1 = test::random_album();
-    $album1_1 = test::random_album($album1);
-    $album1_2 = test::random_album($album1);
-    $album1_1_1 = test::random_album($album1_1);
-    $album1_1_2 = test::random_album($album1_1);
+    $album1 = Test::random_album();
+    $album1_1 = Test::random_album($album1);
+    $album1_2 = Test::random_album($album1);
+    $album1_1_1 = Test::random_album($album1_1);
+    $album1_1_2 = Test::random_album($album1_1);
 
     $album1_1->delete();
     $album1->reload();
@@ -57,11 +57,11 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function move_to_test() {
-    $album1 = test::random_album();
-    $album1_1 = test::random_album($album1);
-    $album1_2 = test::random_album($album1);
-    $album1_1_1 = test::random_album($album1_1);
-    $album1_1_2 = test::random_album($album1_1);
+    $album1 = Test::random_album();
+    $album1_1 = Test::random_album($album1);
+    $album1_2 = Test::random_album($album1);
+    $album1_1_1 = Test::random_album($album1_1);
+    $album1_1_2 = Test::random_album($album1_1);
 
     $album1_2->reload();
     $album1_1_1->reload();
@@ -85,9 +85,9 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cant_move_parent_into_own_subtree_test() {
-    $album1 = test::random_album(Item::root());
-    $album2 = test::random_album($album1);
-    $album3 = test::random_album($album2);
+    $album1 = Test::random_album(Item::root());
+    $album2 = Test::random_album($album1);
+    $album3 = Test::random_album($album2);
 
     try {
       $album1->parent_id = $album3->id;
@@ -99,15 +99,15 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function parent_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $parent = ORM::factory("Item", 1);
     $this->assert_equal($parent->id, $album->parent()->id);
   }
 
   public function parents_test() {
-    $outer = test::random_album();
-    $inner = test::random_album($outer);
+    $outer = Test::random_album();
+    $inner = Test::random_album($outer);
 
     $parent_ids = array();
     foreach ($inner->parents() as $parent) {
@@ -117,9 +117,9 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function children_test() {
-    $outer = test::random_album();
-    $inner1 = test::random_album($outer);
-    $inner2 = test::random_album($outer);
+    $outer = Test::random_album();
+    $inner1 = Test::random_album($outer);
+    $inner2 = Test::random_album($outer);
 
     $child_ids = array();
     foreach ($outer->children() as $child) {
@@ -129,27 +129,27 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function children_limit_test() {
-    $outer = test::random_album();
-    $inner1 = test::random_album($outer);
-    $inner2 = test::random_album($outer);
+    $outer = Test::random_album();
+    $inner1 = Test::random_album($outer);
+    $inner2 = Test::random_album($outer);
 
     $this->assert_equal(array($inner2->id => $inner2->name),
                         $outer->children(1, 1)->select_list('id'));
   }
 
   public function children_count_test() {
-    $outer = test::random_album();
-    $inner1 = test::random_album($outer);
-    $inner2 = test::random_album($outer);
+    $outer = Test::random_album();
+    $inner1 = Test::random_album($outer);
+    $inner2 = Test::random_album($outer);
 
     $this->assert_equal(2, $outer->children_count());
   }
 
   public function descendant_test() {
-    $parent = test::random_album();
-    $photo = test::random_photo($parent);
-    $album1 = test::random_album($parent);
-    $photo1 = test::random_photo($album1);
+    $parent = Test::random_album();
+    $photo = Test::random_photo($parent);
+    $album1 = Test::random_album($parent);
+    $photo1 = Test::random_photo($album1);
 
     $parent->reload();
 
@@ -159,20 +159,20 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
   }
 
   public function descendant_limit_test() {
-    $parent = test::random_album();
-    $album1 = test::random_album($parent);
-    $album2 = test::random_album($parent);
-    $album3 = test::random_album($parent);
+    $parent = Test::random_album();
+    $album1 = Test::random_album($parent);
+    $album2 = Test::random_album($parent);
+    $album3 = Test::random_album($parent);
     $parent->reload();
 
     $this->assert_equal(2, $parent->descendants(2)->count());
   }
 
   public function descendant_count_test() {
-    $parent = test::random_album();
-    $photo = test::random_photo($parent);
-    $album1 = test::random_album($parent);
-    $photo1 = test::random_photo($album1);
+    $parent = Test::random_album();
+    $photo = Test::random_photo($parent);
+    $album1 = Test::random_album($parent);
+    $photo1 = Test::random_photo($album1);
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants_count());

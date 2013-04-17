@@ -19,7 +19,7 @@
  */
 require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
 
-class File_Structure_Test extends Gallery_Unit_Test_Case {
+class File_Structure_Test extends Unittest_Testcase {
   public function no_trailing_closing_php_tag_test() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
@@ -298,7 +298,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
             continue;
           }
 
-          if (preg_match("/class.*extends.*Gallery_Unit_Test_Case/", $line)) {
+          if (preg_match("/class.*extends.*Unittest_Testcase/", $line)) {
             $scan = 1;
           } else if (preg_match("/class.*extends/", $line)) {
             $scan = 0;

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class DrawForm_Test extends Gallery_Unit_Test_Case {
+class DrawForm_Test extends Unittest_Testcase {
   function no_group_test() {
     $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $form->input("title")->label(t("Title"));
