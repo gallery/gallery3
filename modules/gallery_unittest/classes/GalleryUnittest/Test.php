@@ -143,7 +143,7 @@ class GalleryUnittest_Test {
   static function lorem_ipsum($num) {
     static $lorem_ipsum = null;
     if (!$lorem_ipsum) {
-      require_once(MODPATH . "gallery_unit_test/vendor/LoremIpsum.class.php");
+      require_once(MODPATH . "gallery_unittest/vendor/LoremIpsum.class.php");
       $lorem_ipsum = new LoremIpsumGenerator();
     }
     // skip past initial 'lorem ipsum'

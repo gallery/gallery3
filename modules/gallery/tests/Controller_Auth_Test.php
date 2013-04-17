@@ -24,7 +24,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
     $controllers = array_diff(glob("*/*/classes/*/Controller/*.php"), $git_ignores);
     $feeds = array_diff(glob("*/*/classes/*/*Rss.php"), $git_ignores);
     foreach (array_merge($controllers, $feeds) as $controller) {
-      if (preg_match("{modules/(gallery_)?unit_test/}", $controller)) {
+      if (preg_match("{modules/(gallery_)?unittest/}", $controller)) {
         continue;
       }
 

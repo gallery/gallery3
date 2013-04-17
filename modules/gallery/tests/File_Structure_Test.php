@@ -90,7 +90,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
   private function _check_php_preamble($path, &$errors) {
     $expected_2 = null; $expected_3 = null; $expected_4 = null;
     if (strpos($path, SYSPATH) === 0 ||
-        strpos($path, MODPATH . "unit_test") === 0) {
+        strpos($path, MODPATH . "unittest") === 0) {
       // Kohana: we only care about the first line
       $fp = fopen($path, "r");
       $actual = array(fgets($fp));
@@ -102,7 +102,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     } else if (strpos($path, MODPATH . "forge") === 0 ||
                strpos($path, MODPATH . "exif/lib") === 0 ||
                strpos($path, MODPATH . "gallery/vendor/joomla") === 0 ||
-               strpos($path, MODPATH . "gallery_unit_test/vendor") === 0 ||
+               strpos($path, MODPATH . "gallery_unittest/vendor") === 0 ||
                strpos($path, MODPATH . "gallery/lib/HTMLPurifier") === 0 ||
                $path == MODPATH . "user/vendor/phpass/PasswordHash.php" ||
                $path == DOCROOT . "var/database.php") {

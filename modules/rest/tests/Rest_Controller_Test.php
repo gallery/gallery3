@@ -86,7 +86,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
       array("params" => array("key" => "value"),
             "method" => "get",
             "access_key" => Rest::access_key(),
-            "url" => "http://./index.php/gallery_unit_test"),
+            "url" => "http://./index.php/gallery_unittest"),
       test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
@@ -98,7 +98,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
       array("params" => array("key" => "value"),
             "method" => "post",
             "access_key" => Rest::access_key(),
-            "url" => "http://./index.php/gallery_unit_test"),
+            "url" => "http://./index.php/gallery_unittest"),
       test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
@@ -111,7 +111,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
       array("params" => array("key" => "value"),
             "method" => "put",
             "access_key" => Rest::access_key(),
-            "url" => "http://./index.php/gallery_unit_test"),
+            "url" => "http://./index.php/gallery_unittest"),
       test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
@@ -124,7 +124,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
       array("params" => array("key" => "value"),
             "method" => "delete",
             "access_key" => Rest::access_key(),
-            "url" => "http://./index.php/gallery_unit_test"),
+            "url" => "http://./index.php/gallery_unittest"),
       test::call_and_capture(array(new Controller_Rest(), "mock")));
   }
 
