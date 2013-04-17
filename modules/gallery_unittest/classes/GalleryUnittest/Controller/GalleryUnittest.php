@@ -33,48 +33,27 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
     // @todo: for tests, we should force the site_domain to something like example.com
     $_SERVER["SCRIPT_FILENAME"] = "index.php";
     $_SERVER["SCRIPT_NAME"] = "./index.php";
+    $_SERVER["SERVER_NAME"] = "localhost";
 
-    $config = Config::instance();
+    $config = Kohana::$config;
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
-      print "Please copy kohana/config/database.php to $original_config.\n";
+      print "Missing $original_config\n";
       return;
     } else {
       copy($original_config, $test_config);
-      $db_config = Kohana::$config->load('database');
-      if (empty($db_config['unit_test'])) {
-        $default = $db_config['default'];
-        $conn = $default['connection'];
-        $config->set('database.unit_test.benchmark', $default['benchmark']);
-        $config->set('database.unit_test.persistent', $default['persistent']);
-        $config->set('database.unit_test.connection.type', $conn['type']);
-        $config->set('database.unit_test.connection.user', $conn['user']);
-        $config->set('database.unit_test.connection.pass', $conn['pass']);
-        $config->set('database.unit_test.connection.host', $conn['host']);
-        $config->set('database.unit_test.connection.port', $conn['port']);
-        $config->set('database.unit_test.connection.socket', $conn['socket']);
-        $config->set('database.unit_test.connection.database', "{$conn['database']}_test");
-        $config->set('database.unit_test.character_set', $default['character_set']);
-        $config->set('database.unit_test.table_prefix', $default['table_prefix']);
-        $config->set('database.unit_test.object', $default['object']);
-        $config->set('database.unit_test.cache', $default['cache']);
-        $config->set('database.unit_test.escape', $default['escape']);
-        $db_config = Kohana::$config->load('database');
-      }
-
-      if ($db_config['default']['connection']['database'] ==
-          $db_config['unit_test']['connection']['database']) {
-        print "Don't use the default database for your unit tests or you'll lose all your data.\n";
-        return;
-      }
+      $db_config = Kohana::$config->load("database");
+      $db_config["unit_test"] = $db_config["default"];
+      $db_config["unit_test"]["connection"]["database"] =
+        $db_config["default"]["connection"]["database"] . "_test";
 
       try {
-        $db = Database::instance('unit_test');
+        $db = Database::instance("unit_test");
         $db->connect();
 
         // Make this the default database for the rest of this run
-        Database::set_default_instance($db);
+        Database::$default = "unit_test";
       } catch (Exception $e) {
         print "{$e->getMessage()}\n";
         return;
@@ -85,7 +64,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       // Clean out the database
       if ($tables = $db->list_tables()) {
         foreach ($db->list_tables() as $table) {
-          $db->query(Database::DROP, "DROP TABLE {{$table}}");
+          $db->query(Database::DROP, "DROP TABLE `$table`");
         }
       }
 
@@ -101,13 +80,17 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       Module::$modules = array();
       Module::$active = array();
       Module::$var_cache = array();
-      $db->clear_cache();
 
+      // @todo do we need to do this in K3?
+      // $db->clear_cache();
+
+      // @todo: do we need this in K3?
       // Rest the cascading class path
-      $config->set("core", $config->load("core"));
+      // $config->set("core", $config->load("core"));
 
       // Install the active modules
       // Force gallery and user to be installed first to resolve dependencies.
+
       Module::install("gallery");
       Module::load_modules();
 
