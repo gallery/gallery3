@@ -339,10 +339,10 @@ class Gallery_Graphics {
         $db->where("mime_type", "=", $mime_type);
       }
       if ($thumbs) {
-        $db->set("thumb_dirty", 1);
+        $db->set(array("thumb_dirty" => 1));
       }
       if ($resizes) {
-        $db->set("resize_dirty", 1);
+        $db->set(array("resize_dirty" => 1));
       }
       $db->execute();
     }
