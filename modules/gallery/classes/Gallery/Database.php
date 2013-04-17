@@ -74,14 +74,7 @@ abstract class Gallery_Database extends Kohana_Database {
     return strtr($sql, $this->_prefixed_table_names);
   }
 
-  /**
-   * This is used by the unit test code to switch the active database connection.
-   */
-  static function set_default_instance($db) {
-    self::$instances["default"] = $db;
-  }
-
-  /**
+   /**
    * Escape LIKE queries, add wildcards.  In MySQL queries using LIKE, _ and % characters are
    * treated as wildcards similar to ? and *, respectively.  Therefore, we need to escape _, %,
    * and \ (the escape character itself).
