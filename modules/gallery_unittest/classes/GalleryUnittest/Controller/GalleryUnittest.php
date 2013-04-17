@@ -20,7 +20,7 @@
 class GalleryUnittest_Controller_GalleryUnittest extends Controller {
   public function action_index() {
     if (!TEST_MODE) {
-      throw new HTTP_Exception_404();
+      throw HTTP_Exception::factory(404);
     }
 
     // Force strict behavior to flush out bugs early
@@ -42,7 +42,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       return;
     } else {
       copy($original_config, $test_config);
-      $db_config = Kohana::config('database');
+      $db_config = Kohana::$config->load('database');
       if (empty($db_config['unit_test'])) {
         $default = $db_config['default'];
         $conn = $default['connection'];
@@ -60,7 +60,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
         $config->set('database.unit_test.object', $default['object']);
         $config->set('database.unit_test.cache', $default['cache']);
         $config->set('database.unit_test.escape', $default['escape']);
-        $db_config = Kohana::config('database');
+        $db_config = Kohana::$config->load('database');
       }
 
       if ($db_config['default']['connection']['database'] ==
