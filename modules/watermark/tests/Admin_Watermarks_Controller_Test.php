@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
+class Admin_Watermarks_Controller_Test extends Unittest_Testcase {
   public function setup() {
     $this->_save = array($_POST, $_SERVER);
     $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
@@ -29,7 +29,7 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function add_watermark_test() {
     // Source is a jpg file, watermark path has extension jpg
-    $name = test::random_name();
+    $name = Test::random_name();
     $source_path = MODPATH . "gallery/assets/graphics/imagemagick.jpg";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);
@@ -55,7 +55,7 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function add_watermark_reject_illegal_file_test() {
     // Source is a php file, watermark path has extension php
-    $name = test::random_name();
+    $name = Test::random_name();
     $source_path = MODPATH . "watermark/tests/Admin_Watermarks_Controller_Test.php";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
@@ -79,7 +79,7 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function add_watermark_rename_legal_file_with_illegal_extension_test() {
     // Source is a jpg file, watermark path has extension php
-    $name = test::random_name();
+    $name = Test::random_name();
     $source_path = MODPATH . "gallery/assets/graphics/imagemagick.jpg";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.php";
     copy($source_path, $watermark_path);
@@ -105,7 +105,7 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function add_watermark_reject_illegal_file_with_legal_extension_test() {
     // Source is a php file, watermark path has extension jpg
-    $name = test::random_name();
+    $name = Test::random_name();
     $source_path = MODPATH . "watermark/tests/Admin_Watermarks_Controller_Test.php";
     $watermark_path = TMPPATH . "uploadfile-123-{$name}.jpg";
     copy($source_path, $watermark_path);

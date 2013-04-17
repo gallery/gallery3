@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Albums_Controller_Test extends Gallery_Unit_Test_Case {
+class Albums_Controller_Test extends Unittest_Testcase {
   public function setup() {
     $this->_save = array($_POST, $_SERVER);
   }
@@ -28,10 +28,10 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function change_album_test() {
     $controller = new Controller_Albums();
-    $album = test::random_album();
+    $album = Test::random_album();
 
     // Randomize to avoid conflicts.
-    $new_name = "new_name_" . test::random_string(6);
+    $new_name = "new_name_" . Test::random_string(6);
 
     $_POST["name"] = $new_name;
     $_POST["title"] = "new title";
@@ -56,7 +56,7 @@ class Albums_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function change_album_no_csrf_fails_test() {
     $controller = new Controller_Albums();
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";

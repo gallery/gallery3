@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Access_Helper_Test extends Gallery_Unit_Test_Case {
+class Access_Helper_Test extends Unittest_Testcase {
   private $_group;
 
   public function setup() {
@@ -69,7 +69,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
     Access::allow($access_test, "view", Item::root());
 
-    $item = test::random_album();
+    $item = Test::random_album();
 
     Access::deny(Identity::everybody(), "view", $item);
     Access::deny(Identity::registered_users(), "view", $item);
@@ -86,7 +86,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function user_can_no_access_test() {
-    $item = test::random_album();
+    $item = Test::random_album();
 
     Access::deny(Identity::everybody(), "view", $item);
     Access::deny(Identity::registered_users(), "view", $item);
@@ -101,7 +101,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
-    $item = test::random_album();
+    $item = Test::random_album();
 
     // New rows exist
     $this->assert_true(ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->loaded());
@@ -116,16 +116,16 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function new_photos_inherit_parent_permissions_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
     Access::allow(Identity::everybody(), "view", $album);
 
-    $photo = test::random_photo($album);
+    $photo = Test::random_photo($album);
 
     $this->assert_true($photo->__get("view_" . Identity::everybody()->id));
   }
 
   public function can_allow_deny_and_reset_intent_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
     $intent = ORM::factory("AccessIntent")->where("item_id", "=", $album->id)->find();
 
     // Allow
@@ -175,7 +175,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function cant_view_child_of_hidden_parent_test() {
     $root = Item::root();
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $root->reload();
     Access::deny(Identity::everybody(), "view", $root);
@@ -186,7 +186,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function view_permissions_propagate_down_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     Access::allow(Identity::everybody(), "view", Item::root());
     Access::reset(Identity::everybody(), "view", $album);
@@ -195,8 +195,8 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function view_permissions_propagate_down_to_photos_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     Identity::set_active_user(Identity::guest());
 
     $this->assert_true(Access::can("view", $photo));
@@ -208,10 +208,10 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function can_toggle_view_permissions_propagate_down_test() {
-    $album1 = test::random_album(Item::root());
-    $album2 = test::random_album($album1);
-    $album3 = test::random_album($album2);
-    $album4 = test::random_album($album3);
+    $album1 = Test::random_album(Item::root());
+    $album2 = Test::random_album($album1);
+    $album3 = Test::random_album($album2);
+    $album4 = Test::random_album($album3);
 
     $album1->reload();
     $album2->reload();
@@ -234,8 +234,8 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
     $root = Item::root();
-    $album1 = test::random_album($root);
-    $album2 = test::random_album($album1);
+    $album1 = Test::random_album($root);
+    $album2 = Test::random_album($album1);
 
     $root->reload();
     Access::deny(Identity::everybody(), "view", $root);
@@ -255,7 +255,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function non_view_permissions_propagate_down_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     Access::allow(Identity::everybody(), "edit", Item::root());
     Access::reset(Identity::everybody(), "edit", $album);
@@ -263,11 +263,11 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
-    $outer = test::random_album();
-    $outer_photo = test::random_photo($outer);
+    $outer = Test::random_album();
+    $outer_photo = Test::random_photo($outer);
 
-    $inner = test::random_album($outer);
-    $inner_photo = test::random_photo($inner);
+    $inner = Test::random_album($outer);
+    $inner_photo = Test::random_photo($inner);
 
     $outer->reload();
     $inner->reload();
@@ -308,7 +308,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function everybody_view_permission_maintains_htaccess_files_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
 
@@ -326,7 +326,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function everybody_view_full_permission_maintains_htaccess_files_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
@@ -356,17 +356,17 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   public function moved_items_inherit_new_permissions_test() {
     Identity::set_active_user(Identity::lookup_user_by_name("admin"));
 
-    $public_album = test::random_album();
-    $public_photo = test::random_photo($public_album);
+    $public_album = Test::random_album();
+    $public_photo = Test::random_photo($public_album);
     Access::allow(Identity::everybody(), "view", $public_album);
     Access::allow(Identity::everybody(), "edit", $public_album);
 
     Item::root()->reload();  // Account for MPTT changes
 
-    $private_album = test::random_album();
+    $private_album = Test::random_album();
     Access::deny(Identity::everybody(), "view", $private_album);
     Access::deny(Identity::everybody(), "edit", $private_album);
-    $private_photo = test::random_photo($private_album);
+    $private_photo = Test::random_photo($private_album);
 
     // Make sure that we now have a public photo and private photo.
     $this->assert_true(Access::group_can(Identity::everybody(), "view", $public_photo));

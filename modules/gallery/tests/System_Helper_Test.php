@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class System_Helper_Test extends Gallery_Unit_Test_Case {
+class System_Helper_Test extends Unittest_Testcase {
   public function temp_filename_test() {
     $filename = System::temp_filename("file", "ext");
     $this->assert_true(file_exists($filename), "File not created");

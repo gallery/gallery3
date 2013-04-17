@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
+class File_Proxy_Controller_Test extends Unittest_Testcase {
   public function setup() {
     $this->_save = array($_SERVER);
   }
@@ -28,14 +28,14 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function basic_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
     $controller = new Controller_FileProxy();
     $this->assert_same($photo->file_path(), $controller->__call("", array()));
   }
 
   public function query_params_are_ignored_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}?a=1&b=2");
     $controller = new Controller_FileProxy();
     $this->assert_same($photo->file_path(), $controller->__call("", array()));
@@ -64,7 +64,7 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function movie_thumbnails_are_jpgs_test() {
-    $movie = test::random_movie();
+    $movie = Test::random_movie();
     $name = LegalFile::change_extension($movie->name, "jpg");
     $_SERVER["REQUEST_URI"] = URL::file("var/thumbs/$name");
     $controller = new Controller_FileProxy();
@@ -72,7 +72,7 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function invalid_item_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/x_{$photo->name}");
     $controller = new Controller_FileProxy();
     try {
@@ -84,8 +84,8 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function need_view_full_permission_to_view_original_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     $album = $album->reload(); // adding the photo changed the album in the db
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}/{$photo->name}");
     $controller = new Controller_FileProxy();
@@ -102,7 +102,7 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cant_proxy_an_album_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}");
     $controller = new Controller_FileProxy();
 
@@ -115,7 +115,7 @@ class File_Proxy_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function missing_file_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
     unlink($photo->file_path());
     $controller = new Controller_FileProxy();

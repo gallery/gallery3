@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Num_Helper_Test extends Gallery_Unit_Test_Case {
+class Num_Helper_Test extends Unittest_Testcase {
   public function convert_to_bytes_test() {
     $this->assert_equal(5 * 1024, Num::convert_to_bytes("5K"));
     $this->assert_equal(3 * 1024*1024, Num::convert_to_bytes("3M"));

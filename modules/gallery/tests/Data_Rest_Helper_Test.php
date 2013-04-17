@@ -17,20 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
+class Data_Rest_Helper_Test extends Unittest_Testcase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
   }
 
   public function resolve_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
     $resolved = Rest::resolve(Rest::url("data", $photo, 640));
     $this->assert_equal($photo->id, $resolved->id);
   }
 
   public function resolve_needs_permission_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     $album->reload();  // new photo changed the album in the db
 
     Access::deny(Identity::everybody(), "view", $album);
@@ -45,7 +45,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function basic_get_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
 
     $request = new stdClass();
     $request->url = Rest::url("data", $photo, "thumb");
@@ -62,8 +62,8 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function illegal_access_test() {
-    $album = test::random_album();
-    $photo = test::random_photo($album);
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
     $album->reload();
 
     Access::deny(Identity::everybody(), "view", $album);
@@ -83,7 +83,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function missing_file_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
 
     $request = new stdClass();
     $request->url = Rest::url("data", $photo, "thumb");
@@ -101,7 +101,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cache_buster_test() {
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
 
     $this->assert_same(
       URL::abs_site("rest/data/{$photo->id}?size=thumb&m=" . filemtime($photo->thumb_path())),

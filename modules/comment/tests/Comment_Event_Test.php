@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Event_Test extends Gallery_Unit_Test_Case {
+class Comment_Event_Test extends Unittest_Testcase {
   public function deleting_an_item_deletes_its_comments_too_test() {
-    $album = test::random_album();
+    $album = Test::random_album();
 
     $comment = ORM::factory("Comment");
     $comment->item_id = $album->id;

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Html_Helper_Test extends Gallery_Unit_Test_Case {
+class Html_Helper_Test extends Unittest_Testcase {
   public function clean_test() {
     $safe_string = HTML::clean("hello <p  >world</p>");
     $this->assert_equal("hello &lt;p  &gt;world&lt;/p&gt;",

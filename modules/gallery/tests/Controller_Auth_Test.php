@@ -17,14 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Controller_Auth_Test extends Gallery_Unit_Test_Case {
+class Controller_Auth_Test extends Unittest_Testcase {
   public function find_missing_auth_test() {
     $found = array();
     $git_ignores = explode("\n", `git ls-files -o -i --exclude-standard`);
     $controllers = array_diff(glob("*/*/classes/*/Controller/*.php"), $git_ignores);
     $feeds = array_diff(glob("*/*/classes/*/*Rss.php"), $git_ignores);
     foreach (array_merge($controllers, $feeds) as $controller) {
-      if (preg_match("{modules/(gallery_)?unit_test/}", $controller)) {
+      if (preg_match("{modules/(gallery_)?unittest/}", $controller)) {
         continue;
       }
 

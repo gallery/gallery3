@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Url_Security_Test extends Gallery_Unit_Test_Case {
+class Url_Security_Test extends Unittest_Testcase {
   public function setup() {
     $this->save = array(Route::$current_uri, Route::$complete_uri, $_GET);
   }

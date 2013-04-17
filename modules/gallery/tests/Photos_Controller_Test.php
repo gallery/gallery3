@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photos_Controller_Test extends Gallery_Unit_Test_Case {
+class Photos_Controller_Test extends Unittest_Testcase {
   public function setup() {
     $this->_save = array($_POST, $_SERVER);
     $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
@@ -29,7 +29,7 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function change_photo_test() {
     $controller = new Controller_Photos();
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
 
     $_POST["name"] = "new name.jpg";
     $_POST["title"] = "new title";
@@ -53,7 +53,7 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function change_photo_no_csrf_fails_test() {
     $controller = new Controller_Photos();
-    $photo = test::random_photo();
+    $photo = Test::random_photo();
 
     $_POST["name"] = "new name.jpg";
     $_POST["title"] = "new title";
