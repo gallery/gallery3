@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_ORM extends Kohana_ORM {
+  protected $_changed_through = array();
+
   /**
    * Merge in a series of where clause tuples and call where() on each one.
    * @chainable
@@ -75,7 +77,7 @@ class Gallery_ORM extends Kohana_ORM {
    */
   protected function _initialize() {
     if (empty($this->_table_name)) {
-      // Get the table name by using Inflector::decamelize() instead of strtolower()
+      // Get the table name using Inflector::convert_class_to_module_name() instead of strtolower()
       $this->_table_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
       // Make the table name plural (if specified)
       if ($this->_table_names_plural === true) {
@@ -104,12 +106,76 @@ class Gallery_ORM extends Kohana_ORM {
    */
   public function delete() {
     if (!empty($this->_has_many)) {
-      foreach ($this->_has_many as $column => $details) {
+      foreach ($this->_has_many as $alias => $details) {
         if (!empty($details["delete_through"])) {
-          $this->remove($column);
+          $this->remove($alias);
         }
       }
     }
     return parent::delete();
+  }
+
+  /**
+   * Overload ORM::add() to add the related model(s) to changed_through if track_changed
+   * is true (default).  We do this after the parent function so any thrown exceptions
+   * stop it from getting added.
+   * @see ORM::add()
+   */
+  public function add($alias, $far_keys, $track_changed=true) {
+    parent::add($alias, $far_keys);
+    $this->_add_changed_through($alias, $far_keys, $track_changed);
+    return $this;
+  }
+
+  /**
+   * Overload ORM::remove() to add the related model(s) to changed_through if track_changed
+   * is true (default).  We do this after the parent function so any thrown exceptions
+   * stop it from getting added.
+   * @see ORM::remove()
+   */
+  public function remove($alias, $far_keys=null, $track_changed=true) {
+    parent::remove($alias, $far_keys);
+    $this->_add_changed_through($alias, $far_keys, $track_changed);
+    return $this;
+  }
+
+  /**
+   * Return an array of the objects of a has_many through relationship that were just added/removed.
+   * If clear is true (default), this will also clear the list.  We clear it here (as opposed to in
+   * update()/create()/clear()/reload() similar to changed()) since the list reflects changes in the
+   * pivot (or "through") table and not necessarily in the model itself.
+   */
+  public function changed_through($alias, $clear=true) {
+    if (!empty($this->_changed_through[$alias])) {
+      $changed = $this->_changed_through[$alias];
+      if ($clear) {
+        $this->_changed_through[$alias] = array();
+      }
+      return $changed;
+    }
+    return array();
+  }
+
+  /**
+   * Implements the "track_changed_through" argument of a has_many relationship, which adds
+   * added/removed objects to the changed_through array.  This is called by the add() and
+   * remove() overrides above.
+   */
+  protected function _add_changed_through($alias, $far_keys=null, $track_changed=true) {
+    if ($track_changed && !empty($this->_has_many[$alias]["track_changed_through"])) {
+      if ($far_keys instanceof ORM) {
+        // It's a model - add it.
+        $this->_changed_through[$alias][$far_keys->pk()] = $far_keys;
+      } else if (isset($far_keys)) {
+        // It's one or more keys - initialize the models and add them.
+        foreach ((array) $far_keys as $key) {
+          $this->_changed_through[$alias][$key] =
+            ORM::factory($this->_has_many[$alias]["model"], $key);
+        }
+      } else {
+        // It's null - add *all* models of the related type.
+        $this->_changed_through[$alias] = $this->{$alias}->find_all();
+      }
+    }
   }
 }
