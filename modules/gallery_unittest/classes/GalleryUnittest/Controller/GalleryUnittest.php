@@ -23,9 +23,9 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       throw HTTP_Exception::factory(404);
     }
 
-    // Force strict behavior to flush out bugs early.  In PHP <5.4, E_STRICT wasn't part of E_ALL.
+    // Force strict behavior to flush out bugs early.  Even in PHP <5.4, -1 includes E_STRICT.
     ini_set("display_errors", true);
-    error_reporting(E_ALL | E_STRICT);
+    error_reporting(-1);
 
     // Jump through some hoops to satisfy the way that we check for the site_domain in
     // config.php.  We structure this such that the code in config will leave us with a
