@@ -121,6 +121,9 @@ Kohana::$config->attach(new Config_File);
 // Enable some core modules that are needed for the bootstrap.  We'll load the complete set later.
 // Modules are referenced by a relative or absolute path.  Note that none of these modules
 // have init.php files, so nothing should interfere with XSS cleaning happening first.
+//
+// Note that this isn't all 3rd party modules!  Refer to Module::$_third_party_modules for the
+// complete list.
 Kohana::modules(array(
   "purifier"    => MODPATH . "purifier",
   "gallery"     => MODPATH . "gallery",
