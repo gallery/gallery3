@@ -18,10 +18,29 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Helper_Test extends Unittest_Testcase {
+  private $_client_ip;
+  private $_user_agent;
+  private $_save;
+  private $_api_key;
+
   public function setup() {
+    $this->_client_ip = Request::$client_ip;
+    $this->_user_agent = Request::$user_agent;  // Use this instead of user_agent() for exact reset.
+    $this->_save = $_SERVER;
+    $this->_api_key = Module::get_var("akismet", "api_key", "TEST_KEY");
+
+    $_SERVER["HTTP_USER_AGENT"] = "Akismet_Helper_Test";
+
     Request::$client_ip = "1.1.1.1";
-    Request::set_user_agent("Akismet_Helper_Test");
+    Request::$user_agent = "Akismet_Helper_Test";
     Module::set_var("akismet", "api_key", "TEST_KEY");
+  }
+
+  public function teardown() {
+    Request::$client_ip = $this->_client_ip;
+    Request::$user_agent = $this->_user_agent;
+    $_SERVER = $this->_save;
+    Module::set_var("akismet", "api_key", $this->_api_key);
   }
 
   private function _make_comment() {
