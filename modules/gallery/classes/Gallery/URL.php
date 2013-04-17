@@ -58,7 +58,7 @@ class Gallery_URL extends Kohana_URL {
    * Just like URL::current except that it escapes any XSS in the path.
    */
   static function current($qs=false, $suffix=false) {
-    return htmlspecialchars(parent::current($qs, $suffix));
+    return htmlspecialchars(Request::current()->url(true) . URL::query());
   }
 
   /**
