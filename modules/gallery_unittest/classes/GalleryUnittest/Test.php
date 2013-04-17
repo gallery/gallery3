@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class test_Core {
+class GalleryUnittest_Test {
   static function random_album_unsaved($parent=null) {
     $rand = test::random_string(6);
 

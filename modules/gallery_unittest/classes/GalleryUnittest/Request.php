@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class request extends request_Core {
+class GalleryUnittest_Request extends Kohana_Request {
   static function set_user_agent($value) {
     self::$user_agent = null;
     $_SERVER["HTTP_USER_AGENT"] = $value;
