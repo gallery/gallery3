@@ -234,20 +234,9 @@ class Gallery_Hook_GalleryInstaller {
     $now = time();
     DB::insert(
       "items",
-      array("created" => $now,
-            "description" => "",
-            "left_ptr" => 1,
-            "level" => 1,
-            "parent_id" => 0,
-            "resize_dirty" => 1,
-            "right_ptr" => 2,
-            "sort_column" => "weight",
-            "sort_order" => "ASC",
-            "thumb_dirty" => 1,
-            "title" => "Gallery",
-            "type" => "album",
-            "updated" => $now,
-            "weight" => 1))
+      array("created", "description", "left_ptr", "level", "parent_id", "resize_dirty", "right_ptr",
+            "sort_column", "sort_order", "thumb_dirty", "title", "type", "updated", "weight"))
+      ->values(array($now, "", 1, 1, 0, 1, 2, "weight", "ASC", 1, "Gallery", "album", $now, 1))
       ->execute();
     $root = ORM::factory("Item", 1);
     Access::add_item($root);
@@ -821,6 +810,9 @@ class Gallery_Hook_GalleryInstaller {
       }
       Module::set_version("gallery", $version = 58);
     }
+
+    // @TODO for the next upgrade - Image::AUTO in K2 was "2" and now in K3 it's "4" so we have to
+    // upgrade all graphics rules accordingly.
   }
 
   static function uninstall() {
