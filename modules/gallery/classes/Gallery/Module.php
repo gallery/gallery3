@@ -187,7 +187,7 @@ class Gallery_Module {
   static function install($module_name) {
     Module::_add_to_path($module_name);
 
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Installer";
+    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
@@ -238,7 +238,7 @@ class Gallery_Module {
    */
   static function upgrade($module_name) {
     $version_before = Module::get_version($module_name);
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Installer";
+    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     $available = Module::available();
     if (class_exists($installer_class) && method_exists($installer_class, "upgrade")) {
       call_user_func_array(array($installer_class, "upgrade"), array($version_before));
@@ -274,7 +274,7 @@ class Gallery_Module {
   static function activate($module_name) {
     Module::_add_to_path($module_name);
 
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Installer";
+    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "activate")) {
       call_user_func_array(array($installer_class, "activate"), array());
     }
@@ -301,7 +301,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function deactivate($module_name) {
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Installer";
+    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "deactivate")) {
       call_user_func_array(array($installer_class, "deactivate"), array());
     }
@@ -344,7 +344,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function uninstall($module_name) {
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Installer";
+    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "uninstall")) {
       call_user_func(array($installer_class, "uninstall"));
     }
