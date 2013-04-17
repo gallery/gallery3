@@ -38,7 +38,7 @@ class Tag_Tag {
       $tag->name = $tag_name;
     }
 
-    $tag->add($item);
+    $tag->add("items", $item);
     return $tag->save();
   }
 
@@ -84,10 +84,7 @@ class Tag_Tag {
    * @return array
    */
   static function item_tags($item) {
-    return ORM::factory("Tag")
-      ->join("items_tags", "left")->on("tag.id", "=", "items_tags.tag_id")
-      ->where("items_tags.item_id", "=", $item->id)
-      ->find_all();
+    return $item->tags->find_all();
   }
 
   /**
@@ -95,10 +92,7 @@ class Tag_Tag {
    * @return array
    */
   static function tag_items($tag) {
-    return ORM::factory("Item")
-      ->join("items_tags", "left")->on("items_tags.item_id", "=", "item.id")
-      ->where("items_tags.tag_id", "=", $tag->id)
-      ->find_all();
+    return $tag->items->find_all();
   }
 
   static function get_add_form($item) {
@@ -123,27 +117,24 @@ class Tag_Tag {
   }
 
   /**
-   * Delete all tags associated with an item
+   * Delete all tags associated with an item.
    */
   static function clear_all($item) {
-    DB::update("tags")
-      ->set("count", DB::expr("`count` - 1"))
-      ->where("count", ">", 0)
-      ->where("id", "IN", DB::select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
-      ->execute();
-    DB::delete("items_tags")
-      ->where("item_id", "=", $item->id)
-      ->execute();
+    // Re-save each tag so their counts are updated.
+    foreach ($item->tags->find_all() as $tag) {
+      $tag->save();
+    }
+    // Remove the tags.  This doesn't actually affect the item model, so we don't need to save it.
+    $item->remove("tags");
+    // Since we don't save the tag model, we need to run the "item_related_update" event ourselves.
+    Module::event("item_related_update", $item);
   }
 
   /**
-   * Remove all items from a tag
+   * Remove all items from a tag.
    */
   static function remove_items($tag) {
-    DB::delete("items_tags")
-      ->where("tag_id", "=", $tag->id)
-      ->execute();
-    $tag->count = 0;
+    $tag->remove("items");
     $tag->save();
   }
 
@@ -166,10 +157,8 @@ class Tag_Tag {
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
   static function get_position($tag, $item, $where=array()) {
-    return ORM::factory("Item")
+    return $tag->items
       ->viewable()
-      ->join("items_tags")->on("item.id", "=", "items_tags.item_id")
-      ->where("items_tags.tag_id", "=", $tag->id)
       ->where("item.id", "<=", $item->id)
       ->merge_where($where)
       ->order_by("item.id")

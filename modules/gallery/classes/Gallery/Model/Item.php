@@ -18,11 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Model_Item extends ORM_MPTT {
-  protected $children = "items";
   public $data_file = null;
   private $data_file_error = null;
 
   public function __construct($id=null) {
+    if (Module::is_active("tag")) {
+      $this->_has_many["tags"] = array("through" => "items_tags", "delete_through" => true);
+    }
+
     parent::__construct($id);
 
     if (!$this->loaded()) {
