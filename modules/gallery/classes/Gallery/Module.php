@@ -40,7 +40,8 @@ class Gallery_Module {
   private static $_unittest_modules = array("gallery_unittest", "unittest");
   private static $_first_module = "purifier";
   private static $_last_module = "gallery";
-  private static $_third_party_modules = array("formo", "pagination", "cache", "orm", "database");
+  private static $_third_party_modules = array(
+    "cache", "database", "formo", "image", "orm", "pagination", "purifier");
 
   /**
    * Set the version of the corresponding Model_Module
