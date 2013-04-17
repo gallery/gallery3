@@ -24,7 +24,7 @@ class Comment_Helper_Test extends Unittest_Testcase {
 
   public function setup() {
     $this->_client_ip = Request::$client_ip;
-    $this->_user_agent = Request::user_agent();
+    $this->_user_agent = Request::$user_agent;  // Use this instead of user_agent() for exact reset.
     $this->_save = $_SERVER;
 
     $_SERVER["HTTP_ACCEPT"] = "HTTP_ACCEPT";
@@ -33,18 +33,19 @@ class Comment_Helper_Test extends Unittest_Testcase {
     $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "HTTP_ACCEPT_LANGUAGE";
     $_SERVER["HTTP_CONNECTION"] = "HTTP_CONNECTION";
     $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
+    $_SERVER["HTTP_USER_AGENT"] = "HTTP_USER_AGENT";
     $_SERVER["QUERY_STRING"] = "QUERY_STRING";
     $_SERVER["REMOTE_ADDR"] = "REMOTE_ADDR";
     $_SERVER["REMOTE_HOST"] = "REMOTE_HOST";
     $_SERVER["REMOTE_PORT"] = "REMOTE_PORT";
     $_SERVER["SERVER_NAME"] = "SERVER_NAME";
 
-    Request::set_user_agent("HTTP_USER_AGENT");
+    Request::$user_agent = "HTTP_USER_AGENT";
   }
 
   public function teardown() {
     Request::$client_ip = $this->_client_ip;
-    Request::set_user_agent($this->_user_agent);
+    Request::$user_agent = $this->_user_agent;
     $_SERVER = $this->_save;
   }
 
