@@ -19,9 +19,9 @@
  */
 class GalleryUnittest_Test {
   static function random_album_unsaved($parent=null) {
-    $rand = test::random_string(6);
+    $rand = Test::random_string(6);
 
-    $album = ORM::factory("item");
+    $album = ORM::factory("Item");
     $album->type = "album";
     $album->parent_id = $parent ? $parent->id : 1;
     $album->name = "name_$rand";
@@ -30,49 +30,49 @@ class GalleryUnittest_Test {
   }
 
   static function random_album($parent=null) {
-    return test::random_album_unsaved($parent)->save()->reload();
+    return Test::random_album_unsaved($parent)->save()->reload();
   }
 
   static function random_movie_unsaved($parent=null) {
-    $rand = test::random_string(6);
-    $photo = ORM::factory("item");
+    $rand = Test::random_string(6);
+    $photo = ORM::factory("Item");
     $photo->type = "movie";
     $photo->parent_id = $parent ? $parent->id : 1;
-    $photo->set_data_file(MODPATH . "gallery/tests/test.flv");
+    $photo->set_data_file(MODPATH . "gallery_unittest/assets/test.flv");
     $photo->name = "name_$rand.flv";
     $photo->title = "title_$rand";
     return $photo;
   }
 
   static function random_movie($parent=null) {
-    return test::random_movie_unsaved($parent)->save()->reload();
+    return Test::random_movie_unsaved($parent)->save()->reload();
   }
 
   static function random_photo_unsaved($parent=null) {
-    $rand = test::random_string(6);
-    $photo = ORM::factory("item");
+    $rand = Test::random_string(6);
+    $photo = ORM::factory("Item");
     $photo->type = "photo";
     $photo->parent_id = $parent ? $parent->id : 1;
-    $photo->set_data_file(MODPATH . "gallery/tests/test.jpg");
+    $photo->set_data_file(MODPATH . "gallery_unittest/assets/test.jpg");
     $photo->name = "name_$rand.jpg";
     $photo->title = "title_$rand";
     return $photo;
   }
 
   static function random_photo($parent=null) {
-    return test::random_photo_unsaved($parent)->save()->reload();
+    return Test::random_photo_unsaved($parent)->save()->reload();
   }
 
   // If a test compares photo file contents (i.e. file_get_contents), it's best to use this
   // function to guarantee uniqueness.
   static function random_unique_photo_unsaved($parent=null) {
-    $rand = test::random_string(6);
-    $photo = ORM::factory("item");
+    $rand = Test::random_string(6);
+    $photo = ORM::factory("Item");
     $photo->type = "photo";
     $photo->parent_id = $parent ? $parent->id : 1;
     if (function_exists("gd_info")) {
       // Make image unique - color the black dot of test.jpg to the 6-digit hex code of rand.
-      $image = imagecreatefromjpeg(MODPATH . "gallery/tests/test.jpg");
+      $image = imagecreatefromjpeg(MODPATH . "gallery_unittest/assets/test.jpg");
       imagefilter($image, IMG_FILTER_COLORIZE,
         hexdec(substr($rand, 0, 2)), hexdec(substr($rand, 2, 2)), hexdec(substr($rand, 4, 2)));
       imagejpeg($image, TMPPATH . "test_$rand.jpg");
@@ -80,7 +80,7 @@ class GalleryUnittest_Test {
       $photo->set_data_file(TMPPATH . "test_$rand.jpg");
     } else {
       // Just use the black dot.
-      $photo->set_data_file(MODPATH . "gallery/tests/test.jpg");
+      $photo->set_data_file(MODPATH . "gallery_unittest/assets/test.jpg");
     }
     $photo->name = "name_$rand.jpg";
     $photo->title = "title_$rand";
@@ -88,20 +88,20 @@ class GalleryUnittest_Test {
   }
 
   static function random_unique_photo($parent=null) {
-    return test::random_unique_photo_unsaved($parent)->save()->reload();
+    return Test::random_unique_photo_unsaved($parent)->save()->reload();
   }
 
   static function random_user($password="password") {
-    $rand = "name_" . test::random_string(6);
-    return identity::create_user($rand, $rand, $password, "$rand@rand.com");
+    $rand = "name_" . Test::random_string(6);
+    return Identity::create_user($rand, $rand, $password, "$rand@rand.com");
   }
 
   static function random_group() {
-    return identity::create_group(test::random_string(6));
+    return Identity::create_group(Test::random_string(6));
   }
 
   static function random_name($item=null) {
-    $rand = "name_" . test::random_string(6);
+    $rand = "name_" . Test::random_string(6);
     if ($item && $item->is_photo()) {
       $rand .= ".jpg";
     }
@@ -119,8 +119,8 @@ class GalleryUnittest_Test {
   }
 
   static function random_tag() {
-    $tag = ORM::factory("tag");
-    $tag->name = test::lorem_ipsum(rand(2, 4));
+    $tag = ORM::factory("Tag");
+    $tag->name = Test::lorem_ipsum(rand(2, 4));
 
     // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();
@@ -135,7 +135,7 @@ class GalleryUnittest_Test {
   static function random_string($length) {
     $buf = "";
     do {
-      $buf .= random::hash();
+      $buf .= Random::hash();
     } while (strlen($buf) < $length);
     return substr($buf, 0, $length);
   }

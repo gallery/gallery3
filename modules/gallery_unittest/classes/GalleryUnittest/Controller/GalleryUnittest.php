@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class GalleryUnittest_Controller_GalleryUnittest extends Controller {
-  function index() {
+  public function action_index() {
     if (!TEST_MODE) {
-      throw new Kohana_404_Exception();
+      throw new HTTP_Exception_404();
     }
 
     // Force strict behavior to flush out bugs early
@@ -34,7 +34,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
     $_SERVER["SCRIPT_FILENAME"] = "index.php";
     $_SERVER["SCRIPT_NAME"] = "./index.php";
 
-    $config = Kohana_Config::instance();
+    $config = Config::instance();
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
@@ -95,12 +95,12 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       @system("rm -rf test/var");
       @mkdir('test/var/logs', 0777, true);
 
-      $active_modules = module::$active;
+      $active_modules = Module::$active;
 
       // Reset our caches
-      module::$modules = array();
-      module::$active = array();
-      module::$var_cache = array();
+      Module::$modules = array();
+      Module::$active = array();
+      Module::$var_cache = array();
       $db->clear_cache();
 
       // Rest the cascading class path
@@ -108,28 +108,28 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
 
       // Install the active modules
       // Force gallery and user to be installed first to resolve dependencies.
-      module::install("gallery");
-      module::load_modules();
+      Module::install("gallery");
+      Module::load_modules();
 
-      module::install("user");
-      module::activate("user");
+      Module::install("user");
+      Module::activate("user");
       $modules = $paths = array();
-      foreach (module::available() as $module_name => $unused) {
+      foreach (Module::available() as $module_name => $unused) {
         if (in_array($module_name, array("gallery", "user"))) {
           $paths[] = MODPATH . "{$module_name}/tests";
           continue;
         }
         if (file_exists($path = MODPATH . "{$module_name}/tests")) {
           $paths[] = $path;
-          module::install($module_name);
-          module::activate($module_name);
+          Module::install($module_name);
+          Module::activate($module_name);
         }
       }
 
       $config->set('unit_test.paths', $paths);
 
-      // Trigger late-binding install actions (defined in gallery_event::user_login)
-      graphics::choose_default_toolkit();
+      // Trigger late-binding install actions (defined in Hook_GalleryEvent::user_login)
+      Graphics::choose_default_toolkit();
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
       $unit_test = new Unit_Test($modules, $filter);
