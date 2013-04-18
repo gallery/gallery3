@@ -248,7 +248,7 @@ class Gallery_Hook_GalleryTask {
       if (!$task->done) {
         Cache::instance()->set("update_l10n_cache:{$task->id}",
                                serialize(array($dirs, $files, $cache, $num_fetched)),
-                               array("l10n"));
+                               null, array("l10n"));
       } else {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }

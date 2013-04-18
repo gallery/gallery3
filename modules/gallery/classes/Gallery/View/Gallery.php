@@ -195,13 +195,13 @@ class Gallery_View_Gallery extends View {
           $combine_data->contents = $contents;
           Module::event("after_combine", $combine_data);
 
-          $cache->set($key, $combine_data->contents, array($type), 30 * 84600);
+          $cache->set($key, $combine_data->contents, 30 * 84600, array($type));
 
           $use_gzip = function_exists("gzencode") &&
             (int) ini_get("zlib.output_compression") === 0;
           if ($use_gzip) {
             $cache->set("{$key}_gz", gzencode($combine_data->contents, 9, FORCE_GZIP),
-                        array($type, "gzip"), 30 * 84600);
+                        30 * 84600, array($type, "gzip"));
           }
         }
 

@@ -183,7 +183,7 @@ class Gallery_I18n extends Kohana_I18n {
         $translations[$row->key] = unserialize($row->translation);
       }
 
-      $cache->set($cache_key, $translations, array("translation"), 0);
+      $cache->set($cache_key, $translations, 0, array("translation"));
     }
     return $translations;
   }

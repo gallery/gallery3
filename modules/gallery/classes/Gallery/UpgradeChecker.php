@@ -73,7 +73,7 @@ class Gallery_UpgradeChecker {
     }
     $result->timestamp = time();
     Cache::instance()->set("upgrade_checker_version_info", serialize($result),
-                           array("upgrade"), 86400 * 365);
+                           86400 * 365, array("upgrade"));
   }
 
   /**

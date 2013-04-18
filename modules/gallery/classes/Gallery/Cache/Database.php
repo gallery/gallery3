@@ -45,33 +45,25 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    * @throws  Cache_Exception
    */
   public function get($id, $default=null) {
-    $data = null;
-    $result = DB::select()
-      ->from("caches")
-      ->where("key", "=", $id)
-      ->as_object()
-      ->execute();
+    $cache = ORM::factory("Cache")->where("key", "=", $id)->find();
 
-    if ($result->count()) {
-      $cache = $result->current();
-
+    if ($cache->loaded()) {
       // Make sure the expiration is valid and that the hash matches
       if ($cache->expiration != 0 && $cache->expiration <= time()) {
         // Cache is not valid, delete it now
-        $this->delete(array($cache->id));
+        $this->delete($id);
       } else {
-        // Disable notices for unserializing
+        // Temporarily disable notices for unserializing
         $ER = error_reporting(~E_NOTICE);
+        $data = unserialize($cache->cache);
+        error_reporting($ER);
 
         // Return the valid cache data
-        $data = unserialize($cache->cache);
-
-        // Turn notices back on
-        error_reporting($ER);
+        return $data;
       }
     }
-
-    return $data;
+    // No valid cache data found - return default
+    return $default;
   }
 
   /**
@@ -80,11 +72,11 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    * @param   string   $id        id
    * @param   mixed    $data      data
    * @param   integer  $lifetime  lifetime [Optional]
+   * @param   array    $tags      tags [Optional]
    * @return  boolean
    */
-  public function set($id, $data, $lifetime = NULL)
-  {
-    return (bool) $this->set_with_tags($id, $data, $lifetime);
+  public function set($id, $data, $lifetime=null, array $tags=null) {
+    return (bool) $this->set_with_tags($id, $data, $lifetime, $tags);
   }
 
   /**
