@@ -18,7 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin_Languages extends Controller_Admin {
-  public function action_index($share_translations_form=null) {
+  public function action_index() {
+    $this->show_languages_view();
+  }
+
+  public function show_languages_view($share_translations_form=null) {
     $v = new View_Admin("required/admin.html");
     $v->page_title = t("Languages and translations");
     $v->content = new View("admin/languages.html");
@@ -27,7 +31,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     $v->content->default_locale = Module::get_var("gallery", "default_locale");
 
     if (empty($share_translations_form)) {
-      $share_translations_form = $this->_share_translations_form();
+      $share_translations_form = $this->get_share_translations_form();
     }
     $v->content->share_translations_form = $share_translations_form;
     $this->_outgoing_translations_count();
@@ -56,10 +60,10 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
   public function action_share() {
     Access::verify_csrf();
 
-    $form = $this->_share_translations_form();
+    $form = $this->get_share_translations_form();
     if (!$form->validate()) {
       // Show the page with form errors
-      return $this->action_index($form);
+      return $this->show_languages_view($form);
     }
 
     if (Request::current()->post("share")) {
@@ -99,7 +103,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
         HTTP::redirect("admin/languages");
     } else {
       // Show the page with form errors
-      $this->action_index($form);
+      $this->show_languages_view($form);
     }
   }
 
@@ -107,7 +111,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     return ORM::factory("OutgoingTranslation")->count_all();
   }
 
-  private function _share_translations_form() {
+  public function get_share_translations_form() {
     $form = new Forge("admin/languages/share", "", "post", array("id" => "g-share-translations-form"));
     $group = $form->group("sharing")
       ->label("Translations API Key");

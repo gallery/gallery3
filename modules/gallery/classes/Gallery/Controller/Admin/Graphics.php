@@ -27,7 +27,8 @@ class Gallery_Controller_Admin_Graphics extends Controller_Admin {
     print $view;
   }
 
-  public function action_choose($toolkit_id) {
+  public function action_choose() {
+    $toolkit_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     if ($toolkit_id != Module::get_var("gallery", "graphics_toolkit")) {
