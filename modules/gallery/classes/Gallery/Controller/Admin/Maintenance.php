@@ -60,7 +60,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Start a new task
    * @param string $task_callback
    */
-  public function action_start($task_callback) {
+  public function action_start() {
+    $task_callback = $this->arg_required(0);
     Access::verify_csrf();
 
     $task = Task::start($task_callback);
@@ -238,7 +239,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     }
   }
 
-  public function action_maintenance_mode($value) {
+  public function action_maintenance_mode() {
+    $value = $this->arg_required(0, "digit");
     Access::verify_csrf();
     Module::set_var("gallery", "maintenance_mode", $value);
     HTTP::redirect("admin/maintenance");

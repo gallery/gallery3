@@ -41,7 +41,8 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
                       (string) $menu->get("deleted")->label));
   }
 
-  public function action_queue($state) {
+  public function action_queue() {
+    $state = $this->arg_required(0, "alpha");
     $page = max(Request::current()->query("page"), 1);
 
     $view = new View_Gallery("admin/manage_comments_queue.html");
