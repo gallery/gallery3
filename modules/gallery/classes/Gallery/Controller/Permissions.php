@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Permissions extends Controller {
-  public function action_browse($id) {
+  public function action_browse() {
+    $id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
@@ -36,7 +37,8 @@ class Gallery_Controller_Permissions extends Controller {
     print $view;
   }
 
-  public function action_form($id) {
+  public function action_form() {
+    $id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);

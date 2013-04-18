@@ -26,7 +26,8 @@ class Tag_Controller_Tags extends Controller {
     print Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30));
   }
 
-  public function action_create($item_id) {
+  public function action_create() {
+    $item_id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Access::required("edit", $item);

@@ -39,7 +39,8 @@ class Gallery_Controller_Movies extends Controller_Items {
     print $template;
   }
 
-  public function action_update($movie_id) {
+  public function action_update() {
+    $movie_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
     $movie = ORM::factory("Item", $movie_id);
     Access::required("view", $movie);
@@ -81,7 +82,8 @@ class Gallery_Controller_Movies extends Controller_Items {
     }
   }
 
-  public function action_form_edit($movie_id) {
+  public function action_form_edit() {
+    $movie_id = $this->arg_required(0, "digit");
     $movie = ORM::factory("Item", $movie_id);
     Access::required("view", $movie);
     Access::required("edit", $movie);

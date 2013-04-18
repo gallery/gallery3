@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ServerAdd_Controller_ServerAdd extends Controller_Admin {
-  public function action_browse($id) {
+  public function action_browse() {
+    $id = $this->arg_required(0, "digit");
     $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
     foreach (array_keys($paths) as $path) {
       $files[] = $path;
@@ -110,7 +111,8 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
   /**
    * Run the task of adding photos
    */
-  public function action_run($task_id) {
+  public function action_run() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
