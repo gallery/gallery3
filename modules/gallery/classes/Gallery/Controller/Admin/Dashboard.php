@@ -53,7 +53,8 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
     HTTP::redirect("admin/dashboard");
   }
 
-  public function action_remove_block($id) {
+  public function action_remove_block() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $blocks_center = BlockManager::get_active("dashboard_center");

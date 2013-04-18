@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Uploader extends Controller {
-  public function action_index($id) {
+  public function action_index() {
+    $id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("add", $item);
@@ -34,7 +35,8 @@ class Gallery_Controller_Uploader extends Controller {
     Batch::start();
   }
 
-  public function action_add_photo($id) {
+  public function action_add_photo() {
+    $id = $this->arg_required(0, "digit");
     $album = ORM::factory("Item", $id);
     Access::required("view", $album);
     Access::required("add", $album);
@@ -99,7 +101,10 @@ class Gallery_Controller_Uploader extends Controller {
     }
   }
 
-  public function action_status($success_count, $error_count) {
+  public function action_status() {
+    $success_count = $this->arg_required(0, "digit");
+    $error_count = $this->arg_required(1, "digit");
+
     if ($error_count) {
       // The "errors" won't be properly pluralized :-/
       print t2("Uploaded %count photo (%error errors)",

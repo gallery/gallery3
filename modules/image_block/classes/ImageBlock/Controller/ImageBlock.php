@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ImageBlock_Controller_ImageBlock extends Controller {
-  public function action_random($item_id) {
+  public function action_random() {
+    $item_id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Item::set_display_context_callback("Controller_Albums::get_display_context");

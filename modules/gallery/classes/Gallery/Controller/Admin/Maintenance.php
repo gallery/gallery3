@@ -60,7 +60,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Start a new task
    * @param string $task_callback
    */
-  public function action_start($task_callback) {
+  public function action_start() {
+    $task_callback = $this->arg_required(0);
     Access::verify_csrf();
 
     $task = Task::start($task_callback);
@@ -77,7 +78,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Resume a stalled task
    * @param string $task_id
    */
-  public function action_resume($task_id) {
+  public function action_resume() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -99,7 +101,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Show the task log
    * @param string $task_id
    */
-  public function action_show_log($task_id) {
+  public function action_show_log() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -116,7 +119,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Save the task log
    * @param string $task_id
    */
-  public function action_save_log($task_id) {
+  public function action_save_log() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -133,7 +137,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Cancel a task.
    * @param string $task_id
    */
-  public function action_cancel($task_id) {
+  public function action_cancel() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     Task::cancel($task_id);
@@ -157,7 +162,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Remove a task.
    * @param string $task_id
    */
-  public function action_remove($task_id) {
+  public function action_remove() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     Task::remove($task_id);
@@ -185,7 +191,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * back with status on the task.
    * @param string $task_id
    */
-  public function action_run($task_id) {
+  public function action_run() {
+    $task_id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     try {
@@ -232,7 +239,8 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     }
   }
 
-  public function action_maintenance_mode($value) {
+  public function action_maintenance_mode() {
+    $value = $this->arg_required(0, "digit");
     Access::verify_csrf();
     Module::set_var("gallery", "maintenance_mode", $value);
     HTTP::redirect("admin/maintenance");

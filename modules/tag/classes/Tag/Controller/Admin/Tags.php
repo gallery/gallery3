@@ -34,14 +34,16 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     print $view;
   }
 
-  public function action_form_delete($id) {
+  public function action_form_delete() {
+    $id = $this->arg_required(0, "digit");
     $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
       print Tag::get_delete_form($tag);
     }
   }
 
-  public function action_delete($id) {
+  public function action_delete() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $tag = ORM::factory("Tag", $id);
@@ -62,7 +64,8 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     }
   }
 
-  public function action_form_rename($id) {
+  public function action_form_rename() {
+    $id = $this->arg_required(0, "digit");
     $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
       print InPlaceEdit::factory($tag->name)
@@ -71,7 +74,8 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     }
   }
 
-  public function action_rename($id) {
+  public function action_rename() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $tag = ORM::factory("Tag", $id);

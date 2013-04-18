@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Quick extends Controller {
-  public function action_rotate($id, $dir) {
+  public function action_rotate() {
+    $id = $this->arg_required(0, "digit");
+    $dir = $this->arg_required(1, "alpha");
     Access::verify_csrf();
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
@@ -56,7 +58,8 @@ class Gallery_Controller_Quick extends Controller {
     }
   }
 
-  public function action_make_album_cover($id) {
+  public function action_make_album_cover() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $item = ORM::factory("Item", $id);
@@ -72,7 +75,8 @@ class Gallery_Controller_Quick extends Controller {
     JSON::reply(array("result" => "success", "reload" => 1));
   }
 
-  public function action_form_delete($id) {
+  public function action_form_delete() {
+    $id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
@@ -83,7 +87,8 @@ class Gallery_Controller_Quick extends Controller {
     print $v;
   }
 
-  public function action_delete($id) {
+  public function action_delete() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
@@ -117,7 +122,8 @@ class Gallery_Controller_Quick extends Controller {
     }
   }
 
-  public function action_form_edit($id) {
+  public function action_form_edit() {
+    $id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("edit", $item);
