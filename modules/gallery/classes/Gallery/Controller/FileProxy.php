@@ -121,8 +121,6 @@ class Gallery_Controller_FileProxy extends Controller {
       exit;
     }
 
-    header("Content-Length: " . filesize($file));
-
     // Set the filemtime as the etag (same as cache buster), use to check if cache needs refreshing.
     $this->check_cache(filemtime($file));
 
@@ -131,26 +129,18 @@ class Gallery_Controller_FileProxy extends Controller {
 
     // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
     if (($item->is_movie() || $item->is_album()) && $type == "thumbs") {
-      header("Content-Type: image/jpeg");
+      $mime_type = "image/jpeg";
     } else {
-      header("Content-Type: $item->mime_type");
+      $mime_type = $item->mime_type;
     }
 
     if (TEST_MODE) {
       return $file;
     } else {
-      // Don't use Kohana::close_buffers(false) here because that only closes all the buffers
-      // that Kohana started.  We want to close *all* buffers at this point because otherwise we're
-      // going to buffer up whatever file we're proxying (and it may be very large).  This may
-      // affect embedding or systems with PHP's output_buffering enabled.
-      while (ob_get_level()) {
-        if (!@ob_end_clean()) {
-          // ob_end_clean() can return false if the buffer can't be removed for some reason
-          // (zlib output compression buffers sometimes cause problems).
-          break;
-        }
-      }
-      readfile($file);
+      // Send the file as the response.  The filename will be set automatically from the path.
+      // Note: send_file() will automatically halt script execution after sending the file.
+      $this->response->send_file($file, null,
+                                 array("inline" => "true", "mime_type" => $mime_type));
     }
   }
 }

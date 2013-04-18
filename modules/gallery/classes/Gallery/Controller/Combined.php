@@ -46,15 +46,9 @@ class Gallery_Controller_Combined extends Controller {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
-    // Our data is immutable, so if they already have a copy then it needs no updating.
-    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-      header("HTTP/1.0 304 Not Modified");
-      header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
-      header("Cache-Control: public,max-age=2678400");
-      header("Pragma: public");
-      Kohana::close_buffers(false);
-      return "";
-    }
+    // Since our data is immutable, we set the etag to be the key (i.e. it never changes).
+    // That way, if anything is found in the cache with this URL, it won't be refreshed.
+    $this->check_cache($key);
 
     if (empty($key)) {
       throw HTTP_Exception::factory(404);
@@ -62,12 +56,11 @@ class Gallery_Controller_Combined extends Controller {
 
     $cache = Cache::instance();
     $use_gzip = function_exists("gzencode") &&
-      stripos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false &&
+      $this->request->headers()->accepts_encoding_at_quality("gzip") &&
       (int) ini_get("zlib.output_compression") === 0;
 
     if ($use_gzip && $content = $cache->get("{$key}_gz")) {
-      header("Content-Encoding: gzip");
-      header("Vary: Accept-Encoding");
+      $this->response->headers(array("Content-Encoding" => "gzip", "Vary" => "Accept-Encoding"));
     } else {
       // Fall back to non-gzipped if we have to
       $content = $cache->get($key);
@@ -78,19 +71,14 @@ class Gallery_Controller_Combined extends Controller {
 
     // $type is either 'javascript' or 'css'
     if ($type == "javascript") {
-      header("Content-Type: application/javascript; charset=UTF-8");
+      $mime_type = "application/javascript; charset=UTF-8";
     } else {
-      header("Content-Type: text/css; charset=UTF-8");
+      $mime_type = "text/css; charset=UTF-8";
     }
-    header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
-    header("Cache-Control: public,max-age=2678400");
-    header("Pragma: public");
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
-    header("Content-Length: " . strlen($content));
 
-    Kohana::close_buffers(false);
-    print $content;
+    // Send the content as the response.  This sets the filename as $key, which matches the URL.
+    $this->response->body($content);
+    $this->response->send_file(true, $key, array("inline" => "true", "mime_type" => $mime_type));
   }
-
 }
 
