@@ -18,7 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Model_Tag extends ORM {
-  protected $has_and_belongs_to_many = array("items");
+  protected $_has_many = array("items" =>
+    array("through" => "items_tags", "delete_through" => true, "track_changed_through" => true));
 
   public function __construct($id=null) {
     parent::__construct($id);
@@ -31,8 +32,8 @@ class Tag_Model_Tag extends ORM {
 
   /**
    * Return all viewable items associated with this tag.
-   * @param integer  $limit  number of rows to limit result to
-   * @param integer  $offset offset in result to start returning rows from
+   * @param integer  $limit   number of rows to limit result to
+   * @param integer  $offset  offset in result to start returning rows from
    * @param string   $where   an array of arrays, each compatible with ORM::where()
    * @return Database_Result
    */
@@ -41,10 +42,8 @@ class Tag_Model_Tag extends ORM {
       // backwards compatibility
       $where = array(array("item.type", "=", $where));
     }
-    return ORM::factory("Item")
+    return $this->items
       ->viewable()
-      ->join("items_tags")->on("item.id", "=", "items_tags.item_id")
-      ->where("items_tags.tag_id", "=", $this->id)
       ->merge_where($where)
       ->order_by("item.id")
       ->limit($limit)->offset($offset)->find_all();
@@ -60,10 +59,8 @@ class Tag_Model_Tag extends ORM {
       // backwards compatibility
       $where = array(array("item.type", "=", $where));
     }
-    return $model = ORM::factory("Item")
+    return $this->items
       ->viewable()
-      ->join("items_tags")->on("item.id", "=", "items_tags.item_id")
-      ->where("items_tags.tag_id", "=", $this->id)
       ->merge_where($where)
       ->count_all();
   }
@@ -80,33 +77,29 @@ class Tag_Model_Tag extends ORM {
       ->find();
     if ($duplicate_tag->loaded()) {
       // If so, tag its items with this tag so as to merge it
-      $duplicate_tag_items = ORM::factory("Item")
-        ->join("items_tags")->on("item.id", "=", "items_tags.item_id")
-        ->where("items_tags.tag_id", "=", $duplicate_tag->id)
-        ->find_all();
-      foreach ($duplicate_tag_items as $item) {
-        $this->add($item);
+      foreach ($duplicate_tag->items->find_all() as $item) {
+        // Add the item to the tag without adding it to changed_through.
+        $this->add("items", $item, false);
       }
 
       // ... and remove the duplicate tag
       $duplicate_tag->delete();
     }
 
-    if (isset($this->object_relations["items"])) {
-      $added = array_diff($this->changed_relations["items"], $this->object_relations["items"]);
-      $removed = array_diff($this->object_relations["items"], $this->changed_relations["items"]);
-      if (isset($this->changed_relations["items"])) {
-        $changed = array_merge($added, $removed);
-      }
-      $this->count = count($this->object_relations["items"]) + count($added) - count($removed);
+    // Revise the count
+    $this->count = $this->items->count_all();
+
+    // If the tag name has changed, all related items are considered changed, too.
+    if ($this->changed("name")) {
+      $changed_items = $this->items->find_all();
+    } else {
+      $changed_items = $this->changed_through("items");
     }
 
     parent::save($validation);
 
-    if (!empty($changed)) {
-      foreach (ORM::factory("Item")->where("id", "IN", $changed)->find_all() as $item) {
-        Module::event("item_related_update", $item);
-      }
+    foreach ($changed_items as $item) {
+      Module::event("item_related_update", $item);
     }
 
     return $this;
@@ -114,28 +107,16 @@ class Tag_Model_Tag extends ORM {
 
   /**
    * Overload ORM::delete() to trigger an item_related_update event for all items that are
-   * related to this tag, and delete all items_tags relationships.
+   * related to this tag.
    */
   public function delete() {
-    $related_item_ids = array();
-    foreach (DB::select("item_id")
-             ->from("items_tags")
-             ->where("tag_id", "=", $this->id)
-             ->execute() as $row) {
-      $related_item_ids[$row->item_id] = 1;
+    $items = $this->items->find_all();
+    parent::delete();
+    foreach ($items as $item) {
+      Module::event("item_related_update", $item);
     }
 
-    DB::delete("items_tags")->where("tag_id", "=", $this->id)->execute();
-    $result = parent::delete();
-
-    if ($related_item_ids) {
-      foreach (ORM::factory("Item")
-               ->where("id", "IN", array_keys($related_item_ids))
-               ->find_all() as $item) {
-        Module::event("item_related_update", $item);
-      }
-    }
-    return $result;
+    return $this;
   }
 
   /**

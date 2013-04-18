@@ -30,7 +30,7 @@ class Tag_Hook_Rest_TagItem {
   static function delete($request) {
     list ($tag, $item) = Rest::resolve($request->url);
     Access::required("edit", $item);
-    $tag->remove($item);
+    $tag->remove("items", $item);
     $tag->save();
   }
 
