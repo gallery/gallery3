@@ -47,11 +47,11 @@ class Gallery_Controller_Combined extends Controller {
     Session::instance()->abort_save();
 
     // Our data is immutable, so if they already have a copy then it needs no updating.
-    if ($_SERVER["HTTP_IF_MODIFIED_SINCE"]) {
-      header('HTTP/1.0 304 Not Modified');
+    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+      header("HTTP/1.0 304 Not Modified");
       header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
       header("Cache-Control: public,max-age=2678400");
-      header('Pragma: public');
+      header("Pragma: public");
       Kohana::close_buffers(false);
       return "";
     }
