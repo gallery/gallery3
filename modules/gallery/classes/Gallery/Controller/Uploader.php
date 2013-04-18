@@ -101,7 +101,10 @@ class Gallery_Controller_Uploader extends Controller {
     }
   }
 
-  public function action_status($success_count, $error_count) {
+  public function action_status() {
+    $success_count = $this->arg_required(0, "digit");
+    $error_count = $this->arg_required(1, "digit");
+
     if ($error_count) {
       // The "errors" won't be properly pluralized :-/
       print t2("Uploaded %count photo (%error errors)",

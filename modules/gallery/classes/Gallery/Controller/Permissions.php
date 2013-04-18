@@ -50,7 +50,11 @@ class Gallery_Controller_Permissions extends Controller {
     print $this->_get_form($item);
   }
 
-  public function action_change($command, $group_id, $perm_id, $item_id) {
+  public function action_change() {
+    $command = $this->arg_required(0, "alpha");
+    $group_id = $this->arg_required(1, "digit");
+    $perm_id = $this->arg_required(2, "digit");
+    $item_id = $this->arg_required(3, "digit");
     Access::verify_csrf();
 
     $group = Identity::lookup_group($group_id);

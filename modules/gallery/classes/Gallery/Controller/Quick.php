@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Quick extends Controller {
-  public function action_rotate($id, $dir) {
+  public function action_rotate() {
+    $id = $this->arg_required(0, "digit");
+    $dir = $this->arg_required(1, "alpha");
     Access::verify_csrf();
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);

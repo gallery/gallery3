@@ -119,7 +119,9 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     return $counts;
   }
 
-  public function action_set_state($id, $state) {
+  public function action_set_state() {
+    $id = $this->arg_required(0, "digit");
+    $state = $this->arg_required(1, "alpha");
     Access::verify_csrf();
 
     $comment = ORM::factory("Comment", $id);

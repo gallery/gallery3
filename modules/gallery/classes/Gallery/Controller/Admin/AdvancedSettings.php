@@ -29,7 +29,10 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
     print $view;
   }
 
-  public function action_edit($module_name, $var_name) {
+  public function action_edit() {
+    $module_name = $this->arg_required(0, "alpha_dash");
+    $var_name = $this->arg_required(1);
+
     if (Module::is_installed($module_name)) {
       $value = Module::get_var($module_name, $var_name);
       $form = new Forge("admin/advanced_settings/save/$module_name/$var_name", "", "post");
@@ -42,7 +45,9 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
     }
   }
 
-  public function action_save($module_name, $var_name) {
+  public function action_save() {
+    $module_name = $this->arg_required(0, "alpha_dash");
+    $var_name = $this->arg_required(1);
     Access::verify_csrf();
 
     if (Module::is_installed($module_name)) {

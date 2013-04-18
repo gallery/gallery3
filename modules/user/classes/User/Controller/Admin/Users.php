@@ -189,16 +189,22 @@ class User_Controller_Admin_Users extends Controller_Admin {
     print $this->_get_user_edit_form_admin($user);
   }
 
-  public function action_add_user_to_group($user_id, $group_id) {
+  public function action_add_user_to_group() {
+    $user_id = $this->arg_required(0, "digit");
+    $group_id = $this->arg_required(1, "digit");
     Access::verify_csrf();
+
     $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
     $group->add("users", $user);
     $group->save();
   }
 
-  public function action_remove_user_from_group($user_id, $group_id) {
+  public function action_remove_user_from_group() {
+    $user_id = $this->arg_required(0, "digit");
+    $group_id = $this->arg_required(1, "digit");
     Access::verify_csrf();
+
     $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
     $group->remove("users", $user);
