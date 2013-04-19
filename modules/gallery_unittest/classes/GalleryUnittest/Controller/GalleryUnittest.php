@@ -39,7 +39,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
-      print "Missing $original_config\n";
+      $this->response->body("Missing $original_config\n");
       return;
     } else {
       copy($original_config, $test_config);
@@ -55,7 +55,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
         // Make this the default database for the rest of this run
         Database::$default = "unit_test";
       } catch (Exception $e) {
-        print "{$e->getMessage()}\n";
+        $this->response->body("{$e->getMessage()}\n");
         return;
       }
     }
@@ -116,16 +116,18 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
       $unit_test = new Unit_Test($modules, $filter);
-      print $unit_test;
+      $this->response->body($unit_test);
     } catch (ORM_Validation_Exception $e) {
-      print "Validation Exception: {$e->getMessage()}\n";
-      print $e->getTraceAsString() . "\n";
+      $errors = "";
       foreach ($e->validation->errors() as $field => $msg) {
-        print "$field: $msg\n";
+        $errors .= "$field: $msg\n";
       }
+      $this->response->body("Validation Exception: {$e->getMessage()}\n" .
+                            $e->getTraceAsString() . "\n" .
+                            $errors);
     } catch (Exception $e) {
-      print "Exception: {$e->getMessage()}\n";
-      print $e->getTraceAsString() . "\n";
+      $this->response->body("Exception: {$e->getMessage()}\n" .
+                            $e->getTraceAsString() . "\n");
     }
 
     if (!isset($unit_test)) {

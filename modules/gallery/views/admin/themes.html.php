@@ -23,7 +23,7 @@
         <p>
           <?= $themes[$site]->description ?>
         </p>
-        <? $v = new View("admin/themes_buttonset.html"); $v->info = $themes[$site]; print $v; ?>
+        <? $v = new View("admin/themes_buttonset.html"); $v->info = $themes[$site] ?><?= $v ?>
       </div>
 
       <h2> <?= t("Available Gallery themes") ?> </h2>
@@ -41,7 +41,7 @@
               <?= $info->description ?>
             </p>
           </a>
-          <? $v = new View("admin/themes_buttonset.html"); $v->info = $info; print $v; ?>
+          <? $v = new View("admin/themes_buttonset.html"); $v->info = $info ?><?= $v ?>
         </div>
         <? $count++ ?>
         <? endforeach ?>
@@ -63,7 +63,7 @@
         <p>
           <?= $themes[$admin]->description ?>
         </p>
-        <? $v = new View("admin/themes_buttonset.html"); $v->info = $themes[$admin]; print $v; ?>
+        <? $v = new View("admin/themes_buttonset.html"); $v->info = $themes[$admin]; ?><?= $v ?>
       </div>
 
       <h2> <?= t("Available admin themes") ?> </h2>
@@ -81,7 +81,7 @@
               <?= $info->description ?>
             </p>
           </a>
-          <? $v = new View("admin/themes_buttonset.html"); $v->info = $info; print $v; ?>
+          <? $v = new View("admin/themes_buttonset.html"); $v->info = $info; ?><?= $v ?>
         </div>
         <? $count++ ?>
         <? endforeach ?>

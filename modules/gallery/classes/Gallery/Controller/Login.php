@@ -24,7 +24,7 @@ class Gallery_Controller_Login extends Controller {
   public function action_ajax() {
     $view = new View("gallery/login_ajax.html");
     $view->form = Auth::get_login_form("login/auth_ajax");
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_auth_ajax() {
@@ -32,11 +32,11 @@ class Gallery_Controller_Login extends Controller {
 
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
       $view = new View("gallery/login_ajax.html");
       $view->form = $form;
-      JSON::reply(array("result" => "error", "html" => (string)$view));
+      $this->response->json(array("result" => "error", "html" => (string)$view));
     }
   }
 
@@ -45,7 +45,7 @@ class Gallery_Controller_Login extends Controller {
     $view->page_title = t("Log in to Gallery");
     $view->content = new View("gallery/login_ajax.html");
     $view->content->form = Auth::get_login_form("login/auth_html");
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_auth_html() {
@@ -60,7 +60,7 @@ class Gallery_Controller_Login extends Controller {
       $view->page_title = t("Log in to Gallery");
       $view->content = new View("gallery/login_ajax.html");
       $view->content->form = $form;
-      print $view;
+      $this->response->body($view);
     }
   }
 

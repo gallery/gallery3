@@ -30,11 +30,11 @@ class Gallery_Controller_Packager extends Controller {
       $this->_dump_database();        // Dump the database
       $this->_dump_var();             // Dump the var directory
     } catch (Exception $e) {
-      print $e->getMessage() . "\n" . $e->getTraceAsString();
+      $this->response->body($e->getMessage() . "\n" . $e->getTraceAsString());
       return;
     }
 
-    print "Successfully wrote install.sql and init_var.php\n";
+    $this->response->body("Successfully wrote install.sql and init_var.php\n");
   }
 
   private function _reset() {
@@ -90,7 +90,7 @@ class Gallery_Controller_Packager extends Controller {
     $conn = $dbconfig["connection"];
     $sql_file = DOCROOT . "installer/install.sql";
     if (!is_writable($sql_file)) {
-      print "$sql_file is not writeable";
+      $this->response->body("$sql_file is not writeable");
       return;
     }
     $command = sprintf(
@@ -101,10 +101,10 @@ class Gallery_Controller_Packager extends Controller {
       escapeshellarg($conn['database']));
     exec($command, $output, $status);
     if ($status) {
-      print "<pre>";
-      print "$command\n";
-      print "Failed to dump database\n";
-      print implode("\n", $output);
+      $this->response->body("<pre>" .
+                            "$command\n" .
+                            "Failed to dump database\n" .
+                            implode("\n", $output));
       return;
     }
 
@@ -151,7 +151,7 @@ class Gallery_Controller_Packager extends Controller {
 
     $var_file = DOCROOT . "installer/init_var.php";
     if (!is_writable($var_file)) {
-      print "$var_file is not writeable";
+      $this->response->body("$var_file is not writeable");
       return;
     }
 

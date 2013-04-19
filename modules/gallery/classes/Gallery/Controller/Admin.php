@@ -59,7 +59,7 @@ class Gallery_Controller_Admin extends Controller {
       $result->location = URL::abs_site("");
     }
 
-    JSON::reply($result);
+    $this->response->json($result);
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {

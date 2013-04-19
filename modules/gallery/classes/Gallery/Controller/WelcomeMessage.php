@@ -25,6 +25,6 @@ class Gallery_Controller_WelcomeMessage extends Controller {
 
     $v = new View("gallery/welcome_message.html");
     $v->user = Identity::active_user();
-    print $v;
+    $this->response->body($v);
   }
 }

@@ -23,7 +23,7 @@ class Comment_Controller_Admin_Comments extends Controller_Admin {
     $view->page_title = t("Comment settings");
     $view->content = new View("admin/comments.html");
     $view->content->form = $this->_get_admin_form();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_save() {

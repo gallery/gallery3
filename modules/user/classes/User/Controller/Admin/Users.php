@@ -57,7 +57,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       ->limit($page_size)->offset($view->content->pager->sql_offset)->find_all();
     $view->content->groups = ORM::factory("Group")->order_by("name", "ASC")->find_all();
 
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_add_user() {
@@ -87,14 +87,14 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->save();
       Module::event("user_add_form_admin_completed", $user, $form);
       Message::success(t("Created user %user_name", array("user_name" => $user->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      print JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->body($this->response->json(array("result" => "error", "html" => (string)$form)));
     }
   }
 
   public function action_add_user_form() {
-    print $this->_get_user_add_form_admin();
+    $this->response->body($this->_get_user_add_form_admin());
   }
 
   public function action_delete_user() {
@@ -115,13 +115,13 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $name = $user->name;
       $user->delete();
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
 
     $message = t("Deleted user %user_name", array("user_name" => $name));
     GalleryLog::success("user", $message);
     Message::success($message);
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   public function action_delete_user_form() {
@@ -133,7 +133,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $v = new View("admin/users_delete_user.html");
     $v->user = $user;
     $v->form = $this->_get_user_delete_form_admin($user);
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_edit_user() {
@@ -173,9 +173,9 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->save();
       Module::event("user_edit_form_admin_completed", $user, $form);
       Message::success(t("Changed user %user_name", array("user_name" => $user->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string) $form));
+      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
   }
 
@@ -186,7 +186,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       throw HTTP_Exception::factory(404);
     }
 
-    print $this->_get_user_edit_form_admin($user);
+    $this->response->body($this->_get_user_edit_form_admin($user));
   }
 
   public function action_add_user_to_group() {
@@ -215,7 +215,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $group_id = $this->arg_required(0, "digit");
     $view = new View("admin/users_group.html");
     $view->group = Group::lookup($group_id);
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_add_group() {
@@ -239,14 +239,14 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $group->save();
       Message::success(
         t("Created group %group_name", array("group_name" => $group->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function action_add_group_form() {
-    print $this->_get_group_add_form_admin();
+    $this->response->body($this->_get_group_add_form_admin());
   }
 
   public function action_delete_group() {
@@ -263,13 +263,13 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $name = $group->name;
       $group->delete();
     } else {
-      JSON::reply(array("result" => "error", "html" => (string) $form));
+      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
 
     $message = t("Deleted group %group_name", array("group_name" => $name));
     GalleryLog::success("group", $message);
     Message::success($message);
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   public function action_delete_group_form() {
@@ -279,7 +279,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       throw HTTP_Exception::factory(404);
     }
 
-    print $this->_get_group_delete_form_admin($group);
+    $this->response->body($this->_get_group_delete_form_admin($group));
   }
 
   public function action_edit_group() {
@@ -308,12 +308,12 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $group->save();
       Message::success(
         t("Changed group %group_name", array("group_name" => $group->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
       $group->reload();
       Message::error(
         t("Failed to change group %group_name", array("group_name" => $group->name)));
-      JSON::reply(array("result" => "error", "html" => (string) $form));
+      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
   }
 
@@ -324,7 +324,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       throw HTTP_Exception::factory(404);
     }
 
-    print $this->_get_group_edit_form_admin($group);
+    $this->response->body($this->_get_group_edit_form_admin($group));
   }
 
   /* User Form Definitions */

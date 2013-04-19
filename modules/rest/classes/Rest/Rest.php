@@ -20,13 +20,13 @@
 class Rest_Rest {
   const API_VERSION = "3.0";
 
-  static function reply($data=array()) {
+  static function reply($data=array(), $response) {
     Session::instance()->abort_save();
 
     header("X-Gallery-API-Version: " . Rest::API_VERSION);
     switch (Arr::get(Request::current()->query(), "output", "json")) {
     case "json":
-      JSON::reply($data);
+      $response->json($data);
       break;
 
     case "jsonp":
@@ -37,7 +37,7 @@ class Rest_Rest {
 
       if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
         header("Content-type: application/javascript; charset=UTF-8");
-        print "$callback(" . json_encode($data) . ")";
+        $response->body("$callback(" . json_encode($data) . ")");
       } else {
         throw new Rest_Exception(
           "Bad Request", 400, array("errors" => array("callback" => "invalid")));
@@ -53,7 +53,7 @@ class Rest_Rest {
       } else {
         $html = t("Empty response");
       }
-      print "<pre>$html</pre>";
+      $this->body("<pre>$html</pre>");
       if (Gallery::show_profiler()) {
         Profiler::enable();
         $profiler = new Profiler();

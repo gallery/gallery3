@@ -65,6 +65,6 @@ class Rss_Controller_Rss extends Controller {
     }
 
     header("Content-Type: application/rss+xml");
-    print $view;
+    $this->response->body($view);
   }
 }

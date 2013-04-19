@@ -40,7 +40,7 @@
   <ul class="g-breadcrumbs">
     <? $i = 0 ?>
     <? foreach ($parents as $parent): ?>
-    <li id="item-<?= $parent->id ?>"<? if ($i == 0) print " class=\"g-first\"" ?>>
+    <li id="item-<?= $parent->id ?>"<? if ($i == 0): ?> class="g-first"<? endif ?>>
       <? if (Access::can("edit", $parent)): ?>
       <a href="javascript:show(<?= $parent->id ?>)"> <?= HTML::purify($parent->title) ?> </a>
       <? else: ?>

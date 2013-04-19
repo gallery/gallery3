@@ -26,7 +26,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     $paths = unserialize(Module::get_var("server_add", "authorized_paths", "a:0:{}"));
     $view->content->paths = array_keys($paths);
 
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_add_path() {
@@ -53,7 +53,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     $view->content = new View("admin/server_add.html");
     $view->content->form = $form;
     $view->content->paths = array_keys($paths);
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_remove_path() {
@@ -80,7 +80,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
       }
     }
 
-    Ajax::response(json_encode($directories));
+    $this->response->ajax(json_encode($directories));
   }
 
   private function _get_admin_form() {

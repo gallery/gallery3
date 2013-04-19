@@ -17,15 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Ajax {
+class Gallery_Response extends Kohana_Response {
   /**
    * Encode an Ajax response so that it's UTF-7 safe.
    *
    * @param  string $message string to print
    */
-  static function response($content) {
-    header("Content-Type: text/plain; charset=" . Kohana::$charset);
-    print "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n";
-    print $content;
+  public function ajax($content) {
+    $this->headers("Content-Type", "text/plain; charset=" . Kohana::$charset);
+    $this->body("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n" .
+                $content);
+  }
+
+  /**
+   * JSON Encode a reply to the browser and set the content type to specify that it's a JSON
+   * payload.
+   *
+   * Optionally, the content type can be set as "text/plain" which helps with iframe
+   * compatibility (see ticket #2022).
+   *
+   * @param  mixed    $message     string or object to json encode and print
+   * @param  boolean  $text_plain  use content type of "text/plain" (default: false)
+   */
+  public function json($message, $text_plain=false) {
+    if ($text_plain) {
+      $this->headers("Content-Type", "text/plain; charset=" . Kohana::$charset);
+    } else {
+      $this->headers("Content-Type", "application/json; charset=" . Kohana::$charset);
+    }
+    $this->body(json_encode($message));
   }
 }

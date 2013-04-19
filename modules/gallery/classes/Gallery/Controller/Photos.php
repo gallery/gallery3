@@ -36,7 +36,7 @@ class Gallery_Controller_Photos extends Controller_Items {
 
     $photo->increment_view_count();
 
-    print $template;
+    $this->response->body($template);
   }
 
   public function action_update() {
@@ -72,13 +72,13 @@ class Gallery_Controller_Photos extends Controller_Items {
 
       if ($form->from_id->value == $photo->id) {
         // Use the new URL; it might have changed.
-        JSON::reply(array("result" => "success", "location" => $photo->url()));
+        $this->response->json(array("result" => "success", "location" => $photo->url()));
       } else {
         // Stay on the same page
-        JSON::reply(array("result" => "success"));
+        $this->response->json(array("result" => "success"));
       }
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -88,6 +88,6 @@ class Gallery_Controller_Photos extends Controller_Items {
     Access::required("view", $photo);
     Access::required("edit", $photo);
 
-    print Photo::get_edit_form($photo);
+    $this->response->body(Photo::get_edit_form($photo));
   }
 }
