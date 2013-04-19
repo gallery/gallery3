@@ -54,7 +54,6 @@ class Gallery_IdentityProvider {
    */
   static function reset() {
     self::$instance = null;
-    Config::instance()->clear("identity");
   }
 
   /**
