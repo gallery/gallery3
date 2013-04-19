@@ -47,33 +47,31 @@ class Gallery_Hook_Rest_Data {
       throw HTTP_Exception::factory(404);
     }
 
-    header("Content-Length: " . filesize($file));
-
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
     // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
     if (($item->is_movie() || $item->is_album()) && $p->size == "thumb") {
-      header("Content-Type: image/jpeg");
+      $mime_type = "image/jpeg";
     } else {
-      header("Content-Type: $item->mime_type");
+      $mime_type = $item->mime_type;
     }
 
     if (TEST_MODE) {
       return $file;
     } else {
-      Kohana::close_buffers(false);
-
+      // Note: send_file() will automatically halt script execution after sending the file.
       if (isset($p->encoding) && $p->encoding == "base64") {
-        print base64_encode(file_get_contents($file));
+        // Send the base64-encoded content as the response.  This sets the filename as its basename.
+        $this->response->body(base64_encode(file_get_contents($file)));
+        $this->response->send_file(true, pathinfo($file, PATHINFO_BASENAME),
+                                   array("inline" => "true", "mime_type" => $mime_type));
       } else {
-        readfile($file);
+        // Send the file as the response.  The filename will be set automatically from the path.
+        $this->response->send_file($file, null,
+                                   array("inline" => "true", "mime_type" => $mime_type));
       }
     }
-
-    // We must exit here to keep the regular REST framework reply code from adding more bytes on
-    // at the end or tinkering with headers.
-    exit;
   }
 
   static function resolve($id) {

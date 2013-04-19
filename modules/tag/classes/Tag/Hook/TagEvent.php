@@ -86,7 +86,6 @@ class Tag_Hook_TagEvent {
         Tag::add($item, trim($tag_name));
       }
     }
-    Module::event("item_related_update", $item);
     Tag::compact();
   }
 

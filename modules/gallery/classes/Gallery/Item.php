@@ -434,7 +434,7 @@ class Gallery_Item {
     if (!Request::user_agent("robot")) {
       $args = func_get_args();
       Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
-                             array("display_context"));
+                             null, array("display_context"));
     }
   }
 

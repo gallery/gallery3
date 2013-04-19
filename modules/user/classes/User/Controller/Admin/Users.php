@@ -97,7 +97,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     print $this->_get_user_add_form_admin();
   }
 
-  public function action_delete_user($id) {
+  public function action_delete_user() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     if ($id == Identity::active_user()->id || $id == User::guest()->id) {
@@ -123,7 +124,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     JSON::reply(array("result" => "success"));
   }
 
-  public function action_delete_user_form($id) {
+  public function action_delete_user_form() {
+    $id = $this->arg_required(0, "digit");
     $user = User::lookup($id);
     if (empty($user)) {
       throw HTTP_Exception::factory(404);
@@ -134,7 +136,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     print $v;
   }
 
-  public function action_edit_user($id) {
+  public function action_edit_user() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $user = User::lookup($id);
@@ -176,7 +179,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     }
   }
 
-  public function action_edit_user_form($id) {
+  public function action_edit_user_form() {
+    $id = $this->arg_required(0, "digit");
     $user = User::lookup($id);
     if (empty($user)) {
       throw HTTP_Exception::factory(404);
@@ -185,23 +189,30 @@ class User_Controller_Admin_Users extends Controller_Admin {
     print $this->_get_user_edit_form_admin($user);
   }
 
-  public function action_add_user_to_group($user_id, $group_id) {
+  public function action_add_user_to_group() {
+    $user_id = $this->arg_required(0, "digit");
+    $group_id = $this->arg_required(1, "digit");
     Access::verify_csrf();
+
     $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
     $group->add("users", $user);
     $group->save();
   }
 
-  public function action_remove_user_from_group($user_id, $group_id) {
+  public function action_remove_user_from_group() {
+    $user_id = $this->arg_required(0, "digit");
+    $group_id = $this->arg_required(1, "digit");
     Access::verify_csrf();
+
     $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
     $group->remove("users", $user);
     $group->save();
   }
 
-  public function action_group($group_id) {
+  public function action_group() {
+    $group_id = $this->arg_required(0, "digit");
     $view = new View("admin/users_group.html");
     $view->group = Group::lookup($group_id);
     print $view;
@@ -238,7 +249,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     print $this->_get_group_add_form_admin();
   }
 
-  public function action_delete_group($id) {
+  public function action_delete_group() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $group = Group::lookup($id);
@@ -260,7 +272,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     JSON::reply(array("result" => "success"));
   }
 
-  public function action_delete_group_form($id) {
+  public function action_delete_group_form() {
+    $id = $this->arg_required(0, "digit");
     $group = Group::lookup($id);
     if (empty($group)) {
       throw HTTP_Exception::factory(404);
@@ -269,7 +282,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     print $this->_get_group_delete_form_admin($group);
   }
 
-  public function action_edit_group($id) {
+  public function action_edit_group() {
+    $id = $this->arg_required(0, "digit");
     Access::verify_csrf();
 
     $group = Group::lookup($id);
@@ -303,7 +317,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
     }
   }
 
-  public function action_edit_group_form($id) {
+  public function action_edit_group_form() {
+    $id = $this->arg_required(0, "digit");
     $group = Group::lookup($id);
     if (empty($group)) {
       throw HTTP_Exception::factory(404);

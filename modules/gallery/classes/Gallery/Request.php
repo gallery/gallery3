@@ -17,18 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Exif_Controller_Exif extends Controller {
+class Gallery_Request extends Kohana_Request {
+  protected $_args;
+
   /**
-   * Display the EXIF data for an item.
+   * Retrieves a value from the route args.  This uses a syntax similar to param().
+   *
+   *   $args = $request->arg();          // Returns all args
+   *   $id   = $request->arg(0);         // Returns 0th arg
+   *   $type = $request->arg(1, "item"); // Returns 1st arg, defaults to "item" if not set
+   *
+   * @param   mixed  $key      Key of the value (string or int)
+   * @param   mixed  $default  Default value if the key is not set (optional)
+   * @return  mixed
    */
-  public function action_show() {
-    $item_id = $this->arg_required(0, "digit");
-    $item = ORM::factory("Item", $item_id);
-    Access::required("view", $item);
+  public function arg($key=null, $default=null) {
+    if (!isset($this->_args)) {
+      $this->_args = preg_replace("|/+|", "/", trim($this->param("args"), "/"));
+      $this->_args = (array) explode("/", $this->_args);
+      $this->_args = Purifier::clean_html($this->_args);
+    }
 
-    $view = new View("exif/dialog.html");
-    $view->details = Exif::get($item);
-
-    print $view;
+    return isset($key) ? Arr::get($this->_args, $key, $default) : $this->_args;
   }
 }

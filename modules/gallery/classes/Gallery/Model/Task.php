@@ -63,8 +63,7 @@ class Gallery_Model_Task extends ORM {
 
     // Save for 30 days.
     $log .= !empty($log) ? "\n" : "";
-    Cache::instance()->set($key, "$log{$msg}",
-                           array("task", "log", "import"), 2592000);
+    Cache::instance()->set($key, "$log{$msg}", 2592000, array("task", "log", "import"));
   }
 
   /**
