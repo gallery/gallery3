@@ -64,7 +64,7 @@ class Rss_Controller_Rss extends Controller {
       $feed->next_page_uri = URL::abs_site(URL::query(array("page" => $page + 1)));
     }
 
-    header("Content-Type: application/rss+xml");
+    $this->headers("Content-Type", "application/rss+xml");
     $this->response->body($view);
   }
 }
