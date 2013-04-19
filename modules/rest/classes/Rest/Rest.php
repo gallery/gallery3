@@ -23,7 +23,7 @@ class Rest_Rest {
   static function reply($data=array(), $response) {
     Session::instance()->abort_save();
 
-    header("X-Gallery-API-Version: " . Rest::API_VERSION);
+    $response->headers("X-Gallery-API-Version", Rest::API_VERSION);
     switch (Arr::get(Request::current()->query(), "output", "json")) {
     case "json":
       $response->json($data);
@@ -36,7 +36,7 @@ class Rest_Rest {
       }
 
       if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
-        header("Content-type: application/javascript; charset=UTF-8");
+        $response->headers("Content-Type", "application/javascript; charset=UTF-8");
         $response->body("$callback(" . json_encode($data) . ")");
       } else {
         throw new Rest_Exception(
@@ -45,7 +45,7 @@ class Rest_Rest {
       break;
 
     case "html":
-      header("Content-type: text/html; charset=UTF-8");
+      $response->headers("Content-Type", "text/html; charset=UTF-8");
       if ($data) {
         $html = preg_replace(
           "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
