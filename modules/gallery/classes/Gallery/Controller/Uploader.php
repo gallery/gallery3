@@ -90,13 +90,13 @@ class Gallery_Controller_Uploader extends Controller {
           Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->validation->errors(), 1));
         }
 
-        header("HTTP/1.1 500 Internal Server Error");
+        $this->response->status(500);
         $this->response->body("ERROR: " . $e->getMessage());
         return;
       }
       $this->response->body("FILEID: $item->id");
     } else {
-      header("HTTP/1.1 400 Bad Request");
+      $this->response->status(400);
       $this->response->body("ERROR: " . t("Invalid upload"));
     }
   }

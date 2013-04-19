@@ -48,9 +48,6 @@ ini_set("display_errors", false);
 // Ajax code.
 ini_set("session.use_trans_sid", false);
 
-// Restrict all response frames to the same origin for security
-header("X-Frame-Options: SAMEORIGIN");
-
 define("EXT", ".php");
 define("DOCROOT", getcwd() . "/");
 
