@@ -23,7 +23,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     $view->page_title = t("Theme options");
     $view->content = new View("admin/theme_options.html");
     $view->content->form = $this->_get_edit_form_admin();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_save() {
@@ -67,7 +67,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
       $view = new View_Admin("required/admin.html");
       $view->content = new View("admin/theme_options.html");
       $view->content->form = $form;
-      print $view;
+      $this->response->body($view);
     }
   }
 

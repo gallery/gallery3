@@ -47,7 +47,7 @@ class Gallery_Controller_Upgrader extends Controller {
     $view->failed = $failed ? explode(",", $failed) : array();
     $view->done = $available_upgrades == 0;
     $view->obsolete_modules_message = Module::get_obsolete_modules_message();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_upgrade() {
@@ -100,12 +100,12 @@ class Gallery_Controller_Upgrader extends Controller {
 
     if (php_sapi_name() == "cli") {
       if ($failed) {
-        print "Upgrade completed ** WITH FAILURES **\n";
-        print "The following modules were not successfully upgraded:\n";
-        print "  " . implode($failed, "\n  ") . "\n";
-        print "Try getting newer versions or deactivating those modules\n";
+        $this->response->body("Upgrade completed ** WITH FAILURES **\n" .
+                              "The following modules were not successfully upgraded:\n" .
+                              "  " . implode($failed, "\n  ") . "\n" .
+                              "Try getting newer versions or deactivating those modules\n");
       } else {
-        print "Upgrade complete\n";
+        $this->response->body("Upgrade complete\n");
       }
     } else {
       if ($failed) {

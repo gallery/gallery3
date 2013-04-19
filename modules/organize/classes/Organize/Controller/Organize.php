@@ -26,7 +26,7 @@ class Organize_Controller_Organize extends Controller {
 
     $v = new View("organize/frame.html");
     $v->album = $album;
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_dialog() {
@@ -37,7 +37,7 @@ class Organize_Controller_Organize extends Controller {
 
     $v = new View("organize/dialog.html");
     $v->album = $album;
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_tree() {
@@ -48,7 +48,7 @@ class Organize_Controller_Organize extends Controller {
     Access::required("view", $selected_album);
 
     $tree = $this->_get_tree($root, $selected_album);
-    JSON::reply($tree);
+    $this->response->json($tree);
   }
 
   public function action_album_info() {
@@ -73,7 +73,7 @@ class Organize_Controller_Organize extends Controller {
         "type" => $child->type,
         "title" => (string)HTML::clean($child->title));
     }
-    JSON::reply($data);
+    $this->response->json($data);
   }
 
   public function action_reparent() {
@@ -98,7 +98,7 @@ class Organize_Controller_Organize extends Controller {
       $source->parent_id = $new_parent->id;
       $source->save();
     }
-    JSON::reply(null);
+    $this->response->json(null);
   }
 
   public function action_set_sort() {
@@ -115,7 +115,7 @@ class Organize_Controller_Organize extends Controller {
     }
     $album->save();
 
-    JSON::reply(null);
+    $this->response->json(null);
   }
 
   public function action_rearrange() {
@@ -123,7 +123,7 @@ class Organize_Controller_Organize extends Controller {
 
     $target = ORM::factory("Item", Request::current()->post("target_id"));
     if (!$target->loaded()) {
-      JSON::reply(null);
+      $this->response->json(null);
       return;
     }
 
@@ -162,7 +162,7 @@ class Organize_Controller_Organize extends Controller {
         }
       }
     }
-    JSON::reply(null);
+    $this->response->json(null);
   }
 
   public function action_delete() {
@@ -175,7 +175,7 @@ class Organize_Controller_Organize extends Controller {
       }
     }
 
-    JSON::reply(null);
+    $this->response->json(null);
   }
 
   public function action_tag() {
@@ -196,7 +196,7 @@ class Organize_Controller_Organize extends Controller {
       }
     }
 
-    JSON::reply(null);
+    $this->response->json(null);
   }
 
   private function _get_tree($item, $selected) {

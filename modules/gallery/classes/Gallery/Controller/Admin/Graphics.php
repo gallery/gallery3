@@ -24,7 +24,7 @@ class Gallery_Controller_Admin_Graphics extends Controller_Admin {
     $view->content = new View("admin/graphics.html");
     $view->content->tk = Graphics::detect_toolkits();
     $view->content->active = Module::get_var("gallery", "graphics_toolkit", "none");
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_choose() {

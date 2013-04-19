@@ -101,16 +101,18 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
       $unit_test = new Unit_Test($modules, $filter);
-      print $unit_test;
+      $this->response->body($unit_test);
     } catch (ORM_Validation_Exception $e) {
-      print "Validation Exception: {$e->getMessage()}\n";
-      print $e->getTraceAsString() . "\n";
+      $errors = "";
       foreach ($e->validation->errors() as $field => $msg) {
-        print "$field: $msg\n";
+        $errors .= "$field: $msg\n";
       }
+      $this->response->body("Validation Exception: {$e->getMessage()}\n" .
+                            $e->getTraceAsString() . "\n" .
+                            $errors);
     } catch (Exception $e) {
-      print "Exception: {$e->getMessage()}\n";
-      print $e->getTraceAsString() . "\n";
+      $this->response->body("Exception: {$e->getMessage()}\n" .
+                            $e->getTraceAsString() . "\n");
     }
 
     if (!isset($unit_test)) {

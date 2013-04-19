@@ -52,7 +52,7 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
     $view->content->form = $form;
     $view->content->ffmpeg_dir = $ffmpeg_dir;
     $view->content->ffmpeg_version = $ffmpeg_version;
-    print $view;
+    $this->response->body($view);
   }
 
   private function _get_admin_form() {

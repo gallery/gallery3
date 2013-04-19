@@ -45,7 +45,7 @@ class Gallery_Controller_UserProfile extends Controller {
     Module::event("show_user_profile", $event_data);
     $v->content->info_parts = $event_data->content;
 
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_contact() {
@@ -55,7 +55,7 @@ class Gallery_Controller_UserProfile extends Controller {
       throw HTTP_Exception::factory(404);
     }
 
-    print UserProfile::get_contact_form($user);
+    $this->response->body(UserProfile::get_contact_form($user));
   }
 
   public function action_send() {
@@ -77,9 +77,9 @@ class Gallery_Controller_UserProfile extends Controller {
         ->message(HTML::purify($form->message->message->value))
         ->send();
       Message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 

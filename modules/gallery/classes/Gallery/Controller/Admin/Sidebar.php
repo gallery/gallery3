@@ -25,7 +25,7 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $view->content->available = new View("admin/sidebar_blocks.html");
     $view->content->active = new View("admin/sidebar_blocks.html");
     list($view->content->available->blocks, $view->content->active->blocks) = $this->_get_blocks();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_update() {
@@ -49,7 +49,7 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $result["active"] = $v->render();
     $message = t("Updated sidebar blocks");
     $result["message"] = (string) $message;
-    JSON::reply($result);
+    $this->response->json($result);
   }
 
   private function _get_blocks() {

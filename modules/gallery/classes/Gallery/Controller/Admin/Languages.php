@@ -35,7 +35,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
     $v->content->share_translations_form = $share_translations_form;
     $this->_outgoing_translations_count();
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_save() {
@@ -54,7 +54,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
     Module::set_var("gallery", "default_locale", $new_default_locale);
 
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   public function action_share() {

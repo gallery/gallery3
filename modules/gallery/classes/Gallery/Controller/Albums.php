@@ -69,7 +69,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     $template->content = new View("required/album.html");
     $album->increment_view_count();
 
-    print $template;
+    $this->response->body($template);
     Item::set_display_context_callback("Controller_Albums::get_display_context");
   }
 
@@ -133,9 +133,9 @@ class Gallery_Controller_Albums extends Controller_Items {
       Message::success(t("Created album %album_title",
                          array("album_title" => HTML::purify($album->title))));
 
-      JSON::reply(array("result" => "success", "location" => $album->url()));
+      $this->response->json(array("result" => "success", "location" => $album->url()));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -176,13 +176,13 @@ class Gallery_Controller_Albums extends Controller_Items {
 
       if ($form->from_id->value == $album->id) {
         // Use the new URL; it might have changed.
-        JSON::reply(array("result" => "success", "location" => $album->url()));
+        $this->response->json(array("result" => "success", "location" => $album->url()));
       } else {
         // Stay on the same page
-        JSON::reply(array("result" => "success"));
+        $this->response->json(array("result" => "success"));
       }
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -192,7 +192,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("add", $album);
 
-    print Album::get_add_form($album);
+    $this->response->body(Album::get_add_form($album));
   }
 
   public function action_form_edit() {
@@ -201,6 +201,6 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    print Album::get_edit_form($album);
+    $this->response->body(Album::get_edit_form($album));
   }
 }

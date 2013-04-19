@@ -26,7 +26,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
       ->order_by("module_name")
       ->order_by("name")
       ->find_all();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_edit() {
@@ -41,7 +41,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
       $group->input("var_name")->label(t("Setting"))->value($var_name)->disabled(1);
       $group->textarea("value")->label(t("Value"))->value($value);
       $group->submit("")->value(t("Save"));
-      print $form;
+      $this->response->body($form);
     }
   }
 
@@ -56,7 +56,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
         t("Saved value for %var (%module_name)",
           array("var" => $var_name, "module_name" => $module_name)));
 
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     }
   }
 }

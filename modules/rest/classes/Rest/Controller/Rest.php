@@ -36,7 +36,7 @@ class Rest_Controller_Rest extends Controller {
 
     Auth::login($user);
 
-    Rest::reply(Rest::access_key());
+    Rest::reply(Rest::access_key(), $this->response);
   }
 
   public function action_reset_api_key_confirm() {
@@ -45,14 +45,14 @@ class Rest_Controller_Rest extends Controller {
     $group->submit("")->value(t("Reset"));
     $v = new View("rest/reset_api_key_confirm.html");
     $v->form = $form;
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_reset_api_key() {
     Access::verify_csrf();
     Rest::reset_access_key();
     Message::success(t("Your REST API key has been reset."));
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   public function __call($function, $args) {
@@ -110,7 +110,7 @@ class Rest_Controller_Rest extends Controller {
         header("HTTP/1.1 201 Created");
         header("Location: {$response['url']}");
       }
-      Rest::reply($response);
+      Rest::reply($response, $this->response);
     } catch (ORM_Validation_Exception $e) {
       // Note: this is totally insufficient because it doesn't take into account localization.  We
       // either need to map the result values to localized strings in the application code, or every

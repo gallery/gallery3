@@ -28,7 +28,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
 
     SiteStatus::clear("missing_site_theme");
     SiteStatus::clear("missing_admin_theme");
-    print $view;
+    $this->response->body($view);
   }
 
   private function _get_themes() {
@@ -59,7 +59,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
     } else {
       $view->url = Item::root()->url("theme=$theme_name");
     }
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_choose() {
