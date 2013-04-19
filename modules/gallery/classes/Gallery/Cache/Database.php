@@ -22,20 +22,6 @@
  */
 class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_GarbageCollect {
 
-  protected $_db;
-
-  /**
-   * Sets up the PDO SQLite table and
-   * initialises the PDO connection
-   *
-   * @param  array  $config  configuration
-   * @throws  Cache_Exception
-   */
-  protected function __construct(array $config) {
-    parent::__construct($config);
-    $this->_db = Database::instance();
-  }
-
   /**
    * Retrieve a value based on an id
    *
@@ -101,7 +87,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
   public function delete_all()
   {
     // Prepare statement
-    $statement = $this->_db->prepare('DELETE FROM caches');
+    $statement = Database::instance()->prepare('DELETE FROM caches');
 
     // Remove the entry
     try
@@ -162,7 +148,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
   public function delete_tag($tag)
   {
     // Prepare the statement
-    $statement = $this->_db->prepare('DELETE FROM caches WHERE tags LIKE :tag');
+    $statement = Database::instance()->prepare('DELETE FROM caches WHERE tags LIKE :tag');
 
     // Try to delete
     try
@@ -187,7 +173,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
   public function find($tag)
   {
     // Prepare the statement
-    $statement = $this->_db->prepare('SELECT id, cache FROM caches WHERE tags LIKE :tag');
+    $statement = Database::instance()->prepare('SELECT id, cache FROM caches WHERE tags LIKE :tag');
 
     // Try to find
     try
@@ -227,7 +213,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
   public function garbage_collect()
   {
     // Create the sequel statement
-    $statement = $this->_db->prepare('DELETE FROM caches WHERE expiration < :expiration');
+    $statement = Database::instance()->prepare('DELETE FROM caches WHERE expiration < :expiration');
 
     try
     {
@@ -248,7 +234,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    */
   protected function exists($id)
   {
-    $statement = $this->_db->prepare('SELECT id FROM caches WHERE id = :id');
+    $statement = Database::instance()->prepare('SELECT id FROM caches WHERE id = :id');
     try
     {
       $statement->execute(array(':id' => $this->_sanitize_id($id)));
