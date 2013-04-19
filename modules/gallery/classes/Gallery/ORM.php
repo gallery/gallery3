@@ -178,4 +178,13 @@ class Gallery_ORM extends Kohana_ORM {
       }
     }
   }
+
+  /**
+   * Reset any ORM initialization that's happened so that we can start over.  We use this in the
+   * testing framework when we switch from the main database over to the test database.
+   */
+  static function reinitialize() {
+    ORM::$_init_cache = array();
+    ORM::$_column_cache = array();
+  }
 }

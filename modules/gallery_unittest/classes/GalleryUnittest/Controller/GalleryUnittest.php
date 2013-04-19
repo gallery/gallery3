@@ -37,28 +37,13 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
 
     $config = Kohana::$config;
     $original_config = DOCROOT . "var/database.php";
-    $test_config = VARPATH . "database.php";
-    if (!file_exists($original_config)) {
-      print "Missing $original_config\n";
-      return;
-    } else {
-      copy($original_config, $test_config);
-      $db_config = Kohana::$config->load("database");
-      $db_config["unit_test"] = $db_config["default"];
-      $db_config["unit_test"]["connection"]["database"] =
-        $db_config["default"]["connection"]["database"] . "_test";
 
-      try {
-        $db = Database::instance("unit_test");
-        $db->connect();
-
-        // Make this the default database for the rest of this run
-        Database::$default = "unit_test";
-      } catch (Exception $e) {
-        print "{$e->getMessage()}\n";
-        return;
-      }
-    }
+    // Switch over to our test database instance
+    Database::$instances["default"]->disconnect();
+    $db_config = Kohana::$config->load("database");
+    $db_config["default"]["connection"]["database"] .= "_test";
+    $db = Database::instance();
+    ORM::reinitialize();
 
     try {
       // Clean out the database
