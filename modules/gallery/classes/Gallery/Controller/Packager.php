@@ -51,7 +51,6 @@ class Gallery_Controller_Packager extends Controller {
     System::unlink_dir(VARPATH . "modules");
     System::unlink_dir(VARPATH . "tmp");
 
-    Database::instance()->clear_cache();
     Module::$modules = array();
     Module::$active = array();
 
