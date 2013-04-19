@@ -28,6 +28,9 @@ abstract class Gallery_Controller extends Kohana_Controller {
   public function before() {
     parent::before();
 
+    // Restrict all response frames to the same origin for security
+    $this->response->headers("X-Frame-Options", "SAMEORIGIN");
+
     // Initialize the modules (will run "gallery_ready" event)
     if ($this->request->is_initial()) {
       Gallery::ready();
