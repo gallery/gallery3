@@ -66,9 +66,6 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       Module::$active = array();
       Module::$var_cache = array();
 
-      // @todo do we need to do this in K3?
-      // $db->clear_cache();
-
       // @todo: do we need this in K3?
       // Rest the cascading class path
       // $config->set("core", $config->load("core"));
