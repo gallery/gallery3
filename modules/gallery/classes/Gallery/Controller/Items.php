@@ -37,8 +37,8 @@ class Gallery_Controller_Items extends Controller {
     $id = $this->arg_required(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
-    JSON::reply(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
-                      "resize" => array((int)$item->resize_width, (int)$item->resize_height),
-                      "full" => array((int)$item->width, (int)$item->height)));
+    $this->response->json(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
+                                "resize" => array((int)$item->resize_width, (int)$item->resize_height),
+                                "full" => array((int)$item->width, (int)$item->height)));
   }
 }

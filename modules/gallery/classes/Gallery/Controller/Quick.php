@@ -46,12 +46,12 @@ class Gallery_Controller_Quick extends Controller {
     }
 
     if (Request::current()->query("page_type") == "collection") {
-      JSON::reply(
+      $this->response->json(
         array("src" => $item->thumb_url(),
               "width" => $item->thumb_width,
               "height" => $item->thumb_height));
     } else {
-      JSON::reply(
+      $this->response->json(
         array("src" => $item->resize_url(),
               "width" => $item->resize_width,
               "height" => $item->resize_height));
@@ -72,7 +72,7 @@ class Gallery_Controller_Quick extends Controller {
     Item::make_album_cover($item);
     Message::success($msg);
 
-    JSON::reply(array("result" => "success", "reload" => 1));
+    $this->response->json(array("result" => "success", "reload" => 1));
   }
 
   public function action_form_delete() {
@@ -84,7 +84,7 @@ class Gallery_Controller_Quick extends Controller {
     $v = new View("gallery/quick_delete_confirm.html");
     $v->item = $item;
     $v->form = Item::get_delete_form($item);
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_delete() {
@@ -116,9 +116,9 @@ class Gallery_Controller_Quick extends Controller {
     $from_id = Request::current()->query("from_id");
     if (Request::current()->query("page_type") == "collection" &&
         $from_id != $id /* deleted the item we were viewing */) {
-      JSON::reply(array("result" => "success", "reload" => 1));
+      $this->response->json(array("result" => "success", "reload" => 1));
     } else {
-      JSON::reply(array("result" => "success", "location" => $parent->url()));
+      $this->response->json(array("result" => "success", "location" => $parent->url()));
     }
   }
 
@@ -145,6 +145,6 @@ class Gallery_Controller_Quick extends Controller {
     // Pass on the source item where this form was generated, so we have an idea where to return to.
     $form->hidden("from_id")->value((int) Request::current()->query("from_id"));
 
-    print $form;
+    $this->response->body($form);
   }
 }

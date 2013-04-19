@@ -90,7 +90,7 @@ class Gallery_Controller_L10nClient extends Controller {
 
     I18n::clear_cache($locale);
 
-    JSON::reply(new stdClass());
+    $this->response->json(new stdClass());
   }
 
   public function action_toggle_l10n_mode() {

@@ -69,7 +69,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
       $view->content->form->configure_g2_import->embed_path->add_error("invalid", 1);
     }
     G2Import::restore_error_reporting();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_save() {
@@ -96,7 +96,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
     $view->content = new View("admin/g2_import.html");
     $view->content->form = $form;
     G2Import::restore_error_reporting();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_autocomplete() {
@@ -114,7 +114,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
       }
     }
 
-    Ajax::response(json_encode($directories));
+    $this->response->ajax(json_encode($directories));
   }
 
   private function _get_import_form() {

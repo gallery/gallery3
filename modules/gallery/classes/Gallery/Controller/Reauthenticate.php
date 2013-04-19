@@ -36,7 +36,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       $v = new View("gallery/reauthenticate.html");
       $v->form = self::_form();
       $v->user_name = Identity::active_user()->name;
-      print $v;
+      $this->response->body($v);
     } else {
       self::_show_form(self::_form());
     }
@@ -65,7 +65,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
         $v = new View("gallery/reauthenticate.html");
         $v->form = $form;
         $v->user_name = Identity::active_user()->name;
-        JSON::reply(array("html" => (string)$v));
+        $this->response->json(array("html" => (string)$v));
       } else {
         self::_show_form($form);
       }
@@ -79,7 +79,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     $view->content->form = $form;
     $view->content->user_name = Identity::active_user()->name;
 
-    print $view;
+    $this->response->body($view);
   }
 
   private static function _form() {

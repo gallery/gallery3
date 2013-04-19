@@ -63,7 +63,7 @@ class Tag_Controller_Tag extends Controller {
             "children_count" => $children_count));
     $template->content = new View("required/dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
-    print $template;
+    $this->response->body($template);
 
     Item::set_display_context_callback("Controller_Tag::get_display_context", $tag->id);
   }

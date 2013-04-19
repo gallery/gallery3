@@ -36,7 +36,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
     $view->tree = new View("server_add/tree.html");
     $view->tree->files = $files;
     $view->tree->parents = array();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_children() {
@@ -75,7 +75,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         $tree->files[] = $path;
       }
     }
-    print $tree;
+    $this->response->body($tree);
   }
 
   /**
@@ -102,7 +102,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       }
     }
 
-    JSON::reply(
+    $this->response->json(
       array("result" => "started",
             "status" => (string)$task->status,
             "url" => URL::site("server_add/run/$task->id?csrf=" . Access::csrf_token())));
@@ -123,9 +123,9 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
     $task = Task::run($task_id);
     // Prevent the JavaScript code from breaking by forcing a period as
     // decimal separator for all locales with sprintf("%F", $value).
-    JSON::reply(array("done" => (bool)$task->done,
-                      "status" => (string)$task->status,
-                      "percent_complete" => sprintf("%F", $task->percent_complete)));
+    $this->response->json(array("done" => (bool)$task->done,
+                                "status" => (string)$task->status,
+                                "percent_complete" => sprintf("%F", $task->percent_complete)));
   }
 
   /**

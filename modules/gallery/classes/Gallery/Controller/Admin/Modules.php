@@ -27,7 +27,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     $view->content = new View("admin/modules.html");
     $view->content->available = Module::available();
     $view->content->obsolete_modules_message = Module::get_obsolete_modules_message();
-    print $view;
+    $this->response->body($view);
   }
 
 
@@ -61,7 +61,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
       $result["dialog"] = (string)$v;
       $result["allow_continue"] = empty($messages["error"]);
     }
-    JSON::reply($result);
+    $this->response->json($result);
   }
 
   public function action_save() {

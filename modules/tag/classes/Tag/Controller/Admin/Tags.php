@@ -31,14 +31,14 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       $query->like("name", $filter);
     }
     $view->content->tags = $query->order_by("name", "ASC")->find_all();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_form_delete() {
     $id = $this->arg_required(0, "digit");
     $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
-      print Tag::get_delete_form($tag);
+      $this->response->body(Tag::get_delete_form($tag));
     }
   }
 
@@ -58,9 +58,9 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       Message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
       GalleryLog::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
-      JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
+      $this->response->json(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -68,9 +68,9 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $id = $this->arg_required(0, "digit");
     $tag = ORM::factory("Tag", $id);
     if ($tag->loaded()) {
-      print InPlaceEdit::factory($tag->name)
-        ->action("admin/tags/rename/$id")
-        ->render();
+      $this->response->body(InPlaceEdit::factory($tag->name)
+                            ->action("admin/tags/rename/$id")
+                            ->render());
     }
   }
 
@@ -107,9 +107,9 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       Message::success($message);
       GalleryLog::success("tags", $message);
 
-      JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
+      $this->response->json(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
-      JSON::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
+      $this->response->json(array("result" => "error", "form" => (string)$in_place_edit->render()));
     }
   }
 

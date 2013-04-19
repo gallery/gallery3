@@ -27,7 +27,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
       BlockManager::get_html("dashboard_sidebar") .
       "</div>";
     $view->content->obsolete_modules_message = Module::get_obsolete_modules_message();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_add_block() {
