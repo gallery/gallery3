@@ -32,11 +32,11 @@ class Gallery_Controller_Login extends Controller {
 
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
       $view = new View("gallery/login_ajax.html");
       $view->form = $form;
-      JSON::reply(array("result" => "error", "html" => (string)$view));
+      $this->response->json(array("result" => "error", "html" => (string)$view));
     }
   }
 

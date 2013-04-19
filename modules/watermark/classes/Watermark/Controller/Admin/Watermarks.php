@@ -49,14 +49,12 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
 
       GalleryLog::success("watermark", t("Watermark changed"));
       Message::success(t("Watermark changed"));
-      JSON::reply(
-        array("result" => "success",
-              "location" => URL::site("admin/watermarks")));
+      // Send as json with $text_plain = true for iframe compatibility (see ticket #2022)
+      $this->response->json(
+        array("result" => "success", "location" => URL::site("admin/watermarks")), true);
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form), true);
     }
-    // Override the application/json mime type for iframe compatibility.  See ticket #2022.
-    header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
   public function action_form_delete() {
@@ -81,12 +79,12 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
         GalleryLog::success("watermark", t("Watermark deleted"));
         Message::success(t("Watermark deleted"));
       }
-      JSON::reply(array("result" => "success", "location" => URL::site("admin/watermarks")));
+      // Send as json with $text_plain = true for iframe compatibility (see ticket #2022)
+      $this->response->json(
+        array("result" => "success", "location" => URL::site("admin/watermarks")), true);
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form), true);
     }
-    // Override the application/json mime type for iframe compatibility.  See ticket #2022.
-    header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
   public function action_form_add() {
@@ -128,12 +126,12 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
 
       Message::success(t("Watermark saved"));
       GalleryLog::success("watermark", t("Watermark saved"));
-      JSON::reply(array("result" => "success", "location" => URL::site("admin/watermarks")));
+      // Send as json with $text_plain = true for iframe compatibility (see ticket #2022)
+      $this->response->json(
+        array("result" => "success", "location" => URL::site("admin/watermarks")), true);
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form), true);
     }
-    // Override the application/json mime type for iframe compatibility.  See ticket #2022.
-    header("Content-Type: text/plain; charset=" . Kohana::$charset);
   }
 
   private function _update_graphics_rules() {

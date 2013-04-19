@@ -55,10 +55,10 @@ class User_Controller_Users extends Controller {
       $user->save();
       Module::event("user_edit_form_completed", $user, $form);
       Message::success(t("User information updated"));
-      JSON::reply(array("result" => "success",
+      $this->response->json(array("result" => "success",
                         "resource" => URL::site("users/{$user->id}")));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -88,13 +88,13 @@ class User_Controller_Users extends Controller {
       Message::success(t("Password changed"));
       Module::event("user_auth", $user);
       Module::event("user_password_change", $user);
-      JSON::reply(array("result" => "success",
+      $this->response->json(array("result" => "success",
                         "resource" => URL::site("users/{$user->id}")));
     } else {
       GalleryLog::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
       Module::event("user_auth_failed", $name);
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -123,13 +123,13 @@ class User_Controller_Users extends Controller {
       Module::event("user_change_email_form_completed", $user, $form);
       Message::success(t("Email address changed"));
       Module::event("user_auth", $user);
-      JSON::reply(array("result" => "success",
+      $this->response->json(array("result" => "success",
                         "resource" => URL::site("users/{$user->id}")));
     } else {
       GalleryLog::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
       Module::event("user_auth_failed", $name);
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 

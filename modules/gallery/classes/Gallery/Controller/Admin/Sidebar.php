@@ -49,7 +49,7 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $result["active"] = $v->render();
     $message = t("Updated sidebar blocks");
     $result["message"] = (string) $message;
-    JSON::reply($result);
+    $this->response->json($result);
   }
 
   private function _get_blocks() {

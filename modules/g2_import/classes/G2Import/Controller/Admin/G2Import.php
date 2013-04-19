@@ -114,7 +114,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
       }
     }
 
-    Ajax::response(json_encode($directories));
+    $this->response->ajax(json_encode($directories));
   }
 
   private function _get_import_form() {

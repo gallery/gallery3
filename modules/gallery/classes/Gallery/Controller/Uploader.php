@@ -120,7 +120,7 @@ class Gallery_Controller_Uploader extends Controller {
     Access::verify_csrf();
 
     Batch::stop();
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   private function _get_add_form($album)  {

@@ -72,13 +72,13 @@ class Gallery_Controller_Photos extends Controller_Items {
 
       if ($form->from_id->value == $photo->id) {
         // Use the new URL; it might have changed.
-        JSON::reply(array("result" => "success", "location" => $photo->url()));
+        $this->response->json(array("result" => "success", "location" => $photo->url()));
       } else {
         // Stay on the same page
-        JSON::reply(array("result" => "success"));
+        $this->response->json(array("result" => "success"));
       }
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 

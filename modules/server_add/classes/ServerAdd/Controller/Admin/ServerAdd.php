@@ -80,7 +80,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
       }
     }
 
-    Ajax::response(json_encode($directories));
+    $this->response->ajax(json_encode($directories));
   }
 
   private function _get_admin_form() {

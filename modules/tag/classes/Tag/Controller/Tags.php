@@ -41,9 +41,9 @@ class Tag_Controller_Tags extends Controller {
         }
       }
 
-      JSON::reply(array("result" => "success", "cloud" => (string)Tag::cloud(30)));
+      $this->response->json(array("result" => "success", "cloud" => (string)Tag::cloud(30)));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -60,6 +60,6 @@ class Tag_Controller_Tags extends Controller {
       $tags[] = (string)HTML::clean($tag->name);
     }
 
-    Ajax::response(json_encode($tags));
+    $this->response->ajax(json_encode($tags));
   }
 }

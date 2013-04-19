@@ -58,9 +58,9 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       Message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
       GalleryLog::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
-      JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
+      $this->response->json(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -107,9 +107,9 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       Message::success($message);
       GalleryLog::success("tags", $message);
 
-      JSON::reply(array("result" => "success", "location" => URL::site("admin/tags")));
+      $this->response->json(array("result" => "success", "location" => URL::site("admin/tags")));
     } else {
-      JSON::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
+      $this->response->json(array("result" => "error", "form" => (string)$in_place_edit->render()));
     }
   }
 

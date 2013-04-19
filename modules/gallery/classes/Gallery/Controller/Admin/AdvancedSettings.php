@@ -56,7 +56,7 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
         t("Saved value for %var (%module_name)",
           array("var" => $var_name, "module_name" => $module_name)));
 
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     }
   }
 }

@@ -77,9 +77,9 @@ class Gallery_Controller_UserProfile extends Controller {
         ->message(HTML::purify($form->message->message->value))
         ->send();
       Message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 

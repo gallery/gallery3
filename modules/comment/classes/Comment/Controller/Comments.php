@@ -58,12 +58,12 @@ class Comment_Controller_Comments extends Controller {
       $view = new View_Theme("comment/comment.html", "other", "comment-fragment");
       $view->comment = $comment;
 
-      JSON::reply(array("result" => "success",
-                        "view" => (string)$view,
-                        "form" => (string)Comment::get_add_form($item)));
+      $this->response->json(array("result" => "success",
+                                  "view" => (string)$view,
+                                  "form" => (string)Comment::get_add_form($item)));
     } else {
       $form = Comment::prefill_add_form($form);
-      JSON::reply(array("result" => "error", "form" => (string)$form));
+      $this->response->json(array("result" => "error", "form" => (string)$form));
     }
   }
 

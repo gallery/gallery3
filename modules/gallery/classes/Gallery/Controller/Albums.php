@@ -133,9 +133,9 @@ class Gallery_Controller_Albums extends Controller_Items {
       Message::success(t("Created album %album_title",
                          array("album_title" => HTML::purify($album->title))));
 
-      JSON::reply(array("result" => "success", "location" => $album->url()));
+      $this->response->json(array("result" => "success", "location" => $album->url()));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -176,13 +176,13 @@ class Gallery_Controller_Albums extends Controller_Items {
 
       if ($form->from_id->value == $album->id) {
         // Use the new URL; it might have changed.
-        JSON::reply(array("result" => "success", "location" => $album->url()));
+        $this->response->json(array("result" => "success", "location" => $album->url()));
       } else {
         // Stay on the same page
-        JSON::reply(array("result" => "success"));
+        $this->response->json(array("result" => "success"));
       }
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 

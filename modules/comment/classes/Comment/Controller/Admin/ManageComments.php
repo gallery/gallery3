@@ -35,10 +35,10 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
 
   public function action_menu_labels() {
     $menu = $this->_menu($this->_counts());
-    JSON::reply(array((string) $menu->get("unpublished")->label,
-                      (string) $menu->get("published")->label,
-                      (string) $menu->get("spam")->label,
-                      (string) $menu->get("deleted")->label));
+    $this->response->json(array((string) $menu->get("unpublished")->label,
+                                (string) $menu->get("published")->label,
+                                (string) $menu->get("spam")->label,
+                                (string) $menu->get("deleted")->label));
   }
 
   public function action_queue() {

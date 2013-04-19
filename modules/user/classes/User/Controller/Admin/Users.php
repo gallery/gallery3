@@ -87,9 +87,9 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->save();
       Module::event("user_add_form_admin_completed", $user, $form);
       Message::success(t("Created user %user_name", array("user_name" => $user->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      $this->response->body(JSON::reply(array("result" => "error", "html" => (string)$form)));
+      $this->response->body($this->response->json(array("result" => "error", "html" => (string)$form)));
     }
   }
 
@@ -115,13 +115,13 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $name = $user->name;
       $user->delete();
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
 
     $message = t("Deleted user %user_name", array("user_name" => $name));
     GalleryLog::success("user", $message);
     Message::success($message);
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   public function action_delete_user_form() {
@@ -173,9 +173,9 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->save();
       Module::event("user_edit_form_admin_completed", $user, $form);
       Message::success(t("Changed user %user_name", array("user_name" => $user->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string) $form));
+      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
   }
 
@@ -239,9 +239,9 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $group->save();
       Message::success(
         t("Created group %group_name", array("group_name" => $group->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
-      JSON::reply(array("result" => "error", "html" => (string)$form));
+      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -263,13 +263,13 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $name = $group->name;
       $group->delete();
     } else {
-      JSON::reply(array("result" => "error", "html" => (string) $form));
+      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
 
     $message = t("Deleted group %group_name", array("group_name" => $name));
     GalleryLog::success("group", $message);
     Message::success($message);
-    JSON::reply(array("result" => "success"));
+    $this->response->json(array("result" => "success"));
   }
 
   public function action_delete_group_form() {
@@ -308,12 +308,12 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $group->save();
       Message::success(
         t("Changed group %group_name", array("group_name" => $group->name)));
-      JSON::reply(array("result" => "success"));
+      $this->response->json(array("result" => "success"));
     } else {
       $group->reload();
       Message::error(
         t("Failed to change group %group_name", array("group_name" => $group->name)));
-      JSON::reply(array("result" => "error", "html" => (string) $form));
+      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
   }
 

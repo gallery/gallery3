@@ -65,7 +65,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
         $v = new View("gallery/reauthenticate.html");
         $v->form = $form;
         $v->user_name = Identity::active_user()->name;
-        JSON::reply(array("html" => (string)$v));
+        $this->response->json(array("html" => (string)$v));
       } else {
         self::_show_form($form);
       }

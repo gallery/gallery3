@@ -61,7 +61,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
       $result["dialog"] = (string)$v;
       $result["allow_continue"] = empty($messages["error"]);
     }
-    JSON::reply($result);
+    $this->response->json($result);
   }
 
   public function action_save() {

@@ -223,19 +223,19 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
         break;
       }
       // Using sprintf("%F") to avoid comma as decimal separator.
-      JSON::reply(array("result" => "success",
-                        "task" => array(
-                          "percent_complete" => sprintf("%F", $task->percent_complete),
-                          "status" => (string) $task->status,
-                          "done" => (bool) $task->done),
-                        "location" => URL::site("admin/maintenance")));
+      $this->response->json(array("result" => "success",
+                                  "task" => array(
+                                    "percent_complete" => sprintf("%F", $task->percent_complete),
+                                    "status" => (string) $task->status,
+                                    "done" => (bool) $task->done),
+                                  "location" => URL::site("admin/maintenance")));
 
     } else {
-      JSON::reply(array("result" => "in_progress",
-                        "task" => array(
-                          "percent_complete" => sprintf("%F", $task->percent_complete),
-                          "status" => (string) $task->status,
-                          "done" => (bool) $task->done)));
+      $this->response->json(array("result" => "in_progress",
+                                  "task" => array(
+                                    "percent_complete" => sprintf("%F", $task->percent_complete),
+                                    "status" => (string) $task->status,
+                                    "done" => (bool) $task->done)));
     }
   }
 
