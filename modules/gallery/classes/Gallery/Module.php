@@ -41,7 +41,7 @@ class Gallery_Module {
   private static $_first_module = "purifier";
   private static $_last_module = "gallery";
   private static $_third_party_modules = array(
-    "cache", "database", "formo", "image", "orm", "pagination", "purifier");
+    "cache", "database", "formo", "image", "orm", "pagination");
 
   /**
    * Set the version of the corresponding Model_Module
