@@ -100,6 +100,8 @@ class Gallery_IdentityProvider {
       // this function again and can fail, we should be sure not to get into an infinite recursion.
       if (!$restore_already_running) {
         $restore_already_running = true;
+        Log::instance()->add(Log::ERROR, "Error installing new provider, trying to recover\n" .
+                             $e->getMessage() . "\n" . $e->getTraceAsString());
 
         // Make sure new provider is not in the database
         try {
