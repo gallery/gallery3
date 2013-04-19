@@ -409,7 +409,7 @@ class Gallery_Hook_GalleryTask {
         if ($ptr_mode == "L") {
           $stack[] = "$id:R";
           DB::update("items")
-            ->set("left_ptr", $ptr++)
+            ->set(array("left_ptr" => $ptr++))
             ->where("id", "=", $id)
             ->execute();
 
@@ -422,9 +422,9 @@ class Gallery_Hook_GalleryTask {
           }
         } else if ($ptr_mode == "R") {
           DB::update("items")
-            ->set("right_ptr", $ptr++)
-            ->set("relative_path_cache", null)
-            ->set("relative_url_cache", null)
+            ->set(array("right_ptr" => $ptr++,
+                        "relative_path_cache" => null,
+                        "relative_url_cache" => null))
             ->where("id", "=", $id)
             ->execute();
         }
@@ -465,7 +465,7 @@ class Gallery_Hook_GalleryTask {
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
           DB::update("items")
-            ->set("slug", $slug . "-" . (string)rand(1000, 9999))
+            ->set(array("slug" => $slug . "-" . (string))rand(1000, 9999))
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -519,7 +519,8 @@ class Gallery_Hook_GalleryTask {
             $item_extension = "";
           }
           DB::update("items")
-            ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
+            ->set(
+              array("name" => $item_base_name . "-" . (string))rand(1000, 9999) . $item_extension)
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -585,7 +586,8 @@ class Gallery_Hook_GalleryTask {
           } catch (Exception $e) {
             // Didn't work.  Edit database directly without fixing file system.
             DB::update("items")
-              ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
+              ->set(
+                array("name" => $item_base_name . "-" . (string))rand(1000, 9999) . $item_extension)
               ->where("id", "=", $conflict->id)
               ->execute();
           }

@@ -323,7 +323,7 @@ class Item_Helper_Test extends Unittest_Testcase {
   private function _remove_relative_path_caches() {
     // This gets used *many* times in the find_by_path tests above to check the fallback code.
     DB::update("items")
-      ->set("relative_path_cache", null)
+      ->set(array("relative_path_cache" => null))
       ->execute();
   }
 

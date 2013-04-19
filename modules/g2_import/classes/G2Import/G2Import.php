@@ -954,7 +954,7 @@ class G2Import_G2Import {
     // so that if the comments get marked as spam, they don't immediately get
     // flushed (see ticket #1736)
     DB::update("comments")
-      ->set("created", $g2_comment->getDate())
+      ->set(array("created" => $g2_comment->getDate()))
       ->where("id", "=", $comment->id)
       ->execute();
   }

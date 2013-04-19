@@ -89,7 +89,7 @@ class Gallery_Graphics {
    */
   static function activate_rules($module_name) {
     DB::update("graphics_rules")
-      ->set("active", true)
+      ->set(array("active" => true))
       ->where("module_name", "=", $module_name)
       ->execute();
   }
@@ -101,7 +101,7 @@ class Gallery_Graphics {
    */
   static function deactivate_rules($module_name) {
     DB::update("graphics_rules")
-      ->set("active", false)
+      ->set(array("active" => false))
       ->where("module_name", "=", $module_name)
       ->execute();
   }

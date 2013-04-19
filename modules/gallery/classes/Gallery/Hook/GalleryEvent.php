@@ -74,15 +74,15 @@ class Gallery_Hook_GalleryEvent {
     $admin = Identity::admin_user();
     if (!empty($admin)) {          // could be empty if there is not identity provider
       DB::update("tasks")
-        ->set("owner_id", $admin->id)
+        ->set(array("owner_id" => $admin->id))
         ->where("owner_id", "=", $user->id)
         ->execute();
       DB::update("items")
-        ->set("owner_id", $admin->id)
+        ->set(array("owner_id" => $admin->id))
         ->where("owner_id", "=", $user->id)
         ->execute();
       DB::update("logs")
-        ->set("user_id", $admin->id)
+        ->set(array("user_id" => $admin->id))
         ->where("user_id", "=", $user->id)
         ->execute();
     }
@@ -91,13 +91,13 @@ class Gallery_Hook_GalleryEvent {
   static function identity_provider_changed($old_provider, $new_provider) {
     $admin = Identity::admin_user();
     DB::update("tasks")
-      ->set("owner_id", $admin->id)
+      ->set(array("owner_id" => $admin->id))
       ->execute();
     DB::update("items")
-      ->set("owner_id", $admin->id)
+      ->set(array("owner_id" => $admin->id))
       ->execute();
     DB::update("logs")
-      ->set("user_id", $admin->id)
+      ->set(array("user_id" => $admin->id))
       ->execute();
     Module::set_var("gallery", "email_from", $admin->email);
     Module::set_var("gallery", "email_reply_to", $admin->email);

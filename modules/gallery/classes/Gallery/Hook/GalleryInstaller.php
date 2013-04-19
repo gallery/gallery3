@@ -504,8 +504,8 @@ class Gallery_Hook_GalleryInstaller {
           $new_slug = Random::int();
         }
         DB::update("items")
-          ->set("slug", $new_slug)
-          ->set("relative_url_cache", null)
+          ->set(array("slug" => $new_slug,
+                      "relative_url_cache" => null))
           ->where("id", "=", $row->id)
           ->execute();
       }
@@ -532,7 +532,7 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 25) {
       DB::update("items")
-        ->set("title", DB::expr("`name`"))
+        ->set(array("title" => DB::expr("`name`")))
         ->and_where_open()
         ->where("title", "IS", null)
         ->or_where("title", "=", "")
@@ -573,7 +573,7 @@ class Gallery_Hook_GalleryInstaller {
       $db->query(Database::ALTER, "ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
       $db->query(Database::ALTER, "ALTER TABLE {modules} ADD KEY (`weight`)");
       DB::update("modules")
-        ->set("weight", DB::expr("`id`"))
+        ->set(array("weight" => DB::expr("`id`")))
         ->execute();
       Module::set_version("gallery", $version = 32);
     }
@@ -715,7 +715,7 @@ class Gallery_Hook_GalleryInstaller {
       // this process, we correctly mapped m4v files to video/x-m4v, correcting a previous error
       // where they were mapped to video/mp4.  This corrects the existing items.
       DB::update("items")
-        ->set("mime_type", "video/x-m4v")
+        ->set(array("mime_type" => "video/x-m4v"))
         ->where("name", "REGEXP", "\.m4v$") // case insensitive since name column is utf8_general_ci
         ->execute();
       Module::set_version("gallery", $version = 52);
@@ -786,7 +786,7 @@ class Gallery_Hook_GalleryInstaller {
       // unlikely to have occurred, and doesn't currently matter much since albums and movies don't
       // have resize images anyway.  However, it may be useful to be consistent here going forward.
       DB::update("items")
-        ->set("resize_dirty", 1)
+        ->set(array("resize_dirty" => 1))
         ->where("type", "<>", "photo")
         ->execute();
       Module::set_version("gallery", $version = 57);

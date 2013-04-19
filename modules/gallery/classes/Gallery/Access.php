@@ -538,7 +538,7 @@ class Gallery_Access {
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
     DB::update("items")
-      ->set($field, Access::UNKNOWN)
+      ->set(array($field => Access::UNKNOWN))
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->execute();
@@ -556,7 +556,7 @@ class Gallery_Access {
       if ($row->$field == Access::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
         DB::update("items")
-          ->set($field, $row->$field)
+          ->set(array($field => $row->$field))
           ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
           ->where("left_ptr", ">=", $row->left_ptr)
           ->where("right_ptr", "<=", $row->right_ptr)
@@ -564,7 +564,7 @@ class Gallery_Access {
       } else if ($row->$field == Access::DENY) {
         // DENY overwrites everything below it
         DB::update("items")
-          ->set($field, $row->$field)
+          ->set(array($field => $row->$field))
           ->where("left_ptr", ">=", $row->left_ptr)
           ->where("right_ptr", "<=", $row->right_ptr)
           ->execute();
@@ -575,7 +575,7 @@ class Gallery_Access {
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
     DB::update("items")
-      ->set($field, Access::ALLOW)
+      ->set(array($field => Access::ALLOW))
       ->where($field, "IS", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
@@ -630,7 +630,7 @@ class Gallery_Access {
     foreach ($query as $row) {
       $value = ($row->$field === Access::ALLOW) ? true : false;
       DB::update("access_caches")
-        ->set($field, $value)
+        ->set(array($field => $value))
         ->where("item_id", "IN",
                 DB::select("id")
                 ->from("items")

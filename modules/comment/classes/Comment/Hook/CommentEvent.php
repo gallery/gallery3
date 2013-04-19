@@ -28,10 +28,10 @@ class Comment_Hook_CommentEvent {
     $guest = Identity::guest();
     if (!empty($guest)) {          // could be empty if there is not identity provider
       DB::update("comments")
-        ->set("author_id", $guest->id)
-        ->set("guest_email", null)
-        ->set("guest_name", "guest")
-        ->set("guest_url", null)
+        ->set(array("author_id" => $guest->id,
+                    "guest_email" => null,
+                    "guest_name" => "guest",
+                    "guest_url" => null))
         ->where("author_id", "=", $user->id)
         ->execute();
     }
@@ -40,10 +40,10 @@ class Comment_Hook_CommentEvent {
   static function identity_provider_changed($old_provider, $new_provider) {
     $guest = Identity::guest();
     DB::update("comments")
-      ->set("author_id", $guest->id)
-      ->set("guest_email", null)
-      ->set("guest_name", "guest")
-      ->set("guest_url", null)
+      ->set(array("author_id" => $guest->id,
+                  "guest_email" => null,
+                  "guest_name" => "guest",
+                  "guest_url" => null))
       ->execute();
   }
 

@@ -552,7 +552,7 @@ class Gallery_Module {
    */
   static function incr_var($module_name, $name, $increment=1) {
     DB::update("vars")
-      ->set("value", DB::expr("`value` + $increment"))
+      ->set(array("value" => DB::expr("`value` + $increment")))
       ->where("module_name", "=", $module_name)
       ->where("name", "=", $name)
       ->execute();

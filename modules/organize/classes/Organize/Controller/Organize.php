@@ -148,7 +148,7 @@ class Organize_Controller_Organize extends Controller {
     if ($source_ids) {
       // Make a hole the right size
       DB::update("items")
-        ->set("weight", DB::expr("`weight` + " . count($source_ids)))
+        ->set(array("weight" => DB::expr("`weight` + " . count($source_ids))))
         ->where("parent_id", "=", $album->id)
         ->where("weight", ">=", $base_weight)
         ->execute();

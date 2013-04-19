@@ -63,11 +63,11 @@ class Gallery_ORM_MPTT extends ORM {
     try {
       // Make a hole in the parent for this new item
       DB::update($this->table_name())
-        ->set("left_ptr", DB::expr("`left_ptr` + 2"))
+        ->set(array("left_ptr" => DB::expr("`left_ptr` + 2")))
         ->where("left_ptr", ">=", $parent->right_ptr)
         ->execute($this->_db);
       DB::update($this->table_name())
-        ->set("right_ptr", DB::expr("`right_ptr` + 2"))
+        ->set(array("right_ptr" => DB::expr("`right_ptr` + 2")))
         ->where("right_ptr", ">=", $parent->right_ptr)
         ->execute($this->_db);
       $parent->right_ptr += 2;
@@ -119,11 +119,11 @@ class Gallery_ORM_MPTT extends ORM {
 
     try {
       DB::update($this->table_name())
-        ->set("left_ptr", DB::expr("`left_ptr` - 2"))
+        ->set(array("left_ptr" => DB::expr("`left_ptr` - 2")))
         ->where("left_ptr", ">", $this->right_ptr)
         ->execute($this->_db);
       DB::update($this->table_name())
-        ->set("right_ptr", DB::expr("`right_ptr` - 2"))
+        ->set(array("right_ptr" => DB::expr("`right_ptr` - 2")))
         ->where("right_ptr", ">", $this->right_ptr)
         ->execute($this->_db);
     } catch (Exception $e) {
@@ -262,7 +262,7 @@ class Gallery_ORM_MPTT extends ORM {
       if ($level_delta) {
         // Update the levels for the to-be-moved items
         DB::update($this->table_name())
-          ->set("level", DB::expr("`level` + $level_delta"))
+          ->set(array("level" => DB::expr("`level` + $level_delta")))
           ->where("left_ptr", ">=", $original_left_ptr)
           ->where("right_ptr", "<=", $original_right_ptr)
           ->execute($this->_db);
@@ -270,17 +270,17 @@ class Gallery_ORM_MPTT extends ORM {
 
       // Make a hole in the target for the move
       DB::update($this->table_name())
-        ->set("left_ptr", DB::expr("`left_ptr` + $size_of_hole"))
+        ->set(array("left_ptr" => DB::expr("`left_ptr` + $size_of_hole")))
         ->where("left_ptr", ">=", $target_right_ptr)
         ->execute($this->_db);
       DB::update($this->table_name())
-        ->set("right_ptr", DB::expr("`right_ptr` + $size_of_hole"))
+        ->set(array("right_ptr" => DB::expr("`right_ptr` + $size_of_hole")))
         ->where("right_ptr", ">=", $target_right_ptr)
         ->execute($this->_db);
 
       // Change the parent.
       DB::update($this->table_name())
-        ->set("parent_id", $target->id)
+        ->set(array("parent_id" => $target->id))
         ->where("id", "=", $this->id)
         ->execute($this->_db);
 
@@ -295,19 +295,19 @@ class Gallery_ORM_MPTT extends ORM {
 
       $new_offset = $target->right_ptr - $left_ptr;
       DB::update($this->table_name())
-        ->set("left_ptr", DB::expr("`left_ptr` + $new_offset"))
-        ->set("right_ptr", DB::expr("`right_ptr` + $new_offset"))
+        ->set(array("left_ptr" => DB::expr("`left_ptr` + $new_offset"),
+                    "right_ptr" => DB::expr("`right_ptr` + $new_offset")))
         ->where("left_ptr", ">=", $left_ptr)
         ->where("right_ptr", "<=", $right_ptr)
         ->execute($this->_db);
 
       // Close the hole in the source's parent after the move
       DB::update($this->table_name())
-        ->set("left_ptr", DB::expr("`left_ptr` - $size_of_hole"))
+        ->set(array("left_ptr" => DB::expr("`left_ptr` - $size_of_hole")))
         ->where("left_ptr", ">", $right_ptr)
         ->execute($this->_db);
       DB::update($this->table_name())
-        ->set("right_ptr", DB::expr("`right_ptr` - $size_of_hole"))
+        ->set(array("right_ptr" => DB::expr("`right_ptr` - $size_of_hole")))
         ->where("right_ptr", ">", $right_ptr)
         ->execute($this->_db);
     } catch (Exception $e) {

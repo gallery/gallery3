@@ -528,8 +528,8 @@ class Gallery_Model_Item extends ORM_MPTT {
          $original->slug != $this->slug ||
          $original->parent_id != $this->parent_id)) {
       DB::update("items")
-        ->set("relative_url_cache", null)
-        ->set("relative_path_cache", null)
+        ->set(array("relative_url_cache" => null,
+                    "relative_path_cache" => null))
         ->where("left_ptr", ">", $this->left_ptr)
         ->where("right_ptr", "<", $this->right_ptr)
         ->execute($this->_db);

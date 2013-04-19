@@ -33,8 +33,7 @@ class Item_Model_Test extends Unittest_Testcase {
 
     // Force the creation date to something well known
     DB::update("items")
-      ->set("created", 0)
-      ->set("updated", 0)
+      ->set(array("created" => 0, "updated", 0))
       ->where("id", "=", $item->id)
       ->execute();
     $item->reload();
@@ -52,7 +51,7 @@ class Item_Model_Test extends Unittest_Testcase {
 
     // Force the updated date to something well known
     DB::update("items")
-      ->set("updated", 0)
+      ->set(array("updated" => 0))
       ->where("id", "=", $item->id)
       ->execute();
     $item->reload();

@@ -23,7 +23,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    */
   public function action_index() {
     $query = DB::update("tasks")
-      ->set("state", "stalled")
+      ->set(array("state" => "stalled"))
       ->where("done", "=", 0)
       ->where("state", "<>", "stalled")
       ->where(DB::expr("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
@@ -150,8 +150,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   public function action_cancel_running_tasks() {
     Access::verify_csrf();
     DB::update("tasks")
-      ->set("done", 1)
-      ->set("state", "cancelled")
+      ->set(array("done" => 1, "state" => "cancelled"))
       ->where("done", "=", 0)
       ->execute();
     Message::success(t("All running tasks cancelled"));
