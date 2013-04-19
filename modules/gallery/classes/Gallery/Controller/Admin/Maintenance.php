@@ -128,9 +128,10 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
       throw new Exception("@todo MISSING_TASK");
     }
 
-    header("Content-Type: application/text");
-    header("Content-Disposition: filename=gallery3_task_log.txt");
+    // Send the log as an attachment for download.
     $this->response->body($task->get_log());
+    $this->response->send_file(true, "gallery3_task_log.txt",
+                               array("mime_type" => "application/text"));
   }
 
   /**
