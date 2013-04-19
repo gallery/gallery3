@@ -36,7 +36,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
     $view->tree = new View("server_add/tree.html");
     $view->tree->files = $files;
     $view->tree->parents = array();
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_children() {
@@ -75,7 +75,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         $tree->files[] = $path;
       }
     }
-    print $tree;
+    $this->response->body($tree);
   }
 
   /**

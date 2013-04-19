@@ -30,7 +30,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $view = new View_Admin("required/admin.html");
     $view->content = new View("admin/manage_comments.html");
     $view->content->menu = $this->_menu($this->_counts());
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_menu_labels() {
@@ -72,7 +72,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     // Also we want to use $theme->paginator() so we need a dummy theme
     $view->theme = $view;
 
-    print $view;
+    $this->response->body($view);
   }
 
   private function _menu($counts) {

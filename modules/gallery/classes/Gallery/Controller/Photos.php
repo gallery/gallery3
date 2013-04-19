@@ -36,7 +36,7 @@ class Gallery_Controller_Photos extends Controller_Items {
 
     $photo->increment_view_count();
 
-    print $template;
+    $this->response->body($template);
   }
 
   public function action_update() {
@@ -88,6 +88,6 @@ class Gallery_Controller_Photos extends Controller_Items {
     Access::required("view", $photo);
     Access::required("edit", $photo);
 
-    print Photo::get_edit_form($photo);
+    $this->response->body(Photo::get_edit_form($photo));
   }
 }

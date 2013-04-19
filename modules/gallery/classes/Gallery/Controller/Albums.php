@@ -69,7 +69,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     $template->content = new View("required/album.html");
     $album->increment_view_count();
 
-    print $template;
+    $this->response->body($template);
     Item::set_display_context_callback("Controller_Albums::get_display_context");
   }
 
@@ -192,7 +192,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("add", $album);
 
-    print Album::get_add_form($album);
+    $this->response->body(Album::get_add_form($album));
   }
 
   public function action_form_edit() {
@@ -201,6 +201,6 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    print Album::get_edit_form($album);
+    $this->response->body(Album::get_edit_form($album));
   }
 }

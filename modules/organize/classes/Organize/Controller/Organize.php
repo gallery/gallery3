@@ -26,7 +26,7 @@ class Organize_Controller_Organize extends Controller {
 
     $v = new View("organize/frame.html");
     $v->album = $album;
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_dialog() {
@@ -37,7 +37,7 @@ class Organize_Controller_Organize extends Controller {
 
     $v = new View("organize/dialog.html");
     $v->album = $album;
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_tree() {

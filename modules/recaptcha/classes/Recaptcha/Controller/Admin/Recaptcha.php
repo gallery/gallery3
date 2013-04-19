@@ -56,6 +56,6 @@ class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
     $view->content->public_key = Module::get_var("recaptcha", "public_key");
     $view->content->private_key = Module::get_var("recaptcha", "private_key");
     $view->content->form = $form;
-    print $view;
+    $this->response->body($view);
   }
 }

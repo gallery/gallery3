@@ -34,7 +34,7 @@ class Gallery_Controller_Permissions extends Controller {
     $view->parents = $item->parents();
     $view->form = $this->_get_form($item);
 
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_form() {
@@ -47,7 +47,7 @@ class Gallery_Controller_Permissions extends Controller {
       Access::forbidden();
     }
 
-    print $this->_get_form($item);
+    $this->response->body($this->_get_form($item));
   }
 
   public function action_change() {

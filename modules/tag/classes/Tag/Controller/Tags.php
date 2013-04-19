@@ -23,7 +23,7 @@ class Tag_Controller_Tags extends Controller {
     $album = ORM::factory("Item", 1);
     Access::required("view", $album);
 
-    print Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30));
+    $this->response->body(Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30)));
   }
 
   public function action_create() {

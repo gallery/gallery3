@@ -31,11 +31,11 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       $view->content->height = Module::get_var("watermark", "height");
       $view->content->position = Module::get_var("watermark", "position");
     }
-    print $view;
+    $this->response->body($view);
   }
 
   public function action_form_edit() {
-    print Watermark::get_edit_form();
+    $this->response->body(Watermark::get_edit_form());
   }
 
   public function action_edit() {
@@ -60,7 +60,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
   }
 
   public function action_form_delete() {
-    print Watermark::get_delete_form();
+    $this->response->body(Watermark::get_delete_form());
   }
 
   public function action_delete() {
@@ -90,7 +90,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
   }
 
   public function action_form_add() {
-    print Watermark::get_add_form();
+    $this->response->body(Watermark::get_add_form());
   }
 
   public function action_add() {

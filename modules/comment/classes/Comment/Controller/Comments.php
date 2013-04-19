@@ -78,6 +78,6 @@ class Comment_Controller_Comments extends Controller {
       Access::forbidden();
     }
 
-    print Comment::prefill_add_form(Comment::get_add_form($item));
+    $this->response->body(Comment::prefill_add_form(Comment::get_add_form($item)));
   }
 }

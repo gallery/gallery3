@@ -27,7 +27,7 @@ class Gallery_Controller_Uploader extends Controller {
       $item = $item->parent();
     }
 
-    print $this->_get_add_form($item);
+    $this->response->body($this->_get_add_form($item));
   }
 
   public function action_start() {
@@ -91,13 +91,13 @@ class Gallery_Controller_Uploader extends Controller {
         }
 
         header("HTTP/1.1 500 Internal Server Error");
-        print "ERROR: " . $e->getMessage();
+        $this->response->body("ERROR: " . $e->getMessage());
         return;
       }
-      print "FILEID: $item->id";
+      $this->response->body("FILEID: $item->id");
     } else {
       header("HTTP/1.1 400 Bad Request");
-      print "ERROR: " . t("Invalid upload");
+      $this->response->body("ERROR: " . t("Invalid upload"));
     }
   }
 
@@ -107,12 +107,13 @@ class Gallery_Controller_Uploader extends Controller {
 
     if ($error_count) {
       // The "errors" won't be properly pluralized :-/
-      print t2("Uploaded %count photo (%error errors)",
-               "Uploaded %count photos (%error errors)",
-               (int)$success_count,
-               array("error" => (int)$error_count));
+      $this->response->body(t2("Uploaded %count photo (%error errors)",
+                               "Uploaded %count photos (%error errors)",
+                               (int)$success_count,
+                               array("error" => (int)$error_count)));
     } else {
-      print t2("Uploaded %count photo", "Uploaded %count photos", $success_count);}
+      $this->response->body(t2("Uploaded %count photo", "Uploaded %count photos", $success_count));
+    }
   }
 
   public function action_finish() {

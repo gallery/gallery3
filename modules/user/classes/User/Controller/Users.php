@@ -140,7 +140,7 @@ class User_Controller_Users extends Controller {
       Access::forbidden();
     }
 
-    print $this->_get_edit_form($user);
+    $this->response->body($this->_get_edit_form($user));
   }
 
   public function action_form_change_password() {
@@ -150,7 +150,7 @@ class User_Controller_Users extends Controller {
       Access::forbidden();
     }
 
-    print $this->_get_change_password_form($user);
+    $this->response->body($this->_get_change_password_form($user));
   }
 
   public function action_form_change_email() {
@@ -160,7 +160,7 @@ class User_Controller_Users extends Controller {
       Access::forbidden();
     }
 
-    print $this->_get_change_email_form($user);
+    $this->response->body($this->_get_change_email_form($user));
   }
 
   private function _get_change_password_form($user) {

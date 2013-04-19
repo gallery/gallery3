@@ -29,6 +29,6 @@ class Exif_Controller_Exif extends Controller {
     $view = new View("exif/dialog.html");
     $view->details = Exif::get($item);
 
-    print $view;
+    $this->response->body($view);
   }
 }

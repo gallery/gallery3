@@ -45,7 +45,7 @@ class Rest_Controller_Rest extends Controller {
     $group->submit("")->value(t("Reset"));
     $v = new View("rest/reset_api_key_confirm.html");
     $v->form = $form;
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_reset_api_key() {

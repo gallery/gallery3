@@ -46,7 +46,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
       ->where("done", "=", 0)->order_by("updated", "DESC")->find_all();
     $view->content->finished_tasks = ORM::factory("Task")
       ->where("done", "=", 1)->order_by("updated", "DESC")->find_all();
-    print $view;
+    $this->response->body($view);
 
     // Do some maintenance while we're in here
     DB::delete("caches")
@@ -71,7 +71,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     GalleryLog::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               HTML::anchor("admin/maintenance", t("maintenance")));
-    print $view;
+    $this->response->body($view);
   }
 
   /**
@@ -94,7 +94,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     GalleryLog::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               HTML::anchor("admin/maintenance", t("maintenance")));
-    print $view;
+    $this->response->body($view);
   }
 
   /**
@@ -112,7 +112,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
     $view = new View("admin/maintenance_show_log.html");
     $view->task = $task;
 
-    print $view;
+    $this->response->body($view);
   }
 
   /**
@@ -130,7 +130,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     header("Content-Type: application/text");
     header("Content-Disposition: filename=gallery3_task_log.txt");
-    print $task->get_log();
+    $this->response->body($task->get_log());
   }
 
   /**

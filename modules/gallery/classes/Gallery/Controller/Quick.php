@@ -84,7 +84,7 @@ class Gallery_Controller_Quick extends Controller {
     $v = new View("gallery/quick_delete_confirm.html");
     $v->item = $item;
     $v->form = Item::get_delete_form($item);
-    print $v;
+    $this->response->body($v);
   }
 
   public function action_delete() {
@@ -145,6 +145,6 @@ class Gallery_Controller_Quick extends Controller {
     // Pass on the source item where this form was generated, so we have an idea where to return to.
     $form->hidden("from_id")->value((int) Request::current()->query("from_id"));
 
-    print $form;
+    $this->response->body($form);
   }
 }

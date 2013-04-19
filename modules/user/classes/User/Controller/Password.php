@@ -33,7 +33,7 @@ class User_Controller_Password extends Controller {
         JSON::reply(array("result" => "error", "html" => (string)$form));
       }
     } else {
-      print $form;
+      $this->response->body($form);
     }
   }
 
@@ -43,7 +43,7 @@ class User_Controller_Password extends Controller {
     } else {
       $user = User::lookup_by_hash(Request::current()->query("key"));
       if (!empty($user)) {
-        print $this->_new_password_form($user->hash);
+        $this->response->body($this->_new_password_form($user->hash));
       } else {
         throw new Exception("@todo FORBIDDEN", 503);
       }
@@ -135,7 +135,7 @@ class User_Controller_Password extends Controller {
       Message::success(t("Password reset successfully"));
       HTTP::redirect(Item::root()->abs_url());
     } else {
-      print $view;
+      $this->response->body($view);
     }
   }
 }

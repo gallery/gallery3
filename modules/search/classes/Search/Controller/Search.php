@@ -73,7 +73,7 @@ class Search_Controller_Search extends Controller {
     $template->content->items = $result;
     $template->content->q = $q;
 
-    print $template;
+    $this->response->body($template);
 
     Item::set_display_context_callback("Controller_Search::get_display_context", $album, $q);
   }
