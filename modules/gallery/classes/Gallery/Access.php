@@ -663,27 +663,13 @@ class Gallery_Access {
     }
 
     $base_url = URL::base(null, true);
-    $sep = "?";
-    if (strpos($base_url, "?") !== false) {
-      $sep = "&";
-    }
-    $base_url .= $sep . "kohana_uri=/file_proxy";
-    // Replace "/index.php/?kohana..." with "/index.php?koahan..."
-    // Doesn't apply to "/?kohana..." or "/foo/?kohana..."
-    // Can't check for "index.php" since the file might be renamed, and
-    // there might be more Apache aliases / rewrites at work.
-    $url_path = parse_url($base_url, PHP_URL_PATH);
-    // Does the URL path have a file component?
-    if (preg_match("#[^/]+\.php#i", $url_path)) {
-      $base_url = str_replace("/?", "?", $base_url);
-    }
 
     foreach ($dirs as $dir) {
       if ($value === Access::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");
         fwrite($fp, "<IfModule mod_rewrite.c>\n");
         fwrite($fp, "  RewriteEngine On\n");
-        fwrite($fp, "  RewriteRule (.*) $base_url/\$1 [L]\n");
+        fwrite($fp, "  RewriteRule (.*) $base_url [L]\n");
         fwrite($fp, "</IfModule>\n");
         fwrite($fp, "<IfModule !mod_rewrite.c>\n");
         fwrite($fp, "  Order Deny,Allow\n");

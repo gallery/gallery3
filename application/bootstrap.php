@@ -205,12 +205,20 @@ Cookie::$salt = "g3";
 // init.php file which can, among other things, load its own routes which can override those below.
 Module::load_modules();
 
-// Set our five routes.  This will match all valid Gallery URLs (including the empty root URL).
+// Set our routes.  This will match all valid Gallery URLs (including the empty root URL).
 //
 // Since there are the only two controller directories we use (root and admin), we can remove all
 // other underscores.  In Route::matches(), filters are called *after* ucwords, so
-// "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings" and "file_proxy" maps to
-// "Controller_FileProxy".
+// for example "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings".
+$rel_varpath = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
+Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))",
+           array("path" => ".*"))
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = "FileProxy";
+      $params["action"] = "index";
+      return $params;
+    });
+
 Route::set("admin_forms", "form/<type>/<directory>/<controller>(/<args>)",
            array("type" => "(edit|add)", "directory" => "admin", "args" => "[^.,;?\\n]++"))
   ->filter(function($route, $params, $request) {
