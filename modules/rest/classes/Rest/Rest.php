@@ -53,7 +53,7 @@ class Rest_Rest {
       } else {
         $html = t("Empty response");
       }
-      $this->body("<pre>$html</pre>");
+      $response->body("<pre>$html</pre>");
       if (Gallery::show_profiler()) {
         Profiler::enable();
         $profiler = new Profiler();
