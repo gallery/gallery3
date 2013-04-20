@@ -29,38 +29,21 @@
 class Gallery_Controller_FileProxy extends Controller {
   public $allow_private_gallery = true;
 
-  public function __call($function, $args) {
-
+  public function action_index() {
     // Force zlib compression off.  Image and movie files are already compressed and
     // recompressing them is CPU intensive.
     if (ini_get("zlib.output_compression")) {
       ini_set("zlib.output_compression", "Off");
     }
 
-    // request_uri: gallery3/var/albums/foo/bar.jpg?m=1234
-    $request_uri = rawurldecode($_SERVER["REQUEST_URI"]);
+    // type: subdir in var (e.g. "albums")
+    // path: relative path in subdir (e.g. "Bobs Wedding/Eating-Cake.jpg")
+    $path = rawurldecode($this->request->param("path"));
+    $type = $this->request->param("type");
 
-    // get rid of query parameters
-    // request_uri: gallery3/var/albums/foo/bar.jpg
-    $request_uri = preg_replace("/\?.*/", "", $request_uri);
-
-    // var_uri: gallery3/var/
-    $var_uri = URL::file("var/");
-
-    // Make sure that the request is for a file inside var
-    $offset = strpos(rawurldecode($request_uri), $var_uri);
-    if ($offset !== 0) {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 1;
-      throw $e;
-    }
-
-    // file_uri: albums/foo/bar.jpg
-    $file_uri = substr($request_uri, strlen($var_uri));
-
-    // type: albums
-    // path: foo/bar.jpg
-    list ($type, $path) = explode("/", $file_uri, 2);
+    // See if we have a valid type.  This also catches the case where the user navigated directly
+    // to this controller (e.g. "/gallery3/index.php/file_proxy/index/foo.jpg"), in which case
+    // type would be empty.
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       $e = HTTP_Exception::factory(404);
       $e->test_fail_code = 2;
