@@ -18,11 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Tag extends Controller {
-  public function __call($function, $args) {
-    $tag_id = $function;
-    $tag = ORM::factory("Tag")->where("id", "=", $tag_id)->find();
-    $page_size = Module::get_var("gallery", "page_size", 9);
+  public function action_show() {
+    $tag_id = $this->arg_required(0, "digit");
+    $tag = ORM::factory("Tag", $tag_id);
+    if (!$tag->loaded()) {
+      throw HTTP_Exception::factory(404);
+    }
 
+    $page_size = Module::get_var("gallery", "page_size", 9);
     $show = Request::current()->query("show");
 
     if ($show) {
@@ -66,6 +69,18 @@ class Tag_Controller_Tag extends Controller {
     $this->response->body($template);
 
     Item::set_display_context_callback("Controller_Tag::get_display_context", $tag->id);
+  }
+
+  public function action_find_by_name() {
+    $tag_name = $this->arg_required(0);
+    $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
+    if (!$tag->loaded()) {
+      // No matching tag was found. If this was an imported tag, this is probably a bug.
+      // If the user typed the URL manually, it might just be wrong.
+      throw HTTP_Exception::factory(404);
+    }
+    // We have a matching tag, but this is not the canonical URL - redirect them.
+    $this->redirect($tag->abs_url());
   }
 
   public static function get_display_context($item, $tag_id) {

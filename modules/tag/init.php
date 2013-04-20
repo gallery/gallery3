@@ -17,17 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Controller_TagName extends Controller {
-  public function __call($function, $args) {
-    $tag_name = $function;
-    $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
-    if (!$tag->loaded()) {
-      // No matching tag was found. If this was an imported tag, this is probably a bug.
-      // If the user typed the URL manually, it might just be wrong
-      throw HTTP_Exception::factory(404);
-    }
-
-    HTTP::redirect($tag->abs_url());
-  }
-
-}
+Route::set("tag", "<type>(/<args>)",
+           array("type" => "(tag|tag_name)", "args" => "[^.,;?\\n]++"))
+  ->filter(function($route, $params, $request) {
+      $params["controller"] = "Tag";
+      $params["action"] = ($params["type"] == "tag") ? "show" : "find_by_name";
+      return $params;
+    });
