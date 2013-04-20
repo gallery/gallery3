@@ -67,7 +67,7 @@ class Movies_Controller extends Items_Controller {
 
       log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
       message::success(
-        t("Saved movie %movie_title", array("movie_title" => $movie->title)));
+        t("Saved movie %movie_title", array("movie_title" => html::purify($movie->title))));
 
       if ($form->from_id->value == $movie->id) {
         // Use the new url; it might have changed.
