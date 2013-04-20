@@ -207,21 +207,21 @@ class Gallery_Item {
   static function find_by_path($path, $var_subdir="albums") {
     $path = trim($path, "/");
 
-    // The root path name is NULL not "", hence this workaround.
-    if ($path == "") {
-      return Item::root();
-    }
-
     $search_full_name = true;
     $album_thumb = false;
-    if (($var_subdir == "thumbs") && preg_match("|^(.*)/\.album\.jpg$|", $path, $matches)) {
+    if (($var_subdir == "thumbs") && preg_match("|^((.*/)?)\.album\.jpg$|", $path, $matches)) {
       // It's an album thumb - remove "/.album.jpg" from the path.
-      $path = $matches[1];
+      $path = rtrim($matches[1], "/");
       $album_thumb = true;
     } else if (($var_subdir != "albums") && preg_match("/^(.*)\.jpg$/", $path, $matches)) {
       // Item itself could be non-jpg (e.g. movies) - remove .jpg from path, don't search full name.
       $path = $matches[1];
       $search_full_name = false;
+    }
+
+    // The root path name is NULL not "", hence this workaround.
+    if ($path == "") {
+      return Item::root();
     }
 
     // Check to see if there's an item in the database with a matching relative_path_cache value.
