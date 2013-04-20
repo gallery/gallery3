@@ -465,7 +465,7 @@ class Gallery_Hook_GalleryTask {
         if ($conflicts->count() && $conflict = $conflicts->current()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
           DB::update("items")
-            ->set(array("slug" => $slug . "-" . (string))rand(1000, 9999))
+            ->set(array("slug" => $slug . "-" . (string)rand(1000, 9999)))
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -520,7 +520,7 @@ class Gallery_Hook_GalleryTask {
           }
           DB::update("items")
             ->set(
-              array("name" => $item_base_name . "-" . (string))rand(1000, 9999) . $item_extension)
+              array("name" => $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension))
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -587,7 +587,7 @@ class Gallery_Hook_GalleryTask {
             // Didn't work.  Edit database directly without fixing file system.
             DB::update("items")
               ->set(
-                array("name" => $item_base_name . "-" . (string))rand(1000, 9999) . $item_extension)
+                array("name" => $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension))
               ->where("id", "=", $conflict->id)
               ->execute();
           }
