@@ -60,29 +60,25 @@ class Gallery_ORM extends Kohana_ORM {
   }
 
   /**
-   * Set the table name using our method.  Kohana finds it by getting the lowercase version of
-   * the model name and adding plural if needed.  The problem is that it's not sensitive to
-   * camelcase, which breaks how Gallery's DB is set up.  By setting $this->_table_name ahead
-   * of time, the parent function will use our value instead.  Note: can give odd results if you
-   * use a series of capital letters (see examples below).
+   * Set the object name using our method, which is then used to set the object plural name and
+   * the table name.  Kohana finds it by getting the lowercase version of the model name.  The
+   * problem is that this isn't sensitive to camelcase, which breaks how Gallery's DB is set up.
+   * By setting $this->_object_name ahead of time, the parent function will use our value instead.
+   * Note: can give odd results if you use a series of capital letters (see examples below).
    *
-   * Examples: "Model_Item"                --> "items"
-   *           "Model_IncomingTranslation" --> "incoming_translations", not "incomingtranslations"
-   *           "Model_ORM_Example"         --> "orm_examples"
-   *           "Model_ORMExample"          --> "ormexamples"
-   *           "Model_ORMAnotherExample"   --> "ormanother_examples", not "ormanotherexamples"
-   *           "Model_AnotherORMExample"   --> "another_ormexamples", not "anotherormexamples"
+   * Examples: "Model_Item"                --> "item"
+   *           "Model_IncomingTranslation" --> "incoming_translation", not "incomingtranslation"
+   *           "Model_ORM_Example"         --> "orm_example"
+   *           "Model_ORMExample"          --> "ormexample"
+   *           "Model_ORMAnotherExample"   --> "ormanother_example", not "ormanotherexample"
+   *           "Model_AnotherORMExample"   --> "another_ormexample", not "anotherormexample"
    *
    * @see ORM::_initialize()
    */
   protected function _initialize() {
-    if (empty($this->_table_name)) {
-      // Get the table name using Inflector::convert_class_to_module_name() instead of strtolower()
-      $this->_table_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
-      // Make the table name plural (if specified)
-      if ($this->_table_names_plural === true) {
-        $this->_table_name = Inflector::plural($this->_table_name);
-      }
+    if (empty($this->_object_name)) {
+      // Get the object name using Inflector::convert_class_to_module_name() instead of strtolower()
+      $this->_object_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
     }
     parent::_initialize();
   }
