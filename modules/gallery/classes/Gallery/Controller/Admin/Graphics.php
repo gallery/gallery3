@@ -45,7 +45,7 @@ class Gallery_Controller_Admin_Graphics extends Controller_Admin {
       Module::event("graphics_toolkit_change", $toolkit_id);
     }
 
-    HTTP::redirect("admin/graphics");
+    $this->redirect("admin/graphics");
   }
 }
 
