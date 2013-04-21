@@ -18,10 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Hook_CommentEvent {
+  /**
+   * Setup the relationship between Model_Item and Model_Comment.
+   */
+  static function model_relationships($relationships) {
+    $relationships["item"]["has_many"]["comments"] = array();
+    $relationships["comment"]["belongs_to"]["item"] = array();
+  }
+
   static function item_deleted($item) {
-    DB::delete("comments")
-      ->where("item_id", "=", $item->id)
-      ->execute();
+    $item->comments->delete();
   }
 
   static function user_deleted($user) {
@@ -71,11 +77,8 @@ class Comment_Hook_CommentEvent {
   }
 
   static function item_index_data($item, $data) {
-    foreach (DB::select("text")
-             ->from("comments")
-             ->where("item_id", "=", $item->id)
-             ->execute() as $row) {
-      $data[] = $row->text;
+    foreach ($item->comments->find_all() as $comment) {
+      $data[] = $comment->text;
     }
   }
 

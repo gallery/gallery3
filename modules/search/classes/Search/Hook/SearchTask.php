@@ -43,7 +43,7 @@ class Search_Hook_SearchTask {
 
       $start = microtime(true);
       foreach (ORM::factory("Item")
-               ->join("search_records", "left")->on("item.id", "=", "search_record.item_id")
+               ->with("search_record")
                ->where("search_record.item_id", "IS", null)
                ->or_where("search_record.dirty", "=", 1)
                ->limit(100)->find_all() as $item) {

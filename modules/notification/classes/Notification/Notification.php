@@ -142,7 +142,7 @@ class Notification_Notification {
   }
 
   static function send_comment_published($comment) {
-    $item = $comment->item();
+    $item = $comment->item;
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/comment_published.html");
       $v->comment = $comment;

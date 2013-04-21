@@ -18,9 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
-  protected $_has_many = array("users" =>
-                               array("through" => "groups_users", "delete_through" => true));
-
   /**
    * @see ORM::delete()
    */

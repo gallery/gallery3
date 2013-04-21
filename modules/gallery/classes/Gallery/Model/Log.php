@@ -19,9 +19,9 @@
  */
 class Gallery_Model_Log extends ORM {
   /**
-   * @see ORM::__get()
+   * @see ORM::get()
    */
-  public function __get($column) {
+  public function get($column) {
     if ($column == "user") {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
@@ -32,7 +32,7 @@ class Gallery_Model_Log extends ORM {
         return null;
       }
     } else {
-      return parent::__get($column);
+      return parent::get($column);
     }
   }
 }

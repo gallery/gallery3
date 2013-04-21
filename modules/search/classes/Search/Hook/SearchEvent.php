@@ -18,6 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Search_Hook_SearchEvent {
+  /**
+   * Setup the relationship between Model_Item and Model_SearchRecord.
+   */
+  static function model_relationships($relationships) {
+    $relationships["item"]["has_one"]["search_record"] = array();
+    $relationships["search_record"]["belongs_to"]["item"] = array();
+  }
+
   static function item_created($item) {
     Search::update($item);
   }
@@ -27,9 +35,7 @@ class Search_Hook_SearchEvent {
   }
 
   static function item_deleted($item) {
-    DB::delete("search_records")
-      ->where("item_id", "=", $item->id)
-      ->execute();
+    $item->search_record->delete();
   }
 
   static function item_related_update($item) {

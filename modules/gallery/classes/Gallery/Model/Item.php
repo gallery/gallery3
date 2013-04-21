@@ -22,10 +22,6 @@ class Gallery_Model_Item extends ORM_MPTT {
   private $data_file_error = null;
 
   public function __construct($id=null) {
-    if (Module::is_active("tag")) {
-      $this->_has_many["tags"] = array("through" => "items_tags", "delete_through" => true);
-    }
-
     parent::__construct($id);
 
     if (!$this->loaded()) {
