@@ -1,4 +1,4 @@
-Gallery 3.0.6 (Rive Gauche)
+Gallery 3.0.7 (Rive Droite)
 ===========================
 
 [![Build Status](https://travis-ci.org/gallery/gallery3.png?branch=master)](https://travis-ci.org/gallery/gallery3)
