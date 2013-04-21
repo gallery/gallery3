@@ -67,7 +67,7 @@ class Exif_Exif {
     }
     $item->save();
 
-    $record = ORM::factory("ExifRecord")->where("item_id", "=", $item->id)->find();
+    $record = $item->exif_record;
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
@@ -79,9 +79,7 @@ class Exif_Exif {
 
   static function get($item) {
     $exif = array();
-    $record = ORM::factory("ExifRecord")
-      ->where("item_id", "=", $item->id)
-      ->find();
+    $record = $item->exif_record;
     if (!$record->loaded()) {
       return array();
     }
@@ -135,7 +133,7 @@ class Exif_Exif {
   static function stats() {
     $missing_exif = DB::select("item.id")
       ->from("items")
-      ->join("exif_records", "left")->on("item.id", "=", "exif_record.item_id")
+      ->with("exif_record")
       ->where("type", "=", "photo")
       ->and_where_open()
       ->where("exif_record.item_id", "IS", null)

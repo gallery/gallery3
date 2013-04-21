@@ -21,12 +21,8 @@ class Exif_Hook_ExifTheme {
   static function sidebar_bottom($theme) {
     $item = $theme->item();
     if ($item && $item->is_photo()) {
-      $record = DB::select("key_count")
-        ->from("exif_records")
-        ->where("item_id", "=", $item->id)
-        ->execute()
-        ->current();
-      if ($record && $record->key_count) {
+      $record = $item->exif_record;
+      if ($record->loaded() && $record->key_count) {
         $view = new View("exif/sidebar.html");
         $view->item = $item;
         return $view;

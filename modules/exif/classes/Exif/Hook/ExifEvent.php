@@ -18,6 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Exif_Hook_ExifEvent {
+  /**
+   * Setup the relationship between Model_Item and Model_ExifRecord.
+   */
+  static function model_relationships($relationships) {
+    $relationships["item"]["has_one"]["exif_record"] = array();
+    $relationships["exif_record"]["belongs_to"]["item"] = array();
+  }
+
   static function item_created($item) {
     if (!$item->is_album()) {
       Exif::extract($item);
@@ -31,8 +39,6 @@ class Exif_Hook_ExifEvent {
   }
 
   static function item_deleted($item) {
-    DB::delete("exif_records")
-      ->where("item_id", "=", $item->id)
-      ->execute();
+    $item->exif_record->delete();
   }
 }

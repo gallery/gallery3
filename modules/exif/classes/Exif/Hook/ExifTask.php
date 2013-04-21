@@ -43,7 +43,7 @@ class Exif_Hook_ExifTask {
 
       $start = microtime(true);
       foreach (ORM::factory("Item")
-               ->join("exif_records", "left")->on("item.id", "=", "exif_record.item_id")
+               ->with("exif_record")
                ->where("type", "=", "photo")
                ->and_where_open()
                ->where("exif_record.item_id", "IS", null)
