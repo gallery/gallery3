@@ -23,6 +23,6 @@ class ImageBlock_Controller_ImageBlock extends Controller {
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Item::set_display_context_callback("Controller_Albums::get_display_context");
-    HTTP::redirect($item->abs_url());
+    $this->redirect($item->abs_url());
   }
 }

@@ -35,7 +35,7 @@ class Comment_Controller_Admin_Comments extends Controller_Admin {
     Module::set_var("comment", "rss_visible",
                     $form->comment_settings->rss_visible->value);
     Message::success(t("Comment settings updated"));
-    HTTP::redirect("admin/comments");
+    $this->redirect("admin/comments");
   }
 
   private function _get_admin_form() {

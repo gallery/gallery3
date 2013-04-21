@@ -34,7 +34,7 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
       }
       // All done - redirect with message.
       Message::success(t("Movies settings updated successfully"));
-      HTTP::redirect("admin/movies");
+      $this->redirect("admin/movies");
     }
     // Something went wrong - print view from existing form.
     $this->_print_view($form);

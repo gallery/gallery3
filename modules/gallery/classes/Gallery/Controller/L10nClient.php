@@ -108,7 +108,7 @@ class Gallery_Controller_L10nClient extends Controller {
       $redirect_url .= "#l10n-client";
     }
 
-    HTTP::redirect($redirect_url);
+    $this->redirect($redirect_url);
   }
 
   private static function _l10n_client_search_form() {

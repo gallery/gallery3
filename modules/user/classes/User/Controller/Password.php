@@ -133,7 +133,7 @@ class User_Controller_Password extends Controller {
       $user->hash = null;
       $user->save();
       Message::success(t("Password reset successfully"));
-      HTTP::redirect(Item::root()->abs_url());
+      $this->redirect(Item::root()->abs_url());
     } else {
       $this->response->body($view);
     }

@@ -62,7 +62,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
       Module::event("theme_edit_form_completed", $form);
 
       Message::success(t("Updated theme details"));
-      HTTP::redirect("admin/theme_options");
+      $this->redirect("admin/theme_options");
     } else {
       $view = new View_Admin("required/admin.html");
       $view->content = new View("admin/theme_options.html");

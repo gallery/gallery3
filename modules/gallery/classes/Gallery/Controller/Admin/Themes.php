@@ -79,7 +79,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
                          array("theme_name" => $info->name)));
     }
 
-    HTTP::redirect("admin/themes");
+    $this->redirect("admin/themes");
   }
 }
 

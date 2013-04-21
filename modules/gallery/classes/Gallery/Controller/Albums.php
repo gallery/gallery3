@@ -36,9 +36,9 @@ class Gallery_Controller_Albums extends Controller_Items {
       if ($index) {
         $page = ceil($index / $page_size);
         if ($page == 1) {
-          HTTP::redirect($album->abs_url());
+          $this->redirect($album->abs_url());
         } else {
-          HTTP::redirect($album->abs_url("page=$page"));
+          $this->redirect($album->abs_url("page=$page"));
         }
       }
     }
@@ -50,9 +50,9 @@ class Gallery_Controller_Albums extends Controller_Items {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      HTTP::redirect($album->abs_url());
+      $this->redirect($album->abs_url());
     } else if ($page > $max_pages) {
-      HTTP::redirect($album->abs_url("page=$max_pages"));
+      $this->redirect($album->abs_url("page=$max_pages"));
     }
 
     $template = new View_Theme("required/page.html", "collection", "album");
