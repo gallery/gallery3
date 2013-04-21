@@ -34,8 +34,7 @@ class Comment_Hook_CommentTheme {
     $block->anchor = "comments";
 
     $view = new View("comment/block.html");
-    $view->comments = ORM::factory("Comment")
-      ->where("item_id", "=", $theme->item()->id)
+    $view->comments = $theme->item()->comments
       ->where("state", "=", "published")
       ->order_by("created", "ASC")
       ->find_all();

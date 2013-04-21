@@ -70,7 +70,7 @@
       </td>
       <td>
         <div class="g-right">
-          <? $item = $comment->item() ?>
+          <? $item = $comment->item ?>
           <div class="g-item g-photo">
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>

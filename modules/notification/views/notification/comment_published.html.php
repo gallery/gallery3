@@ -25,8 +25,8 @@
       <tr>
         <td><?= t("Url:") ?></td>
         <td>
-          <a href="<?= $comment->item()->abs_url() ?>#comments">
-            <?= $comment->item()->abs_url() ?>#comments
+          <a href="<?= $comment->item->abs_url() ?>#comments">
+            <?= $comment->item->abs_url() ?>#comments
           </a>
         </td>
       </tr>

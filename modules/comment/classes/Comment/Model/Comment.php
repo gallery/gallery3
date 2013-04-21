@@ -18,10 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Model_Comment extends ORM {
-  function item() {
-    return ORM::factory("Item", $this->item_id);
-  }
-
   function author() {
     return Identity::lookup_user($this->author_id);
   }
@@ -84,7 +80,7 @@ class Comment_Model_Comment extends ORM {
 
     // We only notify on the related items if we're making a visible change.
     if (($this->state == "published") || ($original_state == "published")) {
-      $item = $this->item();
+      $item = $this->item;
       Module::event("item_related_update", $item);
     }
 
@@ -147,7 +143,7 @@ class Comment_Model_Comment extends ORM {
    * @chainable
    */
   public function viewable() {
-    $this->join("items")->on("item.id", "=", "comment.item_id");
+    $this->with("item");
     return Item::viewable($this);
   }
 
@@ -179,10 +175,7 @@ class Comment_Model_Comment extends ORM {
    * Make sure we have a valid associated item id.
    */
   public function valid_item(Validation $v, $field) {
-    if (DB::select()
-        ->from("items")
-        ->where("id", "=", $this->item_id)
-        ->execute()->count() != 1) {
+    if (!$this->item->loaded()) {
       $v->add_error("item_id", "invalid");
     }
   }
@@ -204,7 +197,7 @@ class Comment_Model_Comment extends ORM {
         $data[$key] = $value;
       }
     }
-    $data["item"] = Rest::url("item", $this->item());
+    $data["item"] = Rest::url("item", $this->item);
     unset($data["item_id"]);
 
     return $data;
