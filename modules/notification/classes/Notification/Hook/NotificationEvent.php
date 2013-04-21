@@ -131,9 +131,7 @@ class Notification_Hook_NotificationEvent {
     foreach(ORM::factory("Subscription")
             ->where("user_id", "=", $data->user->id)
             ->find_all() as $subscription) {
-      $item = ORM::factory("Item")
-          ->where("id", "=", $subscription->item_id)
-          ->find();
+      $item = $subscription->item;
       if ($item->loaded()) {
         $view->subscriptions[] = (object)array("id" => $subscription->id, "title" => $item->title,
                                                "url" => $item->url());
