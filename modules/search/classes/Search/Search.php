@@ -98,12 +98,11 @@ class Search_Search {
 
   static function update($item) {
     $data = new ArrayObject();
-    $record = ORM::factory("SearchRecord")->where("item_id", "=", $item->id)->find();
+    $record = $item->search_record;
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
 
-    $item = $record->item();
     Module::event("item_index_data", $item, $data);
     $record->data = join(" ", (array)$data);
     $record->dirty = 0;
@@ -111,14 +110,11 @@ class Search_Search {
   }
 
   static function stats() {
-    $remaining = DB::select()
-      ->from("items")
-      ->join("search_records", "left")->on("item.id", "=", "search_record.item_id")
-      ->and_where_open()
+    $remaining = ORM::factory("Item")
+      ->with("search_record")
       ->where("search_record.item_id", "IS", null)
       ->or_where("search_record.dirty", "=", 1)
-      ->and_where_close()
-      ->execute()->count();
+      ->count_all();
 
     $total = ORM::factory("Item")->count_all();
     $percent = round(100 * ($total - $remaining) / $total);

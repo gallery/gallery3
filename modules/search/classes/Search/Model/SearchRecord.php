@@ -18,7 +18,4 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Search_Model_SearchRecord extends ORM {
-  function item() {
-    return ORM::factory("Item", $this->item_id);
-  }
 }
