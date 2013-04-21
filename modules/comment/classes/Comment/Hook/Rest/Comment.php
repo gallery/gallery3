@@ -20,7 +20,7 @@
 class Comment_Hook_Rest_Comment {
   static function get($request) {
     $comment = Rest::resolve($request->url);
-    Access::required("view", $comment->item());
+    Access::required("view", $comment->item);
 
     return array(
       "url" => $request->url,
@@ -46,7 +46,7 @@ class Comment_Hook_Rest_Comment {
     }
 
     $comment = Rest::resolve($request->url);
-    Access::required("edit", $comment->item());
+    Access::required("edit", $comment->item);
 
     $comment->delete();
   }
@@ -62,7 +62,7 @@ class Comment_Hook_Rest_Comment {
 
   static function resolve($id) {
     $comment = ORM::factory("Comment", $id);
-    if (!Access::can("view", $comment->item())) {
+    if (!Access::can("view", $comment->item)) {
       throw HTTP_Exception::factory(404);
     }
     return $comment;

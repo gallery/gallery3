@@ -23,9 +23,7 @@ class Comment_Hook_Rest_ItemComments {
     Access::required("view", $item);
 
     $comments = array();
-    foreach (ORM::factory("Comment")
-             ->viewable()
-             ->where("item_id", "=", $item->id)
+    foreach ($item->comments
              ->order_by("created", "DESC")
              ->find_all() as $comment) {
       $comments[] = Rest::url("comment", $comment);
