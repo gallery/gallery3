@@ -18,6 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Hook_UserEvent {
+  /**
+   * Setup the relationship between Model_User and Model_Group.
+   */
+  static function model_relationships($relationships) {
+    $relationships["user"]["has_many"]["groups"] =
+      array("through" => "groups_users", "delete_through" => true);
+    $relationships["group"]["has_many"]["users"] =
+      array("through" => "groups_users", "delete_through" => true);
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->add_after("appearance_menu", Menu::factory("link")
                      ->id("users_groups")
