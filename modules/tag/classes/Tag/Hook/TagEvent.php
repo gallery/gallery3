@@ -18,6 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Hook_TagEvent {
+   /**
+    * Setup the relationship between Model_Item and Model_Tag.
+    */
+  static function model_relationships($relationships) {
+    $relationships["item"]["has_many"]["tags"] =
+      array("through" => "items_tags", "delete_through" => true);
+    $relationships["tag"]["has_many"]["items"] =
+      array("through" => "items_tags", "delete_through" => true, "track_changed_through" => true);
+  }
+
   /**
    * Handle the creation of a new photo.
    * @todo Get tags from the XMP and/or IPTC data in the image

@@ -18,9 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Model_Tag extends ORM {
-  protected $_has_many = array("items" =>
-    array("through" => "items_tags", "delete_through" => true, "track_changed_through" => true));
-
   public function __construct($id=null) {
     parent::__construct($id);
 
