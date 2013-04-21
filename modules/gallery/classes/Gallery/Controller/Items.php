@@ -29,7 +29,7 @@ class Gallery_Controller_Items extends Controller {
     // don't have a type-specific controller.  Also, we want to drive a single canonical resource
     // mapping where possible.
     Access::required("view", $item);
-    HTTP::redirect($item->abs_url());
+    $this->redirect($item->abs_url());
   }
 
   // Return the width/height dimensions for the given item

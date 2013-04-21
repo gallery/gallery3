@@ -27,7 +27,7 @@ class Rss_Controller_Rss extends Controller {
 
     $page = (int) Arr::get(Request::current()->query(), "page", 1);
     if ($page < 1) {
-      HTTP::redirect(URL::query(array("page" => 1)));
+      $this->redirect(URL::query(array("page" => 1)));
     }
 
     // Configurable page size between 1 and 100, default 20
@@ -47,7 +47,7 @@ class Rss_Controller_Rss extends Controller {
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {
-      HTTP::redirect(URL::query(array("page" => $feed->max_pages)));
+      $this->redirect(URL::query(array("page" => $feed->max_pages)));
     }
 
     $view = new View(empty($feed->view) ? "rss/feed.mrss" : $feed->view);

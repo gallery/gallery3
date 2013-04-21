@@ -32,6 +32,6 @@ class Notification_Controller_Notification extends Controller {
       Notification::add_watch($item);
       Message::success(sprintf(t("You are now watching %s"), HTML::purify($item->title)));
     }
-    HTTP::redirect($item->abs_url());
+    $this->redirect($item->abs_url());
   }
 }

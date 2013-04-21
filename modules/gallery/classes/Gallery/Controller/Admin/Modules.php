@@ -68,7 +68,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     Access::verify_csrf();
 
     $this->_do_save();
-    HTTP::redirect("admin/modules");
+    $this->redirect("admin/modules");
   }
 
   private function _do_save() {

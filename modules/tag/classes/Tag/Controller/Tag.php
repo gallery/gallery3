@@ -34,7 +34,7 @@ class Tag_Controller_Tag extends Controller {
       if ($index) {
         $page = ceil($index / $page_size);
         $uri = "tag/$tag_id/" . urlencode($tag->name);
-        HTTP::redirect($uri . ($page == 1 ? "" : "?page=$page"));
+        $this->redirect($uri . ($page == 1 ? "" : "?page=$page"));
       }
     } else {
       $page = (int) Arr::get(Request::current()->query(), "page", "1");
@@ -46,9 +46,9 @@ class Tag_Controller_Tag extends Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      HTTP::redirect(URL::query(array("page" => 1)));
+      $this->redirect(URL::query(array("page" => 1)));
     } else if ($page > $max_pages) {
-      HTTP::redirect(URL::query(array("page" => $max_pages)));
+      $this->redirect(URL::query(array("page" => $max_pages)));
     }
 
     $root = Item::root();
@@ -80,7 +80,7 @@ class Tag_Controller_Tag extends Controller {
       throw HTTP_Exception::factory(404);
     }
     // We have a matching tag, but this is not the canonical URL - redirect them.
-    $this->redirect($tag->abs_url());
+    $this->redirect($tag->abs_url(), 301);
   }
 
   public static function get_display_context($item, $tag_id) {

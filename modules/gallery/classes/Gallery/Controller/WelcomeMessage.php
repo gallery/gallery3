@@ -20,7 +20,7 @@
 class Gallery_Controller_WelcomeMessage extends Controller {
   public function action_index() {
     if (!Identity::active_user()->admin) {
-      HTTP::redirect(Item::root()->abs_url());
+      $this->redirect(Item::root()->abs_url());
     }
 
     $v = new View("gallery/welcome_message.html");

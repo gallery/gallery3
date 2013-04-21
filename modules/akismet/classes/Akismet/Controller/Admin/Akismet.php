@@ -40,7 +40,7 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
                                   array("new_key" => $new_key)));
         Module::set_var("akismet", "api_key", $new_key);
         Akismet::check_config();
-        HTTP::redirect("admin/akismet");
+        $this->redirect("admin/akismet");
       } else {
         $valid_key = false;
       }
