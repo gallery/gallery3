@@ -635,7 +635,7 @@ class Gallery_Hook_GalleryTask {
         $everybody = Identity::everybody();
         $view_col = "view_{$everybody->id}";
         $view_full_col = "view_full_{$everybody->id}";
-        $intent = ORM::factory("AccessIntent")->where("item_id", "=", $id)->find();
+        $intent = $item->access_intent;
         if ($intent->$view_col === Access::DENY) {
           Access::update_htaccess_files($item, $everybody, "view", Access::DENY);
         }
@@ -791,7 +791,7 @@ class Gallery_Hook_GalleryTask {
   static function find_missing_access_caches_limited($limit) {
     return DB::select("item.id")
       ->from("items")
-      ->join("access_caches", "left")->on("item.id", "=", "access_cache.item_id")
+      ->with("access_cache")
       ->where("access_cache.id", "is", null)
       ->limit($limit)
       ->execute();

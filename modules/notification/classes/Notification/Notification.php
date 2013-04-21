@@ -34,8 +34,7 @@ class Notification_Notification {
       $user = Identity::active_user();
     }
 
-    return ORM::factory("Subscription")
-      ->where("item_id", "=", $item->id)
+    return $item->subscriptions
       ->where("user_id", "=", $user->id)
       ->find()
       ->loaded();
@@ -59,8 +58,7 @@ class Notification_Notification {
         $user = Identity::active_user();
       }
 
-      $subscription = ORM::factory("Subscription")
-        ->where("item_id", "=", $item->id)
+      $subscription = $item->subscriptions
         ->where("user_id", "=", $user->id)
         ->find()->delete();
     }
@@ -70,7 +68,7 @@ class Notification_Notification {
     $subscriber_ids = array();
     foreach (ORM::factory("Subscription")
              ->select("user_id")
-             ->join("items")->on("subscription.item_id", "=", "item.id")
+             ->with("item")
              ->where("item.left_ptr", "<=", $item->left_ptr)
              ->where("item.right_ptr", ">", $item->right_ptr)
              ->find_all()
