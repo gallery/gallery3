@@ -132,12 +132,13 @@ class Gallery_ORM extends Kohana_ORM {
    * with rows corresponding to deleted models.
    *
    * Example: users can belong to one or more groups, related by the pivot table "groups_users".
-   * In Model_User, we have:
-   *   protected $_has_many = array("groups" =>
-   *                                array("through" => "groups_users", "delete_through" => true)
-   * In Model_Group, we have:
-   *   protected $_has_many = array("users" =>
-   *                                array("through" => "groups_users", "delete_through" => true)
+   * In the user module event hook, where the relationship is defined, we have:
+   *   function model_relationships($relationships) {
+   *     $relationships["user"]["has_many"]["groups"] =
+   *       array("through" => "groups_users", "delete_through" => true);
+   *     $relationships["group"]["has_many"]["users"] =
+   *       array("through" => "groups_users", "delete_through" => true);
+   *   }
    * Now, when either a group or user is deleted, all rows in "groups_users" are also deleted.
    *
    * @see ORM::delete()
