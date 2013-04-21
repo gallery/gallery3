@@ -70,6 +70,16 @@ class Gallery_Hook_GalleryEvent {
     System::delete_marked_files();
   }
 
+  /**
+   * Setup relationships between Model_Item, Model_AccessIntent, and Model_AccessCache.
+   */
+  static function model_relationships($relationships) {
+    $relationships["item"]["has_one"]["access_intent"] = array();
+    $relationships["item"]["has_one"]["access_cache"] = array();
+    $relationships["access_intent"]["belongs_to"]["item"] = array();
+    $relationships["access_cache"]["belongs_to"]["item"] = array();
+  }
+
   static function user_deleted($user) {
     $admin = Identity::admin_user();
     if (!empty($admin)) {          // could be empty if there is not identity provider

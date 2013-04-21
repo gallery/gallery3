@@ -158,7 +158,7 @@ class Gallery_Access {
    * @return boolean     Access::ALLOW, Access::DENY or Access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
-    $intent = ORM::factory("AccessIntent", $item->id, "item_id");
+    $intent = $item->access_intent;
     return $intent->__get("{$perm_name}_{$group->id}");
   }
 
@@ -178,11 +178,10 @@ class Gallery_Access {
 
     // For view permissions, if any parent is Access::DENY, then those parents lock this one.
     // Return
-    $lock = ORM::factory("Item")
+    $lock = ORM::factory("Item", $item->id)
       ->where("left_ptr", "<=", $item->left_ptr)
       ->where("right_ptr", ">=", $item->right_ptr)
-      ->where("item.id", "<>", $item->id)
-      ->join("access_intents")->on("item.id", "=", "access_intent.item_id")
+      ->with("access_intent")
       ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
       ->limit(1)
@@ -220,7 +219,7 @@ class Gallery_Access {
     if (!$album->is_album()) {
       throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
-    $access = ORM::factory("AccessIntent", $album->id, "item_id");
+    $access = $album->access_intent;
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
@@ -289,8 +288,8 @@ class Gallery_Access {
    */
   static function recalculate_photo_permissions($photo) {
     $parent = $photo->parent();
-    $parent_access_cache = ORM::factory("AccessCache")->where("item_id", "=", $parent->id)->find();
-    $photo_access_cache = ORM::factory("AccessCache")->where("item_id", "=", $photo->id)->find();
+    $parent_access_cache = $parent->access_cache;
+    $photo_access_cache = $photo->access_cache;
     foreach (self::_get_all_groups() as $group) {
       foreach (ORM::factory("Permission")->find_all() as $perm) {
         $field = "{$perm->name}_{$group->id}";
@@ -385,8 +384,7 @@ class Gallery_Access {
     $access_cache = ORM::factory("AccessCache");
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {
-      $parent_access_cache =
-        ORM::factory("AccessCache")->where("item_id", "=", $item->parent()->id)->find();
+      $parent_access_cache = $item->parent()->access_cache;
       foreach (self::_get_all_groups() as $group) {
         foreach (ORM::factory("Permission")->find_all() as $perm) {
           $field = "{$perm->name}_{$group->id}";
@@ -409,8 +407,8 @@ class Gallery_Access {
    * @return void
    */
   static function delete_item($item) {
-    ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find()->delete();
-    ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->delete();
+    $item->access_intent->delete();
+    $item->access_cache->delete();
   }
 
   /**
@@ -508,7 +506,7 @@ class Gallery_Access {
    * @return void
    */
   private static function _update_access_view_cache($group, $item) {
-    $access = ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find();
+    $access = $item->access_intent;
     $field = "view_{$group->id}";
 
     // With view permissions, deny values in the parent can override allow values in the child,
@@ -523,7 +521,7 @@ class Gallery_Access {
       $tmp_item = ORM::factory("Item")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
-        ->join("access_intents")->on("access_intent.item_id", "=", "item.id")
+        ->with("access_intent")
         ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
@@ -544,8 +542,8 @@ class Gallery_Access {
       ->execute();
 
     $query = ORM::factory("AccessIntent")
-      ->select("access_intent.$field", "item.left_ptr", "item.right_ptr", "item.id")
-      ->join("items")->on("item.id", "=", "access_intent.item_id")
+      ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
+      ->with("item")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where("type", "=", "album")
@@ -594,7 +592,7 @@ class Gallery_Access {
    * @return void
    */
   private static function _update_access_non_view_cache($group, $perm_name, $item) {
-    $access = ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find();
+    $access = $item->access_intent;
 
     $field = "{$perm_name}_{$group->id}";
 
@@ -605,7 +603,7 @@ class Gallery_Access {
     //       propagate from here with the parent's intent.
     if ($access->$field === Access::INHERIT) {
       $tmp_item = ORM::factory("Item")
-        ->join("access_intents")->on("item.id", "=", "access_intent.item_id")
+        ->with("access_intent")
         ->where("left_ptr", "<", $item->left_ptr)
         ->where("right_ptr", ">", $item->right_ptr)
         ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
@@ -621,7 +619,7 @@ class Gallery_Access {
     // so start at the top and work downwards, overlaying permissions as we go.
     $query = ORM::factory("AccessIntent")
       ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
-      ->join("items")->on("item.id", "=", "access_intent.item_id")
+      ->with("item")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
       ->where($field, "IS NOT", Access::INHERIT)
