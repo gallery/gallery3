@@ -80,7 +80,7 @@ class Tag_Controller_Tag extends Controller {
       throw HTTP_Exception::factory(404);
     }
     // We have a matching tag, but this is not the canonical URL - redirect them.
-    $this->redirect($tag->abs_url());
+    $this->redirect($tag->abs_url(), 301);
   }
 
   public static function get_display_context($item, $tag_id) {

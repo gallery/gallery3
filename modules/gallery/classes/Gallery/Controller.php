@@ -87,12 +87,4 @@ abstract class Gallery_Controller extends Kohana_Controller {
 
     return $value;
   }
-
-  /**
-   * Override Controller::redirect() so we default to 301 instead of 302 as it's more SEO-friendly.
-   * @see Controller::redirect()
-   */
-  public static function redirect($uri="", $code=301) {
-    parent::redirect($uri, $code);
-  }
 }
