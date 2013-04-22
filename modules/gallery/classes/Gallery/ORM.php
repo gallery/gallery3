@@ -86,21 +86,24 @@ class Gallery_ORM extends Kohana_ORM {
    * it only needs to be populated once.  Note that we only populate (and use) the cache once we've
    * run Module::load_modules().  This means that it's not easy to add relationships to Model_Module
    * or Model_Var using this method since they're used in the Module class to load the modules in
-   * the first place.
+   * the first place.  Similar to the object name, we set the foreign model names using our method.
    *
    * Example: a module wants to establish a "has_many through" relationship between its foo model
-   * and the item model using the pivot table "items_foos".  In the module's event hook, we have:
+   * and the item model using the pivot table "items_foo_bars".  In the module's event hook, we have:
    *   function model_relationships($relationships) {
-   *     $relationships["item"]["has_many"]["foos"] = array("through" => "items_foos");
-   *     $relationships["foo"]["has_many"]["items"] = array("through" => "items_foos");
+   *     $relationships["item"]["has_many"]["foo_bars"] = array("through" => "items_foo_bars");
+   *     $relationships["foo_bar"]["has_many"]["items"] = array("through" => "items_foo_bars");
    *   }
-   * For more information, see Kohana's ORM relationships documentation.
+   * This will map "Model_Item" and "Model_FooBar" with object names "item" and "foo_bar" to DB
+   * tables "items" and "foo_bars" with a DB pivot table "items_foo_bars" that has columns "item_id"
+   * and "foo_bar_id".  For more information, see Kohana's ORM relationships documentation.
    *
    * @see ORM::_initialize()
    */
   protected function _initialize() {
+    // Set the object name using Inflector::convert_class_to_module_name() if not already defined.
+    // This ensures "Model_FooBar" is called "foo_bar" instead of "foobar".
     if (empty($this->_object_name)) {
-      // Get the object name using Inflector::convert_class_to_module_name() instead of strtolower()
       $this->_object_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
     }
 
@@ -111,6 +114,20 @@ class Gallery_ORM extends Kohana_ORM {
         // Run the "model_relationships" event and populate the relationship cache.
         $relationships = new ArrayObject();
         Module::event("model_relationships", $relationships);
+        // Set the "model" parameter using Inflector::convert_module_to_class_name() if not already
+        // defined.  This ensures "foo_bar" is called "FooBar" instead of "Foo_Bar".  The
+        // $relationships array is not very big, so this nested loop is less ugly than it seems.
+        foreach ($relationships as $model => &$types) {
+          foreach ($types as $type => &$aliases) {
+            foreach ($aliases as $alias => &$details) {
+              if (empty($details["model"])) {
+                $details["model"] = ($type == "has_many") ?
+                  Inflector::convert_module_to_class_name(Inflector::singular($alias)) :
+                  Inflector::convert_module_to_class_name($alias);
+              }
+            }
+          }
+        }
         ORM::$_relationship_cache = $relationships;
       }
 
