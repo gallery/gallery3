@@ -36,8 +36,40 @@ abstract class Gallery_Controller extends Kohana_Controller {
       Gallery::ready();
     }
 
-    // Check if we should be allowed to run this controller if in maintenance or private mode.
-    Gallery::maintenance_mode($this->allow_maintenance_mode);
-    Gallery::private_gallery($this->allow_private_gallery);
+    // See if we need to login because we're in maintenance mode.  This will force all non-admins
+    // back to the login page, unless the controller has "$allow_maintenance_mode == true".
+    // The site theme will put a "This site is down for maintenance" message on the login page.
+    if (Module::get_var("gallery", "maintenance_mode", 0) &&
+        !Identity::active_user()->admin &&
+        !$this->allow_maintenance_mode) {
+      $this->request->post("continue_url", URL::abs_site("admin/maintenance"));
+      $this->request->action("show_login");
+    }
+
+    // See if we need to login because we have a private gallery.  This will force all guests
+    // back to the login page, unless the controller has "$allow_private_gallery == true".
+    if (Identity::active_user()->guest &&
+        !Access::user_can(Identity::guest(), "view", Item::root()) &&
+        (php_sapi_name() != "cli") &&
+        !$this->allow_private_gallery) {
+      $this->request->action("show_login");
+    }
+  }
+
+  public function action_show_login() {
+    // Get continue_url from post, or set to current URL if not found.  Then, set in session.
+    $continue_url = Arr::get($this->request->post(), "continue_url", URL::abs_current());
+    Session::instance()->set("continue_url", $continue_url);
+
+    if (Theme::$is_admin) {
+      // At this point we're in the admin theme and it doesn't have a themed login page, so
+      // we can't just swap in the login controller and have it work.  So redirect to the
+      // login where we'll run this code again with the site theme.  This will maintain the
+      // continue_url since it's set in the session.
+      $this->redirect("login");
+    } else {
+      // Show the login page without redirecting.
+      $this->response = Request::factory("login")->execute();
+    }
   }
 }
