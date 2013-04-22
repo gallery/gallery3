@@ -44,7 +44,7 @@ class Gallery_Controller_Admin_UpgradeChecker extends Controller_Admin {
   }
 
   public function action_set_auto() {
-    $value = $this->arg_required(0, "digit");
+    $value = $this->request->arg(0, "digit");
     Access::verify_csrf();
     Module::set_var("gallery", "upgrade_checker_auto_enabled", (bool)$value);
 

@@ -34,7 +34,7 @@ class Gallery_BlockManager {
   }
 
   static function activate_blocks($module_name) {
-    $block_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Block";
+    $block_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Block";
     if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach (array_keys($blocks) as $block_id) {
@@ -60,7 +60,7 @@ class Gallery_BlockManager {
   }
 
   static function deactivate_blocks($module_name) {
-    $block_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Block";
+    $block_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Block";
     if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {

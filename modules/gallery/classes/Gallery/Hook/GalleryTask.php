@@ -637,9 +637,10 @@ class Gallery_Hook_GalleryTask {
         $view_full_col = "view_full_{$everybody->id}";
         $intent = $item->access_intent;
         if ($intent->$view_col === Access::DENY) {
+          // This generates an .htaccess for the albums, resizes, and thumbs subdirectories.
           Access::update_htaccess_files($item, $everybody, "view", Access::DENY);
-        }
-        if ($intent->$view_full_col === Access::DENY) {
+        } else if ($intent->$view_full_col === Access::DENY) {
+          // This generates an .htaccess for the albums subdirectory only.
           Access::update_htaccess_files($item, $everybody, "view_full", Access::DENY);
         }
         $task->set("stack", implode(" ", $stack));

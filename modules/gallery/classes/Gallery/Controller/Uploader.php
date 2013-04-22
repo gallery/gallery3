@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Uploader extends Controller {
   public function action_index() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     Access::required("add", $item);
@@ -36,7 +36,7 @@ class Gallery_Controller_Uploader extends Controller {
   }
 
   public function action_add_photo() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $id);
     Access::required("view", $album);
     Access::required("add", $album);
@@ -102,8 +102,8 @@ class Gallery_Controller_Uploader extends Controller {
   }
 
   public function action_status() {
-    $success_count = $this->arg_required(0, "digit");
-    $error_count = $this->arg_required(1, "digit");
+    $success_count = $this->request->arg(0, "digit");
+    $error_count = $this->request->arg(1, "digit");
 
     if ($error_count) {
       // The "errors" won't be properly pluralized :-/

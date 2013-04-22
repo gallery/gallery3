@@ -99,7 +99,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public function action_create() {
-    $parent_id = $this->arg_required(0, "digit");
+    $parent_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
     $album = ORM::factory("Item", $parent_id);
     Access::required("view", $album);
@@ -140,7 +140,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public function action_update() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
@@ -187,7 +187,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public function action_form_add() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("add", $album);
@@ -196,7 +196,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public function action_form_edit() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);

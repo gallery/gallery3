@@ -54,7 +54,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
   }
 
   public function action_remove_block() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     $blocks_center = BlockManager::get_active("dashboard_center");

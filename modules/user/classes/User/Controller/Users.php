@@ -19,7 +19,7 @@
  */
 class User_Controller_Users extends Controller {
   public function action_update() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -63,7 +63,7 @@ class User_Controller_Users extends Controller {
   }
 
   public function action_change_password() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -99,7 +99,7 @@ class User_Controller_Users extends Controller {
   }
 
   public function action_change_email() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -134,7 +134,7 @@ class User_Controller_Users extends Controller {
   }
 
   public function action_form_edit() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -144,7 +144,7 @@ class User_Controller_Users extends Controller {
   }
 
   public function action_form_change_password() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
@@ -154,7 +154,7 @@ class User_Controller_Users extends Controller {
   }
 
   public function action_form_change_email() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = User::lookup($id);
     if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();

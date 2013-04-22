@@ -47,8 +47,8 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
   }
 
   public function action_preview() {
-    $type = $this->arg_required(0, "alpha");
-    $theme_name = $this->arg_required(1, "alpha_dash");
+    $type = $this->request->arg(0, "alpha");
+    $theme_name = $this->request->arg(1, "alpha_dash");
 
     $view = new View("admin/themes_preview.html");
     $view->info = Theme::get_info($theme_name);
@@ -63,8 +63,8 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
   }
 
   public function action_choose() {
-    $type = $this->arg_required(0, "alpha");
-    $theme_name = $this->arg_required(1, "alpha_dash");
+    $type = $this->request->arg(0, "alpha");
+    $theme_name = $this->request->arg(1, "alpha_dash");
     Access::verify_csrf();
 
     $info = Theme::get_info($theme_name);

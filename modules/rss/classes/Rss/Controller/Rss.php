@@ -21,9 +21,9 @@ class Rss_Controller_Rss extends Controller {
   public static $page_size = 20;
 
   public function action_feed() {
-    $module_id = $this->arg_required(0, "alpha_dash");
-    $feed_id = $this->arg_required(1);
-    $id = $this->arg(2);
+    $module_id = $this->request->arg(0, "alpha_dash");
+    $feed_id = $this->request->arg(1);
+    $id = $this->request->arg_optional(2);
 
     $page = (int) Arr::get(Request::current()->query(), "page", 1);
     if ($page < 1) {

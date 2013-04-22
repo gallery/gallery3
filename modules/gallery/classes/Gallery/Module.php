@@ -156,7 +156,7 @@ class Gallery_Module {
     Module::_add_to_path($module_name);
     $messages = array();
 
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Installer";
+    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "can_activate")) {
       $messages = call_user_func(array($installer_class, "can_activate"));
     }
