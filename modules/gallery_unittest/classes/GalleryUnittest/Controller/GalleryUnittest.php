@@ -23,6 +23,16 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       throw HTTP_Exception::factory(404);
     }
 
+    // Disable output buffering
+    if (($ob_len = ob_get_length()) !== false) {
+      // flush_end on an empty buffer causes headers to be sent. Only flush if needed.
+      if ($ob_len > 0) {
+        ob_end_flush();
+      } else {
+        ob_end_clean();
+      }
+    }
+
     // Force strict behavior to flush out bugs early.  Even in PHP <5.4, -1 includes E_STRICT.
     ini_set("display_errors", true);
     error_reporting(-1);
@@ -71,11 +81,8 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       // $config->set("core", $config->load("core"));
 
       // Install the active modules
-      // Force gallery and user to be installed first to resolve dependencies.
-
       Module::install("gallery");
-      Module::load_modules();
-
+      Module::activate("gallery");
       Module::install("user");
       Module::activate("user");
       $modules = $paths = array();
