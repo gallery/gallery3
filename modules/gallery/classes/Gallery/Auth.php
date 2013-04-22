@@ -18,21 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Auth {
-  static function get_login_form($url) {
-    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
-    $form->set_attr("class", "g-narrow");
-    $form->hidden("continue_url")->value(Session::instance()->get("continue_url"));
-    $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("g-username")->class(null)
-      ->callback("Auth::validate_too_many_failed_logins")
-      ->error_messages(
-        "too_many_failed_logins", t("Too many failed login attempts.  Try again later"));
-    $group->password("password")->label(t("Password"))->id("g-password")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
-    $group->submit("")->value(t("Login"));
-    return $form;
-  }
-
   static function login($user) {
     Identity::set_active_user($user);
     if (Identity::is_writable()) {
