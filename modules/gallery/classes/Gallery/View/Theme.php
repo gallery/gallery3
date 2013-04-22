@@ -52,8 +52,9 @@ class Gallery_View_Theme extends View_Gallery {
     if (Module::get_var("gallery", "maintenance_mode", 0)) {
       if (Identity::active_user()->admin) {
         Message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => URL::site("admin/maintenance"))));
-    } else
+      } else {
         Message::warning(t("This site is currently in maintenance mode."));
+      }
     }
   }
 
