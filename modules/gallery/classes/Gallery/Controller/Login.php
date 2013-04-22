@@ -21,6 +21,10 @@ class Gallery_Controller_Login extends Controller {
   public $allow_maintenance_mode = true;
   public $allow_private_gallery = true;
 
+  public function action_index() {
+    $this->action_html();
+  }
+
   public function action_ajax() {
     $view = new View("gallery/login_ajax.html");
     $view->form = $this->get_login_form("login/auth_ajax");
