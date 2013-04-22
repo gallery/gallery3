@@ -107,40 +107,61 @@ class Gallery_ORM extends Kohana_ORM {
       $this->_object_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
     }
 
-    // See if Module::load_modules() has been run by looking for a module we know must exist
-    // (i.e. gallery).  If so, check for and add relationships as needed.
-    if (isset(Module::$active["gallery"])) {
-      if (!isset(ORM::$_relationship_cache)) {
-        // Run the "model_relationships" event and populate the relationship cache.
-        $relationships = new ArrayObject();
-        Module::event("model_relationships", $relationships);
-        // Set the "model" parameter using Inflector::convert_module_to_class_name() if not already
-        // defined.  This ensures "foo_bar" is called "FooBar" instead of "Foo_Bar".  The
-        // $relationships array is not very big, so this nested loop is less ugly than it seems.
-        foreach ($relationships as $model => &$types) {
-          foreach ($types as $type => &$aliases) {
-            foreach ($aliases as $alias => &$details) {
-              if (empty($details["model"])) {
-                $details["model"] = ($type == "has_many") ?
-                  Inflector::convert_module_to_class_name(Inflector::singular($alias)) :
-                  Inflector::convert_module_to_class_name($alias);
-              }
-            }
-          }
-        }
-        ORM::$_relationship_cache = $relationships;
-      }
-
-      foreach (array("belongs_to", "has_many", "has_one") as $type) {
-        if (!empty(ORM::$_relationship_cache[$this->_object_name][$type])) {
-          // Relationship found - add it to the model instance.
-          $this->{"_$type"} = (array) ORM::$_relationship_cache[$this->_object_name][$type];
-        }
+    foreach (array("belongs_to", "has_many", "has_one") as $type) {
+      if (isset(ORM::$_relationship_cache[$this->_object_name]) &&
+          !empty(ORM::$_relationship_cache[$this->_object_name][$type])) {
+        // Relationship found - add it to the model instance.
+        $this->{"_$type"} = (array) ORM::$_relationship_cache[$this->_object_name][$type];
       }
     }
 
     parent::_initialize();
   }
+
+  /**
+   * Discover all inter-module relationships.  We will do this whenever the active module set
+   * changes, which happens once at start time or if we activate a module during our request.  If
+   * called with a module parameter, run incrementally to fold that module's model relationships
+   * into the existing set.  This is useful when we're installing a module but it's not yet
+   * active and cannot be reached by Module::event()
+   *
+   * @param   string $module_name
+   */
+  static function load_relationships($module_name=null) {
+    // Run the "model_relationships" event and populate the relationship cache.
+    $relationships = new ArrayObject();
+    if ($module_name) {
+      $class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Event";
+      if (method_exists($class, "model_relationships")) {
+        call_user_func_array(array($class, "model_relationships"), array($relationships));
+      }
+    } else {
+      Module::event("model_relationships", $relationships);
+    }
+    $relationships = (array) $relationships;
+
+    // Set the "model" parameter using Inflector::convert_module_to_class_name() if not already
+    // defined.  This ensures "foo_bar" is called "FooBar" instead of "Foo_Bar".  The
+    // $relationships array is not very big, so this nested loop is less ugly than it seems.
+    foreach ($relationships as $model => &$types) {
+      foreach ($types as $type => &$aliases) {
+        foreach ($aliases as $alias => &$details) {
+          if (empty($details["model"])) {
+            $details["model"] = ($type == "has_many") ?
+              Inflector::convert_module_to_class_name(Inflector::singular($alias)) :
+              Inflector::convert_module_to_class_name($alias);
+          }
+        }
+      }
+    }
+
+    if ($module_name) {
+      ORM::$_relationship_cache = Arr::merge(ORM::$_relationship_cache, $relationships);
+    } else {
+      ORM::$_relationship_cache = $relationships;
+    }
+  }
+
 
   /**
    * Implements the "delete_through" argument of a has_many relationship, which removes the pivot
@@ -242,6 +263,22 @@ class Gallery_ORM extends Kohana_ORM {
   static function reinitialize() {
     ORM::$_init_cache = array();
     ORM::$_column_cache = array();
-    ORM::$_relationship_cache = null;
+    ORM::$_relationship_cache = new ArrayObject();
+  }
+
+  /**
+   * Similar to ORM::reload_columns, except wipe out the ORM::_column_cache as well so that we
+   * get the fresh set of columns from the database.  This is used by the permission code which
+   * alters the database to add and remove columns at run time.
+   *
+   * @chainable
+   * @param   boolean $force Force reloading
+   * @return  ORM
+   */
+  public function reload_columns($force=false) {
+    if ($force) {
+      unset(ORM::$_column_cache[$this->_object_name]);
+    }
+    return parent::reload_columns($force);
   }
 }
