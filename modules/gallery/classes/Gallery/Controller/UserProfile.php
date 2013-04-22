@@ -20,7 +20,7 @@
 class Gallery_Controller_UserProfile extends Controller {
 
   public function action_show() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     // If we get here, then we should have a user id other than guest.
     $user = Identity::lookup_user($id);
     if (!$user) {
@@ -49,7 +49,7 @@ class Gallery_Controller_UserProfile extends Controller {
   }
 
   public function action_contact() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $user = Identity::lookup_user($id);
     if (!$this->_can_view_profile_pages($user)) {
       throw HTTP_Exception::factory(404);
@@ -59,7 +59,7 @@ class Gallery_Controller_UserProfile extends Controller {
   }
 
   public function action_send() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     Access::verify_csrf();
     $user = Identity::lookup_user($id);
     if (!$this->_can_view_profile_pages($user)) {

@@ -19,7 +19,7 @@
  */
 class Organize_Controller_Organize extends Controller {
   public function action_frame() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);
@@ -30,7 +30,7 @@ class Organize_Controller_Organize extends Controller {
   }
 
   public function action_dialog() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
     Access::required("edit", $album);
@@ -41,7 +41,7 @@ class Organize_Controller_Organize extends Controller {
   }
 
   public function action_tree() {
-    $selected_album_id = $this->arg_required(0, "digit");
+    $selected_album_id = $this->request->arg(0, "digit");
     $root = ORM::factory("Item", Arr::get(Request::current()->post(), "root_id", 1));
     $selected_album = ORM::factory("Item", $selected_album_id);
     Access::required("view", $root);
@@ -52,7 +52,7 @@ class Organize_Controller_Organize extends Controller {
   }
 
   public function action_album_info() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);
 
@@ -102,7 +102,7 @@ class Organize_Controller_Organize extends Controller {
   }
 
   public function action_set_sort() {
-    $album_id = $this->arg_required(0, "digit");
+    $album_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
     $album = ORM::factory("Item", $album_id);
     Access::required("view", $album);

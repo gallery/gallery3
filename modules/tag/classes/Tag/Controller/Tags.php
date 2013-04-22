@@ -27,7 +27,7 @@ class Tag_Controller_Tags extends Controller {
   }
 
   public function action_create() {
-    $item_id = $this->arg_required(0, "digit");
+    $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Access::required("edit", $item);
