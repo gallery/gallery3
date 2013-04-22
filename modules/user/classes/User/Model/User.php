@@ -105,12 +105,13 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   public function create(Validation $validation=null) {
     Module::event("user_before_create");
 
+    parent::create($validation);
+
     $this->add("groups", Group::everybody());
     if (!$this->guest) {
       $this->add("groups", Group::registered_users());
     }
 
-    parent::create($validation);
     Module::event("user_created", $this);
 
     return $this;
