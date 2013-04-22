@@ -94,7 +94,7 @@ class Gallery_Remote {
     }
     fflush($handle);
 
-    /*
+    /**
      * Read the status line.  fgets stops after newlines.  The first line is the protocol
      * version followed by a numeric status code and its associated textual phrase.
      */
