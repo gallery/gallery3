@@ -57,7 +57,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       // because we technically don't need it anymore.  If this is confusing, we could always
       // arrange to preserve that one file.
       @system("rm -rf test/var");
-      @mkdir('test/var/logs', 0777, true);
+      @mkdir("test/var/logs", 0777, true);
 
       $active_modules = Module::$active;
 
@@ -104,12 +104,14 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       foreach ($e->validation->errors() as $field => $msg) {
         $errors .= "$field: $msg\n";
       }
-      $this->response->body("Validation Exception: {$e->getMessage()}\n" .
-                            $e->getTraceAsString() . "\n" .
-                            $errors);
+      print("Exception: {$e->getMessage()}\n" .
+            $e->getFile() . ":" . $e->getLine() . "\n" .
+            $e->getTraceAsString() . "\n" .
+            $errors);
     } catch (Exception $e) {
-      $this->response->body("Exception: {$e->getMessage()}\n" .
-                            $e->getTraceAsString() . "\n");
+      print("Exception: {$e->getMessage()}\n" .
+            $e->getFile() . ":" . $e->getLine() . "\n" .
+            $e->getTraceAsString() . "\n");
     }
 
     if (!isset($unit_test)) {
