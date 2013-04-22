@@ -811,8 +811,35 @@ class Gallery_Hook_GalleryInstaller {
       Module::set_version("gallery", $version = 58);
     }
 
+    if ($version == 58) {
+      // In v59 we changed the routing used for the FileProxy controller.  As a result, we need to
+      // update all of the .htaccess files placed in the var directory.
+      $everybody = Identity::everybody();
+      $view_col = "view_{$everybody->id}";
+      $view_full_col = "view_full_{$everybody->id}";
+      foreach (ORM::factory("Item")
+               ->with("access_intent")
+               ->where("type", "=", "album")
+               ->and_where_open()
+               ->where("access_intent.$view_col", "=", Access::DENY)
+               ->or_where("access_intent.$view_full_col", "=", Access::DENY)
+               ->and_where_close()
+               ->find_all() as $album) {
+        if ($album->access_intent->$view_col == Access::DENY) {
+          // This generates an .htaccess for the albums, resizes, and thumbs subdirectories.
+          Access::update_htaccess_files($album, $everybody, "view", Access::DENY);
+        } else {
+          // This generates an .htaccess for the albums subdirectory only.
+          Access::update_htaccess_files($album, $everybody, "view_full", Access::DENY);
+        }
+      }
+      Module::set_version("gallery", $version = 59);
+    }
+
     // @TODO for the next upgrade - Image::AUTO in K2 was "2" and now in K3 it's "4" so we have to
-    // upgrade all graphics rules accordingly.
+    // upgrade all graphics rules accordingly; "gallery_graphics" should be removed/renamed in the
+    // graphics rules definitions; "purifier" should be activated (3.1.x requires v2, 3.0.x could
+    // have had v1).
   }
 
   static function uninstall() {
