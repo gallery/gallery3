@@ -209,10 +209,7 @@ class Gallery_Access {
    * @param  Model_Item  $item
    * @param  boolean     $value
    */
-  private static function _set(Group_Definition $group, $perm_name, $album, $value) {
-    if (!($group instanceof IdentityProvider_GroupDefinition)) {
-      throw new Exception("@todo PERMISSIONS_ONLY_WORK_ON_GROUPS");
-    }
+  private static function _set(IdentityProvider_GroupDefinition $group, $perm_name, $album, $value) {
     if (!$album->loaded()) {
       throw new Exception("@todo INVALID_ALBUM $album->id");
     }
