@@ -18,6 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Notification_Hook_NotificationEvent {
+  /**
+   * Setup the relationship between Model_Item and Model_Subscription.
+   */
+  static function model_relationships($relationships) {
+    $relationships["item"]["has_many"]["subscriptions"] = array();
+    $relationships["subscription"]["belongs_to"]["item"] = array();
+  }
+
   // The assumption is that the exception was logged at a lower level, but we
   // don't want to screw up the processing that was generating the notification
   // so we don't pass the exception up the call stack
