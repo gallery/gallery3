@@ -34,6 +34,8 @@ if ($e instanceof HTTP_Exception_404) {
     $user = Identity::active_user();
     $view->content->is_guest = $user && $user->guest;
     if ($view->content->is_guest) {
+      // @todo: if this view is to be resurrected from orphans, this login will need to be fixed
+      // since get_login_form is now in the Login controller.
       $view->content->login_form = new View("gallery/login_ajax.html");
       $view->content->login_form->form = Auth::get_login_form("login/auth_html");
     }
