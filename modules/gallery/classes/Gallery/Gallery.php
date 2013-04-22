@@ -54,7 +54,7 @@ class Gallery_Gallery {
     if (Identity::active_user()->guest &&
         !Access::user_can(Identity::guest(), "view", Item::root()) &&
         (php_sapi_name() != "cli") &&
-        !allowed) {
+        !$allowed) {
       if (Theme::$is_admin) {
         // At this point we're in the admin theme and it doesn't have a themed login page, so
         // we can't just swap in the login controller and have it work.  So redirect back to the

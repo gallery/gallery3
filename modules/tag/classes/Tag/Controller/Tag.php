@@ -19,7 +19,7 @@
  */
 class Tag_Controller_Tag extends Controller {
   public function action_show() {
-    $tag_id = $this->arg_required(0, "digit");
+    $tag_id = $this->request->arg(0, "digit");
     $tag = ORM::factory("Tag", $tag_id);
     if (!$tag->loaded()) {
       throw HTTP_Exception::factory(404);
@@ -72,7 +72,7 @@ class Tag_Controller_Tag extends Controller {
   }
 
   public function action_find_by_name() {
-    $tag_name = $this->arg_required(0);
+    $tag_name = $this->request->arg(0);
     $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       // No matching tag was found. If this was an imported tag, this is probably a bug.

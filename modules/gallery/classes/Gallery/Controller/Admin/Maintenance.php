@@ -61,7 +61,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_callback
    */
   public function action_start() {
-    $task_callback = $this->arg_required(0);
+    $task_callback = $this->request->arg(0);
     Access::verify_csrf();
 
     $task = Task::start($task_callback);
@@ -79,7 +79,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function action_resume() {
-    $task_id = $this->arg_required(0, "digit");
+    $task_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -102,7 +102,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function action_show_log() {
-    $task_id = $this->arg_required(0, "digit");
+    $task_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -120,7 +120,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function action_save_log() {
-    $task_id = $this->arg_required(0, "digit");
+    $task_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     $task = ORM::factory("Task", $task_id);
@@ -139,7 +139,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function action_cancel() {
-    $task_id = $this->arg_required(0, "digit");
+    $task_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     Task::cancel($task_id);
@@ -163,7 +163,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function action_remove() {
-    $task_id = $this->arg_required(0, "digit");
+    $task_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     Task::remove($task_id);
@@ -192,7 +192,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * @param string $task_id
    */
   public function action_run() {
-    $task_id = $this->arg_required(0, "digit");
+    $task_id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     try {
@@ -240,7 +240,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
   }
 
   public function action_maintenance_mode() {
-    $value = $this->arg_required(0, "digit");
+    $value = $this->request->arg(0, "digit");
     Access::verify_csrf();
     Module::set_var("gallery", "maintenance_mode", $value);
     $this->redirect("admin/maintenance");

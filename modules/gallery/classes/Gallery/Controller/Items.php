@@ -34,7 +34,7 @@ class Gallery_Controller_Items extends Controller {
 
   // Return the width/height dimensions for the given item
   public function action_dimensions() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
     $this->response->json(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),

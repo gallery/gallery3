@@ -19,7 +19,7 @@
  */
 class Notification_Controller_Notification extends Controller {
   public function action_watch() {
-    $id = $this->arg_required(0, "digit");
+    $id = $this->request->arg(0, "digit");
     Access::verify_csrf();
 
     $item = ORM::factory("Item", $id);
