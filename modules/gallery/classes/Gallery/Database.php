@@ -74,7 +74,7 @@ abstract class Gallery_Database extends Kohana_Database {
     return strtr($sql, $this->_prefixed_table_names);
   }
 
-   /**
+  /**
    * Escape LIKE queries, add wildcards.  In MySQL queries using LIKE, _ and % characters are
    * treated as wildcards similar to ? and *, respectively.  Therefore, we need to escape _, %,
    * and \ (the escape character itself).

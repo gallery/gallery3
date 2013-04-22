@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Hook_TagEvent {
-   /**
-    * Setup the relationship between Model_Item and Model_Tag.
-    */
+  /**
+   * Setup the relationship between Model_Item and Model_Tag.
+   */
   static function model_relationships($relationships) {
     $relationships["item"]["has_many"]["tags"] =
       array("through" => "items_tags", "delete_through" => true);

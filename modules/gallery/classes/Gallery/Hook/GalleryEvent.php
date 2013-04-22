@@ -71,15 +71,13 @@ class Gallery_Hook_GalleryEvent {
   }
 
   /**
-   * Setup relationships between Item, AccessIntent, AccessCache, and Subscription models.
+   * Setup the relationships between Model_Item, Model_AccessIntent, and Model_AccessCache.
    */
   static function model_relationships($relationships) {
     $relationships["item"]["has_one"]["access_intent"] = array();
     $relationships["item"]["has_one"]["access_cache"] = array();
-    $relationships["item"]["has_many"]["subscriptions"] = array();
     $relationships["access_intent"]["belongs_to"]["item"] = array();
     $relationships["access_cache"]["belongs_to"]["item"] = array();
-    $relationships["subscription"]["belongs_to"]["item"] = array();
   }
 
   static function user_deleted($user) {
