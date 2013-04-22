@@ -35,7 +35,7 @@ class Gallery_Controller_Admin extends Controller {
     }
 
     if (Auth::must_reauth_for_admin_area()) {
-      return self::_prompt_for_reauth($controller_name, $args);
+      return self::_prompt_for_reauth();
     }
 
     if (Request::current()->method() == HTTP_Request::POST) {
@@ -62,7 +62,7 @@ class Gallery_Controller_Admin extends Controller {
     $this->response->json($result);
   }
 
-  private static function _prompt_for_reauth($controller_name, $args) {
+  private static function _prompt_for_reauth() {
     if (Request::current()->method() == HTTP_Request::GET) {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", URL::abs_current(true));
