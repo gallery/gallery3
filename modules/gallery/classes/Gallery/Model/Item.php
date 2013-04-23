@@ -78,7 +78,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     if ($this->id == 1) {
       $v = new Validation(array("id"));
       $v->error("id", "cant_delete_root_album");
-      ORM_Validation_Exception::handle_validation($this->table_name(), $v);
+      throw new ORM_Validation_Exception($this->object_name(), $v);
     }
 
     $old = clone $this;
@@ -935,7 +935,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    */
   public function valid_slug(Validation $v, $field) {
     if (preg_match("/[^A-Za-z0-9-_]/", $this->slug)) {
-      $v->add_error("slug", "not_url_safe");
+      $v->error("slug", "not_url_safe");
     }
 
     if (DB::select()
@@ -944,11 +944,11 @@ class Gallery_Model_Item extends ORM_MPTT {
         ->where("id", "<>", $this->id)
         ->where("slug", "=", $this->slug)
         ->execute()->count()) {
-      $v->add_error("slug", "conflict");
+      $v->error("slug", "conflict");
     }
 
     if ($this->parent_id == 1 && Kohana::auto_load("Controller_{$this->slug}")) {
-      $v->add_error("slug", "reserved");
+      $v->error("slug", "reserved");
       return;
     }
   }
@@ -963,17 +963,17 @@ class Gallery_Model_Item extends ORM_MPTT {
    */
   public function valid_name(Validation $v) {
     if (strpos($this->name, "/") !== false) {
-      $v->add_error("name", "no_slashes");
+      $v->error("name", "no_slashes");
       return;
     }
 
     if (strpos($this->name, "\\") !== false) {
-      $v->add_error("name", "no_backslashes");
+      $v->error("name", "no_backslashes");
       return;
     }
 
     if (rtrim($this->name, ".") !== $this->name) {
-      $v->add_error("name", "no_trailing_period");
+      $v->error("name", "no_trailing_period");
       return;
     }
 
@@ -981,20 +981,20 @@ class Gallery_Model_Item extends ORM_MPTT {
       if (substr_count($this->name, ".") > 1) {
         // Do not accept files with double extensions, as they can
         // cause problems on some versions of Apache.
-        $v->add_error("name", "illegal_data_file_extension");
+        $v->error("name", "illegal_data_file_extension");
       }
 
       $ext = pathinfo($this->name, PATHINFO_EXTENSION);
 
       if (!$this->loaded() && !$ext) {
         // New items must have an extension
-        $v->add_error("name", "illegal_data_file_extension");
+        $v->error("name", "illegal_data_file_extension");
         return;
       }
 
       if ($this->is_photo() && !LegalFile::get_photo_extensions($ext) ||
           $this->is_movie() && !LegalFile::get_movie_extensions($ext)) {
-        $v->add_error("name", "illegal_data_file_extension");
+        $v->error("name", "illegal_data_file_extension");
       }
     }
 
@@ -1005,7 +1005,7 @@ class Gallery_Model_Item extends ORM_MPTT {
           ->where("name", "=", $this->name)
           ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
           ->execute()->count()) {
-        $v->add_error("name", "conflict");
+        $v->error("name", "conflict");
         return;
       }
     } else {
@@ -1021,7 +1021,7 @@ class Gallery_Model_Item extends ORM_MPTT {
           ->where("name", "LIKE", "{$base_name_escaped}.%")
           ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
           ->execute()->count()) {
-        $v->add_error("name", "conflict");
+        $v->error("name", "conflict");
         return;
       }
     }
@@ -1032,11 +1032,11 @@ class Gallery_Model_Item extends ORM_MPTT {
    */
   public function valid_data_file(Validation $v) {
     if (!is_file($this->data_file)) {
-      $v->add_error("name", "bad_data_file_path");
+      $v->error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
-      $v->add_error("name", "empty_data_file");
+      $v->error("name", "empty_data_file");
     } else if ($this->data_file_error) {
-      $v->add_error("name", "invalid_data_file");
+      $v->error("name", "invalid_data_file");
     }
   }
 
@@ -1046,7 +1046,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   public function valid_parent(Validation $v) {
     if ($this->id == 1) {
       if ($this->parent_id != 0) {
-        $v->add_error("parent_id", "invalid");
+        $v->error("parent_id", "invalid");
       }
     } else {
       $query = DB::select()
@@ -1063,7 +1063,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       }
 
       if ($query->execute()->count() != 1) {
-        $v->add_error("parent_id", "invalid");
+        $v->error("parent_id", "invalid");
       }
     }
   }
@@ -1082,7 +1082,7 @@ class Gallery_Model_Item extends ORM_MPTT {
         ->where("id", "=", $this->album_cover_item_id)
         ->where("type", "<>", "album")
         ->execute()->count() != 1)) {
-      $v->add_error("album_cover_item_id", "invalid_item");
+      $v->error("album_cover_item_id", "invalid_item");
     }
   }
 
@@ -1101,7 +1101,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
     case "sort_column":
       if (!array_key_exists($this->sort_column, $original_values)) {
-        $v->add_error($field, "invalid");
+        $v->error($field, "invalid");
       }
       break;
 
@@ -1114,12 +1114,12 @@ class Gallery_Model_Item extends ORM_MPTT {
       break;
 
     default:
-      $v->add_error($field, "unvalidated_field");
+      $v->error($field, "unvalidated_field");
       break;
     }
 
     if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
-      $v->add_error($field, "invalid");
+      $v->error($field, "invalid");
     }
   }
 
@@ -1128,7 +1128,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    */
   public function read_only(Validation $v, $field) {
     if ($this->loaded() && $this->changed($field)) {
-      $v->add_error($field, "read_only");
+      $v->error($field, "read_only");
     }
   }
 
