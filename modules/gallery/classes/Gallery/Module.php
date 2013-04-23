@@ -276,7 +276,6 @@ class Gallery_Module {
    */
   static function activate($module_name) {
     Module::_add_to_path($module_name);
-    ORM::load_relationships($module_name);
 
     $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     if (class_exists($installer_class) && method_exists($installer_class, "activate")) {
