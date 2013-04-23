@@ -139,7 +139,7 @@ class Search_Search {
       // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
       // the context and try again.
       Item::clear_display_context_callback();
-      HTTP::redirect(URL::current());
+      HTTP::redirect(Request::current()->uri());
     }
     $score = $current->score;
     if (strlen($score) > 7) {
