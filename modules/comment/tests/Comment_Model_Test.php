@@ -22,7 +22,7 @@ class Comment_Model_Test extends Unittest_Testcase {
     Identity::set_active_user(Identity::admin_user());
   }
 
-  public function guest_name_and_email_is_required_test() {
+  public function test_guest_name_and_email_is_required() {
     try {
       $comment = ORM::factory("Comment");
       $comment->item_id = Item::root()->id;
@@ -30,14 +30,14 @@ class Comment_Model_Test extends Unittest_Testcase {
       $comment->text = "text";
       $comment->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("guest_name" => "required",
+      $this->assertEquals(array("guest_name" => "required",
                                 "guest_email" => "required"),
                           $e->validation->errors());
       return;
     }
   }
 
-  public function guest_email_must_be_well_formed_test() {
+  public function test_guest_email_must_be_well_formed() {
     try {
       $comment = ORM::factory("Comment");
       $comment->item_id = Item::root()->id;
@@ -47,13 +47,13 @@ class Comment_Model_Test extends Unittest_Testcase {
       $comment->text = "text";
       $comment->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("guest_email" => "invalid"),
+      $this->assertEquals(array("guest_email" => "invalid"),
                           $e->validation->errors());
       return;
     }
   }
 
-  public function cant_view_comments_for_unviewable_items_test() {
+  public function test_cant_view_comments_for_unviewable_items() {
     $album = Test::random_album();
 
     $comment = ORM::factory("Comment");
@@ -66,12 +66,12 @@ class Comment_Model_Test extends Unittest_Testcase {
 
     // We can see the comment when permissions are granted on the album
     Access::allow(Identity::everybody(), "view", $album);
-    $this->assert_true(
+    $this->assertTrue(
       ORM::factory("Comment")->viewable()->where("comment.id", "=", $comment->id)->count_all());
 
     // We can't see the comment when permissions are denied on the album
     Access::deny(Identity::everybody(), "view", $album);
-    $this->assert_false(
+    $this->assertFalse(
       ORM::factory("Comment")->viewable()->where("comment.id", "=", $comment->id)->count_all());
   }
 }

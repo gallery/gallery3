@@ -20,24 +20,24 @@
 require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
 
 class File_Structure_Test extends Unittest_Testcase {
-  public function no_trailing_closing_php_tag_test() {
+  public function test_no_trailing_closing_php_tag() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $count = 0;
     foreach ($dir as $file) {
       $count++;
       if (!preg_match("|\.html\.php$|", $file->getPathname())) {
-        $this->assert_false(
+        $this->assertFalse(
           preg_match('/\?\>\s*$/', file_get_contents($file)),
           "{$file->getPathname()} ends in ?>");
       }
     }
 
-    $this->assert_true($count > 500, "We should have analyzed at least this 500 files");
-    $this->assert_true($count < 1000, "We shouldn't be shipping 1000 files!");
+    $this->assertTrue($count > 500, "We should have analyzed at least this 500 files");
+    $this->assertTrue($count < 1000, "We shouldn't be shipping 1000 files!");
   }
 
-  public function view_files_correct_suffix_test() {
+  public function test_view_files_correct_suffix() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
@@ -46,20 +46,20 @@ class File_Structure_Test extends Unittest_Testcase {
       }
 
       if (strpos($file, "views")) {
-        $this->assert_true(
+        $this->assertTrue(
           preg_match("#/views/.*?\.(html|mrss|txt|json)\.php$#", $file->getPathname()),
           "{$file->getPathname()} should end in .{html,mrss,txt,json}.php");
       }
     }
   }
 
-  public function no_windows_line_endings_test() {
+  public function test_no_windows_line_endings() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
       if (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line) {
-          $this->assert_true(substr($line, -2) != "\r\n", "$file has windows style line endings");
+          $this->assertTrue(substr($line, -2) != "\r\n", "$file has windows style line endings");
         }
       }
     }
@@ -156,7 +156,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  public function code_files_start_with_preamble_test() {
+  public function test_code_files_start_with_preamble() {
     $dir = new PhpCodeFilterIterator(
         new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
 
@@ -189,11 +189,11 @@ class File_Structure_Test extends Unittest_Testcase {
     }
 
     if ($errors) {
-      $this->assert_false(true, "Preamble errors:\n" . join("\n", $errors));
+      $this->assertFalse(true, "Preamble errors:\n" . join("\n", $errors));
     }
   }
 
-  public function no_tabs_in_our_code_test() {
+  public function test_no_tabs_in_our_code() {
     $dir = new PhpCodeFilterIterator(
       new GalleryCodeFilterIterator(
         new RecursiveIteratorIterator(
@@ -211,7 +211,7 @@ class File_Structure_Test extends Unittest_Testcase {
       $file_as_string = null;
     }
     if ($errors) {
-      $this->assert_false(true, "tab(s) found:\n" . join("\n", $errors));
+      $this->assertFalse(true, "tab(s) found:\n" . join("\n", $errors));
     }
   }
 
@@ -227,7 +227,7 @@ class File_Structure_Test extends Unittest_Testcase {
     return $copy;
   }
 
-  public function helpers_are_static_test() {
+  public function test_helpers_are_static() {
     $dir = new PhpCodeFilterIterator(
       new GalleryCodeFilterIterator(
         new RecursiveIteratorIterator(
@@ -235,7 +235,7 @@ class File_Structure_Test extends Unittest_Testcase {
     foreach ($dir as $file) {
       if (basename(dirname($file)) == "helpers") {
         foreach (file($file) as $line) {
-          $this->assert_true(
+          $this->assertTrue(
             !preg_match("/\sfunction\s.*\(/", $line) ||
             preg_match("/^\s*(private static function _|static function)/", $line),
             "should be \"static function foo\" or \"private static function _foo\":\n" .
@@ -245,7 +245,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  public function module_info_is_well_formed_test() {
+  public function test_module_info_is_well_formed() {
     $info_files = array_merge(
       glob("modules/*/module.info"),
       glob("themes/*/module.info"));
@@ -280,11 +280,11 @@ class File_Structure_Test extends Unittest_Testcase {
       }
     }
     if ($errors) {
-      $this->assert_true(false, $errors);
+      $this->assertTrue(false, $errors);
     }
   }
 
-  public function all_public_functions_in_test_files_end_in_test() {
+  public function test_all_public_functions_in_files_end_in() {
     // Who tests the tests?  :-)   (ref: http://www.xkcd.com/1163)
     $dir = new PhpCodeFilterIterator(
       new GalleryCodeFilterIterator(
@@ -306,7 +306,7 @@ class File_Structure_Test extends Unittest_Testcase {
 
           if ($scan) {
             if (preg_match("/^\s*public\s+function/", $line)) {
-              $this->assert_true(
+              $this->assertTrue(
                 preg_match("/^\s*public\s+function (setup|teardown|.*_test)\(\) {/", $line),
                 "public functions must end in _test:\n$file\n$line\n");
             }
@@ -316,7 +316,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  public function no_extra_spaces_at_end_of_line_test() {
+  public function test_no_extra_spaces_at_end_of_line() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $errors = "";
@@ -329,6 +329,6 @@ class File_Structure_Test extends Unittest_Testcase {
         }
       }
     }
-    $this->assert_true(empty($errors), "Extra spaces at end of line found at:\n$errors");
+    $this->assertTrue(empty($errors), "Extra spaces at end of line found at:\n$errors");
   }
 }

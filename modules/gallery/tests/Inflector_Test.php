@@ -18,21 +18,21 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Inflector_Test extends Unittest_Testcase {
-  public function convert_module_to_class_name_test() {
-    $this->assert_equal("Gallery",    Inflector::convert_module_to_class_name("gallery"));
-    $this->assert_equal("FooBar",     Inflector::convert_module_to_class_name("foo_bar"));
-    $this->assert_equal("G2Import",   Inflector::convert_module_to_class_name("g2_import"));
-    $this->assert_equal("M4vModule",  Inflector::convert_module_to_class_name("m4v_module"));
-    $this->assert_equal("JSBach",     Inflector::convert_module_to_class_name("j_s_bach"));
-    $this->assert_equal("OrmExample", Inflector::convert_module_to_class_name("orm_example"));
+  public function test_convert_module_to_class_name() {
+    $this->assertEquals("Gallery",    Inflector::convert_module_to_class_name("gallery"));
+    $this->assertEquals("FooBar",     Inflector::convert_module_to_class_name("foo_bar"));
+    $this->assertEquals("G2Import",   Inflector::convert_module_to_class_name("g2_import"));
+    $this->assertEquals("M4vModule",  Inflector::convert_module_to_class_name("m4v_module"));
+    $this->assertEquals("JSBach",     Inflector::convert_module_to_class_name("j_s_bach"));
+    $this->assertEquals("OrmExample", Inflector::convert_module_to_class_name("orm_example"));
   }
 
-  public function convert_class_to_module_name_test() {
-    $this->assert_equal("gallery",     Inflector::convert_class_to_module_name("Gallery"));
-    $this->assert_equal("foo_bar",     Inflector::convert_class_to_module_name("FooBar"));
-    $this->assert_equal("g2_import",   Inflector::convert_class_to_module_name("G2Import"));
-    $this->assert_equal("m4v_module",  Inflector::convert_class_to_module_name("M4vModule"));
-    $this->assert_equal("j_s_bach",    Inflector::convert_class_to_module_name("JSBach"));
-    $this->assert_equal("orm_example", Inflector::convert_class_to_module_name("OrmExample"));
+  public function test_convert_class_to_module_name() {
+    $this->assertEquals("gallery",     Inflector::convert_class_to_module_name("Gallery"));
+    $this->assertEquals("foo_bar",     Inflector::convert_class_to_module_name("FooBar"));
+    $this->assertEquals("g2_import",   Inflector::convert_class_to_module_name("G2Import"));
+    $this->assertEquals("m4v_module",  Inflector::convert_class_to_module_name("M4vModule"));
+    $this->assertEquals("j_s_bach",    Inflector::convert_class_to_module_name("JSBach"));
+    $this->assertEquals("orm_example", Inflector::convert_class_to_module_name("OrmExample"));
   }
 }

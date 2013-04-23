@@ -23,28 +23,28 @@
  * test controller before it starts.
  */
 class User_Installer_Test extends Unittest_Testcase {
-  public function install_creates_admin_user_test() {
+  public function test_install_creates_admin_user() {
     $user = ORM::factory("User", 1);
-    $this->assert_equal("guest", $user->name);
-    $this->assert_true($user->guest);
+    $this->assertEquals("guest", $user->name);
+    $this->assertTrue($user->guest);
 
     $user = ORM::factory("User", 2);
-    $this->assert_equal("admin", $user->name);
-    $this->assert_false($user->guest);
+    $this->assertEquals("admin", $user->name);
+    $this->assertFalse($user->guest);
 
-    $this->assert_equal(
+    $this->assertEquals(
       array("Everybody", "Registered Users"),
       array_keys($user->groups->select_list("name")));
   }
 
-  public function install_creates_everybody_group_test() {
+  public function test_install_creates_everybody_group() {
     $group = ORM::factory("Group", 1);
-    $this->assert_equal("Everybody", $group->name);
-    $this->assert_true($group->special);
+    $this->assertEquals("Everybody", $group->name);
+    $this->assertTrue($group->special);
   }
 
-  public function install_creates_registered_group_test() {
+  public function test_install_creates_registered_group() {
     $group = ORM::factory("Group", 2);
-    $this->assert_equal("Registered Users", $group->name);
+    $this->assertEquals("Registered Users", $group->name);
   }
 }

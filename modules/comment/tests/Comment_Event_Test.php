@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Event_Test extends Unittest_Testcase {
-  public function deleting_an_item_deletes_its_comments_too_test() {
+  public function test_deleting_an_item_deletes_its_comments_too() {
     $album = Test::random_album();
 
     $comment = ORM::factory("Comment");
@@ -31,6 +31,6 @@ class Comment_Event_Test extends Unittest_Testcase {
 
     $album->delete();
 
-    $this->assert_false(ORM::factory("Comment", $comment->id)->loaded());
+    $this->assertFalse(ORM::factory("Comment", $comment->id)->loaded());
   }
 }

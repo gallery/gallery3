@@ -18,53 +18,53 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Photo_Helper_Test extends Unittest_Testcase {
-  public function get_file_metadata_test() {
+  public function test_get_file_metadata() {
     $photo = Test::random_photo();
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
+    $this->assertEquals(array(1024, 768, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($photo->file_path()));
   }
 
-  public function get_file_metadata_with_non_existent_file_test() {
+  public function test_get_file_metadata_with_non_existent_file() {
     try {
       $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
-      $this->assert_true(false, "Shouldn't get here");
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
     }
   }
 
-  public function get_file_metadata_with_no_extension_test() {
+  public function test_get_file_metadata_with_no_extension() {
     copy(MODPATH . "gallery_unittest/assets/test.jpg", TMPPATH . "test_jpg_with_no_extension");
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
+    $this->assertEquals(array(1024, 768, "image/jpeg", "jpg"),
                         Photo::get_file_metadata(TMPPATH . "test_jpg_with_no_extension"));
     unlink(TMPPATH . "test_jpg_with_no_extension");
   }
 
-  public function get_file_metadata_with_illegal_extension_test() {
+  public function test_get_file_metadata_with_illegal_extension() {
     try {
       $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/Photo_Helper_Test.php");
-      $this->assert_true(false, "Shouldn't get here");
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
     }
   }
 
-  public function get_file_metadata_with_illegal_extension_but_valid_file_contents_test() {
+  public function test_get_file_metadata_with_illegal_extension_but_valid_file_contents() {
     // This ensures that we correctly "re-type" files with invalid extensions if the contents
     // themselves are valid.  This is needed to ensure that issues similar to those corrected by
     // ticket #1855, where an image that looked valid (header said jpg) with a php extension was
     // previously accepted without changing its extension, do not arise and cause security issues.
     copy(MODPATH . "gallery_unittest/assets/test.jpg", TMPPATH . "test_jpg_with_php_extension.php");
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
+    $this->assertEquals(array(1024, 768, "image/jpeg", "jpg"),
                         Photo::get_file_metadata(TMPPATH . "test_jpg_with_php_extension.php"));
     unlink(TMPPATH . "test_jpg_with_php_extension.php");
   }
 
-  public function get_file_metadata_with_valid_extension_but_illegal_file_contents_test() {
+  public function test_get_file_metadata_with_valid_extension_but_illegal_file_contents() {
     copy(MODPATH . "gallery/tests/Photo_Helper_Test.php", TMPPATH . "test_php_with_jpg_extension.jpg");
     try {
       $metadata = Photo::get_file_metadata(TMPPATH . "test_php_with_jpg_extension.jpg");
-      $this->assert_true(false, "Shouldn't get here");
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
     }

@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Num_Helper_Test extends Unittest_Testcase {
-  public function convert_to_bytes_test() {
-    $this->assert_equal(5 * 1024, Num::convert_to_bytes("5K"));
-    $this->assert_equal(3 * 1024*1024, Num::convert_to_bytes("3M"));
-    $this->assert_equal(4 * 1024*1024*1024, Num::convert_to_bytes("4G"));
+  public function test_convert_to_bytes() {
+    $this->assertEquals(5 * 1024, Num::convert_to_bytes("5K"));
+    $this->assertEquals(3 * 1024*1024, Num::convert_to_bytes("3M"));
+    $this->assertEquals(4 * 1024*1024*1024, Num::convert_to_bytes("4G"));
   }
 
-  public function convert_to_human_readable_test() {
-    $this->assert_equal("6K", Num::convert_to_human_readable(5615));
-    $this->assert_equal("1M", Num::convert_to_human_readable(1205615));
-    $this->assert_equal("3G", Num::convert_to_human_readable(3091205615));
+  public function test_convert_to_human_readable() {
+    $this->assertEquals("6K", Num::convert_to_human_readable(5615));
+    $this->assertEquals("1M", Num::convert_to_human_readable(1205615));
+    $this->assertEquals("3G", Num::convert_to_human_readable(3091205615));
   }
 }

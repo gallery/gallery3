@@ -32,7 +32,7 @@ class Database_Test extends Unittest_Testcase {
       ->where("b", "=", 2)
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same("SELECT [some_column] FROM [some_table] WHERE [a] = [1] AND [b] = [2]", $sql);
+    $this->assertSame("SELECT [some_column] FROM [some_table] WHERE [a] = [1] AND [b] = [2]", $sql);
   }
 
   function compound_where_test() {
@@ -45,7 +45,7 @@ class Database_Test extends Unittest_Testcase {
       ->where("outer2", "=", 2)
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same(
+    $this->assertSame(
       "SELECT [*] WHERE [outer1] = [1] AND ([inner1] = [1] OR [inner2] = [2]) AND [outer2] = [2]",
       $sql);
   }
@@ -60,7 +60,7 @@ class Database_Test extends Unittest_Testcase {
       ->where("outer2", "=", 2)
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same(
+    $this->assertSame(
       "SELECT [*] WHERE ([inner1] = [1] OR [inner2] = [2]) AND [outer1] = [1] AND [outer2] = [2]",
       $sql);
   }
@@ -75,7 +75,7 @@ class Database_Test extends Unittest_Testcase {
       ->and_where_close()
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same(
+    $this->assertSame(
       "SELECT [*] WHERE [outer1] = [1] AND ([inner1] = [1] OR [inner2] = [2] OR [inner3] = [3])",
       $sql);
   }
@@ -88,7 +88,7 @@ class Database_Test extends Unittest_Testcase {
       ->or_where_close()
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same(
+    $this->assertSame(
       "SELECT [*] WHERE [outer1] = [1] OR ([inner1] NOT LIKE [%1%])",
       $sql);
   }
@@ -107,7 +107,7 @@ class Database_Test extends Unittest_Testcase {
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8";
-    $this->assert_same($expected, $converted);
+    $this->assertSame($expected, $converted);
 
     $sql = "UPDATE {test} SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
@@ -122,12 +122,12 @@ class Database_Test extends Unittest_Testcase {
         "  WHERE `left_ptr` >= 1 " .
         "  AND `right_ptr` <= 6)";
 
-    $this->assert_same($expected, $sql);
+    $this->assertSame($expected, $sql);
   }
 
   function prefix_replacement_for_rename_table_test() {
     $db = Database::instance("mock");
-    $this->assert_same(
+    $this->assertSame(
       "RENAME TABLE `g_test` TO `g_new_test`",
       $db->add_table_prefixes("RENAME TABLE {test} TO {new_test}"));
   }
@@ -140,13 +140,13 @@ class Database_Test extends Unittest_Testcase {
       ->update()
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
+    $this->assertSame("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
   }
 
   function escape_for_like_test() {
     // Note: literal double backslash is written as \\\
-    $this->assert_same('basic\_test', Database::escape_for_like("basic_test"));
-    $this->assert_same('\\\100\%\_test/', Database::escape_for_like('\100%_test/'));
+    $this->assertSame('basic\_test', Database::escape_for_like("basic_test"));
+    $this->assertSame('\\\100\%\_test/', Database::escape_for_like('\100%_test/'));
   }
 }
 

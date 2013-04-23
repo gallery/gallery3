@@ -21,7 +21,7 @@ class Breadcrumb_Test extends Unittest_Testcase {
   private $album;
   private $item;
 
-  public function build_breadcrumbs_for_item_test() {
+  public function test_build_breadcrumbs_for_item() {
     $album = Test::random_album();
     $item = Test::random_photo($album);
 
@@ -31,6 +31,6 @@ class Breadcrumb_Test extends Unittest_Testcase {
     $expected[] =
       Breadcrumb::instance($album->title, $album->url("show={$item->id}"));
     $expected[] = Breadcrumb::instance($item->title, $item->url())->set_last();
-    $this->assert_equal($expected, Breadcrumb::array_from_item_parents($item));
+    $this->assertEquals($expected, Breadcrumb::array_from_item_parents($item));
   }
 }

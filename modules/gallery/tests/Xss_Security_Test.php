@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Xss_Security_Test extends Unittest_Testcase {
-  public function find_unescaped_variables_in_views_test() {
+  public function test_find_unescaped_variables_in_views() {
     $found = array();
     foreach (glob("*/*/views/*/*.php") as $view) {
       // List of all tokens without whitespace, simplifying parsing.
@@ -348,7 +348,7 @@ class Xss_Security_Test extends Unittest_Testcase {
     // Compare with the expected report from our golden file.
     $canonical = MODPATH . "gallery/tests/xss_data.txt";
     exec("diff $canonical $new", $output, $return_value);
-    $this->assert_false(
+    $this->assertFalse(
       $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 

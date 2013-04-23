@@ -21,7 +21,7 @@ class Cache_Test extends Unittest_Testcase {
   private $_driver;
   public function setup() {
     DB::delete("caches")->execute();
-    $this->_driver = new Cache_Database();
+    $this->_driver = Cache::instance();
   }
 
   private function _exists($id) {
@@ -33,8 +33,8 @@ class Cache_Test extends Unittest_Testcase {
       ->execute()->count() > 0;
   }
 
-  public function cache_exists_test_helper_function_test() {
-    $this->assert_false($this->_exists("test_key"), "test_key should not be defined");
+  public function test_cache_exists_helper_function() {
+    $this->assertFalse($this->_exists("test_key"), "test_key should not be defined");
 
     $id = Random::hash();
     DB::insert("caches")
@@ -42,10 +42,10 @@ class Cache_Test extends Unittest_Testcase {
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
 
-    $this->assert_true($this->_exists($id), "test_key should be defined");
+    $this->assertTrue($this->_exists($id), "test_key should be defined");
   }
 
-  public function cache_get_test() {
+  public function test_cache_get() {
     $id = Random::hash();
 
     DB::insert("caches")
@@ -54,22 +54,22 @@ class Cache_Test extends Unittest_Testcase {
       ->execute();
 
     $data = $this->_driver->get(array($id));
-    $this->assert_equal("some test data", $data, "cached data should match");
+    $this->assertEquals("some test data", $data, "cached data should match");
 
     $data = $this->_driver->get(array(""));
-    $this->assert_equal(null, $data, "cached data should not be found");
+    $this->assertEquals(null, $data, "cached data should not be found");
   }
 
-  public function cache_set_test() {
+  public function test_cache_set() {
     $id = Random::hash();
     $original_data = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id => $original_data), array("tag1", "tag2"), 84600);
 
     $data = $this->_driver->get(array($id));
-    $this->assert_equal($original_data, $data, "cached data should match");
+    $this->assertEquals($original_data, $data, "cached data should match");
   }
 
-  public function cache_get_tag_test() {
+  public function test_cache_get_tag() {
     $id1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
@@ -86,13 +86,13 @@ class Cache_Test extends Unittest_Testcase {
 
     $expected = array($id1 => $value1, $id2 => $value2);
     ksort($expected);
-    $this->assert_equal($expected, $data, "Expected id1 & id2");
+    $this->assertEquals($expected, $data, "Expected id1 & id2");
 
     $data = $this->_driver->get_tag(array("tag4"));
-    $this->assert_equal(array($id3 => $value3), $data, "Expected id3");
+    $this->assertEquals(array($id3 => $value3), $data, "Expected id3");
   }
 
-  public function cache_delete_id_test() {
+  public function test_cache_delete_id() {
     $id1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
@@ -107,12 +107,12 @@ class Cache_Test extends Unittest_Testcase {
 
     $this->_driver->delete(array($id1));
 
-    $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
-    $this->assert_true($this->_exists($id2), "$id2 should not have been deleted");
-    $this->assert_true($this->_exists($id3), "$id3 should not have been deleted");
+    $this->assertFalse($this->_exists($id1), "$id1 should have been deleted");
+    $this->assertTrue($this->_exists($id2), "$id2 should not have been deleted");
+    $this->assertTrue($this->_exists($id3), "$id3 should not have been deleted");
   }
 
-  public function cache_delete_tag_test() {
+  public function test_cache_delete_tag() {
     $id1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
@@ -127,12 +127,12 @@ class Cache_Test extends Unittest_Testcase {
 
     $data = $this->_driver->delete_tag(array("tag3"));
 
-    $this->assert_true($this->_exists($id1), "$id1 should not have been deleted");
-    $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_exists($id3), "$id3 should have been deleted");
+    $this->assertTrue($this->_exists($id1), "$id1 should not have been deleted");
+    $this->assertFalse($this->_exists($id2), "$id2 should have been deleted");
+    $this->assertFalse($this->_exists($id3), "$id3 should have been deleted");
   }
 
-  public function cache_delete_all_test() {
+  public function test_cache_delete_all() {
     $id1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
     $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
@@ -147,8 +147,8 @@ class Cache_Test extends Unittest_Testcase {
 
     $data = $this->_driver->delete(true);
 
-    $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
-    $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
-    $this->assert_false($this->_exists($id3), "$id3 should have been deleted");
+    $this->assertFalse($this->_exists($id1), "$id1 should have been deleted");
+    $this->assertFalse($this->_exists($id2), "$id2 should have been deleted");
+    $this->assertFalse($this->_exists($id3), "$id3 should have been deleted");
   }
 }

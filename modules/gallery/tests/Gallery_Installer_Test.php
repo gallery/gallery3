@@ -23,25 +23,25 @@
  * test controller before it starts.
  */
 class Gallery_Installer_Test extends Unittest_Testcase {
-  public function install_creates_dirs_test() {
-    $this->assert_true(file_exists(VARPATH . "albums"));
-    $this->assert_true(file_exists(VARPATH . "resizes"));
+  public function test_install_creates_dirs() {
+    $this->assertTrue(file_exists(VARPATH . "albums"));
+    $this->assertTrue(file_exists(VARPATH . "resizes"));
   }
 
-  public function install_registers_gallery_module_test() {
+  public function test_install_registers_gallery_module() {
     $gallery = ORM::factory("Module")->where("name", "=", "gallery")->find();
-    $this->assert_equal("gallery", $gallery->name);
+    $this->assertEquals("gallery", $gallery->name);
   }
 
-  public function install_creates_root_item_test() {
+  public function test_install_creates_root_item() {
     $max_right_ptr = ORM::factory("Item")
       ->select(DB::expr("MAX(`right_ptr`) AS `right_ptr`"))
       ->find()->right_ptr;
     $root = ORM::factory('Item')->find(1);
-    $this->assert_equal("Gallery", $root->title);
-    $this->assert_equal(1, $root->left_ptr);
-    $this->assert_equal($max_right_ptr, $root->right_ptr);
-    $this->assert_equal(0, $root->parent_id);
-    $this->assert_equal(1, $root->level);
+    $this->assertEquals("Gallery", $root->title);
+    $this->assertEquals(1, $root->left_ptr);
+    $this->assertEquals($max_right_ptr, $root->right_ptr);
+    $this->assertEquals(0, $root->parent_id);
+    $this->assertEquals(1, $root->level);
   }
 }

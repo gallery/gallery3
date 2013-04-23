@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Items_Rest_Helper_Test extends Unittest_Testcase {
-  public function get_url_test() {
+  public function test_get_url() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -31,7 +31,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
     $request->params->urls = json_encode(array(
       Rest::url("item", $photo1),
       Rest::url("item", $album2)));
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array(
         array("url" => Rest::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
@@ -54,7 +54,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Items::get($request));
   }
 
-  public function get_url_filter_album_test() {
+  public function test_get_url_filter_album() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -68,7 +68,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Rest::url("item", $photo2),
       Rest::url("item", $album1)));
     $request->params->type = "album";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array(
          array("url" => Rest::url("item", $album1),
                "entity" => $album1->as_restful_array(),
@@ -83,7 +83,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Items::get($request));
   }
 
-  public function get_url_filter_photo_test() {
+  public function test_get_url_filter_photo() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -97,7 +97,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Rest::url("item", $photo1),
       Rest::url("item", $album2)));
     $request->params->type = "photo";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array(
         array("url" => Rest::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
@@ -110,7 +110,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Items::get($request));
   }
 
-  public function get_url_filter_albums_photos_test() {
+  public function test_get_url_filter_albums_photos() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -124,7 +124,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Rest::url("item", $photo1),
       Rest::url("item", $album2)));
     $request->params->type = "photo,album";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array(
         array("url" => Rest::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
@@ -147,7 +147,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Items::get($request));
   }
 
-  public function get_ancestors_test() {
+  public function test_get_ancestors() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -168,7 +168,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->ancestors_for = Rest::url("item", $photo2);
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array(
         $restful_root,
         array("url" => Rest::url("item", $album1),

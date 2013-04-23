@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Exif_Test extends Unittest_Testcase {
-  public function exif_extract_test() {
+  public function test_exif_extract() {
     $photo = Test::random_photo_unsaved()
       ->set_data_file(MODPATH . "exif/tests/data/image.jpg")
       ->save();
@@ -45,6 +45,6 @@ class Exif_Test extends Unittest_Testcase {
       array("caption" => "Scene Type", "value" => "0"),
       array("caption" => "Subject Distance", "value" => "0"),
     );
-    $this->assert_equal($expected, Exif::get($photo));
+    $this->assertEquals($expected, Exif::get($photo));
   }
 }

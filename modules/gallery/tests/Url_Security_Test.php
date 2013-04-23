@@ -26,18 +26,18 @@ class Url_Security_Test extends Unittest_Testcase {
     list(Route::$current_uri, Route::$complete_uri, $_GET) = $this->save;
   }
 
-  public function xss_in_current_url_test() {
+  public function test_xss_in_current_url() {
     Route::$current_uri = "foo/<xss>/bar";
     Route::$complete_uri = "foo/<xss>/bar?foo=bar";
-    $this->assert_same("foo/&lt;xss&gt;/bar", Request::current()->uri());
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", Request::current()->uri() . URL::query());
+    $this->assertSame("foo/&lt;xss&gt;/bar", Request::current()->uri());
+    $this->assertSame("foo/&lt;xss&gt;/bar?foo=bar", Request::current()->uri() . URL::query());
   }
 
-  public function xss_in_merged_url_test() {
+  public function test_xss_in_merged_url() {
     Route::$current_uri = "foo/<xss>/bar";
     Route::$complete_uri = "foo/<xss>/bar?foo=bar";
     $_GET = array("foo" => "bar");
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", URL::query(array()));
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", URL::query(array("a" => "b")));
+    $this->assertSame("foo/&lt;xss&gt;/bar?foo=bar", URL::query(array()));
+    $this->assertSame("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", URL::query(array("a" => "b")));
   }
 }

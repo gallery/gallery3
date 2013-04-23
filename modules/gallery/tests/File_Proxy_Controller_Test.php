@@ -27,63 +27,63 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     Identity::set_active_user(Identity::admin_user());
   }
 
-  public function basic_test() {
+  public function test_basic() {
     $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
     $controller = new Controller_FileProxy();
-    $this->assert_same($photo->file_path(), $controller->__call("", array()));
+    $this->assertSame($photo->file_path(), $controller->__call("", array()));
   }
 
-  public function query_params_are_ignored_test() {
+  public function test_query_params_are_ignored() {
     $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}?a=1&b=2");
     $controller = new Controller_FileProxy();
-    $this->assert_same($photo->file_path(), $controller->__call("", array()));
+    $this->assertSame($photo->file_path(), $controller->__call("", array()));
   }
 
-  public function file_must_be_in_var_test() {
+  public function test_file_must_be_in_var() {
     $_SERVER["REQUEST_URI"] = URL::file("index.php");
     $controller = new Controller_FileProxy();
     try {
       $controller->__call("", array());
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
-      $this->assert_same(1, $e->test_fail_code);
+      $this->assertSame(1, $e->test_fail_code);
     }
   }
 
-  public function file_must_be_in_albums_thumbs_or_resizes_test() {
+  public function test_file_must_be_in_albums_thumbs_or_resizes() {
     $_SERVER["REQUEST_URI"] = URL::file("var/test/var/uploads/.htaccess");
     $controller = new Controller_FileProxy();
     try {
       $controller->__call("", array());
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
-      $this->assert_same(2, $e->test_fail_code);
+      $this->assertSame(2, $e->test_fail_code);
     }
   }
 
-  public function movie_thumbnails_are_jpgs_test() {
+  public function test_movie_thumbnails_are_jpgs() {
     $movie = Test::random_movie();
     $name = LegalFile::change_extension($movie->name, "jpg");
     $_SERVER["REQUEST_URI"] = URL::file("var/thumbs/$name");
     $controller = new Controller_FileProxy();
-    $this->assert_same($movie->thumb_path(), $controller->__call("", array()));
+    $this->assertSame($movie->thumb_path(), $controller->__call("", array()));
   }
 
-  public function invalid_item_test() {
+  public function test_invalid_item() {
     $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/x_{$photo->name}");
     $controller = new Controller_FileProxy();
     try {
       $controller->__call("", array());
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
-      $this->assert_same(3, $e->test_fail_code);
+      $this->assertSame(3, $e->test_fail_code);
     }
   }
 
-  public function need_view_full_permission_to_view_original_test() {
+  public function test_need_view_full_permission_to_view_original() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album = $album->reload(); // adding the photo changed the album in the db
@@ -95,26 +95,26 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
 
     try {
       $controller->__call("", array());
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
-      $this->assert_same(5, $e->test_fail_code);
+      $this->assertSame(5, $e->test_fail_code);
     }
   }
 
-  public function cant_proxy_an_album_test() {
+  public function test_cant_proxy_an_album() {
     $album = Test::random_album();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}");
     $controller = new Controller_FileProxy();
 
     try {
       $controller->__call("", array());
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
-      $this->assert_same(6, $e->test_fail_code);
+      $this->assertSame(6, $e->test_fail_code);
     }
   }
 
-  public function missing_file_test() {
+  public function test_missing_file() {
     $photo = Test::random_photo();
     $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
     unlink($photo->file_path());
@@ -122,9 +122,9 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
 
     try {
       $controller->__call("", array());
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
-      $this->assert_same(7, $e->test_fail_code);
+      $this->assertSame(7, $e->test_fail_code);
     }
   }
 }

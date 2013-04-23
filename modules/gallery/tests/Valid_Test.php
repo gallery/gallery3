@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Valid_Test extends Unittest_Testcase {
-  public function url_test() {
-    $this->assert_true(Valid::url("http://foo.bar.com"));
-    $this->assert_true(Valid::url("https://foo.bar.com"));
+  public function test_url() {
+    $this->assertTrue(Valid::url("http://foo.bar.com"));
+    $this->assertTrue(Valid::url("https://foo.bar.com"));
 
-    $this->assert_false(Valid::url("mailto://bar"));
-    $this->assert_false(Valid::url("ftp://bar"));
+    $this->assertFalse(Valid::url("mailto://bar"));
+    $this->assertFalse(Valid::url("ftp://bar"));
   }
 }

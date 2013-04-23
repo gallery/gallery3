@@ -18,40 +18,40 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Html_Helper_Test extends Unittest_Testcase {
-  public function clean_test() {
+  public function test_clean() {
     $safe_string = HTML::clean("hello <p  >world</p>");
-    $this->assert_equal("hello &lt;p  &gt;world&lt;/p&gt;",
+    $this->assertEquals("hello &lt;p  &gt;world&lt;/p&gt;",
                         $safe_string);
-    $this->assert_true($safe_string instanceof SafeString);
+    $this->assertTrue($safe_string instanceof SafeString);
   }
 
-  public function purify_test() {
+  public function test_purify() {
     $safe_string = HTML::purify("hello <p  >world</p>");
     $expected = (class_exists("Purifier") && method_exists("Purifier", "purify"))
       ? "hello <p>world</p>"
       : "hello &lt;p  &gt;world&lt;/p&gt;";
-    $this->assert_equal($expected, $safe_string->unescaped());
-    $this->assert_true($safe_string instanceof SafeString);
+    $this->assertEquals($expected, $safe_string->unescaped());
+    $this->assertTrue($safe_string instanceof SafeString);
   }
 
-  public function mark_clean_test() {
+  public function test_mark_clean() {
     $safe_string = HTML::mark_clean("hello <p  >world</p>");
-    $this->assert_true($safe_string instanceof SafeString);
+    $this->assertTrue($safe_string instanceof SafeString);
     $safe_string_2 = HTML::clean($safe_string);
-    $this->assert_equal("hello <p  >world</p>",
+    $this->assertEquals("hello <p  >world</p>",
                         $safe_string_2);
   }
 
-  public function js_string_test() {
+  public function test_js_string() {
     $string = HTML::js_string("hello's <p  >world</p>");
-    $this->assert_equal('"hello\'s <p  >world<\\/p>"',
+    $this->assertEquals('"hello\'s <p  >world<\\/p>"',
                         $string);
   }
 
-  public function clean_attribute_test() {
+  public function test_clean_attribute() {
     $safe_string = SafeString::of_safe_html("hello's <p  >world</p>");
     $safe_string = HTML::clean_attribute($safe_string);
-    $this->assert_equal("hello&#039;s <p  >world</p>",
+    $this->assertEquals("hello&#039;s <p  >world</p>",
                         $safe_string);
   }
 }

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Controller_Auth_Test extends Unittest_Testcase {
-  public function find_missing_auth_test() {
+  public function test_find_missing_auth() {
     $found = array();
     $git_ignores = explode("\n", `git ls-files -o -i --exclude-standard`);
     $controllers = array_diff(glob("*/*/classes/*/Controller/*.php"), $git_ignores);
@@ -179,7 +179,7 @@ class Controller_Auth_Test extends Unittest_Testcase {
     // Compare with the expected report from our golden file.
     $canonical = MODPATH . "gallery/tests/controller_auth_data.txt";
     exec("diff $canonical $new", $output, $return_value);
-    $this->assert_false(
+    $this->assertFalse(
                         $return_value, "Controller auth golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 

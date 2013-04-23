@@ -23,7 +23,7 @@ class Sendmail_Test extends Unittest_Testcase {
     Module::set_var("gallery", "email_reply_to", "reply_to@gallery3.com");
   }
 
-  public function sendmail_basic_test() {
+  public function test_sendmail_basic() {
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
                 "Reply-To: reply_to@gallery3.com\r\n" .
@@ -36,10 +36,10 @@ class Sendmail_Test extends Unittest_Testcase {
       ->send()
       ->send_text;
 
-    $this->assert_equal($expected, $result);
+    $this->assertEquals($expected, $result);
   }
 
-  public function sendmail_reply_to_test() {
+  public function test_sendmail_reply_to() {
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
                 "Reply-To: reply_to@gallery3.com\r\n" .
@@ -52,10 +52,10 @@ class Sendmail_Test extends Unittest_Testcase {
       ->message("The mail message body")
       ->send()
       ->send_text;
-    $this->assert_equal($expected, $result);
+    $this->assertEquals($expected, $result);
   }
 
-  public function sendmail_html_message_test() {
+  public function test_sendmail_html_message() {
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
                 "Reply-To: reply_to@gallery3.com\n" .
@@ -71,10 +71,10 @@ class Sendmail_Test extends Unittest_Testcase {
       ->message("<html><body><p>This is an html msg</p></body></html>")
       ->send()
       ->send_text;
-    $this->assert_equal($expected, $result);
+    $this->assertEquals($expected, $result);
   }
 
-  public function sendmail_wrapped_message_test() {
+  public function test_sendmail_wrapped_message() {
     $expected = "To: receiver@someemail.com\r\n" .
                 "From: from@gallery3.com\n" .
                 "Reply-To: reply_to@gallery3.com\r\n" .
@@ -92,7 +92,7 @@ class Sendmail_Test extends Unittest_Testcase {
                 "of times.")
       ->send()
       ->send_text;
-    $this->assert_equal($expected, $result);
+    $this->assertEquals($expected, $result);
   }
 }
 

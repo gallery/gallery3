@@ -27,7 +27,7 @@ class Photos_Controller_Test extends Unittest_Testcase {
     list($_POST, $_SERVER) = $this->_save;
   }
 
-  public function change_photo_test() {
+  public function test_change_photo() {
     $controller = new Controller_Photos();
     $photo = Test::random_photo();
 
@@ -44,14 +44,14 @@ class Photos_Controller_Test extends Unittest_Testcase {
     $results = ob_get_contents();
     ob_end_clean();
 
-    $this->assert_equal(json_encode(array("result" => "success")), $results);
-    $this->assert_equal("new-slug", $photo->slug);
-    $this->assert_equal("new title", $photo->title);
-    $this->assert_equal("new description", $photo->description);
-    $this->assert_equal("new name.jpg", $photo->name);
+    $this->assertEquals(json_encode(array("result" => "success")), $results);
+    $this->assertEquals("new-slug", $photo->slug);
+    $this->assertEquals("new title", $photo->title);
+    $this->assertEquals("new description", $photo->description);
+    $this->assertEquals("new name.jpg", $photo->name);
   }
 
-  public function change_photo_no_csrf_fails_test() {
+  public function test_change_photo_no_csrf_fails() {
     $controller = new Controller_Photos();
     $photo = Test::random_photo();
 
@@ -63,10 +63,10 @@ class Photos_Controller_Test extends Unittest_Testcase {
 
     try {
       $controller->action_update($photo);
-      $this->assert_true(false, "This should fail");
+      $this->assertTrue(false, "This should fail");
     } catch (Exception $e) {
       // pass
-      $this->assert_same("@todo FORBIDDEN", $e->getMessage());
+      $this->assertSame("@todo FORBIDDEN", $e->getMessage());
     }
   }
 }

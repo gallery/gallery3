@@ -18,46 +18,46 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Graphics_Helper_Test extends Unittest_Testcase {
-  public function generate_photo_test() {
+  public function test_generate_photo() {
     $photo = Test::random_photo();
     // Check that the images were correctly resized
-    $this->assert_equal(array(640, 480, "image/jpeg", "jpg"),
+    $this->assertEquals(array(640, 480, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($photo->resize_path()));
-    $this->assert_equal(array(200, 150, "image/jpeg", "jpg"),
+    $this->assertEquals(array(200, 150, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($photo->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(640, 480), array($photo->resize_width, $photo->resize_height));
-    $this->assert_equal(array(200, 150), array($photo->thumb_width, $photo->thumb_height));
+    $this->assertEquals(array(640, 480), array($photo->resize_width, $photo->resize_height));
+    $this->assertEquals(array(200, 150), array($photo->thumb_width, $photo->thumb_height));
     // Check that the images are not marked dirty
-    $this->assert_equal(0, $photo->resize_dirty);
-    $this->assert_equal(0, $photo->thumb_dirty);
+    $this->assertEquals(0, $photo->resize_dirty);
+    $this->assertEquals(0, $photo->thumb_dirty);
   }
 
-  public function generate_movie_test() {
+  public function test_generate_movie() {
     $movie = Test::random_movie();
     // Check that the image was correctly resized
-    $this->assert_equal(array(200, 160, "image/jpeg", "jpg"),
+    $this->assertEquals(array(200, 160, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($movie->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(200, 160), array($movie->thumb_width, $movie->thumb_height));
+    $this->assertEquals(array(200, 160), array($movie->thumb_width, $movie->thumb_height));
     // Check that the image is not marked dirty
-    $this->assert_equal(0, $movie->thumb_dirty);
+    $this->assertEquals(0, $movie->thumb_dirty);
   }
 
-  public function generate_album_cover_test() {
+  public function test_generate_album_cover() {
     $album = Test::random_album();
     $photo = Test::random_unique_photo($album);
     $album->reload();
     // Check that the image was copied directly from item thumb
-    $this->assert_equal(file_get_contents($photo->thumb_path()),
+    $this->assertEquals(file_get_contents($photo->thumb_path()),
                         file_get_contents($album->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(200, 150), array($album->thumb_width, $album->thumb_height));
+    $this->assertEquals(array(200, 150), array($album->thumb_width, $album->thumb_height));
     // Check that the image is not marked dirty
-    $this->assert_equal(0, $album->thumb_dirty);
+    $this->assertEquals(0, $album->thumb_dirty);
   }
 
-  public function generate_album_cover_from_png_test() {
+  public function test_generate_album_cover_from_png() {
     $input_file = MODPATH . "gallery_unittest/assets/test.jpg";
     $output_file = TMPPATH . Test::random_name() . ".png";
     GalleryGraphics::resize($input_file, $output_file, null, null);
@@ -69,26 +69,26 @@ class Graphics_Helper_Test extends Unittest_Testcase {
     $photo->save();
     $album->reload();
     // Check that the image was correctly resized and converted to jpg
-    $this->assert_equal(array(200, 150, "image/jpeg", "jpg"),
+    $this->assertEquals(array(200, 150, "image/jpeg", "jpg"),
                         Photo::get_file_metadata($album->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(200, 150), array($album->thumb_width, $album->thumb_height));
+    $this->assertEquals(array(200, 150), array($album->thumb_width, $album->thumb_height));
     // Check that the image is not marked dirty
-    $this->assert_equal(0, $album->thumb_dirty);
+    $this->assertEquals(0, $album->thumb_dirty);
   }
 
-  public function generate_album_cover_for_empty_album_test() {
+  public function test_generate_album_cover_for_empty_album() {
     $album = Test::random_album();
     // Check that the album cover is the missing image placeholder
-    $this->assert_same(file_get_contents(MODPATH . "gallery/assets/graphics/missing_album_cover.jpg"),
+    $this->assertSame(file_get_contents(MODPATH . "gallery/assets/graphics/missing_album_cover.jpg"),
                        file_get_contents($album->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($album->thumb_width, $album->thumb_height));
+    $this->assertEquals(array(200, 200), array($album->thumb_width, $album->thumb_height));
     // Check that the image is *not* marked as dirty
-    $this->assert_equal(0, $album->thumb_dirty);
+    $this->assertEquals(0, $album->thumb_dirty);
   }
 
-  public function generate_bad_photo_test() {
+  public function test_generate_bad_photo() {
     $photo = Test::random_photo();
     // At this point, the photo is valid and has a valid resize and thumb.  Make it garble.
     file_put_contents($photo->file_path(), Test::lorem_ipsum(200));
@@ -97,24 +97,24 @@ class Graphics_Helper_Test extends Unittest_Testcase {
     $photo->thumb_dirty = 1;
     try {
       Graphics::generate($photo);
-      $this->assert_true(false, "Shouldn't get here");
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (Exception $e) {
       // Exception expected
     }
     // Check that the images got replaced with missing image placeholders
-    $this->assert_same(file_get_contents(MODPATH . "gallery/assets/graphics/missing_photo.jpg"),
+    $this->assertSame(file_get_contents(MODPATH . "gallery/assets/graphics/missing_photo.jpg"),
                        file_get_contents($photo->resize_path()));
-    $this->assert_same(file_get_contents(MODPATH . "gallery/assets/graphics/missing_photo.jpg"),
+    $this->assertSame(file_get_contents(MODPATH . "gallery/assets/graphics/missing_photo.jpg"),
                        file_get_contents($photo->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($photo->resize_width, $photo->resize_height));
-    $this->assert_equal(array(200, 200), array($photo->thumb_width, $photo->thumb_height));
+    $this->assertEquals(array(200, 200), array($photo->resize_width, $photo->resize_height));
+    $this->assertEquals(array(200, 200), array($photo->thumb_width, $photo->thumb_height));
     // Check that the images are marked as dirty
-    $this->assert_equal(1, $photo->resize_dirty);
-    $this->assert_equal(1, $photo->thumb_dirty);
+    $this->assertEquals(1, $photo->resize_dirty);
+    $this->assertEquals(1, $photo->thumb_dirty);
   }
 
-  public function generate_bad_movie_test() {
+  public function test_generate_bad_movie() {
     // Unlike photos, its ok to have missing movies - no thrown exceptions, thumb_dirty can be reset.
     $movie = Test::random_movie();
     // At this point, the movie is valid and has a valid thumb.  Make it garble.
@@ -123,15 +123,15 @@ class Graphics_Helper_Test extends Unittest_Testcase {
     $movie->thumb_dirty = 1;
     Graphics::generate($movie);
     // Check that the image got replaced with a missing image placeholder
-    $this->assert_same(file_get_contents(MODPATH . "gallery/assets/graphics/missing_movie.jpg"),
+    $this->assertSame(file_get_contents(MODPATH . "gallery/assets/graphics/missing_movie.jpg"),
                        file_get_contents($movie->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($movie->thumb_width, $movie->thumb_height));
+    $this->assertEquals(array(200, 200), array($movie->thumb_width, $movie->thumb_height));
     // Check that the image is *not* marked as dirty
-    $this->assert_equal(0, $movie->thumb_dirty);
+    $this->assertEquals(0, $movie->thumb_dirty);
   }
 
-  public function generate_album_cover_from_bad_photo_test() {
+  public function test_generate_album_cover_from_bad_photo() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album->reload();
@@ -143,16 +143,16 @@ class Graphics_Helper_Test extends Unittest_Testcase {
     $album->thumb_dirty = 1;
     try {
       Graphics::generate($album);
-      $this->assert_true(false, "Shouldn't get here");
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (Exception $e) {
       // Exception expected
     }
     // Check that the image got replaced with a missing image placeholder
-    $this->assert_same(file_get_contents(MODPATH . "gallery/assets/graphics/missing_photo.jpg"),
+    $this->assertSame(file_get_contents(MODPATH . "gallery/assets/graphics/missing_photo.jpg"),
                        file_get_contents($album->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($album->thumb_width, $album->thumb_height));
+    $this->assertEquals(array(200, 200), array($album->thumb_width, $album->thumb_height));
     // Check that the images are marked as dirty
-    $this->assert_equal(1, $album->thumb_dirty);
+    $this->assertEquals(1, $album->thumb_dirty);
   }
 }

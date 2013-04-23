@@ -30,12 +30,12 @@ class Tags_Rest_Helper_Test extends Unittest_Testcase {
     Identity::set_active_user(Identity::admin_user());
   }
 
-  public function get_test() {
+  public function test_get() {
     $t1 = Tag::add(Item::root(), "t1");
     $t2 = Tag::add(Item::root(), "t2");
 
     $request = new stdClass();
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array(
         "url" => Rest::url("tags"),
         "members" => array(
@@ -44,19 +44,19 @@ class Tags_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Tags::get($request));
   }
 
-  public function post_test() {
+  public function test_post() {
     Identity::set_active_user(Identity::admin_user());
 
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->name = "test tag";
-    $this->assert_equal(
+    $this->assertEquals(
       array("url" => URL::site("rest/tag/1")),
       Hook_Rest_Tags::post($request));
   }
 
-  public function post_fails_without_permissions_test() {
+  public function test_post_fails_without_permissions() {
     // We have to remove edit permissions from everywhere
     Database::instance()->query(Database::UPDATE, "UPDATE {access_caches} SET edit_1=0");
     Identity::set_active_user(Identity::guest());
@@ -68,10 +68,10 @@ class Tags_Rest_Helper_Test extends Unittest_Testcase {
       $request->params->entity->name = "test tag";
       Hook_Rest_Tags::post($request);
     } catch (Exception $e) {
-      $this->assert_equal(403, $e->getCode());
+      $this->assertEquals(403, $e->getCode());
       return;
     }
-    $this->assert_true(false, "Shouldnt get here");
+    $this->assertTrue(false, "Shouldnt get here");
   }
 
 }

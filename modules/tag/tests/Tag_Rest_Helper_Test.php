@@ -25,12 +25,12 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
     } catch (Exception $e) { }
   }
 
-  public function get_test() {
+  public function test_get() {
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
@@ -41,7 +41,7 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Tag::get($request));
   }
 
-  public function get_with_invalid_url_test() {
+  public function test_get_with_invalid_url() {
     $request = new stdClass();
     $request->url = "bogus";
     try {
@@ -49,15 +49,15 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
     } catch (Kohana_404_Exception $e) {
       return;  // pass
     }
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
-  public function get_with_no_relationships_test() {
+  public function test_get_with_no_relationships() {
     $tag = Test::random_tag();
 
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
@@ -67,7 +67,7 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Tag::get($request));
   }
 
-  public function put_test() {
+  public function test_put() {
     $tag = Test::random_tag();
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
@@ -76,22 +76,22 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
     $request->params->entity->name = "new name";
 
     Hook_Rest_Tag::put($request);
-    $this->assert_equal("new name", $tag->reload()->name);
+    $this->assertEquals("new name", $tag->reload()->name);
   }
 
-  public function delete_tag_test() {
+  public function test_delete_tag() {
     $tag = Test::random_tag();
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
     Hook_Rest_Tag::delete($request);
 
-    $this->assert_false($tag->reload()->loaded());
+    $this->assertFalse($tag->reload()->loaded());
   }
 
-  public function resolve_test() {
+  public function test_resolve() {
     $tag = Test::random_tag();
 
-    $this->assert_equal(
+    $this->assertEquals(
       $tag->as_array(),
       Rest::resolve(Rest::url("tag", $tag))->as_array());
   }

@@ -29,11 +29,11 @@ class Rest_Controller_Test extends Unittest_Testcase {
     Identity::set_active_user(Identity::admin_user());
   }
 
-  public function login_test() {
+  public function test_login() {
     $user = Test::random_user("password");
 
     // There's no access key at first
-    $this->assert_false(
+    $this->assertFalse(
       ORM::factory("UserAccessKey")->where("user_id", "=", $user->id)->find()->loaded());
 
     $_POST["user"] = $user->name;
@@ -44,10 +44,10 @@ class Rest_Controller_Test extends Unittest_Testcase {
       ORM::factory("UserAccessKey")->where("user_id", "=", $user->id)->find()->access_key;
 
     // Now there is an access key, and it was returned
-    $this->assert_equal(json_encode($expected), $response);
+    $this->assertEquals(json_encode($expected), $response);
   }
 
-  public function login_failed_test() {
+  public function test_login_failed() {
     $user = Test::random_user("password");
 
     try {
@@ -55,14 +55,14 @@ class Rest_Controller_Test extends Unittest_Testcase {
       $_POST["password"] = "WRONG PASSWORD";
       Test::call_and_capture(array(new Controller_Rest(), "index"));
     } catch (Rest_Exception $e) {
-      $this->assert_equal(403, $e->getCode());
+      $this->assertEquals(403, $e->getCode());
       return;
     }
 
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
-  public function get_test() {
+  public function test_get() {
     unset($_SERVER["HTTP_X_GALLERY_REQUEST_KEY"]);
 
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
@@ -71,73 +71,81 @@ class Rest_Controller_Test extends Unittest_Testcase {
     try {
       Test::call_and_capture(array(new Controller_Rest(), "mock"));
     } catch (Rest_Exception $e) {
-      $this->assert_same(403, $e->getCode());
+      $this->assertSame(403, $e->getCode());
       return;
     }
 
-    $this->assert_true(false, "Should be forbidden");
+    $this->assertTrue(false, "Should be forbidden");
   }
 
-  public function get_with_access_key_test() {
+  public function test_get_with_access_key() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
     $_GET["key"] = "value";
 
-    $this->assert_array_equal_to_json(
+    $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "get",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      Test::call_and_capture(array(new Controller_Rest(), "mock")));
+      json_decode(
+        Test::call_and_capture(array(new Controller_Rest(), "mock")),
+        true));
   }
 
-  public function post_test() {
+  public function test_post() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_POST["key"] = "value";
 
-    $this->assert_array_equal_to_json(
+    $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "post",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      Test::call_and_capture(array(new Controller_Rest(), "mock")));
+      json_decode(
+        Test::call_and_capture(array(new Controller_Rest(), "mock")),
+        true));
   }
 
-  public function put_test() {
+  public function test_put() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "put";
     $_POST["key"] = "value";
 
-    $this->assert_array_equal_to_json(
+    $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "put",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      Test::call_and_capture(array(new Controller_Rest(), "mock")));
+      json_decode(
+        Test::call_and_capture(array(new Controller_Rest(), "mock")),
+        true));
   }
 
-  public function delete_test() {
+  public function test_delete() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "delete";
     $_POST["key"] = "value";
 
-    $this->assert_array_equal_to_json(
+    $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "delete",
             "access_key" => Rest::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
-      Test::call_and_capture(array(new Controller_Rest(), "mock")));
+      json_decode(
+        Test::call_and_capture(array(new Controller_Rest(), "mock")),
+        true));
   }
 
-  public function bogus_method_test() {
+  public function test_bogus_method() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
     try {
       Test::call_and_capture(array(new Controller_Rest(), "mock"));
     } catch (Exception $e) {
-      $this->assert_equal(400, $e->getCode());
+      $this->assertEquals(400, $e->getCode());
       return;
     }
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 }
 

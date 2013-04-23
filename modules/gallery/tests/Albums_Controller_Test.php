@@ -26,7 +26,7 @@ class Albums_Controller_Test extends Unittest_Testcase {
     list($_POST, $_SERVER) = $this->_save;
   }
 
-  public function change_album_test() {
+  public function test_change_album() {
     $controller = new Controller_Albums();
     $album = Test::random_album();
 
@@ -48,13 +48,13 @@ class Albums_Controller_Test extends Unittest_Testcase {
     $results = ob_get_contents();
     ob_end_clean();
 
-    $this->assert_equal(json_encode(array("result" => "success")), $results);
-    $this->assert_equal($new_name, $album->name);
-    $this->assert_equal("new title", $album->title);
-    $this->assert_equal("new description", $album->description);
+    $this->assertEquals(json_encode(array("result" => "success")), $results);
+    $this->assertEquals($new_name, $album->name);
+    $this->assertEquals("new title", $album->title);
+    $this->assertEquals("new description", $album->description);
   }
 
-  public function change_album_no_csrf_fails_test() {
+  public function test_change_album_no_csrf_fails() {
     $controller = new Controller_Albums();
     $album = Test::random_album();
 
@@ -65,10 +65,10 @@ class Albums_Controller_Test extends Unittest_Testcase {
 
     try {
       $controller->action_update($album->id);
-      $this->assert_true(false, "This should fail");
+      $this->assertTrue(false, "This should fail");
     } catch (Exception $e) {
       // pass
-      $this->assert_same("@todo FORBIDDEN", $e->getMessage());
+      $this->assertSame("@todo FORBIDDEN", $e->getMessage());
     }
   }
 }

@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class System_Helper_Test extends Unittest_Testcase {
-  public function temp_filename_test() {
+  public function test_temp_filename() {
     $filename = System::temp_filename("file", "ext");
-    $this->assert_true(file_exists($filename), "File not created");
+    $this->assertTrue(file_exists($filename), "File not created");
     unlink($filename);
-    $this->assert_pattern($filename, "|/file.*\\.ext$|");
+    $this->assertRegExp("|/file.*\\.ext$|", $filename);
   }
 
-  public function remove_album_test() {
+  public function test_remove_album() {
     $dirname = (VARPATH . "albums/testdir");
     mkdir($dirname, 0777, true);
 
@@ -33,7 +33,7 @@ class System_Helper_Test extends Unittest_Testcase {
     touch($filename);
 
     System::unlink_dir($dirname);
-    $this->assert_boolean(!file_exists($filename), "File not deleted");
-    $this->assert_boolean(!file_exists($dirname), "Directory not deleted");
+    $this->assertTrue(!file_exists($filename), "File not deleted");
+    $this->assertTrue(!file_exists($dirname), "Directory not deleted");
   }
 }

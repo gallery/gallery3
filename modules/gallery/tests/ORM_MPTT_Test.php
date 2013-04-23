@@ -19,16 +19,16 @@
  */
 class ORM_MPTT_Test extends Unittest_Testcase {
 
-  public function add_to_parent_test() {
+  public function test_add_to_parent() {
     $album = Test::random_album();
 
-    $this->assert_equal($album->parent()->right_ptr - 2, $album->left_ptr);
-    $this->assert_equal($album->parent()->right_ptr - 1, $album->right_ptr);
-    $this->assert_equal($album->parent()->level + 1, $album->level);
-    $this->assert_equal($album->parent()->id, $album->parent_id);
+    $this->assertEquals($album->parent()->right_ptr - 2, $album->left_ptr);
+    $this->assertEquals($album->parent()->right_ptr - 1, $album->right_ptr);
+    $this->assertEquals($album->parent()->level + 1, $album->level);
+    $this->assertEquals($album->parent()->id, $album->parent_id);
   }
 
-  public function add_hierarchy_test() {
+  public function test_add_hierarchy() {
     $album1 = Test::random_album();
     $album1_1 = Test::random_album($album1);
     $album1_2 = Test::random_album($album1);
@@ -36,13 +36,13 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $album1_1_2 = Test::random_album($album1_1);
 
     $album1->reload();
-    $this->assert_equal(9, $album1->right_ptr - $album1->left_ptr);
+    $this->assertEquals(9, $album1->right_ptr - $album1->left_ptr);
 
     $album1_1->reload();
-    $this->assert_equal(5, $album1_1->right_ptr - $album1_1->left_ptr);
+    $this->assertEquals(5, $album1_1->right_ptr - $album1_1->left_ptr);
   }
 
-  public function delete_hierarchy_test() {
+  public function test_delete_hierarchy() {
     $album1 = Test::random_album();
     $album1_1 = Test::random_album($album1);
     $album1_2 = Test::random_album($album1);
@@ -53,10 +53,10 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $album1->reload();
 
     // Now album1 contains only album1_2
-    $this->assert_equal(3, $album1->right_ptr - $album1->left_ptr);
+    $this->assertEquals(3, $album1->right_ptr - $album1->left_ptr);
   }
 
-  public function move_to_test() {
+  public function test_move_to() {
     $album1 = Test::random_album();
     $album1_1 = Test::random_album($album1);
     $album1_2 = Test::random_album($album1);
@@ -72,19 +72,19 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $album1_1->reload();
     $album1_2->reload();
 
-    $this->assert_equal(3, $album1_1->right_ptr - $album1_1->left_ptr);
-    $this->assert_equal(3, $album1_2->right_ptr - $album1_2->left_ptr);
+    $this->assertEquals(3, $album1_1->right_ptr - $album1_1->left_ptr);
+    $this->assertEquals(3, $album1_2->right_ptr - $album1_2->left_ptr);
 
-    $this->assert_equal(
+    $this->assertEquals(
       array($album1_1_2->id => $album1_1_2->name),
       $album1_1->children()->select_list());
 
-    $this->assert_equal(
+    $this->assertEquals(
       array($album1_1_1->id => $album1_1_1->name),
       $album1_2->children()->select_list());
   }
 
-  public function cant_move_parent_into_own_subtree_test() {
+  public function test_cant_move_parent_into_own_subtree() {
     $album1 = Test::random_album(Item::root());
     $album2 = Test::random_album($album1);
     $album3 = Test::random_album($album2);
@@ -92,20 +92,20 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     try {
       $album1->parent_id = $album3->id;
       $album1->save();
-      $this->assert_true(false, "We should be unable to move an item inside its own hierarchy");
+      $this->assertTrue(false, "We should be unable to move an item inside its own hierarchy");
     } catch (Exception $e) {
       // pass
     }
   }
 
-  public function parent_test() {
+  public function test_parent() {
     $album = Test::random_album();
 
     $parent = ORM::factory("Item", 1);
-    $this->assert_equal($parent->id, $album->parent()->id);
+    $this->assertEquals($parent->id, $album->parent()->id);
   }
 
-  public function parents_test() {
+  public function test_parents() {
     $outer = Test::random_album();
     $inner = Test::random_album($outer);
 
@@ -113,10 +113,10 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     foreach ($inner->parents() as $parent) {
       $parent_ids[] = $parent->id;
     }
-    $this->assert_equal(array(1, $outer->id), $parent_ids);
+    $this->assertEquals(array(1, $outer->id), $parent_ids);
   }
 
-  public function children_test() {
+  public function test_children() {
     $outer = Test::random_album();
     $inner1 = Test::random_album($outer);
     $inner2 = Test::random_album($outer);
@@ -125,27 +125,27 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     foreach ($outer->children() as $child) {
       $child_ids[] = $child->id;
     }
-    $this->assert_equal(array($inner1->id, $inner2->id), $child_ids);
+    $this->assertEquals(array($inner1->id, $inner2->id), $child_ids);
   }
 
-  public function children_limit_test() {
+  public function test_children_limit() {
     $outer = Test::random_album();
     $inner1 = Test::random_album($outer);
     $inner2 = Test::random_album($outer);
 
-    $this->assert_equal(array($inner2->id => $inner2->name),
+    $this->assertEquals(array($inner2->id => $inner2->name),
                         $outer->children(1, 1)->select_list('id'));
   }
 
-  public function children_count_test() {
+  public function test_children_count() {
     $outer = Test::random_album();
     $inner1 = Test::random_album($outer);
     $inner2 = Test::random_album($outer);
 
-    $this->assert_equal(2, $outer->children_count());
+    $this->assertEquals(2, $outer->children_count());
   }
 
-  public function descendant_test() {
+  public function test_descendant() {
     $parent = Test::random_album();
     $photo = Test::random_photo($parent);
     $album1 = Test::random_album($parent);
@@ -153,30 +153,30 @@ class ORM_MPTT_Test extends Unittest_Testcase {
 
     $parent->reload();
 
-    $this->assert_equal(3, $parent->descendants()->count());
-    $this->assert_equal(2, $parent->descendants(null, null, array(array("type", "=", "photo")))->count());
-    $this->assert_equal(1, $parent->descendants(null, null, array(array("type", "=", "album")))->count());
+    $this->assertEquals(3, $parent->descendants()->count());
+    $this->assertEquals(2, $parent->descendants(null, null, array(array("type", "=", "photo")))->count());
+    $this->assertEquals(1, $parent->descendants(null, null, array(array("type", "=", "album")))->count());
   }
 
-  public function descendant_limit_test() {
+  public function test_descendant_limit() {
     $parent = Test::random_album();
     $album1 = Test::random_album($parent);
     $album2 = Test::random_album($parent);
     $album3 = Test::random_album($parent);
     $parent->reload();
 
-    $this->assert_equal(2, $parent->descendants(2)->count());
+    $this->assertEquals(2, $parent->descendants(2)->count());
   }
 
-  public function descendant_count_test() {
+  public function test_descendant_count() {
     $parent = Test::random_album();
     $photo = Test::random_photo($parent);
     $album1 = Test::random_album($parent);
     $photo1 = Test::random_photo($album1);
     $parent->reload();
 
-    $this->assert_equal(3, $parent->descendants_count());
-    $this->assert_equal(2, $parent->descendants_count(array(array("type", "=", "photo"))));
-    $this->assert_equal(1, $parent->descendants_count(array(array("type", "=", "album"))));
+    $this->assertEquals(3, $parent->descendants_count());
+    $this->assertEquals(2, $parent->descendants_count(array(array("type", "=", "photo"))));
+    $this->assertEquals(1, $parent->descendants_count(array(array("type", "=", "album"))));
   }
 }

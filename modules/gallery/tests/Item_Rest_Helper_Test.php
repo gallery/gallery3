@@ -22,13 +22,13 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     Identity::set_active_user(Identity::admin_user());
   }
 
-  public function resolve_test() {
+  public function test_resolve() {
     $album = Test::random_album();
     $resolved = Rest::resolve(Rest::url("item", $album));
-    $this->assert_equal($album->id, $resolved->id);
+    $this->assertEquals($album->id, $resolved->id);
   }
 
-  public function get_scope_test() {
+  public function test_get_scope() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -39,7 +39,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request = new stdClass();
     $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -56,7 +56,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
 
     $request->url = Rest::url("item", $album1);
     $request->params->scope = "direct";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -73,7 +73,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
 
     $request->url = Rest::url("item", $album1);
     $request->params->scope = "all";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -90,7 +90,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Item::get($request));
   }
 
-  public function get_children_like_test() {
+  public function test_get_children_like() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $photo2 = Test::random_photo_unsaved($album1);
@@ -102,7 +102,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->name = "foo";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -117,7 +117,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Item::get($request));
   }
 
-  public function get_children_type_test() {
+  public function test_get_children_type() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -127,7 +127,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->type = "album";
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -142,7 +142,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Item::get($request));
   }
 
-  public function update_album_test() {
+  public function test_update_album() {
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -153,10 +153,10 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->params->entity->title = "my new title";
 
     Hook_Rest_Item::put($request);
-    $this->assert_equal("my new title", $album1->reload()->title);
+    $this->assertEquals("my new title", $album1->reload()->title);
   }
 
-  public function update_album_illegal_value_fails_test() {
+  public function test_update_album_illegal_value_fails() {
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -170,13 +170,13 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Item::put($request);
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("slug" => "not_url_safe"), $e->validation->errors());
+      $this->assertEquals(array("slug" => "not_url_safe"), $e->validation->errors());
       return;
     }
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
-  public function add_album_test() {
+  public function test_add_album() {
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -190,11 +190,11 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $response = Hook_Rest_Item::post($request);
     $new_album = Rest::resolve($response["url"]);
 
-    $this->assert_true($new_album->is_album());
-    $this->assert_equal($album1->id, $new_album->parent_id);
+    $this->assertTrue($new_album->is_album());
+    $this->assertEquals($album1->id, $new_album->parent_id);
   }
 
-  public function add_album_illegal_value_fails_test() {
+  public function test_add_album_illegal_value_fails() {
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -210,14 +210,14 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Item::post($request);
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("slug" => "not_url_safe"), $e->validation->errors());
+      $this->assertEquals(array("slug" => "not_url_safe"), $e->validation->errors());
       return;
     }
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
 
-  public function add_photo_test() {
+  public function test_add_photo() {
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -231,11 +231,11 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $response = Hook_Rest_Item::post($request);
     $new_photo = Rest::resolve($response["url"]);
 
-    $this->assert_true($new_photo->is_photo());
-    $this->assert_equal($album1->id, $new_photo->parent_id);
+    $this->assertTrue($new_photo->is_photo());
+    $this->assertEquals($album1->id, $new_photo->parent_id);
   }
 
-  public function delete_album_test() {
+  public function test_delete_album() {
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -244,10 +244,10 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     Hook_Rest_Item::delete($request);
 
     $album1->reload();
-    $this->assert_false($album1->loaded());
+    $this->assertFalse($album1->loaded());
   }
 
-  public function delete_album_fails_without_permission_test() {
+  public function test_delete_album_fails_without_permission() {
     $album1 = Test::random_album();
     Access::deny(Identity::everybody(), "edit", $album1);
     Identity::set_active_user(Identity::guest());
@@ -257,9 +257,9 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Item::delete($request);
     } catch (Exception $e) {
-      $this->assert_equal("@todo FORBIDDEN", $e->getMessage());
+      $this->assertEquals("@todo FORBIDDEN", $e->getMessage());
       return;
     }
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 }

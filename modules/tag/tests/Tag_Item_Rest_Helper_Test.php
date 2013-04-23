@@ -25,12 +25,12 @@ class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
     } catch (Exception $e) { }
   }
 
-  public function get_test() {
+  public function test_get() {
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
     $request->url = Rest::url("tag_item", $tag, Item::root());
-    $this->assert_equal_array(
+    $this->assertEquals_array(
       array("url" => Rest::url("tag_item", $tag, Item::root()),
             "entity" => array(
               "tag" => Rest::url("tag", $tag),
@@ -38,7 +38,7 @@ class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_TagItem::get($request));
   }
 
-  public function get_with_invalid_url_test() {
+  public function test_get_with_invalid_url() {
     $request = new stdClass();
     $request->url = "bogus";
     try {
@@ -46,25 +46,25 @@ class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
     } catch (Kohana_404_Exception $e) {
       return;  // pass
     }
-    $this->assert_true(false, "Shouldn't get here");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
-  public function delete_test() {
+  public function test_delete() {
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
     $request->url = Rest::url("tag_item", $tag, Item::root());
     Hook_Rest_TagItem::delete($request);
 
-    $this->assert_false($tag->reload()->has(Item::root()));
+    $this->assertFalse($tag->reload()->has(Item::root()));
   }
 
-  public function resolve_test() {
+  public function test_resolve() {
     $album = Test::random_album();
     $tag = Tag::add($album, "tag1")->reload();
 
     $tuple = Rest::resolve(Rest::url("tag_item", $tag, $album));
-    $this->assert_equal_array($tag->as_array(), $tuple[0]->as_array());
-    $this->assert_equal_array($album->as_array(), $tuple[1]->as_array());
+    $this->assertEquals_array($tag->as_array(), $tuple[0]->as_array());
+    $this->assertEquals_array($album->as_array(), $tuple[1]->as_array());
   }
 }

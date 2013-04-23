@@ -24,39 +24,39 @@
  * around HTMLPurifier correctly.
  */
 class Purifier_Test extends Unittest_Testcase {
-  public function clean_html_basic_test() {
-    $this->assert_equal("hello wrld", Purifier::clean_html("hello w<o>rld"));
+  public function test_clean_html_basic() {
+    $this->assertEquals("hello wrld", Purifier::clean_html("hello w<o>rld"));
   }
 
-  public function clean_html_recursion_test() {
-    $this->assert_equal(array("hello wrld", "fo_<b>ar</b>"),
+  public function test_clean_html_recursion() {
+    $this->assertEquals(array("hello wrld", "fo_<b>ar</b>"),
                         Purifier::clean_html(array("hello w<o>rld", "f<o>o_<b>ar</b>")));
   }
 
-  public function add_config_group_test() {
+  public function test_add_config_group() {
     // Add test config group which doesn't tidy HTML
     $settings = array("HTML.TidyLevel" => "none");
     Purifier::add_config_group("test", $settings);
     // Test config group doesn't fix center
-    $this->assert_equal('<center>Centered</center>',
+    $this->assertEquals('<center>Centered</center>',
       Purifier::clean_html('<center>Centered</center>', "test"));
     // Default config group still does
-    $this->assert_equal('<div style="text-align:center;">Centered</div>',
+    $this->assertEquals('<div style="text-align:center;">Centered</div>',
       Purifier::clean_html('<center>Centered</center>'));
     // Test config group works when recursed
-    $this->assert_equal(array('<center>Hello</center>', '<center>World</center>'),
+    $this->assertEquals(array('<center>Hello</center>', '<center>World</center>'),
       Purifier::clean_html(array('<center>Hello</center>', '<center>World</center>'), "test"));
   }
 
-  public function clean_input_array_keys_test() {
+  public function test_clean_input_array_keys() {
     // Both clean and raw will fix "foo|bar|too" but trash "foo|bar" since "foo_bar" already exists
     $dirty = array("foo|bar" => "baz1", "foo_bar" => "baz2", "foo|bar|too" => "baz3");
     $raw   = array(                     "foo_bar" => "baz2", "foo_bar_too" => "baz3");
     $clean = array(                     "foo_bar" => "baz2", "foo_bar_too" => "baz3");
-    $this->assert_equal(array($clean, $raw), Purifier::clean_input_array($dirty));
+    $this->assertEquals(array($clean, $raw), Purifier::clean_input_array($dirty));
   }
 
-  public function clean_input_array_charset_test() {
+  public function test_clean_input_array_charset() {
     // Note: this test file is not UTF8-encoded.
     $utf8 = utf8_encode("Àçéñöû");
     $iso88591 = utf8_decode($utf8);
@@ -64,22 +64,22 @@ class Purifier_Test extends Unittest_Testcase {
     $dirty = array("test" => $iso88591);
     $raw   = array("test" => $utf8);
     $clean = array("test" => $utf8);
-    $this->assert_equal(array($clean, $raw), Purifier::clean_input_array($dirty));
+    $this->assertEquals(array($clean, $raw), Purifier::clean_input_array($dirty));
   }
 
-  public function clean_input_array_purifier_test() {
+  public function test_clean_input_array_purifier() {
     // Raw will do nothing (keys already clean), clean will fix values
     $dirty = array("test" => "hello w<o>rld");
     $raw   = array("test" => "hello w<o>rld");
     $clean = array("test" => "hello wrld");
-    $this->assert_equal(array($clean, $raw), Purifier::clean_input_array($dirty));
+    $this->assertEquals(array($clean, $raw), Purifier::clean_input_array($dirty));
   }
 
-  public function clean_input_array_recursion_test() {
+  public function test_clean_input_array_recursion() {
     // Raw will recursively fix keys but not values, clean will recursively fix both
     $dirty = array("test" => "hello w<o>rld", "foo|bar" => array("fo|o" => "f<o>o", "ba|r" => "<b>ar</b>"));
     $raw   = array("test" => "hello w<o>rld", "foo_bar" => array("fo_o" => "f<o>o", "ba_r" => "<b>ar</b>"));
     $clean = array("test" => "hello wrld",    "foo_bar" => array("fo_o" => "fo",    "ba_r" => "<b>ar</b>"));
-    $this->assert_equal(array($clean, $raw), Purifier::clean_input_array($dirty));
+    $this->assertEquals(array($clean, $raw), Purifier::clean_input_array($dirty));
   }
 }

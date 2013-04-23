@@ -22,22 +22,22 @@ class Tag_Test extends Unittest_Testcase {
     ORM::factory("Tag")->delete_all();
   }
 
-  public function create_tag_test() {
+  public function test_create_tag() {
     $album = Test::random_album();
 
     Tag::add($album, "tag1");
     $tag = ORM::factory("Tag")->where("name", "=", "tag1")->find();
-    $this->assert_equal(1, $tag->count);
+    $this->assertEquals(1, $tag->count);
 
     // Make sure adding the tag again doesn't increase the count
     Tag::add($album, "tag1");
-    $this->assert_equal(1, $tag->reload()->count);
+    $this->assertEquals(1, $tag->reload()->count);
 
     Tag::add(Test::random_album(), "tag1");
-    $this->assert_equal(2, $tag->reload()->count);
+    $this->assertEquals(2, $tag->reload()->count);
   }
 
-  public function rename_merge_tag_test() {
+  public function test_rename_merge_tag() {
     $album1 = Test::random_album();
     $album2 = Test::random_album();
 
@@ -51,13 +51,13 @@ class Tag_Test extends Unittest_Testcase {
     // Tags should be merged; $tag2 should be deleted
     $tag1->reload();
 
-    $this->assert_equal(2, $tag1->count);
-    $this->assert_true($tag1->has($album1));
-    $this->assert_true($tag1->has($album2));
-    $this->assert_equal(1, ORM::factory("Tag")->count_all());
+    $this->assertEquals(2, $tag1->count);
+    $this->assertTrue($tag1->has($album1));
+    $this->assertTrue($tag1->has($album2));
+    $this->assertEquals(1, ORM::factory("Tag")->count_all());
   }
 
-  public function rename_merge_tag_with_same_items_test() {
+  public function test_rename_merge_tag_with_same_items() {
     $album = Test::random_album();
 
     Tag::add($album, "tag1");
@@ -70,8 +70,8 @@ class Tag_Test extends Unittest_Testcase {
     // Tags should be merged
     $tag1->reload();
 
-    $this->assert_equal(1, $tag1->count);
-    $this->assert_true($tag1->has($album));
-    $this->assert_equal(1, ORM::factory("Tag")->count_all());
+    $this->assertEquals(1, $tag1->count);
+    $this->assertTrue($tag1->has($album));
+    $this->assertEquals(1, ORM::factory("Tag")->count_all());
   }
 }

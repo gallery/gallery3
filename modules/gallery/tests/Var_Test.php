@@ -18,38 +18,38 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Var_Test extends Unittest_Testcase {
-  public function add_parameter_test() {
+  public function test_add_parameter() {
     Module::set_var("Var_Test", "Parameter", "original value");
-    $this->assert_equal("original value", Module::get_var("Var_Test", "Parameter"));
+    $this->assertEquals("original value", Module::get_var("Var_Test", "Parameter"));
 
     Module::set_var("Var_Test", "Parameter", "updated value");
-    $this->assert_equal("updated value", Module::get_var("Var_Test", "Parameter"));
+    $this->assertEquals("updated value", Module::get_var("Var_Test", "Parameter"));
   }
 
-  public function clear_parameter_test() {
+  public function test_clear_parameter() {
     Module::set_var("Var_Test", "Parameter", "original value");
     Module::clear_var("Var_Test", "Parameter");
-    $this->assert_equal(null, Module::get_var("Var_Test", "Parameter"));
+    $this->assertEquals(null, Module::get_var("Var_Test", "Parameter"));
   }
 
-  public function clear_all_module_parameters_test() {
+  public function test_clear_all_module_parameters() {
     Module::set_var("Var_Test", "Parameter1", "original value");
     Module::set_var("Var_Test", "Parameter2", "original value");
     Module::clear_all_vars("Var_Test");
-    $this->assert_equal(null, Module::get_var("Var_Test", "Parameter1"));
-    $this->assert_equal(null, Module::get_var("Var_Test", "Parameter2"));
+    $this->assertEquals(null, Module::get_var("Var_Test", "Parameter1"));
+    $this->assertEquals(null, Module::get_var("Var_Test", "Parameter2"));
   }
 
-  public function incr_parameter_test() {
+  public function test_incr_parameter() {
     Module::set_var("Var_Test", "Parameter", "original value");
     Module::incr_var("Var_Test", "Parameter");
-    $this->assert_equal("1", Module::get_var("Var_Test", "Parameter"));
+    $this->assertEquals("1", Module::get_var("Var_Test", "Parameter"));
 
     Module::set_var("Var_Test", "Parameter", "2");
     Module::incr_var("Var_Test", "Parameter", "9");
-    $this->assert_equal("11", Module::get_var("Var_Test", "Parameter"));
+    $this->assertEquals("11", Module::get_var("Var_Test", "Parameter"));
 
     Module::incr_var("Var_Test", "NonExistent", "9");
-    $this->assert_equal(null, Module::get_var("Var_Test", "NonExistent"));
+    $this->assertEquals(null, Module::get_var("Var_Test", "NonExistent"));
   }
 }

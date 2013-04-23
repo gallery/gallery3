@@ -44,7 +44,7 @@ class DrawForm_Test extends Unittest_Testcase {
                 "  </li>\n" .
                 "  </ul>\n" .
                 "</form>";
-    $this->assert_same($expected, (string) $form);
+    $this->assertSame($expected, (string) $form);
   }
 
   function group_test() {
@@ -77,7 +77,7 @@ class DrawForm_Test extends Unittest_Testcase {
                 "    </ul>\n" .
                 "  </fieldset>\n" .
                 "</form>";
-    $this->assert_same($expected, (string) $form);
+    $this->assertSame($expected, (string) $form);
   }
 
   function form_script_test() {
@@ -117,7 +117,7 @@ class DrawForm_Test extends Unittest_Testcase {
                 "alert('Test Javascript');\n" .
                 "</script>\n" .
                 "</form>";
-    $this->assert_same($expected, (string) $form);
+    $this->assertSame($expected, (string) $form);
   }
 
   function two_hiddens_test() {
@@ -131,7 +131,7 @@ class DrawForm_Test extends Unittest_Testcase {
                 "  <ul>\n" .
                 "  </ul>\n" .
                 "</form>";
-    $this->assert_same($expected, (string) $form);
+    $this->assertSame($expected, (string) $form);
   }
 }
 

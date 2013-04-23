@@ -22,13 +22,13 @@ class Data_Rest_Helper_Test extends Unittest_Testcase {
     Identity::set_active_user(Identity::admin_user());
   }
 
-  public function resolve_test() {
+  public function test_resolve() {
     $photo = Test::random_photo();
     $resolved = Rest::resolve(Rest::url("data", $photo, 640));
-    $this->assert_equal($photo->id, $resolved->id);
+    $this->assertEquals($photo->id, $resolved->id);
   }
 
-  public function resolve_needs_permission_test() {
+  public function test_resolve_needs_permission() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album->reload();  // new photo changed the album in the db
@@ -38,13 +38,13 @@ class Data_Rest_Helper_Test extends Unittest_Testcase {
 
     try {
       Hook_Rest_Data::resolve($photo->id);
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
       // pass
     }
   }
 
-  public function basic_get_test() {
+  public function test_basic_get() {
     $photo = Test::random_photo();
 
     $request = new stdClass();
@@ -52,16 +52,16 @@ class Data_Rest_Helper_Test extends Unittest_Testcase {
     $request->params = new stdClass();
 
     $request->params->size = "thumb";
-    $this->assert_same($photo->thumb_path(), Hook_Rest_Data::get($request));
+    $this->assertSame($photo->thumb_path(), Hook_Rest_Data::get($request));
 
     $request->params->size = "resize";
-    $this->assert_same($photo->resize_path(), Hook_Rest_Data::get($request));
+    $this->assertSame($photo->resize_path(), Hook_Rest_Data::get($request));
 
     $request->params->size = "full";
-    $this->assert_same($photo->file_path(), Hook_Rest_Data::get($request));
+    $this->assertSame($photo->file_path(), Hook_Rest_Data::get($request));
   }
 
-  public function illegal_access_test() {
+  public function test_illegal_access() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album->reload();
@@ -76,13 +76,13 @@ class Data_Rest_Helper_Test extends Unittest_Testcase {
 
     try {
       Hook_Rest_Data::get($request);
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
       // pass
     }
   }
 
-  public function missing_file_test() {
+  public function test_missing_file() {
     $photo = Test::random_photo();
 
     $request = new stdClass();
@@ -94,16 +94,16 @@ class Data_Rest_Helper_Test extends Unittest_Testcase {
 
     try {
       Hook_Rest_Data::get($request);
-      $this->assert_true(false);
+      $this->assertTrue(false);
     } catch (Kohana_404_Exception $e) {
       // pass
     }
   }
 
-  public function cache_buster_test() {
+  public function test_cache_buster() {
     $photo = Test::random_photo();
 
-    $this->assert_same(
+    $this->assertSame(
       URL::abs_site("rest/data/{$photo->id}?size=thumb&m=" . filemtime($photo->thumb_path())),
       Hook_Rest_Data::url($photo, "thumb"));
   }

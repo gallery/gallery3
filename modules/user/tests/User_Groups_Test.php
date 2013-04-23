@@ -19,13 +19,13 @@
  */
 
 class User_Groups_Test extends Unittest_Testcase {
-  public function add_user_to_group_test() {
+  public function test_add_user_to_group() {
     $user = Test::random_user();
     $group = Test::random_group();
 
     $group->add("users", $user);
     $group->save();
 
-    $this->assert_true($user->has($group));
+    $this->assertTrue($user->has($group));
   }
 }

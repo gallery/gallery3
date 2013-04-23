@@ -27,7 +27,7 @@ class Admin_Watermarks_Controller_Test extends Unittest_Testcase {
     list($_POST, $_SERVER) = $this->_save;
   }
 
-  public function add_watermark_test() {
+  public function test_add_watermark() {
     // Source is a jpg file, watermark path has extension jpg
     $name = Test::random_name();
     $source_path = MODPATH . "gallery/assets/graphics/imagemagick.jpg";
@@ -43,17 +43,17 @@ class Admin_Watermarks_Controller_Test extends Unittest_Testcase {
     $results = ob_get_clean();
 
     // Add should be successful
-    $this->assert_equal(json_encode(array("result" => "success",
+    $this->assertEquals(json_encode(array("result" => "success",
                                           "location" => URL::site("admin/watermarks"))), $results);
-    $this->assert_equal(file_get_contents($source_path),
+    $this->assertEquals(file_get_contents($source_path),
                         file_get_contents(VARPATH . "modules/watermark/$name.jpg"));
-    $this->assert_equal("$name.jpg", Module::get_var("watermark", "name"));
-    $this->assert_equal(114, Module::get_var("watermark", "width"));
-    $this->assert_equal(118, Module::get_var("watermark", "height"));
-    $this->assert_equal("image/jpeg", Module::get_var("watermark", "mime_type"));
+    $this->assertEquals("$name.jpg", Module::get_var("watermark", "name"));
+    $this->assertEquals(114, Module::get_var("watermark", "width"));
+    $this->assertEquals(118, Module::get_var("watermark", "height"));
+    $this->assertEquals("image/jpeg", Module::get_var("watermark", "mime_type"));
   }
 
-  public function add_watermark_reject_illegal_file_test() {
+  public function test_add_watermark_reject_illegal_file() {
     // Source is a php file, watermark path has extension php
     $name = Test::random_name();
     $source_path = MODPATH . "watermark/tests/Admin_Watermarks_Controller_Test.php";
@@ -72,12 +72,12 @@ class Admin_Watermarks_Controller_Test extends Unittest_Testcase {
     System::delete_marked_files();
 
     // Add should *not* be successful, and watermark should be deleted
-    $this->assert_equal("", $results);
-    $this->assert_false(file_exists($watermark_path));
-    $this->assert_false(file_exists(VARPATH . "modules/watermark/$name.php"));
+    $this->assertEquals("", $results);
+    $this->assertFalse(file_exists($watermark_path));
+    $this->assertFalse(file_exists(VARPATH . "modules/watermark/$name.php"));
   }
 
-  public function add_watermark_rename_legal_file_with_illegal_extension_test() {
+  public function test_add_watermark_rename_legal_file_with_illegal_extension() {
     // Source is a jpg file, watermark path has extension php
     $name = Test::random_name();
     $source_path = MODPATH . "gallery/assets/graphics/imagemagick.jpg";
@@ -93,17 +93,17 @@ class Admin_Watermarks_Controller_Test extends Unittest_Testcase {
     $results = ob_get_clean();
 
     // Add should be successful with file renamed as jpg
-    $this->assert_equal(json_encode(array("result" => "success",
+    $this->assertEquals(json_encode(array("result" => "success",
                                           "location" => URL::site("admin/watermarks"))), $results);
-    $this->assert_equal(file_get_contents($source_path),
+    $this->assertEquals(file_get_contents($source_path),
                         file_get_contents(VARPATH . "modules/watermark/$name.jpg"));
-    $this->assert_equal("$name.jpg", Module::get_var("watermark", "name"));
-    $this->assert_equal(114, Module::get_var("watermark", "width"));
-    $this->assert_equal(118, Module::get_var("watermark", "height"));
-    $this->assert_equal("image/jpeg", Module::get_var("watermark", "mime_type"));
+    $this->assertEquals("$name.jpg", Module::get_var("watermark", "name"));
+    $this->assertEquals(114, Module::get_var("watermark", "width"));
+    $this->assertEquals(118, Module::get_var("watermark", "height"));
+    $this->assertEquals("image/jpeg", Module::get_var("watermark", "mime_type"));
   }
 
-  public function add_watermark_reject_illegal_file_with_legal_extension_test() {
+  public function test_add_watermark_reject_illegal_file_with_legal_extension() {
     // Source is a php file, watermark path has extension jpg
     $name = Test::random_name();
     $source_path = MODPATH . "watermark/tests/Admin_Watermarks_Controller_Test.php";
@@ -122,9 +122,9 @@ class Admin_Watermarks_Controller_Test extends Unittest_Testcase {
     System::delete_marked_files();
 
     // Add should *not* be successful, and watermark should be deleted
-    $this->assert_equal("", $results);
-    $this->assert_false(file_exists($watermark_path));
-    $this->assert_false(file_exists(VARPATH . "modules/watermark/$name.php"));
-    $this->assert_false(file_exists(VARPATH . "modules/watermark/$name.jpg"));
+    $this->assertEquals("", $results);
+    $this->assertFalse(file_exists($watermark_path));
+    $this->assertFalse(file_exists(VARPATH . "modules/watermark/$name.php"));
+    $this->assertFalse(file_exists(VARPATH . "modules/watermark/$name.jpg"));
   }
 }

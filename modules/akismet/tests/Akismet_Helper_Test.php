@@ -62,7 +62,7 @@ class Akismet_Helper_Test extends Unittest_Testcase {
     return $comment->save();
   }
 
-  public function build_verify_request_test() {
+  public function test_build_verify_request() {
     $request = Akismet::_build_verify_request("TEST_KEY");
     $expected =
       "POST /1.1/verify-key HTTP/1.0\r\n" .
@@ -71,10 +71,10 @@ class Akismet_Helper_Test extends Unittest_Testcase {
       "Content-Length: 27\r\n" .
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "key=TEST_KEY&blog=http://./";
-    $this->assert_equal($expected, $request);
+    $this->assertEquals($expected, $request);
   }
 
-  public function build_comment_check_request_test() {
+  public function test_build_comment_check_request() {
     $comment = $this->_make_comment();
     $request = Akismet::_build_request("comment-check", $comment);
     $expected = "POST /1.1/comment-check HTTP/1.0\r\n" .
@@ -92,10 +92,10 @@ class Akismet_Helper_Test extends Unittest_Testcase {
       "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
-    $this->assert_equal($expected, $request);
+    $this->assertEquals($expected, $request);
   }
 
-  public function build_submit_spam_request_test() {
+  public function test_build_submit_spam_request() {
     $comment = $this->_make_comment();
     $request = Akismet::_build_request("submit-spam", $comment);
     $expected =
@@ -114,10 +114,10 @@ class Akismet_Helper_Test extends Unittest_Testcase {
       "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
-    $this->assert_equal($expected, $request);
+    $this->assertEquals($expected, $request);
   }
 
-  public function build_submit_ham_request_test() {
+  public function test_build_submit_ham_request() {
     $comment = $this->_make_comment();
     $request = Akismet::_build_request("submit-ham", $comment);
     $expected =
@@ -136,7 +136,7 @@ class Akismet_Helper_Test extends Unittest_Testcase {
       "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
-    $this->assert_equal($expected, $request);
+    $this->assertEquals($expected, $request);
   }
 }
 

@@ -52,57 +52,57 @@ class Gallery_I18n_Test extends Unittest_Testcase {
     }
   }
 
-  public function get_locale_test() {
+  public function test_get_locale() {
     $locale = $this->i18n->locale();
-    $this->assert_equal("te_ST", $locale);
+    $this->assertEquals("te_ST", $locale);
   }
 
-  public function set_locale_test() {
+  public function test_set_locale() {
     $this->i18n->locale("de_DE");
     $locale = $this->i18n->locale();
-    $this->assert_equal("de_DE", $locale);
+    $this->assertEquals("de_DE", $locale);
   }
 
-  public function translate_simple_test() {
+  public function test_translate_simple() {
     $result = $this->i18n->translate('Hello world');
-    $this->assert_equal('Hallo Welt', $result);
+    $this->assertEquals('Hallo Welt', $result);
   }
 
-  public function translate_simple_root_fallback_test() {
+  public function test_translate_simple_root_fallback() {
     $result = $this->i18n->translate('Hello world zzz');
-    $this->assert_equal('Hello world zzz', $result);
+    $this->assertEquals('Hello world zzz', $result);
   }
 
-  public function translate_plural_other_test() {
+  public function test_translate_plural_other() {
     $result = $this->i18n->translate(array('one' => 'One item has been added',
                                            'other' => '%count elements have been added'),
                                      array('count' => 5));
-    $this->assert_equal('5 Elemente wurden hinzugefuegt.', $result);
+    $this->assertEquals('5 Elemente wurden hinzugefuegt.', $result);
   }
 
-  public function translate_plural_one_test() {
+  public function test_translate_plural_one() {
     $result = $this->i18n->translate(array('one' => 'One item has been added',
                                            'other' => '%count elements have been added'),
                                      array('count' => 1));
-    $this->assert_equal('Ein Element wurde hinzugefuegt.', $result);
+    $this->assertEquals('Ein Element wurde hinzugefuegt.', $result);
   }
 
-  public function translate_interpolate_test() {
+  public function test_translate_interpolate() {
     $result = $this->i18n->translate('Hello %name, how are you today?', array('name' => 'John'));
-    $this->assert_equal('Hallo John, wie geht es Dir heute?', $result);
+    $this->assertEquals('Hallo John, wie geht es Dir heute?', $result);
   }
 
-  public function translate_interpolate_missing_value_test() {
+  public function test_translate_interpolate_missing_value() {
     $result = $this->i18n->translate('Hello %name, how are you today?', array('foo' => 'bar'));
-    $this->assert_equal('Hallo %name, wie geht es Dir heute?', $result);
+    $this->assertEquals('Hallo %name, wie geht es Dir heute?', $result);
   }
 
-  public function translate_plural_zero_test() {
+  public function test_translate_plural_zero() {
     // te_ST has the same plural rules as en and de.
     // For count 0, plural form "other" should be used.
     $result = $this->i18n->translate(array('one' => 'One item has been added',
                                            'other' => '%count elements have been added'),
                                      array('count' => 0));
-    $this->assert_equal('0 Elemente wurden hinzugefuegt.', $result);
+    $this->assertEquals('0 Elemente wurden hinzugefuegt.', $result);
   }
 }

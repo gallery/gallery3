@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Menu_Test extends Unittest_Testcase {
-  public function find_menu_item_test() {
+  public function test_find_menu_item() {
     $menu = new Menu(true);
     $menu
       ->append(Menu::factory("link")->id("element_1"))
@@ -26,7 +26,7 @@ class Menu_Test extends Unittest_Testcase {
       ->append(Menu::factory("submenu")->id("element_3")
                ->append(Menu::factory("link")->id("element_3_1")));
 
-    $this->assert_equal("element_2", $menu->get("element_2")->id);
-    $this->assert_equal("element_3_1", $menu->get("element_3")->get("element_3_1")->id);
+    $this->assertEquals("element_2", $menu->get("element_2")->id);
+    $this->assertEquals("element_3_1", $menu->get("element_3")->get("element_3_1")->id);
   }
 }

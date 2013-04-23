@@ -20,7 +20,7 @@
 require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
 
 class No_Direct_ORM_Access_Test extends Unittest_Testcase {
-  public function no_access_to_users_table_test() {
+  public function test_no_access_to_users_table() {
     $dir = new UserModuleFilterIterator(
       new PhpCodeFilterIterator(
         new GalleryCodeFilterIterator(
@@ -40,11 +40,11 @@ class No_Direct_ORM_Access_Test extends Unittest_Testcase {
       $file_as_string = null;
     }
     if ($errors) {
-      $this->assert_false(true, "Direct access to the users table found:\n" . join("\n", $errors));
+      $this->assertFalse(true, "Direct access to the users table found:\n" . join("\n", $errors));
     }
   }
 
-  public function no_access_to_groups_table_test() {
+  public function test_no_access_to_groups_table() {
     $dir = new UserModuleFilterIterator(
       new PhpCodeFilterIterator(
         new GalleryCodeFilterIterator(
@@ -63,7 +63,7 @@ class No_Direct_ORM_Access_Test extends Unittest_Testcase {
       $file_as_string = null;
     }
     if ($errors) {
-      $this->assert_false(true, "Direct access to the groups table found:\n" . join("\n", $errors));
+      $this->assertFalse(true, "Direct access to the groups table found:\n" . join("\n", $errors));
     }
   }
 
