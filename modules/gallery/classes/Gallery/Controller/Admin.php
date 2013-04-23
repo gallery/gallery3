@@ -30,12 +30,16 @@ class Gallery_Controller_Admin extends Controller {
       }
     }
 
+    $time_remaining = Auth::get_time_remaining_for_admin_area();
+
     if (Request::current()->query("reauth_check")) {
-      return self::_reauth_check();
+      return self::_reauth_check($time_remaining);
     }
 
-    if (Auth::must_reauth_for_admin_area()) {
+    if ($time_remaining < 0) {
       return self::_prompt_for_reauth();
+    } else {
+      Session::instance()->set("admin_area_activity_timestamp", time());
     }
 
     if (Request::current()->method() == HTTP_Request::POST) {
@@ -43,15 +47,7 @@ class Gallery_Controller_Admin extends Controller {
     }
   }
 
-  private static function _reauth_check() {
-    $session = Session::instance();
-    $last_active_auth = $session->get("active_auth_timestamp", 0);
-    $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
-    $admin_area_timeout = Module::get_var("gallery", "admin_area_timeout");
-
-    $time_remaining = max($last_active_auth, $last_admin_area_activity) +
-      $admin_area_timeout - time();
-
+  private static function _reauth_check($time_remaining) {
     $result = new stdClass();
     $result->result = "success";
     if ($time_remaining < 30) {

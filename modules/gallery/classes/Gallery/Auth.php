@@ -95,25 +95,15 @@ class Gallery_Auth {
   }
 
   /**
-   * Checks whether the current user (= admin) must
-   * actively re-authenticate before access is given
-   * to the admin area.
+   * Checks how much time is remaining before the current (admin) user
+   * must actively re-authenticate before access is given to the admin
+   * area.  This can be negative if the user has already timed out.
    */
-  static function must_reauth_for_admin_area() {
-    if (!Identity::active_user()->admin) {
-      Access::forbidden();
-    }
+  static function get_time_remaining_for_admin_area() {
+    $last_active_auth         = Session::instance()->get("active_auth_timestamp", 0);
+    $last_admin_area_activity = Session::instance()->get("admin_area_activity_timestamp", 0);
+    $admin_area_timeout       = Module::get_var("gallery", "admin_area_timeout", 90 * 60);
 
-    $session = Session::instance();
-    $last_active_auth = $session->get("active_auth_timestamp", 0);
-    $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
-    $admin_area_timeout = Module::get_var("gallery", "admin_area_timeout");
-
-    if (max($last_active_auth, $last_admin_area_activity) + $admin_area_timeout < time()) {
-      return true;
-    }
-
-    $session->set("admin_area_activity_timestamp", time());
-    return false;
+    return max($last_active_auth, $last_admin_area_activity) + $admin_area_timeout - time();
   }
 }
