@@ -44,8 +44,7 @@ class Gallery_URL extends Kohana_URL {
    * Just like URL::query except that it escapes any XSS in the path.
    */
   static function query(array $params=null, $use_get=true) {
-    $params = Purifier::clean_html($params);
-    return parent::query($params, $use_get);
+    return htmlspecialchars(parent::query($params, $use_get));
   }
 
   /**
