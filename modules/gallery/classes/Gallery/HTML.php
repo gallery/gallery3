@@ -53,7 +53,7 @@ class Gallery_HTML extends Kohana_HTML {
    *   // Parameters to t() are automatically escaped by default.
    *   // If the parameter is marked as clean, it won't get escaped.
    *   t('Go <a href="%url">there</a>',
-   *     array("url" => HTML::mark_clean(URL::current())))
+   *     array("url" => HTML::mark_clean(Request::current()->uri())))
    * </pre>
    */
   static function mark_clean($html) {

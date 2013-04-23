@@ -89,7 +89,7 @@ class User_Controller_Password extends Controller {
   }
 
   private static function _reset_form() {
-    $form = new Forge(URL::current(true), "", "post", array("id" => "g-reset-form"));
+    $form = new Forge("password/reset", "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
     $group->input("name")->label(t("Username"))->id("g-name")->class(null)
       ->rules("required")
