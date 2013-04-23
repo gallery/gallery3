@@ -34,7 +34,7 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $available_blocks = BlockManager::get_available_site_blocks();
 
     $active_blocks = array();
-    foreach ((array) Request::current()->query("block") as $block_id) {
+    foreach ((array) $this->request->query("block") as $block_id) {
       $active_blocks[md5($block_id)] = explode(":", (string) $block_id);
     }
     BlockManager::set_active("site_sidebar", $active_blocks);
