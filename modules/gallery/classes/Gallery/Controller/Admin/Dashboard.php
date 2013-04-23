@@ -89,7 +89,7 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
 
     foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
       $new_blocks = array();
-      foreach ((array) Request::current()->query($location) as $id) {
+      foreach ((array) $this->request->query($location) as $id) {
         $new_blocks[$id] = $active_set[$id];
       }
       BlockManager::set_active($location, $new_blocks);

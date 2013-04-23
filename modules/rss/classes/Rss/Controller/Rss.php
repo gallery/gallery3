@@ -25,13 +25,13 @@ class Rss_Controller_Rss extends Controller {
     $feed_id = $this->request->arg(1);
     $id = $this->request->arg_optional(2);
 
-    $page = (int) Arr::get(Request::current()->query(), "page", 1);
+    $page = (int) Arr::get($this->request->query(), "page", 1);
     if ($page < 1) {
       $this->redirect(URL::query(array("page" => 1)));
     }
 
     // Configurable page size between 1 and 100, default 20
-    $page_size = max(1, min(100, (int) Arr::get(Request::current()->query(), "page_size", self::$page_size)));
+    $page_size = max(1, min(100, (int) Arr::get($this->request->query(), "page_size", self::$page_size)));
 
     // Run the appropriate feed callback
     if (Module::is_active($module_id)) {
