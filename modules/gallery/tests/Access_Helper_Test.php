@@ -21,6 +21,7 @@ class Access_Helper_Test extends Unittest_TestCase {
   private $_group;
 
   public function setup() {
+    parent::setup();
     Identity::set_active_user(Identity::guest());
   }
 
@@ -46,6 +47,7 @@ class Access_Helper_Test extends Unittest_TestCase {
     // Reset some permissions that we mangle below
     Access::allow(Identity::everybody(), "view", Item::root());
     Identity::set_active_user(Identity::admin_user());
+    parent::teardown();
   }
 
   public function test_groups_and_permissions_are_bound_to_columns() {

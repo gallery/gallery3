@@ -19,11 +19,13 @@
  */
 class Albums_Controller_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     $this->_save = array($_POST, $_SERVER);
   }
 
   public function teardown() {
     list($_POST, $_SERVER) = $this->_save;
+    parent::teardown();
   }
 
   public function test_change_album() {

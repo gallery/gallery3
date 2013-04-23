@@ -19,11 +19,13 @@
  */
 class Url_Security_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     $this->save = array(Route::$current_uri, Route::$complete_uri, $_GET);
   }
 
   public function teardown() {
     list(Route::$current_uri, Route::$complete_uri, $_GET) = $this->save;
+    parent::teardown();
   }
 
   public function test_xss_in_current_url() {

@@ -23,6 +23,7 @@ class Comment_Helper_Test extends Unittest_Testcase {
   private $_save;
 
   public function setup() {
+    parent::setup();
     $this->_client_ip = Request::$client_ip;
     $this->_user_agent = Request::$user_agent;  // Use this instead of user_agent() for exact reset.
     $this->_save = $_SERVER;
@@ -47,6 +48,7 @@ class Comment_Helper_Test extends Unittest_Testcase {
     Request::$client_ip = $this->_client_ip;
     Request::$user_agent = $this->_user_agent;
     $_SERVER = $this->_save;
+    parent::teardown();
   }
 
   public function test_create_comment_for_guest() {

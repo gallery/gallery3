@@ -20,6 +20,7 @@
 class Item_Rest_Helper_Test extends Unittest_Testcase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
+    parent::teardown();
   }
 
   public function test_resolve() {

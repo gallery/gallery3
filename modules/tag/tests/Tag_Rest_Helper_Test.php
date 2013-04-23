@@ -19,6 +19,7 @@
  */
 class Tag_Rest_Helper_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     try {
       Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
       Database::instance()->query(Database::TRUNCATE, "TRUNCATE {items_tags}");

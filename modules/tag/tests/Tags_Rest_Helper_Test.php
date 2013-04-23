@@ -19,6 +19,7 @@
  */
 class Tags_Rest_Helper_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     try {
       Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
       Database::instance()->query(Database::TRUNCATE, "TRUNCATE {items_tags}");
@@ -28,6 +29,7 @@ class Tags_Rest_Helper_Test extends Unittest_Testcase {
 
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
+    parent::teardown();
   }
 
   public function test_get() {

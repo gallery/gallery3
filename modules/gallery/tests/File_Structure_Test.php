@@ -307,8 +307,8 @@ class File_Structure_Test extends Unittest_Testcase {
           if ($scan) {
             if (preg_match("/^\s*public\s+function/", $line)) {
               $this->assertTrue(
-                preg_match("/^\s*public\s+function (setup|teardown|.*_test)\(\) {/", $line),
-                "public functions must end in _test:\n$file\n$line\n");
+                preg_match("/^\s*public\s+function (setup|teardown|test_.*)\(\) {/", $line),
+                "public functions must start with in 'test_':\n$file\n$line\n");
             }
           }
         }

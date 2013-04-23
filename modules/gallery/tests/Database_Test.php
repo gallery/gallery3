@@ -19,6 +19,7 @@
  */
 class Database_Test extends Unittest_Testcase {
   function setup() {
+    parent::setup();
     $config = Config::instance();
     $config->set("database.mock.connection.type", "mock");
     $config->set("database.mock.cache", false);

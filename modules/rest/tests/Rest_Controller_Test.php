@@ -19,6 +19,7 @@
  */
 class Rest_Controller_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     $this->_save = array($_GET, $_POST, $_SERVER);
 
     $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = Rest::access_key();
@@ -27,6 +28,7 @@ class Rest_Controller_Test extends Unittest_Testcase {
   public function teardown() {
     list($_GET, $_POST, $_SERVER) = $this->_save;
     Identity::set_active_user(Identity::admin_user());
+    parent::teardown();
   }
 
   public function test_login() {

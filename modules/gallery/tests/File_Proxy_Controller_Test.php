@@ -19,12 +19,14 @@
  */
 class File_Proxy_Controller_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     $this->_save = array($_SERVER);
   }
 
   public function teardown() {
     list($_SERVER) = $this->_save;
     Identity::set_active_user(Identity::admin_user());
+    parent::teardown();
   }
 
   public function test_basic() {

@@ -19,6 +19,7 @@
  */
 class Sendmail_Test extends Unittest_Testcase {
   public function setup() {
+    parent::setup();
     Module::set_var("gallery", "email_from", "from@gallery3.com");
     Module::set_var("gallery", "email_reply_to", "reply_to@gallery3.com");
   }

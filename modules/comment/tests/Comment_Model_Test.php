@@ -20,6 +20,7 @@
 class Comment_Model_Test extends Unittest_Testcase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
+    parent::teardown();
   }
 
   public function test_guest_name_and_email_is_required() {

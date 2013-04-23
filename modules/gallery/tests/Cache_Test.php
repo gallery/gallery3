@@ -20,6 +20,7 @@
 class Cache_Test extends Unittest_Testcase {
   private $_driver;
   public function setup() {
+    parent::setup();
     DB::delete("caches")->execute();
     $this->_driver = Cache::instance();
   }

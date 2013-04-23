@@ -22,6 +22,7 @@ class Locales_Helper_Test extends Unittest_Testcase {
   static $default_locale;
 
   public function setup() {
+    parent::setup();
     self::$installed_locales = Locales::installed();
     self::$default_locale = Module::get_var("gallery", "default_locale");
     Locales::update_installed(array_keys(Locales::available()));
@@ -31,6 +32,7 @@ class Locales_Helper_Test extends Unittest_Testcase {
   public function teardown() {
     Locales::update_installed(array_keys(self::$installed_locales));
     Module::set_var("gallery", "default_locale", self::$default_locale);
+    parent::teardown();
   }
 
   public function test_locale_from_http_request() {

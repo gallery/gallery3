@@ -24,6 +24,7 @@ class Akismet_Helper_Test extends Unittest_Testcase {
   private $_api_key;
 
   public function setup() {
+    parent::setup();
     $this->_client_ip = Request::$client_ip;
     $this->_user_agent = Request::$user_agent;  // Use this instead of user_agent() for exact reset.
     $this->_save = $_SERVER;
@@ -41,6 +42,7 @@ class Akismet_Helper_Test extends Unittest_Testcase {
     Request::$user_agent = $this->_user_agent;
     $_SERVER = $this->_save;
     Module::set_var("akismet", "api_key", $this->_api_key);
+    parent::teardown();
   }
 
   private function _make_comment() {
