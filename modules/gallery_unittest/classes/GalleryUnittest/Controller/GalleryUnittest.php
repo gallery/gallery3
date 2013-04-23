@@ -98,14 +98,12 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
         }
       }
 
-      $config->set('unit_test.paths', $paths);
-
       // Trigger late-binding install actions (defined in Hook_GalleryEvent::user_login)
       Graphics::choose_default_toolkit();
 
-      $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
-      $unit_test = new Unit_Test($modules, $filter);
-      $this->response->body($unit_test);
+      require "/usr/share/php/PHPUnit/Autoload.php";
+      $_SERVER["argv"] = array("", MODPATH . "unittest/tests.php");
+      PHPUnit_TextUI_Command::main();
     } catch (ORM_Validation_Exception $e) {
       $errors = "";
       foreach ($e->validation->errors() as $field => $msg) {
@@ -121,17 +119,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
             $e->getTraceAsString() . "\n");
     }
 
-    if (!isset($unit_test)) {
-      // If an exception is thrown, it's possible that $unit_test was never set.
-      $failed = 1;
-    } else {
-      $failed = 0;
-      foreach ($unit_test->stats as $class => $stats) {
-        $failed += ($stats["failed"] + $stats["errors"]);
-      }
-    }
-    if (PHP_SAPI == 'cli') {
-      exit($failed);
-    }
+    // @todo: we need to exit here with a failure count so that Travis knows that
+    // the build was successful (or not!)
   }
 }

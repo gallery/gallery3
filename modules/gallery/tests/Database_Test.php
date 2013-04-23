@@ -150,41 +150,43 @@ class Database_Test extends Unittest_Testcase {
   }
 }
 
-class Database_Mock extends Database {
+class Database_Mock extends Gallery_Database {
   public function connect() {
   }
 
   public function disconnect() {
+    return true;
   }
 
   public function set_charset($charset) {
   }
 
-  public function query_execute($sql) {
+  public function query($type, $sql, $as_object=false, array $params=null) {
+    return array($type, $sql, $as_object, $params);
   }
 
-  public function escape($val) {
+  public function begin($mode=null) {
+    return true;
   }
 
-  public function list_constraints($table) {
+  public function commit() {
+    return true;
   }
 
-  public function list_fields($table) {
+  public function rollback() {
+    return true;
   }
 
-  public function list_tables() {
-    return array("test");
+  public function list_tables($like=null) {
+    return array("@todo put something reasonable here");
   }
 
-  public function quote_column($val, $alias=null) {
-    return $alias ? "[$val,$alias]" : "[$val]";
+  public function list_columns($table, $like=null, $add_prefix=true) {
+    return array("@todo put something reasonable here");
   }
 
-  public function quote_table($val, $alias=null) {
-    return $alias ? "[$val,$alias]" : "[$val]";
+  public function escape($value) {
+    return "[escaped:$value]";
   }
 
-  public function quote($val) {
-    return "[$val]";
-  }
 }

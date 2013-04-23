@@ -151,11 +151,13 @@ class Kohana_Exception_Test_Database extends Database {
   public function connect() {}
   public function disconnect() {}
   public function set_charset($charset) {}
-  public function query_execute($sql) {}
+  public function query($type, $sql, $as_object=false, array $params=null) {}
+  public function begin($mode=null) {}
+  public function commit() {}
+  public function rollback() {}
+  public function list_tables($like=null) {}
+  public function list_columns($table, $like=null, $add_prefix=true) {}
   public function escape($value) {}
-  public function list_constraints($table) {}
-  public function list_fields($table) {}
-  public function list_tables() {}
 }
 
 class Kohana_Exception_Test_Class {
