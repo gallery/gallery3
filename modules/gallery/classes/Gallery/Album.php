@@ -30,16 +30,16 @@ class Gallery_Album {
     $group = $form->group("add_album")
       ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"))
-      ->error_messages("required", t("You must provide a title"))
-      ->error_messages("length", t("Your title is too long"));
+      ->error_messages("not_empty", t("You must provide a title"))
+      ->error_messages("max_length", t("Your title is too long"));
     $group->textarea("description")->label(t("Description"));
     $group->input("name")->label(t("Directory name"))
-      ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
-      ->error_messages("no_backslashes", t("The directory name can't contain a \"\\\""))
+      ->error_messages("contains_no_slashes", t("The directory name can't contain a \"/\""))
+      ->error_messages("contains_no_backslashes", t("The directory name can't contain a \"\\\""))
       ->error_messages("no_trailing_period", t("The directory name can't end in \".\""))
-      ->error_messages("required", t("You must provide a directory name"))
-      ->error_messages("length", t("Your directory name is too long"))
-      ->error_messages("conflict", t("There is already a movie, photo or album with this name"));
+      ->error_messages("not_empty", t("You must provide a directory name"))
+      ->error_messages("max_length", t("Your directory name is too long"))
+      ->error_messages("name_conflict", t("There is already a movie, photo or album with this name"));
     $group->input("slug")->label(t("Internet Address"))
       ->error_messages(
         "conflict", t("There is already a movie, photo or album with this internet address"))
@@ -48,8 +48,8 @@ class Gallery_Album {
       ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"))
-      ->error_messages("required", t("You must provide an internet address"))
-      ->error_messages("length", t("Your internet address is too long"));
+      ->error_messages("not_empty", t("You must provide an internet address"))
+      ->error_messages("max_length", t("Your internet address is too long"));
     $group->hidden("type")->value("album");
 
     Module::event("album_add_form", $parent, $form);
@@ -68,17 +68,17 @@ class Gallery_Album {
     $group = $form->group("edit_item")->label(t("Edit Album"));
 
     $group->input("title")->label(t("Title"))->value($parent->title)
-      ->error_messages("required", t("You must provide a title"))
-      ->error_messages("length", t("Your title is too long"));
+      ->error_messages("not_empty", t("You must provide a title"))
+      ->error_messages("max_length", t("Your title is too long"));
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
       $group->input("name")->label(t("Directory Name"))->value($parent->name)
-        ->error_messages("conflict", t("There is already a movie, photo or album with this name"))
+        ->error_messages("name_conflict", t("There is already a movie, photo or album with this name"))
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->error_messages("no_backslashes", t("The directory name can't contain a \"\\\""))
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""))
-        ->error_messages("required", t("You must provide a directory name"))
-        ->error_messages("length", t("Your directory name is too long"));
+        ->error_messages("not_empty", t("You must provide a directory name"))
+        ->error_messages("max_length", t("Your directory name is too long"));
       $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
         ->error_messages(
           "conflict", t("There is already a movie, photo or album with this internet address"))
@@ -87,8 +87,8 @@ class Gallery_Album {
         ->error_messages(
           "not_url_safe",
           t("The internet address should contain only letters, numbers, hyphens and underscores"))
-        ->error_messages("required", t("You must provide an internet address"))
-        ->error_messages("length", t("Your internet address is too long"));
+        ->error_messages("not_empty", t("You must provide an internet address"))
+        ->error_messages("max_length", t("Your internet address is too long"));
     } else {
       $group->hidden("name")->value($parent->name);
       $group->hidden("slug")->value($parent->slug);

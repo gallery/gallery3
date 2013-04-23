@@ -77,18 +77,18 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
       ->callback(array($this, "validate_page_size"))
-      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("not_empty", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->error_messages("valid_min_value", t("The value must be greater than zero"))
       ->value(Module::get_var("gallery", "page_size"));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
       ->rules("required|valid_digit")
-      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("not_empty", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->value(Module::get_var("gallery", "thumb_size"));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
       ->rules("required|valid_digit")
-      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("not_empty", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->value(Module::get_var("gallery", "resize_size"));
     $group->input("favicon_url")->label(t("URL (or relative path) to your favicon.ico"))

@@ -871,20 +871,44 @@ class Gallery_Model_Item extends ORM_MPTT {
 
   public function rules() {
     $rules = array(
-        "album_cover_item_id" => array("callbacks" => array(array($this, "valid_album_cover"))),
-        "description"         => array("rules"     => array("length[0,65535]")),
-        "mime_type"           => array("callbacks" => array(array($this, "valid_field"))),
-        "name"                => array("rules"     => array("length[0,255]", "required"),
-                                       "callbacks" => array(array($this, "valid_name"))),
-        "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
-        "rand_key"            => array("rule"      => array("decimal")),
-        "slug"                => array("rules"     => array("length[0,255]", "required"),
-                                       "callbacks" => array(array($this, "valid_slug"))),
-        "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
-        "sort_order"          => array("callbacks" => array(array($this, "valid_field"))),
-        "title"               => array("rules"     => array("length[0,255]", "required")),
-        "type"                => array("callbacks" => array(array($this, "read_only"),
-                                                            array($this, "valid_field"))),
+      "album_cover_item_id" => array(
+        array(array($this, "valid_album_cover"), array(":validation"))),
+
+      "description" => array(
+        array("max_length", array(":value", 65535))),
+
+      "mime_type" => array(
+        array(array($this, "valid_field"), array(":validation", ":field", ":original_values"))),
+
+      "name" => array(
+        array("max_length", array(":value", 255)),
+        array("not_empty"),
+        array(array($this, "valid_name"), array(":validation"))),
+
+      "parent_id" => array(
+        array(array($this, "valid_parent"), array(":validation"))),
+
+      "rand_key" => array(
+        array("decimal")),
+
+      "slug" => array(
+        array("max_length", array(":value", 255)),
+        array("not_empty"),
+        array(array($this, "valid_slug"), array(":validation"))),
+
+      "sort_column" => array(
+        array(array($this, "valid_field"), array(":validation", ":field", ":original_values"))),
+
+      "sort_order" => array(
+        array(array($this, "valid_field"), array(":validation", ":field", ":original_values"))),
+
+      "title" => array(
+        array("max_length", array(":value", 255)),
+        array("not_empty")),
+
+      "type" => array(
+        array(array($this, "read_only"), array(":validation", ":field")),
+        array(array($this, "valid_field"), array(":validation", ":field", ":original_values")))
       );
 
       // Conditional rules
@@ -897,7 +921,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       // Movies and photos must have data files.  Verify the data file on new items, or if it has
       // been replaced.
       if (($this->is_photo() || $this->is_movie()) && $this->data_file) {
-        $rules["name"]["callbacks"][] = array($this, "valid_data_file");
+        $rules["name"][] = array(array($this, "valid_data_file"), array(":validation"));
       }
 
       return $rules;
@@ -937,7 +961,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * - illegal_data_file_extension (non-albums only): has double, no, or illegal extension
    * - conflict: has conflicting name
    */
-  public function valid_name(Validation $v, $field) {
+  public function valid_name(Validation $v) {
     if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
       return;
@@ -1006,7 +1030,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   /**
    * Make sure that the data file is well formed (it exists and isn't empty).
    */
-  public function valid_data_file(Validation $v, $field) {
+  public function valid_data_file(Validation $v) {
     if (!is_file($this->data_file)) {
       $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
@@ -1019,7 +1043,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   /**
    * Make sure that the parent id refers to an album.
    */
-  public function valid_parent(Validation $v, $field) {
+  public function valid_parent(Validation $v) {
     if ($this->id == 1) {
       if ($this->parent_id != 0) {
         $v->add_error("parent_id", "invalid");
@@ -1047,7 +1071,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   /**
    * Make sure the album cover item id refers to a valid item, or is null.
    */
-  public function valid_album_cover(Validation $v, $field) {
+  public function valid_album_cover(Validation $v) {
     if ($this->id == 1) {
       return;
     }
@@ -1065,7 +1089,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   /**
    * Make sure that the type is valid.
    */
-  public function valid_field(Validation $v, $field) {
+  public function valid_field(Validation $v, $field, $original_values) {
     switch($field) {
     case "mime_type":
       if ($this->is_movie()) {
@@ -1076,7 +1100,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       break;
 
     case "sort_column":
-      if (!array_key_exists($this->sort_column, $this->object)) {
+      if (!array_key_exists($this->sort_column, $original_values)) {
         $v->add_error($field, "invalid");
       }
       break;

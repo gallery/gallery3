@@ -381,10 +381,10 @@ class Item_Model_Test extends Unittest_Testcase {
     try {
       $item->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("description" => "length",
-                               "name" => "required",
-                               "title" => "required",
-                               "album_cover_item_id" => "invalid_item",
+      $this->assert_same(array("description" => "max_length",
+                               "name" => "not_empty",
+                               "title" => "not_empty",
+                               "album_cover_item_id" => "valid_album_cover",
                                "parent_id" => "invalid",
                                "sort_column" => "invalid",
                                "sort_order" => "invalid",
