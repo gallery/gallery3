@@ -32,8 +32,13 @@ class Gallery_Controller_Admin extends Controller {
 
     $time_remaining = Auth::get_time_remaining_for_admin_area();
 
-    if (Request::current()->query("reauth_check")) {
-      return self::_reauth_check($time_remaining);
+    if ($this->request->query("reauth_check")) {
+      $result["result"] = "success";
+      if ($time_remaining < 30) {
+        Message::success(t("Automatically logged out of the admin area for your security"));
+        $result["location"] = URL::abs_site("");
+      }
+      $this->response->json($result);
     }
 
     if ($time_remaining < 0) {
@@ -45,17 +50,6 @@ class Gallery_Controller_Admin extends Controller {
     if (Request::current()->method() == HTTP_Request::POST) {
       Access::verify_csrf();
     }
-  }
-
-  private static function _reauth_check($time_remaining) {
-    $result = new stdClass();
-    $result->result = "success";
-    if ($time_remaining < 30) {
-      Message::success(t("Automatically logged out of the admin area for your security"));
-      $result->location = URL::abs_site("");
-    }
-
-    $this->response->json($result);
   }
 
   private static function _prompt_for_reauth() {
