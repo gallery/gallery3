@@ -126,7 +126,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->name = "/no_slashes/allowed/";
     // Should fail on validate.
     try {
-      $item->validate();
+      $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $errors = $e->validation->errors();
@@ -146,7 +146,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->name = "\\no_backslashes\\allowed\\";
     // Should fail on validate.
     try {
-      $item->validate();
+      $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $errors = $e->validation->errors();
@@ -166,7 +166,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->name = "no_trailing_period_allowed.";
     // Should fail on validate.
     try {
-      $item->validate();
+      $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $errors = $e->validation->errors();
@@ -186,7 +186,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->name = "/no_album_slashes/allowed/";
     // Should fail on validate.
     try {
-      $item->validate();
+      $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $errors = $e->validation->errors();
@@ -206,7 +206,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->name = "\\no_album_backslashes\\allowed\\";
     // Should fail on validate.
     try {
-      $item->validate();
+      $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $errors = $e->validation->errors();
@@ -226,7 +226,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->name = ".no_trailing_period.allowed.";
     // Should fail on validate.
     try {
-      $item->validate();
+      $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $errors = $e->validation->errors();
