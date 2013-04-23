@@ -23,27 +23,29 @@ abstract class Gallery_Controller extends Kohana_Controller {
   public $allow_private_gallery = false;
 
   /**
-   * This is run to initialize Gallery before executing the controller action.
+   * Check if we need to halt controller execution and send an auth-related reponse to the user
+   * instead.  Controllers can overload this function to add checks of their own.  For example:
+   *   public function check_auth($auth) {
+   *     if (Example::foo()) {
+   *       $auth->login = true;
+   *     }
+   *     return parent::check_auth($auth);
+   *   }
+   *
+   * @see  Controller::execute() for more details on how $auth is processed
+   * @see  Controller_Admin::check_auth() for how this is used in the admin area
+   * @param   object  $auth  Auth as directed by child classes
+   * @return  object  $auth  Auth as directed to parent classes
    */
-  public function before() {
-    parent::before();
-
-    // Restrict all response frames to the same origin for security
-    $this->response->headers("X-Frame-Options", "SAMEORIGIN");
-
-    // Initialize the modules (will run "gallery_ready" event)
-    if ($this->request->is_initial()) {
-      Gallery::ready();
-    }
-
+  public function check_auth($auth) {
     // See if we need to login because we're in maintenance mode.  This will force all non-admins
     // back to the login page, unless the controller has "$allow_maintenance_mode == true".
     // The site theme will put a "This site is down for maintenance" message on the login page.
     if (Module::get_var("gallery", "maintenance_mode", 0) &&
         !Identity::active_user()->admin &&
         !$this->allow_maintenance_mode) {
-      $this->request->post("continue_url", URL::abs_site("admin/maintenance"));
-      $this->request->action("show_login");
+      $auth->continue_url = "admin/maintenance";
+      $auth->login = true;
     }
 
     // See if we need to login because we have a private gallery.  This will force all guests
@@ -52,24 +54,59 @@ abstract class Gallery_Controller extends Kohana_Controller {
         !Access::user_can(Identity::guest(), "view", Item::root()) &&
         (php_sapi_name() != "cli") &&
         !$this->allow_private_gallery) {
-      $this->request->action("show_login");
+      $auth->login = true;
     }
+
+    return $auth;
   }
 
-  public function action_show_login() {
-    // Get continue_url from post, or set to current URL if not found.  Then, set in session.
-    $continue_url = Arr::get($this->request->post(), "continue_url", URL::abs_current());
-    Session::instance()->set("continue_url", $continue_url);
-
-    if (Theme::$is_admin) {
-      // At this point we're in the admin theme and it doesn't have a themed login page, so
-      // we can't just swap in the login controller and have it work.  So redirect to the
-      // login where we'll run this code again with the site theme.  This will maintain the
-      // continue_url since it's set in the session.
-      $this->redirect("login");
-    } else {
-      // Show the login page without redirecting.
-      $this->response = Request::factory("login")->execute();
+  /**
+   * Overload Controller::execute() to add initialization and auth checking before executing the
+   * controller as normal.  Controllers should use before() and after() functions instead of trying
+   * to overload this implementation.
+   */
+  public function execute() {
+    // Initialize the modules (will run "gallery_ready" event).
+    if ($this->request->is_initial()) {
+      Gallery::ready();
     }
+
+    // Restrict all response frames to the same origin for security.
+    $this->response->headers("X-Frame-Options", "SAMEORIGIN");
+
+    // Populate $auth with our defaults, then run check_auth().
+    $auth = new stdClass();
+    $auth->login = false;
+    $auth->reauthenticate = false;
+    $auth->continue_url = $this->request->uri();
+    $auth = $this->check_auth($auth);
+
+    // If check_auth() generated a response (e.g. admin reauth_check), halt controller and send it.
+    if ($this->response->body()) {
+      return $this->response;
+    }
+
+    if ($auth->login || $auth->reauthenticate) {
+      $url = $auth->login ? "login" : "reauthenticate";
+
+      // Set the continue_url and is_ajax values in the session so they're kept if we redirect.
+      Session::instance()->set("continue_url", URL::abs_site($auth->continue_url));
+      Session::instance()->set("is_ajax_request", $this->request->is_ajax());
+
+      if (Theme::$is_admin) {
+        // At this point we're in the admin theme and it doesn't have themed pages for this, so we
+        // can't just do an internal sub-request.  So we redirect, where we'll run this code again
+        // with the site theme.  This will still maintain the variables set in the Session.
+        $this->redirect($url);
+      } else {
+        // Show the page without redirecting the browser.
+        $this->response = Request::factory($url)->execute();
+      }
+    } else {
+      // No auth required - execute the controller's before(), action, and after() as normal.
+      parent::execute();
+    }
+
+    return $this->response;
   }
 }

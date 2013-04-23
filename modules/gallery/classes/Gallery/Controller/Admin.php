@@ -18,58 +18,42 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Admin extends Controller {
-  public function before() {
-    parent::before();
-
+  /**
+   * Do auth checks for the admin area.
+   */
+  public function check_auth($auth) {
     if (!Identity::active_user()->admin) {
+      // We're not an admin - redirect guests to login or non-admin users to a 403 Forbidden.
       if (Identity::active_user()->guest) {
-        Session::instance()->set("continue_url", URL::abs_current(true));
-        $this->redirect("login");
+        $auth->login = true;
       } else {
         Access::forbidden();
       }
+    } else {
+      $time_remaining = Auth::get_time_remaining_for_admin_area();
+
+      if ($this->request->query("reauth_check")) {
+        // This is the ajax query checking to see if our admin session has expired.
+        $result["result"] = "success";
+        if ($time_remaining < 30) {
+          Message::success(t("Automatically logged out of the admin area for your security"));
+          $result["location"] = URL::abs_site("");  // site root
+        }
+        $this->response->json($result);
+      } else {
+        // Go to the reauth page if they've timed out, otherwise refresh the activity timestamp.
+        if ($time_remaining < 0) {
+          $auth->reauthenticate = true;
+        } else {
+          Session::instance()->set("admin_area_activity_timestamp", time());
+        }
+      }
     }
 
-    if (Request::current()->query("reauth_check")) {
-      return self::_reauth_check();
-    }
-
-    if (Auth::must_reauth_for_admin_area()) {
-      return self::_prompt_for_reauth();
-    }
-
-    if (Request::current()->method() == HTTP_Request::POST) {
+    if ($this->request->method() == HTTP_Request::POST) {
       Access::verify_csrf();
     }
-  }
 
-  private static function _reauth_check() {
-    $session = Session::instance();
-    $last_active_auth = $session->get("active_auth_timestamp", 0);
-    $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
-    $admin_area_timeout = Module::get_var("gallery", "admin_area_timeout");
-
-    $time_remaining = max($last_active_auth, $last_admin_area_activity) +
-      $admin_area_timeout - time();
-
-    $result = new stdClass();
-    $result->result = "success";
-    if ($time_remaining < 30) {
-      Message::success(t("Automatically logged out of the admin area for your security"));
-      $result->location = URL::abs_site("");
-    }
-
-    $this->response->json($result);
-  }
-
-  private static function _prompt_for_reauth() {
-    if (Request::current()->method() == HTTP_Request::GET) {
-      // Avoid anti-phishing protection by passing the url as session variable.
-      Session::instance()->set("continue_url", URL::abs_current(true));
-    }
-    // Save the is_ajax value as we lose it, if set, when we redirect
-    Session::instance()->set("is_ajax_request", Request::current()->is_ajax());
-    $this->redirect("reauthenticate");
+    return parent::check_auth($auth);
   }
 }
-

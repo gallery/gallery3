@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Reauthenticate extends Controller {
   public function action_index() {
-    $is_ajax = Session::instance()->get_once("is_ajax_request", Request::current()->is_ajax());
+    $is_ajax = Session::instance()->get_once("is_ajax_request", $this->request->is_ajax());
     if (!Identity::active_user()->admin) {
       if ($is_ajax) {
         // We should never be able to get here since Controller_Admin::_reauth_check() won't work
@@ -53,7 +53,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     $user = Identity::active_user();
     if ($valid) {
       Module::event("user_auth", $user);
-      if (!Request::current()->is_ajax()) {
+      if (!$this->request->is_ajax()) {
         Message::success(t("Successfully re-authenticated!"));
       }
       $this->redirect(Session::instance()->get_once("continue_url"));
@@ -61,7 +61,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       $name = $user->name;
       GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
       Module::event("user_auth_failed", $name);
-      if (Request::current()->is_ajax()) {
+      if ($this->request->is_ajax()) {
         $v = new View("gallery/reauthenticate.html");
         $v->form = $form;
         $v->user_name = Identity::active_user()->name;

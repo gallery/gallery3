@@ -26,7 +26,7 @@ class Tag_Controller_Tag extends Controller {
     }
 
     $page_size = Module::get_var("gallery", "page_size", 9);
-    $show = Request::current()->query("show");
+    $show = $this->request->query("show");
 
     if ($show) {
       $child = ORM::factory("Item", $show);
@@ -37,7 +37,7 @@ class Tag_Controller_Tag extends Controller {
         $this->redirect($uri . ($page == 1 ? "" : "?page=$page"));
       }
     } else {
-      $page = (int) Arr::get(Request::current()->query(), "page", "1");
+      $page = (int) Arr::get($this->request->query(), "page", "1");
     }
 
     $children_count = $tag->items_count();
