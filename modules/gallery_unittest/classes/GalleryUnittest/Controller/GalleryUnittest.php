@@ -101,8 +101,11 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       // Trigger late-binding install actions (defined in Hook_GalleryEvent::user_login)
       Graphics::choose_default_toolkit();
 
+      // Rework the cli arguments to look like a traditional phpunit execution
+      array_splice($_SERVER["argv"], 0, 2, "phpunit");
+      $_SERVER["argv"][] = MODPATH . "unittest/tests.php";
+
       require "/usr/share/php/PHPUnit/Autoload.php";
-      $_SERVER["argv"] = array("", MODPATH . "unittest/tests.php");
       PHPUnit_TextUI_Command::main();
     } catch (ORM_Validation_Exception $e) {
       $errors = "";
