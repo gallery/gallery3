@@ -81,23 +81,6 @@ class Gallery_ORM extends Kohana_ORM {
    *           "Model_ORMAnotherExample"   --> "ormanother_example", not "ormanotherexample"
    *           "Model_AnotherORMExample"   --> "another_ormexample", not "anotherormexample"
    *
-   * Then, we populate the relationships cache by running the "model_relationships" event then
-   * use the cache to define the relationships of new model instances.  Since the cache is static,
-   * it only needs to be populated once.  Note that we only populate (and use) the cache once we've
-   * run Module::load_modules().  This means that it's not easy to add relationships to Model_Module
-   * or Model_Var using this method since they're used in the Module class to load the modules in
-   * the first place.  Similar to the object name, we set the foreign model names using our method.
-   *
-   * Example: a module wants to establish a "has_many through" relationship between its foo model
-   * and the item model using the pivot table "items_foo_bars".  In the module's event hook, we have:
-   *   function model_relationships($relationships) {
-   *     $relationships["item"]["has_many"]["foo_bars"] = array("through" => "items_foo_bars");
-   *     $relationships["foo_bar"]["has_many"]["items"] = array("through" => "items_foo_bars");
-   *   }
-   * This will map "Model_Item" and "Model_FooBar" with object names "item" and "foo_bar" to DB
-   * tables "items" and "foo_bars" with a DB pivot table "items_foo_bars" that has columns "item_id"
-   * and "foo_bar_id".  For more information, see Kohana's ORM relationships documentation.
-   *
    * @see ORM::_initialize()
    */
   protected function _initialize() {
@@ -124,6 +107,24 @@ class Gallery_ORM extends Kohana_ORM {
    * called with a module parameter, run incrementally to fold that module's model relationships
    * into the existing set.  This is useful when we're installing a module but it's not yet
    * active and cannot be reached by Module::event()
+   *
+   * We populate the relationships cache by running the "model_relationships" event then use the
+   * cache to define the relationships of new model instances.  Since the cache is static, it only
+   * needs to be populated once.  Note that we only populate (and use) the cache once we've run
+   * Module::load_modules().  This means that it's not easy to add relationships to Model_Module
+   * or Model_Var using this method since they're used in the Module class to load the modules in
+   * the first place.  Similar to the object name, we set the foreign model names using our
+   * method.
+   *
+   * Example: a module wants to establish a "has_many through" relationship between its foo model
+   * and the item model using the pivot table "items_foo_bars".  In the module's event hook, we have:
+   *   function model_relationships($relationships) {
+   *     $relationships["item"]["has_many"]["foo_bars"] = array("through" => "items_foo_bars");
+   *     $relationships["foo_bar"]["has_many"]["items"] = array("through" => "items_foo_bars");
+   *   }
+   * This will map "Model_Item" and "Model_FooBar" with object names "item" and "foo_bar" to DB
+   * tables "items" and "foo_bars" with a DB pivot table "items_foo_bars" that has columns "item_id"
+   * and "foo_bar_id".  For more information, see Kohana's ORM relationships documentation.
    *
    * @param   string $module_name
    */
@@ -263,7 +264,7 @@ class Gallery_ORM extends Kohana_ORM {
   static function reinitialize() {
     ORM::$_init_cache = array();
     ORM::$_column_cache = array();
-    ORM::$_relationship_cache = new ArrayObject();
+    ORM::$_relationship_cache = null;
   }
 
   /**
