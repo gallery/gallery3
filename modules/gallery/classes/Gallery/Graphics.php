@@ -482,19 +482,15 @@ class Gallery_Graphics {
     }
     switch(Module::get_var("gallery", "graphics_toolkit")) {
     case "gd":
-      Config::instance()->set("image.driver", "GD");
+      Image::$default_driver = "GD";
       break;
 
     case "imagemagick":
-      Config::instance()->set("image.driver", "ImageMagick");
-      Config::instance()->set(
-        "image.params.directory", Module::get_var("gallery", "graphics_toolkit_path"));
+      Image::$default_driver = "Imagick";
       break;
 
     case "graphicsmagick":
-      Config::instance()->set("image.driver", "GraphicsMagick");
-      Config::instance()->set(
-        "image.params.directory", Module::get_var("gallery", "graphics_toolkit_path"));
+      Image::$default_driver = "GraphicsMagick";
       break;
     }
 
