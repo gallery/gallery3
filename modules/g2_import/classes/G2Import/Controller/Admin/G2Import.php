@@ -101,7 +101,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
 
   public function action_autocomplete() {
     $directories = array();
-    $path_prefix = Request::current()->query("term");
+    $path_prefix = $this->request->query("term");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
         $file = (string)HTML::clean($file);

@@ -267,7 +267,7 @@ class Gallery_Hook_GalleryEvent {
             $continue_url = Item::root()->abs_url();
           }
         } else {
-          $continue_url = URL::abs_current();
+          $continue_url = Request::current()->url(true);
         }
 
         $menu->append(Menu::factory("link")

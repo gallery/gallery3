@@ -41,24 +41,11 @@ class Gallery_URL extends Kohana_URL {
   }
 
   /**
-   * Just like URL::current except that it returns an absolute URI
-   */
-  static function abs_current($qs=false) {
-    return self::abs_site(URL::current($qs));
-  }
-
-  /**
    * Just like URL::query except that it escapes any XSS in the path.
    */
   static function query(array $params=null, $use_get=true) {
-    return htmlspecialchars(parent::query($params, $use_get));
-  }
-
-  /**
-   * Just like URL::current except that it escapes any XSS in the path.
-   */
-  static function current($qs=false, $suffix=false) {
-    return htmlspecialchars(Request::current()->url(true) . URL::query());
+    $params = Purifier::clean_html($params);
+    return parent::query($params, $use_get);
   }
 
   /**

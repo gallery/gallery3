@@ -21,8 +21,8 @@ class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
   public function action_index() {
-    $username = Request::current()->post("user");
-    $password = Request::current()->post("password");
+    $username = $this->request->post("user");
+    $password = $this->request->post("password");
 
     if (empty($username) || Auth::too_many_failures($username)) {
       throw new Rest_Exception("Forbidden", 403);
@@ -61,11 +61,11 @@ class Rest_Controller_Rest extends Controller {
 
       switch ($method = strtolower($_SERVER["REQUEST_METHOD"])) {
       case "get":
-        $request->params = (object) Request::current()->query();
+        $request->params = (object) $this->request->query();
         break;
 
       default:
-        $request->params = (object) Request::current()->post();
+        $request->params = (object) $this->request->post();
         if (isset($_FILES["file"])) {
           $request->file = Upload::save("file");
           System::delete_later($request->file);
@@ -87,7 +87,7 @@ class Rest_Controller_Rest extends Controller {
         $request->access_key = $request->params->access_key;
       }
 
-      $request->url = URL::abs_current(true);
+      $request->url = $this->request->url(true) . URL::query();
 
       Rest::set_active_user($request->access_key);
 

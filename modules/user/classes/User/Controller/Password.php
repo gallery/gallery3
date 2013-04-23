@@ -23,7 +23,7 @@ class User_Controller_Password extends Controller {
 
   public function action_reset() {
     $form = self::_reset_form();
-    if (Request::current()->method() == HTTP_Request::POST) {
+    if ($this->request->method() == HTTP_Request::POST) {
       // @todo separate the post from get parts of this function
       Access::verify_csrf();
       // Basic validation (was some user name specified?)
@@ -38,10 +38,10 @@ class User_Controller_Password extends Controller {
   }
 
   public function action_do_reset() {
-    if (Request::current()->method() == HTTP_Request::POST) {
+    if ($this->request->method() == HTTP_Request::POST) {
       $this->_change_password();
     } else {
-      $user = User::lookup_by_hash(Request::current()->query("key"));
+      $user = User::lookup_by_hash($this->request->query("key"));
       if (!empty($user)) {
         $this->response->body($this->_new_password_form($user->hash));
       } else {
@@ -89,7 +89,7 @@ class User_Controller_Password extends Controller {
   }
 
   private static function _reset_form() {
-    $form = new Forge(URL::current(true), "", "post", array("id" => "g-reset-form"));
+    $form = new Forge("password/reset", "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
     $group->input("name")->label(t("Username"))->id("g-name")->class(null)
       ->rules("required")
@@ -124,7 +124,7 @@ class User_Controller_Password extends Controller {
   private function _change_password() {
     $view = $this->_new_password_form();
     if ($view->content->validate()) {
-      $user = User::lookup_by_hash(Request::current()->post("hash"));
+      $user = User::lookup_by_hash($this->request->post("hash"));
       if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
