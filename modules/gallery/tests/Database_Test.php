@@ -20,10 +20,11 @@
 class Database_Test extends Unittest_Testcase {
   function setup() {
     parent::setup();
-    $config = Config::instance();
-    $config->set("database.mock.connection.type", "mock");
-    $config->set("database.mock.cache", false);
-    $config->set("database.mock.table_prefix", "g_");
+
+    $db_config = Kohana::$config->load("database");
+    $db_config["mock"] = $db_config["default"];
+    $db_config["mock"]["caching"] = false;
+    $db_config["mock"]["table_prefix"] = "g_";
   }
 
   function simple_where_test() {
