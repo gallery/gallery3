@@ -87,8 +87,8 @@ class Gallery_Request extends Kohana_Request {
   }
 
   /**
-   * Initialize the args array if not already set or if the force argument is specified.  This
-   * pulls it from the param array, parses it, and cleans it to protect against XSS.
+   * Initialize the args array if not already set or if the force argument is specified.
+   * This pulls it from the param array and parses it.
    */
   protected function _init_args($force=false) {
     if (!isset($this->_args) || $force) {
@@ -97,8 +97,21 @@ class Gallery_Request extends Kohana_Request {
         $this->_args = array();
       } else {
         $this->_args = explode("/", $this->_args);
-        $this->_args = Purifier::clean_html($this->_args);
       }
     }
+  }
+
+  /**
+   * Overload Request::__construct() to clean our URI and protect against XSS.  This happens after
+   * Request::factory() has autodetected the URI (if not specified) and removed the base URL and
+   * index (i.e. it's fed something like "my_controller/my_action?q=123"), but before our routes,
+   * params, and args are determined, so everything we do downstream is safe.  We make no attempt
+   * to be careful with "&" since Request::__construct() removes any query params before use.
+   *
+   * @see Request::__construct() and Request::factory()
+   */
+  public function __construct($uri, $client_params=array(), $allow_external=true, $injected_routes=array()) {
+    $uri = Purifier::clean_html($uri);
+    parent::__construct($uri, $client_params, $allow_external, $injected_routes);
   }
 }
