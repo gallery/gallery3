@@ -198,7 +198,7 @@ class Gallery_Access {
    * Terminate immediately with an HTTP 403 Forbidden response.
    */
   static function forbidden() {
-    throw new Kohana_Exception("@todo FORBIDDEN", null, 403);
+    throw HTTP_Exception::factory(403);
   }
 
   /**
