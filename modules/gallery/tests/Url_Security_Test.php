@@ -29,8 +29,8 @@ class Url_Security_Test extends Unittest_Testcase {
   public function xss_in_current_url_test() {
     Route::$current_uri = "foo/<xss>/bar";
     Route::$complete_uri = "foo/<xss>/bar?foo=bar";
-    $this->assert_same("foo/&lt;xss&gt;/bar", URL::current());
-    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", URL::current(true));
+    $this->assert_same("foo/&lt;xss&gt;/bar", Request::current()->uri());
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", Request::current()->uri() . URL::query());
   }
 
   public function xss_in_merged_url_test() {

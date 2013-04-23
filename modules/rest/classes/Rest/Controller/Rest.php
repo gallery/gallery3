@@ -87,7 +87,7 @@ class Rest_Controller_Rest extends Controller {
         $request->access_key = $request->params->access_key;
       }
 
-      $request->url = URL::abs_current(true);
+      $request->url = $this->request->url(true) . URL::query();
 
       Rest::set_active_user($request->access_key);
 
