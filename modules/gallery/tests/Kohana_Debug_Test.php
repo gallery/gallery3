@@ -17,42 +17,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Kohana_Exception_Test extends Unittest_Testcase {
+class Debug_Test extends Unittest_Testcase {
 
   public function test_dump() {
     // Verify the override.
     $this->assertEquals('<small>string</small><span>(19)</span> "removed for display"',
-        Kohana_Exception::dump("1a62761b836138c6198313911"));
+        Debug::dump("1a62761b836138c6198313911"));
     $this->assertEquals('<small>string</small><span>(14)</span> "original value"',
-        Kohana_Exception::dump("original value"));
+        Debug::dump("original value"));
   }
 
   public function test_safe_dump() {
     // Verify the delegation.
     $this->assertEquals('<small>string</small><span>(19)</span> "removed for display"',
-        Kohana_Exception::safe_dump("original value", "password"));
+        Debug::safe_dump("original value", "password"));
     $this->assertEquals('<small>string</small><span>(14)</span> "original value"',
-        Kohana_Exception::safe_dump("original value", "meow"));
+        Debug::safe_dump("original value", "meow"));
   }
 
   public function test_sanitize_for_dump_match_key() {
     $this->assertEquals("removed for display",
-        Kohana_Exception::_sanitize_for_dump("original value", "password", 5));
+        Debug::_sanitize_for_dump("original value", "password", 5));
     $this->assertEquals("original value",
-        Kohana_Exception::_sanitize_for_dump("original value", "meow", 5));
+        Debug::_sanitize_for_dump("original value", "meow", 5));
   }
 
   public function test_sanitize_for_dump_match_key_loosely() {
     $this->assertEquals("removed for display",
-        Kohana_Exception::_sanitize_for_dump("original value", "this secret key", 5));
+        Debug::_sanitize_for_dump("original value", "this secret key", 5));
   }
 
   public function test_sanitize_for_dump_match_value() {
     // Looks like a hash / secret value.
     $this->assertEquals("removed for display",
-        Kohana_Exception::_sanitize_for_dump("p$2a178b841c6391d6368f131", "meow", 5));
+        Debug::_sanitize_for_dump("p$2a178b841c6391d6368f131", "meow", 5));
     $this->assertEquals("original value",
-        Kohana_Exception::_sanitize_for_dump("original value", "meow", 5));
+        Debug::_sanitize_for_dump("original value", "meow", 5));
   }
 
   public function test_sanitize_for_dump_array() {
@@ -64,7 +64,7 @@ class Kohana_Exception_Test extends Unittest_Testcase {
                       "three" => "removed for display");
 
     $this->assertEquals($expected,
-        Kohana_Exception::_sanitize_for_dump($var, "ignored", 5));
+        Debug::_sanitize_for_dump($var, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_nested_array() {
@@ -73,7 +73,7 @@ class Kohana_Exception_Test extends Unittest_Testcase {
     $expected = array("safe" => "original value 1",
                       "safe 2" => array("some hash" => "removed for display"));
     $this->assertEquals($expected,
-        Kohana_Exception::_sanitize_for_dump($var, "ignored", 5));
+        Debug::_sanitize_for_dump($var, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_user() {
@@ -83,32 +83,32 @@ class Kohana_Exception_Test extends Unittest_Testcase {
     $user->email = "value 2";
     $user->full_name = "value 3";
     $this->assertEquals('Model_User object for "john" - details omitted for display',
-        Kohana_Exception::_sanitize_for_dump($user, "ignored", 5));
+        Debug::_sanitize_for_dump($user, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_database() {
-    $db = new Kohana_Exception_Test_Database(
+    $db = new Debug_Test_Database(
         array("connection" => array("user" => "john", "name" => "gallery_3"),
               "cache" => array()));
-    $this->assertEquals("Kohana_Exception_Test_Database object - details omitted for display",
-        Kohana_Exception::_sanitize_for_dump($db, "ignored", 5));
+    $this->assertEquals("Debug_Test_Database object - details omitted for display",
+        Debug::_sanitize_for_dump($db, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_nested_database() {
-    $db = new Kohana_Exception_Test_Database(
+    $db = new Debug_Test_Database(
         array("connection" => array("user" => "john", "name" => "gallery_3"),
               "cache" => array()));
     $var = array("some" => "foo",
                  "bar" => $db);
     $this->assertEquals(
         array("some" => "foo",
-              "bar (type: Kohana_Exception_Test_Database)" =>
-              "Kohana_Exception_Test_Database object - details omitted for display"),
-        Kohana_Exception::_sanitize_for_dump($var, "ignored", 5));
+              "bar (type: Debug_Test_Database)" =>
+              "Debug_Test_Database object - details omitted for display"),
+        Debug::_sanitize_for_dump($var, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_object() {
-    $obj = new Kohana_Exception_Test_Class();
+    $obj = new Debug_Test_Class();
     $obj->password = "original value";
     $expected = array("var_1" => "val 1",
                       "protected: var_2" => "val 2",
@@ -117,14 +117,14 @@ class Kohana_Exception_Test extends Unittest_Testcase {
                       "private: email_address" => "removed for display",
                       "password" => "removed for display");
     $this->assertEquals($expected,
-        Kohana_Exception::_sanitize_for_dump($obj, "ignored", 5));
+        Debug::_sanitize_for_dump($obj, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_nested_object() {
     $user = new Model_User();
     $user->name = "john";
-    $obj = new Kohana_Exception_Test_Class();
-    $obj->meow = new Kohana_Exception_Test_Class();
+    $obj = new Debug_Test_Class();
+    $obj->meow = new Debug_Test_Class();
     $obj->woof = "original value";
     $obj->foo = array("bar" => $user);
     $expected = array("var_1" => "val 1",
@@ -132,7 +132,7 @@ class Kohana_Exception_Test extends Unittest_Testcase {
                       "private: var_3" => "val 3",
                       "protected: hash" => "removed for display",
                       "private: email_address" => "removed for display",
-                      "meow (type: Kohana_Exception_Test_Class)" =>
+                      "meow (type: Debug_Test_Class)" =>
                           array("var_1" => "val 1",
                                 "protected: var_2" => "val 2",
                                 "private: var_3" => "val 3",
@@ -142,11 +142,11 @@ class Kohana_Exception_Test extends Unittest_Testcase {
                       "foo" => array("bar (type: Model_User)" =>
                                      'Model_User object for "john" - details omitted for display'));
     $this->assertEquals($expected,
-        Kohana_Exception::_sanitize_for_dump($obj, "ignored", 5));
+        Debug::_sanitize_for_dump($obj, "ignored", 5));
   }
 }
 
-class Kohana_Exception_Test_Database extends Database {
+class Debug_Test_Database extends Database {
   function __construct($config) { parent::__construct($config); }
   public function connect() {}
   public function disconnect() {}
@@ -160,7 +160,7 @@ class Kohana_Exception_Test_Database extends Database {
   public function escape($value) {}
 }
 
-class Kohana_Exception_Test_Class {
+class Debug_Test_Class {
   public $var_1 = "val 1";
   protected $var_2 = "val 2";
   private $var_3 = "val 3";
