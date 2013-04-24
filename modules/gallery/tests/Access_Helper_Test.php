@@ -79,9 +79,9 @@ class Access_Helper_Test extends Unittest_TestCase {
 
     $user = Identity::create_user("access_test", "Access Test", "*****", "user@user.com");
     foreach ($user->groups() as $group) {
-      $user->remove($group);
+      $user->remove("groups", $group);
     }
-    $user->add($access_test);
+    $user->add("groups", $access_test);
     $user->save();
 
     $this->assertTrue(Access::user_can($user, "view", $item), "Should be able to view");
@@ -95,7 +95,7 @@ class Access_Helper_Test extends Unittest_TestCase {
 
     $user = Identity::create_user("access_test", "Access Test", "*****", "user@user.com");
     foreach ($user->groups() as $group) {
-      $user->remove($group);
+      $user->remove("groups", $group);
     }
     $user->save();
 
@@ -287,7 +287,7 @@ class Access_Helper_Test extends Unittest_TestCase {
     // Create a new user that belongs to no groups
     $user = Identity::create_user("access_test", "Access Test", "*****", "user@user.com");
     foreach ($user->groups() as $group) {
-      $user->remove($group);
+      $user->remove("groups", $group);
     }
     $user->save();
     Identity::set_active_user($user);
@@ -298,7 +298,7 @@ class Access_Helper_Test extends Unittest_TestCase {
 
     // Now add them to a group that has edit permission
     $group = Identity::create_group("access_test");
-    $group->add($user);
+    $group->add("users", $user);
     $group->save();
     Access::allow($group, "edit", $root);
 
