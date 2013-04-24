@@ -271,12 +271,13 @@ class Gallery_Model_Item extends ORM_MPTT {
   private function _build_relative_caches() {
     $names = array();
     $slugs = array();
-    foreach (DB::select(array("name", "slug"))
+    foreach (DB::select("name", "slug")
              ->from("items")
              ->where("left_ptr", "<=", $this->left_ptr)
              ->where("right_ptr", ">=", $this->right_ptr)
              ->where("id", "<>", 1)
              ->order_by("left_ptr", "ASC")
+             ->as_object()
              ->execute($this->_db) as $row) {
       // Don't encode the names segment
       $names[] = rawurlencode($row->name);
@@ -348,11 +349,11 @@ class Gallery_Model_Item extends ORM_MPTT {
     if ($significant_changes || isset($this->data_file)) {
       $this->updated = time();
       return parent::save();
+    } else {
+      // Insignificant changes only.  Don't fire events or do any special checking to try to keep
+      // this lightweight.  This skips our local update() and create() functions.
+      return $this->loaded() ? parent::update($validation) : parent::create($validation);
     }
-
-    // Insignificant changes only.  Don't fire events or do any special checking to try to keep
-    // this lightweight.  This skips our local update() and create() functions.
-    return $this->loaded() ? parent::update($validation) : parent::create($validation);
   }
 
   /**
@@ -573,7 +574,7 @@ class Gallery_Model_Item extends ORM_MPTT {
              ->or_where("slug", "=", "{$this->slug}{$suffix}")
              ->and_where_close()
              ->execute($this->_db)
-             ->execute()->count()) {
+             ->count()) {
         $suffix = "-" . (($suffix_num <= 99) ? sprintf("%02d", $suffix_num++) : Random::int());
       }
       if ($suffix) {
@@ -603,7 +604,7 @@ class Gallery_Model_Item extends ORM_MPTT {
              ->or_where("slug", "=", "{$this->slug}{$suffix}")
              ->and_where_close()
              ->execute($this->_db)
-             ->execute()->count()) {
+             ->count()) {
         $suffix = "-" . (($suffix_num <= 99) ? sprintf("%02d", $suffix_num++) : Random::int());
       }
       if ($suffix) {
@@ -878,7 +879,7 @@ class Gallery_Model_Item extends ORM_MPTT {
         array("max_length", array(":value", 65535))),
 
       "mime_type" => array(
-        array(array($this, "valid_field"), array(":validation", ":field", ":original_values"))),
+        array(array($this, "valid_field"), array(":validation", ":field"))),
 
       "name" => array(
         array("max_length", array(":value", 255)),
@@ -889,7 +890,7 @@ class Gallery_Model_Item extends ORM_MPTT {
         array(array($this, "valid_parent"), array(":validation"))),
 
       "rand_key" => array(
-        array("decimal")),
+        array("regex", array(":value", "/0\.[0-9]+/"))),
 
       "slug" => array(
         array("max_length", array(":value", 255)),
@@ -897,10 +898,10 @@ class Gallery_Model_Item extends ORM_MPTT {
         array(array($this, "valid_slug"), array(":validation"))),
 
       "sort_column" => array(
-        array(array($this, "valid_field"), array(":validation", ":field", ":original_values"))),
+        array(array($this, "valid_field"), array(":validation", ":field"))),
 
       "sort_order" => array(
-        array(array($this, "valid_field"), array(":validation", ":field", ":original_values"))),
+        array(array($this, "valid_field"), array(":validation", ":field"))),
 
       "title" => array(
         array("max_length", array(":value", 255)),
@@ -908,7 +909,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
       "type" => array(
         array(array($this, "read_only"), array(":validation", ":field")),
-        array(array($this, "valid_field"), array(":validation", ":field", ":original_values")))
+        array(array($this, "valid_field"), array(":validation", ":field")))
       );
 
       // Conditional rules
@@ -933,7 +934,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * - conflict: has conflicting slug
    * - reserved (items in root only): has same slug as a controller
    */
-  public function valid_slug(Validation $v, $field) {
+  public function valid_slug(Validation $v) {
     if (preg_match("/[^A-Za-z0-9-_]/", $this->slug)) {
       $v->error("slug", "not_url_safe");
     }
@@ -943,7 +944,8 @@ class Gallery_Model_Item extends ORM_MPTT {
         ->where("parent_id", "=", $this->parent_id)
         ->where("id", "<>", $this->id)
         ->where("slug", "=", $this->slug)
-        ->execute()->count()) {
+        ->execute()
+        ->count()) {
       $v->error("slug", "conflict");
     }
 
@@ -999,14 +1001,15 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     if ($this->is_album()) {
-      if (DB::select()
-          ->from("items")
-          ->where("parent_id", "=", $this->parent_id)
-          ->where("name", "=", $this->name)
-          ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-          ->execute()->count()) {
+      $query = DB::select()
+        ->from("items")
+        ->where("parent_id", "=", $this->parent_id)
+        ->where("name", "=", $this->name);
+      if ($this->id) {
+        $query->where("id", "<>", $this->id);
+      }
+      if ($query->execute()->count()) {
         $v->error("name", "conflict");
-        return;
       }
     } else {
       if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $this->name, $matches)) {
@@ -1015,14 +1018,15 @@ class Gallery_Model_Item extends ORM_MPTT {
         $base_name = $this->name;
       }
       $base_name_escaped = Database::escape_for_like($base_name);
-      if (DB::select()
-          ->from("items")
-          ->where("parent_id", "=", $this->parent_id)
-          ->where("name", "LIKE", "{$base_name_escaped}.%")
-          ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-          ->execute()->count()) {
+      $query = DB::select()
+        ->from("items")
+        ->where("parent_id", "=", $this->parent_id)
+        ->where("name", "LIKE", "{$base_name_escaped}.%");
+      if ($this->id) {
+        $query->where("id", "<>", $this->id);
+      }
+      if ($query->execute()->count()) {
         $v->error("name", "conflict");
-        return;
       }
     }
   }
@@ -1076,12 +1080,14 @@ class Gallery_Model_Item extends ORM_MPTT {
       return;
     }
 
-    if ($this->album_cover_item_id && ($this->is_photo() || $this->is_movie() ||
-        DB::select()
-        ->from("items")
-        ->where("id", "=", $this->album_cover_item_id)
-        ->where("type", "<>", "album")
-        ->execute()->count() != 1)) {
+    if ($this->album_cover_item_id &&
+        ($this->is_photo() || $this->is_movie() ||
+         DB::select()
+         ->from("items")
+         ->where("id", "=", $this->album_cover_item_id)
+         ->where("type", "<>", "album")
+         ->execute()
+         ->count() != 1)) {
       $v->error("album_cover_item_id", "invalid_item");
     }
   }
@@ -1089,7 +1095,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   /**
    * Make sure that the type is valid.
    */
-  public function valid_field(Validation $v, $field, $original_values) {
+  public function valid_field(Validation $v, $field) {
     switch($field) {
     case "mime_type":
       if ($this->is_movie()) {
@@ -1100,7 +1106,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       break;
 
     case "sort_column":
-      if (!array_key_exists($this->sort_column, $original_values)) {
+      if (!array_key_exists($this->sort_column, $this->table_columns())) {
         $v->error($field, "invalid");
       }
       break;
