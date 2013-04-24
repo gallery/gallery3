@@ -82,6 +82,11 @@ class Purifier {
       self::_init($config_group);
     }
 
+    // Ensure that null/false/0 are returned as such (HTMLPurifier would return "" instead).
+    if (!$html) {
+      return $html;
+    }
+
     // Recurse if needed.
     if (is_array($html) || is_object($html)) {
       foreach ($html as $key => $value) {
