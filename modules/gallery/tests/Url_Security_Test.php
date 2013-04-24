@@ -18,17 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Url_Security_Test extends Unittest_Testcase {
-  public function setup() {
-    parent::setup();
-    $this->save = array(Route::$current_uri, Route::$complete_uri, $_GET);
-  }
-
-  public function teardown() {
-    list(Route::$current_uri, Route::$complete_uri, $_GET) = $this->save;
-    parent::teardown();
-  }
-
   public function test_xss_in_current_url() {
+    throw new Exception("fixme");
     Route::$current_uri = "foo/<xss>/bar";
     Route::$complete_uri = "foo/<xss>/bar?foo=bar";
     $this->assertSame("foo/&lt;xss&gt;/bar", Request::current()->uri());
@@ -36,6 +27,7 @@ class Url_Security_Test extends Unittest_Testcase {
   }
 
   public function test_xss_in_merged_url() {
+    throw new Exception("fixme");
     Route::$current_uri = "foo/<xss>/bar";
     Route::$complete_uri = "foo/<xss>/bar?foo=bar";
     $_GET = array("foo" => "bar");
