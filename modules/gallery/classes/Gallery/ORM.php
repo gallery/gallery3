@@ -24,7 +24,7 @@ class Gallery_ORM extends Kohana_ORM {
    * Stores relationship information for ORM models.
    * @var array
    */
-  protected static $_relationship_cache = null;
+  protected static $_relationship_cache = array();
 
   /**
    * Merge in a series of where clause tuples and call where() on each one.
@@ -90,11 +90,15 @@ class Gallery_ORM extends Kohana_ORM {
       $this->_object_name = Inflector::convert_class_to_module_name(substr(get_class($this), 6));
     }
 
-    foreach (array("belongs_to", "has_many", "has_one") as $type) {
-      if (isset(ORM::$_relationship_cache[$this->_object_name]) &&
-          !empty(ORM::$_relationship_cache[$this->_object_name][$type])) {
-        // Relationship found - add it to the model instance.
-        $this->{"_$type"} = (array) ORM::$_relationship_cache[$this->_object_name][$type];
+    // Load the relationships.  We only need to do this if its init cache is not set.
+    // If it is set, whatever we do here would be overwritten with it anyway.
+    if (!isset(ORM::$_init_cache[$this->_object_name])) {
+      foreach (array("belongs_to", "has_many", "has_one") as $type) {
+        if (isset(ORM::$_relationship_cache[$this->_object_name]) &&
+            !empty(ORM::$_relationship_cache[$this->_object_name][$type])) {
+          // Relationship found - add it to the model instance.
+          $this->{"_$type"} = (array) ORM::$_relationship_cache[$this->_object_name][$type];
+        }
       }
     }
 
@@ -128,7 +132,10 @@ class Gallery_ORM extends Kohana_ORM {
    *
    * @param   string $module_name
    */
-  static function load_relationships($module_name=null) {
+  public static function load_relationships($module_name=null) {
+    // Since the init cache is (in part) derived from the relationships, we need to flush it, too.
+    ORM::$_init_cache = array();
+
     // Run the "model_relationships" event and populate the relationship cache.
     $relationships = new ArrayObject();
     if ($module_name) {
@@ -162,7 +169,6 @@ class Gallery_ORM extends Kohana_ORM {
       ORM::$_relationship_cache = $relationships;
     }
   }
-
 
   /**
    * Implements the "delete_through" argument of a has_many relationship, which removes the pivot
@@ -261,10 +267,10 @@ class Gallery_ORM extends Kohana_ORM {
    * Reset any ORM initialization that's happened so that we can start over.  We use this in the
    * testing framework when we switch from the main database over to the test database.
    */
-  static function reinitialize() {
+  public static function reinitialize() {
     ORM::$_init_cache = array();
     ORM::$_column_cache = array();
-    ORM::$_relationship_cache = null;
+    ORM::$_relationship_cache = array();
   }
 
   /**
