@@ -328,7 +328,10 @@ class Gallery_ORM_MPTT extends ORM {
    */
   protected function lock() {
     $timeout = Module::get_var("gallery", "lock_timeout", 1);
-    $result = $this->_db->query(Database::SELECT, "SELECT GET_LOCK('" . $this->table_name() . "', $timeout) AS l")
+    $result = $this->_db->query(
+      Database::SELECT,
+      "SELECT GET_LOCK('" . $this->table_name() . "', $timeout) AS l",
+      true)
       ->current();
     if (empty($result->l)) {
       throw new Exception("@todo UNABLE_TO_LOCK_EXCEPTION");
@@ -339,6 +342,6 @@ class Gallery_ORM_MPTT extends ORM {
    * Unlock the tree.
    */
   protected function unlock() {
-    $this->db->query(Database::SELECT, "SELECT RELEASE_LOCK('" . $this->table_name() . "')");
+    $this->_db->query(Database::SELECT, "SELECT RELEASE_LOCK('" . $this->table_name() . "')");
   }
 }
