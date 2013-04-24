@@ -37,7 +37,7 @@ class Tags_Rest_Helper_Test extends Unittest_Testcase {
     $t2 = Tag::add(Item::root(), "t2");
 
     $request = new stdClass();
-    $this->assertEquals_array(
+    $this->assertEquals(
       array(
         "url" => Rest::url("tags"),
         "members" => array(

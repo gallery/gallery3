@@ -40,7 +40,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request = new stdClass();
     $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -57,7 +57,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
 
     $request->url = Rest::url("item", $album1);
     $request->params->scope = "direct";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -74,7 +74,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
 
     $request->url = Rest::url("item", $album1);
     $request->params->scope = "all";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -103,7 +103,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->name = "foo";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
@@ -128,7 +128,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = Rest::url("item", $album1);
     $request->params = new stdClass();
     $request->params->type = "album";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(

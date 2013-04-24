@@ -31,7 +31,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
     $request->params->urls = json_encode(array(
       Rest::url("item", $photo1),
       Rest::url("item", $album2)));
-    $this->assertEquals_array(
+    $this->assertEquals(
       array(
         array("url" => Rest::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
@@ -68,7 +68,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Rest::url("item", $photo2),
       Rest::url("item", $album1)));
     $request->params->type = "album";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array(
          array("url" => Rest::url("item", $album1),
                "entity" => $album1->as_restful_array(),
@@ -97,7 +97,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Rest::url("item", $photo1),
       Rest::url("item", $album2)));
     $request->params->type = "photo";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array(
         array("url" => Rest::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
@@ -124,7 +124,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       Rest::url("item", $photo1),
       Rest::url("item", $album2)));
     $request->params->type = "photo,album";
-    $this->assertEquals_array(
+    $this->assertEquals(
       array(
         array("url" => Rest::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
@@ -168,7 +168,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->ancestors_for = Rest::url("item", $photo2);
-    $this->assertEquals_array(
+    $this->assertEquals(
       array(
         $restful_root,
         array("url" => Rest::url("item", $album1),

@@ -31,7 +31,7 @@ class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
 
     $request = new stdClass();
     $request->url = Rest::url("tag_item", $tag, Item::root());
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("tag_item", $tag, Item::root()),
             "entity" => array(
               "tag" => Rest::url("tag", $tag),
@@ -65,7 +65,7 @@ class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
     $tag = Tag::add($album, "tag1")->reload();
 
     $tuple = Rest::resolve(Rest::url("tag_item", $tag, $album));
-    $this->assertEquals_array($tag->as_array(), $tuple[0]->as_array());
-    $this->assertEquals_array($album->as_array(), $tuple[1]->as_array());
+    $this->assertEquals($tag->as_array(), $tuple[0]->as_array());
+    $this->assertEquals($album->as_array(), $tuple[1]->as_array());
   }
 }

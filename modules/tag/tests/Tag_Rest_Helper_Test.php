@@ -31,7 +31,7 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
 
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
@@ -58,7 +58,7 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
 
     $request = new stdClass();
     $request->url = Rest::url("tag", $tag);
-    $this->assertEquals_array(
+    $this->assertEquals(
       array("url" => Rest::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
