@@ -20,7 +20,7 @@
 class Tag_Test extends Unittest_Testcase {
   public function setup() {
     parent::setup();
-    ORM::factory("Tag")->delete_all();
+    DB::delete("tags")->execute();
   }
 
   public function test_create_tag() {
