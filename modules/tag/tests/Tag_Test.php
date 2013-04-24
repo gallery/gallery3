@@ -20,7 +20,8 @@
 class Tag_Test extends Unittest_Testcase {
   public function setup() {
     parent::setup();
-    ORM::factory("Tag")->delete_all();
+    // We use ORM instead of DB to delete tags so the pivot table is cleared, too.
+    ORM::factory("Tag")->find_all()->delete();
   }
 
   public function test_create_tag() {
