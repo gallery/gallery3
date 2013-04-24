@@ -103,7 +103,7 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : ORM::factory("AccessCache", $id, "item_id");
+      $item : $item->access_cache;
 
     foreach ($user->groups() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW) {
@@ -144,7 +144,7 @@ class Gallery_Access {
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
     $resource = $perm_name == "view" ?
-      $item : ORM::factory("AccessCache", $id, "item_id");
+      $item : $item->access_cache;
 
     return $resource->__get("{$perm_name}_{$group->id}") === Access::ALLOW;
   }
