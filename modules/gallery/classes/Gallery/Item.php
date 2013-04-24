@@ -166,7 +166,7 @@ class Gallery_Item {
     // @todo: figure out a better way to bootstrap the weight.
     $result = DB::select("weight")->from("items")
       ->order_by("weight", "desc")->limit(1)
-      ->execute()->current();
+      ->as_object()->execute()->current();
     return ($result ? $result->weight : 0) + 1;
   }
 
