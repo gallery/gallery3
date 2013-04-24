@@ -162,7 +162,7 @@ class User_User {
    */
   private static function _lookup_user_by_field($field_name, $value) {
     try {
-      $user = ORM::factory("User", $value, $field_name);
+      $user = ORM::factory("User")->where($field_name, "=", $value)->find();
       if ($user->loaded()) {
         return $user;
       }
