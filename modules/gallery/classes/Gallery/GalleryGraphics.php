@@ -47,9 +47,8 @@ class Gallery_GalleryGraphics {
 
       // Rotate the image.  This also implicitly converts its format if needed.
       Image::factory($input_file)
-        ->quality(Module::get_var("gallery", "image_quality"))
         ->rotate($options["degrees"])
-        ->save($output_file);
+        ->save($output_file, Module::get_var("gallery", "image_quality"));
     }
 
     Module::event("graphics_rotate_completed", $input_file, $output_file, $options, $item);
@@ -94,18 +93,16 @@ class Gallery_GalleryGraphics {
         } else {
           // Mimes not well-defined or not the same - convert input to output
           $image = Image::factory($input_file)
-            ->quality(Module::get_var("gallery", "image_quality"))
-            ->save($output_file);
+            ->save($output_file, Module::get_var("gallery", "image_quality"));
         }
       } else {
         // Resize the image.  This also implicitly converts its format if needed.
         $image = Image::factory($input_file)
-          ->resize($options["width"], $options["height"], $options["master"])
-          ->quality(Module::get_var("gallery", "image_quality"));
+          ->resize($options["width"], $options["height"], $options["master"]);
         if (Graphics::can("sharpen")) {
           $image->sharpen(Module::get_var("gallery", "image_sharpen"));
         }
-        $image->save($output_file);
+        $image->save($output_file, Module::get_var("gallery", "image_quality"));
       }
     }
 
@@ -166,8 +163,7 @@ class Gallery_GalleryGraphics {
 
         Image::factory($input_file)
           ->composite($options["file"], $x, $y, $options["transparency"])
-          ->quality(Module::get_var("gallery", "image_quality"))
-          ->save($output_file);
+          ->save($output_file, Module::get_var("gallery", "image_quality"));
       }
 
       Module::event("graphics_composite_completed", $input_file, $output_file, $options, $item);
