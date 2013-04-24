@@ -33,6 +33,13 @@ class Purifier_Test extends Unittest_Testcase {
                         Purifier::clean_html(array("hello w<o>rld", "f<o>o_<b>ar</b>")));
   }
 
+  public function test_clean_html_empty() {
+    $this->assertSame(null, Purifier::clean_html(null));
+    $this->assertSame("", Purifier::clean_html(""));
+    $this->assertSame(array(), Purifier::clean_html(array()));
+    $this->assertSame(array("foo", array()), Purifier::clean_html(array("foo", array())));
+  }
+
   public function test_add_config_group() {
     // Add test config group which doesn't tidy HTML
     $settings = array("HTML.TidyLevel" => "none");
