@@ -467,7 +467,9 @@ class Gallery_Access {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     Database::instance()->query(Database::ALTER, "ALTER TABLE {{$cache_table}} DROP `$field`");
     Database::instance()->query(Database::ALTER, "ALTER TABLE {access_intents} DROP `$field`");
+    ORM::factory("Item")->reload_columns(true);
     ORM::factory("AccessIntent")->reload_columns(true);
+    ORM::factory("AccessCache")->reload_columns(true);
   }
 
   /**
@@ -489,7 +491,9 @@ class Gallery_Access {
       ->set(array($field => Access::DENY))
       ->where("item_id", "=", 1)
       ->execute();
+    ORM::factory("Item")->reload_columns(true);
     ORM::factory("AccessIntent")->reload_columns(true);
+    ORM::factory("AccessCache")->reload_columns(true);
   }
 
   /**
