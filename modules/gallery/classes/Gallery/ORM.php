@@ -133,7 +133,7 @@ class Gallery_ORM extends Kohana_ORM {
     $relationships = new ArrayObject();
     if ($module_name) {
       $class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Event";
-      if (method_exists($class, "model_relationships")) {
+      if (class_exists($class) && method_exists($class, "model_relationships")) {
         call_user_func_array(array($class, "model_relationships"), array($relationships));
       }
     } else {
