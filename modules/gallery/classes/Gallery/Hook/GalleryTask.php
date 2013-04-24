@@ -777,7 +777,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_empty_item_caches($limit) {
-    return DB::select("item.id")
+    return DB::select("id")
       ->from("items")
       ->where("relative_path_cache", "is", null)
       ->or_where("relative_url_cache", "is", null)
