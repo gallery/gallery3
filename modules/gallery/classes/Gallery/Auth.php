@@ -89,9 +89,9 @@ class Gallery_Auth {
    * Clear any failed logins for this user
    */
   static function clear_failed_attempts($user) {
-    ORM::factory("FailedAuth")
+    DB::delete("failed_auths")
       ->where("name", "=", $user->name)
-      ->delete_all();
+      ->execute();
   }
 
   /**

@@ -68,7 +68,7 @@ class User_Group {
    */
   private static function _lookup_by_field($field_name, $value) {
     try {
-      $group = ORM::factory("Group", $value, $field_name);
+      $group = ORM::factory("Group")->where($field_name, "=", $value)->find();
       if ($group->loaded()) {
         return $group;
       }
