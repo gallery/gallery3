@@ -32,7 +32,7 @@
  * and licensing issues so I've reimplemented just the features that we need.
  */
 class Gallery_ORM_MPTT extends ORM {
-  private $_model_name = null;
+  protected $_model_name = null;
 
   function _initialize() {
     parent::_initialize();

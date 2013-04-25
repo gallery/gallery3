@@ -71,7 +71,7 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     }
   }
 
-  private function _get_edit_form_admin() {
+  protected function _get_edit_form_admin() {
     $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
     $group = $form->group("edit_theme")->label(t("Theme layout"));
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")

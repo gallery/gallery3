@@ -199,7 +199,7 @@ class Organize_Controller_Organize extends Controller {
     $this->response->json(null);
   }
 
-  private function _get_tree($item, $selected) {
+  protected function _get_tree($item, $selected) {
     $tree = array();
     $children = $item->viewable()
       ->children(null, null, array(array("type", "=", "album")))

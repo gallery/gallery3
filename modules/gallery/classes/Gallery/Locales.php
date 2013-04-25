@@ -22,8 +22,8 @@
  * This is the API for handling locales.
  */
 class Gallery_Locales {
-  private static $locales;
-  private static $language_subtag_to_locale;
+  protected static $locales;
+  protected static $language_subtag_to_locale;
 
   /**
    * Return the list of available locales.
@@ -65,7 +65,7 @@ class Gallery_Locales {
   // ref: http://cldr.unicode.org/
   // ref: http://cldr.unicode.org/index/cldr-spec/picking-the-right-language-code
   // ref: http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/likely_subtags.html
-  private static function _init_language_data() {
+  protected static function _init_language_data() {
     $l["af_ZA"] = "Afrikaans";                // Afrikaans
     $l["ar_SA"] = "العربية";                   // Arabic
     $l["be_BY"] = "Беларускі";           // Belarusian
@@ -213,7 +213,7 @@ class Gallery_Locales {
     return null;
   }
 
-  private static function _locale_match_score($requested_locale, $qvalue, $adjustment_factor) {
+  protected static function _locale_match_score($requested_locale, $qvalue, $adjustment_factor) {
     $installed = Locales::installed();
     if (isset($installed[$requested_locale])) {
       return array($requested_locale, $qvalue);

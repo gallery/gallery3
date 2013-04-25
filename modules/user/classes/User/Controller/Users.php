@@ -163,7 +163,7 @@ class User_Controller_Users extends Controller {
     $this->response->body($this->_get_change_email_form($user));
   }
 
-  private function _get_change_password_form($user) {
+  protected function _get_change_password_form($user) {
     $form = new Forge(
       "users/change_password/$user->id", "", "post", array("id" => "g-change-password-user-form"));
     $group = $form->group("change_password")->label(t("Change your password"));
@@ -188,7 +188,7 @@ class User_Controller_Users extends Controller {
     return $form;
   }
 
-  private function _get_change_email_form($user) {
+  protected function _get_change_email_form($user) {
     $form = new Forge(
       "users/change_email/$user->id", "", "post", array("id" => "g-change-email-user-form"));
     $group = $form->group("change_email")->label(t("Change your email address"));
@@ -209,7 +209,7 @@ class User_Controller_Users extends Controller {
     return $form;
   }
 
-  private function _get_edit_form($user) {
+  protected function _get_edit_form($user) {
     $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit your profile"));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name)
@@ -224,7 +224,7 @@ class User_Controller_Users extends Controller {
   }
 
   /** @todo combine with Controller_Admin_Users::_add_locale_dropdown */
-  private function _add_locale_dropdown(&$form, $user=null) {
+  protected function _add_locale_dropdown(&$form, $user=null) {
     $locales = Locales::installed();
     if (count($locales) <= 1) {
       return;

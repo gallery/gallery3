@@ -37,10 +37,10 @@ class Gallery_Module {
    *   4. Last module.  This is "gallery", which *can* be overridden.
    *   5. Third-party modules.  These do not have module.info files.
    */
-  private static $_unittest_modules = array("gallery_unittest", "unittest");
-  private static $_first_module = "purifier";
-  private static $_last_module = "gallery";
-  private static $_third_party_modules = array(
+  protected static $_unittest_modules = array("gallery_unittest", "unittest");
+  protected static $_first_module = "purifier";
+  protected static $_last_module = "gallery";
+  protected static $_third_party_modules = array(
     "cache", "database", "formo", "image", "orm", "pagination");
 
   /**
@@ -215,7 +215,7 @@ class Gallery_Module {
    * Add a module path to Kohana's list.  This is used to temporarily add a module path
    * to the top of the list during activation, installation, etc.
    */
-  private static function _add_to_path($module_name) {
+  protected static function _add_to_path($module_name) {
     $kohana_modules = Kohana::modules();
     Arr::unshift($kohana_modules, $module_name, MODPATH . $module_name);
     Kohana::modules($kohana_modules);
@@ -226,7 +226,7 @@ class Gallery_Module {
    * Remove a module path from Kohana's list.  This is used to remove a module path
    * temporarily added with _add_to_path().
    */
-  private static function _remove_from_path($module_name) {
+  protected static function _remove_from_path($module_name) {
     $kohana_modules = Kohana::modules();
     unset($kohana_modules[$module_name]);
     Kohana::modules($kohana_modules);

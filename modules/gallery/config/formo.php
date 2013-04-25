@@ -27,7 +27,7 @@ return array(
   // Close single html tags (true = <br/>. false = <br>)
   "close_single_html_tags"  => true,
   // Auto-generate IDs on form elements
-  "auto_id"                 => true,
+  "auto_id"                 => false,
   // The directory for the formo templates (ex: "formo" or "formo_bootstrap")
   // @todo: pick one, then delete the other views subdir
   "template_dir"            => "formo_bootstrap/",

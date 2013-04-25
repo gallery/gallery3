@@ -50,7 +50,7 @@ class User_Controller_Password extends Controller {
     }
   }
 
-  private function _send_reset($form) {
+  protected function _send_reset($form) {
     $user_name = $form->reset->inputs["name"]->value;
     $user = User::lookup_by_name($user_name);
     if ($user && !empty($user->email)) {
@@ -88,7 +88,7 @@ class User_Controller_Password extends Controller {
     $this->response->json(array("result" => "success"));
   }
 
-  private static function _reset_form() {
+  protected static function _reset_form() {
     $form = new Forge("password/reset", "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
     $group->input("name")->label(t("Username"))->id("g-name")->class(null)
@@ -99,7 +99,7 @@ class User_Controller_Password extends Controller {
     return $form;
   }
 
-  private function _new_password_form($hash=null) {
+  protected function _new_password_form($hash=null) {
     $template = new View_Theme("required/page.html", "other", "reset");
 
     $form = new Forge("password/do_reset", "", "post", array("id" => "g-change-password-form"));
@@ -121,7 +121,7 @@ class User_Controller_Password extends Controller {
     return $template;
   }
 
-  private function _change_password() {
+  protected function _change_password() {
     $view = $this->_new_password_form();
     if ($view->content->validate()) {
       $user = User::lookup_by_hash($this->request->post("hash"));

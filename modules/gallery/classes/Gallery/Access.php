@@ -209,7 +209,7 @@ class Gallery_Access {
    * @param  Model_Item  $item
    * @param  boolean     $value
    */
-  private static function _set(IdentityProvider_GroupDefinition $group, $perm_name, $album, $value) {
+  protected static function _set(IdentityProvider_GroupDefinition $group, $perm_name, $album, $value) {
     if (!$album->loaded()) {
       throw new Exception("@todo INVALID_ALBUM $album->id");
     }
@@ -410,10 +410,14 @@ class Gallery_Access {
 
   /**
    * Verify our Cross Site Request Forgery token is valid, else throw an exception.
+   * @param  string  CSRF to verify (if not specified, it will be autodetected from GET/POST)
    */
-  static function verify_csrf() {
-    if (Arr::get(Request::current()->post(), "csrf", Request::current()->query("csrf")) !==
-        Session::instance()->get("csrf")) {
+  static function verify_csrf($csrf=null) {
+    if (!isset($csrf)) {
+      $csrf = Arr::get(Request::current()->post(), "csrf", Request::current()->query("csrf"));
+    }
+
+    if ($csrf !== Session::instance()->get("csrf")) {
       Access::forbidden();
     }
   }
@@ -445,7 +449,7 @@ class Gallery_Access {
    *
    * @return Database_Result
    */
-  private static function _get_all_groups() {
+  protected static function _get_all_groups() {
     // When we build the gallery package, it's possible that there is no identity provider
     // installed yet.  This is ok at packaging time, so work around it.
    if (Module::is_active(Module::get_var("gallery", "identity_provider", "user"))) {
@@ -462,7 +466,7 @@ class Gallery_Access {
    * @param  string      $perm_name
    * @return void
    */
-  private static function _drop_columns($perm_name, $group) {
+  protected static function _drop_columns($perm_name, $group) {
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     Database::instance()->query(Database::ALTER, "ALTER TABLE {{$cache_table}} DROP `$field`");
@@ -479,7 +483,7 @@ class Gallery_Access {
    * @param  string  $perm_name
    * @return void
    */
-  private static function _add_columns($perm_name, $group) {
+  protected static function _add_columns($perm_name, $group) {
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $not_null = $cache_table == "items" ? "" : "NOT NULL";
@@ -506,7 +510,7 @@ class Gallery_Access {
    * @param  Model_Item $item
    * @return void
    */
-  private static function _update_access_view_cache($group, $item) {
+  protected static function _update_access_view_cache($group, $item) {
     $access = $item->access_intent;
     $field = "view_{$group->id}";
 
@@ -592,7 +596,7 @@ class Gallery_Access {
    * @param  Model_Item $item
    * @return void
    */
-  private static function _update_access_non_view_cache($group, $perm_name, $item) {
+  protected static function _update_access_non_view_cache($group, $perm_name, $item) {
     $access = $item->access_intent;
 
     $field = "{$perm_name}_{$group->id}";

@@ -163,9 +163,9 @@ class Debug_Test_Database extends Database {
 class Debug_Test_Class {
   public $var_1 = "val 1";
   protected $var_2 = "val 2";
-  private $var_3 = "val 3";
+  protected $var_3 = "val 3";
   protected $hash = "val 4";
-  private $email_address = "val 5";
+  protected $email_address = "val 5";
   function __set($name, $val) {
     $this->$name = $val;
   }

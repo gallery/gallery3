@@ -40,7 +40,7 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
     $this->_print_view($form);
   }
 
-  private function _print_view($form) {
+  protected function _print_view($form) {
     list ($ffmpeg_version, $ffmpeg_date) = Movie::get_ffmpeg_version();
     $ffmpeg_version = $ffmpeg_date ? "{$ffmpeg_version} ({$ffmpeg_date})" : $ffmpeg_version;
     $ffmpeg_path = Movie::find_ffmpeg();
@@ -55,7 +55,7 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
     $this->response->body($view);
   }
 
-  private function _get_admin_form() {
+  protected function _get_admin_form() {
     $form = new Forge("admin/movies/save", "", "post", array("id" => "g-movies-admin-form"));
     $group = $form->group("settings")->label(t("Settings"));
     $group->dropdown("allow_uploads")

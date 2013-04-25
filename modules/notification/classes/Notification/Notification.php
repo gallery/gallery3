@@ -195,7 +195,7 @@ class Notification_Notification {
     }
   }
 
-  private static function _notify($email, $locale, $item, $text, $subject) {
+  protected static function _notify($email, $locale, $item, $text, $subject) {
     if (!Batch::in_progress()) {
       Sendmail::factory()
         ->to($email)

@@ -111,7 +111,7 @@ class Recaptcha_Recaptcha {
    * @param $data - array of string elements to be encoded
    * @return string - encoded request
    */
-  private static function _encode(array $data){
+  protected static function _encode(array $data){
     $req = array();
     foreach ($data as $key => $value){
       $req[] = "$key=" . urlencode(stripslashes($value));
@@ -127,7 +127,7 @@ class Recaptcha_Recaptcha {
    * @param int port
    * @return array response
    */
-  private static function _http_post($host, $path, $data, $port = 80) {
+  protected static function _http_post($host, $path, $data, $port = 80) {
     $req = self::_encode($data);
     $http_request  = "POST $path HTTP/1.0\r\n";
     $http_request .= "Host: $host\r\n";

@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Helper_Test extends Unittest_Testcase {
-  private $_client_ip;
-  private $_user_agent;
-  private $_save;
-  private $_api_key;
+  protected $_client_ip;
+  protected $_user_agent;
+  protected $_save;
+  protected $_api_key;
 
   public function setup() {
     parent::setup();
@@ -45,7 +45,7 @@ class Akismet_Helper_Test extends Unittest_Testcase {
     parent::teardown();
   }
 
-  private function _make_comment() {
+  protected function _make_comment() {
     $comment = ORM::factory("Comment");
     $comment->item_id = Item::root()->id;
     $comment->author_id = Identity::guest()->id;

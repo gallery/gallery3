@@ -41,7 +41,7 @@ class Gallery_Remote {
    * @param array $extra_headers extra headers to pass to the server
    * @return string the encoded post data
    */
-  private static function _encode_post_data($post_data_array, &$extra_headers) {
+  protected static function _encode_post_data($post_data_array, &$extra_headers) {
     $post_data_raw = '';
     foreach ($post_data_array as $key => $value) {
       if (!empty($post_data_raw)) {
@@ -142,7 +142,7 @@ class Gallery_Remote {
    * @return array url components
    * @access private
    */
-  private static function _parse_url_for_fsockopen($url) {
+  protected static function _parse_url_for_fsockopen($url) {
     $url_components = parse_url($url);
     if (strtolower($url_components['scheme']) == 'https') {
       $url_components['fsockhost'] = 'ssl://' . $url_components['host'];

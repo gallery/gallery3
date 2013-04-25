@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Access_Test extends Unittest_TestCase {
-  private $_group;
+  protected $_group;
 
   public function setup() {
     parent::setup();

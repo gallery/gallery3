@@ -113,7 +113,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     }
   }
 
-  private function _copy_items_for_tags($tag, $tag_list) {
+  protected function _copy_items_for_tags($tag, $tag_list) {
     foreach ($tag->items() as $item) {
       foreach ($tag_list as $new_tag_name) {
         Tag::add($item, trim($new_tag_name));

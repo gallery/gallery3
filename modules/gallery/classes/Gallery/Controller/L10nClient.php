@@ -111,7 +111,7 @@ class Gallery_Controller_L10nClient extends Controller {
     $this->redirect($redirect_url);
   }
 
-  private static function _l10n_client_search_form() {
+  protected static function _l10n_client_search_form() {
     $form = new Forge("#", "", "post", array("id" => "g-l10n-search-form"));
     $group = $form->group("l10n_search");
     $group->input("l10n-search")->id("g-l10n-search");

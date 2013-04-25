@@ -123,7 +123,7 @@ class Gallery_Controller_Uploader extends Controller {
     $this->response->json(array("result" => "success"));
   }
 
-  private function _get_add_form($album)  {
+  protected function _get_add_form($album)  {
     $form = new Forge("uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
       ->label(t("Add photos to %album_title", array("album_title" => HTML::purify($album->title))));

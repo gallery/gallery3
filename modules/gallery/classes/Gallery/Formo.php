@@ -17,29 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class Forge extends Forge_Core {
+class Gallery_Formo extends Formo_Core_Formo {
   /**
-   * Force a CSRF element into every form.
+   * Add a CSRF element into every form that uses Access::verify_csrf() for validation.
+   *
+   * @see  Formo::__construct()
    */
-  public function __construct($action=null, $title='', $method=null, $attr=array()) {
-    parent::__construct($action, $title, $method, $attr);
-    $this->hidden("csrf")->value(Access::csrf_token());
-  }
+  public function __construct(array $array=null) {
+    parent::__construct($array);
 
-  /**
-   * Use our own template
-   */
-  public function render($template="form.html", $custom=false) {
-    return parent::render($template, $custom);
-  }
-
-  /**
-   * Validate our CSRF value as a mandatory part of all form validation.
-   */
-  public function validate() {
-    $status = parent::validate();
-    Access::verify_csrf();
-    return $status;
+    // If the driver is form (i.e. the parent form instead of a field within it), add the CSRF.
+    if ($this->get("driver") == "form") {
+      $this->add("csrf", "input|hidden", Access::csrf_token());
+      $this->csrf->add_rule(array("Access::verify_csrf", array(":value")));
+    }
   }
 }

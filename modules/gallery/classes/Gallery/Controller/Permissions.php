@@ -87,7 +87,7 @@ class Gallery_Controller_Permissions extends Controller {
     }
   }
 
-  private function _get_form($item) {
+  protected function _get_form($item) {
     $view = new View("gallery/permissions_form.html");
     $view->item = $item;
     $view->groups = Identity::groups();

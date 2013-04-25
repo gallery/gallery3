@@ -60,7 +60,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    * @param integer $severity      one of the severity constants
    */
-  private static function _add($msg, $severity) {
+  protected static function _add($msg, $severity) {
     $session = Session::instance();
     $status = $session->get("messages");
     $status[] = array($msg, $severity);

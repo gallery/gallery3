@@ -100,7 +100,7 @@ class Gallery_L10nScanner {
     }
   }
 
-  private static function _parse_t_calls(&$tokens, &$call_list, &$cache) {
+  protected static function _parse_t_calls(&$tokens, &$call_list, &$cache) {
     $errors = array();
     foreach ($call_list as $index) {
       $function_name = $tokens[$index++];
@@ -127,7 +127,7 @@ class Gallery_L10nScanner {
     return $errors;
   }
 
-  private static function _parse_plural_calls(&$tokens, &$call_list, &$cache) {
+  protected static function _parse_plural_calls(&$tokens, &$call_list, &$cache) {
     $errors = array();
     foreach ($call_list as $index) {
       $function_name = $tokens[$index++];
@@ -164,7 +164,7 @@ class Gallery_L10nScanner {
    *
    * @param $str The strings to escape
    */
-  private static function _escape_quoted_string($str) {
+  protected static function _escape_quoted_string($str) {
     $quo = substr($str, 0, 1);
     $str = substr($str, 1, -1);
     if ($quo == '"') {
