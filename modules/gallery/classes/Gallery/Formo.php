@@ -29,7 +29,7 @@ class Gallery_Formo extends Formo_Core_Formo {
     // If the driver is form (i.e. the parent form instead of a field within it), add the CSRF.
     if ($this->get("driver") == "form") {
       $this->add("csrf", "input|hidden", Access::csrf_token());
-      $this->csrf->add_rule(array("Access::verify_csrf", array()));
+      $this->csrf->add_rule(array("Access::verify_csrf", array(":value")));
     }
   }
 }

@@ -410,10 +410,14 @@ class Gallery_Access {
 
   /**
    * Verify our Cross Site Request Forgery token is valid, else throw an exception.
+   * @param  string  CSRF to verify (if not specified, it will be autodetected from GET/POST)
    */
-  static function verify_csrf() {
-    if (Arr::get(Request::current()->post(), "csrf", Request::current()->query("csrf")) !==
-        Session::instance()->get("csrf")) {
+  static function verify_csrf($csrf=null) {
+    if (!isset($csrf)) {
+      $csrf = Arr::get(Request::current()->post(), "csrf", Request::current()->query("csrf"));
+    }
+
+    if ($csrf !== Session::instance()->get("csrf")) {
       Access::forbidden();
     }
   }
