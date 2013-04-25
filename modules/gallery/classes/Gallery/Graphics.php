@@ -111,6 +111,7 @@ class Gallery_Graphics {
    * @param Model_Item $item
    */
   static function generate($item) {
+    $ops = array();
     if ($item->thumb_dirty) {
       $ops["thumb"] = $item->thumb_path();
     }
