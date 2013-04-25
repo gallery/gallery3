@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Cache_Test extends Unittest_Testcase {
-  private $_driver;
+  protected $_driver;
   public function setup() {
     parent::setup();
     DB::delete("caches")->execute();

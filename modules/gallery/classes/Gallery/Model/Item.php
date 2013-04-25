@@ -19,7 +19,7 @@
  */
 class Gallery_Model_Item extends ORM_MPTT {
   public $data_file = null;
-  private $data_file_error = null;
+  protected $data_file_error = null;
 
   public function __construct($id=null) {
     parent::__construct($id);

@@ -211,9 +211,9 @@ class Controller_Auth_Test_Function {
   public $name;
   public $line;
   public $is_admin_controller = false;
-  private $_uses_input = false;
-  private $_checks_authorization = false;
-  private $_checks_csrf = false;
+  protected $_uses_input = false;
+  protected $_checks_authorization = false;
+  protected $_checks_csrf = false;
 
   function __construct($name, $line, $is_admin_controller) {
     $this->name = $name;

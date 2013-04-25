@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Form_Recaptcha_Core extends Form_Input {
-  private $_error = null;
+  protected $_error = null;
 
   protected $data = array(
     'name'  => '',

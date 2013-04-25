@@ -381,17 +381,17 @@ class Xss_Security_Test extends Unittest_Testcase {
 }
 
 class Xss_Security_Test_Frame {
-  private $_expr = "";
-  private $_in_script_block = false;
-  private $_is_safe_html = false;
-  private $_is_safe_js = false;
-  private $_in_href_attribute = false;
-  private $_is_safe_href_attr = false;
-  private $_in_attribute_js_context = false;
-  private $_in_attribute = false;
-  private $_preceded_by_quote = false;
-  private $_is_safe_attr = false;
-  private $_line;
+  protected $_expr = "";
+  protected $_in_script_block = false;
+  protected $_is_safe_html = false;
+  protected $_is_safe_js = false;
+  protected $_in_href_attribute = false;
+  protected $_is_safe_href_attr = false;
+  protected $_in_attribute_js_context = false;
+  protected $_in_attribute = false;
+  protected $_preceded_by_quote = false;
+  protected $_is_safe_attr = false;
+  protected $_line;
 
   function __construct($line_number, $in_script_block,
                        $href_attribute_start, $in_attribute_js_context,

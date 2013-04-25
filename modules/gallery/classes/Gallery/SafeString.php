@@ -22,7 +22,7 @@
  * Safe string representation (regarding security - cross site scripting).
  */
 class Gallery_SafeString {
-  private $_raw_string;
+  protected $_raw_string;
   protected $_is_safe_html = false;
 
   /** Constructor */

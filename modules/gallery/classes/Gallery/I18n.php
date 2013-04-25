@@ -49,9 +49,9 @@ function t2($singular, $plural, $count, $options=array()) {
 
 class Gallery_I18n extends Kohana_I18n {
   protected static $_instance;
-  private $_config = array();
-  private $_call_log = array();
-  private $_message_cache = array();
+  protected $_config = array();
+  protected $_call_log = array();
+  protected $_message_cache = array();
 
   protected function __construct($config) {
     $this->_config = $config;

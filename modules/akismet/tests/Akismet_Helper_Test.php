@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Helper_Test extends Unittest_Testcase {
-  private $_client_ip;
-  private $_user_agent;
-  private $_save;
-  private $_api_key;
+  protected $_client_ip;
+  protected $_user_agent;
+  protected $_save;
+  protected $_api_key;
 
   public function setup() {
     parent::setup();
