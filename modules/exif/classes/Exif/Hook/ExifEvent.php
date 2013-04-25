@@ -39,6 +39,8 @@ class Exif_Hook_ExifEvent {
   }
 
   static function item_deleted($item) {
-    $item->exif_record->delete();
+    if ($item->exif_record->loaded()) {
+      $item->exif_record->delete();
+    }
   }
 }

@@ -27,12 +27,14 @@ class Comment_Hook_CommentEvent {
   }
 
   static function item_deleted($item) {
-    $item->comments->delete();
+    foreach ($item->comments->find_all() as $comment) {
+      $comment->delete();
+    }
   }
 
   static function user_deleted($user) {
     $guest = Identity::guest();
-    if (!empty($guest)) {          // could be empty if there is not identity provider
+    if (!empty($guest)) {          // could be empty if there is no identity provider
       DB::update("comments")
         ->set(array("author_id" => $guest->id,
                     "guest_email" => null,
