@@ -73,8 +73,8 @@ class Controller_Auth_Test extends Unittest_Testcase {
           } else if ($open_braces == 1 && $token[0] == T_FUNCTION) {
             $line = $token[2];
             $name = "";
-            // Search backwards to check visibility,
-            // "private function", or "private static function"
+            // Search backwards to check visibility: "private function", "protected function",
+            // "private static function", or "protected static function".
             $previous = $tokens[$token_number - 1][0];
             $previous_2 = $tokens[$token_number - 2][0];
             $is_private = in_array($previous, array(T_PRIVATE, T_PROTECTED)) ||
@@ -183,7 +183,7 @@ class Controller_Auth_Test extends Unittest_Testcase {
                         $return_value, "Controller auth golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
-  private static function _token_matches($expected_token, &$tokens, $token_number) {
+  protected static function _token_matches($expected_token, &$tokens, $token_number) {
     if (!isset($tokens[$token_number])) {
       return false;
     }
@@ -211,9 +211,9 @@ class Controller_Auth_Test_Function {
   public $name;
   public $line;
   public $is_admin_controller = false;
-  private $_uses_input = false;
-  private $_checks_authorization = false;
-  private $_checks_csrf = false;
+  protected $_uses_input = false;
+  protected $_checks_authorization = false;
+  protected $_checks_csrf = false;
 
   function __construct($name, $line, $is_admin_controller) {
     $this->name = $name;

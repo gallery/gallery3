@@ -22,8 +22,8 @@ class G2Import_G2Import {
   public static $map = array();
   public static $g2_base_url = null;
 
-  private static $current_g2_item = null;
-  private static $error_reporting = null;
+  protected static $current_g2_item = null;
+  protected static $error_reporting = null;
 
   static function is_configured() {
     return Module::get_var("g2_import", "embed_path");
@@ -769,12 +769,12 @@ class G2Import_G2Import {
    * g2 encoded'&', '"', '<' and '>' as '&amp;', '&quot;', '&lt;' and '&gt;' respectively.
    * This function undoes that encoding.
    */
-  private static function _decode_html_special_chars($value) {
+  protected static function _decode_html_special_chars($value) {
     return str_replace(array("&amp;", "&quot;", "&lt;", "&gt;"),
                        array("&", "\"", "<", ">"), $value);
   }
 
-  private static $_permission_map = array(
+  protected static $_permission_map = array(
     "core.view" => "view",
     "core.viewSource" => "view_full",
     "core.edit" => "edit",
@@ -799,7 +799,7 @@ class G2Import_G2Import {
    *  core.delete         <ignored>
    *  comment.*           <ignored>
    */
-  private static function _import_permissions($g2_album, $g3_album) {
+  protected static function _import_permissions($g2_album, $g3_album) {
     // No need to do anything if this album has the same G2 ACL as its parent.
     if ($g2_album->getParentId() != null &&
         g2(GalleryCoreApi::fetchAccessListId($g2_album->getId())) ==
@@ -866,7 +866,7 @@ class G2Import_G2Import {
    * Loads all the granted group G2 permissions for a specific
    * album and returns an array with G3 groups ids and G3 permission ids.
    */
-  private static function _map_permissions($g2_album_id) {
+  protected static function _map_permissions($g2_album_id) {
     $g2_permissions = g2(GalleryCoreApi::fetchAllPermissionsForItem($g2_album_id));
     $permissions = array();
     foreach ($g2_permissions as $entry) {
@@ -1164,7 +1164,7 @@ class G2Import_G2Import {
     "#\\[ul\\](.*?)\\/ul\\]#" => "<ul>$1</ul>",
     "#\\[li\\](.*?)\\[/li\\]#" => "<li>$1</li>",
   );
-  private static function _transform_bbcode($text) {
+  protected static function _transform_bbcode($text) {
     if (strpos($text, "[") !== false) {
       $text = preg_replace(array_keys(self::$bbcode_mappings), array_values(self::$bbcode_mappings),
                            $text);

@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Graphics {
-  private static $init;
-  private static $_rules_cache = array();
+  protected static $init;
+  protected static $_rules_cache = array();
 
   /**
    * Add a new graphics rule.
@@ -242,7 +242,7 @@ class Gallery_Graphics {
     }
   }
 
-  private static function _update_item_dimensions($item) {
+  protected static function _update_item_dimensions($item) {
     if ($item->is_photo()) {
       list ($item->resize_width, $item->resize_height) =
         Photo::get_file_metadata($item->resize_path());
@@ -251,7 +251,7 @@ class Gallery_Graphics {
       Photo::get_file_metadata($item->thumb_path());
   }
 
-  private static function _replace_image_with_placeholder($item, $target) {
+  protected static function _replace_image_with_placeholder($item, $target) {
     if ($item->is_album() && !$item->album_cover_item_id) {
       $input_path = MODPATH . "gallery/assets/graphics/missing_album_cover.jpg";
     } else if ($item->is_movie() || ($item->is_album() && $item->album_cover()->is_movie())) {
@@ -290,7 +290,7 @@ class Gallery_Graphics {
     }
   }
 
-  private static function _get_rules($target) {
+  protected static function _get_rules($target) {
     if (empty(self::$_rules_cache[$target])) {
       $rules = array();
       foreach (ORM::factory("GraphicsRule")

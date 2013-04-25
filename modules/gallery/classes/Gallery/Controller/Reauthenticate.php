@@ -72,7 +72,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     }
   }
 
-  private static function _show_form($form) {
+  protected static function _show_form($form) {
     $view = new View_Theme("required/page.html", "other", "reauthenticate");
     $view->page_title = t("Re-authenticate");
     $view->content = new View("gallery/reauthenticate.html");
@@ -82,7 +82,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
     $this->response->body($view);
   }
 
-  private static function _form() {
+  protected static function _form() {
     $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
     $form->set_attr("class", "g-narrow");
     $group = $form->group("reauthenticate")->label(t("Re-authenticate"));

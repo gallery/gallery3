@@ -24,13 +24,12 @@ class Gallery_Formo extends Formo_Core_Formo {
    * @see  Formo::__construct()
    */
   public function __construct(array $array=null) {
-    $form = parent::__construct($array);
+    parent::__construct($array);
 
     // If the driver is form (i.e. the parent form instead of a field within it), add the CSRF.
-    if ($form->get("driver") == "form") {
-      $form->add("csrf", "input|hidden", Access::csrf_token());
-      $form->csrf->add_rule(array("Access::verify_csrf", array()));
+    if ($this->get("driver") == "form") {
+      $this->add("csrf", "input|hidden", Access::csrf_token());
+      $this->csrf->add_rule(array("Access::verify_csrf", array()));
     }
-    return $form;
   }
 }

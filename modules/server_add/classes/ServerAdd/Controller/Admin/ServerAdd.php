@@ -83,7 +83,7 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     $this->response->ajax(json_encode($directories));
   }
 
-  private function _get_admin_form() {
+  protected function _get_admin_form() {
     $form = new Forge("admin/server_add/add_path", "", "post",
                       array("id" => "g-server-add-admin-form", "class" => "g-short-form"));
     $add_path = $form->group("add_path");

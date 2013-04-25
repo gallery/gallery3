@@ -328,7 +328,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   }
 
   /* User Form Definitions */
-  private static function _get_user_edit_form_admin($user) {
+  protected static function _get_user_edit_form_admin($user) {
     $form = new Forge(
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit user"));
@@ -365,7 +365,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  private static function _get_user_add_form_admin() {
+  protected static function _get_user_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
     $group = $form->group("add_user")->label(t("Add user"));
     $group->input("name")->label(t("Username"))->id("g-username")
@@ -396,7 +396,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  private static function _add_locale_dropdown(&$form, $user=null) {
+  protected static function _add_locale_dropdown(&$form, $user=null) {
     $locales = Locales::installed();
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);
@@ -411,7 +411,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       ->selected($selected_locale);
   }
 
-  private function _get_user_delete_form_admin($user) {
+  protected function _get_user_delete_form_admin($user) {
     $form = new Forge("admin/users/delete_user/$user->id", "", "post",
                       array("id" => "g-delete-user-form"));
     $group = $form->group("delete_user")->label(
@@ -421,7 +421,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   }
 
   /* Group Form Definitions */
-  private function _get_group_edit_form_admin($group) {
+  protected function _get_group_edit_form_admin($group) {
     $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
     $form_group = $form->group("edit_group")->label(t("Edit group"));
     $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name)
@@ -435,7 +435,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  private function _get_group_add_form_admin() {
+  protected function _get_group_add_form_admin() {
     $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
     $form_group = $form->group("add_group")->label(t("Add group"));
     $form_group->input("name")->label(t("Name"))->id("g-name");
@@ -445,7 +445,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  private function _get_group_delete_form_admin($group) {
+  protected function _get_group_delete_form_admin($group) {
     $form = new Forge("admin/users/delete_group/$group->id", "", "post",
                       array("id" => "g-delete-group-form"));
     $form_group = $form->group("delete_group")->label(

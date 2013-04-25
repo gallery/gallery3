@@ -71,7 +71,7 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     $this->redirect("admin/modules");
   }
 
-  private function _do_save() {
+  protected function _do_save() {
     $changes = new stdClass();
     $changes->activate = array();
     $changes->deactivate = array();

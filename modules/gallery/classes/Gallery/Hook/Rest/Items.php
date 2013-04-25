@@ -77,7 +77,7 @@ class Gallery_Hook_Rest_Items {
     return $item;
   }
 
-  private static function _format_restful_item($item, $types) {
+  protected static function _format_restful_item($item, $types) {
     $item_rest = array("url" => Rest::url("item", $item),
                        "entity" => $item->as_restful_array(),
                        "relationships" => Rest::relationships("item", $item));

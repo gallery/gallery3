@@ -117,7 +117,7 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
     $this->response->ajax(json_encode($directories));
   }
 
-  private function _get_import_form() {
+  protected function _get_import_form() {
     $embed_path = Module::get_var("g2_import", "embed_path", "");
     $form = new Forge(
       "admin/g2_import/save", "", "post", array("id" => "g-admin-configure-g2-import-form"));

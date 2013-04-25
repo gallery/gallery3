@@ -83,7 +83,7 @@ class Gallery_Controller_UserProfile extends Controller {
     }
   }
 
-  private function _can_view_profile_pages($user) {
+  protected function _can_view_profile_pages($user) {
     if (!$user->loaded()) {
       return false;
     }

@@ -48,12 +48,12 @@ function t2($singular, $plural, $count, $options=array()) {
 }
 
 class Gallery_I18n extends Kohana_I18n {
-  private static $_instance;
-  private $_config = array();
-  private $_call_log = array();
-  private $_message_cache = array();
+  protected static $_instance;
+  protected $_config = array();
+  protected $_call_log = array();
+  protected $_message_cache = array();
 
-  private function __construct($config) {
+  protected function __construct($config) {
     $this->_config = $config;
     $this->locale($config['default_locale']);
   }
@@ -148,7 +148,7 @@ class Gallery_I18n extends Kohana_I18n {
     return SafeString::of_safe_html($entry);
   }
 
-  private function lookup($locale, $message) {
+  protected function lookup($locale, $message) {
     if (!isset($this->_message_cache[$locale])) {
       $this->_message_cache[$locale] = self::load_translations($locale);
     }
@@ -162,7 +162,7 @@ class Gallery_I18n extends Kohana_I18n {
     }
   }
 
-  private static function load_translations($locale) {
+  protected static function load_translations($locale) {
     $cache_key = "translation|" . $locale;
     $cache = Cache::instance();
     $translations = $cache->get($cache_key);
@@ -221,7 +221,7 @@ class Gallery_I18n extends Kohana_I18n {
     return is_array($message);
   }
 
-  private function interpolate($locale, $string, $key_values) {
+  protected function interpolate($locale, $string, $key_values) {
     // TODO: Handle locale specific number formatting.
 
     // Replace x_y before replacing x.
@@ -236,7 +236,7 @@ class Gallery_I18n extends Kohana_I18n {
     return str_replace($keys, $values, $string);
   }
 
-  private function pluralize($locale, $entry, $count) {
+  protected function pluralize($locale, $entry, $count) {
     if (!is_array($entry)) {
       return $entry;
     }
@@ -256,7 +256,7 @@ class Gallery_I18n extends Kohana_I18n {
     }
   }
 
-  private function log($message, $options) {
+  protected function log($message, $options) {
     $key = self::get_message_key($message);
     isset($this->_call_log[$key]) or $this->_call_log[$key] = array($message, $options);
   }
@@ -274,7 +274,7 @@ class Gallery_I18n extends Kohana_I18n {
     }
   }
 
-  private static function get_plural_key($locale, $count) {
+  protected static function get_plural_key($locale, $count) {
     $parts = explode('_', $locale);
     $language = $parts[0];
 

@@ -34,8 +34,8 @@ class Purifier {
   /**
    * Initialize the purifier array and setup our default configuration
    */
-  private static $_purifier = array();
-  private static $_config = array(
+  protected static $_purifier = array();
+  protected static $_config = array(
     "default" => array(
       "Cache.SerializerPath" => TMPPATH,
       "Attr.EnableID" => true
@@ -149,7 +149,7 @@ class Purifier {
   /**
    * Initialize an instance of HTMLPurifier and load the library if needed.
    */
-  private static function _init($config_group) {
+  protected static function _init($config_group) {
     if (empty(self::$_purifier)) {
       // To further reinforce the fact that the purifier module cannot be overridden,
       // the library path is hard-coded and doesn't use Kohana::find_file().

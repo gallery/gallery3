@@ -93,7 +93,7 @@ class Exif_Exif {
     return $exif;
   }
 
-  private static function _keys() {
+  protected static function _keys() {
     if (!isset(self::$exif_keys)) {
       self::$exif_keys = array(
         "Make"            => array("IFD0",   "Make",              t("Camera Maker"),     ),

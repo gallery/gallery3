@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Controller_Admin_ManageComments extends Controller_Admin {
-  private static $items_per_page = 20;
+  protected static $items_per_page = 20;
 
   public function action_index() {
     // Get rid of old deleted/spam comments once in a while
@@ -75,7 +75,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $this->response->body($view);
   }
 
-  private function _menu($counts) {
+  protected function _menu($counts) {
     return Menu::factory("root")
       ->append(Menu::factory("link")
                ->id("unpublished")
@@ -103,7 +103,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
                ->url(URL::site("admin/manage_comments/queue/deleted")));
   }
 
-  private function _counts() {
+  protected function _counts() {
     $counts = new stdClass();
     $counts->unpublished = 0;
     $counts->published = 0;

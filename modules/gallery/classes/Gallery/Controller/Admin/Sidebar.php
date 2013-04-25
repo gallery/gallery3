@@ -52,7 +52,7 @@ class Gallery_Controller_Admin_Sidebar extends Controller_Admin {
     $this->response->json($result);
   }
 
-  private function _get_blocks() {
+  protected function _get_blocks() {
     $active_blocks = array();
     $available_blocks = BlockManager::get_available_site_blocks();
     foreach (BlockManager::get_active("site_sidebar") as $block) {

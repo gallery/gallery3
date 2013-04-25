@@ -67,7 +67,7 @@ class Slideshow_Hook_SlideshowEvent {
                   ->css_id("g-slideshow-link"));
   }
 
-  private static function _feed_url($theme) {
+  protected static function _feed_url($theme) {
     if ($item = $theme->item()) {
       if (!$item->is_album()) {
         $item = $item->parent();

@@ -84,7 +84,7 @@ class Gallery_BlockManager {
     return self::_get_blocks("get_site_list");
   }
 
-  private static function _get_blocks($function) {
+  protected static function _get_blocks($function) {
     $blocks = array();
 
     foreach (Module::active() as $module) {

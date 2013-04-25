@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_InPlaceEdit {
-  private $rules = array();
-  private $messages = array();
-  private $callback = array();
-  private $initial_value;
-  private $action = "";
-  private $errors;
-  private $form;
+  protected $rules = array();
+  protected $messages = array();
+  protected $callback = array();
+  protected $initial_value;
+  protected $action = "";
+  protected $errors;
+  protected $form;
 
   static function factory($initial_value) {
     $instance = new InPlaceEdit();

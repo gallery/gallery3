@@ -19,7 +19,7 @@
  */
 
 class Gallery_I18n_Test extends Unittest_Testcase {
-  private $i18n;
+  protected $i18n;
 
   public function setup() {
     parent::setup();

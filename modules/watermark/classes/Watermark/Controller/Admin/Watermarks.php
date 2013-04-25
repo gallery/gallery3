@@ -134,7 +134,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
     }
   }
 
-  private function _update_graphics_rules() {
+  protected function _update_graphics_rules() {
     Graphics::remove_rules("watermark");
     if ($name = Module::get_var("watermark", "name")) {
       foreach (array("thumb", "resize") as $target) {

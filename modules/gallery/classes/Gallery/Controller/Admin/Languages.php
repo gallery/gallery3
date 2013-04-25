@@ -75,7 +75,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     $this->redirect("admin/languages");
   }
 
-  private function _save_api_key($form) {
+  protected function _save_api_key($form) {
     $new_key = $form->sharing->api_key->value;
     if ($new_key) {
       list($connected, $valid) = L10nClient::validate_api_key($new_key);
@@ -107,7 +107,7 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     }
   }
 
-  private function _outgoing_translations_count() {
+  protected function _outgoing_translations_count() {
     return ORM::factory("OutgoingTranslation")->count_all();
   }
 

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_System {
-  private static $files_marked_for_deletion = array();
+  protected static $files_marked_for_deletion = array();
 
   /**
    * Return the path to an executable version of the named binary, or null.

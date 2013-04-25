@@ -165,7 +165,7 @@ class Akismet_Akismet {
     return $http_request;
   }
 
-  private static function _http_post($http_request, $host=null) {
+  protected static function _http_post($http_request, $host=null) {
     if (!$host) {
       $host = Module::get_var("akismet", "api_key") . ".rest.akismet.com";
     }
