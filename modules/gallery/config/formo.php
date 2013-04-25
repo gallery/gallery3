@@ -27,12 +27,12 @@ return array(
   // Close single html tags (true = <br/>. false = <br>)
   "close_single_html_tags"  => true,
   // Auto-generate IDs on form elements
-  "auto_id"                 => true,
+  "auto_id"                 => false,
   // The directory for the formo templates (ex: "formo" or "formo_bootstrap")
   // @todo: pick one, then delete the other views subdir
   "template_dir"            => "formo_bootstrap/",
   // Namespace fields (name="parent_alias[field_alias]")
-  "namespaces"              => true,
+  "namespaces"              => false,
   // Driver used for ORM integration
   "orm_driver"              => "kohana",
   // Automatically add these rules to "input" fields for html5 compatability.
