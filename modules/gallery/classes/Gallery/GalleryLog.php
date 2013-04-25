@@ -72,7 +72,7 @@ class Gallery_GalleryLog {
    * @param integer $severity  INFO, WARNING or ERROR
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  private static function _add($category, $message, $html, $severity) {
+  protected static function _add($category, $message, $html, $severity) {
     $log = ORM::factory("Log");
     $log->category = $category;
     $log->message = $message;

@@ -42,7 +42,7 @@ class Gallery_Controller_Combined extends Controller {
    * @param string   the combined entry type (either "javascript" or "css")
    * @param string   the key (typically an md5 sum)
    */
-  private function _emit($type, $key) {
+  protected function _emit($type, $key) {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 

@@ -160,7 +160,7 @@ class User_User {
    * @param string      search value
    * @return User       the user object, or null if the name was invalid.
    */
-  private static function _lookup_user_by_field($field_name, $value) {
+  protected static function _lookup_user_by_field($field_name, $value) {
     try {
       $user = ORM::factory("User")->where($field_name, "=", $value)->find();
       if ($user->loaded()) {

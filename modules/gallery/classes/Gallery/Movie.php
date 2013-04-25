@@ -24,7 +24,7 @@
  * Note: by design, this class does not do any permission checking.
  */
 class Gallery_Movie {
-  private static $allow_uploads;
+  protected static $allow_uploads;
 
   static function get_edit_form($movie) {
     $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));

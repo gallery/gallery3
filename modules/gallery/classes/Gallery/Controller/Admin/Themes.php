@@ -31,7 +31,7 @@ class Gallery_Controller_Admin_Themes extends Controller_Admin {
     $this->response->body($view);
   }
 
-  private function _get_themes() {
+  protected function _get_themes() {
     $themes = array();
     foreach (scandir(THEMEPATH) as $theme_name) {
       if ($theme_name[0] == ".") {

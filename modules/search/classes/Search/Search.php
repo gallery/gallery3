@@ -51,7 +51,7 @@ class Search_Search {
     return array($count, $data);
   }
 
-  private static function _build_query_base($q, $album, $where=array()) {
+  protected static function _build_query_base($q, $album, $where=array()) {
     $db = Database::instance();
     $q = $db->escape($q);
 

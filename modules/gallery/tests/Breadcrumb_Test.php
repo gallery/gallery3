@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Breadcrumb_Test extends Unittest_Testcase {
-  private $album;
-  private $item;
+  protected $album;
+  protected $item;
 
   public function test_build_breadcrumbs_for_item() {
     $album = Test::random_album();

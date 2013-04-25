@@ -321,7 +321,7 @@ class Item_Helper_Test extends Unittest_Testcase {
     $this->assertEquals(null, Item::find_by_path($thumb_path)->id);
   }
 
-  private function _remove_relative_path_caches() {
+  protected function _remove_relative_path_caches() {
     // This gets used *many* times in the find_by_path tests above to check the fallback code.
     DB::update("items")
       ->set(array("relative_path_cache" => null))

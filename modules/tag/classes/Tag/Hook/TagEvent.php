@@ -150,7 +150,7 @@ class Tag_Hook_TagEvent {
     }
   }
 
-  private static function _get_autocomplete_js() {
+  protected static function _get_autocomplete_js() {
     $url = URL::site("tags/autocomplete");
     return "$('input[name=\"tags\"]').gallery_autocomplete('$url', {multiple: true});";
   }

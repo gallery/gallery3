@@ -234,7 +234,7 @@ class Gallery_View_Gallery extends View {
    * a new location as part of a combined bundle the references are still correct.
    * @param string  the path to the css file
    */
-  private function process_css($css_file) {
+  protected function process_css($css_file) {
     static $PATTERN = "#url\(\s*['|\"]{0,1}(.*?)['|\"]{0,1}\s*\)#";
     $docroot_length = strlen(DOCROOT);
 

@@ -66,7 +66,7 @@ class User_Group {
    * @param string      $value value to match
    * @return IdentityProvider_GroupDefinition  the group object, or null if the name was invalid.
    */
-  private static function _lookup_by_field($field_name, $value) {
+  protected static function _lookup_by_field($field_name, $value) {
     try {
       $group = ORM::factory("Group")->where($field_name, "=", $value)->find();
       if ($group->loaded()) {

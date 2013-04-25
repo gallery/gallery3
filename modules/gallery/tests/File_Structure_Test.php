@@ -65,7 +65,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  private function _check_view_preamble($path, &$errors) {
+  protected function _check_view_preamble($path, &$errors) {
     $expected_2 = null;
     // The preamble for views is a single line that prevents direct script access
     if (strpos($path, SYSPATH) === 0) {
@@ -87,7 +87,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  private function _check_php_preamble($path, &$errors) {
+  protected function _check_php_preamble($path, &$errors) {
     $expected_2 = null; $expected_3 = null; $expected_4 = null;
     if (strpos($path, SYSPATH) === 0 ||
         strpos($path, MODPATH . "unittest") === 0) {
@@ -215,7 +215,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  private function _get_preamble($file) {
+  protected function _get_preamble($file) {
     $lines = file($file);
     $copy = array();
     for ($i = 0; $i < count($lines); $i++) {
@@ -237,8 +237,8 @@ class File_Structure_Test extends Unittest_Testcase {
         foreach (file($file) as $line) {
           $this->assertTrue(
             !preg_match("/\sfunction\s.*\(/", $line) ||
-            preg_match("/^\s*(private static function _|static function)/", $line),
-            "should be \"static function foo\" or \"private static function _foo\":\n" .
+            preg_match("/^\s*(protected static function _|static function)/", $line),
+            "should be \"static function foo\" or \"protected static function _foo\":\n" .
             "$file\n$line\n");
         }
       }
