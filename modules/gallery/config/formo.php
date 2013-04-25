@@ -32,7 +32,7 @@ return array(
   // @todo: pick one, then delete the other views subdir
   "template_dir"            => "formo_bootstrap/",
   // Namespace fields (name="parent_alias[field_alias]")
-  "namespaces"              => false,
+  "namespaces"              => true,
   // Driver used for ORM integration
   "orm_driver"              => "kohana",
   // Automatically add these rules to "input" fields for html5 compatability.
