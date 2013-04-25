@@ -123,7 +123,7 @@ class Access_Test extends Unittest_TestCase {
 
     $photo = Test::random_photo($album);
 
-    $this->assertTrue($photo->__get("view_" . Identity::everybody()->id));
+    $this->assertSame("1", $photo->__get("view_" . Identity::everybody()->id));
   }
 
   public function test_can_allow_deny_and_reset_intent() {
