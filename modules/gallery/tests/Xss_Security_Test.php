@@ -352,7 +352,7 @@ class Xss_Security_Test extends Unittest_Testcase {
       $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
-  private static function _create_frame($token, $in_script_block,
+  protected static function _create_frame($token, $in_script_block,
                                         $href_attribute_start, $in_attribute_js_context,
                                         $in_attribute, $preceded_by_quote) {
     return new Xss_Security_Test_Frame($token[2], $in_script_block,
@@ -360,7 +360,7 @@ class Xss_Security_Test extends Unittest_Testcase {
                                        $in_attribute, $preceded_by_quote);
   }
 
-  private static function _token_matches($expected_token, &$tokens, $token_number) {
+  protected static function _token_matches($expected_token, &$tokens, $token_number) {
     if (!isset($tokens[$token_number])) {
       return false;
     }

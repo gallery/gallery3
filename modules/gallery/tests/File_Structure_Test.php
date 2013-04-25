@@ -237,8 +237,8 @@ class File_Structure_Test extends Unittest_Testcase {
         foreach (file($file) as $line) {
           $this->assertTrue(
             !preg_match("/\sfunction\s.*\(/", $line) ||
-            preg_match("/^\s*(private static function _|static function)/", $line),
-            "should be \"static function foo\" or \"private static function _foo\":\n" .
+            preg_match("/^\s*(protected static function _|static function)/", $line),
+            "should be \"static function foo\" or \"protected static function _foo\":\n" .
             "$file\n$line\n");
         }
       }

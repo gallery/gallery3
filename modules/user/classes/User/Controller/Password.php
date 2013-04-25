@@ -88,7 +88,7 @@ class User_Controller_Password extends Controller {
     $this->response->json(array("result" => "success"));
   }
 
-  private static function _reset_form() {
+  protected static function _reset_form() {
     $form = new Forge("password/reset", "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
     $group->input("name")->label(t("Username"))->id("g-name")->class(null)

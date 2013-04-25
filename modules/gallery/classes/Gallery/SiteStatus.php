@@ -65,7 +65,7 @@ class Gallery_SiteStatus {
    * @param integer $severity      one of the severity constants
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  private static function _add($msg, $severity, $permanent_key) {
+  protected static function _add($msg, $severity, $permanent_key) {
     $message = ORM::factory("Message")
       ->where("key", "=", $permanent_key)
       ->find();

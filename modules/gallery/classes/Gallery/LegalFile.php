@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_LegalFile {
-  private static $photo_types_by_extension;
-  private static $movie_types_by_extension;
-  private static $photo_extensions;
-  private static $movie_extensions;
-  private static $photo_types;
-  private static $movie_types;
-  private static $blacklist = array("php", "php3", "php4", "php5", "phtml", "phtm", "shtml", "shtm",
+  protected static $photo_types_by_extension;
+  protected static $movie_types_by_extension;
+  protected static $photo_extensions;
+  protected static $movie_extensions;
+  protected static $photo_types;
+  protected static $movie_types;
+  protected static $blacklist = array("php", "php3", "php4", "php5", "phtml", "phtm", "shtml", "shtm",
                                     "pl", "cgi", "asp", "sh", "py", "c", "js");
 
   /**

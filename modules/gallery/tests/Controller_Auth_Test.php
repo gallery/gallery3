@@ -183,7 +183,7 @@ class Controller_Auth_Test extends Unittest_Testcase {
                         $return_value, "Controller auth golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
-  private static function _token_matches($expected_token, &$tokens, $token_number) {
+  protected static function _token_matches($expected_token, &$tokens, $token_number) {
     if (!isset($tokens[$token_number])) {
       return false;
     }

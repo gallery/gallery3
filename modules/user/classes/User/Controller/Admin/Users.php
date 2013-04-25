@@ -328,7 +328,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
   }
 
   /* User Form Definitions */
-  private static function _get_user_edit_form_admin($user) {
+  protected static function _get_user_edit_form_admin($user) {
     $form = new Forge(
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit user"));
@@ -365,7 +365,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  private static function _get_user_add_form_admin() {
+  protected static function _get_user_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
     $group = $form->group("add_user")->label(t("Add user"));
     $group->input("name")->label(t("Username"))->id("g-username")
@@ -396,7 +396,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     return $form;
   }
 
-  private static function _add_locale_dropdown(&$form, $user=null) {
+  protected static function _add_locale_dropdown(&$form, $user=null) {
     $locales = Locales::installed();
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);

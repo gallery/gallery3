@@ -19,7 +19,7 @@
  */
 class Gallery_L10nClient {
 
-  private static function _server_url($path) {
+  protected static function _server_url($path) {
     return "http://galleryproject.org/translations/$path";
   }
 
@@ -44,7 +44,7 @@ class Gallery_L10nClient {
     return empty($parts) ? 0 : $parts[0];
   }
 
-  private static function _sign($payload, $api_key=null) {
+  protected static function _sign($payload, $api_key=null) {
     $api_key = $api_key == null ? L10nClient::api_key() : $api_key;
     return md5($api_key . $payload . L10nClient::client_token());
   }

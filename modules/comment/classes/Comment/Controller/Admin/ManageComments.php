@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Controller_Admin_ManageComments extends Controller_Admin {
-  private static $items_per_page = 20;
+  protected static $items_per_page = 20;
 
   public function action_index() {
     // Get rid of old deleted/spam comments once in a while

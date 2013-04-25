@@ -145,14 +145,14 @@ class Gallery_SafeString {
   /**
    * Escape special HTML chars ("<", ">", "&", etc.) to HTML entities.
    */
-  private static function _escape_for_html($dirty_html) {
+  protected static function _escape_for_html($dirty_html) {
     return HTML::chars($dirty_html);
   }
 
   /**
    * Purify the string, removing any potentially malicious or unsafe HTML / JavaScript.
    */
-  private static function _purify_for_html($dirty_html) {
+  protected static function _purify_for_html($dirty_html) {
     return Purifier::clean_html($dirty_html);
   }
 }

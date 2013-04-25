@@ -48,7 +48,7 @@ function t2($singular, $plural, $count, $options=array()) {
 }
 
 class Gallery_I18n extends Kohana_I18n {
-  private static $_instance;
+  protected static $_instance;
   private $_config = array();
   private $_call_log = array();
   private $_message_cache = array();
@@ -162,7 +162,7 @@ class Gallery_I18n extends Kohana_I18n {
     }
   }
 
-  private static function load_translations($locale) {
+  protected static function load_translations($locale) {
     $cache_key = "translation|" . $locale;
     $cache = Cache::instance();
     $translations = $cache->get($cache_key);
@@ -274,7 +274,7 @@ class Gallery_I18n extends Kohana_I18n {
     }
   }
 
-  private static function get_plural_key($locale, $count) {
+  protected static function get_plural_key($locale, $count) {
     $parts = explode('_', $locale);
     $language = $parts[0];
 
