@@ -25,7 +25,7 @@ class Cache_Test extends Unittest_Testcase {
     $this->_driver = Cache::instance();
   }
 
-  private function _exists($id) {
+  protected function _exists($id) {
     return DB::select()
       ->from("caches")
       ->where("key", "=", $id)

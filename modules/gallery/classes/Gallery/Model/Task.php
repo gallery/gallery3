@@ -79,7 +79,7 @@ class Gallery_Model_Task extends ORM {
    * Build the task cache key
    * @returns the key to use in access the cache
    */
-  private function _cache_key() {
+  protected function _cache_key() {
     return md5("$this->id; $this->name; $this->callback");
   }
 }

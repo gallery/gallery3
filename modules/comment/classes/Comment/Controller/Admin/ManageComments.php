@@ -75,7 +75,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $this->response->body($view);
   }
 
-  private function _menu($counts) {
+  protected function _menu($counts) {
     return Menu::factory("root")
       ->append(Menu::factory("link")
                ->id("unpublished")
@@ -103,7 +103,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
                ->url(URL::site("admin/manage_comments/queue/deleted")));
   }
 
-  private function _counts() {
+  protected function _counts() {
     $counts = new stdClass();
     $counts->unpublished = 0;
     $counts->published = 0;

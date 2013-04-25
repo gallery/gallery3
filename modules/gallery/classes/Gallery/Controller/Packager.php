@@ -37,7 +37,7 @@ class Gallery_Controller_Packager extends Controller {
     $this->response->body("Successfully wrote install.sql and init_var.php\n");
   }
 
-  private function _reset() {
+  protected function _reset() {
     // Drop all tables
     foreach (Database::instance()->list_tables() as $table) {
       Database::instance()->query(Database::DROP, "DROP TABLE IF EXISTS {{$table}}");
@@ -65,7 +65,7 @@ class Gallery_Controller_Packager extends Controller {
     }
   }
 
-  private function _dump_database() {
+  protected function _dump_database() {
     // We now have a clean install with just the packages that we want.  Make sure that the
     // database is clean too.
     $i = 1;
@@ -143,7 +143,7 @@ class Gallery_Controller_Packager extends Controller {
     fclose($fd);
   }
 
-  private function _dump_var() {
+  protected function _dump_var() {
     $objects = new RecursiveIteratorIterator(
       new RecursiveDirectoryIterator(VARPATH),
       RecursiveIteratorIterator::SELF_FIRST);

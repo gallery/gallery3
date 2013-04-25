@@ -38,7 +38,7 @@ class Comment_Controller_Admin_Comments extends Controller_Admin {
     $this->redirect("admin/comments");
   }
 
-  private function _get_admin_form() {
+  protected function _get_admin_form() {
     $form = new Forge("admin/comments/save", "", "post",
                       array("id" => "g-comments-admin-form"));
     $comment_settings = $form->group("comment_settings")->label(t("Permissions"));

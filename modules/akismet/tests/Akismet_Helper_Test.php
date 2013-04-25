@@ -45,7 +45,7 @@ class Akismet_Helper_Test extends Unittest_Testcase {
     parent::teardown();
   }
 
-  private function _make_comment() {
+  protected function _make_comment() {
     $comment = ORM::factory("Comment");
     $comment->item_id = Item::root()->id;
     $comment->author_id = Identity::guest()->id;

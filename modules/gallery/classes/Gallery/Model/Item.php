@@ -268,7 +268,7 @@ class Gallery_Model_Item extends ORM_MPTT {
   /**
    * Rebuild the relative_path_cache and relative_url_cache.
    */
-  private function _build_relative_caches() {
+  protected function _build_relative_caches() {
     $names = array();
     $slugs = array();
     foreach (DB::select("name", "slug")
@@ -561,7 +561,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * checks the name without its extension, it covers possible collisions with thumbs and resizes
    * as well (e.g. between the thumbs of movie "foo.flv" and photo "foo.jpg").
    */
-  private function _check_and_fix_conflicts() {
+  protected function _check_and_fix_conflicts() {
     $suffix_num = 1;
     $suffix = "";
     if ($this->is_album()) {
@@ -621,7 +621,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * If valid, use it to sanitize the item name and update the
    * width, height, and mime type.
    */
-  private function _process_data_file_info() {
+  protected function _process_data_file_info() {
     try {
       if ($this->is_photo()) {
         list ($this->width, $this->height, $this->mime_type, $extension) =
@@ -1245,7 +1245,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       ->execute($this->_db);
   }
 
-  private function _cache_buster($path) {
+  protected function _cache_buster($path) {
     return "?m=" . (string)(file_exists($path) ? filemtime($path) : 0);
   }
 }
