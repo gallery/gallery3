@@ -27,8 +27,11 @@ class Gallery_Formo extends Formo_Core_Formo {
     parent::__construct($array);
 
     // If the driver is form (i.e. the parent form instead of a field within it), add the CSRF.
+    // The "can_be_empty" argument means that, if the csrf field is empty in $_POST (i.e. illegal
+    // access), go ahead and set the form entry as as null instead of passing along the pre-filled
+    // value to validate (which would indicate legal access).
     if ($this->get("driver") == "form") {
-      $this->add("csrf", "input|hidden", Access::csrf_token());
+      $this->add("csrf", "input|hidden", Access::csrf_token(), array("can_be_empty" => true));
       $this->csrf->add_rule(array("Access::verify_csrf", array(":value")));
     }
   }
