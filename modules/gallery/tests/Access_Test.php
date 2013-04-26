@@ -106,15 +106,19 @@ class Access_Test extends Unittest_TestCase {
     $item = Test::random_album();
 
     // New rows exist
-    $this->assertTrue(ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->loaded());
-    $this->assertTrue(ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find()->loaded());
+    $this->assertTrue(
+      ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->loaded());
+    $this->assertTrue(
+      ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find()->loaded());
 
     // Delete the item
     $item->delete();
 
     // Rows are gone
-    $this->assertFalse(ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->loaded());
-    $this->assertFalse(ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find()->loaded());
+    $this->assertFalse(
+      ORM::factory("AccessCache")->where("item_id", "=", $item->id)->find()->loaded());
+    $this->assertFalse(
+      ORM::factory("AccessIntent")->where("item_id", "=", $item->id)->find()->loaded());
   }
 
   public function test_new_photos_inherit_parent_permissions() {
@@ -306,6 +310,7 @@ class Access_Test extends Unittest_TestCase {
     Identity::set_active_user($user);
 
     // And verify that the user can edit.
+    $root->reload();  // flush related models like AccessCache
     $this->assertTrue(Access::can("edit", $root));
   }
 
