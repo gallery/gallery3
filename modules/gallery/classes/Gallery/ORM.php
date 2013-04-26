@@ -288,4 +288,30 @@ class Gallery_ORM extends Kohana_ORM {
     }
     return parent::reload_columns($force);
   }
+
+  /**
+   * Create a fresh instance of this model with all pending database rules applied.  This is
+   * useful in the case where we want to have a chainable ORM function that works on a loaded
+   * instance and returns a set of other ORM instances using find_all(), but preserves anything
+   * else that happened in the chain.
+   *
+   * Somewhat contrived example:
+   *   ORM::factory("Item", 1)   // this returns a loaded instance
+   *     ->viewable()            // all further operations are restricted to viewable items
+   *     ->unloaded_instance()   // get a new instance, but keep the 'viewable' constraint
+   *     ->where("parent_id", 1) // add new constraints
+   *     ->find_all()            // return results
+   *
+   * Without the unloaded_instance() call in the chain, Kohana_ORM will bounce the request.
+   *
+   * @chainable
+   */
+  public function unloaded_instance() {
+    if ($this->_db_applied) {
+      throw new Exception("Can't create an unloaded copy of a model with applied database rules");
+    }
+    $model = ORM::factory($this->_model_name);
+    $model->_db_pending = $this->_db_pending;
+    return $model;
+  }
 }

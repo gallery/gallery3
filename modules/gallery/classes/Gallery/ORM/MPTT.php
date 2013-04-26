@@ -162,7 +162,8 @@ class Gallery_ORM_MPTT extends ORM {
    * @return array ORM
    */
   function parents($where=null) {
-    return ORM::factory($this->_model_name)
+    return $this
+      ->unloaded_instance()
       ->merge_where($where)
       ->where("left_ptr", "<=", $this->left_ptr)
       ->where("right_ptr", ">=", $this->right_ptr)
@@ -182,11 +183,13 @@ class Gallery_ORM_MPTT extends ORM {
    * @return array ORM
    */
   function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return ORM::factory($this->_model_name)
+    return $this
+      ->unloaded_instance()
       ->merge_where($where)
       ->where("parent_id", "=", $this->id)
       ->merge_order_by($order_by)
-      ->limit($limit)->offset($offset)->find_all();
+      ->limit($limit)->offset($offset)
+      ->find_all();
   }
 
   /**
@@ -213,12 +216,14 @@ class Gallery_ORM_MPTT extends ORM {
    * @return object Database_Result
    */
   function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return ORM::factory($this->_model_name)
+    return $this
+      ->unloaded_instance()
       ->merge_where($where)
       ->where("left_ptr", ">", $this->left_ptr)
       ->where("right_ptr", "<=", $this->right_ptr)
       ->merge_order_by($order_by)
-      ->limit($limit)->offset($offset)->find_all();
+      ->limit($limit)->offset($offset)
+      ->find_all();
   }
 
   /**
