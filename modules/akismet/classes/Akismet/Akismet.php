@@ -142,7 +142,7 @@ class Akismet_Akismet {
     $comment_data["comment_author_url"] = $comment->author_url();
     $comment_data["comment_content"] = $comment->text;
     $comment_data["comment_type"] = "comment";
-    $comment_data["permalink"] = URL::site("comments/{$comment->id}");
+    $comment_data["permalink"] = URL::abs_site("comments/{$comment->id}");
     $comment_data["referrer"] = $comment->server_http_referer;
     $comment_data["user_agent"] = $comment->server_http_user_agent;
     $comment_data["user_ip"] = $comment->server_remote_addr;

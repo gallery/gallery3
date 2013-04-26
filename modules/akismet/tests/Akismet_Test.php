@@ -18,31 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Test extends Unittest_Testcase {
-  protected $_client_ip;
-  protected $_user_agent;
-  protected $_save;
-  protected $_api_key;
 
   public function setup() {
     parent::setup();
-    $this->_client_ip = Request::$client_ip;
-    $this->_user_agent = Request::$user_agent;  // Use this instead of user_agent() for exact reset.
-    $this->_save = $_SERVER;
-    $this->_api_key = Module::get_var("akismet", "api_key", "TEST_KEY");
-
-    $_SERVER["HTTP_USER_AGENT"] = "Akismet_Helper_Test";
 
     Request::$client_ip = "1.1.1.1";
-    Request::$user_agent = "Akismet_Helper_Test";
+    Request::$user_agent = "Akismet_Test";
     Module::set_var("akismet", "api_key", "TEST_KEY");
-  }
-
-  public function teardown() {
-    Request::$client_ip = $this->_client_ip;
-    Request::$user_agent = $this->_user_agent;
-    $_SERVER = $this->_save;
-    Module::set_var("akismet", "api_key", $this->_api_key);
-    parent::teardown();
   }
 
   protected function _make_comment() {
@@ -53,10 +35,9 @@ class Akismet_Test extends Unittest_Testcase {
     $comment->guest_name = "John Doe";
     $comment->guest_email = "john@gallery2.org";
     $comment->guest_url = "http://gallery2.org";
-    $comment->save();
 
     // Set the server fields to a known placeholder
-    foreach ($comment->list_fields("comments") as $name => $field) {
+    foreach ($comment->list_columns("comments") as $name => $field) {
       if (strpos($name, "server_") === 0) {
         $comment->$name = substr($name, strlen("server_"));
       }
@@ -70,9 +51,9 @@ class Akismet_Test extends Unittest_Testcase {
       "POST /1.1/verify-key HTTP/1.0\r\n" .
       "Host: rest.akismet.com\r\n" .
       "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n" .
-      "Content-Length: 27\r\n" .
+      "Content-Length: 35\r\n" .
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
-      "key=TEST_KEY&blog=http://./";
+      "key=TEST_KEY&blog=http://localhost/";
     $this->assertEquals($expected, $request);
   }
 
@@ -82,16 +63,17 @@ class Akismet_Test extends Unittest_Testcase {
     $expected = "POST /1.1/comment-check HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
       "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n" .
-      "Content-Length: 645\r\n" .
+      "Content-Length: 658\r\n" .
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "HTTP_ACCEPT=http_accept&HTTP_ACCEPT_ENCODING=http_accept_encoding&" .
       "HTTP_ACCEPT_LANGUAGE=http_accept_language&HTTP_CONNECTION=http_connection&" .
       "HTTP_USER_AGENT=http_user_agent&QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
       "REMOTE_HOST=remote_host&REMOTE_PORT=remote_port&" .
       "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&SERVER_NAME=name&" .
-      "blog=http%3A%2F%2F.%2F&comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
-      "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
-      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
+      "blog=http%3A%2F%2Flocalhost%2F&comment_author=John+Doe&" .
+      "comment_author_email=john%40gallery2.org&comment_author_url=http%3A%2F%2Fgallery2.org&" .
+      "comment_content=This+is+a+comment&comment_type=comment&" .
+      "permalink=http%3A%2F%2Flocalhost%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
     $this->assertEquals($expected, $request);
@@ -104,16 +86,17 @@ class Akismet_Test extends Unittest_Testcase {
       "POST /1.1/submit-spam HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
       "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n" .
-      "Content-Length: 645\r\n" .
+      "Content-Length: 658\r\n" .
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "HTTP_ACCEPT=http_accept&HTTP_ACCEPT_ENCODING=http_accept_encoding&" .
       "HTTP_ACCEPT_LANGUAGE=http_accept_language&HTTP_CONNECTION=http_connection&" .
       "HTTP_USER_AGENT=http_user_agent&QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
       "REMOTE_HOST=remote_host&REMOTE_PORT=remote_port&" .
       "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&SERVER_NAME=name&" .
-      "blog=http%3A%2F%2F.%2F&comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
-      "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
-      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
+      "blog=http%3A%2F%2Flocalhost%2F&comment_author=John+Doe&" .
+      "comment_author_email=john%40gallery2.org&comment_author_url=http%3A%2F%2Fgallery2.org&" .
+      "comment_content=This+is+a+comment&comment_type=comment&" .
+      "permalink=http%3A%2F%2Flocalhost%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
     $this->assertEquals($expected, $request);
@@ -126,19 +109,21 @@ class Akismet_Test extends Unittest_Testcase {
       "POST /1.1/submit-ham HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
       "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n" .
-      "Content-Length: 645\r\n" .
+      "Content-Length: 658\r\n" .
       "User-Agent: Gallery/3 | Akismet/1\r\n\r\n" .
       "HTTP_ACCEPT=http_accept&HTTP_ACCEPT_ENCODING=http_accept_encoding&" .
       "HTTP_ACCEPT_LANGUAGE=http_accept_language&HTTP_CONNECTION=http_connection&" .
       "HTTP_USER_AGENT=http_user_agent&QUERY_STRING=query_string&REMOTE_ADDR=remote_addr&" .
       "REMOTE_HOST=remote_host&REMOTE_PORT=remote_port&" .
       "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&SERVER_NAME=name&" .
+      "blog=http%3A%2F%2Flocalhost%2F&" .
       "comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
-      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
+      "comment_type=comment&" .
+      "permalink=http%3A%2F%2Flocalhost%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
-    $this->assertEquals($expected, $request);
+    $this->assertEquals(explode("&", $expected), explode("&", $request));
   }
 }
 
