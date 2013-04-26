@@ -72,10 +72,9 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    * @return  boolean
    * @throws  Cache_Exception
    */
-  public function delete($id)
-  {
-    return (bool)DB::delete("caches")
-      ->where("id", "=", $id)
+  public function delete($id) {
+    return (bool) DB::delete("caches")
+      ->where("key", "=", $id)
       ->execute();
   }
 
@@ -84,22 +83,8 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    *
    * @return  boolean
    */
-  public function delete_all()
-  {
-    // Prepare statement
-    $statement = Database::instance()->prepare('DELETE FROM caches');
-
-    // Remove the entry
-    try
-    {
-      $statement->execute();
-    }
-    catch (PDOException $e)
-    {
-      throw new Cache_Exception('There was a problem querying the local SQLite3 cache. :error', array(':error' => $e->getMessage()));
-    }
-
-    return (bool) $statement->rowCount();
+  public function delete_all() {
+    return (bool) DB::delete("caches")->execute();
   }
 
   /**
@@ -145,22 +130,10 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    * @return  boolean
    * @throws  Cache_Exception
    */
-  public function delete_tag($tag)
-  {
-    // Prepare the statement
-    $statement = Database::instance()->prepare('DELETE FROM caches WHERE tags LIKE :tag');
-
-    // Try to delete
-    try
-    {
-      $statement->execute(array(':tag' => "%<{$tag}>%"));
-    }
-    catch (PDOException $e)
-    {
-      throw new Cache_Exception('There was a problem querying the local SQLite3 cache. :error', array(':error' => $e->getMessage()));
-    }
-
-    return (bool) $statement->rowCount();
+  public function delete_tag($tag) {
+    return (bool) DB::delete("caches")
+      ->where("tags", "LIKE", "%" . Database::escape_for_like("<{$tag}>") . "%")
+      ->execute();
   }
 
   /**
@@ -170,36 +143,17 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    * @return  array
    * @throws  Cache_Exception
    */
-  public function find($tag)
-  {
-    // Prepare the statement
-    $statement = Database::instance()->prepare('SELECT id, cache FROM caches WHERE tags LIKE :tag');
-
-    // Try to find
-    try
-    {
-      if ( ! $statement->execute(array(':tag' => "%<{$tag}>%")))
-      {
-        return array();
-      }
-    }
-    catch (PDOException $e)
-    {
-      throw new Cache_Exception('There was a problem querying the local SQLite3 cache. :error', array(':error' => $e->getMessage()));
-    }
-
+  public function find($tag) {
     $result = array();
 
-    while ($row = $statement->fetchObject())
-    {
-      // Disable notices for unserializing
-      $ER = error_reporting(~E_NOTICE);
-
-      $result[$row->id] = unserialize($row->cache);
-
-      // Turn notices back on
-      error_reporting($ER);
+    // Temporarily disable notices for unserializing
+    $ER = error_reporting(~E_NOTICE);
+    foreach (ORM::factory("Cache")
+             ->where("tags", "LIKE", "%" . Database::escape_for_like("<{$tag}>") . "%")
+             ->find_all() as $cache) {
+      $result[$cache->id] = unserialize($cache->cache);
     }
+    error_reporting($ER);
 
     return $result;
   }
@@ -210,19 +164,8 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    *
    * @return  void
    */
-  public function garbage_collect()
-  {
-    // Create the sequel statement
-    $statement = Database::instance()->prepare('DELETE FROM caches WHERE expiration < :expiration');
-
-    try
-    {
-      $statement->execute(array(':expiration' => time()));
-    }
-    catch (PDOException $e)
-    {
-      throw new Cache_Exception('There was a problem querying the local SQLite3 cache. :error', array(':error' => $e->getMessage()));
-    }
+  public function garbage_collect() {
+    DB::delete("caches")->where("expiration", "<", time())->execute();
   }
 
   /**
@@ -232,18 +175,10 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    * @return  boolean
    * @throws  Cache_Exception
    */
-  protected function exists($id)
-  {
-    $statement = Database::instance()->prepare('SELECT id FROM caches WHERE id = :id');
-    try
-    {
-      $statement->execute(array(':id' => $this->_sanitize_id($id)));
-    }
-    catch (PDOExeption $e)
-    {
-      throw new Cache_Exception('There was a problem querying the local SQLite3 cache. :error', array(':error' => $e->getMessage()));
-    }
-
-    return (bool) $statement->fetchAll();
+  protected function exists($id) {
+    return ORM::factory("Cache")
+      ->where("key", "=", $id)
+      ->find()
+      ->loaded();
   }
 }
