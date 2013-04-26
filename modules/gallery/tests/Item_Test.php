@@ -93,7 +93,7 @@ class Item_Test extends Unittest_TestCase {
     Item::move($photo, Item::root());
 
     $src_album->reload();
-    $this->assertFalse($src_album->album_cover_item_id);
+    $this->assertNull($src_album->album_cover_item_id);
   }
 
   public function test_move_conflicts_result_in_a_rename() {
