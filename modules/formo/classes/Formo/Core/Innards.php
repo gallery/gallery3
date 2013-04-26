@@ -563,7 +563,7 @@ abstract class Formo_Core_Innards {
 			{
 				$field->driver('load', array('val' => $value));
 			}
-			elseif ($field->driver('can_be_empty') === TRUE)
+			elseif ($field->get('can_be_empty', $field->driver('can_be_empty')) === TRUE)
 			{
 				$field->val(null);
 			}
@@ -773,7 +773,7 @@ abstract class Formo_Core_Innards {
 	 */
 	protected function _set_id( array & $array)
 	{
-		if ($this->config('auto_id') === TRUE AND empty($array['attr']['id']))
+		if ($this->config('auto_id') === TRUE AND Arr::path($array, 'attr.id') === NULL)
 		{
 			if (empty($array['attr']))
 			{
@@ -861,4 +861,35 @@ abstract class Formo_Core_Innards {
 
 		return $_array;
 	}
+
+	/**
+	 * Validation method that properly validates for html5 range
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $field
+	 * @param mixed $form
+	 * @return boolean
+	 */
+	public static function range($field, $form)
+	{
+		$value = $form->$field->val();
+		$attr = $form->$field->get('attr');
+
+		$max = Arr::get($attr, 'max');
+		$min = Arr::get($attr, 'min');
+		$step = Arr::get($attr, 'step');
+
+		if ($min AND $value <= $min)
+			return FALSE;
+
+		if ($max AND $value >= $max)
+			return FALSE;
+
+		// Use the default step of 1
+		( ! $step AND $step = 1);
+
+		return strpos(($value - $min) / $step, '.') === FALSE;
+	}
+
 }

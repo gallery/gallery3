@@ -39,8 +39,6 @@ class Formo_Core_Driver_Checkboxes extends Formo_Driver {
 		return ($label !== Formo::NOTSET)
 			? $label
 			: $field->alias();
-
-		return $label;
 	}
 
 	public static function get_val( array $array)
