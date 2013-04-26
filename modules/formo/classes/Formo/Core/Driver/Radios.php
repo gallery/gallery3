@@ -28,7 +28,12 @@ class Formo_Core_Driver_Radios extends Formo_Driver {
 	public static function get_title( array $array)
 	{
 		$field = $array['field'];
-		return $field->alias();
+
+		$label = $field->get('label');
+
+		return ($label !== Formo::NOTSET)
+			? $label
+			: $field->alias();
 	}
 
 }
