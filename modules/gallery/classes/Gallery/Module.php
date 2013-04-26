@@ -53,7 +53,7 @@ class Gallery_Module {
     if (!$module->loaded()) {
       $module->name = $module_name;
       // Only the pre-defined first and last modules are active by default.
-      $module->active = in_array($module_name, array(self::$_first_module, self::$_last_module));
+      $module->active = in_array($module_name, array(Module::$_first_module, Module::$_last_module));
     }
     $module->version = $version;
     $module->save();
@@ -65,10 +65,10 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function get($module_name) {
-    if (empty(self::$modules[$module_name])) {
+    if (empty(Module::$modules[$module_name])) {
       return ORM::factory("Module")->where("name", "=", $module_name)->find();
     }
-    return self::$modules[$module_name];
+    return Module::$modules[$module_name];
   }
 
   /**
@@ -86,7 +86,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function is_installed($module_name) {
-    return array_key_exists($module_name, self::$modules);
+    return array_key_exists($module_name, Module::$modules);
   }
 
   /**
@@ -94,15 +94,15 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function is_active($module_name) {
-    return array_key_exists($module_name, self::$modules) &&
-      self::$modules[$module_name]->active;
+    return array_key_exists($module_name, Module::$modules) &&
+      Module::$modules[$module_name]->active;
   }
 
   /**
    * Return the list of available modules, including uninstalled modules.
    */
   static function available() {
-    if (empty(self::$available)) {
+    if (empty(Module::$available)) {
       $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
       foreach (glob(MODPATH . "*/module.info") as $file) {
         $module_name = basename(dirname($file));
@@ -123,14 +123,14 @@ class Gallery_Module {
       // Lock certain modules
       $identity_module = Module::get_var("gallery", "identity_provider", "user");
       $modules->$identity_module->locked = true;
-      $modules->{self::$_first_module}->locked = true;
-      $modules->{self::$_last_module}->locked = true;
+      $modules->{Module::$_first_module}->locked = true;
+      $modules->{Module::$_last_module}->locked = true;
 
       $modules->uasort(array("module", "module_comparator"));
-      self::$available = $modules;
+      Module::$available = $modules;
     }
 
-    return self::$available;
+    return Module::$available;
   }
 
   /**
@@ -144,7 +144,7 @@ class Gallery_Module {
    * Return a list of all the active modules in order of priority.
    */
   static function active() {
-    return self::$active;
+    return Module::$active;
   }
 
   /**
@@ -334,7 +334,7 @@ class Gallery_Module {
    * This happens when a user deletes a module without deactivating it.
    */
   static function deactivate_missing_modules() {
-    foreach (self::$modules as $module_name => $module) {
+    foreach (Module::$modules as $module_name => $module) {
       if (Module::is_active($module_name) && !Module::info($module_name)) {
         Module::deactivate($module_name);
       }
@@ -368,8 +368,8 @@ class Gallery_Module {
 
   /**
    * Load (or refresh) all installed modules.  This:
-   *   - rebuilds self::$modules with all installed modules
-   *   - rebuilds self::$active with all active modules
+   *   - rebuilds Module::$modules with all installed modules
+   *   - rebuilds Module::$active with all active modules
    *   - reinitializes Kohana's module list (including unit test and third-party modules)
    *   - causes Kohana to run any init.php files it may find
    *
@@ -377,8 +377,8 @@ class Gallery_Module {
    * deactivate, or upgrade events.
    */
   static function load_modules() {
-    self::$modules = array();
-    self::$active = array();
+    Module::$modules = array();
+    Module::$active = array();
 
     // In version 32 we introduced a weight column so we can specify the module order
     // If we try to use that blindly, we'll break earlier versions before they can even
@@ -391,28 +391,28 @@ class Gallery_Module {
     $first_module = array();
     $last_module = array();
     foreach ($modules as $module) {
-      self::$modules[$module->name] = $module;
+      Module::$modules[$module->name] = $module;
       // Skip inactive or missing modules.  Kohana 3 will not let us load a module that's missing.
       // Kohana 2 would, so it was possible to have an active, deleted module in Gallery 3.0.x.
       if (!$module->active || !is_dir(MODPATH . $module->name)) {
         continue;
       }
 
-      if ($module->name == self::$_first_module) {
+      if ($module->name == Module::$_first_module) {
         $first_module = array($module->name => $module);
-      } else if ($module->name == self::$_last_module) {
+      } else if ($module->name == Module::$_last_module) {
         $last_module = array($module->name => $module);
       } else {
-        self::$active[$module->name] = $module;
+        Module::$active[$module->name] = $module;
       }
     }
-    self::$active = array_merge($first_module, self::$active, $last_module);
+    Module::$active = array_merge($first_module, Module::$active, $last_module);
 
     // Build the complete list of module names, including unit test and third-party modules.
     $module_names = array_merge(
-      (TEST_MODE ? self::$_unittest_modules : array()),
-      array_keys(self::$active),
-      self::$_third_party_modules
+      (TEST_MODE ? Module::$_unittest_modules : array()),
+      array_keys(Module::$active),
+      Module::$_third_party_modules
     );
 
     // Format the module names and paths as needed for Kohana, then send it off.
@@ -456,7 +456,7 @@ class Gallery_Module {
       }
     }
 
-    foreach (self::$active as $module) {
+    foreach (Module::$active as $module) {
       if ($module->name == "gallery") {
         continue;
       }
@@ -491,28 +491,28 @@ class Gallery_Module {
    */
   static function get_var($module_name, $name, $default_value=null) {
     // We cache vars so we can load them all at once for performance.
-    if (empty(self::$var_cache)) {
-      self::$var_cache = Cache::instance()->get("var_cache");
-      if (empty(self::$var_cache)) {
+    if (empty(Module::$var_cache)) {
+      Module::$var_cache = Cache::instance()->get("var_cache");
+      if (empty(Module::$var_cache)) {
         // Cache doesn't exist, create it now.
-        self::$var_cache = new stdClass();
+        Module::$var_cache = new stdClass();
         foreach (DB::select("module_name", "name", "value")
                  ->from("vars")
                  ->order_by("module_name")
                  ->order_by("name")
                  ->as_object()
                  ->execute() as $row) {
-          if (!isset(self::$var_cache->{$row->module_name})) {
-            self::$var_cache->{$row->module_name} = new stdClass();
+          if (!isset(Module::$var_cache->{$row->module_name})) {
+            Module::$var_cache->{$row->module_name} = new stdClass();
           }
-          self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
+          Module::$var_cache->{$row->module_name}->{$row->name} = $row->value;
         }
-        Cache::instance()->set_with_tags("var_cache", self::$var_cache, null, array("vars"));
+        Cache::instance()->set_with_tags("var_cache", Module::$var_cache, null, array("vars"));
       }
     }
 
-    if (isset(self::$var_cache->$module_name->$name)) {
-      return self::$var_cache->$module_name->$name;
+    if (isset(Module::$var_cache->$module_name->$name)) {
+      return Module::$var_cache->$module_name->$name;
     } else {
       return $default_value;
     }
@@ -537,7 +537,7 @@ class Gallery_Module {
     $var->save();
 
     Cache::instance()->delete("var_cache");
-    self::$var_cache = null;
+    Module::$var_cache = null;
  }
 
   /**
@@ -561,7 +561,7 @@ class Gallery_Module {
       ->execute();
 
     Cache::instance()->delete("var_cache");
-    self::$var_cache = null;
+    Module::$var_cache = null;
   }
 
  /**
@@ -576,7 +576,7 @@ class Gallery_Module {
       ->execute();
 
     Cache::instance()->delete("var_cache");
-    self::$var_cache = null;
+    Module::$var_cache = null;
   }
 
  /**
@@ -589,7 +589,7 @@ class Gallery_Module {
       ->execute();
 
     Cache::instance()->delete("var_cache");
-    self::$var_cache = null;
+    Module::$var_cache = null;
   }
 
   /**
