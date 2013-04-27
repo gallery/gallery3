@@ -32,15 +32,10 @@
  */
 class Purifier {
   /**
-   * Initialize the purifier array and setup our default configuration
+   * Initialize the purifier and config arrays
    */
   protected static $_purifier = array();
-  protected static $_config = array(
-    "default" => array(
-      "Cache.SerializerPath" => TMPPATH,
-      "Attr.EnableID" => true
-    )
-  );
+  protected static $_config = array();
 
   /**
    * Add another config group.  Use this if you want to setup another instance of
@@ -154,6 +149,15 @@ class Purifier {
       // To further reinforce the fact that the purifier module cannot be overridden,
       // the library path is hard-coded and doesn't use Kohana::find_file().
       require MODPATH . "purifier/vendor/htmlpurifier/HTMLPurifier.standalone.php";
+
+      // Set our default configuration.  We can't set the default configuration in a
+      // static variable declaration since we use Kohana::$cache_dir.
+      self::$_config = array(
+        "default" => array(
+          "Cache.SerializerPath" => Kohana::$cache_dir,
+          "Attr.EnableID" => true
+        )
+      );
     }
 
     if (!isset(self::$_config[$config_group])) {
