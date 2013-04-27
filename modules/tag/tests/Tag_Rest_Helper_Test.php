@@ -47,7 +47,7 @@ class Tag_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = "bogus";
     try {
       Hook_Rest_Tag::get($request);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       return;  // pass
     }
     $this->assertTrue(false, "Shouldn't get here");

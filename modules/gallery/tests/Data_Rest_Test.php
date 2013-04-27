@@ -40,7 +40,7 @@ class Data_Rest_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Data::resolve($photo->id);
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       // pass
     }
   }
@@ -78,7 +78,7 @@ class Data_Rest_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Data::get($request);
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       // pass
     }
   }
@@ -96,7 +96,7 @@ class Data_Rest_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Data::get($request);
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       // pass
     }
   }

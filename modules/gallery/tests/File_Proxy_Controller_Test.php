@@ -49,7 +49,7 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     try {
       $controller->__call("", array());
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       $this->assertSame(1, $e->test_fail_code);
     }
   }
@@ -60,7 +60,7 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     try {
       $controller->__call("", array());
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       $this->assertSame(2, $e->test_fail_code);
     }
   }
@@ -80,7 +80,7 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     try {
       $controller->__call("", array());
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       $this->assertSame(3, $e->test_fail_code);
     }
   }
@@ -98,7 +98,7 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     try {
       $controller->__call("", array());
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       $this->assertSame(5, $e->test_fail_code);
     }
   }
@@ -111,7 +111,7 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     try {
       $controller->__call("", array());
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       $this->assertSame(6, $e->test_fail_code);
     }
   }
@@ -125,7 +125,7 @@ class File_Proxy_Controller_Test extends Unittest_Testcase {
     try {
       $controller->__call("", array());
       $this->assertTrue(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       $this->assertSame(7, $e->test_fail_code);
     }
   }

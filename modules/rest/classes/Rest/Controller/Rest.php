@@ -115,7 +115,7 @@ class Rest_Controller_Rest extends Controller {
       // either need to map the result values to localized strings in the application code, or every
       // client needs its own l10n string set.
       throw new Rest_Exception("Bad Request", 400, $e->validation->errors());
-    } catch (Kohana_404_Exception $e) {
+    } catch (HTTP_Exception_404 $e) {
       throw new Rest_Exception("Not Found", 404);
     }
   }
