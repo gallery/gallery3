@@ -46,6 +46,14 @@ class Gallery_Auth {
   }
 
   /**
+   * Validate the username and password.  This uses a syntax similar to Valid::matches().
+   */
+  static function validate_username_and_password($array, $name, $password) {
+    $user = Identity::lookup_user_by_name($array[$name]);
+    return (!empty($user) && Identity::is_correct_password($user, $array[$password]));
+  }
+
+  /**
    * After there have been 5 failed auth attempts, any failure leads to getting locked out for a
    * minute.
    */
@@ -58,10 +66,11 @@ class Gallery_Auth {
             (time() - $failed->time < 60));
   }
 
-  static function validate_too_many_failed_logins($name_input) {
-    if (Auth::too_many_failures($name_input->value)) {
-      $name_input->add_error("too_many_failed_logins", 1);
-    }
+  /**
+   * Validate that there haven't been too many failed login attempts.
+   */
+  static function validate_too_many_failed_logins($name) {
+    return !Auth::too_many_failures($name);
   }
 
   static function validate_too_many_failed_auth_attempts($form_input) {

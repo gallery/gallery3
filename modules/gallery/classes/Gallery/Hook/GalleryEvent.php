@@ -247,7 +247,7 @@ class Gallery_Hook_GalleryEvent {
         $menu->append(Menu::factory("dialog")
                       ->id("user_menu_login")
                       ->css_id("g-login-link")
-                      ->url(URL::site("login/ajax"))
+                      ->url(URL::site("login"))
                       ->label(t("Login")));
       } else {
         $csrf = Access::csrf_token();
