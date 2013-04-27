@@ -105,7 +105,29 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       array_splice($_SERVER["argv"], 0, 2, "phpunit");
       $_SERVER["argv"][] = MODPATH . "unittest/tests.php";
 
-      require "/usr/share/php/PHPUnit/Autoload.php";
+      // Directories in which we search for PHPUnit
+      $phpunit_dirs = array("/usr/share/php/", "/usr/local/php/", DOCROOT);
+      $phpunit_loaded = false;
+
+      // Try to load the PHPUnit Autoload.php
+      foreach ($phpunit_dirs as $dir) {
+        if (file_exists("{$dir}PHPUnit/Autoload.php")) {
+          require "{$dir}PHPUnit/Autoload.php";
+          $phpunit_loaded = true;
+        } else if (file_exists("{$dir}phpunit.phar")) {
+          require "phar://{$dir}phpunit.phar";
+          $phpunit_loaded = true;
+        }
+      }
+
+      // Display error message if we can't find it.
+      if (!$phpunit_loaded) {
+        print "PHPUnit not found, aborting Gallery unit test.\n";
+        print "To download and use a standalone installation of PHPUnit, go to the Gallery root directory and run:\n";
+        print "  wget http://pear.phpunit.de/get/phpunit.phar\n";
+        exit(1);
+      }
+
       PHPUnit_TextUI_Command::main();
     } catch (ORM_Validation_Exception $e) {
       $errors = "";
