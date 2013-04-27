@@ -19,9 +19,9 @@
  */
 return array(
   // File used for label messages (false or name of message file (ex: "label_messages"))
-  "label_message_file"      => false,
+  "label_message_file"      => "formo_labels",
   // File used for validation messages (false or name of message file (ex: "validation_messages"))
-  "validation_message_file" => false,
+  "validation_message_file" => "formo_errors",
   // Whether to translate labels and error messages (false since Gallery has its own I18n system)
   "translate"               => false,
   // Close single html tags (true = <br/>. false = <br>)

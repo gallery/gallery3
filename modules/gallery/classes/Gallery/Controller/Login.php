@@ -22,88 +22,70 @@ class Gallery_Controller_Login extends Controller {
   public $allow_private_gallery = true;
 
   public function action_index() {
-    $this->action_html();
-  }
+    // Define our login form.
+    $form = Formo::form()
+      ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
+      ->add("login", "group");
+    $form->login
+      ->add("username", "input")
+      ->add("password", "input|password")
+      ->add("submit", "input|submit", t("Login"));
 
-  public function action_ajax() {
-    $view = new View("gallery/login_ajax.html");
-    $view->form = $this->get_login_form("login/auth_ajax");
-    $this->response->body($view);
-  }
+    $form
+      ->attr("id", "g-login-form")
+      ->attr("class", "g-narrow");
+    $form->login->username
+      ->attr("id", "g-username")
+      ->add_rule(array("Auth::validate_too_many_failed_logins",
+                 array(":value")))
+      ->add_rule(array("Auth::validate_username_and_password",
+                 array(":form_val", "username", "password")));
+    $form->login->password
+      ->attr("id", "g-password");
 
-  public function action_auth_ajax() {
-    Access::verify_csrf();
+    // Define our basic form view.
+    $view = new View("gallery/login.html");
+    $view->form = $form;
 
-    list ($valid, $form) = $this->auth("login/auth_ajax");
-    if ($valid) {
-      $this->response->json(array("result" => "success"));
-    } else {
-      $view = new View("gallery/login_ajax.html");
-      $view->form = $form;
-      $this->response->json(array("result" => "error", "html" => (string)$view));
-    }
-  }
+    if ($form->sent()) {
+      // Login attempted - regenerate the session id to avoid session trapping.
+      Session::instance()->regenerate();
 
-  public function action_html() {
-    $view = new View_Theme("required/page.html", "other", "login");
-    $view->page_title = t("Log in to Gallery");
-    $view->content = new View("gallery/login_ajax.html");
-    $view->content->form = $this->get_login_form("login/auth_html");
-    $this->response->body($view);
-  }
+      if ($form->load()->validate()) {
+        // Login attempt is valid.
+        $user = Identity::lookup_user_by_name($form->login->username->val());
+        Auth::login($user);
 
-  public function action_auth_html() {
-    Access::verify_csrf();
-
-    list ($valid, $form) = $this->auth("login/auth_html");
-    if ($valid) {
-      $continue_url = $form->continue_url->value;
-      $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
-    } else {
-      $view = new View_Theme("required/page.html", "other", "login");
-      $view->page_title = t("Log in to Gallery");
-      $view->content = new View("gallery/login_ajax.html");
-      $view->content->form = $form;
-      $this->response->body($view);
-    }
-  }
-
-  public function auth($url) {
-    $form = $this->get_login_form($url);
-    $valid = $form->validate();
-    if ($valid) {
-      $user = Identity::lookup_user_by_name($form->login->inputs["name"]->value);
-      if (empty($user) || !Identity::is_correct_password($user, $form->login->password->value)) {
-        $form->login->inputs["name"]->add_error("invalid_login", 1);
-        $name = $form->login->inputs["name"]->value;
+        if ($this->request->is_ajax()) {
+          $this->response->json(array("result" => "success"));
+          return;
+        } else {
+          $continue_url = $form->continue_url->val();
+          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
+        }
+      } else {
+        // Login attempt is invalid.
+        $name = $form->login->username->val();
         GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
         Module::event("user_auth_failed", $name);
-        $valid = false;
+
+        if ($this->request->is_ajax()) {
+          $this->response->json(array("result" => "error", "html" => (string)$view));
+          return;
+        }
       }
     }
 
-    if ($valid) {
-      Auth::login($user);
+    // Login not yet attempted (ajax or non-ajax) or login failed (non-ajax).
+    if ($this->request->is_ajax()) {
+      // Send the basic login view.
+      $this->response->body($view);
+    } else {
+      // Wrap the basic login view in a theme.
+      $view_theme = new View_Theme("required/page.html", "other", "login");
+      $view_theme->page_title = t("Log in to Gallery");
+      $view_theme->content = $view;
+      $this->response->body($view_theme);
     }
-
-    // Either way, regenerate the session id to avoid session trapping
-    Session::instance()->regenerate();
-
-    return array($valid, $form);
-  }
-
-  public function get_login_form($url) {
-    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
-    $form->set_attr("class", "g-narrow");
-    $form->hidden("continue_url")->value(Session::instance()->get("continue_url"));
-    $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("g-username")->class(null)
-      ->callback("Auth::validate_too_many_failed_logins")
-      ->error_messages(
-        "too_many_failed_logins", t("Too many failed login attempts.  Try again later"));
-    $group->password("password")->label(t("Password"))->id("g-password")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
-    $group->submit("")->value(t("Login"));
-    return $form;
   }
 }
