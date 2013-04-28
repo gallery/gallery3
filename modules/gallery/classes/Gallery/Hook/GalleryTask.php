@@ -305,7 +305,7 @@ class Gallery_Hook_GalleryTask {
         $task->set("current", 0);
         $task->set("total", count($files));
         Cache::instance()->set("file_cleanup_cache:{$task->id}", serialize($files),
-                               array("file_cleanup"));
+                               null, array("file_cleanup"));
         if (count($files) == 0) {
           break;
         }

@@ -23,21 +23,21 @@
 class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_GarbageCollect {
 
   /**
-   * Retrieve a value based on an id
+   * Retrieve a value based on an key
    *
-   * @param   string  $id       id
-   * @param   string  $default  default [Optional] Default value to return if id not found
+   * @param   string  $key       key
+   * @param   string  $default  default [Optional] Default value to return if key not found
    * @return  mixed
    * @throws  Cache_Exception
    */
-  public function get($id, $default=null) {
-    $cache = ORM::factory("Cache")->where("key", "=", $id)->find();
+  public function get($key, $default=null) {
+    $cache = ORM::factory("Cache")->where("key", "=", $key)->find();
 
     if ($cache->loaded()) {
       // Make sure the expiration is valid and that the hash matches
       if ($cache->expiration != 0 && $cache->expiration <= time()) {
         // Cache is not valid, delete it now
-        $this->delete($id);
+        $this->delete($key);
       } else {
         // Temporarily disable notices for unserializing
         $ER = error_reporting(~E_NOTICE);
@@ -53,28 +53,28 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
   }
 
   /**
-   * Set a value based on an id. Optionally add tags.
+   * Set a value based on an key. Optionally add tags.
    *
-   * @param   string   $id        id
+   * @param   string   $key        key
    * @param   mixed    $data      data
    * @param   integer  $lifetime  lifetime [Optional]
    * @param   array    $tags      tags [Optional]
    * @return  boolean
    */
-  public function set($id, $data, $lifetime=null, array $tags=null) {
-    return (bool) $this->set_with_tags($id, $data, $lifetime, $tags);
+  public function set($key, $data, $lifetime=null, array $tags=null) {
+    return (bool) $this->set_with_tags($key, $data, $lifetime, $tags);
   }
 
   /**
-   * Delete a cache entry based on id
+   * Delete a cache entry based on key
    *
-   * @param   string  $id  id
+   * @param   string  $key  key
    * @return  boolean
    * @throws  Cache_Exception
    */
-  public function delete($id) {
+  public function delete($key) {
     return (bool) DB::delete("caches")
-      ->where("key", "=", $id)
+      ->where("key", "=", $key)
       ->execute();
   }
 
@@ -88,16 +88,16 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
   }
 
   /**
-   * Set a value based on an id. Optionally add tags.
+   * Set a value based on an key. Optionally add tags.
    *
-   * @param   string   $id        id
+   * @param   string   $key        key
    * @param   mixed    $data      data
    * @param   integer  $lifetime  lifetime [Optional]
    * @param   array    $tags      tags [Optional]
    * @return  boolean
    * @throws  Cache_Exception
    */
-  public function set_with_tags($id, $data, $lifetime=null, array $tags=null) {
+  public function set_with_tags($key, $data, $lifetime=null, array $tags=null) {
     // Serialize the data
     $data = serialize($data);
 
@@ -113,12 +113,12 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
       $lifetime = (0 === $lifetime) ? 0 : ((int) $lifetime + time());
     }
 
-    $cache = ORM::factory("Cache")->where("key", "=", $id)->find();
+    $cache = ORM::factory("Cache")->where("key", "=", $key)->find();
     $cache->tags = $tags;
     $cache->expiration = $lifetime;
     $cache->cache = $data;
     if (!$cache->loaded()) {
-      $cache->key = $id;
+      $cache->key = $key;
     }
     return (bool) $cache->save();
   }
@@ -151,7 +151,7 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
     foreach (ORM::factory("Cache")
              ->where("tags", "LIKE", "%" . Database::escape_for_like("<{$tag}>") . "%")
              ->find_all() as $cache) {
-      $result[$cache->id] = unserialize($cache->cache);
+      $result[$cache->key] = unserialize($cache->cache);
     }
     error_reporting($ER);
 
@@ -166,19 +166,5 @@ class Gallery_Cache_Database extends Cache implements Cache_Tagging, Cache_Garba
    */
   public function garbage_collect() {
     DB::delete("caches")->where("expiration", "<", time())->execute();
-  }
-
-  /**
-   * Tests whether an id exists or not
-   *
-   * @param   string  $id  id
-   * @return  boolean
-   * @throws  Cache_Exception
-   */
-  protected function exists($id) {
-    return ORM::factory("Cache")
-      ->where("key", "=", $id)
-      ->find()
-      ->loaded();
   }
 }

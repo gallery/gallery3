@@ -22,134 +22,132 @@ class Cache_Test extends Unittest_Testcase {
   public function setup() {
     parent::setup();
     DB::delete("caches")->execute();
-    $this->_driver = Cache::instance();
-  }
-
-  protected function _exists($id) {
-    return DB::select()
-      ->from("caches")
-      ->where("key", "=", $id)
-      ->where("expiration", ">=", time())
-      ->limit("1")
-      ->execute()->count() > 0;
-  }
-
-  public function test_cache_exists_helper_function() {
-    $this->assertFalse($this->_exists("test_key"), "test_key should not be defined");
-
-    $id = Random::hash();
-    DB::insert("caches")
-      ->columns("key", "tags", "expiration", "cache")
-      ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
-      ->execute();
-
-    $this->assertTrue($this->_exists($id), "test_key should be defined");
   }
 
   public function test_cache_get() {
-    $id = Random::hash();
+    $key = Random::hash();
 
     DB::insert("caches")
-      ->columns("key", "tags", "expiration", "cache")
-      ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
+      ->columns(array("key", "tags", "expiration", "cache"))
+      ->values(array($key, "<tag1>, <tag2>", 84600 + time(), serialize("some test data")))
       ->execute();
 
-    $data = $this->_driver->get(array($id));
+    $data = Cache::instance()->get(array($key));
     $this->assertEquals("some test data", $data, "cached data should match");
 
-    $data = $this->_driver->get(array(""));
+    $data = Cache::instance()->get(array(""));
     $this->assertEquals(null, $data, "cached data should not be found");
   }
 
   public function test_cache_set() {
-    $id = Random::hash();
+    $key = Random::hash();
     $original_data = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id => $original_data), array("tag1", "tag2"), 84600);
+    Cache::instance()->set($key, $original_data, 86400, array("tag1", "tag2"));
 
-    $data = $this->_driver->get(array($id));
+    $data = Cache::instance()->get(array($key));
     $this->assertEquals($original_data, $data, "cached data should match");
   }
 
   public function test_cache_get_tag() {
-    $id1 = Random::hash();
+    $key1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    Cache::instance()->set($key1, $value1, 84600, array("tag1", "tag2"));
 
-    $id2 = Random::hash();
+    $key2 = Random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 84600);
+    Cache::instance()->set($key2, $value2, 84600, array("tag2", "tag3"));
 
-    $id3 = Random::hash();
+    $key3 = Random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    Cache::instance()->set($key3, $value3, 84600, array("tag3", "tag4"));
 
-    $data = $this->_driver->get_tag(array("tag2"));
+    $data = Cache::instance()->find("tag2");
 
-    $expected = array($id1 => $value1, $id2 => $value2);
+    $expected = array($key1 => $value1, $key2 => $value2);
     ksort($expected);
-    $this->assertEquals($expected, $data, "Expected id1 & id2");
+    $this->assertEquals($expected, $data, "Expected key1 & key2");
 
-    $data = $this->_driver->get_tag(array("tag4"));
-    $this->assertEquals(array($id3 => $value3), $data, "Expected id3");
+    $data = Cache::instance()->find("tag4");
+    $this->assertEquals(array($key3 => $value3), $data, "Expected key3");
   }
 
-  public function test_cache_delete_id() {
-    $id1 = Random::hash();
+  public function test_cache_delete_key() {
+    $key1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    Cache::instance()->set($key1, $value1, 84600, array("tag1", "tag2"));
 
-    $id2 = Random::hash();
+    $key2 = Random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
+    Cache::instance()->set($key2, $value2, 846000, array("tag2", "tag3"));
 
-    $id3 = Random::hash();
+    $key3 = Random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    Cache::instance()->set($key3, $value3, 84600, array("tag3", "tag4"));
 
-    $this->_driver->delete(array($id1));
+    Cache::instance()->delete($key1);
 
-    $this->assertFalse($this->_exists($id1), "$id1 should have been deleted");
-    $this->assertTrue($this->_exists($id2), "$id2 should not have been deleted");
-    $this->assertTrue($this->_exists($id3), "$id3 should not have been deleted");
+    $this->assertNotExists($key1, "$key1 should have been deleted");
+    $this->assertExists($key2, "$key2 should not have been deleted");
+    $this->assertExists($key3, "$key3 should not have been deleted");
   }
 
   public function test_cache_delete_tag() {
-    $id1 = Random::hash();
+    $key1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    Cache::instance()->set($key1, $value1, 84600, array("tag1", "tag2"));
 
-    $id2 = Random::hash();
+    $key2 = Random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
+    Cache::instance()->set($key2, $value2, 846000, array("tag2", "tag3"));
 
-    $id3 = Random::hash();
+    $key3 = Random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    Cache::instance()->set($key3, $value3, 84600, array("tag3", "tag4"));
 
-    $data = $this->_driver->delete_tag(array("tag3"));
+    $data = Cache::instance()->delete_tag("tag3");
 
-    $this->assertTrue($this->_exists($id1), "$id1 should not have been deleted");
-    $this->assertFalse($this->_exists($id2), "$id2 should have been deleted");
-    $this->assertFalse($this->_exists($id3), "$id3 should have been deleted");
+    $this->assertExists($key1, "$key1 should not have been deleted");
+    $this->assertNotExists($key2, "$key2 should have been deleted");
+    $this->assertNotExists($key3, "$key3 should have been deleted");
   }
 
   public function test_cache_delete_all() {
-    $id1 = Random::hash();
+    $key1 = Random::hash();
     $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    Cache::instance()->set($key1, $value1, 84600, array("tag1", "tag2"));
 
-    $id2 = Random::hash();
+    $key2 = Random::hash();
     $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
+    Cache::instance()->set($key2, $value2, 846000, array("tag2", "tag3"));
 
-    $id3 = Random::hash();
+    $key3 = Random::hash();
     $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    Cache::instance()->set($key3, $value3, 84600, array("tag3", "tag4"));
 
-    $data = $this->_driver->delete(true);
+    $data = Cache::instance()->delete_all();
 
-    $this->assertFalse($this->_exists($id1), "$id1 should have been deleted");
-    $this->assertFalse($this->_exists($id2), "$id2 should have been deleted");
-    $this->assertFalse($this->_exists($id3), "$id3 should have been deleted");
+    $this->assertNotExists($key1, "$key1 should have been deleted");
+    $this->assertNotExists($key2, "$key2 should have been deleted");
+    $this->assertNotExists($key3, "$key3 should have been deleted");
+  }
+
+  /* Helper functions */
+
+  protected function key_count($key) {
+    return DB::select()
+      ->from("caches")
+      ->where("key", "=", $key)
+      ->where("expiration", ">=", time())
+      ->limit("1")
+      ->execute()
+      ->count();
+  }
+
+  protected function assertNotExists($key, $message=null) {
+    $this->assertEquals(0, $this->key_count($key), $message);
+  }
+
+  protected function assertExists($key, $message=null) {
+    $this->assertNotEquals(0, $this->key_count($key), $message);
   }
 }
