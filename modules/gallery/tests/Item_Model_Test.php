@@ -561,31 +561,31 @@ class Item_Model_Test extends Unittest_Testcase {
 
   public function test_urls() {
     $photo = Test::random_photo();
-    $this->assertTrue(
-      preg_match("|http://./var/resizes/name_\w+\.jpg\?m=\d+|", $photo->resize_url()),
-      $photo->resize_url() . " is malformed");
-    $this->assertTrue(
-      preg_match("|http://./var/thumbs/name_\w+\.jpg\?m=\d+|", $photo->thumb_url()),
-      $photo->thumb_url() . " is malformed");
-    $this->assertTrue(
-      preg_match("|http://./var/albums/name_\w+\.jpg\?m=\d+|", $photo->file_url()),
-      $photo->file_url() . " is malformed");
+    $this->assertRegexp(
+      "|http://localhost/var/resizes/name_\w+\.jpg\?m=\d+|", $photo->resize_url(true),
+      "resize_url is malformed");
+    $this->assertRegexp(
+      "|http://localhost/var/thumbs/name_\w+\.jpg\?m=\d+|", $photo->thumb_url(true),
+      "thumb_url is malformed");
+    $this->assertRegexp(
+      "|http://localhost/var/albums/name_\w+\.jpg\?m=\d+|", $photo->file_url(true),
+      "file_url is malformed");
 
     $album = Test::random_album();
-    $this->assertTrue(
-      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
-      $album->thumb_url() . " is malformed");
+    $this->assertRegexp(
+      "|http://localhost/var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url(true),
+      "thumb_url is malformed");
 
     $photo = Test::random_photo($album);
-    $this->assertTrue(
-      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url()),
-      $album->thumb_url() . " is malformed");
+    $this->assertRegexp(
+      "|http://localhost/var/thumbs/name_\w+/\.album\.jpg\?m=\d+|", $album->thumb_url(true),
+      "thumb url is malformed");
 
     // If the file does not exist, we should return a cache buster of m=0.
     unlink($album->thumb_path());
-    $this->assertTrue(
-      preg_match("|http://./var/thumbs/name_\w+/\.album\.jpg\?m=0|", $album->thumb_url()),
-      $album->thumb_url() . " is malformed");
+    $this->assertRegexp(
+      "|http://localhost/var/thumbs/name_\w+/\.album\.jpg\?m=0|", $album->thumb_url(true),
+      "thumb url is malformed");
   }
 
   public function test_legal_extension_that_does_match_gets_used() {
