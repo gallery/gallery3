@@ -34,14 +34,18 @@ class Gallery_Controller_Login extends Controller {
     $form
       ->attr("id", "g-login-form")
       ->attr("class", "g-narrow");
+    $form->login
+      ->set("label", t("Login"));
     $form->login->username
       ->attr("id", "g-username")
-      ->add_rule(array("Auth::validate_too_many_failed_logins",
-                 array(":value")))
-      ->add_rule(array("Auth::validate_username_and_password",
-                 array(":form_val", "username", "password")));
+      ->set("label", t("Username"))
+      ->add_rule("Auth::validate_too_many_failed_logins", array(":value"),
+                 t("Too many failed login attempts.  Try again later"))
+      ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),
+                 t("Invalid name or password"));
     $form->login->password
-      ->attr("id", "g-password");
+      ->attr("id", "g-password")
+      ->set("label", t("Password"));
 
     // Define our basic form view.
     $view = new View("gallery/login.html");
