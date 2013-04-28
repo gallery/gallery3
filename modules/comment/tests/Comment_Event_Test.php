@@ -27,7 +27,9 @@ class Comment_Event_Test extends Unittest_Testcase {
     $comment->guest_name = "test";
     $comment->guest_email = "test@test.com";
     $comment->text = "text";
+    $comment->server_name = "server_name";
     $comment->save();
+
 
     $album->delete();
 

@@ -29,6 +29,7 @@ class Comment_Model_Test extends Unittest_Testcase {
       $comment->item_id = Item::root()->id;
       $comment->author_id = Identity::guest()->id;
       $comment->text = "text";
+      $comment->server_name = "server_name";
       $comment->save();
     } catch (ORM_Validation_Exception $e) {
       $this->assertEquals(array("guest_name" => "required",
@@ -46,6 +47,7 @@ class Comment_Model_Test extends Unittest_Testcase {
       $comment->guest_name = "guest";
       $comment->guest_email = "bogus";
       $comment->text = "text";
+      $comment->server_name = "server_name";
       $comment->save();
     } catch (ORM_Validation_Exception $e) {
       $this->assertEquals(array("guest_email" => "invalid"),
@@ -61,18 +63,19 @@ class Comment_Model_Test extends Unittest_Testcase {
     $comment->item_id = $album->id;
     $comment->author_id = Identity::admin_user()->id;
     $comment->text = "text";
+    $comment->server_name = "server_name";
     $comment->save();
 
     Identity::set_active_user(Identity::guest());
 
     // We can see the comment when permissions are granted on the album
     Access::allow(Identity::everybody(), "view", $album);
-    $this->assertTrue(
+    $this->assertTrue((bool)
       ORM::factory("Comment")->viewable()->where("comment.id", "=", $comment->id)->count_all());
 
     // We can't see the comment when permissions are denied on the album
     Access::deny(Identity::everybody(), "view", $album);
-    $this->assertFalse(
+    $this->assertFalse((bool)
       ORM::factory("Comment")->viewable()->where("comment.id", "=", $comment->id)->count_all());
   }
 }
