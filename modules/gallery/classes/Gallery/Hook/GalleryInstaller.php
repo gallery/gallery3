@@ -498,6 +498,7 @@ class Gallery_Hook_GalleryInstaller {
       foreach (DB::select("id", "slug")
                ->from("items")
                ->where(DB::expr("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
+               ->as_object()
                ->execute() as $row) {
         $new_slug = Item::convert_filename_to_slug($row->slug);
         if (empty($new_slug)) {
@@ -692,6 +693,7 @@ class Gallery_Hook_GalleryInstaller {
                ->where("type", "<>", "album")
                ->where(DB::expr("`name` REGEXP '\\\\..*\\\\.'"), "=", 1)
                ->order_by("id", "asc")
+               ->as_object()
                ->execute() as $row) {
         set_time_limit(30);
         $item = ORM::factory("Item", $row->id);
@@ -747,6 +749,7 @@ class Gallery_Hook_GalleryInstaller {
                ->where("type", "<>", "album")
                ->having("C", ">", 1)
                ->group_by("parent_base_name")
+               ->as_object()
                ->execute() as $conflict) {
         list ($parent_id, $base_name) = explode(":", $conflict->parent_base_name, 2);
         $base_name_escaped = Database::escape_for_like($base_name);
@@ -758,6 +761,7 @@ class Gallery_Hook_GalleryInstaller {
                  ->where("name", "LIKE", "{$base_name_escaped}.%")
                  ->limit(1000000)  // required to satisfy SQL syntax (no offset without limit)
                  ->offset(1)       // skips the 0th item
+                 ->as_object()
                  ->execute() as $row) {
           set_time_limit(30);
           $item = ORM::factory("Item", $row->id);
@@ -802,6 +806,7 @@ class Gallery_Hook_GalleryInstaller {
                ->from("items")
                ->where(DB::expr("`name` REGEXP '\\\\\\\\'"), "=", 1)  // one \, 3x escaped
                ->order_by("id", "asc")
+               ->as_object()
                ->execute() as $row) {
         set_time_limit(30);
         $item = ORM::factory("Item", $row->id);

@@ -88,7 +88,7 @@
               <?= ($user->last_login == 0) ? "" : Gallery::date($user->last_login) ?>
             </td>
             <td>
-              <?= DB::select()->from("items")->where("owner_id", "=", $user->id)->execute()->count() ?>
+              <?= DB::select()->from("items")->where("owner_id", "=", $user->id)->as_object()->execute()->count() ?>
             </td>
             <td>
               <a href="<?= URL::site("admin/users/edit_user_form/$user->id") ?>"

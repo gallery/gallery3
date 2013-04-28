@@ -98,11 +98,12 @@ class Gallery_L10nClient {
     $max_messages = 2000 / count($locales);
     $num_messages = 0;
     $rows = DB::select("key", "locale", "revision", "translation")
-        ->from("incoming_translations")
-        ->order_by("key")
-        ->limit(1000000)  // ignore, just there to satisfy SQL syntax
-        ->offset($num_fetched)
-        ->execute();
+      ->from("incoming_translations")
+      ->order_by("key")
+      ->limit(1000000)  // ignore, just there to satisfy SQL syntax
+      ->offset($num_fetched)
+      ->as_object()
+      ->execute();
     $num_remaining = $rows->count();
     foreach ($rows as $row) {
       if (!isset($request->messages->{$row->key})) {
@@ -204,6 +205,7 @@ class Gallery_L10nClient {
     $request = new stdClass();
     foreach (DB::select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
+             ->as_object()
              ->execute() as $row) {
       $key = $row->key;
       if (!isset($request->{$key})) {

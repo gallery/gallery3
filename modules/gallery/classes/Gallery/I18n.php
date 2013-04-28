@@ -171,6 +171,7 @@ class Gallery_I18n extends Kohana_I18n {
       foreach (DB::select("key", "translation")
                ->from("incoming_translations")
                ->where("locale", "=", $locale)
+               ->as_object()
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
@@ -179,6 +180,7 @@ class Gallery_I18n extends Kohana_I18n {
       foreach (DB::select("key", "translation")
                ->from("outgoing_translations")
                ->where("locale", "=", $locale)
+               ->as_object()
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }

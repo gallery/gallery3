@@ -84,7 +84,9 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
     if (DB::select()->from("groups")
         ->where("name", "=", $this->name)
         ->where("id", "<>", $this->id)
-        ->execute()->count() == 1) {
+        ->as_object()
+        ->execute()
+        ->count() == 1) {
       $v->add_error("name", "conflict");
     }
   }

@@ -138,6 +138,7 @@ class Gallery_Controller_L10nClient extends Controller {
       foreach (DB::select("key", "translation")
                ->from("incoming_translations")
                ->where("locale", "=", $locale)
+               ->as_object()
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
@@ -145,6 +146,7 @@ class Gallery_Controller_L10nClient extends Controller {
       foreach (DB::select("key", "translation")
                ->from("outgoing_translations")
                ->where("locale", "=", $locale)
+               ->as_object()
                ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }

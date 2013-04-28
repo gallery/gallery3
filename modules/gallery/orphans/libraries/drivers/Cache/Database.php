@@ -70,7 +70,7 @@ class Cache_Database_Driver extends Cache_Driver {
     foreach ($tags as $tag) {
       $db->where("tags", "LIKE", "%" . Database::escape_for_like("<$tag>") . "%");
     }
-    $db_result = $db->execute();
+    $db_result = $db->as_object()->execute();
 
     // An array will always be returned
     $result = array();
@@ -100,6 +100,7 @@ class Cache_Database_Driver extends Cache_Driver {
     $result = DB::select()
       ->from("caches")
       ->where("key", "IN", $keys)
+      ->as_object()
       ->execute();
 
     if (count($result) > 0) {

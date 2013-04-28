@@ -417,6 +417,7 @@ class Gallery_Hook_GalleryTask {
                    ->from("items")
                    ->where("parent_id", "=", $id)
                    ->order_by("left_ptr", "ASC")
+                   ->as_object()
                    ->execute() as $child) {
             array_push($stack, "{$child->id}:L");
           }
@@ -612,6 +613,7 @@ class Gallery_Hook_GalleryTask {
         foreach (DB::select("id")
                  ->from("items")
                  ->where("type", "=", "album")
+                 ->as_object()
                  ->execute() as $row) {
           $stack[] = $row->id;
         }
@@ -746,6 +748,7 @@ class Gallery_Hook_GalleryTask {
       ->from("items")
       ->having("C", ">", 1)
       ->group_by("parent_slug")
+      ->as_object()
       ->execute();
   }
 
@@ -759,6 +762,7 @@ class Gallery_Hook_GalleryTask {
       ->from("items")
       ->having("C", ">", 1)
       ->group_by("parent_name")
+      ->as_object()
       ->execute();
   }
 
@@ -773,6 +777,7 @@ class Gallery_Hook_GalleryTask {
       ->where("type", "<>", "album")
       ->having("C", ">", 1)
       ->group_by("parent_base_name")
+      ->as_object()
       ->execute();
   }
 
@@ -782,6 +787,7 @@ class Gallery_Hook_GalleryTask {
       ->where("relative_path_cache", "is", null)
       ->or_where("relative_url_cache", "is", null)
       ->limit($limit)
+      ->as_object()
       ->execute();
   }
 

@@ -28,7 +28,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
     // @todo: add this as a config option
     $page_size = Module::get_var("user", "page_size", 10);
     $page = Arr::get($this->request->query(), "page", "1");
-    $user_count = DB::select()->from("users")->execute()->count();
+    $user_count = DB::select()->from("users")->as_object()->execute()->count();
 
     // Pagination info
     $view->page = $page;

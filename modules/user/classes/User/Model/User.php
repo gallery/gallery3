@@ -148,7 +148,9 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
     if (DB::select()->from("users")
         ->where("name", "=", $this->name)
         ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-        ->execute()->count() == 1) {
+        ->as_object()
+        ->execute()
+        ->count() == 1) {
       $v->add_error("name", "conflict");
     }
   }
