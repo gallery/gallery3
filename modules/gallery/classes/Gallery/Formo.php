@@ -31,8 +31,10 @@ class Gallery_Formo extends Formo_Core_Formo {
     // access), go ahead and set the form entry as as null instead of passing along the pre-filled
     // value to validate (which would indicate legal access).
     if ($this->get("driver") == "form") {
-      $this->add("csrf", "input|hidden", Access::csrf_token(), array("can_be_empty" => true));
-      $this->csrf->add_rule(array("Access::verify_csrf", array(":value")));
+      $this->add("csrf", "input|hidden", Access::csrf_token());
+      $this->csrf
+        ->set("can_be_empty", true)
+        ->add_rule("Access::verify_csrf", array(":value"));
     }
   }
 }
