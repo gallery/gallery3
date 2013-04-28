@@ -17,8 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-return array(
-  "login" => t("Login"),
-  "username" => t("Username"),
-  "password" => t("Password")
-);
+abstract class Gallery_Formo_Innards extends Formo_Core_Innards {
+  protected $_error_messages = array();
+
+  /**
+   * Override Formo_Innards::_error_to_msg() to look for a message in the $_error_messages array.
+   * This array is populated using our Formo::add_rule() override.  If nothing is found, the
+   * error name is returned.
+   */
+  protected function _error_to_msg(array $errors_array=null) {
+    $message = parent::_error_to_msg($errors_array);
+    return ($message === false) ? false : Arr::get($this->_error_messages, $message, $message);
+  }
+}
