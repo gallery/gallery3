@@ -106,15 +106,15 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       $_SERVER["argv"][] = MODPATH . "unittest/tests.php";
 
       // Look for PHPUnit in a bunch of reasonable places
-      foreach (array("phar://" . DOCROOT . "phpunit.phar",
+      foreach (array("phar://" . DOCROOT . "bin/phpunit.phar",
                      "/usr/local/php/PHPUnit/Autoload.php",
                      "/usr/share/php/PHPUnit/Autoload.php") as $path) {
         @include $path;
       }
 
       if (!function_exists("phpunit_autoload")) {
-        print "PHPUnit not found, aborting.  To install PHPUnit: \n";
-        print "  $ cd gallery3\n";
+        print "PHPUnit not found, aborting.  To download and use a standalone version of PHPUnit: \n";
+        print "  $ cd gallery3/bin\n";
         print "  $ wget http://pear.phpunit.de/get/phpunit.phar\n";
         exit(1);
       }
