@@ -251,13 +251,27 @@ class Formo_Core_Formo extends Formo_Innards {
 	 * Add a single rule
 	 * 
 	 * @access public
-	 * @param mixed $alias
-	 * @param array $rule (default: NULL)
+	 * @param mixed $rule   (as array like Validation::rules() or string like Validation::rule())
+	 * @param array $params (only used if $rule isn't an array, default: NULL)
 	 * @return Formo obj
 	 */
-	public function add_rule( array $array)
+	public function add_rule($rule, $params = NULL)
 	{
-		$this->_add_rule($array);
+		if (is_array($rule))
+		{
+			$this->_add_rule($rule);
+		}
+		else
+		{
+			if (isset($params))
+			{
+				$this->_add_rule(array($rule, $params));
+			}
+			else
+			{
+				$this->_add_rule(array($rule));
+			}
+		}
 
 		return $this;
 	}
