@@ -37,4 +37,22 @@ class Gallery_Formo extends Formo_Core_Formo {
         ->add_rule("Access::verify_csrf", array(":value"));
     }
   }
+
+  /**
+   * Override Formo::add_rule() to allow us to define error messages inline.  We use this
+   * approach instead of using Kohana message files.
+   * @todo: consider recasting this as a patch to send upstream to the Formo project.
+   */
+  public function add_rule($rule, $params=null, $error_message=null) {
+    // If add_rule() is called using an array, separate it into its parts for clarity.
+    if (is_array($rule)) {
+      return $this->add_rule($rule[0], Arr::get($rule, 1), Arr::get($rule, 2, $params));
+    }
+
+    if (isset($error_message)) {
+      $this->_error_messages[$rule] = $error_message;
+    }
+
+    return parent::add_rule($rule, $params);
+  }
 }
