@@ -26,15 +26,48 @@ class Gallery_Formo extends Formo_Core_Formo {
   public function __construct(array $array=null) {
     parent::__construct($array);
 
-    // If the driver is form (i.e. the parent form instead of a field within it), add the CSRF.
-    // The "can_be_empty" argument means that, if the csrf field is empty in $_POST (i.e. illegal
-    // access), go ahead and set the form entry as as null instead of passing along the pre-filled
-    // value to validate (which would indicate legal access).
-    if ($this->get("driver") == "form") {
-      $this->add("csrf", "input|hidden", Access::csrf_token());
-      $this->csrf
-        ->set("can_be_empty", true)
-        ->add_rule("Access::verify_csrf", array(":value"));
+    switch ($this->get("driver")) {
+      // If the driver is form (i.e. the parent form instead of a field within it), add the CSRF.
+      // The "can_be_empty" argument means that, if the csrf field is empty in $_POST (i.e. illegal
+      // access), go ahead and set the form entry as as null instead of passing along the pre-filled
+      // value to validate (which would indicate legal access).
+      case "form":
+        $this->add("csrf", "input|hidden", Access::csrf_token());
+        $this->csrf
+          ->set("can_be_empty", true)
+          ->add_rule("Access::verify_csrf", array(":value"));
+        break;
+      // For the rest of these cases, we're just auto-adding CSS classes based on the input type.
+      // The CSS class names are chosen to be compatible with Gallery 3.0.x (which used Forge),
+      // and can be overridden using Formo::remove_class("foo") or Formo::set("class", "foo").
+      case "checkbox":
+        $this->add_class("checkbox");
+        break;
+      case "checkboxes":
+        $this->add_class("checklist");
+        break;
+      case "radios":
+        $this->add_class("radio");  // Note: the missing "s" isn't a typo.
+        break;
+      case "select":
+        $this->add_class("dropdown");
+        break;
+      case "textarea":
+        $this->add_class("textarea");
+        break;
+      case "input":
+        switch ($this->attr("type")) {
+          case "password":
+            $this->add_class("password");
+            break;
+          case "submit":
+            $this->add_class("submit");
+            break;
+          case "text":
+            $this->add_class("textbox");
+            break;
+        }
+        break;
     }
   }
 
@@ -54,5 +87,25 @@ class Gallery_Formo extends Formo_Core_Formo {
     }
 
     return parent::add_rule($rule, $params);
+  }
+
+  /**
+   * See if the field has at least one group/subform.  This is used when we render our
+   * custom templates.
+   */
+  public function has_group() {
+    foreach ($this->_fields as $field) {
+      if ($field->get("driver") == "group") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Return whether or not the field is hidden.  This is used when we render our custom templates.
+   */
+  public function is_hidden() {
+    return ($this->attr("type") == "hidden");
   }
 }
