@@ -63,7 +63,7 @@ class Organize_Controller_Organize extends Controller {
       "title" => (string)HTML::clean($album->title),
       "children" => array());
 
-    foreach ($album->viewable()->children() as $child) {
+    foreach ($album->children->viewable()->find_all() as $child) {
       $dims = $child->scale_dimensions(120);
       $data["children"][] = array(
         "id" => $child->id,
@@ -87,7 +87,7 @@ class Organize_Controller_Organize extends Controller {
       if (!$source->loaded()) {
         continue;
       }
-      Access::required("edit", $source->parent());
+      Access::required("edit", $source->parent);
 
       if ($source->contains($new_parent) || $source->id == $new_parent->id) {
         // Can't move an item into its own hierarchy.  Silently skip this,
@@ -127,7 +127,7 @@ class Organize_Controller_Organize extends Controller {
       return;
     }
 
-    $album = $target->parent();
+    $album = $target->parent;
     Access::required("edit", $album);
 
     if ($album->sort_column != "weight") {
@@ -201,8 +201,10 @@ class Organize_Controller_Organize extends Controller {
 
   protected function _get_tree($item, $selected) {
     $tree = array();
-    $children = $item->viewable()
-      ->children(null, null, array(array("type", "=", "album")))
+    $children = $item->children
+      ->viewable()
+      ->where("type", "=", "album")
+      ->find_all()
       ->as_array();
     foreach ($children as $child) {
       $node = array(
@@ -211,7 +213,7 @@ class Organize_Controller_Organize extends Controller {
         "editable" => false,
         "expandable" => false,
         "id" => $child->id,
-        "leaf" => $child->children_count(array(array("type", "=", "album"))) == 0,
+        "leaf" => $child->children->where("type", "=", "album")->count_all() == 0,
         "text" => (string)HTML::clean($child->title),
         "nodeType" => "async");
 

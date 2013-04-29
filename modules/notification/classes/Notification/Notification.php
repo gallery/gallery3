@@ -105,7 +105,7 @@ class Notification_Notification {
   }
 
   static function send_item_add($item) {
-    $parent = $item->parent();
+    $parent = $item->parent;
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/item_added.html");
       $v->item = $item;
@@ -122,7 +122,7 @@ class Notification_Notification {
   }
 
   static function send_item_deleted($item) {
-    $parent = $item->parent();
+    $parent = $item->parent;
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/item_deleted.html");
       $v->item = $item;

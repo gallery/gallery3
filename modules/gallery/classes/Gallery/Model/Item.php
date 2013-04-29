@@ -84,7 +84,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     $old = clone $this;
     Module::event("item_before_delete", $this);
 
-    $parent = $this->parent();
+    $parent = $this->parent;
     if ($parent->album_cover_item_id == $this->id) {
       Item::remove_album_cover($parent);
     }
@@ -488,7 +488,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     // Update the MPTT pointers, if necessary.  We have to do this before we generate any
     // cached paths!
     if ($original->parent_id != $this->parent_id) {
-      parent::move_to($this->parent());
+      parent::move_to($this->parent);
     }
 
     if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
@@ -515,7 +515,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
       if ($original->parent_id != $this->parent_id) {
         // This will result in 2 events since we'll still fire the item_updated event below
-        Module::event("item_moved", $this, $original->parent());
+        Module::event("item_moved", $this, $original->parent);
       }
     }
 
@@ -1158,7 +1158,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
     // Convert item ids to rest URLs for consistency
     if (empty($fields) || isset($fields["parent"])) {
-      if ($tmp = $this->parent()) {
+      if ($tmp = $this->parent) {
         $data["parent"] = Rest::url("item", $tmp);
       }
       unset($data["parent_id"]);

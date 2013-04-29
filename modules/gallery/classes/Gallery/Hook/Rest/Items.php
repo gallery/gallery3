@@ -61,7 +61,7 @@ class Gallery_Hook_Rest_Items {
         throw HTTP_Exception::factory(404);
       }
       $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
-      while (($item = $item->parent()) != null) {
+      while (($item = $item->parent) != null) {
         array_unshift($items, Hook_Rest_Items::_format_restful_item($item, $types));
       };
     }
@@ -83,7 +83,7 @@ class Gallery_Hook_Rest_Items {
                        "relationships" => Rest::relationships("item", $item));
     if ($item->type == "album") {
       $members = array();
-      foreach ($item->viewable()->children() as $child) {
+      foreach ($item->children->viewable()->find_all() as $child) {
         if (empty($types) || in_array($child->type, $types)) {
           $members[] = Rest::url("item", $child);
         }

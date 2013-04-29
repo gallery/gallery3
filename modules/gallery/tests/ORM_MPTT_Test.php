@@ -22,10 +22,10 @@ class ORM_MPTT_Test extends Unittest_Testcase {
   public function test_add_to_parent() {
     $album = Test::random_album();
 
-    $this->assertEquals($album->parent()->right_ptr - 2, $album->left_ptr);
-    $this->assertEquals($album->parent()->right_ptr - 1, $album->right_ptr);
-    $this->assertEquals($album->parent()->level + 1, $album->level);
-    $this->assertEquals($album->parent()->id, $album->parent_id);
+    $this->assertEquals($album->parent->right_ptr - 2, $album->left_ptr);
+    $this->assertEquals($album->parent->right_ptr - 1, $album->right_ptr);
+    $this->assertEquals($album->parent->level + 1, $album->level);
+    $this->assertEquals($album->parent->id, $album->parent_id);
   }
 
   public function test_add_hierarchy() {
@@ -75,8 +75,8 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $this->assertEquals(3, $album1_1->right_ptr - $album1_1->left_ptr);
     $this->assertEquals(3, $album1_2->right_ptr - $album1_2->left_ptr);
 
-    $this->assertEquals($album1_1_2->id, $album1_1->children()->current()->id);
-    $this->assertEquals($album1_1_1->id, $album1_2->children()->current()->id);
+    $this->assertEquals($album1_1_2->id, $album1_1->children->find_all()->current()->id);
+    $this->assertEquals($album1_1_1->id, $album1_2->children->find_all()->current()->id);
   }
 
   public function test_cant_move_parent_into_own_subtree() {
@@ -97,7 +97,7 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $album = Test::random_album();
 
     $parent = ORM::factory("Item", 1);
-    $this->assertEquals($parent->id, $album->parent()->id);
+    $this->assertEquals($parent->id, $album->parent->id);
   }
 
   public function test_parents() {
@@ -105,7 +105,7 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $inner = Test::random_album($outer);
 
     $parent_ids = array();
-    foreach ($inner->parents() as $parent) {
+    foreach ($inner->parents->find_all() as $parent) {
       $parent_ids[] = $parent->id;
     }
     $this->assertEquals(array(1, $outer->id), $parent_ids);
@@ -117,7 +117,7 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $inner2 = Test::random_album($outer);
 
     $child_ids = array();
-    foreach ($outer->children() as $child) {
+    foreach ($outer->children->find_all() as $child) {
       $child_ids[] = $child->id;
     }
     $this->assertEquals(array($inner1->id, $inner2->id), $child_ids);
@@ -128,7 +128,8 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $inner1 = Test::random_album($outer);
     $inner2 = Test::random_album($outer);
 
-    $this->assertEquals($inner2->id, $outer->children(1, 1)->current()->id);
+    $this->assertEquals(
+      $inner2->id, $outer->children->limit(1)->offset(1)->find_all()->current()->id);
   }
 
   public function test_children_count() {
@@ -136,7 +137,7 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $inner1 = Test::random_album($outer);
     $inner2 = Test::random_album($outer);
 
-    $this->assertEquals(2, $outer->children_count());
+    $this->assertEquals(2, $outer->children->count_all());
   }
 
   public function test_descendant() {
@@ -147,19 +148,9 @@ class ORM_MPTT_Test extends Unittest_Testcase {
 
     $parent->reload();
 
-    $this->assertEquals(3, $parent->descendants()->count());
-    $this->assertEquals(2, $parent->descendants(null, null, array(array("type", "=", "photo")))->count());
-    $this->assertEquals(1, $parent->descendants(null, null, array(array("type", "=", "album")))->count());
-  }
-
-  public function test_descendant_limit() {
-    $parent = Test::random_album();
-    $album1 = Test::random_album($parent);
-    $album2 = Test::random_album($parent);
-    $album3 = Test::random_album($parent);
-    $parent->reload();
-
-    $this->assertEquals(2, $parent->descendants(2)->count());
+    $this->assertEquals(3, $parent->descendants->count_all());
+    $this->assertEquals(2, $parent->descendants->where("type", "=", "photo")->count_all());
+    $this->assertEquals(1, $parent->descendants->where("type", "=", "album")->count_all());
   }
 
   public function test_descendant_count() {
@@ -169,8 +160,8 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $photo1 = Test::random_photo($album1);
     $parent->reload();
 
-    $this->assertEquals(3, $parent->descendants_count());
-    $this->assertEquals(2, $parent->descendants_count(array(array("type", "=", "photo"))));
-    $this->assertEquals(1, $parent->descendants_count(array(array("type", "=", "album"))));
+    $this->assertEquals(3, $parent->descendants->count_all());
+    $this->assertEquals(2, $parent->descendants->where("type", "=", "photo")->count_all());
+    $this->assertEquals(1, $parent->descendants->where("type", "=", "album")->count_all());
   }
 }

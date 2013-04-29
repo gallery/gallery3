@@ -39,17 +39,18 @@ class Gallery_Hook_Rest_Tree {
     $item = Rest::resolve($request->url);
     Access::required("view", $item);
 
+    $descendants = $item->descendants->viewable();
     $query_params = array();
     $p = $request->params;
     $where = array();
     if (isset($p->type)) {
-      $where[] = array("type", "=", $p->type);
+      $descendants->where("type", "=", $p->type);
       $query_params[] = "type={$p->type}";
     }
 
     if (isset($p->depth)) {
       $lowest_depth = $item->level + $p->depth;
-      $where[] = array("level", "<=", $lowest_depth);
+      $descendants->where("level", "<=", $lowest_depth);
       $query_params[] = "depth={$p->depth}";
     }
 
@@ -62,7 +63,7 @@ class Gallery_Hook_Rest_Tree {
     $entity = array(array("url" => Rest::url("item", $item),
                            "entity" => $item->as_restful_array($fields)));
     $members = array();
-    foreach ($item->viewable()->descendants(null, null, $where) as $child) {
+    foreach ($descendants->find_all() as $child) {
       $entity[] = array("url" => Rest::url("item", $child),
                         "entity" => $child->as_restful_array($fields));
       if (isset($lowest_depth) && $child->level == $lowest_depth) {

@@ -136,7 +136,7 @@ class Gallery_Hook_GalleryEvent {
 
     if ($item->is_photo() || $item->is_movie()) {
       // If the parent has no cover item, make this it.
-      $parent = $item->parent();
+      $parent = $item->parent;
       if (Access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
         Item::make_album_cover($item);
       }
@@ -155,7 +155,7 @@ class Gallery_Hook_GalleryEvent {
       Item::remove_album_cover($parent);
     }
 
-    $parent = $item->parent();
+    $parent = $item->parent;
     if (!$parent->album_cover_item_id) {
       // Assume that we deleted the album cover
       if (Batch::in_progress()) {
@@ -165,7 +165,7 @@ class Gallery_Hook_GalleryEvent {
         Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
       } else {
         // Choose the first viewable child as the new cover.
-        if ($child = $parent->viewable()->children(1)->current()) {
+        if ($child = $parent->children->viewable()->limit(1)->find_all()->current()) {
           Item::make_album_cover($child);
         }
       }
@@ -193,7 +193,7 @@ class Gallery_Hook_GalleryEvent {
     foreach (array_keys(Session::instance()->get("batch_missing_album_cover", array())) as $id) {
       $item = ORM::factory("Item", $id);
       if ($item->loaded() && !$item->album_cover_item_id) {
-        if ($child = $item->children(1)->current()) {
+        if ($child = $item->children->limit(1)->find_all()->current()) {
           Item::make_album_cover($child);
         }
       }
@@ -203,13 +203,13 @@ class Gallery_Hook_GalleryEvent {
 
   static function item_moved($item, $old_parent) {
     if ($item->is_album()) {
-      Access::recalculate_album_permissions($item->parent());
+      Access::recalculate_album_permissions($item->parent);
     } else {
       Access::recalculate_photo_permissions($item);
     }
 
     // If the new parent doesn't have an album cover, make this it.
-    if (!$item->parent()->album_cover_item_id) {
+    if (!$item->parent->album_cover_item_id) {
       Item::make_album_cover($item);
     }
   }
@@ -298,7 +298,7 @@ class Gallery_Hook_GalleryEvent {
                         ->id("add_menu")
                         ->label(t("Add")));
           $is_album_writable =
-            is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
+            is_writable($item->is_album() ? $item->file_path() : $item->parent->file_path());
           if ($is_album_writable) {
             $add_menu->append(Menu::factory("dialog")
                               ->id("add_photos_item")
@@ -377,7 +377,7 @@ class Gallery_Hook_GalleryEvent {
         }
 
         if ($item->id != Item::root()->id) {
-          $parent = $item->parent();
+          $parent = $item->parent;
           if (Access::can("edit", $parent)) {
             // We can't make this item the highlight if it's an album with no album cover, or if it's
             // already the album cover.
@@ -389,7 +389,7 @@ class Gallery_Hook_GalleryEvent {
               $disabledState = "";
             }
 
-            if ($item->parent()->id != 1) {
+            if ($item->parent->id != 1) {
               $options_menu
                 ->append(
                   Menu::factory("ajax_link")
@@ -535,7 +535,7 @@ class Gallery_Hook_GalleryEvent {
             ->url(URL::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
-      $parent = $item->parent();
+      $parent = $item->parent;
       if (Access::can("edit", $parent)) {
         // We can't make this item the highlight if it's an album with no album cover, or if it's
         // already the album cover.
@@ -546,7 +546,7 @@ class Gallery_Hook_GalleryEvent {
         } else {
           $disabledState = "";
         }
-        if ($item->parent()->id != 1) {
+        if ($item->parent->id != 1) {
           $options_menu
             ->append(Menu::factory("ajax_link")
                      ->id("make_album_cover")

@@ -22,7 +22,7 @@ class Gallery_Hook_GalleryRss {
     $feeds["gallery/latest"] = t("Latest photos and movies");
 
     if ($item) {
-      $feed_item = $item -> is_album() ? $item : $item->parent();
+      $feed_item = $item -> is_album() ? $item : $item->parent;
 
       $feeds["gallery/album/{$feed_item->id}"] =
           t("%title photos and movies", array("title" => $feed_item->title));
@@ -56,10 +56,14 @@ class Gallery_Hook_GalleryRss {
       Access::required("view", $item);
 
       $feed->items = $item
+        ->descendants
         ->viewable()
-        ->descendants($limit, $offset, array(array("type", "=", "photo")));
+        ->where("type", "=", "photo")
+        ->limit($limit)
+        ->offset($offset)
+        ->find_all();
       $feed->max_pages = ceil(
-        $item->viewable()->descendants_count(array(array("type", "=", "photo"))) / $limit);
+        $item->descendants->viewable()->where("type", "=", "photo")->count_all() / $limit);
       if ($item->id == Item::root()->id) {
         $feed->title = HTML::purify($item->title);
       } else {

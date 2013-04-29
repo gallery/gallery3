@@ -284,7 +284,7 @@ class Gallery_Access {
    * Recalculate the permissions for a single photo.
    */
   static function recalculate_photo_permissions($photo) {
-    $parent = $photo->parent();
+    $parent = $photo->parent;
     $parent_access_cache = $parent->access_cache;
     $photo_access_cache = $photo->access_cache;
     foreach (self::_get_all_groups() as $group) {
@@ -381,12 +381,12 @@ class Gallery_Access {
     $access_cache = ORM::factory("AccessCache");
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {
-      $parent_access_cache = $item->parent()->access_cache;
+      $parent_access_cache = $item->parent->access_cache;
       foreach (self::_get_all_groups() as $group) {
         foreach (ORM::factory("Permission")->find_all() as $perm) {
           $field = "{$perm->name}_{$group->id}";
           if ($perm->name == "view") {
-            $item->$field = $item->parent()->$field;
+            $item->$field = $item->parent->$field;
           } else {
             $access_cache->$field = $parent_access_cache->$field;
           }

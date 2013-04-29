@@ -161,7 +161,7 @@ class Items_Rest_Helper_Test extends Unittest_Testcase {
       "entity" => $root->as_restful_array(),
       "relationships" => Rest::relationships("item", $root));
     $restful_root["members"] = array();
-    foreach ($root->children() as $child) {
+    foreach ($root->children->find_all() as $child) {
       $restful_root["members"][] = Rest::url("item", $child);
     }
 

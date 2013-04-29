@@ -41,7 +41,7 @@ class Organize_Hook_OrganizeEvent {
                    ->css_class("ui-icon-folder-open g-organize-link")
                    ->url(URL::site("organize/dialog/{$item->id}")));
       } else {
-        $parent = $item->parent();
+        $parent = $item->parent;
         $menu->get("options_menu")
           ->append(Menu::factory("dialog")
                    ->id("move")

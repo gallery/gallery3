@@ -31,7 +31,7 @@ class Gallery_Controller_Permissions extends Controller {
     $view = new View("gallery/permissions_browse.html");
     $view->htaccess_works = Access::htaccess_works();
     $view->item = $item;
-    $view->parents = $item->parents();
+    $view->parents = $item->parents->find_all();
     $view->form = $this->_get_form($item);
 
     $this->response->body($view);

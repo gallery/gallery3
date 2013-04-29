@@ -46,7 +46,7 @@ class Gallery_ORM_MPTT extends ORM {
    * @chainable
    * @return  ORM
    */
-  function create(Validation $validation=null) {
+  public function create(Validation $validation=null) {
     if ($this->_loaded) {
       throw new Kohana_Exception("Cannot create :model model because it is already loaded.",
                                  array(':model' => $this->_object_name));
@@ -97,18 +97,14 @@ class Gallery_ORM_MPTT extends ORM {
                                  array(':model' => $this->_object_name));
     }
 
-    $children = $this->children();
-    if ($children) {
-      foreach ($this->children() as $item) {
-        // Deleting children affects the MPTT tree, so we have to reload each child before we
-        // delete it so that we have current left_ptr/right_ptr pointers.  This is inefficient.
-        // @todo load each child once, not twice.
-        set_time_limit(30);
-        $item->reload()->delete();
-      }
-
-      // Deleting children has affected this item, but we'll reload it below.
+    foreach ($this->children->find_all() as $item) {
+      // Deleting children affects the MPTT tree, so we have to reload each child before we
+      // delete it so that we have current left_ptr/right_ptr pointers.  This is inefficient.
+      // @todo load each child once, not twice.
+      set_time_limit(30);
+      $item->reload()->delete();
     }
+    // Deleting children has affected this item, but we'll reload it below.
 
     $this->lock();
     $this->reload();  // Assume that the prior lock holder may have changed this entry
@@ -140,104 +136,48 @@ class Gallery_ORM_MPTT extends ORM {
    * @param ORM $target
    * @return boolean
    */
-  function contains($target) {
+  public function contains($target) {
     return ($this->left_ptr <= $target->left_ptr && $this->right_ptr >= $target->right_ptr);
   }
 
   /**
-   * Return the parent of this node
-   *
-   * @return ORM
+   * Overload ORM::get() to provide support for our special MPTT relationships
    */
-  function parent() {
-    if (!$this->parent_id) {
-      return null;
+  public function get($column) {
+    // These special relationships are generated off of a new instance of the model
+    // so anything that happens before them in a chain will be discarded.  This can
+    // be disastrous in the case where we have security constraints that we think are
+    // being applied, eg: $item->viewable()->descendants would discard the viewable() part.
+    // So require these relationships to come first.
+    if (in_array($column, array("parent", "parents", "children", "descendants")) &&
+        !empty($this->_db_pending)) {
+      throw new Kohana_Exception("MPTT relationships must be first in the chain");
     }
-    return ORM::factory($this->_model_name, $this->parent_id);
-  }
 
-  /**
-   * Return all the parents of this node, in order from root to this node's immediate parent.
-   *
-   * @return array ORM
-   */
-  function parents($where=null) {
-    return $this
-      ->unloaded_instance()
-      ->merge_where($where)
-      ->where("left_ptr", "<=", $this->left_ptr)
-      ->where("right_ptr", ">=", $this->right_ptr)
-      ->where("id", "<>", $this->id)
-      ->order_by("left_ptr", "ASC")
-      ->find_all();
-  }
+    switch ($column) {
+    case "parent":
+      if (!isset($this->_related["parent"])) {
+        $this->_related["parent"] = ORM::factory($this->_model_name, $this->parent_id);
+      }
+      return $this->_related["parent"];
 
-  /**
-   * Return all of the children of this node, ordered by id.
-   *
-   * @chainable
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
-   * @param   array    additional where clauses
-   * @param   array    order_by
-   * @return array ORM
-   */
-  function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return $this
-      ->unloaded_instance()
-      ->merge_where($where)
-      ->where("parent_id", "=", $this->id)
-      ->merge_order_by($order_by)
-      ->limit($limit)->offset($offset)
-      ->find_all();
-  }
+    case "parents":
+      return ORM::factory($this->_model_name)
+        ->where("left_ptr", "<=", $this->left_ptr)
+        ->where("right_ptr", ">=", $this->right_ptr)
+        ->where("id", "<>", $this->id)
+        ->order_by("left_ptr", "ASC");
 
-  /**
-   * Return the number of children of this node.
-   *
-   * @chainable
-   * @param   array    additional where clauses
-   * @return array ORM
-   */
-  function children_count($where=null) {
-    return $this
-      ->merge_where($where)
-      ->where("parent_id", "=", $this->id)
-      ->count_all();
-  }
+    case "children":
+      return ORM::factory("Item")->where("parent_id", "=", $this->id);
 
-  /**
-   * Return all of the decendents of the specified type, ordered by id.
-   *
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
-   * @param   array    additional where clauses
-   * @param   array    order_by
-   * @return object Database_Result
-   */
-  function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    return $this
-      ->unloaded_instance()
-      ->merge_where($where)
-      ->where("left_ptr", ">", $this->left_ptr)
-      ->where("right_ptr", "<=", $this->right_ptr)
-      ->merge_order_by($order_by)
-      ->limit($limit)->offset($offset)
-      ->find_all();
-  }
+    case "descendants":
+      return ORM::factory($this->_model_name)
+        ->where("left_ptr", ">", $this->left_ptr)
+        ->where("right_ptr", "<=", $this->right_ptr);
+    }
 
-  /**
-   * Return the count of all the children of the specified type.
-   *
-   * @param    array    additional where clauses
-   * @return   integer  child count
-   */
-  function descendants_count($where=null) {
-    return $this
-      ->merge_where($where)
-      ->where("left_ptr", ">", $this->left_ptr)
-      ->where("right_ptr", "<=", $this->right_ptr)
-      ->count_all();
+    return parent::get($column);
   }
 
   /**

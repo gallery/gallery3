@@ -47,7 +47,7 @@ class Gallery_Breadcrumb {
       return array();
     }
 
-    $bc = array_merge($item->parents()->as_array(), array($item));
+    $bc = array_merge($item->parents->find_all()->as_array(), array($item));
     for ($i = 0; $i < count($bc) - 1; $i++) {
       $bc[$i] = new Breadcrumb($bc[$i]->title, $bc[$i]->url("show={$bc[$i+1]->id}"));
     }

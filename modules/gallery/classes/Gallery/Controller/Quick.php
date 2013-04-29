@@ -64,8 +64,8 @@ class Gallery_Controller_Quick extends Controller {
 
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
-    Access::required("view", $item->parent());
-    Access::required("edit", $item->parent());
+    Access::required("view", $item->parent);
+    Access::required("edit", $item->parent);
 
     $msg = t("Made <b>%title</b> this album's cover", array("title" => HTML::purify($item->title)));
 
@@ -100,7 +100,7 @@ class Gallery_Controller_Quick extends Controller {
       $msg = t("Deleted photo <b>%title</b>", array("title" => HTML::purify($item->title)));
     }
 
-    $parent = $item->parent();
+    $parent = $item->parent;
 
     if ($item->is_album()) {
       // Album delete will trigger deletes for all children.  Do this in a batch so that we can be

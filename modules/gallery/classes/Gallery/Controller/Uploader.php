@@ -24,7 +24,7 @@ class Gallery_Controller_Uploader extends Controller {
     Access::required("view", $item);
     Access::required("add", $item);
     if (!$item->is_album()) {
-      $item = $item->parent();
+      $item = $item->parent;
     }
 
     $this->response->body($this->_get_add_form($item));

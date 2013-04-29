@@ -10,7 +10,7 @@
   <p id="g-description"><?= t("Photos will be added to album:") ?></p>
   <ul class="g-breadcrumbs">
     <? $i = 0 ?>
-    <? foreach ($item->parents() as $parent): ?>
+    <? foreach ($item->parents->find_all() as $parent): ?>
     <li<? if ($i == 0): ?> class="g-first"<? endif ?>> <?= HTML::purify($parent->title) ?> </li>
     <? $i++ ?>
     <? endforeach ?>

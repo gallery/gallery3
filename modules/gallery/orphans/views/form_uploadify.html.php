@@ -139,7 +139,7 @@
 
   <div>
     <ul class="g-breadcrumbs">
-      <? foreach ($album->parents() as $i => $parent): ?>
+      <? foreach ($album->parents->find_all() as $i => $parent): ?>
       <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= HTML::clean($parent->title) ?> </li>
       <? endforeach ?>
       <li class="g-active"> <?= HTML::purify($album->title) ?> </li>

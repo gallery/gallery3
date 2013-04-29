@@ -23,7 +23,7 @@ class Rss_Hook_RssTheme {
       if ($item->is_album()) {
         return Rss::feed_link("gallery/album/{$item->id}");
       } else {
-        return Rss::feed_link("gallery/album/{$item->parent()->id}");
+        return Rss::feed_link("gallery/album/{$item->parent->id}");
       }
     } else if ($tag = $theme->tag()) {
       return Rss::feed_link("tag/tag/{$tag->id}");

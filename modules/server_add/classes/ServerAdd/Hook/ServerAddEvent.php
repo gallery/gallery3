@@ -31,7 +31,7 @@ class ServerAdd_Hook_ServerAddEvent {
     $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
 
     if ($item && Identity::active_user()->admin && $item->is_album() && !empty($paths) &&
-        is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path())) {
+        is_writable($item->is_album() ? $item->file_path() : $item->parent->file_path())) {
       $menu->get("add_menu")
         ->append(Menu::factory("dialog")
                  ->id("server_add")

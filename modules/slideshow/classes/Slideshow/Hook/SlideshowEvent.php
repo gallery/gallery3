@@ -37,7 +37,7 @@ class Slideshow_Hook_SlideshowEvent {
 
   static function album_menu($menu, $theme) {
     $max_scale = Module::get_var("slideshow", "max_scale");
-    if ($theme->item()->descendants_count(array(array("type", "=", "photo")))) {
+    if ($theme->item()->descendants->where("type", "=", "photo")->count_all()) {
       $menu->append(Menu::factory("link")
                     ->id("slideshow")
                     ->label(t("View slideshow"))
@@ -70,7 +70,7 @@ class Slideshow_Hook_SlideshowEvent {
   protected static function _feed_url($theme) {
     if ($item = $theme->item()) {
       if (!$item->is_album()) {
-        $item = $item->parent();
+        $item = $item->parent;
       }
       return Rss::url("gallery/album/{$item->id}");
     } else {

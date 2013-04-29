@@ -44,7 +44,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     }
 
     $page = Arr::get($this->request->query(), "page", "1");
-    $children_count = $album->viewable()->children_count();
+    $children_count = $album->children->viewable()->count_all();
     $offset = ($page - 1) * $page_size;
     $max_pages = max(ceil($children_count / $page_size), 1);
 
@@ -62,8 +62,8 @@ class Gallery_Controller_Albums extends Controller_Items {
             "max_pages" => $max_pages,
             "page_size" => $page_size,
             "item" => $album,
-            "children" => $album->viewable()->children($page_size, $offset),
-            "parents" => $album->parents()->as_array(), // view calls empty() on this
+            "children" => $album->children->viewable()->limit($page_size)->offset($offset)->find_all(),
+            "parents" => $album->parents->find_all()->as_array(), // view calls empty() on this
             "breadcrumbs" => Breadcrumb::array_from_item_parents($album),
             "children_count" => $children_count));
     $template->content = new View("required/album.html");
@@ -74,28 +74,37 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public static function get_display_context($item) {
-    $where = array(array("type", "!=", "album"));
     $position = Item::get_position($item, $where);
     if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) =
-        $item->parent()->viewable()->children(3, $position - 2, $where);
+      list ($previous_item, $ignore, $next_item) = $item->parent->children
+        ->viewable()
+        ->where("type", "!=", "album")
+        ->limit(3)
+        ->offset($position - 2)
+        ->find_all();
     } else {
       $previous_item = null;
-      list ($next_item) = $item->parent()->viewable()->children(1, $position, $where);
+      list ($next_item) = $item->parent->children
+        ->viewable()
+        ->where("type", "!=", "album")
+        ->limit(1)
+        ->offset($position)
+        ->find_all();
     }
 
     return array("position" => $position,
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
-                 "sibling_count" => $item->parent()->viewable()->children_count($where),
+                 "sibling_count" =>
+                   $item->parent->children->viewable()->where("type", "!=", "album")->count_all(),
                  "siblings_callback" => array("Controller_Albums::get_siblings", array($item)),
-                 "parents" => $item->parents()->as_array(),
+                 "parents" => $item->parents->find_all()->as_array(),
                  "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
   }
 
   public static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Model_Item::siblings() if we use this more broadly.
-    return $item->parent()->viewable()->children($limit, $offset);
+    return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
   }
 
   public function action_create() {

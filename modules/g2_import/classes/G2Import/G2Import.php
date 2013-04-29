@@ -813,7 +813,7 @@ class G2Import_G2Import {
       // Compare to current permissions, and change them if necessary.
       $g3_parent_album = Item::root();
     } else {
-      $g3_parent_album = $g3_album->parent();
+      $g3_parent_album = $g3_album->parent;
     }
     $granted_parent_permissions = array();
     $perm_ids = array_unique(array_values(self::$_permission_map));

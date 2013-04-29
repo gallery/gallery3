@@ -24,10 +24,10 @@ class Gallery_Item {
     Access::required("edit", $source);
     Access::required("edit", $target);
 
-    $parent = $source->parent();
+    $parent = $source->parent;
     if ($parent->album_cover_item_id == $source->id) {
-      if ($parent->children_count() > 1) {
-        foreach ($parent->children(2) as $child) {
+      if ($parent->children->count_all() > 1) {
+        foreach ($parent->children->limit(2)->find_all() as $child) {
           if ($child->id != $source->id) {
             $new_cover_item = $child;
             break;
@@ -71,7 +71,7 @@ class Gallery_Item {
   }
 
   static function make_album_cover($item) {
-    $parent = $item->parent();
+    $parent = $item->parent;
     Access::required("view", $item);
     Access::required("view", $parent);
     Access::required("edit", $parent);
@@ -83,7 +83,7 @@ class Gallery_Item {
     Graphics::generate($parent);
 
     // Walk up the parent hierarchy and set album covers if necessary
-    $grand_parent = $parent->parent();
+    $grand_parent = $parent->parent;
     if ($grand_parent && Access::can("edit", $grand_parent) &&
         $grand_parent->album_cover_item_id == null)  {
       Item::make_album_cover($parent);
@@ -94,7 +94,7 @@ class Gallery_Item {
     // album cover.  So find any parent albums that had the old item as their album cover and
     // switch them over to the new item.
     if ($old_album_cover_id) {
-      foreach ($item->parents(array(array("album_cover_item_id", "=", $old_album_cover_id)))
+      foreach ($item->parents->where("album_cover_item_id", "=", $old_album_cover_id)->find_all()
                as $ancestor) {
         if (Access::can("edit", $ancestor)) {
           $ancestor->album_cover_item_id = $parent->album_cover_item_id;
@@ -347,7 +347,7 @@ class Gallery_Item {
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
   static function get_position($item, $where=array()) {
-    $album = $item->parent();
+    $album = $item->parent;
 
     if (!strcasecmp($album->sort_order, "DESC")) {
       $comp = ">";
@@ -468,7 +468,7 @@ class Gallery_Item {
    */
   static function resequence_child_weights($album) {
     $weight = 0;
-    foreach ($album->children() as $child) {
+    foreach ($album->children->find_all() as $child) {
       $child->weight = ++$weight;
       $child->save();
     }
