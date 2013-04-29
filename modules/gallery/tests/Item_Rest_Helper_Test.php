@@ -172,7 +172,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Item::put($request);
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals(array("slug" => "not_url_safe"), $e->validation->errors());
+      $this->assertEquals("not_url_safe", $e->errors()["slug"][0]);
     }
   }
 
@@ -211,7 +211,7 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
       Hook_Rest_Item::post($request);
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals(array("slug" => "not_url_safe"), $e->validation->errors());
+      $this->assertEquals("not_url_safe", $e->errors()["slug"][0]);
     }
   }
 
