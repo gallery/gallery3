@@ -56,8 +56,8 @@ class Tag_Test extends Unittest_Testcase {
     $tag1->reload();
 
     $this->assertEquals(2, $tag1->count);
-    $this->assertTrue($tag1->has("Item", $album1));
-    $this->assertTrue($tag1->has("Item", $album2));
+    $this->assertTrue($tag1->has("items", $album1));
+    $this->assertTrue($tag1->has("items", $album2));
     $this->assertEquals(1, ORM::factory("Tag")->count_all());
   }
 
@@ -75,7 +75,7 @@ class Tag_Test extends Unittest_Testcase {
     $tag1->reload();
 
     $this->assertEquals(1, $tag1->count);
-    $this->assertTrue($tag1->has("Item", $album));
+    $this->assertTrue($tag1->has("items", $album));
     $this->assertEquals(1, ORM::factory("Tag")->count_all());
   }
 }

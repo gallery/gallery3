@@ -26,6 +26,6 @@ class User_Groups_Test extends Unittest_Testcase {
     $group->add("users", $user);
     $group->save();
 
-    $this->assertTrue($user->has("Group", $group));
+    $this->assertTrue($user->has("groups", $group));
   }
 }
