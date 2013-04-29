@@ -75,13 +75,8 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $this->assertEquals(3, $album1_1->right_ptr - $album1_1->left_ptr);
     $this->assertEquals(3, $album1_2->right_ptr - $album1_2->left_ptr);
 
-    $this->assertEquals(
-      array($album1_1_2->id => $album1_1_2->name),
-      $album1_1->children()->select_list());
-
-    $this->assertEquals(
-      array($album1_1_1->id => $album1_1_1->name),
-      $album1_2->children()->select_list());
+    $this->assertEquals($album1_1_2->id, $album1_1->children()->current()->id);
+    $this->assertEquals($album1_1_1->id, $album1_2->children()->current()->id);
   }
 
   public function test_cant_move_parent_into_own_subtree() {
@@ -133,8 +128,7 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $inner1 = Test::random_album($outer);
     $inner2 = Test::random_album($outer);
 
-    $this->assertEquals(array($inner2->id => $inner2->name),
-                        $outer->children(1, 1)->select_list('id'));
+    $this->assertEquals($inner2->id, $outer->children(1, 1)->current()->id);
   }
 
   public function test_children_count() {
