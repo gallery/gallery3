@@ -455,8 +455,9 @@ class Gallery_Model_Item extends ORM_MPTT {
     } else if (!$this->is_album() && $this->changed("name")) {
       // There's no new data file, but the name changed.  If it's a photo or movie,
       // make sure the new name still agrees with the file type.
-      $this->name = LegalFile::sanitize_filename($this->name,
-                                                  pathinfo($original->name, PATHINFO_EXTENSION), $this->type);
+      $this->name = LegalFile::sanitize_filename(
+        $this->name,
+        pathinfo($original->name, PATHINFO_EXTENSION), $this->type);
     }
 
     // If an album's name changed, sanitize it.
