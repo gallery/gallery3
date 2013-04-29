@@ -57,7 +57,7 @@ class Tag_Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = Rest::url("tag_item", $tag, Item::root());
     Hook_Rest_TagItem::delete($request);
 
-    $this->assertFalse($tag->reload()->has(Item::root()));
+    $this->assertFalse($tag->reload()->has("Item", Item::root()));
   }
 
   public function test_resolve() {

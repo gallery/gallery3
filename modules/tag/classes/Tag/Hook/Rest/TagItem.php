@@ -38,7 +38,8 @@ class Tag_Hook_Rest_TagItem {
     list ($tag_id, $item_id) = explode(",", $tuple);
     $tag = ORM::factory("Tag", $tag_id);
     $item = ORM::factory("Item", $item_id);
-    if (!$tag->loaded() || !$item->loaded() || !$tag->has($item) || !Access::can("view", $item)) {
+    if (!$tag->loaded() || !$item->loaded() ||
+        !$tag->has("Item", $item) || !Access::can("view", $item)) {
       throw HTTP_Exception::factory(404);
     }
 

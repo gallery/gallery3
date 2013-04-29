@@ -36,10 +36,10 @@ class Tag_Tag {
     $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       $tag->name = $tag_name;
+      $tag->save();
     }
 
-    $tag->add("items", $item);
-    return $tag->save();
+    return $tag->add("items", $item);
   }
 
   /**
