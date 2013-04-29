@@ -170,11 +170,10 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
 
     try {
       Hook_Rest_Item::put($request);
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $this->assertEquals(array("slug" => "not_url_safe"), $e->validation->errors());
-      return;
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_add_album() {
@@ -210,11 +209,10 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
 
     try {
       Hook_Rest_Item::post($request);
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $this->assertEquals(array("slug" => "not_url_safe"), $e->validation->errors());
-      return;
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
 
@@ -257,10 +255,9 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     $request->url = Rest::url("item", $album1);
     try {
       Hook_Rest_Item::delete($request);
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (Exception $e) {
       $this->assertEquals("@todo FORBIDDEN", $e->getMessage());
-      return;
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 }
