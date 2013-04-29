@@ -158,7 +158,7 @@ class Gallery_Access {
    * @return boolean     Access::ALLOW, Access::DENY or Access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
-    $intent = $item->access_intent;
+    $intent = $item->access_intent->reload();
     return $intent->__get("{$perm_name}_{$group->id}");
   }
 
@@ -511,7 +511,7 @@ class Gallery_Access {
    * @return void
    */
   protected static function _update_access_view_cache($group, $item) {
-    $access = $item->access_intent;
+    $access = $item->access_intent->reload();
     $field = "view_{$group->id}";
 
     // With view permissions, deny values in the parent can override allow values in the child,
@@ -597,7 +597,7 @@ class Gallery_Access {
    * @return void
    */
   protected static function _update_access_non_view_cache($group, $perm_name, $item) {
-    $access = $item->access_intent;
+    $access = $item->access_intent->reload();
 
     $field = "{$perm_name}_{$group->id}";
 

@@ -377,7 +377,9 @@ class Access_Test extends Unittest_TestCase {
 
     // Make sure that we now have a public photo and private photo.
     $this->assertTrue(Access::group_can(Identity::everybody(), "view", $public_photo));
+    $this->assertTrue(Access::group_can(Identity::everybody(), "edit", $public_photo));
     $this->assertFalse(Access::group_can(Identity::everybody(), "view", $private_photo));
+    $this->assertFalse(Access::group_can(Identity::everybody(), "edit", $private_photo));
 
     // Swap the photos
     Item::move($public_photo, $private_album);

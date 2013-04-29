@@ -73,11 +73,12 @@ class Gallery_Hook_GalleryEvent {
   /**
    * Setup the relationships between Model_Item, Model_AccessIntent, and Model_AccessCache.
    */
-  static function model_relationships($relationships) {
-    $relationships["item"]["has_one"]["access_intent"] = array();
-    $relationships["item"]["has_one"]["access_cache"] = array();
-    $relationships["access_intent"]["belongs_to"]["item"] = array();
-    $relationships["access_cache"]["belongs_to"]["item"] = array();
+  static function model_relationships($rels) {
+    $rels["item"]["has_one"]["access_intent"] = array();
+    $rels["item"]["has_one"]["access_cache"] = array();
+    $rels["item"]["belongs_to"]["parent"] = array("model" => "Item", "column" => "parent_id");
+    $rels["access_intent"]["belongs_to"]["item"] = array();
+    $rels["access_cache"]["belongs_to"]["item"] = array();
   }
 
   static function user_deleted($user) {

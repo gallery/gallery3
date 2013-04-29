@@ -491,6 +491,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     // Update the MPTT pointers, if necessary.  We have to do this before we generate any
     // cached paths!
     if ($original->parent_id != $this->parent_id) {
+      unset($this->parent);
       parent::move_to($this->parent);
     }
 

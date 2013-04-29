@@ -149,18 +149,12 @@ class Gallery_ORM_MPTT extends ORM {
     // be disastrous in the case where we have security constraints that we think are
     // being applied, eg: $item->viewable()->descendants would discard the viewable() part.
     // So require these relationships to come first.
-    if (in_array($column, array("parent", "parents", "children", "descendants")) &&
+    if (in_array($column, array("parents", "children", "descendants")) &&
         !empty($this->_db_pending)) {
       throw new Kohana_Exception("MPTT relationships must be first in the chain");
     }
 
     switch ($column) {
-    case "parent":
-      if (!isset($this->_related["parent"])) {
-        $this->_related["parent"] = ORM::factory($this->_model_name, $this->parent_id);
-      }
-      return $this->_related["parent"];
-
     case "parents":
       return ORM::factory($this->_model_name)
         ->where("left_ptr", "<=", $this->left_ptr)
