@@ -129,8 +129,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $errors = $e->validation->errors();
-      $this->assertSame("no_slashes", $errors["name"]);
+      $this->assertEquals("no_slashes", $e->errors()["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -149,8 +148,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $errors = $e->validation->errors();
-      $this->assertSame("no_backslashes", $errors["name"]);
+      $this->assertEquals("no_backslashes", $e->errors()["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -169,8 +167,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $errors = $e->validation->errors();
-      $this->assertSame("no_trailing_period", $errors["name"]);
+      $this->assertEquals("no_trailing_period", $e->errors()["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -189,8 +186,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $errors = $e->validation->errors();
-      $this->assertSame("no_slashes", $errors["name"]);
+      $this->assertEquals("no_slashes", $e->errors()["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -209,8 +205,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $errors = $e->validation->errors();
-      $this->assertSame("no_backslashes", $errors["name"]);
+      $this->assertEquals("no_backslashes", $e->errors()["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -229,8 +224,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $errors = $e->validation->errors();
-      $this->assertSame("no_trailing_period", $errors["name"]);
+      $this->assertEquals("no_trailing_period", $e->errors()["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -310,8 +304,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $source->save();
 
     // foo should become foo-01
-    $this->assertSame("{$album->name}-01", $source->name);
-    $this->assertSame("{$album->slug}-01", $source->slug);
+    $this->assertEquals("{$album->name}-01", $source->name);
+    $this->assertEquals("{$album->slug}-01", $source->slug);
   }
 
   public function test_move_album_fails_wrong_target_type() {
@@ -324,11 +318,10 @@ class Item_Model_Test extends Unittest_Testcase {
     try {
       $album->parent_id = $photo->id;
       $album->save();
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals(array("parent_id" => "invalid"), $e->validation->errors());
-      return;
+      $this->assertEquals("invalid", $e->errors()["parent_id"][0]);
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_move_photo_with_conflicting_target_gets_uniquified() {
@@ -345,10 +338,10 @@ class Item_Model_Test extends Unittest_Testcase {
     $photo2->save();
 
     // foo.jpg should become foo-01.jpg
-    $this->assertSame(pathinfo($photo1->name, PATHINFO_FILENAME) . "-01.jpg", $photo2->name);
+    $this->assertEquals(pathinfo($photo1->name, PATHINFO_FILENAME) . "-01.jpg", $photo2->name);
 
     // foo should become foo-01
-    $this->assertSame("{$photo1->slug}-01", $photo2->slug);
+    $this->assertEquals("{$photo1->slug}-01", $photo2->slug);
   }
 
   public function test_move_album_inside_descendent_fails() {
@@ -359,11 +352,10 @@ class Item_Model_Test extends Unittest_Testcase {
     try {
       $album1->parent_id = $album3->id;
       $album1->save();
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals(array("parent_id" => "invalid"), $e->validation->errors());
-      return;
+      $this->assertEquals("invalid", $e->errors()["parent_id"][0]);
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
 
@@ -380,20 +372,17 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->type = "bogus";
     try {
       $item->save();
+      $this->assertFalse(true, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertSame(array("description" => "max_length",
-                               "name" => "not_empty",
-                               "title" => "not_empty",
-                               "album_cover_item_id" => "valid_album_cover",
-                               "parent_id" => "invalid",
-                               "sort_column" => "invalid",
-                               "sort_order" => "invalid",
-                               "type" => "invalid"),
-                         $e->validation->errors());
-      return;
+      $this->assertEquals("max_length", $e->errors()["description"][0]);
+      $this->assertEquals("not_empty", $e->errors()["name"][0]);
+      $this->assertEquals("not_empty", $e->errors()["title"][0]);
+      $this->assertEquals("invalid_item", $e->errors()["album_cover_item_id"][0]);
+      $this->assertEquals("invalid", $e->errors()["parent_id"][0]);
+      $this->assertEquals("invalid", $e->errors()["sort_column"][0]);
+      $this->assertEquals("invalid", $e->errors()["sort_order"][0]);
+      $this->assertEquals("invalid", $e->errors()["type"][0]);
     }
-
-    $this->assertFalse(true, "Shouldn't get here");
   }
 
   public function test_slug_is_url_safe() {
@@ -403,7 +392,7 @@ class Item_Model_Test extends Unittest_Testcase {
       $album->save();
       $this->assertTrue(false, "Shouldn't be able to save");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertSame(array("slug" => "not_url_safe"), $e->validation->errors());
+      $this->assertEquals("not_url_safe", $e->errors()["slug"][0]);
     }
 
     // This should work
@@ -423,13 +412,13 @@ class Item_Model_Test extends Unittest_Testcase {
       $photo->type = "movie";
       $photo->mime_type = "video/x-flv";
       $photo->save();
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $this->assertSame(
-        array("name" => "illegal_data_file_extension", "type" => "read_only"),
-        $e->validation->errors());
-      return;  // pass
+        array("name" => array("illegal_data_file_extension", null),
+              "type" => array("read_only", null)),
+        $e->errors());
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_photo_files_must_have_an_extension() {
@@ -449,11 +438,10 @@ class Item_Model_Test extends Unittest_Testcase {
   public function test_cant_delete_root_album() {
     try {
       Item::root()->delete();
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertSame(array("id" => "cant_delete_root_album"), $e->validation->errors());
-      return;  // pass
+      $this->assertEquals("cant_delete_root_album", $e->errors()["id"][0]);
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_as_restful_array() {
@@ -462,8 +450,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $album->reload();
 
     $result = $album->as_restful_array();
-    $this->assertSame(Rest::url("item", Item::root()), $result["parent"]);
-    $this->assertSame(Rest::url("item", $photo), $result["album_cover"]);
+    $this->assertEquals(Rest::url("item", Item::root()), $result["parent"]);
+    $this->assertEquals(Rest::url("item", $photo), $result["album_cover"]);
     $this->assertTrue(!array_key_exists("parent_id", $result));
     $this->assertTrue(!array_key_exists("album_cover_item_id", $result));
   }
@@ -538,11 +526,10 @@ class Item_Model_Test extends Unittest_Testcase {
       $photo = Test::random_photo();
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertSame(array("name" => "invalid_data_file"), $e->validation->errors());
-      return;  // pass
+      $this->assertEquals("invalid_data_file", $e->errors()["name"][0]);
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_unsafe_data_file_replacement_with_valid_extension() {
@@ -552,11 +539,10 @@ class Item_Model_Test extends Unittest_Testcase {
       $photo = Test::random_photo();
       $photo->set_data_file($temp_file);
       $photo->save();
+      $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertSame(array("name" => "invalid_data_file"), $e->validation->errors());
-      return;  // pass
+      $this->assertEquals("invalid_data_file", $e->errors()["name"][0]);
     }
-    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_urls() {
@@ -657,8 +643,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $photo2->save();
 
     // photo2 has same name and slug as photo1 but different parent - no conflict.
-    $this->assertSame($photo1->name, $photo2->name);
-    $this->assertSame($photo1->slug, $photo2->slug);
+    $this->assertEquals($photo1->name, $photo2->name);
+    $this->assertEquals($photo1->slug, $photo2->slug);
   }
 
   public function test_fix_conflict_when_names_identical() {
@@ -673,8 +659,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $photo2->save();
 
     // photo2 has same name as photo1 - conflict resolved by renaming with -01.
-    $this->assertSame("{$photo1_orig_base}-01.jpg", $photo2->name);
-    $this->assertSame("{$photo2_orig_slug}-01", $photo2->slug);
+    $this->assertEquals("{$photo1_orig_base}-01.jpg", $photo2->name);
+    $this->assertEquals("{$photo2_orig_slug}-01", $photo2->slug);
   }
 
   public function test_fix_conflict_when_slugs_identical() {
@@ -688,8 +674,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $photo2->save();
 
     // photo2 has same slug as photo1 - conflict resolved by renaming with -01.
-    $this->assertSame("{$photo2_orig_base}-01.jpg", $photo2->name);
-    $this->assertSame("{$photo1->slug}-01", $photo2->slug);
+    $this->assertEquals("{$photo2_orig_base}-01.jpg", $photo2->name);
+    $this->assertEquals("{$photo1->slug}-01", $photo2->slug);
   }
 
   public function test_no_conflict_when_parents_different_for_albums() {
@@ -703,8 +689,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $album2->save();
 
     // album2 has same name and slug as album1 but different parent - no conflict.
-    $this->assertSame($album1->name, $album2->name);
-    $this->assertSame($album1->slug, $album2->slug);
+    $this->assertEquals($album1->name, $album2->name);
+    $this->assertEquals($album1->slug, $album2->slug);
   }
 
   public function test_fix_conflict_when_names_identical_for_albums() {
@@ -718,8 +704,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $album2->save();
 
     // album2 has same name as album1 - conflict resolved by renaming with -01.
-    $this->assertSame("{$album1->name}-01", $album2->name);
-    $this->assertSame("{$album2_orig_slug}-01", $album2->slug);
+    $this->assertEquals("{$album1->name}-01", $album2->name);
+    $this->assertEquals("{$album2_orig_slug}-01", $album2->slug);
   }
 
   public function test_fix_conflict_when_slugs_identical_for_albums() {
@@ -733,8 +719,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $album2->save();
 
     // album2 has same slug as album1 - conflict resolved by renaming with -01.
-    $this->assertSame("{$album2_orig_name}-01", $album2->name);
-    $this->assertSame("{$album1->slug}-01", $album2->slug);
+    $this->assertEquals("{$album2_orig_name}-01", $album2->name);
+    $this->assertEquals("{$album1->slug}-01", $album2->slug);
   }
 
   public function test_no_conflict_when_base_names_identical_between_album_and_photo() {
@@ -748,8 +734,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $photo->save();
 
     // photo has same base name as album - no conflict.
-    $this->assertSame("{$album->name}.jpg", $photo->name);
-    $this->assertSame($photo_orig_slug, $photo->slug);
+    $this->assertEquals("{$album->name}.jpg", $photo->name);
+    $this->assertEquals($photo_orig_slug, $photo->slug);
   }
 
   public function test_fix_conflict_when_full_names_identical_between_album_and_photo() {
@@ -763,8 +749,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $album->save();
 
     // album has same full name as album - conflict resolved by renaming with -01.
-    $this->assertSame("{$photo->name}-01", $album->name);
-    $this->assertSame("{$album_orig_slug}-01", $album->slug);
+    $this->assertEquals("{$photo->name}-01", $album->name);
+    $this->assertEquals("{$album_orig_slug}-01", $album->slug);
   }
 
   public function test_fix_conflict_when_slugs_identical_between_album_and_photo() {
@@ -778,8 +764,8 @@ class Item_Model_Test extends Unittest_Testcase {
     $photo->save();
 
     // photo has same slug as album - conflict resolved by renaming with -01.
-    $this->assertSame("{$photo_orig_base}-01.jpg", $photo->name);
-    $this->assertSame("{$album->slug}-01", $photo->slug);
+    $this->assertEquals("{$photo_orig_base}-01.jpg", $photo->name);
+    $this->assertEquals("{$album->slug}-01", $photo->slug);
   }
 
   public function test_fix_conflict_when_base_names_identical_between_jpg_png_flv() {
@@ -800,9 +786,9 @@ class Item_Model_Test extends Unittest_Testcase {
     $item3->save();
 
     // item2 and item3 have same base name as item1 - conflict resolved by renaming with -01 and -02.
-    $this->assertSame("{$item1_orig_base}-01.png", $item2->name);
-    $this->assertSame("{$item2_orig_slug}-01", $item2->slug);
-    $this->assertSame("{$item1_orig_base}-02.flv", $item3->name);
-    $this->assertSame("{$item3_orig_slug}-02", $item3->slug);
+    $this->assertEquals("{$item1_orig_base}-01.png", $item2->name);
+    $this->assertEquals("{$item2_orig_slug}-01", $item2->slug);
+    $this->assertEquals("{$item1_orig_base}-02.flv", $item3->name);
+    $this->assertEquals("{$item3_orig_slug}-02", $item3->slug);
   }
 }
