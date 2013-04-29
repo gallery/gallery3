@@ -327,6 +327,8 @@ class Gallery_Model_Item extends ORM_MPTT {
     if ($column == "owner") {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
+      // @TODO: revisit this - it's silly to have a design which allows us to not have an identity
+      // provider.
       try {
         return Identity::lookup_user($this->owner_id);
       } catch (Exception $e) {
