@@ -66,9 +66,8 @@ class Photos_Controller_Test extends Unittest_Testcase {
     try {
       $controller->action_update($photo);
       $this->assertTrue(false, "This should fail");
-    } catch (Exception $e) {
+    } catch (HTTP_Exception_403 $e) {
       // pass
-      $this->assertSame("@todo FORBIDDEN", $e->getMessage());
     }
   }
 }

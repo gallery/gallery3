@@ -45,7 +45,7 @@ class User_Controller_Password extends Controller {
       if (!empty($user)) {
         $this->response->body($this->_new_password_form($user->hash));
       } else {
-        throw new Exception("@todo FORBIDDEN", 503);
+        throw HTTP_Exception::factory(403);
       }
     }
   }
@@ -126,7 +126,7 @@ class User_Controller_Password extends Controller {
     if ($view->content->validate()) {
       $user = User::lookup_by_hash($this->request->post("hash"));
       if (empty($user)) {
-        throw new Exception("@todo FORBIDDEN", 503);
+        throw HTTP_Exception::factory(403);
       }
 
       $user->password = $view->content->reset->password->value;

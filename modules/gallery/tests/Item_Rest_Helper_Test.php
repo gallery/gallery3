@@ -256,8 +256,8 @@ class Item_Rest_Helper_Test extends Unittest_Testcase {
     try {
       Hook_Rest_Item::delete($request);
       $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      $this->assertEquals("@todo FORBIDDEN", $e->getMessage());
+    } catch (HTTP_Exception_403 $e) {
+      // pass
     }
   }
 }
