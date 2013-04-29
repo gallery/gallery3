@@ -26,7 +26,7 @@ input.submit {
   display: inline !important;
 }
 
-.g-short-form input.text,
+.g-short-form input.textbox,
 .g-short-form input.submit {
   font-size: 1em;
   line-height: 1em;

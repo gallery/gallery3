@@ -30,7 +30,7 @@ return array(
   "auto_id"                 => false,
   // The directory for the formo templates (ex: "formo" or "formo_bootstrap")
   // @todo: pick one, then delete the other views subdir
-  "template_dir"            => "formo_bootstrap/",
+  "template_dir"            => "formo/",
   // Namespace fields (name="parent_alias[field_alias]")
   "namespaces"              => true,
   // Driver used for ORM integration
