@@ -791,4 +791,30 @@ class Item_Model_Test extends Unittest_Testcase {
     $this->assertEquals("{$item1_orig_base}-02.flv", $item3->name);
     $this->assertEquals("{$item3_orig_slug}-02", $item3->slug);
   }
+
+  public function test_children_default_to_albums_sort_order() {
+    $album = Test::random_album_unsaved();
+    $album->sort_column = "name";
+    $album->sort_order = "DESC";
+    $album->save();
+
+    $album->children->find_all();
+    $this->assertRegexp("/ORDER BY `name` DESC, `id` ASC/", Database::instance()->last_query);
+  }
+
+  public function test_descendants_default_to_albums_sort_order() {
+    $album = Test::random_album_unsaved();
+    $album->sort_column = "view_count";
+    $album->sort_order = "DESC";
+    $album->save();
+
+    $album->descendants->find_all();
+    $this->assertRegexp("/ORDER BY `view_count` DESC, `id` ASC/", Database::instance()->last_query);
+  }
+
+  public function test_unordered_children() {
+    $album = Test::random_album();
+    $album->unordered_children->find_all();
+    $this->assertNotRegexp("/ORDER BY/", Database::instance()->last_query);
+  }
 }

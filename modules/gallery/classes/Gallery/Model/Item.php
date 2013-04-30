@@ -321,10 +321,11 @@ class Gallery_Model_Item extends ORM_MPTT {
   }
 
   /**
-   * @see ORM::__get()
+   * @see ORM::get()
    */
-  public function __get($column) {
-    if ($column == "owner") {
+  public function get($column) {
+    switch ($column) {
+    case "owner":
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       // @TODO: revisit this - it's silly to have a design which allows us to not have an identity
@@ -334,9 +335,23 @@ class Gallery_Model_Item extends ORM_MPTT {
       } catch (Exception $e) {
         return null;
       }
-    } else {
-      return parent::__get($column);
+
+    case "unordered_children":
+      return parent::get("children");
+
+    case "children":
+    case "descendants":
+      // By default use the album's sort order
+      $models = parent::get($column);
+      $models->order_by($this->sort_column, $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $models->order_by("id", "ASC");
+      }
+      return $models;
     }
+
+    return parent::get($column);
   }
 
   /**
@@ -828,50 +843,6 @@ class Gallery_Model_Item extends ORM_MPTT {
       }
     }
     return $view;
-  }
-
-  /**
-   * Return all of the children of this album.  Unless you specify a specific sort order, the
-   * results will be ordered by this album's sort order.
-   *
-   * @chainable
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
-   * @param   array    additional where clauses
-   * @param   array    order_by
-   * @return array ORM
-   */
-  function children($limit=null, $offset=null, $where=array(), $order_by=null) {
-    if (empty($order_by)) {
-      $order_by = array($this->sort_column => $this->sort_order);
-      // Use id as a tie breaker
-      if ($this->sort_column != "id") {
-        $order_by["id"] = "ASC";
-      }
-    }
-    return parent::children($limit, $offset, $where, $order_by);
-  }
-
-  /**
-   * Return the children of this album, and all of it's sub-albums.  Unless you specify a specific
-   * sort order, the results will be ordered by this album's sort order.  Note that this
-   * album's sort order is imposed on all sub-albums, regardless of their sort order.
-   *
-   * @chainable
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
-   * @param   array    additional where clauses
-   * @return object Database_Result
-   */
-  function descendants($limit=null, $offset=null, $where=array(), $order_by=null) {
-    if (empty($order_by)) {
-      $order_by = array($this->sort_column => $this->sort_order);
-      // Use id as a tie breaker
-      if ($this->sort_column != "id") {
-        $order_by["id"] = "ASC";
-      }
-    }
-    return parent::descendants($limit, $offset, $where, $order_by);
   }
 
   public function rules() {
