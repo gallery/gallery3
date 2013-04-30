@@ -729,7 +729,7 @@ abstract class Formo_Core_Innards {
 				$callbacks = Arr::get($this->_callbacks, $key, array());
 				foreach ($callbacks as $callback)
 				{
-					$result = $callback($this);
+					$result = call_user_func($callback, $this);
 
 					if ($value === TRUE AND $result === FALSE)
 					{

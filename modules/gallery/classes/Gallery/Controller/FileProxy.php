@@ -122,8 +122,8 @@ class Gallery_Controller_FileProxy extends Controller {
     } else {
       // Send the file as the response.  The filename will be set automatically from the path.
       // Note: send_file() will automatically halt script execution after sending the file.
-      $this->response->send_file($file, null,
-                                 array("inline" => "true", "mime_type" => $mime_type));
+      $options = array("inline" => "true", "mime_type" => $mime_type);
+      $this->response->send_file($file, null, $options);
     }
   }
 }

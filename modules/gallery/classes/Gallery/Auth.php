@@ -29,6 +29,13 @@ class Gallery_Auth {
     Module::event("user_login", $user);
   }
 
+  static function reauthenticate($user) {
+    if (!Request::current()->is_ajax()) {
+      Message::success(t("Successfully re-authenticated!"));
+    }
+    Module::event("user_auth", $user);
+  }
+
   static function logout() {
     $user = Identity::active_user();
     if (!$user->guest) {
@@ -68,15 +75,10 @@ class Gallery_Auth {
 
   /**
    * Validate that there haven't been too many failed login attempts.
+   * This uses a syntax similar to Valid::matches().
    */
-  static function validate_too_many_failed_logins($name) {
-    return !Auth::too_many_failures($name);
-  }
-
-  static function validate_too_many_failed_auth_attempts($form_input) {
-    if (Auth::too_many_failures(Identity::active_user()->name)) {
-      $form_input->add_error("too_many_failed_auth_attempts", 1);
-    }
+  static function validate_too_many_failed_logins($array, $name) {
+    return !Auth::too_many_failures($array[$name]);
   }
 
   /**
