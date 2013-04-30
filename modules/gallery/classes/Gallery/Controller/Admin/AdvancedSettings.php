@@ -32,31 +32,41 @@ class Gallery_Controller_Admin_AdvancedSettings extends Controller_Admin {
   public function action_edit() {
     $module_name = $this->request->arg(0, "alpha_dash");
     $var_name = $this->request->arg(1);
+    $value = Module::get_var($module_name, $var_name);
 
-    if (Module::is_installed($module_name)) {
-      $value = Module::get_var($module_name, $var_name);
-      $form = new Forge("admin/advanced_settings/save/$module_name/$var_name", "", "post");
-      $group = $form->group("edit_var")->label(t("Edit setting"));
-      $group->input("module_name")->label(t("Module"))->value($module_name)->disabled(1);
-      $group->input("var_name")->label(t("Setting"))->value($var_name)->disabled(1);
-      $group->textarea("value")->label(t("Value"))->value($value);
-      $group->submit("")->value(t("Save"));
-      $this->response->body($form);
+    if (!Module::is_installed($module_name)) {
+      throw HTTP_Exception::factory(400);
     }
-  }
 
-  public function action_save() {
-    $module_name = $this->request->arg(0, "alpha_dash");
-    $var_name = $this->request->arg(1);
-    Access::verify_csrf();
+    $form = Formo::form()
+      ->add("edit_var", "group");
+    $form->edit_var
+      ->add("module_name", "input", $module_name)
+      ->add("var_name", "input", $var_name)
+      ->add("value", "textarea", $value)
+      ->add("submit", "input|submit", t("Save"));
 
-    if (Module::is_installed($module_name)) {
-      Module::set_var($module_name, $var_name, $this->request->post("value"));
+    $form->edit_var
+      ->set("label", t("Edit setting"));
+    $form->edit_var->module_name
+      ->attr("disabled", "disabled")
+      ->set("label", t("Module"));
+    $form->edit_var->var_name
+      ->attr("disabled", "disabled")
+      ->set("label", t("Setting"));
+    $form->edit_var->value
+      ->set("label", t("Value"));
+
+    if ($form->load()->validate()) {
+      Module::set_var($module_name, $var_name, $form->edit_var->value->val());
       Message::success(
         t("Saved value for %var (%module_name)",
           array("var" => $var_name, "module_name" => $module_name)));
 
       $this->response->json(array("result" => "success"));
+      return;
     }
+
+    $this->response->body($form);
   }
 }

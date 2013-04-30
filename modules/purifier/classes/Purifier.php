@@ -106,6 +106,9 @@ class Purifier {
    *
    * Optionally, if a different config group has been added, it can be used instead.
    *
+   * Note: the key cleaning will alter the RFC2109-compliant special cookie attributes $Version,
+   * $Domain, and $Path.  This doesn't matter since they aren't used in Kohana or Gallery anyway.
+   *
    * @param   array   $raw_array                       the input array
    * @param   string  $config_group (optional)         the config group ("default" if not given)
    * @return  array   array($clean_array, $raw_array)  the two arrays as described above

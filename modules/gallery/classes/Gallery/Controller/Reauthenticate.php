@@ -19,87 +19,104 @@
  */
 class Gallery_Controller_Reauthenticate extends Controller {
   public function action_index() {
-    $is_ajax = Session::instance()->get_once("is_ajax_request", $this->request->is_ajax());
-    if (!Identity::active_user()->admin) {
-      if ($is_ajax) {
-        // We should never be able to get here since Controller_Admin::_reauth_check() won't work
-        // for non-admins.
+    // By design, this bears a strong resemblance to the login controller.  Aside from a
+    // search'n'replace for login and reauthenticate, the differences are that:
+    // - it's restricted to admins
+    // - it's fixed to the current user
+    // - it doesn't need allow_maintenance_mode or allow_private_gallery, which would be
+    //   redundant with the admin-only restriction
+    // - the username field is hidden with a pre-filled value, and has rules that enforce it's the
+    //   current user
+    // - the main validation rules have moved from username to password so errors are shown there
+    // - the field labels are different
+    // - the username is added to the view
+    // - some ajax replies are different (@todo: try and unify this)
+
+    $user = Identity::active_user();
+
+    if (!$user->admin) {
+      if ($this->request->is_ajax()) {
+        // We should never be able to get here since the admin reauth_check
+        // won't work for non-admins.
         Access::forbidden();
       } else {
+        // The user could have navigated here directly.  This isn't a security
+        // breach, but they still shouldn't be here.
         $this->redirect(Item::root()->abs_url());
       }
     }
 
-    // On redirects from the admin controller, the ajax request indicator is lost,
-    // so we store it in the session.
-    if ($is_ajax) {
-      $v = new View("gallery/reauthenticate.html");
-      $v->form = self::_form();
-      $v->user_name = Identity::active_user()->name;
-      $this->response->body($v);
-    } else {
-      self::_show_form(self::_form());
-    }
-  }
+    // Define our reauthenticate form.
+    $form = Formo::form()
+      ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
+      ->add("reauthenticate", "group");
+    $form->reauthenticate
+      ->add("username", "input|hidden", Identity::active_user()->name)
+      ->add("password", "input|password")
+      ->add("submit", "input|submit", t("Submit"));
 
-  public function action_auth() {
-    if (!Identity::active_user()->admin) {
-      Access::forbidden();
-    }
-    Access::verify_csrf();
+    $form
+      ->attr("id", "g-reauthenticate-form")
+      ->attr("class", "g-narrow");
+    $form->reauthenticate
+      ->set("label", t("Re-authenticate"));
+    $form->reauthenticate->username
+      ->set("can_be_empty", true)
+      ->add_rule("equals", array(":value", $user->name))
+      ->callback("fail", array("Access::forbidden"));
+    $form->reauthenticate->password
+      ->attr("id", "g-password")
+      ->set("label", t("Password"))
+      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "username"),
+                 t("Too many incorrect passwords.  Try again later"))
+      ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),
+                 t("Incorrect password"));
 
-    $form = self::_form();
-    $valid = $form->validate();
-    $user = Identity::active_user();
-    if ($valid) {
-      Module::event("user_auth", $user);
-      if (!$this->request->is_ajax()) {
-        Message::success(t("Successfully re-authenticated!"));
-      }
-      $this->redirect(Session::instance()->get_once("continue_url"));
-    } else {
-      $name = $user->name;
-      GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
-      Module::event("user_auth_failed", $name);
-      if ($this->request->is_ajax()) {
-        $v = new View("gallery/reauthenticate.html");
-        $v->form = $form;
-        $v->user_name = Identity::active_user()->name;
-        $this->response->json(array("html" => (string)$v));
+    // Define our basic form view.
+    $view = new View("gallery/reauthenticate.html");
+    $view->form = $form;
+    $view->username = $form->reauthenticate->username->val();
+
+    if ($form->sent()) {
+      // Reauthenticate attempted - regenerate the session id to avoid session trapping.
+      Session::instance()->regenerate();
+
+      if ($form->load()->validate()) {
+        // Reauthenticate attempt is valid.
+        Auth::reauthenticate($user);
+
+        if ($this->request->is_ajax()) {
+          // @todo: make reauthenticate and login use the same type of response here
+          $continue_url = $form->continue_url->val();
+          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
+        } else {
+          $continue_url = $form->continue_url->val();
+          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
+        }
       } else {
-        self::_show_form($form);
+        // Reauthenticate attempt is invalid.
+        $name = $form->reauthenticate->username->val();
+        GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
+        Module::event("user_auth_failed", $name);
+
+        if ($this->request->is_ajax()) {
+          // @todo: make reauthenticate and login use the same type of response here
+          $this->response->json(array("html" => (string)$view));
+          return;
+        }
       }
     }
-  }
 
-  protected static function _show_form($form) {
-    $view = new View_Theme("required/page.html", "other", "reauthenticate");
-    $view->page_title = t("Re-authenticate");
-    $view->content = new View("gallery/reauthenticate.html");
-    $view->content->form = $form;
-    $view->content->user_name = Identity::active_user()->name;
-
-    $this->response->body($view);
-  }
-
-  protected static function _form() {
-    $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
-    $form->set_attr("class", "g-narrow");
-    $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
-    $group->password("password")->label(t("Password"))->id("g-password")->class(null)
-      ->callback("Auth::validate_too_many_failed_auth_attempts")
-      ->callback("Controller_Reauthenticate::valid_password")
-      ->error_messages("invalid_password", t("Incorrect password"))
-      ->error_messages(
-        "too_many_failed_auth_attempts",
-        t("Too many incorrect passwords.  Try again later"));
-    $group->submit("")->value(t("Submit"));
-    return $form;
-  }
-
-  public static function valid_password($password_input) {
-    if (!Identity::is_correct_password(Identity::active_user(), $password_input->value)) {
-      $password_input->add_error("invalid_password", 1);
+    // Reauthenticate not yet attempted (ajax or non-ajax) or reauthenticate failed (non-ajax).
+    if ($this->request->is_ajax()) {
+      // Send the basic reauthenticate view.
+      $this->response->body($view);
+    } else {
+      // Wrap the basic reauthenticate view in a theme.
+      $view_theme = new View_Theme("required/page.html", "other", "reauthenticate");
+      $view_theme->page_title = t("Re-authenticate");
+      $view_theme->content = $view;
+      $this->response->body($view_theme);
     }
   }
 }

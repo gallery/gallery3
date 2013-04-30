@@ -47,4 +47,34 @@ class Gallery_Response extends Kohana_Response {
     }
     $this->body(json_encode($message));
   }
+
+  /**
+   * Overload Response::send_file() to handle the "encoding" option.  Currently,
+   * the only value of encoding we act upon is "base64" which is used in REST.
+   * @see Response::send_file()
+   */
+  public function send_file($filename, $download=null, array $options=null) {
+    if ($encoding = Arr::get($options, "encoding")) {
+      switch ($encoding) {
+        case "base64":
+          if ($filename === true) {
+            // Use the response body.
+            $this->response->body(base64_encode($this->response->body()));
+          } else {
+            // Load file into the response body, set download name if empty, reset the filename.
+            $this->response->body(base64_encode(file_get_contents($filename)));
+            if (empty($download)) {
+              $download = pathinfo($filename, PATHINFO_BASENAME);
+            }
+            $filename = true;
+          }
+          break;
+        default:
+          // Remove the encoding option to avoid confusion downstream.
+          unset($options["encoding"]);
+      }
+    }
+
+    return parent::send_file($filename, $download, $options);
+  }
 }
