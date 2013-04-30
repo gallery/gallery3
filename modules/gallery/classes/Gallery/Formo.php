@@ -90,16 +90,23 @@ class Gallery_Formo extends Formo_Core_Formo {
   }
 
   /**
-   * See if the field has at least one group/subform.  This is used when we render our
+   * Sort the child fields by whether they're groups or hidden.  This is used when we render our
    * custom templates.
    */
-  public function has_group() {
+  public function sort_children() {
+    $groups = array();
+    $non_groups = array();
+    $hidden = array();
     foreach ($this->_fields as $field) {
       if ($field->get("driver") == "group") {
-        return true;
+        $groups[] = $field;
+      } else if ($field->is_hidden()) {
+        $hidden[] = $field;
+      } else {
+        $non_groups[] = $field;
       }
     }
-    return false;
+    return array($groups, $non_groups, $hidden);
   }
 
   /**
