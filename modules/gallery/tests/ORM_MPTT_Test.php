@@ -164,4 +164,25 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $this->assertEquals(2, $parent->descendants->where("type", "=", "photo")->count_all());
     $this->assertEquals(1, $parent->descendants->where("type", "=", "album")->count_all());
   }
+
+  public function test_fail_on_viewable_before_special_relationships() {
+    Identity::set_active_user(Identity::guest());
+    try {
+      Item::root()->viewable()->children;
+      $this->assertTrue(false);
+    } catch (Kohana_Exception $e) {
+    }
+
+    try {
+      Item::root()->viewable()->parents;
+      $this->assertTrue(false);
+    } catch (Kohana_Exception $e) {
+    }
+
+    try {
+      Item::root()->viewable()->descendants;
+      $this->assertTrue(false);
+    } catch (Kohana_Exception $e) {
+    }
+  }
 }
