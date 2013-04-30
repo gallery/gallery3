@@ -60,17 +60,13 @@ class Gallery_Hook_Rest_Data {
     if (TEST_MODE) {
       return $file;
     } else {
+      // Send the file as the response.  The filename will be set automatically from the path.
       // Note: send_file() will automatically halt script execution after sending the file.
+      $options = array("inline" => "true", "mime_type" => $mime_type);
       if (isset($p->encoding) && $p->encoding == "base64") {
-        // Send the base64-encoded content as the response.  This sets the filename as its basename.
-        $this->response->body(base64_encode(file_get_contents($file)));
-        $this->response->send_file(true, pathinfo($file, PATHINFO_BASENAME),
-                                   array("inline" => "true", "mime_type" => $mime_type));
-      } else {
-        // Send the file as the response.  The filename will be set automatically from the path.
-        $this->response->send_file($file, null,
-                                   array("inline" => "true", "mime_type" => $mime_type));
+        $options["encoding"] = "base64";
       }
+      $this->response->send_file($file, null, $options);
     }
   }
 
