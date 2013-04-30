@@ -1,12 +1,13 @@
-<? // Open the <li> and add the label (if not hidden) ?>
+<? // Open the <li>, then open the <label> add the label (if applicable) ?>
 <? if (!$hidden = $field->is_hidden()): ?>
   <? if ($error = $field->error()): ?>
     <li class="g-error">
   <? else: ?>
     <li>
   <? endif; ?>
-  <? if ($label): ?>
-    <label for="<?= $field->alias() ?>"><?= $label ?></label>
+  <? if ($label && ($editable = $field->get("editable"))): ?>
+    <label>
+    <?= $label ?>
   <? endif; ?>
 <? endif; ?>
 <? // Render the input element ?>
@@ -15,8 +16,11 @@
 <? else: ?>
   <?= $field->val() ?>
 <? endif; ?>
-<? // Add errors and close the <li> (if not hidden) ?>
+<? // Add errors, then close the <label> and the <li> (if applicable) ?>
 <? if (!$hidden): ?>
+  <? if ($label && $editable): ?>
+    </label>
+  <? endif; ?>
   <? if ($error): ?>
     <p class="g-message g-error">
       <?= $error ?>
