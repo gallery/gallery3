@@ -22,6 +22,9 @@ class Gallery_Controller_Login extends Controller {
   public $allow_private_gallery = true;
 
   public function action_index() {
+    // By design, this bears a strong resemblance to the reauthenticate controller.
+    // For details on the differences, see the notes in the reauthenticate controller.
+
     // Define our login form.
     $form = Formo::form()
       ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
@@ -39,7 +42,7 @@ class Gallery_Controller_Login extends Controller {
     $form->login->username
       ->attr("id", "g-username")
       ->set("label", t("Username"))
-      ->add_rule("Auth::validate_too_many_failed_logins", array(":value"),
+      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "username"),
                  t("Too many failed login attempts.  Try again later"))
       ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),
                  t("Invalid name or password"));
