@@ -50,10 +50,6 @@ class Gallery_Controller_Admin extends Controller {
       }
     }
 
-    if ($this->request->method() == HTTP_Request::POST) {
-      Access::verify_csrf();
-    }
-
     return parent::check_auth($auth);
   }
 }
