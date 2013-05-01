@@ -1084,6 +1084,12 @@ class Formo_Core_Formo extends Formo_Innards {
 			$template = $this->config('template_dir').$template;
 		}
 
+		// If template_ext is defined and template doesn't already have that extension, add it
+		$template_ext = $this->config('template_ext');
+		if ($template_ext && pathinfo($template, PATHINFO_EXTENSION) != $template_ext) {
+			$template .= ".$template_ext";
+		}
+
 		$view = View::factory($template)
 			->set('field', $this)
 			->set('label', $this->label())
