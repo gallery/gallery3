@@ -53,21 +53,19 @@
   <? endif ?>
 
   <div class="g-block-content">
-    <form id="g-module-update-form" method="post" action="<?= URL::site("admin/modules/confirm") ?>">
-      <?= Access::csrf_form_field() ?>
+    <?= $form->open() ?>
       <table>
         <tr>
-          <th> <?= t("Installed") ?> </th>
+          <th> <?= t("Active") ?> </th>
           <th style="width: 8em"> <?= t("Name") ?> </th>
           <th> <?= t("Version") ?> </th>
           <th> <?= t("Description") ?> </th>
           <th style="width: 60px"> <?= t("Details") ?> </th>
         </tr>
-        <? foreach ($available as $module_name => $module_info):  ?>
+        <? foreach ($form->modules->as_array() as $module): ?>
         <tr class="<?= Text::alternate("g-odd", "g-even") ?>">
-          <? $data = array("name" => $module_name); ?>
-          <? if ($module_info->locked) $data["disabled"] = 1; ?>
-          <td> <?= Form::checkbox($data, '1', Module::is_active($module_name)) ?> </td>
+          <td> <?= $module->open() . $module->close() ?> </td>
+          <? $module_info = $module->get("info"); ?>
           <td> <?= t($module_info->name) ?> </td>
           <td> <?= $module_info->version ?> </td>
           <td> <?= t($module_info->description) ?> </td>
@@ -123,7 +121,9 @@
         </tr>
         <? endforeach ?>
       </table>
-      <input type="submit" value="<?= t("Update")->for_html_attr() ?>" />
-    </form>
+      <? foreach ($form->as_array() as $field): ?>
+      <?= $field->driver("is_a_parent") ? "" : $field->open() . $field->close() ?>
+      <? endforeach; ?>
+    <?= $form->close() ?>
   </div>
 </div>
