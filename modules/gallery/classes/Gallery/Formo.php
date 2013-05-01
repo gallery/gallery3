@@ -76,6 +76,8 @@ class Gallery_Formo extends Formo_Core_Formo {
    * Override Formo::add_rule() to allow us to define error messages inline.  We use this
    * approach instead of using Kohana message files.
    * @todo: consider recasting this as a patch to send upstream to the Formo project.
+   *
+   * @see  Formo::add_rule()
    */
   public function add_rule($rule, $params=null, $error_message=null) {
     // If add_rule() is called using an array, separate it into its parts for clarity.
@@ -88,6 +90,38 @@ class Gallery_Formo extends Formo_Core_Formo {
     }
 
     return parent::add_rule($rule, $params);
+  }
+
+  /**
+   * Overload Formo::close() to add our script data to the end of the form/group rendering.
+   * This throws an exception if there's data applied to a non-parent form element.
+   *
+   * @see  Formo::close()
+   */
+  public function close() {
+    $script_data = (string) $this->get("script_data");
+    if ($script_data && !$this->driver("is_a_parent")) {
+      throw new Exception("@todo CANNOT_ADD_SCRIPTS_TO_FORM_ELEMENTS");
+    }
+
+    return $script_data . parent::close();
+  }
+
+  /**
+   * Add a script link to the end of this form/group.  The URL can be relative or absolute.
+   * This can be accessed later using Formo::get("script_data") or Formo::set("script_data", ...).
+   */
+  public function add_script_url($url) {
+    return $this->set("script_data", $this->get("script_data") . HTML::script($url) . "\n");
+  }
+
+  /**
+   * Add script text to the end of this form/group.  The <script> tags are automatically added.
+   * This can be accessed later using Formo::get("script_data") or Formo::set("script_data", ...).
+   */
+  public function add_script_text($text) {
+    return $this->set("script_data", $this->get("script_data") .
+      "<script type=\"text/javascript\">\n{$text}\n</script>\n");
   }
 
   /**
