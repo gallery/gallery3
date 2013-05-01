@@ -26,23 +26,28 @@ class GalleryCodeFilterIterator extends FilterIterator {
       $file_name == "." ||
       $file_name == ".." ||
       strpos($path_name, DOCROOT . ".git") !== false ||
+      strpos($path_name, DOCROOT . "lib") !== false ||
       strpos($path_name, DOCROOT . "test") !== false ||
+      strpos($path_name, DOCROOT . "themes/admin_wind/vendor/themeroller") !== false ||
+      strpos($path_name, DOCROOT . "themes/wind/vendor/themeroller") !== false ||
       strpos($path_name, DOCROOT . "var") !== false ||
-      strpos($path_name, MODPATH . "forge") !== false ||
+      strpos($path_name, MODPATH . "cache") !== false ||
+      strpos($path_name, MODPATH . "database") !== false ||
+      strpos($path_name, MODPATH . "exif/vendor") !== false ||
+      strpos($path_name, MODPATH . "formo") !== false ||
+      strpos($path_name, MODPATH . "gallery/vendor") !== false ||
       strpos($path_name, MODPATH . "gallery/views/gallery/kohana_profiler.php") !== false ||
       strpos($path_name, MODPATH . "gallery_unittest/vendor") !== false ||
       strpos($path_name, MODPATH . "gallery_unittest/views/kohana_error_page.php") !== false ||
       strpos($path_name, MODPATH . "gallery_unittest/views/kohana_unittest_cli.php") !== false ||
+      strpos($path_name, MODPATH . "image") !== false ||
+      strpos($path_name, MODPATH . "organize/vendor") !== false ||
+      strpos($path_name, MODPATH . "orm") !== false ||
+      strpos($path_name, MODPATH . "pagination") !== false ||
+      strpos($path_name, MODPATH . "purifier/vendor") !== false ||
       strpos($path_name, MODPATH . "unittest") !== false ||
-      strpos($path_name, MODPATH . "exif/lib") !== false ||
-      strpos($path_name, MODPATH . "user/vendor/phpass/PasswordHash") !== false ||
+      strpos($path_name, MODPATH . "user/vendor") !== false ||
       strpos($path_name, SYSPATH) !== false ||
-      strpos($path_name, MODPATH . "gallery/libraries/HTMLPurifier") !== false ||
-      strpos($path_name, MODPATH . "gallery/vendor/joomla") !== false ||
-      strpos($path_name, MODPATH . "organize/vendor/ext") !== false ||
-      strpos($path_name, DOCROOT . "lib") !== false ||
-      strpos($path_name, DOCROOT . "themes/admin_wind/vendor/themeroller") !== false ||
-      strpos($path_name, DOCROOT . "themes/wind/vendor/themeroller") !== false ||
       substr($path_name, -1, 1) == "~");
   }
 }
