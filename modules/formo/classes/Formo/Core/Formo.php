@@ -1086,7 +1086,7 @@ class Formo_Core_Formo extends Formo_Innards {
 
 		// If template_ext is defined and template doesn't already have that extension, add it
 		$template_ext = $this->config('template_ext');
-		if ($template_ext && pathinfo($template, PATHINFO_EXTENSION) != $template_ext) {
+		if ($template_ext AND pathinfo($template, PATHINFO_EXTENSION) != $template_ext) {
 			$template .= ".$template_ext";
 		}
 
