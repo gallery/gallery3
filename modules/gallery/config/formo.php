@@ -29,11 +29,10 @@ return array(
   // Auto-generate IDs on form elements
   "auto_id"                 => false,
   // The directory for the formo templates (ex: "formo" or "formo_bootstrap")
-  // @todo: pick one, then delete the other views subdir
   "template_dir"            => "formo/",
   // The extension for the formo templates
   // false or extension (ex: false looks for "template.php", "html" looks for "template.html.php")
-  "template_ext"            => false,
+  "template_ext"            => "html",
   // Namespace fields (name="parent_alias[field_alias]")
   "namespaces"              => true,
   // Driver used for ORM integration
