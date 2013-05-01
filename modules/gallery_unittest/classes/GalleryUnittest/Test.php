@@ -127,8 +127,8 @@ class GalleryUnittest_Test {
   }
 
   static function diff($a, $b) {
-    fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
-    fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
+    fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), is_array($a) ? implode("\n", $a) : $a);
+    fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), is_array($b) ? implode("\n", $b) : $b);
     return `diff $a_name $b_name`;
   }
 
