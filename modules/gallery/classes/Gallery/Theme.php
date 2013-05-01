@@ -35,41 +35,41 @@ class Gallery_Theme {
    */
   static function load_themes() {
     $override = Request::current()->query("theme");
-    self::$is_admin = Request::current()->param("is_admin", false);
-    self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
+    Theme::$is_admin = Request::current()->param("is_admin", false);
+    Theme::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
 
     // If the site theme doesn't exist, fall back to wind.
-    if (!file_exists(THEMEPATH . self::$site_theme_name . "/theme.info")) {
+    if (!file_exists(THEMEPATH . Theme::$site_theme_name . "/theme.info")) {
       SiteStatus::error(t("Theme '%name' is missing.  Falling back to the Wind theme.",
-                           array("name" => self::$site_theme_name)), "missing_site_theme");
-      Module::set_var("gallery", "active_site_theme", self::$site_theme_name = "wind");
+                           array("name" => Theme::$site_theme_name)), "missing_site_theme");
+      Module::set_var("gallery", "active_site_theme", Theme::$site_theme_name = "wind");
     }
 
-    if (self::$is_admin) {
+    if (Theme::$is_admin) {
       // Load the admin theme
-      self::$admin_theme_name = Module::get_var("gallery", "active_admin_theme");
+      Theme::$admin_theme_name = Module::get_var("gallery", "active_admin_theme");
 
       // If the admin theme doesn't exist, fall back to admin_wind.
-      if (!file_exists(THEMEPATH . self::$admin_theme_name . "/theme.info")) {
+      if (!file_exists(THEMEPATH . Theme::$admin_theme_name . "/theme.info")) {
         SiteStatus::error(t("Admin theme '%name' is missing!  Falling back to the Wind theme.",
-                             array("name" => self::$admin_theme_name)), "missing_admin_theme");
-        Module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
+                             array("name" => Theme::$admin_theme_name)), "missing_admin_theme");
+        Module::set_var("gallery", "active_admin_theme", Theme::$admin_theme_name = "admin_wind");
       }
 
-      self::$kohana_themes[self::$admin_theme_name] = THEMEPATH . self::$admin_theme_name;
+      Theme::$kohana_themes[Theme::$admin_theme_name] = THEMEPATH . Theme::$admin_theme_name;
 
       // If the site theme has an admin subdir, load that as a module so that
       // themes can provide their own code.
-      if (file_exists(THEMEPATH . self::$site_theme_name . "/admin")) {
-        self::$kohana_themes[self::$site_theme_name] = THEMEPATH . self::$site_theme_name . "/admin";
+      if (file_exists(THEMEPATH . Theme::$site_theme_name . "/admin")) {
+        Theme::$kohana_themes[Theme::$site_theme_name] = THEMEPATH . Theme::$site_theme_name . "/admin";
       }
       // Admins can override the site theme, temporarily.  This lets us preview themes.
       // @todo: verify that overriding the *admin* theme like this works.
       if (Identity::active_user()->admin && $override) {
         if (file_exists(THEMEPATH . $override)) {
-          self::$admin_theme_name = $override;
-          self::$kohana_themes[self::$admin_theme_name] = THEMEPATH . self::$admin_theme_name;
+          Theme::$admin_theme_name = $override;
+          Theme::$kohana_themes[Theme::$admin_theme_name] = THEMEPATH . Theme::$admin_theme_name;
         } else {
           Log::instance()->add(Log::ERROR, "Missing override admin theme: '$override'");
         }
@@ -78,17 +78,17 @@ class Gallery_Theme {
       // Admins can override the site theme, temporarily.  This lets us preview themes.
       if (Identity::active_user()->admin && $override) {
         if (file_exists(THEMEPATH . $override)) {
-          self::$site_theme_name = $override;
+          Theme::$site_theme_name = $override;
         } else {
           Log::instance()->add(Log::ERROR, "Missing override site theme: '$override'");
         }
       }
-      self::$kohana_themes[self::$site_theme_name] = THEMEPATH . self::$site_theme_name;
+      Theme::$kohana_themes[Theme::$site_theme_name] = THEMEPATH . Theme::$site_theme_name;
     }
 
-    self::$kohana_themes = array_reverse(self::$kohana_themes, true);
+    Theme::$kohana_themes = array_reverse(Theme::$kohana_themes, true);
     $kohana_modules = Kohana::modules();
-    Kohana::modules(array_merge(self::$kohana_themes, $kohana_modules));
+    Kohana::modules(array_merge(Theme::$kohana_themes, $kohana_modules));
   }
 
   static function get_info($theme_name) {
