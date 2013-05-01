@@ -41,6 +41,7 @@ class Gallery_Formo extends Formo_Core_Formo {
       // The CSS class names are chosen to be compatible with Gallery 3.0.x (which used Forge),
       // and can be overridden using Formo::remove_class("foo") or Formo::set("class", "foo").
       case "checkbox":
+        $this->set("template", "field_template");  // We don't use a special checkbox template
         $this->add_class("checkbox");
         break;
       case "checkboxes":
