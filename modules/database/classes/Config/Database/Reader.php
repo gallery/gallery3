@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined("SYSPATH") or die("No direct script access.");
 
 /**
  * Transparent extension of the Kohana_Config_Database_Reader class

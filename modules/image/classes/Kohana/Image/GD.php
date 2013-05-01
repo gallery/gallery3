@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Support for image manipulation using [GD](http://php.net/GD).
  *
