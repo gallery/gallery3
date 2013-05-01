@@ -19,28 +19,39 @@
  */
 class Gallery_Controller_Admin_Movies extends Controller_Admin {
   public function action_index() {
-    // Print screen from new form.
-    $form = $this->_get_admin_form();
-    $this->_print_view($form);
-  }
+    // Build the form.
+    $form = Formo::form()
+      ->add("settings", "group")
+      ->add("submit", "input|submit", t("Save"));
+    $form->settings
+      ->add("allow_uploads", "select", Module::get_var("gallery", "movie_allow_uploads", "autodetect"))
+      ->add("rebuild_thumbs", "checkbox", false);  // always reset to false
 
-  public function action_save() {
-    Access::verify_csrf();
-    $form = $this->_get_admin_form();
-    if ($form->validate()) {
-      Module::set_var("gallery", "movie_allow_uploads", $form->settings->allow_uploads->value);
-      if ($form->settings->rebuild_thumbs->value) {
+    $form
+      ->attr("id", "g-movies-admin-form");
+    $form->settings
+      ->set("label", t("Settings"));
+    $form->settings->allow_uploads
+      ->set("label", t("Allow movie uploads into Gallery (does not affect existing movies)"))
+      ->set("opts", array(
+          "autodetect" => t("only if FFmpeg is detected (default)"),
+          "always"     => t("always"),
+          "never"      => t("never")
+        ));
+    $form->settings->rebuild_thumbs
+      ->set("label", t("Rebuild all movie thumbnails (once FFmpeg is installed, use this to update existing movie thumbnails)"));
+
+    // Validate the form and update the settings as needed.
+    if ($form->load()->validate()) {
+      Module::set_var("gallery", "movie_allow_uploads", $form->settings->allow_uploads->val());
+      if ($form->settings->rebuild_thumbs->val()) {
         Graphics::mark_dirty(true, false, "movie");
+        $form->settings->rebuild_thumbs->val(false);  // always reset to false
       }
-      // All done - redirect with message.
       Message::success(t("Movies settings updated successfully"));
-      $this->redirect("admin/movies");
     }
-    // Something went wrong - print view from existing form.
-    $this->_print_view($form);
-  }
 
-  protected function _print_view($form) {
+    // Build and return the view.
     list ($ffmpeg_version, $ffmpeg_date) = Movie::get_ffmpeg_version();
     $ffmpeg_version = $ffmpeg_date ? "{$ffmpeg_version} ({$ffmpeg_date})" : $ffmpeg_version;
     $ffmpeg_path = Movie::find_ffmpeg();
@@ -52,21 +63,7 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
     $view->content->form = $form;
     $view->content->ffmpeg_dir = $ffmpeg_dir;
     $view->content->ffmpeg_version = $ffmpeg_version;
-    $this->response->body($view);
-  }
 
-  protected function _get_admin_form() {
-    $form = new Forge("admin/movies/save", "", "post", array("id" => "g-movies-admin-form"));
-    $group = $form->group("settings")->label(t("Settings"));
-    $group->dropdown("allow_uploads")
-      ->label(t("Allow movie uploads into Gallery (does not affect existing movies)"))
-      ->options(array("autodetect"=>t("only if FFmpeg is detected (default)"),
-                      "always"=>t("always"), "never"=>t("never")))
-      ->selected(Module::get_var("gallery", "movie_allow_uploads", "autodetect"));
-    $group->checkbox("rebuild_thumbs")
-      ->label(t("Rebuild all movie thumbnails (once FFmpeg is installed, use this to update existing movie thumbnails)"))
-      ->checked(false);  // always set as false
-    $form->submit("save")->value(t("Save"));
-    return $form;
+    $this->response->body($view);
   }
 }
