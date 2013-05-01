@@ -114,7 +114,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("add", $album);
 
-    $form = Album::get_add_form($album);
+    $form = $this->get_add_form($album);
     try {
       $valid = $form->validate();
       $album = ORM::factory("Item");
@@ -155,7 +155,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    $form = Album::get_edit_form($album);
+    $form = $this->get_edit_form($album);
     try {
       $valid = $form->validate();
       $album->title = $form->edit_item->title->value;
@@ -201,7 +201,7 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("add", $album);
 
-    $this->response->body(Album::get_add_form($album));
+    $this->response->body($this->get_add_form($album));
   }
 
   public function action_form_edit() {
@@ -210,6 +210,96 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $album);
     Access::required("edit", $album);
 
-    $this->response->body(Album::get_edit_form($album));
+    $this->response->body($this->get_edit_form($album));
+  }
+
+  public function get_add_form($parent) {
+    $form = new Forge("albums/create/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
+    $group = $form->group("add_album")
+      ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
+    $group->input("title")->label(t("Title"))
+      ->error_messages("not_empty", t("You must provide a title"))
+      ->error_messages("max_length", t("Your title is too long"));
+    $group->textarea("description")->label(t("Description"));
+    $group->input("name")->label(t("Directory name"))
+      ->error_messages("contains_no_slashes", t("The directory name can't contain a \"/\""))
+      ->error_messages("contains_no_backslashes", t("The directory name can't contain a \"\\\""))
+      ->error_messages("no_trailing_period", t("The directory name can't end in \".\""))
+      ->error_messages("not_empty", t("You must provide a directory name"))
+      ->error_messages("max_length", t("Your directory name is too long"))
+      ->error_messages("name_conflict", t("There is already a movie, photo or album with this name"));
+    $group->input("slug")->label(t("Internet Address"))
+      ->error_messages(
+        "conflict", t("There is already a movie, photo or album with this internet address"))
+      ->error_messages(
+        "reserved", t("This address is reserved and can't be used."))
+      ->error_messages(
+        "not_url_safe",
+        t("The internet address should contain only letters, numbers, hyphens and underscores"))
+      ->error_messages("not_empty", t("You must provide an internet address"))
+      ->error_messages("max_length", t("Your internet address is too long"));
+    $group->hidden("type")->value("album");
+
+    Module::event("album_add_form", $parent, $form);
+
+    $group->submit("")->value(t("Create"));
+    $form->script("")
+      ->url(URL::abs_file("modules/gallery/assets/albums_form_add.js"));
+
+    return $form;
+  }
+
+  public function get_edit_form($parent) {
+    $form = new Forge(
+      "albums/update/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
+    $form->hidden("from_id")->value($parent->id);
+    $group = $form->group("edit_item")->label(t("Edit Album"));
+
+    $group->input("title")->label(t("Title"))->value($parent->title)
+      ->error_messages("not_empty", t("You must provide a title"))
+      ->error_messages("max_length", t("Your title is too long"));
+    $group->textarea("description")->label(t("Description"))->value($parent->description);
+    if ($parent->id != 1) {
+      $group->input("name")->label(t("Directory Name"))->value($parent->name)
+        ->error_messages("name_conflict", t("There is already a movie, photo or album with this name"))
+        ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
+        ->error_messages("no_backslashes", t("The directory name can't contain a \"\\\""))
+        ->error_messages("no_trailing_period", t("The directory name can't end in \".\""))
+        ->error_messages("not_empty", t("You must provide a directory name"))
+        ->error_messages("max_length", t("Your directory name is too long"));
+      $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
+        ->error_messages(
+          "conflict", t("There is already a movie, photo or album with this internet address"))
+        ->error_messages(
+          "reserved", t("This address is reserved and can't be used."))
+        ->error_messages(
+          "not_url_safe",
+          t("The internet address should contain only letters, numbers, hyphens and underscores"))
+        ->error_messages("not_empty", t("You must provide an internet address"))
+        ->error_messages("max_length", t("Your internet address is too long"));
+    } else {
+      $group->hidden("name")->value($parent->name);
+      $group->hidden("slug")->value($parent->slug);
+    }
+
+    $sort_order = $group->group("sort_order", array("id" => "g-album-sort-order"))
+      ->label(t("Sort Order"));
+
+    $sort_order->dropdown("column", array("id" => "g-album-sort-column"))
+      ->label(t("Sort by"))
+      ->options(Album::get_sort_order_options())
+      ->selected($parent->sort_column);
+    $sort_order->dropdown("direction", array("id" => "g-album-sort-direction"))
+      ->label(t("Order"))
+      ->options(array("ASC" => t("Ascending"),
+                      "DESC" => t("Descending")))
+      ->selected($parent->sort_order);
+
+    Module::event("item_edit_form", $parent, $form);
+
+    $group = $form->group("buttons")->label("");
+    $group->hidden("type")->value("album");
+    $group->submit("")->value(t("Modify"));
+    return $form;
   }
 }
