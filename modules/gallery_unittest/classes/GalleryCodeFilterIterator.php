@@ -17,13 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class PhpCodeFilterIterator extends FilterIterator {
-  public function accept() {
-    $path_name = $this->getInnerIterator()->getPathName();
-    return substr($path_name, -4) == ".php";
-  }
-}
-
 class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
     // Skip anything that we didn't write

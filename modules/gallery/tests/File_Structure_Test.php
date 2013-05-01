@@ -17,8 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
-
 class File_Structure_Test extends Unittest_Testcase {
   public function test_no_trailing_closing_php_tag() {
     $dir = new GalleryCodeFilterIterator(
@@ -26,10 +24,9 @@ class File_Structure_Test extends Unittest_Testcase {
     $count = 0;
     foreach ($dir as $file) {
       $count++;
-      if (!preg_match("|\.html\.php$|", $file->getPathname())) {
-        $this->assertFalse(
-          preg_match('/\?\>\s*$/', file_get_contents($file)),
-          "{$file->getPathname()} ends in ?>");
+      if (!preg_match("/\bviews\b/", $file->getPathname())) {
+        $this->assertNotRegExp(
+          '/\?\>\s*$/', file_get_contents($file), "{$file->getPathname()} ends in ?>");
       }
     }
 
@@ -46,8 +43,8 @@ class File_Structure_Test extends Unittest_Testcase {
       }
 
       if (strpos($file, "views")) {
-        $this->assertTrue(
-          preg_match("#/views/.*?\.(html|mrss|txt|json)\.php$#", $file->getPathname()),
+        $this->assertRegExp(
+          "#/views/.*?\.(html|mrss|txt|json)\.php$#", $file->getPathname(),
           "{$file->getPathname()} should end in .{html,mrss,txt,json}.php");
       }
     }
@@ -70,7 +67,7 @@ class File_Structure_Test extends Unittest_Testcase {
     // The preamble for views is a single line that prevents direct script access
     if (strpos($path, SYSPATH) === 0) {
       // Kohana preamble
-      $expected = "<?php defined('SYSPATH') OR die('No direct access allowed.'); ?>\n";
+      $expected = "<?php defined('SYSPATH') OR die('No direct script access.'); ?>\n";
       $expected_2 = "<?php defined('SYSPATH') OR die('No direct access allowed.');\n";  // error.php
     } else {
       // Gallery preamble
@@ -149,6 +146,9 @@ class File_Structure_Test extends Unittest_Testcase {
         " * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.",
         " */",
       );
+      if (filesize($path) < 300) {
+        $expected_2 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
+      }
     }
     if ($expected != $actual && $expected_2 != $actual && $expected_3 != $actual && $expected_4 != $actual) {
       $errors[] = "$path:1\n  expected\n\t" . join("\n\t", $expected) .

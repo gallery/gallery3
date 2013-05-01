@@ -17,8 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
-
 class No_Direct_ORM_Access_Test extends Unittest_Testcase {
   public function test_no_access_to_users_table() {
     $dir = new UserModuleFilterIterator(
@@ -30,9 +28,9 @@ class No_Direct_ORM_Access_Test extends Unittest_Testcase {
     foreach ($dir as $file) {
       //if (basename(dirname($file)) == "helpers") {
       $file_as_string = file_get_contents($file);
-      if (preg_match("/ORM::factory\\(\"user\"/", $file_as_string)) {
+      if (preg_match("/ORM::factory\\(\"User\"/", $file_as_string)) {
         foreach (explode("\n", $file_as_string) as $l => $line) {
-          if (preg_match('/ORM::factory\\(\"user\"/', $line)) {
+          if (preg_match('/ORM::factory\\(\"User\"/', $line)) {
             $errors[] = "$file($l) => $line";
           }
         }
@@ -53,9 +51,9 @@ class No_Direct_ORM_Access_Test extends Unittest_Testcase {
     $errors = array();
     foreach ($dir as $file) {
       $file_as_string = file_get_contents($file);
-      if (preg_match("/ORM::factory\\(\"group\"/", $file_as_string)) {
+      if (preg_match("/ORM::factory\\(\"Group\"/", $file_as_string)) {
         foreach (explode("\n", $file_as_string) as $l => $line) {
-          if (preg_match('/ORM::factory\\(\"group\"/', $line)) {
+          if (preg_match('/ORM::factory\\(\"Group\"/', $line)) {
             $errors[] = "$file($l) => $line";
           }
         }
