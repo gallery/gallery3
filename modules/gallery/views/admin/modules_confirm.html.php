@@ -11,11 +11,10 @@
     <? endforeach ?>
     <? endforeach ?>
   </ul>
-    <form method="post" action="<?= URL::site("admin/modules/save") ?>">
-      <?= Access::csrf_form_field() ?>
-      <? foreach ($modules as $module): ?>
-        <?= Form::hidden($module, 1) ?>
-      <? endforeach ?>
-    </form>
+    <?= $form->open() ?>
+      <? foreach (array_merge($form->as_array(), $form->modules->as_array()) as $field): ?>
+      <?= $field->is_hidden() ? $field->open() . $field->close() : ""?>
+      <? endforeach; ?>
+    <?= $form->close() ?>
   </div>
 </div>
