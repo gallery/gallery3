@@ -135,11 +135,9 @@ class Database_Test extends Unittest_Testcase {
   }
 
   function test_prefix_no_replacement() {
-    $sql = DB::select()
-      ->from("test_tables")
+    $sql = DB::update("test_tables")
       ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))
-      ->update()
       ->compile("mock");
     $sql = str_replace("\n", " ", $sql);
     $this->assertSame("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
