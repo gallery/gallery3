@@ -86,7 +86,9 @@ class Gallery_Formo extends Formo_Core_Formo {
     }
 
     if (isset($error_message)) {
-      $this->_error_messages[$rule] = $error_message;
+      $error_messages = $this->get("error_messages", array());
+      $error_messages[$rule] = $error_message;
+      $this->set("error_messages", $error_messages);
     }
 
     return parent::add_rule($rule, $params);

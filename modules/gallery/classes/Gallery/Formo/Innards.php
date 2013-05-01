@@ -18,15 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 abstract class Gallery_Formo_Innards extends Formo_Core_Innards {
-  protected $_error_messages = array();
-
   /**
-   * Override Formo_Innards::_error_to_msg() to look for a message in the $_error_messages array.
-   * This array is populated using our Formo::add_rule() override.  If nothing is found, the
-   * error name is returned.
+   * Override Formo_Innards::_error_to_msg() to look for a message in the "error_messages" array.
+   * This array can be populated using our Formo::add_rule() override, or by accessing it directly
+   * using Formo::set("error_messages",...).  If nothing is found, the error name is returned.
    */
   protected function _error_to_msg(array $errors_array=null) {
     $message = parent::_error_to_msg($errors_array);
-    return ($message === false) ? false : Arr::get($this->_error_messages, $message, $message);
+    return ($message === false) ? false :
+      Arr::get($this->get("error_messages", array()), $message, $message);
   }
 }
