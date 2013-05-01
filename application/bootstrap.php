@@ -256,6 +256,10 @@ Route::set("site", "<controller>(/<action>(/<args>))",
         return false;
       }
       $params["controller"] = str_replace("_", "", $params["controller"]);
+      if (!class_exists("Controller_" . $params["controller"])) {
+        // No controller found - abort match so we can try to find an item URL.
+        return false;
+      }
       return $params;
     })
   ->defaults(array(
