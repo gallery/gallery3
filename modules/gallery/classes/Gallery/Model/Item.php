@@ -865,7 +865,7 @@ class Gallery_Model_Item extends ORM_MPTT {
         array(array($this, "valid_parent"), array(":validation"))),
 
       "rand_key" => array(
-        array("regex", array(":value", "/0\.[0-9]+/"))),
+        array("regex", array(":value", "/^0[\.,][0-9]+$/D"))),
 
       "slug" => array(
         array("max_length", array(":value", 255)),
