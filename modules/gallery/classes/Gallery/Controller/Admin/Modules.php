@@ -36,17 +36,17 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
 
     $messages = array("error" => array(), "warn" => array());
     $desired_list = array();
-    foreach (Module::available() as $module_name => $info) {
-      if ($info->locked) {
+    foreach (Module::available() as $module_name => $module_info) {
+      if ($module_info->locked) {
         continue;
       }
 
       if ($desired = $this->request->post($module_name) == 1) {
         $desired_list[] = $module_name;
       }
-      if ($info->active && !$desired && Module::is_active($module_name)) {
+      if ($module_info->active && !$desired) {
         $messages = array_merge($messages, Module::can_deactivate($module_name));
-      } else if (!$info->active && $desired && !Module::is_active($module_name)) {
+      } else if (!$module_info->active && $desired) {
         $messages = array_merge($messages, Module::can_activate($module_name));
       }
     }
@@ -77,18 +77,18 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
     $changes->deactivate = array();
     $activated_names = array();
     $deactivated_names = array();
-    foreach (Module::available() as $module_name => $info) {
-      if ($info->locked) {
+    foreach (Module::available() as $module_name => $module_info) {
+      if ($module_info->locked) {
         continue;
       }
 
       try {
         $desired = $this->request->post($module_name) == 1;
-        if ($info->active && !$desired && Module::is_active($module_name)) {
+        if ($module_info->active && !$desired) {
           Module::deactivate($module_name);
           $changes->deactivate[] = $module_name;
-          $deactivated_names[] = t($info->name);
-        } else if (!$info->active && $desired && !Module::is_active($module_name)) {
+          $deactivated_names[] = t($module_info->name);
+        } else if (!$module_info->active && $desired) {
           if (Module::is_installed($module_name)) {
             Module::upgrade($module_name);
           } else {
@@ -96,11 +96,11 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
           }
           Module::activate($module_name);
           $changes->activate[] = $module_name;
-          $activated_names[] = t($info->name);
+          $activated_names[] = t($module_info->name);
         }
       } catch (Exception $e) {
         Message::warning(t("An error occurred while installing the <b>%module_name</b> module",
-                           array("module_name" => $info->name)));
+                           array("module_name" => $module_info->name)));
         Log::instance()->add(Log::ERROR, (string)$e);
       }
     }
