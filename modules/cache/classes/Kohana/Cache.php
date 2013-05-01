@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Kohana Cache provides a common interface to a variety of caching engines. Tags are
  * supported where available natively to the cache system. Kohana Cache supports multiple

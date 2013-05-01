@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined("SYSPATH") or die("No direct script access.");
 
 /**
  * A version of the stock PHPUnit testcase that includes some extra helpers
