@@ -57,7 +57,7 @@
       <?= Access::csrf_form_field() ?>
       <table>
         <tr>
-          <th> <?= t("Installed") ?> </th>
+          <th> <?= t("Active") ?> </th>
           <th style="width: 8em"> <?= t("Name") ?> </th>
           <th> <?= t("Version") ?> </th>
           <th> <?= t("Description") ?> </th>
