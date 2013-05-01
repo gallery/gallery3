@@ -91,26 +91,6 @@ class Gallery_Formo extends Formo_Core_Formo {
   }
 
   /**
-   * Sort the child fields by whether they're groups or hidden.  This is used when we render our
-   * custom templates.
-   */
-  public function sort_children() {
-    $groups = array();
-    $non_groups = array();
-    $hidden = array();
-    foreach ($this->_fields as $field) {
-      if ($field->get("driver") == "group") {
-        $groups[] = $field;
-      } else if ($field->is_hidden()) {
-        $hidden[] = $field;
-      } else {
-        $non_groups[] = $field;
-      }
-    }
-    return array($groups, $non_groups, $hidden);
-  }
-
-  /**
    * Return whether or not the field is hidden.  This is used when we render our custom templates.
    */
   public function is_hidden() {
