@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // Open the <li>, then open the <label> add the label (if applicable) ?>
 <? if (!$hidden = $field->is_hidden()): ?>
   <? if ($error = $field->error()): ?>

@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // Render the group.  The code here is very similar to that of form_template. ?>
 <?= $field->open() ?>
   <fieldset>

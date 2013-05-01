@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <? if ($field->get('blank') === TRUE): ?>
 <option></option>
 <? endif; ?>

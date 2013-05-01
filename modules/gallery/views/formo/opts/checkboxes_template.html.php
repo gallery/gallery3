@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <span class="checkbox opts">
 <? foreach ($opts as $key => $opt): ?>
   <label>

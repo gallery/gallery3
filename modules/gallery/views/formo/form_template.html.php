@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // Render the form.  The code here is very similar to that of group_template. ?>
 <?= $field->open() ?>
   <? if ($title): ?>
