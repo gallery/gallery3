@@ -41,6 +41,7 @@ class Gallery_Formo extends Formo_Core_Formo {
       // The CSS class names are chosen to be compatible with Gallery 3.0.x (which used Forge),
       // and can be overridden using Formo::remove_class("foo") or Formo::set("class", "foo").
       case "checkbox":
+        $this->set("template", "field_template");  // We don't use a special checkbox template
         $this->add_class("checkbox");
         break;
       case "checkboxes":
@@ -87,26 +88,6 @@ class Gallery_Formo extends Formo_Core_Formo {
     }
 
     return parent::add_rule($rule, $params);
-  }
-
-  /**
-   * Sort the child fields by whether they're groups or hidden.  This is used when we render our
-   * custom templates.
-   */
-  public function sort_children() {
-    $groups = array();
-    $non_groups = array();
-    $hidden = array();
-    foreach ($this->_fields as $field) {
-      if ($field->get("driver") == "group") {
-        $groups[] = $field;
-      } else if ($field->is_hidden()) {
-        $hidden[] = $field;
-      } else {
-        $non_groups[] = $field;
-      }
-    }
-    return array($groups, $non_groups, $hidden);
   }
 
   /**

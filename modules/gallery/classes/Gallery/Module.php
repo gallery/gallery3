@@ -44,7 +44,9 @@ class Gallery_Module {
     "cache", "database", "formo", "image", "orm", "pagination");
 
   /**
-   * Set the version of the corresponding Model_Module
+   * Set the version of the corresponding Model_Module.
+   * If the module doesn't yet have a DB entry, add one.
+   *
    * @param string  $module_name
    * @param integer $version
    */
@@ -192,6 +194,7 @@ class Gallery_Module {
     if (class_exists($installer_class) && method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
+    // Module::set_version() will add the module to the DB if it doesn't already exist.
     Module::set_version($module_name, Module::available()->$module_name->code_version);
 
     // Set the weight of the new Module, which controls the order in which the modules are
@@ -203,12 +206,12 @@ class Gallery_Module {
       $module->weight = $module->id;
       $module->save();
     }
+    // Similar to activate(), deactivate(), and upgrade(), calling load_modules() here
+    // refreshes Module::$modules, Module::$active, and the Kohana paths as needed.
+    Module::load_modules();
 
     GalleryLog::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
-
-    // Remove the module from the path since it's not active yet.
-    Module::_remove_from_path($module_name);
   }
 
   /**
@@ -240,6 +243,10 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function upgrade($module_name) {
+    if (!Module::is_active($module_name)) {
+      Module::_add_to_path($module_name);
+    }
+
     $version_before = Module::get_version($module_name);
     $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     $available = Module::available();
@@ -252,6 +259,8 @@ class Gallery_Module {
         throw new Exception("@todo UNKNOWN_MODULE");
       }
     }
+    // Similar to activate(), deactivate(), and install(), calling load_modules() here
+    // refreshes Module::$modules, Module::$active, and the Kohana paths as needed.
     Module::load_modules();
 
     $version_after = Module::get_version($module_name);
@@ -420,7 +429,7 @@ class Gallery_Module {
     foreach ($module_names as $module_name) {
       $kohana_modules[$module_name] = MODPATH . $module_name;
     }
-    Kohana::modules($kohana_modules);
+    Kohana::modules(array_merge(Theme::$kohana_themes, $kohana_modules));
     ORM::load_relationships();
   }
 
