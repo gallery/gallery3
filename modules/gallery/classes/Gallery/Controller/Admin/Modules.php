@@ -127,13 +127,18 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
         Message::success(t("Deactivated: %names", array("names" => join(", ", $deactivated_names))));
       }
 
-      // If we got here after a confirmation dialog, we'll need an ajax reply.
+      // We just updated the active module list, but it's possible that PHP has already
+      // autoloaded classes from now-deactivated modules.  So, we need to reload.
       if ($this->request->is_ajax()) {
+        // We got here after a confirmation dialog - send an ajax reply to reload.
         $this->response->json(array(
           "result" => "success",
           "reload" => 1
         ));
         return;
+      } else {
+        // Do a self-redirect to reload.
+        $this->redirect($this->request->uri());
       }
     }
 
