@@ -123,6 +123,8 @@ class Gallery_Controller_Quick extends Controller {
   }
 
   public function action_form_edit() {
+    // @todo: fix this function.  The edit forms are no longer in helpers.
+    // This should be handled with sub-requests or different routes.
     $id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);

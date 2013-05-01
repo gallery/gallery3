@@ -26,40 +26,6 @@
 class Gallery_Movie {
   protected static $allow_uploads;
 
-  static function get_edit_form($movie) {
-    $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
-    $form->hidden("from_id")->value($movie->id);
-    $group = $form->group("edit_item")->label(t("Edit Movie"));
-    $group->input("title")->label(t("Title"))->value($movie->title)
-      ->error_messages("not_empty", t("You must provide a title"))
-      ->error_messages("max_length", t("Your title is too long"));
-    $group->textarea("description")->label(t("Description"))->value($movie->description);
-    $group->input("name")->label(t("Filename"))->value($movie->name)
-      ->error_messages(
-        "name_conflict", t("There is already a movie, photo or album with this name"))
-      ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))
-      ->error_messages("no_backslashes", t("The movie name can't contain a \"\\\""))
-      ->error_messages("no_trailing_period", t("The movie name can't end in \".\""))
-      ->error_messages("data_file_extension", t("You cannot change the movie file extension"))
-      ->error_messages("not_empty", t("You must provide a movie file name"))
-      ->error_messages("max_length", t("Your movie file name is too long"));
-    $group->input("slug")->label(t("Internet Address"))->value($movie->slug)
-      ->error_messages(
-        "conflict", t("There is already a movie, photo or album with this internet address"))
-      ->error_messages(
-        "not_url_safe",
-        t("The internet address should contain only letters, numbers, hyphens and underscores"))
-      ->error_messages("not_empty", t("You must provide an internet address"))
-      ->error_messages("max_length", t("Your internet address is too long"));
-
-    Module::event("item_edit_form", $movie, $form);
-
-    $group = $form->group("buttons")->label("");
-    $group->submit("")->value(t("Modify"));
-
-    return $form;
-  }
-
   /**
    * Extract a frame from a movie file.  Valid movie_options are start_time (in seconds),
    * input_args (extra ffmpeg input args) and output_args (extra ffmpeg output args).  Extra args
