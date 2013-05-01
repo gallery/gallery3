@@ -27,7 +27,7 @@ class Database_Test extends Unittest_Testcase {
     $db_config["mock"]["table_prefix"] = "g_";
   }
 
-  function simple_where_test() {
+  function test_simple_where() {
     $sql = DB::select("some_column")
       ->from("some_table")
       ->where("a", "=", 1)
@@ -37,7 +37,7 @@ class Database_Test extends Unittest_Testcase {
     $this->assertSame("SELECT [some_column] FROM [some_table] WHERE [a] = [1] AND [b] = [2]", $sql);
   }
 
-  function compound_where_test() {
+  function test_compound_where() {
     $sql = DB::select()
       ->where("outer1", "=", 1)
       ->and_where_open()
@@ -52,7 +52,7 @@ class Database_Test extends Unittest_Testcase {
       $sql);
   }
 
-  function group_first_test() {
+  function test_group_first() {
     $sql = DB::select()
       ->and_where_open()
       ->where("inner1", "=", 1)
@@ -67,7 +67,7 @@ class Database_Test extends Unittest_Testcase {
       $sql);
   }
 
-  function where_array_test() {
+  function test_where_array() {
     $sql = DB::select()
       ->where("outer1", "=", 1)
       ->and_where_open()
@@ -82,7 +82,7 @@ class Database_Test extends Unittest_Testcase {
       $sql);
   }
 
-  function notlike_test() {
+  function test_notlike() {
     $sql = DB::select()
       ->where("outer1", "=", 1)
       ->or_where_open()
@@ -95,7 +95,7 @@ class Database_Test extends Unittest_Testcase {
       $sql);
   }
 
-  function prefix_replacement_test() {
+  function test_prefix_replacement() {
     $db = Database::instance("mock");
     $converted = $db->add_table_prefixes("CREATE TABLE IF NOT EXISTS {test} (
                    `id` int(9) NOT NULL auto_increment,
@@ -127,14 +127,14 @@ class Database_Test extends Unittest_Testcase {
     $this->assertSame($expected, $sql);
   }
 
-  function prefix_replacement_for_rename_table_test() {
+  function test_prefix_replacement_for_rename_table() {
     $db = Database::instance("mock");
     $this->assertSame(
       "RENAME TABLE `g_test` TO `g_new_test`",
       $db->add_table_prefixes("RENAME TABLE {test} TO {new_test}"));
   }
 
-  function prefix_no_replacement_test() {
+  function test_prefix_no_replacement() {
     $sql = DB::select()
       ->from("test_tables")
       ->where("1", "=", "1")
@@ -145,7 +145,7 @@ class Database_Test extends Unittest_Testcase {
     $this->assertSame("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
   }
 
-  function escape_for_like_test() {
+  function test_escape_for_like() {
     // Note: literal double backslash is written as \\\
     $this->assertSame('basic\_test', Database::escape_for_like("basic_test"));
     $this->assertSame('\\\100\%\_test/', Database::escape_for_like('\100%_test/'));

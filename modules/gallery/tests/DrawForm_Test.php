@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class DrawForm_Test extends Unittest_Testcase {
-  function no_group_test() {
+  function test_no_group() {
     $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $form->input("title")->label(t("Title"));
     $form->textarea("description")->label(t("Text Area"));
@@ -47,7 +47,7 @@ class DrawForm_Test extends Unittest_Testcase {
     $this->assertSame($expected, (string) $form);
   }
 
-  function group_test() {
+  function test_group() {
     $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $group = $form->group("test_group")->label(t("Test Group"));
     $group->input("title")->label(t("Title"));
@@ -80,7 +80,7 @@ class DrawForm_Test extends Unittest_Testcase {
     $this->assertSame($expected, (string) $form);
   }
 
-  function form_script_test() {
+  function test_form_script() {
     $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $group = $form->group("test_group")->label(t("Test Group"));
     $group->input("title")->label(t("Title"));
@@ -120,7 +120,7 @@ class DrawForm_Test extends Unittest_Testcase {
     $this->assertSame($expected, (string) $form);
   }
 
-  function two_hiddens_test() {
+  function test_two_hiddens() {
     $form = new Forge("test/controller", "", "post");
     $form->hidden("HIDDEN_NAME")->value("HIDDEN_VALUE");
 
