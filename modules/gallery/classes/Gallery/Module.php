@@ -429,7 +429,7 @@ class Gallery_Module {
     foreach ($module_names as $module_name) {
       $kohana_modules[$module_name] = MODPATH . $module_name;
     }
-    Kohana::modules($kohana_modules);
+    Kohana::modules(array_merge(Theme::$kohana_themes, $kohana_modules));
     ORM::load_relationships();
   }
 

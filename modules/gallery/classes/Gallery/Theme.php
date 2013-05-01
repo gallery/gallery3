@@ -27,6 +27,7 @@ class Gallery_Theme {
   public static $admin_theme_name;
   public static $site_theme_name;
   public static $is_admin;
+  public static $kohana_themes = array();
 
   /**
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
@@ -37,7 +38,6 @@ class Gallery_Theme {
     self::$is_admin = Request::current()->param("is_admin", false);
     self::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
-    $modules = Kohana::modules();
 
     // If the site theme doesn't exist, fall back to wind.
     if (!file_exists(THEMEPATH . self::$site_theme_name . "/theme.info")) {
@@ -57,21 +57,19 @@ class Gallery_Theme {
         Module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
       }
 
-      $modules = array_merge(
-        array(self::$admin_theme_name => THEMEPATH . self::$admin_theme_name), $modules);
+      self::$kohana_themes[self::$admin_theme_name] = THEMEPATH . self::$admin_theme_name;
 
       // If the site theme has an admin subdir, load that as a module so that
       // themes can provide their own code.
       if (file_exists(THEMEPATH . self::$site_theme_name . "/admin")) {
-        $modules = array_merge(
-          array(self::$site_theme_name => THEMEPATH . self::$site_theme_name . "/admin"), $modules);
+        self::$kohana_themes[self::$site_theme_name] = THEMEPATH . self::$site_theme_name . "/admin";
       }
       // Admins can override the site theme, temporarily.  This lets us preview themes.
+      // @todo: verify that overriding the *admin* theme like this works.
       if (Identity::active_user()->admin && $override) {
         if (file_exists(THEMEPATH . $override)) {
           self::$admin_theme_name = $override;
-          $modules = array_merge(
-            array(self::$admin_theme_name => THEMEPATH . self::$admin_theme_name), $modules);
+          self::$kohana_themes[self::$admin_theme_name] = THEMEPATH . self::$admin_theme_name;
         } else {
           Log::instance()->add(Log::ERROR, "Missing override admin theme: '$override'");
         }
@@ -85,11 +83,12 @@ class Gallery_Theme {
           Log::instance()->add(Log::ERROR, "Missing override site theme: '$override'");
         }
       }
-      $modules = array_merge(
-        array(self::$site_theme_name => THEMEPATH . self::$site_theme_name), $modules);
+      self::$kohana_themes[self::$site_theme_name] = THEMEPATH . self::$site_theme_name;
     }
 
-    Kohana::modules($modules);
+    self::$kohana_themes = array_reverse(self::$kohana_themes, true);
+    $kohana_modules = Kohana::modules();
+    Kohana::modules(array_merge(self::$kohana_themes, $kohana_modules));
   }
 
   static function get_info($theme_name) {

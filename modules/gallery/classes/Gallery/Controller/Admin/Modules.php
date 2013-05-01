@@ -135,10 +135,6 @@ class Gallery_Controller_Admin_Modules extends Controller_Admin {
         ));
         return;
       }
-      // @todo: this redirect shouldn't be necessary... something is strange with the add/remove
-      // from path code, and if we don't reload we can't find the required/admin.html view (in the
-      // gallery module).  There's a bug elsewhere that needs to be caught.
-      $this->redirect($this->request->uri());
     }
 
     // Build and return the view.
