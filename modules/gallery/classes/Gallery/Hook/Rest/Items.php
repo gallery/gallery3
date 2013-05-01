@@ -61,7 +61,7 @@ class Gallery_Hook_Rest_Items {
         throw HTTP_Exception::factory(404);
       }
       $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
-      while (($item = $item->parent) != null) {
+      while ($item->parent_id && $item = $item->parent) {
         array_unshift($items, Hook_Rest_Items::_format_restful_item($item, $types));
       };
     }
