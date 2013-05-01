@@ -63,67 +63,58 @@ class File_Structure_Test extends Unittest_Testcase {
   }
 
   protected function _check_view_preamble($path, &$errors) {
-    $expected_2 = null;
-    // The preamble for views is a single line that prevents direct script access
-    if (strpos($path, SYSPATH) === 0) {
-      // Kohana preamble
-      $expected = "<?php defined('SYSPATH') OR die('No direct script access.'); ?>\n";
-      $expected_2 = "<?php defined('SYSPATH') OR die('No direct access allowed.');\n";  // error.php
-    } else {
-      // Gallery preamble
-      // @todo use the same preamble for both!
-      $expected = "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n";
-    }
-
+    $expected = "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n";
     $fp = fopen($path, "r");
     $actual = fgets($fp);
     fclose($fp);
 
-    if ($expected != $actual && $expected_2 != $actual) {
+    if ($expected != $actual) {
       $errors[] = "$path:1\n  expected:\n\t$expected\n  actual:\n\t$actual";
     }
   }
 
+  protected function _is_kohana_path($path) {
+    return strpos($path, SYSPATH) === 0 ||
+      strpos($path, MODPATH . "cache") === 0 ||
+      strpos($path, MODPATH . "database") === 0 ||
+      strpos($path, MODPATH . "formo") === 0 ||
+      strpos($path, MODPATH . "image") === 0 ||
+      strpos($path, MODPATH . "orm") === 0 ||
+      strpos($path, MODPATH . "pagination") === 0 ||
+      strpos($path, MODPATH . "unittest") === 0;
+  }
+
+  protected function _is_vendor_path($path) {
+    return strpos($path, "/vendor/") !== null;
+  }
+
+  protected function _is_var_path($path) {
+    return strpos($path, DOCROOT . "var") === 0;
+  }
+
+  protected function _is_transparent_extension_class($path) {
+    return preg_match("#modules/[^/]+/classes/#", $path) && filesize($path) < 300;
+  }
+
+  protected function _is_var_logs($path) {
+    return strpos($path, VARPATH . "logs/") === 0;
+  }
+
   protected function _check_php_preamble($path, &$errors) {
-    $expected_2 = null; $expected_3 = null; $expected_4 = null;
-    if (strpos($path, SYSPATH) === 0 ||
-        strpos($path, MODPATH . "unittest") === 0) {
-      // Kohana: we only care about the first line
-      $fp = fopen($path, "r");
-      $actual = array(fgets($fp));
-      fclose($fp);
-      $expected = array("<?php defined('SYSPATH') OR die('No direct script access.');\n");
-      $expected_2 = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
-      $expected_3 = array("<?php defined('SYSPATH') or die('No direct access allowed.');\n");
-      $expected_4 = array("<?php defined('SYSPATH') or die('No direct script access.');\n");
-    } else if (strpos($path, MODPATH . "forge") === 0 ||
-               strpos($path, MODPATH . "exif/lib") === 0 ||
-               strpos($path, MODPATH . "gallery/vendor/joomla") === 0 ||
-               strpos($path, MODPATH . "gallery_unittest/vendor") === 0 ||
-               strpos($path, MODPATH . "gallery/lib/HTMLPurifier") === 0 ||
-               $path == MODPATH . "user/vendor/phpass/PasswordHash.php" ||
-               $path == DOCROOT . "var/database.php") {
-      // 3rd party module security-only preambles, similar to Gallery's
-      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct access allowed.\");\n");
-      $expected_2 = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
-      $expected_3 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
-      $fp = fopen($path, "r");
-      $actual = array(fgets($fp));
-      fclose($fp);
-    } else if (strpos($path, DOCROOT . "var/logs") === 0) {
-      // var/logs has the kohana one-liner preamble
-      $expected = array("<?php defined('SYSPATH') or die('No direct script access.'); ?>\n");
-      $fp = fopen($path, "r");
-      $actual = array(fgets($fp));
-      fclose($fp);
-    } else if (strpos($path, DOCROOT . "var") === 0) {
-      // Anything else under var has the Gallery one-liner
-      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n");
-      $fp = fopen($path, "r");
-      $actual = array(fgets($fp));
-      fclose($fp);
+    if ($this->_is_transparent_extension_class($path) ||
+        $this->_is_var_logs($path)) {
+      // Similar to the one-line preamble, except that we don't close the PHP tag
+      // because more code follows.
+      $actual = array(file($path)[0]);
+      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
+    } else if ($this->_is_kohana_path($path) ||
+               $this->_is_vendor_path($path) ||
+               $this->_is_var_path($path)) {
+      // In all of these cases we only care about the first line.
+      $actual = array(file($path)[0]);
+      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
     } else {
-      // Gallery: we care about the entire copyright
+      // For everything else we care about the entire copyright
       $actual = $this->_get_preamble($path);
       $expected = array(
         "<?php defined(\"SYSPATH\") or die(\"No direct script access.\");",
@@ -146,13 +137,10 @@ class File_Structure_Test extends Unittest_Testcase {
         " * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.",
         " */",
       );
-      if (filesize($path) < 300) {
-        $expected_2 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
-      }
     }
-    if ($expected != $actual && $expected_2 != $actual && $expected_3 != $actual && $expected_4 != $actual) {
-      $errors[] = "$path:1\n  expected\n\t" . join("\n\t", $expected) .
-        "\n  actual:\n\t" . join("\n\t", $actual);
+    if ($expected != $actual) {
+      $errors[] = "$path:1\n  expected:\n\t" . join("\n\t", $expected) .
+        "\n  actual:\n\t" . implode("\n\t", $actual);
     }
   }
 
@@ -284,7 +272,7 @@ class File_Structure_Test extends Unittest_Testcase {
     }
   }
 
-  public function test_all_public_functions_in_files_end_in() {
+  public function test_all_public_functions_in_test_files_start_with_test() {
     // Who tests the tests?  :-)   (ref: http://www.xkcd.com/1163)
     $dir = new PhpCodeFilterIterator(
       new GalleryCodeFilterIterator(
@@ -306,9 +294,8 @@ class File_Structure_Test extends Unittest_Testcase {
 
           if ($scan) {
             if (preg_match("/^\s*public\s+function/", $line)) {
-              $this->assertTrue(
-                preg_match("/^\s*public\s+function (setup|teardown|test_.*)\(\) {/", $line),
-                "public functions must start with in 'test_':\n$file\n$line\n");
+              $this->assertRegExp("/^\s*public\s+function (setup|teardown|test_.*)\(\) {/", $line,
+                                  "public functions must start with in 'test_':\n$file\n$line\n");
             }
           }
         }
