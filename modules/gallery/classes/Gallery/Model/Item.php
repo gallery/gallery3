@@ -1022,21 +1022,16 @@ class Gallery_Model_Item extends ORM_MPTT {
         $v->error("parent_id", "invalid");
       }
     } else {
-      $query = DB::select()
-        ->from("items")
-        ->where("id", "=", $this->parent_id)
-        ->where("type", "=", "album");
+      $parent = $this->parent;
+      if (!$parent->loaded() || !$parent->is_album()) {
+        $v->error("parent_id", "invalid");
+      }
 
       // If this is an existing item, make sure the new parent is not part of our hierarchy
       if ($this->loaded()) {
-        $query->and_where_open()
-          ->where("left_ptr", "<", $this->left_ptr)
-          ->or_where("right_ptr", ">", $this->right_ptr)
-          ->and_where_close();
-      }
-
-      if ($query->execute()->count() != 1) {
-        $v->error("parent_id", "invalid");
+        if ($this->descendants->where("id", "=", $parent->id)->find()->loaded()) {
+          $v->error("parent_id", "invalid");
+        }
       }
     }
   }
