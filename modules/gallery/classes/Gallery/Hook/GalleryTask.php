@@ -459,11 +459,12 @@ class Gallery_Hook_GalleryTask {
 
         // We want to leave the first one alone and update all conflicts to be random values.
         $fixed = 0;
-        $conflicts = ORM::factory("Item")
+        $conflict = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("slug", "=", $slug)
-          ->limit(1)->offset(1)->find_all();
-        if ($conflicts->count() && $conflict = $conflicts->current()) {
+          ->offset(1)
+          ->find();
+        if ($conflict->loaded()) {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
           DB::update("items")
             ->set(array("slug" => $slug . "-" . (string)rand(1000, 9999)))
@@ -506,11 +507,12 @@ class Gallery_Hook_GalleryTask {
 
         $fixed = 0;
         // We want to leave the first one alone and update all conflicts to be random values.
-        $conflicts = ORM::factory("Item")
+        $conflict = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("name", "=", $name)
-          ->limit(1)->offset(1)->find_all();
-        if ($conflicts->count() && $conflict = $conflicts->current()) {
+          ->offset(1)
+          ->find();
+        if ($conflict->loaded()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
           if (!$conflict->is_album() && preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
             $item_base_name = $matches[1];
@@ -562,12 +564,13 @@ class Gallery_Hook_GalleryTask {
 
         $fixed = 0;
         // We want to leave the first one alone and update all conflicts to be random values.
-        $conflicts = ORM::factory("Item")
+        $conflict = ORM::factory("Item")
           ->where("parent_id", "=", $parent_id)
           ->where("name", "LIKE", "{$base_name_escaped}.%")
           ->where("type", "<>", "album")
-          ->limit(1)->offset(1)->find_all();
-        if ($conflicts->count() && $conflict = $conflicts->current()) {
+          ->offset(1)
+          ->find();
+        if ($conflict->loaded()) {
           $task->log("Fixing conflicting name for item id {$conflict->id}");
           if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $conflict->name, $matches)) {
             $item_base_name = $matches[1]; // unlike $base_name, this always maintains capitalization
