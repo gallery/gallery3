@@ -241,13 +241,11 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         }
 
         $name = basename($entry->path);
-        $title = Item::convert_filename_to_title($name);
         if ($entry->is_directory) {
           $album = ORM::factory("Item");
           $album->type = "album";
           $album->parent_id = $parent->id;
           $album->name = $name;
-          $album->title = $title;
           $album->owner_id = $owner_id;
           $album->sort_order = $parent->sort_order;
           $album->sort_column = $parent->sort_column;
@@ -262,7 +260,6 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
               $photo->parent_id = $parent->id;
               $photo->set_data_file($entry->path);
               $photo->name = $name;
-              $photo->title = $title;
               $photo->owner_id = $owner_id;
               $photo->save();
               $entry->item_id = $photo->id;
@@ -272,7 +269,6 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
               $movie->parent_id = $parent->id;
               $movie->set_data_file($entry->path);
               $movie->name = $name;
-              $movie->title = $title;
               $movie->owner_id = $owner_id;
               $movie->save();
               $entry->item_id = $movie->id;

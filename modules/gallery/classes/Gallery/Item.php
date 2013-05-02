@@ -123,7 +123,7 @@ class Gallery_Item {
     $title = strtr($filename, "_", " ");
     $title = preg_replace("/\..{3,4}$/", "", $title);
     $title = preg_replace("/ +/", " ", $title);
-    return $title;
+    return trim($title);
   }
 
   /**
