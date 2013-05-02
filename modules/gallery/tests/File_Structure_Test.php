@@ -97,14 +97,18 @@ class File_Structure_Test extends Unittest_Testcase {
   }
 
   protected function _is_var_logs($path) {
-    return strpos($path, VARPATH . "logs/") === 0;
+    return strpos($path, DOCROOT . "var/logs/") === 0;
   }
 
   protected function _check_php_preamble($path, &$errors) {
-    if ($this->_is_transparent_extension_class($path) ||
-        $this->_is_var_logs($path)) {
+    if ($this->_is_var_logs($path)) {
+      // Similar to view files
+      $actual = array(file($path)[0]);
+      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\"); ?>\n");
+    } else if ($this->_is_transparent_extension_class($path)) {
       // Similar to the one-line preamble, except that we don't close the PHP tag
-      // because more code follows.
+      // because more code follows.  Put this first because transparent extensions
+      // exist inside Kohana modules as well.
       $actual = array(file($path)[0]);
       $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
     } else if ($this->_is_kohana_path($path) ||
