@@ -165,12 +165,6 @@ class Gallery_Controller_Albums extends Controller_Items {
 
     // Load and validate the form.
     if ($form->load()->validate()) {
-      // Set a default title if none given.
-      // @todo: consider moving this to the item model.
-      if (!$form->item->title->val()) {
-        $form->item->title->val($form->item->name->val());
-      }
-
       // Build the item model.
       $item = ORM::factory("Item");
       $item->parent_id = $parent_id;

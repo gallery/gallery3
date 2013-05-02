@@ -373,10 +373,10 @@ class Item_Model_Test extends Unittest_Testcase {
     $item->description = str_repeat("x", 70000);  // invalid
     $item->name = null;
     $item->parent_id = Random::int();
-    $item->slug = null;
+    $item->slug = null;  // gets auto-generated, no error
     $item->sort_column = "bogus";
     $item->sort_order = "bogus";
-    $item->title = null;
+    $item->title = null;  // gets auto-generated, no error
     $item->type = "bogus";
     try {
       $item->save();
@@ -385,7 +385,6 @@ class Item_Model_Test extends Unittest_Testcase {
       $errors = $e->errors();
       $this->assertEquals("max_length", $errors["description"][0]);
       $this->assertEquals("not_empty", $errors["name"][0]);
-      $this->assertEquals("not_empty", $errors["title"][0]);
       $this->assertEquals("invalid_item", $errors["album_cover_item_id"][0]);
       $this->assertEquals("invalid", $errors["parent_id"][0]);
       $this->assertEquals("invalid", $errors["sort_column"][0]);
