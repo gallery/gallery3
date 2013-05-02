@@ -78,12 +78,16 @@ class Gallery_View_Theme extends View_Gallery {
     // If the item is an album with children, grab an item from that album instead.  We're
     // interested in the size of the thumbnails in this album, not the thumbnail of the
     // album itself.
-    if ($item && $item->is_album() && $item->children->count_all()) {
-      $item = $item->unordered_children;
+    if ($item && $item->is_album()) {
       if (isset($dimension)) {
-        $item->order_by("thumb_".$dimension, "desc");
+        $item = $item->children->order_by("thumb_".$dimension, "desc")->find();
+      } else {
+        $item = $item->children->find();
       }
-      $item->find();
+
+      if (!$item->loaded()) {
+        $item = null;
+      }
     }
 
     // By default we have a globally fixed thumbnail size In core code, we just return a fixed

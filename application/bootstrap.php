@@ -267,7 +267,7 @@ Route::set("site", "<controller>(/<action>(/<args>))",
     ));
 
 Route::set("item", "(<item_url>)",
-           array("item" => "[^A-Za-z0-9-_/]++")) // Ref: Model_Item::valid_slug, Route::REGEX_SEGMENT
+           array("item_url" => "[A-Za-z0-9-_/]++")) // Ref: Model_Item::valid_slug, Route::REGEX_SEGMENT
   ->filter(function($route, $params, $request) {
       // Note: at this point, item_url has matched against the regex above, so it's XSS-free.
       if (empty($params["item_url"])) {

@@ -129,7 +129,7 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $inner2 = Test::random_album($outer);
 
     $this->assertEquals(
-      $inner2->id, $outer->children->limit(1)->offset(1)->find_all()->current()->id);
+      $inner2->id, $outer->children->offset(1)->find()->id);
   }
 
   public function test_children_count() {

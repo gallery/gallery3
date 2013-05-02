@@ -184,7 +184,6 @@ class Gallery_Access {
       ->with("access_intent")
       ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
-      ->limit(1)
       ->find();
 
     if ($lock->loaded()) {
@@ -529,7 +528,6 @@ class Gallery_Access {
         ->with("access_intent")
         ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
-        ->limit(1)
         ->find();
       if ($tmp_item->loaded()) {
         $item = $tmp_item;
@@ -613,7 +611,6 @@ class Gallery_Access {
         ->where("right_ptr", ">", $item->right_ptr)
         ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
         ->order_by("left_ptr", "DESC")
-        ->limit(1)
         ->find();
       if ($tmp_item->loaded()) {
         $item = $tmp_item;

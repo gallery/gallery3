@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined("SYSPATH") or die("No direct script access.");
 
 class Formo_Core_Formo extends Formo_Innards {
 
@@ -670,13 +670,13 @@ class Formo_Core_Formo extends Formo_Innards {
 			$var = array_shift($parts);
 		}
 
-		$array_name = $this->_get_var_name($var);
-
-		if ($array_name === 'val')
+		if ($var === 'val')
 		{
 			// Special case for value
 			return $this->val();
 		}
+
+		$array_name = $this->_get_var_name($var);
 
 		if ($array_name === '_vars')
 		{
@@ -772,6 +772,13 @@ class Formo_Core_Formo extends Formo_Innards {
 		else
 		{
 			$this->_load($array);
+			foreach ($this->_fields as $field)
+			{
+				if ($field->driver('is_a_parent'))
+				{
+					$field->_load($array);
+				}
+			}
 		}
 
 		if (isset($benchmark))

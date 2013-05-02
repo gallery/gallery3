@@ -34,7 +34,7 @@ return array(
   // false or extension (ex: false looks for "template.php", "html" looks for "template.html.php")
   "template_ext"            => "html",
   // Namespace fields (name="parent_alias[field_alias]")
-  "namespaces"              => true,
+  "namespaces"              => false,
   // Driver used for ORM integration
   "orm_driver"              => "kohana",
   // Automatically add these rules to "input" fields for html5 compatability.
