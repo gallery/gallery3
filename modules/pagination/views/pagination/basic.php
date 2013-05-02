@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <p class="pagination">
 
 	<?php if ($first_page !== FALSE): ?>
