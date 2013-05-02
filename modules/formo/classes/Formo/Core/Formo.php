@@ -772,6 +772,13 @@ class Formo_Core_Formo extends Formo_Innards {
 		else
 		{
 			$this->_load($array);
+			foreach ($this->_fields as $field)
+			{
+				if ($field->driver('is_a_parent'))
+				{
+					$field->_load($array);
+				}
+			}
 		}
 
 		if (isset($benchmark))
