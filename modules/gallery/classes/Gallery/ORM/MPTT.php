@@ -157,9 +157,8 @@ class Gallery_ORM_MPTT extends ORM {
     switch ($column) {
     case "parents":
       return ORM::factory($this->_model_name)
-        ->where("left_ptr", "<=", $this->left_ptr)
-        ->where("right_ptr", ">=", $this->right_ptr)
-        ->where("id", "<>", $this->id)
+        ->where("left_ptr", "<", $this->left_ptr)
+        ->where("right_ptr", ">", $this->right_ptr)
         ->order_by("left_ptr", "ASC");
 
     case "children":
@@ -168,7 +167,7 @@ class Gallery_ORM_MPTT extends ORM {
     case "descendants":
       return ORM::factory($this->_model_name)
         ->where("left_ptr", ">", $this->left_ptr)
-        ->where("right_ptr", "<=", $this->right_ptr);
+        ->where("right_ptr", "<", $this->right_ptr);
     }
 
     return parent::get($column);
