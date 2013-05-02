@@ -45,6 +45,8 @@ class Item_Test extends Unittest_TestCase {
   public function test_convert_filename_to_title() {
     $this->assertEquals("foo", Item::convert_filename_to_title("foo.jpg"));
     $this->assertEquals("foo.bar", Item::convert_filename_to_title("foo.bar.jpg"));
+    $this->assertEquals("foo", Item::convert_filename_to_title("_ foo.jpg"));
+    $this->assertEquals("", Item::convert_filename_to_title("_.jpg"));
   }
 
   public function test_convert_filename_to_slug() {

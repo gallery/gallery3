@@ -61,7 +61,6 @@ class Gallery_Controller_Uploader extends Controller {
       try {
         $item = ORM::factory("Item");
         $item->name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
-        $item->title = Item::convert_filename_to_title($item->name);
         $item->parent_id = $album->id;
         $item->set_data_file($temp_filename);
 
