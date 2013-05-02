@@ -107,44 +107,108 @@ class Gallery_Controller_Albums extends Controller_Items {
     return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
   }
 
-  public function action_create() {
+  /**
+   * Add a new album.  This generates the form, validates it, adds the item, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
+  public function action_add() {
     $parent_id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-    $album = ORM::factory("Item", $parent_id);
-    Access::required("view", $album);
-    Access::required("add", $album);
+    $parent = ORM::factory("Item", $parent_id);
+    Access::required("view", $parent);
+    Access::required("add", $parent);
 
-    $form = $this->get_add_form($album);
-    try {
-      $valid = $form->validate();
-      $album = ORM::factory("Item");
-      $album->type = "album";
-      $album->parent_id = $parent_id;
-      $album->name = $form->add_album->inputs["name"]->value;
-      $album->title = $form->add_album->title->value ?
-        $form->add_album->title->value : $form->add_album->inputs["name"]->value;
-      $album->description = $form->add_album->description->value;
-      $album->slug = $form->add_album->slug->value;
-      $album->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->add_album->inputs[$key]->add_error($error, 1);
+    // Build the form.
+    $form = Formo::form()
+      ->add("item", "group");
+    $form->item
+      ->add("title", "input")
+      ->add("description", "textarea")
+      ->add("name", "input")
+      ->add("slug", "input")
+      ->add("type", "input|hidden", "album")
+      ->add("submit", "input|submit", t("Create"));
+
+    $form
+      ->attr("id", "g-add-album-form")
+      ->add_script_url("modules/gallery/assets/albums_form_add.js");
+    $form->item
+      ->set("label", t("Add an album to %album_title", array("album_title" => $parent->title)));
+    $form->item->title
+      ->set("label", t("Title"))
+      ->set("error_messages", array(
+          "not_empty" => t("You must provide a title"),
+          "max_length" => t("Your title is too long")
+        ));
+    $form->item->description
+      ->set("label", t("Description"));
+    $form->item->name
+      ->set("label", t("Directory name"))
+      ->set("error_messages", array(
+          "no_slashes" => t("The directory name can't contain a \"/\""),
+          "no_backslashes" => t("The directory name can't contain a \"\\\""),
+          "no_trailing_period" => t("The directory name can't end in \".\""),
+          "not_empty" => t("You must provide a directory name"),
+          "max_length" => t("Your directory name is too long"),
+          "name_conflict" => t("There is already a movie, photo or album with this name")
+        ));
+    $form->item->slug
+      ->set("label", t("Internet Address"))
+      ->set("error_messages", array(
+          "conflict" => t("There is already a movie, photo or album with this internet address"),
+          "reserved" => t("This address is reserved and can't be used."),
+          "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+          "not_empty" => t("You must provide an internet address"),
+          "max_length" => t("Your internet address is too long")
+        ));
+
+    Module::event("album_add_form", $parent, $form);
+
+    // Load and validate the form.
+    if ($form->load()->validate()) {
+      // Set a default title if none given.
+      // @todo: consider moving this to the item model.
+      if (!$form->item->title->val()) {
+        $form->item->title->val($form->item->name->val());
       }
-      $valid = false;
+
+      // Build the item model.
+      $item = ORM::factory("Item");
+      $item->parent_id = $parent_id;
+      $form->item->orm("save", array("model" => $item));
+
+      if ($form->item->get("orm_passed")) {
+        // Passed - run event, add to log, send message, then redirect to new item.
+        Module::event("album_add_form_completed", $item, $form);
+        GalleryLog::success("content", "Created an album",
+                            HTML::anchor("albums/$item->id", "view album"));
+        Message::success(t("Created album %album_title",
+                           array("album_title" => HTML::purify($item->title))));
+
+        if ($this->request->is_ajax()) {
+          $this->response->json(array("result" => "success", "location" => $item->url()));
+          return;
+        } else {
+          $this->redirect($item->abs_url());
+        }
+      } else {
+        // Failed - if ajax, return an error.
+        if ($this->request->is_ajax()) {
+          $this->response->json(array("result" => "error", "html" => (string)$form));
+          return;
+        }
+      }
     }
 
-    if ($valid) {
-      $album->save();
-      Module::event("album_add_form_completed", $album, $form);
-      GalleryLog::success("content", "Created an album",
-                   HTML::anchor("albums/$album->id", "view album"));
-      Message::success(t("Created album %album_title",
-                         array("album_title" => HTML::purify($album->title))));
-
-      $this->response->json(array("result" => "success", "location" => $album->url()));
+    // Nothing sent yet (ajax or non-ajax) or item validation failed (non-ajax).
+    if ($this->request->is_ajax()) {
+      // Send the basic form.
+      $this->response->body($form);
     } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
+      // Wrap the basic form in a theme.
+      $view_theme = new View_Theme("required/page.html", "other", "albums_add");
+      $view_theme->page_title = $form->item->get("label");
+      $view_theme->content = $form;
+      $this->response->body($view_theme);
     }
   }
 
@@ -195,15 +259,6 @@ class Gallery_Controller_Albums extends Controller_Items {
     }
   }
 
-  public function action_form_add() {
-    $album_id = $this->request->arg(0, "digit");
-    $album = ORM::factory("Item", $album_id);
-    Access::required("view", $album);
-    Access::required("add", $album);
-
-    $this->response->body($this->get_add_form($album));
-  }
-
   public function action_form_edit() {
     $album_id = $this->request->arg(0, "digit");
     $album = ORM::factory("Item", $album_id);
@@ -211,42 +266,6 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("edit", $album);
 
     $this->response->body($this->get_edit_form($album));
-  }
-
-  public function get_add_form($parent) {
-    $form = new Forge("albums/create/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
-    $group = $form->group("add_album")
-      ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
-    $group->input("title")->label(t("Title"))
-      ->error_messages("not_empty", t("You must provide a title"))
-      ->error_messages("max_length", t("Your title is too long"));
-    $group->textarea("description")->label(t("Description"));
-    $group->input("name")->label(t("Directory name"))
-      ->error_messages("contains_no_slashes", t("The directory name can't contain a \"/\""))
-      ->error_messages("contains_no_backslashes", t("The directory name can't contain a \"\\\""))
-      ->error_messages("no_trailing_period", t("The directory name can't end in \".\""))
-      ->error_messages("not_empty", t("You must provide a directory name"))
-      ->error_messages("max_length", t("Your directory name is too long"))
-      ->error_messages("name_conflict", t("There is already a movie, photo or album with this name"));
-    $group->input("slug")->label(t("Internet Address"))
-      ->error_messages(
-        "conflict", t("There is already a movie, photo or album with this internet address"))
-      ->error_messages(
-        "reserved", t("This address is reserved and can't be used."))
-      ->error_messages(
-        "not_url_safe",
-        t("The internet address should contain only letters, numbers, hyphens and underscores"))
-      ->error_messages("not_empty", t("You must provide an internet address"))
-      ->error_messages("max_length", t("Your internet address is too long"));
-    $group->hidden("type")->value("album");
-
-    Module::event("album_add_form", $parent, $form);
-
-    $group->submit("")->value(t("Create"));
-    $form->script("")
-      ->url(URL::abs_file("modules/gallery/assets/albums_form_add.js"));
-
-    return $form;
   }
 
   public function get_edit_form($parent) {
