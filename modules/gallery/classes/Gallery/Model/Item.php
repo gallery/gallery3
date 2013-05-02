@@ -34,6 +34,14 @@ class Gallery_Model_Item extends ORM_MPTT {
       $this->sort_order = "ASC";
       $this->owner_id = Identity::active_user()->id;
     }
+
+    // Set the default sorting, and use id as a tie breaker.
+    // @see ORM::_load_result(), which uses this if no other order_by calls have been applied
+    $this->_sorting[$this->sort_column] = $this->sort_order;
+    if ($this->sort_column != "id") {
+      // Use id as a tie breaker
+      $this->_sorting["id"] = "ASC";
+    }
   }
 
   /**
@@ -335,20 +343,6 @@ class Gallery_Model_Item extends ORM_MPTT {
       } catch (Exception $e) {
         return null;
       }
-
-    case "unordered_children":
-      return parent::get("children");
-
-    case "children":
-    case "descendants":
-      // By default use the album's sort order
-      $models = parent::get($column);
-      $models->order_by($this->sort_column, $this->sort_order);
-      // Use id as a tie breaker
-      if ($this->sort_column != "id") {
-        $models->order_by("id", "ASC");
-      }
-      return $models;
     }
 
     return parent::get($column);

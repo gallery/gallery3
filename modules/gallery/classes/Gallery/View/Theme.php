@@ -80,7 +80,7 @@ class Gallery_View_Theme extends View_Gallery {
     // album itself.
     if ($item && $item->is_album()) {
       if (isset($dimension)) {
-        $item = $item->unordered_children->order_by("thumb_".$dimension, "desc")->find();
+        $item = $item->children->order_by("thumb_".$dimension, "desc")->find();
       } else {
         $item = $item->children->find();
       }
