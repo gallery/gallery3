@@ -34,7 +34,7 @@ class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
    *
    * Note that this automatically flattens subgroups and discards fields that
    * don't exist in the model (e.g. "submit").
-	 *
+   *
    * @todo: consider recasting this as a patch to send upstream to the Formo project.
    */
   public static function save(array $array) {
