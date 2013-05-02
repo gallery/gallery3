@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined("SYSPATH") or die("No direct script access.");
 
 class Formo_Core_Driver_Select extends Formo_Driver {
 

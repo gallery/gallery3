@@ -129,7 +129,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("no_slashes", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("no_slashes", $errors["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -148,7 +149,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("no_backslashes", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("no_backslashes", $errors["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -167,7 +169,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("no_trailing_period", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("no_trailing_period", $errors["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -186,7 +189,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("no_slashes", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("no_slashes", $errors["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -205,7 +209,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("no_backslashes", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("no_backslashes", $errors["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -224,7 +229,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->check();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("no_trailing_period", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("no_trailing_period", $errors["name"][0]);
     }
     // Should be corrected on save.
     $item->save();
@@ -320,7 +326,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $album->save();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("invalid", $e->errors()["parent_id"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("invalid", $errors["parent_id"][0]);
     }
   }
 
@@ -354,7 +361,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $album1->save();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("invalid", $e->errors()["parent_id"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("invalid", $errors["parent_id"][0]);
     }
   }
 
@@ -374,14 +382,15 @@ class Item_Model_Test extends Unittest_Testcase {
       $item->save();
       $this->assertFalse(true, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("max_length", $e->errors()["description"][0]);
-      $this->assertEquals("not_empty", $e->errors()["name"][0]);
-      $this->assertEquals("not_empty", $e->errors()["title"][0]);
-      $this->assertEquals("invalid_item", $e->errors()["album_cover_item_id"][0]);
-      $this->assertEquals("invalid", $e->errors()["parent_id"][0]);
-      $this->assertEquals("invalid", $e->errors()["sort_column"][0]);
-      $this->assertEquals("invalid", $e->errors()["sort_order"][0]);
-      $this->assertEquals("invalid", $e->errors()["type"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("max_length", $errors["description"][0]);
+      $this->assertEquals("not_empty", $errors["name"][0]);
+      $this->assertEquals("not_empty", $errors["title"][0]);
+      $this->assertEquals("invalid_item", $errors["album_cover_item_id"][0]);
+      $this->assertEquals("invalid", $errors["parent_id"][0]);
+      $this->assertEquals("invalid", $errors["sort_column"][0]);
+      $this->assertEquals("invalid", $errors["sort_order"][0]);
+      $this->assertEquals("invalid", $errors["type"][0]);
     }
   }
 
@@ -392,7 +401,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $album->save();
       $this->assertTrue(false, "Shouldn't be able to save");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("not_url_safe", $e->errors()["slug"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("not_url_safe", $errors["slug"][0]);
     }
 
     // This should work
@@ -440,7 +450,8 @@ class Item_Model_Test extends Unittest_Testcase {
       Item::root()->delete();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("cant_delete_root_album", $e->errors()["id"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("cant_delete_root_album", $errors["id"][0]);
     }
   }
 
@@ -528,7 +539,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $photo->save();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("invalid_data_file", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("invalid_data_file", $errors["name"][0]);
     }
   }
 
@@ -541,7 +553,8 @@ class Item_Model_Test extends Unittest_Testcase {
       $photo->save();
       $this->assertTrue(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals("invalid_data_file", $e->errors()["name"][0]);
+      $errors = $e->errors();
+      $this->assertEquals("invalid_data_file", $errors["name"][0]);
     }
   }
 

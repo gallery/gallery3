@@ -166,7 +166,7 @@ class Gallery_Hook_GalleryEvent {
         Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
       } else {
         // Choose the first viewable child as the new cover.
-        if ($child = $parent->children->viewable()->limit(1)->find_all()->current()) {
+        if ($child = $parent->children->viewable()->find()) {
           Item::make_album_cover($child);
         }
       }
@@ -194,7 +194,7 @@ class Gallery_Hook_GalleryEvent {
     foreach (array_keys(Session::instance()->get("batch_missing_album_cover", array())) as $id) {
       $item = ORM::factory("Item", $id);
       if ($item->loaded() && !$item->album_cover_item_id) {
-        if ($child = $item->children->limit(1)->find_all()->current()) {
+        if ($child = $item->children->find()) {
           Item::make_album_cover($child);
         }
       }
@@ -309,7 +309,7 @@ class Gallery_Hook_GalleryEvent {
               $add_menu->append(Menu::factory("dialog")
                                 ->id("add_album_item")
                                 ->label(t("Add an album"))
-                                ->url(URL::site("form/add/albums/$item->id?type=album")));
+                                ->url(URL::site("albums/add/$item->id")));
             }
           } else {
             Message::warning(t("The album '%album_name' is not writable.",
@@ -576,7 +576,7 @@ class Gallery_Hook_GalleryEvent {
                    ->id("add_album")
                    ->label(t("Add an album"))
                    ->css_class("ui-icon-note")
-                   ->url(URL::site("form/add/albums/$item->id?type=album")))
+                   ->url(URL::site("albums/add/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("edit_permissions")
                    ->label(t("Edit permissions"))

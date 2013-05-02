@@ -34,6 +34,8 @@ class Gallery_Model_Item extends ORM_MPTT {
       $this->sort_order = "ASC";
       $this->owner_id = Identity::active_user()->id;
     }
+
+    $this->_set_default_sorting();
   }
 
   /**
@@ -335,23 +337,22 @@ class Gallery_Model_Item extends ORM_MPTT {
       } catch (Exception $e) {
         return null;
       }
-
-    case "unordered_children":
-      return parent::get("children");
-
-    case "children":
-    case "descendants":
-      // By default use the album's sort order
-      $models = parent::get($column);
-      $models->order_by($this->sort_column, $this->sort_order);
-      // Use id as a tie breaker
-      if ($this->sort_column != "id") {
-        $models->order_by("id", "ASC");
-      }
-      return $models;
     }
 
     return parent::get($column);
+  }
+
+  /**
+   * Set (or reset) the item's default sorting order.  This is used in __construct() and save().
+   * @see ORM::_load_result(), which uses this if no other order_by calls have been applied
+   */
+  protected function _set_default_sorting() {
+    $this->_sorting = array();
+    $this->_sorting[$this->sort_column] = $this->sort_order;
+    // Use id as a tie breaker
+    if ($this->sort_column != "id") {
+      $this->_sorting["id"] = "ASC";
+    }
   }
 
   /**
@@ -365,7 +366,10 @@ class Gallery_Model_Item extends ORM_MPTT {
 
     if ($significant_changes || isset($this->data_file)) {
       $this->updated = time();
-      return parent::save();
+      parent::save();
+      // Now that the sort_order and sort_column are validated, reset the default sorting order.
+      $this->_set_default_sorting();
+      return $this;
     } else {
       // Insignificant changes only.  Don't fire events or do any special checking to try to keep
       // this lightweight.  This skips our local update() and create() functions.
@@ -1028,21 +1032,16 @@ class Gallery_Model_Item extends ORM_MPTT {
         $v->error("parent_id", "invalid");
       }
     } else {
-      $query = DB::select()
-        ->from("items")
-        ->where("id", "=", $this->parent_id)
-        ->where("type", "=", "album");
+      $parent = $this->parent;
+      if (!$parent->loaded() || !$parent->is_album()) {
+        $v->error("parent_id", "invalid");
+      }
 
       // If this is an existing item, make sure the new parent is not part of our hierarchy
       if ($this->loaded()) {
-        $query->and_where_open()
-          ->where("left_ptr", "<", $this->left_ptr)
-          ->or_where("right_ptr", ">", $this->right_ptr)
-          ->and_where_close();
-      }
-
-      if ($query->execute()->count() != 1) {
-        $v->error("parent_id", "invalid");
+        if ($this->descendants->where("id", "=", $parent->id)->find()->loaded()) {
+          $v->error("parent_id", "invalid");
+        }
       }
     }
   }
