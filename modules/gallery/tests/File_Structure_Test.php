@@ -101,21 +101,22 @@ class File_Structure_Test extends Unittest_Testcase {
   }
 
   protected function _check_php_preamble($path, &$errors) {
+    $file = file($path);
     if ($this->_is_var_logs($path)) {
       // Similar to view files
-      $actual = array(file($path)[0]);
+      $actual = array($file[0]);
       $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\"); ?>\n");
     } else if ($this->_is_transparent_extension_class($path)) {
       // Similar to the one-line preamble, except that we don't close the PHP tag
       // because more code follows.  Put this first because transparent extensions
       // exist inside Kohana modules as well.
-      $actual = array(file($path)[0]);
+      $actual = array($file[0]);
       $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
     } else if ($this->_is_kohana_path($path) ||
                $this->_is_vendor_path($path) ||
                $this->_is_var_path($path)) {
       // In all of these cases we only care about the first line.
-      $actual = array(file($path)[0]);
+      $actual = array($file[0]);
       $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
     } else {
       // For everything else we care about the entire copyright
