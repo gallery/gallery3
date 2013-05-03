@@ -299,7 +299,7 @@ class Gallery_ORM extends Kohana_ORM {
    *
    * @see ORM::_load_result(), which uses $_sorting if no other order_by calls have been applied.
    * @see ORM_MPTT::get(), which uses this to set the sorting order of children and descendants.
-   * @see Model_Item::_set_sorting(), which uses this to set the sorting order based on the DB row.
+   * @see Model_Item::_set_default_sorting(), which uses this to set the sorting order for items.
    *
    * @param  mixed   $column    (optional, string or array)
    * @param  string  $direction (optional)

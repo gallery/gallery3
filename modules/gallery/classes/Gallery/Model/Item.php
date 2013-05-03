@@ -35,7 +35,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       $this->owner_id = Identity::active_user()->id;
     }
 
-    $this->_set_sorting();
+    $this->_set_default_sorting();
   }
 
   /**
@@ -348,7 +348,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * @see ORM::sorting(), which sets/gets $_sorting
    * @see ORM_MPTT::get(), which uses this to set the sorting order of children and descendants.
    */
-  protected function _set_sorting() {
+  protected function _set_default_sorting() {
     $sorting[$this->sort_column] = $this->sort_order;
     // Use id as a tie breaker
     if ($this->sort_column != "id") {
@@ -370,7 +370,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       $this->updated = time();
       parent::save();
       // Now that the sort_order and sort_column are validated, reset the default sorting order.
-      $this->_set_sorting();
+      $this->_set_default_sorting();
       return $this;
     } else {
       // Insignificant changes only.  Don't fire events or do any special checking to try to keep
