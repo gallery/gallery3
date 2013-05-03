@@ -168,12 +168,14 @@ class Gallery_ORM_MPTT extends ORM {
 
     case "children":
       return ORM::factory($this->_model_name)
-        ->where("parent_id", "=", $this->id);
+        ->where("parent_id", "=", $this->id)
+        ->sorting($this->sorting());
 
     case "descendants":
       return ORM::factory($this->_model_name)
         ->where("left_ptr", ">", $this->left_ptr)
-        ->where("right_ptr", "<", $this->right_ptr);
+        ->where("right_ptr", "<", $this->right_ptr)
+        ->sorting($this->sorting());
     }
 
     return parent::get($column);

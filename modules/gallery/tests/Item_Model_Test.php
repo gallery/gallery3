@@ -811,7 +811,7 @@ class Item_Model_Test extends Unittest_TestCase {
     $album->save();
 
     $album->children->find_all();
-    $this->assertRegexp("/ORDER BY `name` DESC, `id` ASC/", Database::instance()->last_query);
+    $this->assertRegexp("/ORDER BY `item`.`name` DESC, `item`.`id` ASC/", Database::instance()->last_query);
   }
 
   public function test_descendants_default_to_albums_sort_order() {
@@ -821,12 +821,6 @@ class Item_Model_Test extends Unittest_TestCase {
     $album->save();
 
     $album->descendants->find_all();
-    $this->assertRegexp("/ORDER BY `view_count` DESC, `id` ASC/", Database::instance()->last_query);
-  }
-
-  public function test_unordered_children() {
-    $album = Test::random_album();
-    $album->unordered_children->find_all();
-    $this->assertNotRegexp("/ORDER BY/", Database::instance()->last_query);
+    $this->assertRegexp("/ORDER BY `item`.`view_count` DESC, `item`.`id` ASC/", Database::instance()->last_query);
   }
 }
