@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Sendmail_Test extends Unittest_Testcase {
+class Sendmail_Test extends Unittest_TestCase {
   public function setup() {
     parent::setup();
     Module::set_var("gallery", "email_from", "from@gallery3.com");

@@ -22,7 +22,7 @@
  * This test case operates under the assumption that Hook_GalleryInstaller::install() is called by the
  * test controller before it starts.
  */
-class Gallery_Installer_Test extends Unittest_Testcase {
+class Gallery_Installer_Test extends Unittest_TestCase {
   public function test_install_creates_dirs() {
     $this->assertTrue(file_exists(VARPATH . "albums"));
     $this->assertTrue(file_exists(VARPATH . "resizes"));
