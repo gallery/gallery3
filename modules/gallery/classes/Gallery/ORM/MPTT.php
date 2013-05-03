@@ -162,7 +162,8 @@ class Gallery_ORM_MPTT extends ORM {
         ->order_by("left_ptr", "ASC");
 
     case "children":
-      return ORM::factory("Item")->where("parent_id", "=", $this->id);
+      return ORM::factory($this->_model_name)
+        ->where("parent_id", "=", $this->id);
 
     case "descendants":
       return ORM::factory($this->_model_name)
