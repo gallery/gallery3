@@ -34,7 +34,7 @@ class Gallery_Model_Task extends ORM {
   }
 
   public function save(Validation $validation=null) {
-    if (!$this->changed()) {
+    if ($this->changed()) {
       $this->updated = time();
     }
     return parent::save($validation);
