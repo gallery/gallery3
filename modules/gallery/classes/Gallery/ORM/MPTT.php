@@ -132,12 +132,17 @@ class Gallery_ORM_MPTT extends ORM {
   }
 
   /**
-   * Return true if the target is descendant of this item.
-   * @param ORM $target
+   * Return true if the target is descendant of this item.  If $include_self is true (default),
+   * then this will return true if the target is the object itself.
+   *
+   * @param  ORM      $target
+   * @param  boolean  $include_self (optional - default true)
    * @return boolean
    */
-  public function contains($target) {
-    return ($this->left_ptr <= $target->left_ptr && $this->right_ptr >= $target->right_ptr);
+  public function contains($target, $include_self=true) {
+    return $include_self ?
+      ($this->left_ptr <= $target->left_ptr && $this->right_ptr >= $target->right_ptr) :
+      ($this->left_ptr <  $target->left_ptr && $this->right_ptr >  $target->right_ptr);
   }
 
   /**
