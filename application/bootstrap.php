@@ -219,23 +219,6 @@ Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))",
       return $params;
     });
 
-Route::set("admin_forms", "form/<type>/<directory>/<controller>(/<args>)",
-           array("type" => "(edit|add)", "directory" => "admin", "args" => "[^.,;?\\n]++"))
-  ->filter(function($route, $params, $request) {
-      $params["controller"] = str_replace("_", "", $params["controller"]);
-      $params["action"] = "form_" . $params["type"];
-      $params["is_admin"] = true;
-      return $params;
-    });
-
-Route::set("site_forms", "form/<type>/<controller>(/<args>)",
-           array("type" => "(edit|add)", "args" => "[^.,;?\\n]++"))
-  ->filter(function($route, $params, $request) {
-      $params["controller"] = str_replace("_", "", $params["controller"]);
-      $params["action"] = "form_" . $params["type"];
-      return $params;
-    });
-
 Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))",
            array("directory" => "admin", "args" => "[^.,;?\\n]++"))
   ->filter(function($route, $params, $request) {
