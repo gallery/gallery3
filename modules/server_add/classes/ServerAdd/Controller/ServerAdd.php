@@ -134,13 +134,13 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
    * them one at a time.
    */
   public static function add($task) {
-    $mode = $task->get("mode", "init");
+    $mode = $task->get_data("mode", "init");
     $start = microtime(true);
 
     switch ($mode) {
     case "init":
-      $task->set("mode", "build-file-list");
-      $task->set("dirs_scanned", 0);
+      $task->set_data("mode", "build-file-list");
+      $task->set_data("dirs_scanned", 0);
       $task->percent_complete = 0;
       $task->status = t("Starting up");
       Batch::start();
@@ -151,7 +151,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       // Don't use an iterator here because we can't get enough control over it when we're dealing
       // with a deep hierarchy and we don't want to go over our time quota.
       $paths = unserialize(Module::get_var("server_add", "authorized_paths"));
-      $dirs_scanned = $task->get("dirs_scanned");
+      $dirs_scanned = $task->get_data("dirs_scanned");
       while (microtime(true) - $start < 0.5) {
         // Process every directory that doesn't yet have a parent id, these are the
         // paths that we're importing.
@@ -194,13 +194,13 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       // We have no idea how long this can take because we have no idea how deep the tree
       // hierarchy rabbit hole goes.  Leave ourselves room here for 100 iterations and don't go
       // over 10% in percent_complete.
-      $task->set("dirs_scanned", $dirs_scanned);
+      $task->set_data("dirs_scanned", $dirs_scanned);
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
       $task->status = t2("Scanned one directory", "Scanned %count directories", $dirs_scanned);
 
       if (!$entry->loaded()) {
-        $task->set("mode", "add-files");
-        $task->set(
+        $task->set_data("mode", "add-files");
+        $task->set_data(
           "total_files",
           ORM::factory("ServerAddEntry")->where("task_id", "=", $task->id)->count_all());
         $task->percent_complete = 10;
@@ -208,8 +208,8 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
       break;
 
     case "add-files": // 10% to 100%
-      $completed_files = $task->get("completed_files", 0);
-      $total_files = $task->get("total_files");
+      $completed_files = $task->get_data("completed_files", 0);
+      $total_files = $task->get_data("total_files");
 
       // Ordering by id ensures that we add them in the order that we created the entries, which
       // will create albums first.  Ignore entries which already have an Model_Item attached,
@@ -222,7 +222,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         ->find_all();
       if ($entries->count() == 0) {
         // Out of entries, we're done.
-        $task->set("mode", "done");
+        $task->set_data("mode", "done");
       }
 
       $owner_id = Identity::active_user()->id;
@@ -235,7 +235,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         // specified, then this belongs as a child of the current item.
         $parent_entry = ORM::factory("ServerAddEntry", $entry->parent_id);
         if (!$parent_entry->loaded()) {
-          $parent = ORM::factory("Item", $task->get("item_id"));
+          $parent = ORM::factory("Item", $task->get_data("item_id"));
         } else {
           $parent = ORM::factory("Item", $parent_entry->item_id);
         }
@@ -289,7 +289,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         $completed_files++;
         $entry->save();
       }
-      $task->set("completed_files", $completed_files);
+      $task->set_data("completed_files", $completed_files);
       $task->status = t("Adding photos / albums (%completed of %total)",
                         array("completed" => $completed_files,
                               "total" => $total_files));
@@ -306,7 +306,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
         ->execute();
       Message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos / albums",
-                       $task->get("completed_files")));
+                       $task->get_data("completed_files")));
     }
   }
 }
