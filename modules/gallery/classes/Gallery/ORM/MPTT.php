@@ -58,7 +58,7 @@ class Gallery_ORM_MPTT extends ORM {
     }
 
     $this->lock();
-    $parent = ORM::factory("Item", $this->parent_id);
+    $parent = ORM::factory($this->_model_name, $this->parent_id);
 
     try {
       // Make a hole in the parent for this new item
@@ -183,7 +183,7 @@ class Gallery_ORM_MPTT extends ORM {
    * Move this item to the specified target.
    *
    * @chainable
-   * @param   Model_Item $target Target node
+   * @param   ORM_MPTT $target Target node
    * @return  ORM_MPTT
    */
   protected function move_to($target) {
