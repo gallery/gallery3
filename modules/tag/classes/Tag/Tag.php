@@ -43,6 +43,8 @@ class Tag_Tag {
       $tag->add("items", $item);
       $tag->save();
     }
+
+    return $tag;
   }
 
   /**
