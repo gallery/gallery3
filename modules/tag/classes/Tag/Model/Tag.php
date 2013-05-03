@@ -75,8 +75,10 @@ class Tag_Model_Tag extends ORM {
     if ($duplicate_tag->loaded()) {
       // If so, tag its items with this tag so as to merge it
       foreach ($duplicate_tag->items->find_all() as $item) {
-        // Add the item to the tag without adding it to changed_through.
-        $this->add("items", $item, false);
+        if (!$this->has("items", $item)) {
+          // Add the item to the tag without adding it to changed_through.
+          $this->add("items", $item, false);
+        }
       }
 
       // ... and remove the duplicate tag

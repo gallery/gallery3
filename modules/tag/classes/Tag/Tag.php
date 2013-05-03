@@ -30,7 +30,7 @@ class Tag_Tag {
    */
   static function add($item, $tag_name) {
     if (empty($tag_name)) {
-      throw new exception("@todo MISSING_TAG_NAME");
+      throw new Exception("@todo MISSING_TAG_NAME");
     }
 
     $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
@@ -39,7 +39,10 @@ class Tag_Tag {
       $tag->save();
     }
 
-    return $tag->add("items", $item);
+    if (!$tag->has("items", $item)) {
+      $tag->add("items", $item);
+      $tag->save();
+    }
   }
 
   /**
