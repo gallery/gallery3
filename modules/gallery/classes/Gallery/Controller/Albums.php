@@ -183,8 +183,8 @@ class Gallery_Controller_Albums extends Controller_Items {
         // Passed - save item, run event, add to log, send message, then redirect to new item.
         $item->save();
         Module::event("album_add_form_completed", $item, $form);
-        GalleryLog::success("content", "Created an album",
-                            HTML::anchor("albums/$item->id", "view album"));
+        GalleryLog::success("content", t("Created an album"),
+                            HTML::anchor($item->url(), t("view")));
         Message::success(t("Created album %album_title",
                            array("album_title" => HTML::purify($item->title))));
 
@@ -209,7 +209,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       $this->response->body($form);
     } else {
       // Wrap the basic form in a theme.
-      $view_theme = new View_Theme("required/page.html", "other", "album_add");
+      $view_theme = new View_Theme("required/page.html", "other", "item_add");
       $view_theme->page_title = $form->item->get("label");
       $view_theme->content = $form;
       $this->response->body($view_theme);
@@ -315,8 +315,8 @@ class Gallery_Controller_Albums extends Controller_Items {
         // Passed - save item, run event, add to log, send message, then redirect to new item.
         $item->save();
         //Module::event("item_edit_form_completed", $item, $form);  // @todo: make these work.
-        GalleryLog::success("content", "Updated album",
-                            HTML::anchor("albums/$item->id", "view album"));
+        GalleryLog::success("content", t("Updated album"),
+                            HTML::anchor($item->url(), t("view")));
         Message::success(t("Saved album %album_title",
                            array("album_title" => HTML::purify($item->title))));
 
@@ -347,7 +347,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       $this->response->body($form);
     } else {
       // Wrap the basic form in a theme.
-      $view_theme = new View_Theme("required/page.html", "other", "album_edit");
+      $view_theme = new View_Theme("required/page.html", "other", "item_edit");
       $view_theme->page_title = $form->item->get("label");
       $view_theme->content = $form;
       $this->response->body($view_theme);
