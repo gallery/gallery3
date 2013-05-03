@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Movie_Helper_Test extends Unittest_Testcase {
+class Movie_Helper_Test extends Unittest_TestCase {
   public function test_seconds_to_hhmmssdd() {
     $times = array("00:00:00.50" => 0.5,
                    "00:00:06.00" => 6,

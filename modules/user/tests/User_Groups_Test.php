@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class User_Groups_Test extends Unittest_Testcase {
+class User_Groups_Test extends Unittest_TestCase {
   public function test_add_user_to_group() {
     $user = Test::random_user();
     $group = Test::random_group();

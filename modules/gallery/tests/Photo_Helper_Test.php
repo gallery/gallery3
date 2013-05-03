@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photo_Helper_Test extends Unittest_Testcase {
+class Photo_Helper_Test extends Unittest_TestCase {
   public function test_get_file_metadata() {
     $photo = Test::random_photo();
     $this->assertEquals(array(1024, 768, "image/jpeg", "jpg"),

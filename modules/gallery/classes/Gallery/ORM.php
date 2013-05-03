@@ -288,4 +288,32 @@ class Gallery_ORM extends Kohana_ORM {
     }
     return parent::reload_columns($force);
   }
+
+  /**
+   * Allow us to get/set ORM::$_sorting, the model's default sorting order.  We add this since
+   * there's no built-in API to access it externally.  This can be used as a getter or setter:
+   *   $orm->sorting();                     // get sorting as array
+   *   $orm->sorting($array);               // set sorting to $array
+   *   $orm->sorting($column, $direction);  // set sorting to array($column => $direction)
+   *   $orm->sorting(array());              // clear sorting
+   *
+   * @see ORM::_load_result(), which uses $_sorting if no other order_by calls have been applied.
+   * @see ORM_MPTT::get(), which uses this to set the sorting order of children and descendants.
+   * @see Model_Item::_set_sorting(), which uses this to set the sorting order based on the DB row.
+   *
+   * @param  mixed   $column    (optional, string or array)
+   * @param  string  $direction (optional)
+   * @return mixed   sorting array if getting, object if setting
+   */
+  public function sorting($column=null, $direction=null) {
+    if (isset($column)) {
+      if (is_array($column)) {
+        $this->_sorting = $column;
+      } else {
+        $this->_sorting = array($column => $direction);
+      }
+      return $this;
+    }
+    return empty($this->_sorting) ? array() : $this->_sorting;
+  }
 }

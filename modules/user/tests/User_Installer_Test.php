@@ -22,7 +22,7 @@
  * This test case operates under the assumption that Hook_UserInstaller::install() is called by the
  * test controller before it starts.
  */
-class User_Installer_Test extends Unittest_Testcase {
+class User_Installer_Test extends Unittest_TestCase {
   public function test_install_creates_admin_user() {
     $user = ORM::factory("User", 1);
     $this->assertEquals("guest", $user->name);

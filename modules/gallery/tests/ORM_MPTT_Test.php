@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class ORM_MPTT_Test extends Unittest_Testcase {
+class ORM_MPTT_Test extends Unittest_TestCase {
 
   public function test_add_to_parent() {
     $album = Test::random_album();

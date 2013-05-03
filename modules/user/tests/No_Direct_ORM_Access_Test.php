@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class No_Direct_ORM_Access_Test extends Unittest_Testcase {
+class No_Direct_ORM_Access_Test extends Unittest_TestCase {
   public function test_no_access_to_users_table() {
     $dir = new UserModuleFilterIterator(
       new PhpCodeFilterIterator(

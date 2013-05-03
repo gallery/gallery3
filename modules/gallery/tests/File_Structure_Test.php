@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class File_Structure_Test extends Unittest_Testcase {
+class File_Structure_Test extends Unittest_TestCase {
   public function test_no_trailing_closing_php_tag() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
@@ -291,7 +291,7 @@ class File_Structure_Test extends Unittest_Testcase {
             continue;
           }
 
-          if (preg_match("/class.*extends.*Unittest_Testcase/", $line)) {
+          if (preg_match("/class.*extends.*Unittest_TestCase/", $line)) {
             $scan = 1;
           } else if (preg_match("/class.*extends/", $line)) {
             $scan = 0;

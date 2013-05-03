@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Helper_Test extends Unittest_Testcase {
+class Comment_Helper_Test extends Unittest_TestCase {
   protected $_client_ip;
   protected $_user_agent;
   protected $_save;

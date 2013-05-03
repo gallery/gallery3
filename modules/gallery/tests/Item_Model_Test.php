@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Model_Test extends Unittest_Testcase {
+class Item_Model_Test extends Unittest_TestCase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
   }
@@ -811,7 +811,7 @@ class Item_Model_Test extends Unittest_Testcase {
     $album->save();
 
     $album->children->find_all();
-    $this->assertRegexp("/ORDER BY `name` DESC, `id` ASC/", Database::instance()->last_query);
+    $this->assertRegexp("/ORDER BY `item`.`name` DESC, `item`.`id` ASC/", Database::instance()->last_query);
   }
 
   public function test_descendants_default_to_albums_sort_order() {
@@ -821,12 +821,6 @@ class Item_Model_Test extends Unittest_Testcase {
     $album->save();
 
     $album->descendants->find_all();
-    $this->assertRegexp("/ORDER BY `view_count` DESC, `id` ASC/", Database::instance()->last_query);
-  }
-
-  public function test_unordered_children() {
-    $album = Test::random_album();
-    $album->unordered_children->find_all();
-    $this->assertNotRegexp("/ORDER BY/", Database::instance()->last_query);
+    $this->assertRegexp("/ORDER BY `item`.`view_count` DESC, `item`.`id` ASC/", Database::instance()->last_query);
   }
 }
