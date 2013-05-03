@@ -19,40 +19,43 @@
  */
 class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function action_index() {
-    $view = new View_Admin("required/admin.html");
-    $view->page_title = t("Add from server");
-    $view->content = new View("admin/server_add.html");
-    $view->content->form = $this->_get_admin_form();
+    $form = Formo::form()
+      ->add("add_path", "group");
+    $form->add_path
+      ->add("path", "input")
+      ->add("add", "input|submit", t("Add Path"));
+
+    $form
+      ->attr("id", "g-server-add-admin-form")
+      ->add_class("g-short-form");
+    $form->add_path
+      ->set("label", t("Add Path"));
+    $form->add_path->path
+      ->attr("id", "g-path")
+      ->set("label", t("Path"))
+      ->add_rule("Controller_Admin_ServerAdd::validate_readable_path", array(":value"),
+                 t("This directory is not readable by the webserver"))
+      ->add_rule("Controller_Admin_ServerAdd::validate_non_symlink_path", array(":value"),
+                 t("Symbolic links are not allowed"));
+
     $paths = unserialize(Module::get_var("server_add", "authorized_paths", "a:0:{}"));
-    $view->content->paths = array_keys($paths);
 
-    $this->response->body($view);
-  }
+    if ($form->load()->validate()) {
+      $path = html_entity_decode($form->add_path->path->val());
+      $paths[$path] = 1;
+      Module::set_var("server_add", "authorized_paths", serialize($paths));
 
-  public function action_add_path() {
-    Access::verify_csrf();
-
-    $form = $this->_get_admin_form();
-    $paths = unserialize(Module::get_var("server_add", "authorized_paths", "a:0:{}"));
-    if ($form->validate()) {
-      $path = html_entity_decode($form->add_path->path->value);
-      if (is_link($path)) {
-        $form->add_path->path->add_error("is_symlink", 1);
-      } else if (!is_readable($path)) {
-        $form->add_path->path->add_error("not_readable", 1);
-      } else {
-        $paths[$path] = 1;
-        Module::set_var("server_add", "authorized_paths", serialize($paths));
-        Message::success(t("Added path %path", array("path" => $path)));
-        ServerAdd::check_config($paths);
-        $this->redirect("admin/server_add");
-      }
+      Message::success(t("Added path %path", array("path" => $path)));
+      ServerAdd::check_config($paths);
+      $this->redirect("admin/server_add");
     }
 
     $view = new View_Admin("required/admin.html");
+    $view->page_title = t("Add from server");
     $view->content = new View("admin/server_add.html");
     $view->content->form = $form;
     $view->content->paths = array_keys($paths);
+
     $this->response->body($view);
   }
 
@@ -83,15 +86,11 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
     $this->response->ajax(json_encode($directories));
   }
 
-  protected function _get_admin_form() {
-    $form = new Forge("admin/server_add/add_path", "", "post",
-                      array("id" => "g-server-add-admin-form", "class" => "g-short-form"));
-    $add_path = $form->group("add_path");
-    $add_path->input("path")->label(t("Path"))->rules("required")->id("g-path")
-      ->error_messages("not_readable", t("This directory is not readable by the webserver"))
-      ->error_messages("is_symlink", t("Symbolic links are not allowed"));
-    $add_path->submit("add")->value(t("Add Path"));
+  public static function validate_readable_path($path) {
+    return is_readable(html_entity_decode($path));
+  }
 
-    return $form;
+  public static function validate_non_symlink_path($path) {
+    return !is_link(html_entity_decode($path));
   }
 }
