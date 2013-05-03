@@ -22,13 +22,12 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
    * Show a list of all available, running and finished tasks.
    */
   public function action_index() {
-    $query = DB::update("tasks")
+    $stalled_count = DB::update("tasks")
       ->set(array("state" => "stalled"))
       ->where("done", "=", 0)
       ->where("state", "<>", "stalled")
-      ->where(DB::expr("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
+      ->where("updated", "<", DB::expr("UNIX_TIMESTAMP() - 15"))
       ->execute();
-    $stalled_count = $query->count();
     if ($stalled_count) {
       GalleryLog::warning("tasks",
                    t2("One task is stalled",
