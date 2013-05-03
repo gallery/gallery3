@@ -122,8 +122,10 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       PHPUnit_TextUI_Command::main();
     } catch (ORM_Validation_Exception $e) {
       $errors = "";
-      foreach ($e->validation->errors() as $field => $msg) {
-        $errors .= "$field: $msg\n";
+      foreach ($e->errors() as $field => $msgs) {
+        foreach ($msgs as $msg) {
+          $errors .= "$field: $msg\n";
+        }
       }
       print("Exception: {$e->getMessage()}\n" .
             $e->getFile() . ":" . $e->getLine() . "\n" .

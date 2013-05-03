@@ -77,8 +77,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->add_user->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->add_user->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }
@@ -163,8 +163,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->edit_user->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->edit_user->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }
@@ -229,8 +229,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $group->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->add_group->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->add_group->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }
@@ -298,8 +298,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
       $group->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->edit_group->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->edit_group->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }

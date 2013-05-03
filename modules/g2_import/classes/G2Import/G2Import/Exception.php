@@ -28,7 +28,7 @@ class G2Import_G2Import_Exception extends Exception {
       $message .= "\n" . implode("\n", $additional_messages);
     }
     if ($previous && $previous instanceof ORM_Validation_Exception) {
-      $message .= "\nORM validation errors: " . print_r($previous->validation->errors(), true);
+      $message .= "\nORM validation errors: " . print_r($previous->errors(), true);
     }
     if ($previous) {
       $message .= "\n" . (string) $previous;
