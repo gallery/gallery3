@@ -291,7 +291,7 @@ class File_Structure_Test extends Unittest_Testcase {
             continue;
           }
 
-          if (preg_match("/class.*extends.*Unittest_Testcase/", $line)) {
+          if (preg_match("/class.*extends.*Unittest_TestCase/", $line)) {
             $scan = 1;
           } else if (preg_match("/class.*extends/", $line)) {
             $scan = 0;
