@@ -81,16 +81,16 @@ class Gallery_Hook_GalleryTask {
         ->select(DB::expr("RAND() as r"))
         ->order_by("r", "ASC")
         ->execute();
-      $total_count = $task->get("total_count", $result->count());
-      $mode = $task->get("mode", "init");
+      $total_count = $task->get_data("total_count", $result->count());
+      $mode = $task->get_data("mode", "init");
       if ($mode == "init") {
-        $task->set("total_count", $total_count);
-        $task->set("mode", "process");
+        $task->set_data("total_count", $total_count);
+        $task->set_data("mode", "process");
         Batch::start();
       }
 
-      $completed = $task->get("completed", 0);
-      $ignored = $task->get("ignored", array());
+      $completed = $task->get_data("completed", 0);
+      $ignored = $task->get_data("ignored", array());
 
       $i = 0;
 
@@ -137,8 +137,8 @@ class Gallery_Hook_GalleryTask {
         $task->percent_complete = 100;
       }
 
-      $task->set("completed", $completed);
-      $task->set("ignored", $ignored);
+      $task->set_data("completed", $completed);
+      $task->set_data("ignored", $ignored);
       if ($task->percent_complete == 100) {
         $task->done = true;
         $task->state = "success";
@@ -167,12 +167,12 @@ class Gallery_Hook_GalleryTask {
       }
       $i = 0;
 
-      switch ($task->get("mode", "init")) {
+      switch ($task->get_data("mode", "init")) {
       case "init":  // 0%
         $dirs = array("gallery", "modules", "themes", "installer");
         $files = $cache = array();
         $num_fetched = 0;
-        $task->set("mode", "find_files");
+        $task->set_data("mode", "find_files");
         $task->status = t("Finding files");
         break;
 
@@ -196,8 +196,8 @@ class Gallery_Hook_GalleryTask {
                            "Finding files: found %count files", count($files));
 
         if (!$dirs) {
-          $task->set("mode", "scan_files");
-          $task->set("total_files", count($files));
+          $task->set_data("mode", "scan_files");
+          $task->set_data("total_files", count($files));
           $task->status = t("Scanning files");
           $task->percent_complete = 10;
         }
@@ -217,13 +217,13 @@ class Gallery_Hook_GalleryTask {
           }
         }
 
-        $total_files = $task->get("total_files");
+        $total_files = $task->get_data("total_files");
         $task->status = t2("Scanning files: scanned 1 file",
                            "Scanning files: scanned %count files", $total_files - count($files));
 
         $task->percent_complete = 10 + 60 * ($total_files - count($files)) / $total_files;
         if (empty($files)) {
-          $task->set("mode", "fetch_updates");
+          $task->set_data("mode", "fetch_updates");
           $task->status = t("Fetching updates");
           $task->percent_complete = 70;
         }
@@ -278,7 +278,7 @@ class Gallery_Hook_GalleryTask {
       $current = 0;
       $total = 0;
 
-      switch ($task->get("mode", "init")) {
+      switch ($task->get_data("mode", "init")) {
       case "init":
         $threshold = time() - 1209600; // older than 2 weeks
         // Note that this code is roughly duplicated in Hook_GalleryEvent::gallery_shutdown
@@ -301,9 +301,9 @@ class Gallery_Hook_GalleryTask {
             }
           }
         }
-        $task->set("mode", "delete_files");
-        $task->set("current", 0);
-        $task->set("total", count($files));
+        $task->set_data("mode", "delete_files");
+        $task->set_data("current", 0);
+        $task->set_data("total", count($files));
         Cache::instance()->set("file_cleanup_cache:{$task->id}", serialize($files),
                                null, array("file_cleanup"));
         if (count($files) == 0) {
@@ -311,14 +311,14 @@ class Gallery_Hook_GalleryTask {
         }
 
       case "delete_files":
-        $current = $task->get("current");
-        $total = $task->get("total");
+        $current = $task->get_data("current");
+        $total = $task->get_data("total");
         while ($current < $total && microtime(true) - $start < 1) {
           @unlink($files[$current]);
           $task->log(t("%file removed", array("file" => $files[$current++])));
         }
         $task->percent_complete = $current / $total * 100;
-        $task->set("current", $current);
+        $task->set_data("current", $current);
       }
 
       $task->status = t2("Removed: 1 file. Total: %total_count.",
@@ -345,7 +345,7 @@ class Gallery_Hook_GalleryTask {
   static function fix($task) {
     $start = microtime(true);
 
-    $total = $task->get("total");
+    $total = $task->get_data("total");
     if (empty($total)) {
       $item_count = DB::select()->from("items")->execute()->count();
       $total = 0;
@@ -367,14 +367,14 @@ class Gallery_Hook_GalleryTask {
       // one operation to rebuild path and url caches;
       $total += 1 * $item_count;
 
-      $task->set("total", $total);
-      $task->set("state", $state = self::FIX_STATE_START_MPTT);
-      $task->set("ptr", 1);
-      $task->set("completed", 0);
+      $task->set_data("total", $total);
+      $task->set_data("state", $state = self::FIX_STATE_START_MPTT);
+      $task->set_data("ptr", 1);
+      $task->set_data("completed", 0);
     }
 
-    $completed = $task->get("completed");
-    $state = $task->get("state");
+    $completed = $task->get_data("completed");
+    $state = $task->get_data("state");
 
     if (!Module::get_var("gallery", "maintenance_mode")) {
       Module::set_var("gallery", "maintenance_mode", 1);
@@ -397,14 +397,14 @@ class Gallery_Hook_GalleryTask {
     while ($state != self::FIX_STATE_DONE && microtime(true) - $start < 1.5) {
       switch ($state) {
       case self::FIX_STATE_START_MPTT:
-        $task->set("ptr", $ptr = 1);
-        $task->set("stack", Item::root()->id . ":L");
+        $task->set_data("ptr", $ptr = 1);
+        $task->set_data("stack", Item::root()->id . ":L");
         $state = self::FIX_STATE_RUN_MPTT;
         break;
 
       case self::FIX_STATE_RUN_MPTT:
-        $ptr = $task->get("ptr");
-        $stack = explode(" ", $task->get("stack"));
+        $ptr = $task->get_data("ptr");
+        $stack = explode(" ", $task->get_data("stack"));
         list ($id, $ptr_mode) = explode(":", array_pop($stack));
         if ($ptr_mode == "L") {
           $stack[] = "$id:R";
@@ -429,8 +429,8 @@ class Gallery_Hook_GalleryTask {
             ->where("id", "=", $id)
             ->execute();
         }
-        $task->set("ptr", $ptr);
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("ptr", $ptr);
+        $task->set_data("stack", implode(" ", $stack));
         $completed++;
 
         if (empty($stack)) {
@@ -446,7 +446,7 @@ class Gallery_Hook_GalleryTask {
           $stack[] = join(":", array($parent_id, $slug));
         }
         if ($stack) {
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
           $state = self::FIX_STATE_RUN_DUPE_SLUGS;
         } else {
           $state = self::FIX_STATE_START_DUPE_NAMES;
@@ -454,7 +454,7 @@ class Gallery_Hook_GalleryTask {
         break;
 
       case self::FIX_STATE_RUN_DUPE_SLUGS:
-        $stack = explode(" ", $task->get("stack"));
+        $stack = explode(" ", $task->get_data("stack"));
         list ($parent_id, $slug) = explode(":", array_pop($stack));
 
         // We want to leave the first one alone and update all conflicts to be random values.
@@ -478,7 +478,7 @@ class Gallery_Hook_GalleryTask {
           $stack[] = "$parent_id:$slug";
           break;
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $completed++;
 
         if (empty($stack)) {
@@ -493,7 +493,7 @@ class Gallery_Hook_GalleryTask {
           $stack[] = join(":", array($parent_id, $name));
         }
         if ($stack) {
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
           $state = self::FIX_STATE_RUN_DUPE_NAMES;
         } else {
           $state = self::FIX_STATE_START_DUPE_BASE_NAMES;
@@ -502,7 +502,7 @@ class Gallery_Hook_GalleryTask {
 
       case self::FIX_STATE_RUN_DUPE_NAMES:
         // NOTE: This does *not* attempt to fix the file system!
-        $stack = explode(" ", $task->get("stack"));
+        $stack = explode(" ", $task->get_data("stack"));
         list ($parent_id, $name) = explode(":", array_pop($stack));
 
         $fixed = 0;
@@ -534,7 +534,7 @@ class Gallery_Hook_GalleryTask {
           $stack[] = "$parent_id:$name";
           break;
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $completed++;
 
         if (empty($stack)) {
@@ -549,7 +549,7 @@ class Gallery_Hook_GalleryTask {
           $stack[] = join(":", array($parent_id, $base_name));
         }
         if ($stack) {
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
           $state = self::FIX_STATE_RUN_DUPE_BASE_NAMES;
         } else {
           $state = self::FIX_STATE_START_ALBUMS;
@@ -558,7 +558,7 @@ class Gallery_Hook_GalleryTask {
 
       case self::FIX_STATE_RUN_DUPE_BASE_NAMES:
         // NOTE: This *does* attempt to fix the file system!  So, it must go *after* run_dupe_names.
-        $stack = explode(" ", $task->get("stack"));
+        $stack = explode(" ", $task->get_data("stack"));
         list ($parent_id, $base_name) = explode(":", array_pop($stack));
         $base_name_escaped = Database::escape_for_like($base_name);
 
@@ -603,7 +603,7 @@ class Gallery_Hook_GalleryTask {
           $stack[] = "$parent_id:$base_name";
           break;
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $completed++;
 
         if (empty($stack)) {
@@ -620,12 +620,12 @@ class Gallery_Hook_GalleryTask {
                  ->execute() as $row) {
           $stack[] = $row->id;
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $state = self::FIX_STATE_RUN_ALBUMS;
         break;
 
       case self::FIX_STATE_RUN_ALBUMS:
-        $stack = explode(" ", $task->get("stack"));
+        $stack = explode(" ", $task->get_data("stack"));
         $id = array_pop($stack);
 
         $item = ORM::factory("Item", $id);
@@ -648,7 +648,7 @@ class Gallery_Hook_GalleryTask {
           // This generates an .htaccess for the albums subdirectory only.
           Access::update_htaccess_files($item, $everybody, "view_full", Access::DENY);
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $completed++;
 
         if (empty($stack)) {
@@ -661,17 +661,17 @@ class Gallery_Hook_GalleryTask {
         foreach (self::find_empty_item_caches(500) as $row) {
           $stack[] = $row->id;
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $state = self::FIX_STATE_RUN_REBUILD_ITEM_CACHES;
         break;
 
       case self::FIX_STATE_RUN_REBUILD_ITEM_CACHES:
-        $stack = explode(" ", $task->get("stack"));
+        $stack = explode(" ", $task->get_data("stack"));
         if (!empty($stack)) {
           $id = array_pop($stack);
           $item = ORM::factory("Item", $id);
           $item->relative_path();  // this rebuilds the cache and saves the item as a side-effect
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
           $completed++;
         }
 
@@ -680,7 +680,7 @@ class Gallery_Hook_GalleryTask {
           foreach (self::find_empty_item_caches(500) as $row) {
             $stack[] = $row->id;
           }
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
 
           if (empty($stack)) {
             $state = self::FIX_STATE_START_MISSING_ACCESS_CACHES;
@@ -693,18 +693,18 @@ class Gallery_Hook_GalleryTask {
         foreach (self::find_missing_access_caches_limited(500) as $row) {
           $stack[] = $row->id;
         }
-        $task->set("stack", implode(" ", $stack));
+        $task->set_data("stack", implode(" ", $stack));
         $state = self::FIX_STATE_RUN_MISSING_ACCESS_CACHES;
         break;
 
       case self::FIX_STATE_RUN_MISSING_ACCESS_CACHES:
-        $stack = array_filter(explode(" ", $task->get("stack"))); // filter removes empty/zero ids
+        $stack = array_filter(explode(" ", $task->get_data("stack"))); // filter removes empty/zero ids
         if (!empty($stack)) {
           $id = array_pop($stack);
           $access_cache = ORM::factory("AccessCache");
           $access_cache->item_id = $id;
           $access_cache->save();
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
           $completed++;
         }
 
@@ -713,7 +713,7 @@ class Gallery_Hook_GalleryTask {
           foreach (self::find_missing_access_caches_limited(500) as $row) {
             $stack[] = $row->id;
           }
-          $task->set("stack", implode(" ", $stack));
+          $task->set_data("stack", implode(" ", $stack));
 
           if (empty($stack)) {
             // The new cache rows are there, but they're incorrectly populated so we have to fix
@@ -727,8 +727,8 @@ class Gallery_Hook_GalleryTask {
       }
     }
 
-    $task->set("state", $state);
-    $task->set("completed", $completed);
+    $task->set_data("state", $state);
+    $task->set_data("completed", $completed);
 
     if ($state == self::FIX_STATE_DONE) {
       $task->done = true;

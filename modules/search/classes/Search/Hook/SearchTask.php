@@ -39,7 +39,7 @@ class Search_Hook_SearchTask {
 
   static function update_index($task) {
     try {
-      $completed = $task->get("completed", 0);
+      $completed = $task->get_data("completed", 0);
 
       $start = microtime(true);
       foreach (ORM::factory("Item")
@@ -62,7 +62,7 @@ class Search_Hook_SearchTask {
       }
 
       list ($remaining, $total, $percent) = Search::stats();
-      $task->set("completed", $completed);
+      $task->set_data("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {
         $task->done = true;
         $task->state = "success";

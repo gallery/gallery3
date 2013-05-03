@@ -39,7 +39,7 @@ class Exif_Hook_ExifTask {
 
   static function update_index($task) {
     try {
-      $completed = $task->get("completed", 0);
+      $completed = $task->get_data("completed", 0);
 
       $start = microtime(true);
       foreach (ORM::factory("Item")
@@ -65,7 +65,7 @@ class Exif_Hook_ExifTask {
       }
 
       list ($remaining, $total, $percent) = Exif::stats();
-      $task->set("completed", $completed);
+      $task->set_data("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {
         $task->done = true;
         $task->state = "success";

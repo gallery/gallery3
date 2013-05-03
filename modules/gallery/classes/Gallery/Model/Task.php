@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Model_Task extends ORM {
-  public function get($key, $default=null) {
+  public function get_data($key, $default=null) {
     $context = unserialize($this->context);
     if (array_key_exists($key, $context)) {
       return $context[$key];
@@ -27,7 +27,7 @@ class Gallery_Model_Task extends ORM {
     }
   }
 
-  public function set($key, $value=null) {
+  public function set_data($key, $value=null) {
     $context = unserialize($this->context);
     $context[$key] = $value;
     $this->context = serialize($context);

@@ -36,21 +36,21 @@ class Tag_Hook_TagTask {
     $errors = array();
     try {
       $start = microtime(true);
-      $last_tag_id = $task->get("last_tag_id", null);
+      $last_tag_id = $task->get_data("last_tag_id", null);
       $current = 0;
       $total = 0;
 
-      switch ($task->get("mode", "init")) {
+      switch ($task->get_data("mode", "init")) {
       case "init":
-        $task->set("total", ORM::factory("Tag")->count_all());
-        $task->set("mode", "clean_up_tags");
-        $task->set("completed", 0);
-        $task->set("last_tag_id", 0);
+        $task->set_data("total", ORM::factory("Tag")->count_all());
+        $task->set_data("mode", "clean_up_tags");
+        $task->set_data("completed", 0);
+        $task->set_data("last_tag_id", 0);
 
       case "clean_up_tags":
-        $completed = $task->get("completed");
-        $total = $task->get("total");
-        $last_tag_id = $task->get("last_tag_id");
+        $completed = $task->get_data("completed");
+        $total = $task->get_data("total");
+        $last_tag_id = $task->get_data("last_tag_id");
         $tags = ORM::factory("Tag")->where("id", ">", $last_tag_id)->limit(25)->find_all();
         Log::instance()->add(Log::ERROR,print_r(Database::instance()->last_query(),1));
         while ($current < $total && microtime(true) - $start < 1 && $tag = $tags->current()) {
@@ -72,8 +72,8 @@ class Tag_Hook_TagTask {
           $tags->next();
         }
         $task->percent_complete = $completed / $total * 100;
-        $task->set("completed", $completed);
-        $task->set("last_tag_id", $last_tag_id);
+        $task->set_data("completed", $completed);
+        $task->set_data("last_tag_id", $last_tag_id);
       }
 
       $task->status = t2("Examined %count tag", "Examined %count tags", $completed);
