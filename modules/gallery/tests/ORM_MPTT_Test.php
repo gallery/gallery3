@@ -165,6 +165,22 @@ class ORM_MPTT_Test extends Unittest_Testcase {
     $this->assertEquals(1, $parent->descendants->where("type", "=", "album")->count_all());
   }
 
+  public function test_contains() {
+    $parent = Test::random_album();
+    $photo = Test::random_photo($parent);
+    $album1 = Test::random_album($parent);
+    $photo1 = Test::random_photo($album1);
+    $parent->reload();
+
+    $this->assertEquals(true, $parent->contains($photo1));        // grandchild
+    $this->assertEquals(true, $parent->contains($photo));         // child
+    $this->assertEquals(true, $photo->contains($photo));          // self
+    $this->assertEquals(false, $photo->contains($photo, false));  // self (with include_self)
+    $this->assertEquals(false, $album1->contains($photo));        // sibling
+    $this->assertEquals(false, $album1->contains($parent));       // parent
+    $this->assertEquals(false, $photo1->contains($parent));       // grandparent
+  }
+
   public function test_fail_on_viewable_before_special_relationships() {
     Identity::set_active_user(Identity::guest());
     try {
