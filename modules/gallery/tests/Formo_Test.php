@@ -21,10 +21,10 @@ class Formo_Test extends Unittest_TestCase {
   public function test_valid_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
-    $mock_post = array("test" => array(
+    $mock_post = array(
       "foo" => "bar",
       "csrf" => Access::csrf_token()
-    ));
+    );
 
     $this->assertTrue($form->load($mock_post)->validate());
   }
@@ -32,10 +32,10 @@ class Formo_Test extends Unittest_TestCase {
   public function test_invalid_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
-    $mock_post = array("test" => array(
+    $mock_post = array(
       "foo" => "bar",
       "csrf" => "invalid"
-    ));
+    );
 
     try {
       $valid = $form->load($mock_post)->validate();
@@ -48,10 +48,10 @@ class Formo_Test extends Unittest_TestCase {
   public function test_empty_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
-    $mock_post = array("test" => array(
+    $mock_post = array(
       "foo" => "bar",
       "csrf" => ""
-    ));
+    );
 
     try {
       $valid = $form->load($mock_post)->validate();
@@ -64,10 +64,10 @@ class Formo_Test extends Unittest_TestCase {
   public function test_unset_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
-    $mock_post = array("test" => array(
+    $mock_post = array(
       "foo" => "bar"
       // csrf => unset
-    ));
+    );
 
     try {
       $valid = $form->load($mock_post)->validate();

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Menu_Test extends Unittest_Testcase {
+class Menu_Test extends Unittest_TestCase {
   public function test_find_menu_item() {
     $menu = new Menu(true);
     $menu

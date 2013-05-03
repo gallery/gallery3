@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Inflector_Test extends Unittest_Testcase {
+class Inflector_Test extends Unittest_TestCase {
   public function test_convert_module_to_class_name() {
     $this->assertEquals("Gallery",    Inflector::convert_module_to_class_name("gallery"));
     $this->assertEquals("FooBar",     Inflector::convert_module_to_class_name("foo_bar"));

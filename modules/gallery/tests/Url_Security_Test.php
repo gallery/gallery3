@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Url_Security_Test extends Unittest_Testcase {
+class Url_Security_Test extends Unittest_TestCase {
   public function test_xss_in_current_url() {
     throw new Exception("fixme");
     Route::$current_uri = "foo/<xss>/bar";

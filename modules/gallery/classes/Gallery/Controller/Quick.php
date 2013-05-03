@@ -121,32 +121,4 @@ class Gallery_Controller_Quick extends Controller {
       $this->response->json(array("result" => "success", "location" => $parent->url()));
     }
   }
-
-  public function action_form_edit() {
-    // @todo: fix this function.  The edit forms are no longer in helpers.
-    // This should be handled with sub-requests or different routes.
-    $id = $this->request->arg(0, "digit");
-    $item = ORM::factory("Item", $id);
-    Access::required("view", $item);
-    Access::required("edit", $item);
-
-    switch ($item->type) {
-    case "album":
-      $form = Album::get_edit_form($item);
-      break;
-
-    case "photo":
-      $form = Photo::get_edit_form($item);
-      break;
-
-    case "movie":
-      $form = Movie::get_edit_form($item);
-      break;
-    }
-
-    // Pass on the source item where this form was generated, so we have an idea where to return to.
-    $form->hidden("from_id")->value((int) $this->request->query("from_id"));
-
-    $this->response->body($form);
-  }
 }

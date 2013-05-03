@@ -23,7 +23,7 @@
  * aren't meant to illustrate XSS blocking ability but rather just that the Purifier class wraps
  * around HTMLPurifier correctly.
  */
-class Purifier_Test extends Unittest_Testcase {
+class Purifier_Test extends Unittest_TestCase {
   public function test_clean_html_basic() {
     $this->assertEquals("hello wrld", Purifier::clean_html("hello w<o>rld"));
   }

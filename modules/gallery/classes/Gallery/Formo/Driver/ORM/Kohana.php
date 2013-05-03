@@ -51,7 +51,7 @@ class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
     }
 
     $field->set("linked_orm_model", $model);
-    $field->callback("pass", array("Formo_Driver_ORM_Kohana::load_and_check"));
+    $field->callback("pass", array("Formo_Driver_ORM_Kohana::validate_linked_orm_model_callback"));
   }
 
   /**
@@ -59,7 +59,7 @@ class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
    * the model, perform model validation, and translate ORM validation errors to
    * form errors.  This function needs to be public, but should not be called directly.
    */
-  public static function load_and_check($field) {
+  public static function validate_linked_orm_model_callback($field) {
     $model = $field->get("linked_orm_model");
 
     // Load the values in the model.  ORM silently discards fields that don't exist.
