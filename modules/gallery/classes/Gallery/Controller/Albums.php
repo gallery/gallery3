@@ -74,6 +74,7 @@ class Gallery_Controller_Albums extends Controller_Items {
   }
 
   public static function get_display_context($item) {
+    $where = array(array("type", "!=", "album"));
     $position = Item::get_position($item, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) = $item->parent->children
