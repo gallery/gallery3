@@ -65,6 +65,7 @@ class Gallery_Formo extends Formo_Core_Formo {
             $this->add_class("submit");
             break;
           case "text":
+          case null:
             $this->add_class("textbox");
             break;
         }
