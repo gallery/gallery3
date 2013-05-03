@@ -1426,7 +1426,7 @@ class Formo_Core_Formo extends Formo_Innards {
 
 		$this->_run_callbacks($pass_validation);
 
-		if ($this->error())
+		if ($this->errors())
 		{
 			$pass_validation = FALSE;
 		}
