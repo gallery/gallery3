@@ -811,7 +811,18 @@ class Item_Model_Test extends Unittest_TestCase {
     $album->save();
 
     $album->children->find_all();
-    $this->assertRegexp("/ORDER BY `item`.`name` DESC, `item`.`id` ASC/", Database::instance()->last_query);
+    $this->assertRegexp(
+      "/ORDER BY `.*?item`.`name` DESC, `.*?item`.`id` ASC/",
+      $album->last_query());
+  }
+
+  public function test_children_override_sort_order() {
+    $album = Test::random_album();
+
+    $album->children->order_by("item.created")->find_all();
+    $this->assertRegexp(
+      "/ORDER BY `.*?item`.`created`/",
+      $album->last_query());
   }
 
   public function test_descendants_default_to_albums_sort_order() {
@@ -821,6 +832,18 @@ class Item_Model_Test extends Unittest_TestCase {
     $album->save();
 
     $album->descendants->find_all();
-    $this->assertRegexp("/ORDER BY `item`.`view_count` DESC, `item`.`id` ASC/", Database::instance()->last_query);
+    $this->assertRegexp(
+      "/ORDER BY `.*?item`.`view_count` DESC, `.*?item`.`id` ASC/",
+      $album->last_query());
   }
+
+  public function test_descendants_override_sort_order() {
+    $album = Test::random_album();
+
+    $album->descendants->order_by("item.updated")->find_all();
+    $this->assertRegexp(
+      "/ORDER BY `.*?item`.`updated`/",
+      $album->last_query());
+  }
+
 }
