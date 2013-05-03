@@ -19,44 +19,60 @@
  */
 class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
   /**
-   * Save the ORM model "model" using the values of the field's children.
+   * Link the ORM model "model" to the form element.  This loads the values of
+   * the model into the form element (typically a group/form) and adds a callback
+   * for form validation to load the form values back into the model and validate it.
    * Any ORM validation errors will be translated to form field errors.
-   * Optionally, "check" determines whether the model validation is checked
-   * before saving (default: true).  The result can be found in the field's
-   * "orm_passed" variable.
+   * The linked model can be found in the field's "linked_orm_model" variable.
    *
-   *   Example: to load the values, check, and then save the model:
-   *     $form->orm("save", array("model" => $model));
-   *     $passed = $form->get("orm_passed");
-   *   Example: to load the values and just save the model (without check):
-   *     $form->orm("save", array("model" => $model, "check" => false));
-   *     $passed = $form->get("orm_passed");
+   *   Example: to link the form to item 3:
+   *     $item = ORM::factory("Item", 3);
+   *     $form = ....; // define the form
+   *     $form->orm("link", array("model" => $item));
+   *     if ($form->load()->validate()) {
+   *       // Model has been updated with the form values and passed validation - all set!
+   *       $item->save();
+   *     }
    *
-   * Note that this automatically flattens subgroups and discards fields that
-   * don't exist in the model (e.g. "submit").
+   * Only elements that are common to both the form and the model are linked, and
+   * the rest are ignored.  Note that this automatically flattens form subgroups.
    *
    * @todo: consider recasting this as a patch to send upstream to the Formo project.
+   * We'd need to include relationship support for this to be compatible with stuff upstream.
    */
-  public static function save(array $array) {
+  public static function link(array $array) {
     $model = $array["model"];
     $field = $array["field"];
-    $check = Arr::get($array, "check", true);
+
+    // Load the values in the form.  Arr::overwrite() silently discards fields that don't exist.
+    $vals = Arr::overwrite(Arr::flatten($field->as_array("val")), $model->as_array());
+    foreach ($vals as $alias => $val) {
+      $field->find($alias)->val($val);
+    }
+
+    $field->set("linked_orm_model", $model);
+    $field->callback("pass", array("Formo_Driver_ORM_Kohana::load_and_check"));
+  }
+
+  /**
+   * This callback is used during form validation to load the form values back into
+   * the model, perform model validation, and translate ORM validation errors to
+   * form errors.  This function needs to be public, but should not be called directly.
+   */
+  public static function load_and_check($field) {
+    $model = $field->get("linked_orm_model");
 
     // Load the values in the model.  ORM silently discards fields that don't exist.
     $model->values(Arr::flatten($field->as_array("val")));
 
-    // Save it, set orm_passed, and translate ORM errors if needed.
+    // Save it and translate ORM errors if needed.
     try {
-      if ($check) {
-        $model->check();
-      }
-      $model->save();
-      $field->set("orm_passed", true);
+      $model->check();
     } catch (ORM_Validation_Exception $e) {
       foreach ($e->errors() as $alias => $errors) {
+        // This uses only the first error for each field.
         $field->find($alias)->error($errors[0]);
       }
-      $field->set("orm_passed", false);
     }
   }
 }

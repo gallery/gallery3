@@ -117,6 +117,11 @@ class Gallery_Controller_Albums extends Controller_Items {
     Access::required("view", $parent);
     Access::required("add", $parent);
 
+    // Build the item model.
+    $item = ORM::factory("Item");
+    $item->type = "album";
+    $item->parent_id = $parent_id;
+
     // Build the form.
     $form = Formo::form()
       ->add("item", "group");
@@ -125,8 +130,8 @@ class Gallery_Controller_Albums extends Controller_Items {
       ->add("description", "textarea")
       ->add("name", "input")
       ->add("slug", "input")
-      ->add("type", "input|hidden", "album")
-      ->add("submit", "input|submit", t("Create"));
+      ->add("submit", "input|submit", t("Create"))
+      ->orm("link", array("model" => $item));
 
     $form
       ->attr("id", "g-add-album-form")
@@ -164,14 +169,10 @@ class Gallery_Controller_Albums extends Controller_Items {
     Module::event("album_add_form", $parent, $form);
 
     // Load and validate the form.
-    if ($form->load()->validate()) {
-      // Build the item model.
-      $item = ORM::factory("Item");
-      $item->parent_id = $parent_id;
-      $form->item->orm("save", array("model" => $item));
-
-      if ($form->item->get("orm_passed")) {
-        // Passed - run event, add to log, send message, then redirect to new item.
+    if ($form->sent()) {
+      if ($form->load()->validate()) {
+        // Passed - save item, run event, add to log, send message, then redirect to new item.
+        $item->save();
         Module::event("album_add_form_completed", $item, $form);
         GalleryLog::success("content", "Created an album",
                             HTML::anchor("albums/$item->id", "view album"));
