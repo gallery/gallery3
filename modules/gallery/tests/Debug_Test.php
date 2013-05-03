@@ -88,16 +88,18 @@ class Debug_Test extends Unittest_Testcase {
 
   public function test_sanitize_for_dump_database() {
     $db = new Debug_Test_Database(
-        array("connection" => array("user" => "john", "name" => "gallery_3"),
-              "cache" => array()));
+      "Debug_Test",
+      array("connection" => array("user" => "john", "name" => "gallery_3"),
+            "cache" => array()));
     $this->assertEquals("Debug_Test_Database object - details omitted for display",
         Debug::_sanitize_for_dump($db, "ignored", 5));
   }
 
   public function test_sanitize_for_dump_nested_database() {
     $db = new Debug_Test_Database(
-        array("connection" => array("user" => "john", "name" => "gallery_3"),
-              "cache" => array()));
+      "Debug_Test",
+      array("connection" => array("user" => "john", "name" => "gallery_3"),
+            "cache" => array()));
     $var = array("some" => "foo",
                  "bar" => $db);
     $this->assertEquals(
@@ -147,7 +149,7 @@ class Debug_Test extends Unittest_Testcase {
 }
 
 class Debug_Test_Database extends Database {
-  function __construct($config) { parent::__construct($config); }
+  function __construct($name, $config) { parent::__construct($name, $config); }
   public function connect() {}
   public function disconnect() {}
   public function set_charset($charset) {}
@@ -163,9 +165,9 @@ class Debug_Test_Database extends Database {
 class Debug_Test_Class {
   public $var_1 = "val 1";
   protected $var_2 = "val 2";
-  protected $var_3 = "val 3";
+  private $var_3 = "val 3";
   protected $hash = "val 4";
-  protected $email_address = "val 5";
+  private $email_address = "val 5";
   function __set($name, $val) {
     $this->$name = $val;
   }
