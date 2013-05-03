@@ -103,7 +103,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
 
       // Rework the cli arguments to look like a traditional phpunit execution
       array_splice($_SERVER["argv"], 0, 2, "phpunit");
-      $_SERVER["argv"][] = MODPATH . "gallery_unittest/classes/TestSuite.php";
+      $_SERVER["argv"][] = MODPATH . "unittest/classes/Unittest/Tests.php";
 
       // Look for PHPUnit in a bunch of reasonable places
       foreach (array("phar://" . DOCROOT . "bin/phpunit.phar",
