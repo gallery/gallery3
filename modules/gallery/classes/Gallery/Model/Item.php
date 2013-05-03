@@ -34,8 +34,6 @@ class Gallery_Model_Item extends ORM_MPTT {
       $this->sort_order = "ASC";
       $this->owner_id = Identity::active_user()->id;
     }
-
-    $this->_set_default_sorting();
   }
 
   /**
@@ -337,22 +335,23 @@ class Gallery_Model_Item extends ORM_MPTT {
       } catch (Exception $e) {
         return null;
       }
+
+    case "unordered_children":
+      return parent::get("children");
+
+    case "children":
+    case "descendants":
+      // By default use the album's sort order
+      $models = parent::get($column);
+      $models->order_by($this->sort_column, $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $models->order_by("id", "ASC");
+      }
+      return $models;
     }
 
     return parent::get($column);
-  }
-
-  /**
-   * Set (or reset) the item's default sorting order.  This is used in __construct() and save().
-   * @see ORM::_load_result(), which uses this if no other order_by calls have been applied
-   */
-  protected function _set_default_sorting() {
-    $this->_sorting = array();
-    $this->_sorting[$this->sort_column] = $this->sort_order;
-    // Use id as a tie breaker
-    if ($this->sort_column != "id") {
-      $this->_sorting["id"] = "ASC";
-    }
   }
 
   /**
@@ -366,10 +365,7 @@ class Gallery_Model_Item extends ORM_MPTT {
 
     if ($significant_changes || isset($this->data_file)) {
       $this->updated = time();
-      parent::save();
-      // Now that the sort_order and sort_column are validated, reset the default sorting order.
-      $this->_set_default_sorting();
-      return $this;
+      return parent::save();
     } else {
       // Insignificant changes only.  Don't fire events or do any special checking to try to keep
       // this lightweight.  This skips our local update() and create() functions.
