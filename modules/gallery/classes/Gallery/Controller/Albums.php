@@ -154,7 +154,7 @@ class Gallery_Controller_Albums extends Controller_Items {
           "no_trailing_period" => t("The directory name can't end in \".\""),
           "not_empty" => t("You must provide a directory name"),
           "max_length" => t("Your directory name is too long"),
-          "name_conflict" => t("There is already a movie, photo or album with this name")
+          "conflict" => t("There is already a movie, photo or album with this name")
         ));
     $form->item->slug
       ->set("label", t("Internet Address"))
