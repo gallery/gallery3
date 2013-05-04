@@ -115,6 +115,43 @@ class Gallery_Controller_Items extends Controller {
     $this->response->json(array("result" => "success", "reload" => 1));
   }
 
+  public function action_rotate() {
+    Access::verify_csrf();
+
+    $item_id = $this->request->arg(0, "digit");
+    $dir = $this->request->arg(1, "alpha");
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
+
+    switch($dir) {
+      case "ccw": $degrees = -90; break;
+      case "cw":  $degrees =  90; break;
+      default:    throw HTTP_Exception::factory(400);
+    }
+
+    // Get the from_id query parameter, which defaults to the edited item's id.
+    $from_id = Arr::get($this->request->query(), "from_id", $item->id);
+
+    $tmpfile = System::temp_filename("rotate", pathinfo($item->file_path(), PATHINFO_EXTENSION));
+    GalleryGraphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees), $item);
+    $item->set_data_file($tmpfile);
+    $item->save();
+
+    // We don't need to refresh the page - just tell js what the new dimensions are.
+    if ($from_id == $item->id) {
+      $this->response->json(
+        array("src" => $item->resize_url(),
+              "width" => $item->resize_width,
+              "height" => $item->resize_height));
+    } else {
+      $this->response->json(
+        array("src" => $item->thumb_url(),
+              "width" => $item->thumb_width,
+              "height" => $item->thumb_height));
+    }
+  }
+
   // Return the width/height dimensions for the given item
   public function action_dimensions() {
     $id = $this->request->arg(0, "digit");

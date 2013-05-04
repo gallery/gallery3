@@ -368,7 +368,7 @@ class Gallery_Hook_GalleryEvent {
               ->css_class("ui-icon-rotate-ccw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(URL::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")))
+              ->url(URL::site("items/rotate/$item->id/ccw?csrf=$csrf")))
             ->append(
               Menu::factory("ajax_link")
               ->id("rotate_cw")
@@ -376,7 +376,7 @@ class Gallery_Hook_GalleryEvent {
               ->css_class("ui-icon-rotate-cw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(URL::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
+              ->url(URL::site("items/rotate/$item->id/cw?csrf=$csrf")));
         }
 
         if ($item->id != Item::root()->id) {
@@ -408,7 +408,6 @@ class Gallery_Hook_GalleryEvent {
                 ->id("delete")
                 ->label($delete_text)
                 ->css_class("ui-icon-trash")
-                ->css_class("g-quick-delete")
                 ->url(URL::site("items/delete/$item->id")));
           }
         }
@@ -527,7 +526,7 @@ class Gallery_Hook_GalleryEvent {
             ->css_class("ui-icon-rotate-ccw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(URL::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")))
+            ->url(URL::site("items/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$theme_item->id}")))
           ->append(
             Menu::factory("ajax_link")
             ->id("rotate_cw")
@@ -535,7 +534,7 @@ class Gallery_Hook_GalleryEvent {
             ->css_class("ui-icon-rotate-cw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(URL::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
+            ->url(URL::site("items/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}")));
       }
 
       $parent = $item->parent;
