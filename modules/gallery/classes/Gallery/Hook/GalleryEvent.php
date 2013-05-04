@@ -311,7 +311,7 @@ class Gallery_Hook_GalleryEvent {
               $add_menu->append(Menu::factory("dialog")
                                 ->id("add_album_item")
                                 ->label(t("Add an album"))
-                                ->url(URL::site("albums/add/$item->id")));
+                                ->url(URL::site("items/add/$item->id")));
             }
           } else {
             Message::warning(t("The album '%album_name' is not writable.",
@@ -344,7 +344,7 @@ class Gallery_Hook_GalleryEvent {
             $options_menu->append(Menu::factory("dialog")
                                   ->id("edit_item")
                                   ->label($edit_text)
-                                  ->url(URL::site("{$item->type}s/edit/$item->id")));
+                                  ->url(URL::site("items/edit/$item->id")));
           }
 
           if ($item->is_album()) {
@@ -515,7 +515,7 @@ class Gallery_Hook_GalleryEvent {
                             ->id("edit")
                             ->label($edit_title)
                             ->css_class("ui-icon-pencil")
-                            ->url(URL::site("{$item->type}s/edit/$item->id?from_id={$theme_item->id}")));
+                            ->url(URL::site("items/edit/$item->id?from_id={$theme_item->id}")));
 
       if ($item->is_photo() && Graphics::can("rotate")) {
         $options_menu
@@ -576,7 +576,7 @@ class Gallery_Hook_GalleryEvent {
                    ->id("add_album")
                    ->label(t("Add an album"))
                    ->css_class("ui-icon-note")
-                   ->url(URL::site("albums/add/$item->id")))
+                   ->url(URL::site("items/add/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("edit_permissions")
                    ->label(t("Edit permissions"))

@@ -251,22 +251,10 @@ Route::set("site", "<controller>(/<action>(/<args>))",
 
 Route::set("item", "(<item_url>)",
            array("item_url" => "[A-Za-z0-9-_/]++")) // Ref: Model_Item::valid_slug, Route::REGEX_SEGMENT
-  ->filter(function($route, $params, $request) {
-      // Note: at this point, item_url has matched against the regex above, so it's XSS-free.
-      if (empty($params["item_url"])) {
-        $item = Item::root();
-      } else {
-        $item = Item::find_by_relative_url($params["item_url"]);
-        if (!$item->loaded()) {
-          // Nothing found - abort match.
-          return false;
-        }
-      }
-      $params["controller"] = ucfirst($item->type) . "s";
-      $params["action"] = "show";
-      $params["item"] = $item;
-      return $params;
-    });
+  ->defaults(array(
+      "controller" => "items",
+      "action" => "show"
+    ));
 
 // Initialize our session support
 Session::instance();
