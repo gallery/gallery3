@@ -409,7 +409,7 @@ class Gallery_Hook_GalleryEvent {
                 ->label($delete_text)
                 ->css_class("ui-icon-trash")
                 ->css_class("g-quick-delete")
-                ->url(URL::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
+                ->url(URL::site("items/delete/$item->id")));
           }
         }
       }
@@ -563,8 +563,7 @@ class Gallery_Hook_GalleryEvent {
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->url(URL::site("quick/form_delete/$item->id?csrf=$csrf&amp;" .
-                                   "from_id={$theme_item->id}&amp;page_type=$page_type")));
+                   ->url(URL::site("items/delete/$item->id?from_id={$theme_item->id}")));
       }
 
       if ($item->is_album()) {
