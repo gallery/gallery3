@@ -19,40 +19,45 @@
  */
 class Akismet_Controller_Admin_Akismet extends Controller_Admin {
   public function action_index() {
-    $form = Akismet::get_configure_form();
+    $form = Formo::form()
+      ->add("akismet", "group");
+    $form->akismet
+      ->add("api_key", "input", Module::get_var("akismet", "api_key"))
+      ->add("submit", "input|submit", t("Save"));
 
-    if ($this->request->method() == HTTP_Request::POST) {
-      // @todo move the "post" handler part of this code into a separate function
-      Access::verify_csrf();
+    $form
+      ->attr("id", "g-configure-akismet-form");
+    $form->akismet
+      ->set("label", t("Configure Akismet"));
+    $form->akismet->api_key
+      ->set("label", t("API Key"))
+      ->add_rule("Akismet::validate_key", array(":value"), t("The API key you provided is invalid."));
 
-      if ($form->validate()) {
-        $new_key = $form->configure_akismet->api_key->value;
-        $old_key = Module::get_var("akismet", "api_key");
-        if ($old_key && !$new_key) {
-          Message::success(t("Your Akismet key has been cleared."));
-        } else if ($old_key && $new_key && $old_key != $new_key) {
-          Message::success(t("Your Akismet key has been changed."));
-        } else if (!$old_key && $new_key) {
-          Message::success(t("Your Akismet key has been saved."));
-        }
+    if ($form->load()->validate()) {
+      $new_key = $form->akismet->api_key->val();
+      $old_key = Module::get_var("akismet", "api_key");
 
-        GalleryLog::success("akismet", t("Akismet key changed to %new_key",
-                                  array("new_key" => $new_key)));
-        Module::set_var("akismet", "api_key", $new_key);
-        Akismet::check_config();
-        $this->redirect("admin/akismet");
-      } else {
-        $valid_key = false;
+      Module::set_var("akismet", "api_key", $new_key);
+
+      if ($old_key && !$new_key) {
+        Message::success(t("Your Akismet key has been cleared."));
+      } else if ($old_key && $new_key && $old_key != $new_key) {
+        Message::success(t("Your Akismet key has been changed."));
+      } else if (!$old_key && $new_key) {
+        Message::success(t("Your Akismet key has been saved."));
       }
-    } else {
-      $valid_key = Module::get_var("akismet", "api_key") ? 1 : 0;
+
+      GalleryLog::success("akismet",
+        t("Akismet key changed to %new_key", array("new_key" => $new_key)));
+      Akismet::check_config();
+      $this->redirect("admin/akismet");
     }
 
     Akismet::check_config();
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Akismet spam filtering");
     $view->content = new View("admin/akismet.html");
-    $view->content->valid_key = $valid_key;
+    $view->content->valid_key = (bool)Module::get_var("akismet", "api_key");
     $view->content->form = $form;
     $this->response->body($view);
   }

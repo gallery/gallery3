@@ -20,16 +20,6 @@
 class Akismet_Akismet {
   public static $test_mode = TEST_MODE;
 
-  static function get_configure_form() {
-    $form = new Forge("admin/akismet", "", "post", array("id" => "g-configure-akismet-form"));
-    $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
-    $group->input("api_key")->label(t("API Key"))->value(Module::get_var("akismet", "api_key"))
-      ->callback("Akismet::validate_key")
-      ->error_messages("invalid", t("The API key you provided is invalid."));
-    $group->submit("")->value(t("Save"));
-    return $form;
-  }
-
   /**
    * Check a comment against Akismet and return "spam", "ham" or "unknown".
    * @param  Model_Comment  $comment  A comment to check
@@ -79,20 +69,20 @@ class Akismet_Akismet {
   }
 
   /**
-   * Check an API Key against Akismet to make sure that it's valid
+   * Check an API Key against Akismet to make sure that it's valid.  Blank passes, too.
    * @param  string   $api_key the API key
    * @return boolean
    */
-  static function validate_key($api_key_input) {
-    if ($api_key_input->value) {
-      $request = self::_build_verify_request($api_key_input->value);
+  static function validate_key($api_key) {
+    if ($api_key) {
+      $request = self::_build_verify_request($api_key);
       $response = self::_http_post($request, "rest.akismet.com");
       if ("valid" != $response->body[0]) {
-        $api_key_input->add_error("invalid", 1);
+        return false;
       }
     }
+    return true;
   }
-
 
   static function check_config() {
     $api_key = Module::get_var("akismet", "api_key");
@@ -106,7 +96,7 @@ class Akismet_Akismet {
     }
   }
 
-
+  // @todo: redo/simplify this using a sub-request.
   static function _build_verify_request($api_key) {
     $base_url = URL::base("http", false);
     $query_string = "key={$api_key}&blog=$base_url";
@@ -123,6 +113,7 @@ class Akismet_Akismet {
     return $http_request;
   }
 
+  // @todo: redo/simplify this using a sub-request.
   static function _build_request($function, $comment) {
     $comment_data = array();
     $comment_data["HTTP_ACCEPT"] = $comment->server_http_accept;
@@ -165,6 +156,7 @@ class Akismet_Akismet {
     return $http_request;
   }
 
+  // @todo: redo/simplify this using a sub-request.
   protected static function _http_post($http_request, $host=null) {
     if (!$host) {
       $host = Module::get_var("akismet", "api_key") . ".rest.akismet.com";

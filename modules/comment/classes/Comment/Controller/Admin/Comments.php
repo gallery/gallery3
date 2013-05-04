@@ -19,41 +19,43 @@
  */
 class Comment_Controller_Admin_Comments extends Controller_Admin {
   public function action_index() {
+    $form = Formo::form()
+      ->add("comment", "group");
+    $form->comment
+      ->add("access_permissions", "select", Module::get_var("comment", "access_permissions"))
+      ->add("rss_visible",        "select", Module::get_var("comment", "rss_visible"))
+      ->add("submit",             "input|submit", t("Save"));
+
+    $form
+      ->attr("id", "g-comments-admin-form");
+    $form->comment
+      ->set("label", t("Permissions"));
+    $form->comment->access_permissions
+      ->set("label", t("Who can leave comments?"))
+      ->set("opts", array(
+          "everybody"        => t("Everybody"),
+          "registered_users" => t("Only registered users")
+        ));
+    $form->comment->rss_visible
+      ->set("label", t("Which RSS feeds can users see?"))
+      ->set("opts", array(
+          "all"      => t("All comment feeds"),
+          "newest"   => t("New comments feed only"),
+          "per_item" => t("Comments on photos, movies and albums only")
+        ));
+
+    if ($form->load()->validate()) {
+      Module::set_var("comment", "access_permissions", $form->comment->access_permissions->val());
+      Module::set_var("comment", "rss_visible",        $form->comment->rss_visible->val());
+      Message::success(t("Comment settings updated"));
+      $this->redirect("admin/comments");
+    }
+
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Comment settings");
     $view->content = new View("admin/comments.html");
-    $view->content->form = $this->_get_admin_form();
+    $view->content->form = $form;
+
     $this->response->body($view);
-  }
-
-  public function action_save() {
-    Access::verify_csrf();
-    $form = $this->_get_admin_form();
-    $form->validate();
-    Module::set_var("comment", "access_permissions",
-                    $form->comment_settings->access_permissions->value);
-    Module::set_var("comment", "rss_visible",
-                    $form->comment_settings->rss_visible->value);
-    Message::success(t("Comment settings updated"));
-    $this->redirect("admin/comments");
-  }
-
-  protected function _get_admin_form() {
-    $form = new Forge("admin/comments/save", "", "post",
-                      array("id" => "g-comments-admin-form"));
-    $comment_settings = $form->group("comment_settings")->label(t("Permissions"));
-    $comment_settings->dropdown("access_permissions")
-      ->label(t("Who can leave comments?"))
-      ->options(array("everybody" => t("Everybody"),
-                      "registered_users" => t("Only registered users")))
-      ->selected(Module::get_var("comment", "access_permissions"));
-    $comment_settings->dropdown("rss_visible")
-      ->label(t("Which RSS feeds can users see?"))
-      ->options(array("all" => t("All comment feeds"),
-                      "newest" => t("New comments feed only"),
-                      "per_item" => t("Comments on photos, movies and albums only")))
-      ->selected(Module::get_var("comment", "rss_visible"));
-    $comment_settings->submit("save")->value(t("Save"));
-    return $form;
   }
 }
