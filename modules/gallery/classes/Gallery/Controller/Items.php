@@ -98,6 +98,23 @@ class Gallery_Controller_Items extends Controller {
     $this->response->body($form);
   }
 
+  public function action_make_album_cover() {
+    Access::verify_csrf();
+
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    Access::required("view", $item->parent);
+    Access::required("edit", $item->parent);
+
+    $msg = t("Made <b>%title</b> this album's cover", array("title" => HTML::purify($item->title)));
+
+    Item::make_album_cover($item);
+    Message::success($msg);
+
+    $this->response->json(array("result" => "success", "reload" => 1));
+  }
+
   // Return the width/height dimensions for the given item
   public function action_dimensions() {
     $id = $this->request->arg(0, "digit");

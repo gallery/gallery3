@@ -400,7 +400,7 @@ class Gallery_Hook_GalleryEvent {
                   ->label(t("Choose as the album cover"))
                   ->css_class("ui-icon-star $disabledState")
                   ->ajax_handler("function(data) { window.location.reload() }")
-                  ->url(URL::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+                  ->url(URL::site("items/make_album_cover/$item->id?csrf=$csrf")));
             }
             $options_menu
               ->append(
@@ -556,7 +556,7 @@ class Gallery_Hook_GalleryEvent {
                      ->label($cover_title)
                      ->css_class("ui-icon-star $disabledState")
                      ->ajax_handler("function(data) { window.location.reload() }")
-                     ->url(URL::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+                     ->url(URL::site("items/make_album_cover/$item->id?csrf=$csrf")));
         }
         $options_menu
           ->append(Menu::factory("dialog")

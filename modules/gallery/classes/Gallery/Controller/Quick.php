@@ -57,21 +57,4 @@ class Gallery_Controller_Quick extends Controller {
               "height" => $item->resize_height));
     }
   }
-
-  public function action_make_album_cover() {
-    $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-
-    $item = ORM::factory("Item", $id);
-    Access::required("view", $item);
-    Access::required("view", $item->parent);
-    Access::required("edit", $item->parent);
-
-    $msg = t("Made <b>%title</b> this album's cover", array("title" => HTML::purify($item->title)));
-
-    Item::make_album_cover($item);
-    Message::success($msg);
-
-    $this->response->json(array("result" => "success", "reload" => 1));
-  }
 }
