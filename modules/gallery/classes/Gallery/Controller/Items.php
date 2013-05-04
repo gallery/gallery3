@@ -89,7 +89,7 @@ class Gallery_Controller_Items extends Controller {
         "breadcrumbs" => Breadcrumb::array_from_item_parents($item),
         "children_count" => $children_count
       ));
-      Item::set_display_context_callback("Controller_Albums::get_display_context");
+      Item::set_display_context_callback("Controller_Items::get_display_context");
     } else {
       $template = new View_Theme("required/page.html", "item", $item->type);
       $template->content = new View("required/{$item->type}.html");
@@ -433,5 +433,44 @@ class Gallery_Controller_Items extends Controller {
     $this->response->json(array("thumb" => array((int)$item->thumb_width, (int)$item->thumb_height),
                                 "resize" => array((int)$item->resize_width, (int)$item->resize_height),
                                 "full" => array((int)$item->width, (int)$item->height)));
+  }
+
+  /**
+   * Display context callback for albums.
+   *
+   * @see  Item::set_display_context_callback()
+   * @see  Item::get_display_context_callback()
+   * @see  Item::clear_display_context_callback()
+   * @see  Controller_Search::get_display_context()
+   * @see  Controller_Tag::get_display_context()
+   */
+  public static function get_display_context($item) {
+    $where = array(array("type", "!=", "album"));
+    $position = Item::get_position($item, $where);
+    if ($position > 1) {
+      list ($previous_item, $ignore, $next_item) = $item->parent->children
+        ->viewable()
+        ->where("type", "!=", "album")
+        ->limit(3)
+        ->offset($position - 2)
+        ->find_all();
+    } else {
+      $previous_item = null;
+      list ($next_item) = $item->parent->children
+        ->viewable()
+        ->where("type", "!=", "album")
+        ->limit(1)
+        ->offset($position)
+        ->find_all();
+    }
+
+    return array("position" => $position,
+                 "previous_item" => $previous_item,
+                 "next_item" => $next_item,
+                 "sibling_count" =>
+                   $item->parent->children->viewable()->where("type", "!=", "album")->count_all(),
+                 "siblings_callback" => array("Controller_Albums::get_siblings", array($item)),
+                 "parents" => $item->parents->find_all()->as_array(),
+                 "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
   }
 }

@@ -438,7 +438,7 @@ class Gallery_Item {
     }
 
     if (empty($callback)) {
-      $callback = "Controller_Albums::get_display_context";
+      $callback = "Controller_Items::get_display_context";
       $args = array($item);
     }
     return call_user_func_array($callback, $args);

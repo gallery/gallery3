@@ -18,36 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Albums extends Controller_Items {
-  public static function get_display_context($item) {
-    $where = array(array("type", "!=", "album"));
-    $position = Item::get_position($item, $where);
-    if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) = $item->parent->children
-        ->viewable()
-        ->where("type", "!=", "album")
-        ->limit(3)
-        ->offset($position - 2)
-        ->find_all();
-    } else {
-      $previous_item = null;
-      list ($next_item) = $item->parent->children
-        ->viewable()
-        ->where("type", "!=", "album")
-        ->limit(1)
-        ->offset($position)
-        ->find_all();
-    }
-
-    return array("position" => $position,
-                 "previous_item" => $previous_item,
-                 "next_item" => $next_item,
-                 "sibling_count" =>
-                   $item->parent->children->viewable()->where("type", "!=", "album")->count_all(),
-                 "siblings_callback" => array("Controller_Albums::get_siblings", array($item)),
-                 "parents" => $item->parents->find_all()->as_array(),
-                 "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
-  }
-
   public static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Model_Item::siblings() if we use this more broadly.
     return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
