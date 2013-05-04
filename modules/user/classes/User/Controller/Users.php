@@ -40,8 +40,8 @@ class User_Controller_Users extends Controller {
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->edit_user->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->edit_user->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }
@@ -76,8 +76,8 @@ class User_Controller_Users extends Controller {
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->change_password->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->change_password->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }
@@ -112,8 +112,8 @@ class User_Controller_Users extends Controller {
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->change_email->inputs[$key]->add_error($error, 1);
+      foreach ($e->errors() as $key => $error) {
+        $form->change_email->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }

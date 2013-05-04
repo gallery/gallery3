@@ -420,7 +420,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     // Give the item a title, if necessary
-    if (!empty($this->title)) {
+    if (empty($this->title)) {
       $this->title = Item::convert_filename_to_title($this->name);
 
       // If the filename got converted away to nothing (e.g. "_.jpg"),
