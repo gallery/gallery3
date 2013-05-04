@@ -39,87 +39,127 @@ class Gallery_Controller_Movies extends Controller_Items {
     $this->response->body($template);
   }
 
-  public function action_update() {
-    $movie_id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-    $movie = ORM::factory("Item", $movie_id);
-    Access::required("view", $movie);
-    Access::required("edit", $movie);
+  /**
+   * Edit a movie.  This generates the form, validates it, adds the item, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
+  public function action_edit() {
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
+    if (!$item->loaded() || !$item->is_movie()) {
+      // Item doesn't exist or isn't a movie - fire a 400 Bad Request.
+      throw HTTP_Exception::factory(400);
+    }
+    Access::required("view", $item);
+    Access::required("edit", $item);
 
-    $form = $this->get_edit_form($movie);
-    try {
-      $valid = $form->validate();
-      $movie->title = $form->edit_item->title->value;
-      $movie->description = $form->edit_item->description->value;
-      $movie->slug = $form->edit_item->slug->value;
-      $movie->name = $form->edit_item->inputs["name"]->value;
-      $movie->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
-        $form->edit_item->inputs[$key]->add_error($error, 1);
-      }
-      $valid = false;
+    // Get the from_id query parameter, which defaults to the edited item's id.
+    $from_id = Arr::get($this->request->query(), "from_id", $item->id);
+
+    // Build the form.
+    $form = Formo::form()
+      ->add("from_id", "input|hidden", $from_id)
+      ->add("item", "group")
+      ->add("buttons", "group");
+    $form->item
+      ->add("title", "input")
+      ->add("description", "textarea")
+      ->add("name", "input")
+      ->add("slug", "input");
+    $form->buttons
+      ->add("submit", "input|submit", t("Modify"));
+
+    $form
+      ->attr("id", "g-edit-movie-form");
+    $form->item
+      ->set("label", t("Edit Movie"));
+    $form->item->title
+      ->set("label", t("Title"))
+      ->set("error_messages", array(
+          "not_empty" => t("You must provide a title"),
+          "max_length" => t("Your title is too long")
+        ));
+    $form->item->description
+      ->set("label", t("Description"));
+    $form->item->name
+      ->set("label", t("Filename"))
+      ->set("error_messages", array(
+          "no_slashes" => t("The movie name can't contain a \"/\""),
+          "no_backslashes" => t("The movie name can't contain a \"\\\""),
+          "no_trailing_period" => t("The movie name can't end in \".\""),
+          "not_empty" => t("You must provide a movie file name"),
+          "max_length" => t("Your movie file name is too long"),
+          "conflict" => t("There is already a movie, movie or album with this name"),
+          "data_file_extension" => t("You cannot change the movie file extension")
+        ));
+    $form->item->slug
+      ->set("label", t("Internet Address"))
+      ->set("error_messages", array(
+          "conflict" => t("There is already a movie, movie or album with this internet address"),
+          "reserved" => t("This address is reserved and can't be used."),
+          "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+          "not_empty" => t("You must provide an internet address"),
+          "max_length" => t("Your internet address is too long")
+        ));
+    $form->buttons
+      ->set("label", "");
+
+    // Link the ORM model and call the form event
+    $form->item->orm("link", array("model" => $item));
+    //Module::event("item_edit_form", $item, $form);  // @todo: make these work.
+
+    // We can't edit the root item's name or slug.
+    if ($item->id == 1) {
+      $form->item->name
+        ->attr("type", "hidden")
+        ->add_rule("equals", array(":value", $item->name));
+      $form->item->slug
+        ->attr("type", "hidden")
+        ->add_rule("equals", array(":value", $item->slug));
     }
 
-    if ($valid) {
-      $movie->save();
-      Module::event("item_edit_form_completed", $movie, $form);
+    // Load and validate the form.
+    if ($form->sent()) {
+      if ($form->load()->validate()) {
+        // Passed - save item, run event, add to log, send message, then redirect to new item.
+        $item->save();
+        //Module::event("item_edit_form_completed", $item, $form);  // @todo: make these work.
+        GalleryLog::success("content", t("Updated movie"),
+                            HTML::anchor($item->url(), t("view")));
+        Message::success(t("Saved movie %movie_title",
+                           array("movie_title" => HTML::purify($item->title))));
 
-      GalleryLog::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
-      Message::success(
-        t("Saved movie %movie_title", array("movie_title" => HTML::purify($movie->title))));
-
-      if ($form->from_id->value == $movie->id) {
-        // Use the new URL; it might have changed.
-        $this->response->json(array("result" => "success", "location" => $movie->url()));
+        if ($this->request->is_ajax()) {
+          // If from_id points to the item itself, redirect as the address may have changed.
+          if ($form->from_id->val() == $item->id) {
+            $this->response->json(array("result" => "success", "location" => $item->url()));
+          } else {
+            $this->response->json(array("result" => "success"));
+          }
+          return;
+        } else {
+          // We ignore the from_id for non-ajax responses.
+          $this->redirect($item->abs_url());
+        }
       } else {
-        // Stay on the same page
-        $this->response->json(array("result" => "success"));
+        // Failed - if ajax, return an error.
+        if ($this->request->is_ajax()) {
+          $this->response->json(array("result" => "error", "html" => (string)$form));
+          return;
+        }
       }
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string) $form));
     }
-  }
 
-  public function action_form_edit() {
-    $movie_id = $this->request->arg(0, "digit");
-    $movie = ORM::factory("Item", $movie_id);
-    Access::required("view", $movie);
-    Access::required("edit", $movie);
-
-    $this->response->body($this->get_edit_form($movie));
-  }
-
-  public function get_edit_form($movie) {
-    $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
-    $form->hidden("from_id")->value($movie->id);
-    $group = $form->group("edit_item")->label(t("Edit Movie"));
-    $group->input("title")->label(t("Title"))->value($movie->title)
-      ->error_messages("not_empty", t("You must provide a title"))
-      ->error_messages("max_length", t("Your title is too long"));
-    $group->textarea("description")->label(t("Description"))->value($movie->description);
-    $group->input("name")->label(t("Filename"))->value($movie->name)
-      ->error_messages("name_conflict", t("There is already a movie, photo or album with this name"))
-      ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))
-      ->error_messages("no_backslashes", t("The movie name can't contain a \"\\\""))
-      ->error_messages("no_trailing_period", t("The movie name can't end in \".\""))
-      ->error_messages("data_file_extension", t("You cannot change the movie file extension"))
-      ->error_messages("not_empty", t("You must provide a movie file name"))
-      ->error_messages("max_length", t("Your movie file name is too long"));
-    $group->input("slug")->label(t("Internet Address"))->value($movie->slug)
-      ->error_messages(
-        "conflict", t("There is already a movie, photo or album with this internet address"))
-      ->error_messages(
-        "not_url_safe",
-        t("The internet address should contain only letters, numbers, hyphens and underscores"))
-      ->error_messages("not_empty", t("You must provide an internet address"))
-      ->error_messages("max_length", t("Your internet address is too long"));
-
-    Module::event("item_edit_form", $movie, $form);
-
-    $group = $form->group("buttons")->label("");
-    $group->submit("")->value(t("Modify"));
-    return $form;
+    // Nothing sent yet (ajax or non-ajax) or item validation failed (non-ajax).
+    if ($this->request->is_ajax()) {
+      // Send the basic form.
+      $this->response->body($form);
+    } else {
+      // Wrap the basic form in a theme.
+      $view_theme = new View_Theme("required/page.html", "other", "item_edit");
+      $view_theme->page_title = $form->item->get("label");
+      $view_theme->content = $form;
+      $this->response->body($view_theme);
+    }
   }
 }
