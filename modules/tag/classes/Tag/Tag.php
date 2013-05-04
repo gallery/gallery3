@@ -84,19 +84,6 @@ class Tag_Tag {
     return strcasecmp($tag1->name, $tag2->name);
   }
 
-  static function get_add_form($item) {
-    $form = new Forge("tags/create/{$item->id}", "", "post", array("id" => "g-add-tag-form", "class" => "g-short-form"));
-    $label = $item->is_album() ?
-      t("Add tag to album") :
-      ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
-
-    $group = $form->group("add_tag")->label("Add Tag");
-    $group->input("name")->label($label)->rules("required")->id("name");
-    $group->hidden("item_id")->value($item->id);
-    $group->submit("")->value(t("Add Tag"));
-    return $form;
-  }
-
   static function get_delete_form($tag) {
     $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "g-delete-tag-form"));
     $group = $form->group("delete_tag")
