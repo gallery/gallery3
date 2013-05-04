@@ -286,7 +286,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       ->set("label", t("Sort Order"));
     $form->item->sorting->sort_column
       ->set("label", t("Sort by"))
-      ->set("opts", Album::get_sort_order_options());  // @todo: this function is poorly named...
+      ->set("opts", Album::get_sort_column_options());
     $form->item->sorting->sort_order
       ->set("label", t("Order"))
       ->set("opts", array(

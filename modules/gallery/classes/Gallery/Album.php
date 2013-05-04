@@ -25,9 +25,9 @@
  */
 class Gallery_Album {
   /**
-   * Return a structured set of all the possible sort orders.
+   * Return a structured set of all the possible sort columns.
    */
-  static function get_sort_order_options() {
+  static function get_sort_column_options() {
     return array("weight" => t("Manual"),
                  "captured" => t("Date captured"),
                  "created" => t("Date uploaded"),
