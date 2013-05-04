@@ -85,43 +85,6 @@ class Tag_Tag {
   }
 
   /**
-   * Return all the tags for a given item.
-   * @return array
-   */
-  static function item_tags($item) {
-    return $item->tags->find_all();
-  }
-
-  /**
-   * Return all the items for a given tag.
-   * @return array
-   */
-  static function tag_items($tag) {
-    return $tag->items->find_all();
-  }
-
-  static function get_add_form($item) {
-    $form = new Forge("tags/create/{$item->id}", "", "post", array("id" => "g-add-tag-form", "class" => "g-short-form"));
-    $label = $item->is_album() ?
-      t("Add tag to album") :
-      ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
-
-    $group = $form->group("add_tag")->label("Add Tag");
-    $group->input("name")->label($label)->rules("required")->id("name");
-    $group->hidden("item_id")->value($item->id);
-    $group->submit("")->value(t("Add Tag"));
-    return $form;
-  }
-
-  static function get_delete_form($tag) {
-    $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "g-delete-tag-form"));
-    $group = $form->group("delete_tag")
-      ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
-    $group->submit("")->value(t("Delete Tag"));
-    return $form;
-  }
-
-  /**
    * Delete all tags associated with an item.
    */
   static function clear_all($item) {

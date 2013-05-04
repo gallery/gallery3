@@ -286,7 +286,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       ->set("label", t("Sort Order"));
     $form->item->sorting->sort_column
       ->set("label", t("Sort by"))
-      ->set("opts", Album::get_sort_order_options());  // @todo: this function is poorly named...
+      ->set("opts", Album::get_sort_column_options());
     $form->item->sorting->sort_order
       ->set("label", t("Order"))
       ->set("opts", array(
@@ -298,7 +298,7 @@ class Gallery_Controller_Albums extends Controller_Items {
 
     // Link the ORM model and call the form event
     $form->item->orm("link", array("model" => $item));
-    //Module::event("item_edit_form", $item, $form);  // @todo: make these work.
+    Module::event("item_edit_form", $item, $form);
 
     // We can't edit the root item's name or slug.
     if ($item->id == 1) {
@@ -315,7 +315,7 @@ class Gallery_Controller_Albums extends Controller_Items {
       if ($form->load()->validate()) {
         // Passed - save item, run event, add to log, send message, then redirect to new item.
         $item->save();
-        //Module::event("item_edit_form_completed", $item, $form);  // @todo: make these work.
+        Module::event("item_edit_form_completed", $item, $form);
         GalleryLog::success("content", t("Updated album"),
                             HTML::anchor($item->url(), t("view")));
         Message::success(t("Saved album %album_title",

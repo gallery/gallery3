@@ -21,7 +21,7 @@ class Tag_Hook_Rest_ItemTags {
   static function get($request) {
     $item = Rest::resolve($request->url);
     $tags = array();
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $tags[] = Rest::url("tag_item", $tag, $item);
     }
 

@@ -33,7 +33,7 @@ class Tag_Hook_TagBlock {
       $block->content->cloud = Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30));
 
       if ($theme->item() && $theme->page_subtype() != "tag" && Access::can("edit", $theme->item())) {
-        $block->content->form = Tag::get_add_form($theme->item());
+        $block->content->form = Request::factory("tags/add/{$theme->item()->id}")->execute()->body();
       } else {
         $block->content->form = "";
       }
