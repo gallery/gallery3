@@ -5,7 +5,7 @@
 
 // Log validation exceptions to ease debugging
 if ($e instanceof ORM_Validation_Exception) {
-  Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->validation->errors(), 1));
+  Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->errors(), 1));
 }
 
 if (php_sapi_name() == "cli") {

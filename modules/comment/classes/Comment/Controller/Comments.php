@@ -42,13 +42,13 @@ class Comment_Controller_Comments extends Controller {
       $comment->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
-      foreach ($e->validation->errors() as $key => $error) {
+      foreach ($e->errors() as $key => $error) {
         switch ($key) {
         case "guest_name":  $key = "name";  break;
         case "guest_email": $key = "email"; break;
         case "guest_url":   $key = "url";   break;
         }
-        $form->add_comment->inputs[$key]->add_error($error, 1);
+        $form->add_comment->inputs[$key]->add_error($error[0], 1);
       }
       $valid = false;
     }
