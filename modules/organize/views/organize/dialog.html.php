@@ -5,7 +5,7 @@
     <?= t("Organize :: %album_title", array("album_title" => "__TITLE__"))->for_js() ?>;
   var done_organizing = function(album_id) {
     $("#g-dialog").dialog("close");
-    window.location = '<?= URL::site("items/__ID__") ?>'.replace("__ID__", album_id);
+    window.location = '<?= URL::site("items/show/__ID__") ?>'.replace("__ID__", album_id);
   }
 
   var set_title = function(title) {

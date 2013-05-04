@@ -18,18 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Items extends Controller {
-  public function __call($function, $args) {
-    $item = ORM::factory("Item", (int)$function);
+  public function action_show() {
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
     if (!$item->loaded()) {
       throw HTTP_Exception::factory(404);
     }
 
     // Redirect to the more specific resource type, since it will render differently.  We can't
-    // delegate here because we may have gotten to this page via /items/<id> which means that we
+    // delegate here because we may have gotten to this page via items/show/<id> which means that we
     // don't have a type-specific controller.  Also, we want to drive a single canonical resource
     // mapping where possible.
     Access::required("view", $item);
-    $this->redirect($item->abs_url());
+    $this->redirect($item->abs_url(), 301);
   }
 
   // Return the width/height dimensions for the given item
