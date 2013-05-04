@@ -100,6 +100,195 @@ class Gallery_Controller_Items extends Controller {
     $this->response->body($template);
   }
 
+  /**
+   * Edit an item.  This generates the form, validates it, adds the item, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
+  public function action_edit() {
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
+    if (!$item->loaded()) {
+      throw HTTP_Exception::factory(404);
+    }
+    Access::required("view", $item);
+    Access::required("edit", $item);
+
+    // Get the from_id query parameter, which defaults to the edited item's id.
+    $from_id = Arr::get($this->request->query(), "from_id", $item->id);
+
+    // Build the form.
+    $form = Formo::form()
+      ->add("from_id", "input|hidden", $from_id)
+      ->add("item", "group")
+      ->add("buttons", "group");
+    $form->item
+      ->add("title", "input")
+      ->add("description", "textarea")
+      ->add("name", "input")
+      ->add("slug", "input");
+    $form->buttons
+      ->add("submit", "input|submit", t("Modify"));
+
+    $form
+      ->attr("id", "g-edit-{$item->type}-form");
+    $form->item
+      ->set("label", Arr::get(array(
+          "album" => t("Edit Album"),
+          "photo" => t("Edit Photo"),
+          "movie" => t("Edit Movie")
+        ), $item->type));
+    $form->item->title
+      ->set("label", t("Title"))
+      ->set("error_messages", array(
+          "not_empty" => t("You must provide a title"),
+          "max_length" => t("Your title is too long")
+        ));
+    $form->item->description
+      ->set("label", t("Description"));
+    $form->item->name
+      ->set("label", Arr::get(array(
+          "album" => t("Directory name"),
+          "photo" => t("Filename"),
+          "movie" => t("Filename")
+        ), $item->type))
+      ->set("error_messages", array_merge(Arr::get(array(
+          "album" => array(
+            "no_slashes" => t("The directory name can't contain a \"/\""),
+            "no_backslashes" => t("The directory name can't contain a \"\\\""),
+            "no_trailing_period" => t("The directory name can't end in \".\""),
+            "not_empty" => t("You must provide a directory name"),
+            "max_length" => t("Your directory name is too long")
+          ),
+          "photo" => array(
+            "no_slashes" => t("The photo name can't contain a \"/\""),
+            "no_backslashes" => t("The photo name can't contain a \"\\\""),
+            "no_trailing_period" => t("The photo name can't end in \".\""),
+            "not_empty" => t("You must provide a photo file name"),
+            "max_length" => t("Your photo file name is too long"),
+            "data_file_extension" => t("You cannot change the photo file extension")
+          ),
+          "movie" => array(
+            "no_slashes" => t("The movie name can't contain a \"/\""),
+            "no_backslashes" => t("The movie name can't contain a \"\\\""),
+            "no_trailing_period" => t("The movie name can't end in \".\""),
+            "not_empty" => t("You must provide a movie file name"),
+            "max_length" => t("Your movie file name is too long"),
+            "data_file_extension" => t("You cannot change the movie file extension")
+          )), $item->type),
+          array("conflict" => t("There is already a movie, photo or album with this name"))
+        ));
+    $form->item->slug
+      ->set("label", t("Internet Address"))
+      ->set("error_messages", Arr::get(array(
+          "album" => array(
+            "conflict" => t("There is already a movie, photo or album with this internet address"),
+            "reserved" => t("This address is reserved and can't be used."),
+            "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+            "not_empty" => t("You must provide an internet address"),
+            "max_length" => t("Your internet address is too long")
+          ),
+          "photo" => array(
+            "conflict" => t("There is already a movie, photo or album with this internet address"),
+            "reserved" => t("This address is reserved and can't be used."),
+            "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+            "not_empty" => t("You must provide an internet address"),
+            "max_length" => t("Your internet address is too long")
+          ),
+          "movie" => array(
+            "conflict" => t("There is already a movie, movie or album with this internet address"),
+            "reserved" => t("This address is reserved and can't be used."),
+            "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+            "not_empty" => t("You must provide an internet address"),
+            "max_length" => t("Your internet address is too long")
+          )), $item->type)
+        );
+    $form->buttons
+      ->set("label", "");
+
+    // Add sorting options for albums.
+    if ($item->is_album()) {
+      $form->item
+        ->add("sorting", "group");
+      $form->item->sorting
+        ->set("label", t("Sort Order"))
+        ->add("sort_column", "select")
+        ->add("sort_order", "select");
+      $form->item->sorting->sort_column
+        ->set("label", t("Sort by"))
+        ->set("opts", Album::get_sort_column_options());
+      $form->item->sorting->sort_order
+        ->set("label", t("Order"))
+        ->set("opts", array(
+            "ASC"  => t("Ascending"),
+            "DESC" => t("Descending")
+          ));
+    }
+
+    // Link the ORM model and call the form event.
+    $form->item->orm("link", array("model" => $item));
+    Module::event("item_edit_form", $item, $form);
+
+    // We can't edit the root item's name or slug.
+    if ($item->id == 1) {
+      $form->item->name
+        ->attr("type", "hidden")
+        ->add_rule("equals", array(":value", $item->name));
+      $form->item->slug
+        ->attr("type", "hidden")
+        ->add_rule("equals", array(":value", $item->slug));
+    }
+
+    // Load and validate the form.
+    if ($form->sent()) {
+      if ($form->load()->validate()) {
+        // Passed - save item, run event, add to log, send message, then redirect to new item.
+        $item->save();
+        Module::event("item_edit_form_completed", $item, $form);
+        GalleryLog::success("content", Arr::get(array(
+            "album" => t("Updated album"),
+            "photo" => t("Updated photo"),
+            "movie" => t("Updated movie")
+          ), $item->type), HTML::anchor($item->url(), t("view")));
+        Message::success(Arr::get(array(
+          "album" => t("Saved album %album_title", array("album_title" => HTML::purify($item->title))),
+          "photo" => t("Saved photo %photo_title", array("photo_title" => HTML::purify($item->title))),
+          "movie" => t("Saved movie %movie_title", array("movie_title" => HTML::purify($item->title)))
+        )));
+
+        if ($this->request->is_ajax()) {
+          // If from_id points to the item itself, redirect as the address may have changed.
+          if ($form->from_id->val() == $item->id) {
+            $this->response->json(array("result" => "success", "location" => $item->url()));
+          } else {
+            $this->response->json(array("result" => "success"));
+          }
+          return;
+        } else {
+          // We ignore the from_id for non-ajax responses.
+          $this->redirect($item->abs_url());
+        }
+      } else {
+        // Failed - if ajax, return an error.
+        if ($this->request->is_ajax()) {
+          $this->response->json(array("result" => "error", "html" => (string)$form));
+          return;
+        }
+      }
+    }
+
+    // Nothing sent yet (ajax or non-ajax) or item validation failed (non-ajax).
+    if ($this->request->is_ajax()) {
+      // Send the basic form.
+      $this->response->body($form);
+    } else {
+      // Wrap the basic form in a theme.
+      $view_theme = new View_Theme("required/page.html", "other", "item_edit");
+      $view_theme->page_title = $form->item->get("label");
+      $view_theme->content = $form;
+      $this->response->body($view_theme);
+    }
+  }
+
   public function action_delete() {
     $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);

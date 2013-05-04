@@ -344,7 +344,7 @@ class Gallery_Hook_GalleryEvent {
             $options_menu->append(Menu::factory("dialog")
                                   ->id("edit_item")
                                   ->label($edit_text)
-                                  ->url(URL::site("{$item->type}s/edit/$item->id")));
+                                  ->url(URL::site("items/edit/$item->id")));
           }
 
           if ($item->is_album()) {
@@ -515,7 +515,7 @@ class Gallery_Hook_GalleryEvent {
                             ->id("edit")
                             ->label($edit_title)
                             ->css_class("ui-icon-pencil")
-                            ->url(URL::site("{$item->type}s/edit/$item->id?from_id={$theme_item->id}")));
+                            ->url(URL::site("items/edit/$item->id?from_id={$theme_item->id}")));
 
       if ($item->is_photo() && Graphics::can("rotate")) {
         $options_menu
