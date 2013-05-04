@@ -7,7 +7,7 @@
 
     // In-place editing for tag admin
     $(".g-editable").gallery_in_place_edit({
-      form_url: <?= HTML::js_string(URL::site("admin/tags/form_rename/__ID__")) ?>
+      form_url: <?= HTML::js_string(URL::site("admin/tags/edit/__ID__")) ?>
     });
   });
 </script>
