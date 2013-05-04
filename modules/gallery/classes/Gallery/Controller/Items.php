@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Items extends Controller {
+  /**
+   * Show an item.  This finds the item by its URL and generates a view.  This is how all items
+   * (albums, photos, and movies) get displayed in Gallery.
+   */
   public function action_show() {
     // See if we got here via items/show/<id> - if so, do a 301 redirect to our canonical URL.
     if ($item_id = $this->request->arg_optional(0)) {
@@ -289,6 +293,10 @@ class Gallery_Controller_Items extends Controller {
     }
   }
 
+  /**
+   * Delete an item.  This generates the confirmation form, validates it,
+   * deletes the item, and returns a response.
+   */
   public function action_delete() {
     $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);
@@ -354,6 +362,9 @@ class Gallery_Controller_Items extends Controller {
     $this->response->body($form);
   }
 
+  /**
+   * Make an item the album cover.  This checks access, makes it the cover, and then reloads.
+   */
   public function action_make_album_cover() {
     Access::verify_csrf();
 
@@ -371,6 +382,10 @@ class Gallery_Controller_Items extends Controller {
     $this->response->json(array("result" => "success", "reload" => 1));
   }
 
+  /**
+   * Rotate an item.  This checks access, rotates it, and then sends an ajax response with the
+   * new image dimensions (no reload required).
+   */
   public function action_rotate() {
     Access::verify_csrf();
 
@@ -408,7 +423,9 @@ class Gallery_Controller_Items extends Controller {
     }
   }
 
-  // Return the width/height dimensions for the given item
+  /**
+   * Return the width/height dimensions for the given item as a json response.
+   */
   public function action_dimensions() {
     $id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $id);
