@@ -18,61 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Albums extends Controller_Items {
-  public function action_show() {
-    $album = $this->request->param("item");
-    if (!is_object($album)) {
-      // action_show() must be a public action because we route to it in the bootstrap,
-      // so make sure that we're actually receiving an object
-      throw HTTP_Exception::factory(404);
-    }
-    Access::required("view", $album);
-
-    $page_size = Module::get_var("gallery", "page_size", 9);
-    $show = $this->request->query("show");
-
-    if ($show) {
-      $child = ORM::factory("Item", $show);
-      $index = Item::get_position($child);
-      if ($index) {
-        $page = ceil($index / $page_size);
-        if ($page == 1) {
-          $this->redirect($album->abs_url());
-        } else {
-          $this->redirect($album->abs_url("page=$page"));
-        }
-      }
-    }
-
-    $page = Arr::get($this->request->query(), "page", "1");
-    $children_count = $album->children->viewable()->count_all();
-    $offset = ($page - 1) * $page_size;
-    $max_pages = max(ceil($children_count / $page_size), 1);
-
-    // Make sure that the page references a valid offset
-    if ($page < 1) {
-      $this->redirect($album->abs_url());
-    } else if ($page > $max_pages) {
-      $this->redirect($album->abs_url("page=$max_pages"));
-    }
-
-    $template = new View_Theme("required/page.html", "collection", "album");
-    $template->set_global(
-      array("page" => $page,
-            "page_title" => null,
-            "max_pages" => $max_pages,
-            "page_size" => $page_size,
-            "item" => $album,
-            "children" => $album->children->viewable()->limit($page_size)->offset($offset)->find_all(),
-            "parents" => $album->parents->find_all()->as_array(), // view calls empty() on this
-            "breadcrumbs" => Breadcrumb::array_from_item_parents($album),
-            "children_count" => $children_count));
-    $template->content = new View("required/album.html");
-    $album->increment_view_count();
-
-    $this->response->body($template);
-    Item::set_display_context_callback("Controller_Albums::get_display_context");
-  }
-
   public static function get_display_context($item) {
     $where = array(array("type", "!=", "album"));
     $position = Item::get_position($item, $where);

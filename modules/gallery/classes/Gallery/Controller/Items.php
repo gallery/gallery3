@@ -19,18 +19,85 @@
  */
 class Gallery_Controller_Items extends Controller {
   public function action_show() {
-    $item_id = $this->request->arg(0, "digit");
-    $item = ORM::factory("Item", $item_id);
-    if (!$item->loaded()) {
-      throw HTTP_Exception::factory(404);
+    // See if we got here via items/show/<id> - if so, do a 301 redirect to our canonical URL.
+    if ($item_id = $this->request->arg_optional(0)) {
+      $item = ORM::factory("Item", $item_id);
+      if (!$item->loaded()) {
+        throw HTTP_Exception::factory(404);
+      }
+      Access::required("view", $item);
+      $this->redirect($item->abs_url(), 301);
     }
 
-    // Redirect to the more specific resource type, since it will render differently.  We can't
-    // delegate here because we may have gotten to this page via items/show/<id> which means that we
-    // don't have a type-specific controller.  Also, we want to drive a single canonical resource
-    // mapping where possible.
+    // Find the item by its URL, check access, and increment the view count.
+    $item_url = $this->request->param("item_url");
+    if (empty($item_url)) {
+      $item = Item::root();
+    } else {
+      $item = Item::find_by_relative_url($item_url);
+      if (!$item->loaded()) {
+        throw HTTP_Exception::factory(404);
+      }
+    }
     Access::required("view", $item);
-    $this->redirect($item->abs_url(), 301);
+    $item->increment_view_count();
+
+    // Build the view.  Photos and movies are nearly identical, but albums are different.
+    if ($item->is_album()) {
+      $page_size = Module::get_var("gallery", "page_size", 9);
+      $show = $this->request->query("show");
+
+      if ($show) {
+        $child = ORM::factory("Item", $show);
+        $index = Item::get_position($child);
+        if ($index) {
+          $page = ceil($index / $page_size);
+          if ($page == 1) {
+            $this->redirect($item->abs_url());
+          } else {
+            $this->redirect($item->abs_url("page=$page"));
+          }
+        }
+      }
+
+      $page = Arr::get($this->request->query(), "page", "1");
+      $children_count = $item->children->viewable()->count_all();
+      $offset = ($page - 1) * $page_size;
+      $max_pages = max(ceil($children_count / $page_size), 1);
+
+      // Make sure that the page references a valid offset
+      if ($page < 1) {
+        $this->redirect($item->abs_url());
+      } else if ($page > $max_pages) {
+        $this->redirect($item->abs_url("page=$max_pages"));
+      }
+
+      $template = new View_Theme("required/page.html", "collection", "album");
+      $template->content = new View("required/album.html");
+      $template->set_global(array(
+        "page" => $page,
+        "page_title" => null,
+        "max_pages" => $max_pages,
+        "page_size" => $page_size,
+        "item" => $item,
+        "children" => $item->children->viewable()->limit($page_size)->offset($offset)->find_all(),
+        "parents" => $item->parents->find_all()->as_array(), // view calls empty() on this
+        "breadcrumbs" => Breadcrumb::array_from_item_parents($item),
+        "children_count" => $children_count
+      ));
+      Item::set_display_context_callback("Controller_Albums::get_display_context");
+    } else {
+      $template = new View_Theme("required/page.html", "item", $item->type);
+      $template->content = new View("required/{$item->type}.html");
+      $template->set_global(array(
+        "item" => $item,
+        "children" => array(),
+        "children_count" => 0
+      ));
+      $template->set_global(Item::get_display_context($item));
+    }
+
+    $this->response->body($template);
   }
 
   public function action_delete() {

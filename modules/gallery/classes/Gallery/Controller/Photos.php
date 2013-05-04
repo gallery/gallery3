@@ -18,27 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Photos extends Controller_Items {
-  public function action_show() {
-    $photo = $this->request->param("item");
-    if (!is_object($photo)) {
-      // action_show() must be a public action because we route to it in the bootstrap,
-      // so make sure that we're actually receiving an object
-      throw HTTP_Exception::factory(404);
-    }
-    Access::required("view", $photo);
-
-    $template = new View_Theme("required/page.html", "item", "photo");
-    $template->set_global(array("item" => $photo,
-                                "children" => array(),
-                                "children_count" => 0));
-    $template->set_global(Item::get_display_context($photo));
-    $template->content = new View("required/photo.html");
-
-    $photo->increment_view_count();
-
-    $this->response->body($template);
-  }
-
   /**
    * Edit a photo.  This generates the form, validates it, adds the item, and returns a response.
    * This can be used as an ajax dialog (preferable) or a normal view.

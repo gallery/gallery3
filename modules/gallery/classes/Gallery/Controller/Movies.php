@@ -18,27 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Movies extends Controller_Items {
-  public function action_show() {
-    $movie = $this->request->param("item");
-    if (!is_object($movie)) {
-      // action_show() must be a public action because we route to it in the bootstrap,
-      // so make sure that we're actually receiving an object
-      throw HTTP_Exception::factory(404);
-    }
-    Access::required("view", $movie);
-
-    $template = new View_Theme("required/page.html", "item", "movie");
-    $template->set_global(array("item" => $movie,
-                                "children" => array(),
-                                "children_count" => 0));
-    $template->set_global(Item::get_display_context($movie));
-    $template->content = new View("required/movie.html");
-
-    $movie->increment_view_count();
-
-    $this->response->body($template);
-  }
-
   /**
    * Edit a movie.  This generates the form, validates it, adds the item, and returns a response.
    * This can be used as an ajax dialog (preferable) or a normal view.
