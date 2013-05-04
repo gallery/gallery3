@@ -140,24 +140,6 @@ class Gallery_Item {
   }
 
   /**
-   * Display delete confirmation message and form
-   * @param object $item
-   * @return string form
-   */
-  static function get_delete_form($item) {
-    $page_type = Request::current()->query("page_type");
-    $from_id = Request::current()->query("from_id");
-    $form = new Forge(
-      "quick/delete/$item->id?page_type=$page_type&from_id=$from_id", "",
-      "post", array("id" => "g-confirm-delete"));
-    $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
-    $group->submit("")->value(t("Delete"));
-    $form->script("")
-      ->url(URL::abs_file("modules/gallery/assets/item_form_delete.js"));
-    return $form;
-  }
-
-  /**
    * Get the next weight value
    */
   static function get_max_weight() {

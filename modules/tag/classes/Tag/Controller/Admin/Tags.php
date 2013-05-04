@@ -45,7 +45,8 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       ->attr("id", "g-delete-tag-form")
       ->add("confirm", "group");
     $form->confirm
-      ->set("label", t("Really delete tag %tag_name?", array("tag_name" => $tag->name)))
+      ->set("label", t("Confirm Deletion"))
+      ->html(t("Really delete tag %tag_name?", array("tag_name" => HTML::purify($tag->name))))
       ->add("submit", "input|submit", t("Delete Tag"));
 
     if ($form->sent()) {

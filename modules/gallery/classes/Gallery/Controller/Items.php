@@ -18,18 +18,138 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_Items extends Controller {
-  public function __call($function, $args) {
-    $item = ORM::factory("Item", (int)$function);
+  public function action_show() {
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
     if (!$item->loaded()) {
       throw HTTP_Exception::factory(404);
     }
 
     // Redirect to the more specific resource type, since it will render differently.  We can't
-    // delegate here because we may have gotten to this page via /items/<id> which means that we
+    // delegate here because we may have gotten to this page via items/show/<id> which means that we
     // don't have a type-specific controller.  Also, we want to drive a single canonical resource
     // mapping where possible.
     Access::required("view", $item);
-    $this->redirect($item->abs_url());
+    $this->redirect($item->abs_url(), 301);
+  }
+
+  public function action_delete() {
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
+
+    // Get the from_id query parameter, which defaults to the edited item's id.
+    $from_id = Arr::get($this->request->query(), "from_id", $item->id);
+
+    $form = Formo::form()
+      ->attr("id", "g-delete-item-form")
+      ->add("from_id", "input|hidden", $from_id)
+      ->add("confirm", "group")
+      ->add_script_text(
+          '$("#g-delete-item-form").submit(function() {
+            $("#g-delete-item-form input[type=submit]").gallery_show_loading();
+          });'
+        );  // @todo: make all dialogs do something like this automatically.
+    $form->confirm
+      ->set("label", t("Confirm Deletion"))
+      ->html($item->is_album() ?
+          t("Delete the album <b>%title</b>? All photos and movies in the album will also be deleted.",
+            array("title" => HTML::purify($item->title))) :
+          t("Are you sure you want to delete <b>%title</b>?",
+            array("title" => HTML::purify($item->title)))
+        )
+      ->add("submit", "input|submit", t("Delete"));
+
+    if ($form->sent()) {
+      if ($form->load()->validate()) {
+        $msg = Arr::get(array(
+          "album" => t("Deleted album <b>%title</b>", array("title" => HTML::purify($item->title))),
+          "photo" => t("Deleted photo <b>%title</b>", array("title" => HTML::purify($item->title))),
+          "movie" => t("Deleted movie <b>%title</b>", array("title" => HTML::purify($item->title)))
+        ), $item->type);
+
+        // If we just deleted the item we were viewing, we'll need to redirect to the parent.
+        $location = ($form->from_id->val() == $item->id) ? $item->parent->url() : null;
+
+        if ($item->is_album()) {
+          // Album delete will trigger deletes for all children.  Do this in a batch so that we can
+          // be smart about notifications, album cover updates, etc.
+          Batch::start();
+          $item->delete();
+          Batch::stop();
+        } else {
+          $item->delete();
+        }
+
+        Message::success($msg);
+
+        if (isset($location)) {
+          $this->response->json(array("result" => "success", "location" => $location));
+        } else {
+          $this->response->json(array("result" => "success", "reload" => 1));
+        }
+      } else {
+        $this->response->json(array("result" => "error", "html" => (string)$form));
+      }
+      return;
+    }
+
+    $this->response->body($form);
+  }
+
+  public function action_make_album_cover() {
+    Access::verify_csrf();
+
+    $item_id = $this->request->arg(0, "digit");
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    Access::required("view", $item->parent);
+    Access::required("edit", $item->parent);
+
+    $msg = t("Made <b>%title</b> this album's cover", array("title" => HTML::purify($item->title)));
+
+    Item::make_album_cover($item);
+    Message::success($msg);
+
+    $this->response->json(array("result" => "success", "reload" => 1));
+  }
+
+  public function action_rotate() {
+    Access::verify_csrf();
+
+    $item_id = $this->request->arg(0, "digit");
+    $dir = $this->request->arg(1, "alpha");
+    $item = ORM::factory("Item", $item_id);
+    Access::required("view", $item);
+    Access::required("edit", $item);
+
+    switch($dir) {
+      case "ccw": $degrees = -90; break;
+      case "cw":  $degrees =  90; break;
+      default:    throw HTTP_Exception::factory(400);
+    }
+
+    // Get the from_id query parameter, which defaults to the edited item's id.
+    $from_id = Arr::get($this->request->query(), "from_id", $item->id);
+
+    $tmpfile = System::temp_filename("rotate", pathinfo($item->file_path(), PATHINFO_EXTENSION));
+    GalleryGraphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees), $item);
+    $item->set_data_file($tmpfile);
+    $item->save();
+
+    // We don't need to refresh the page - just tell js what the new dimensions are.
+    if ($from_id == $item->id) {
+      $this->response->json(
+        array("src" => $item->resize_url(),
+              "width" => $item->resize_width,
+              "height" => $item->resize_height));
+    } else {
+      $this->response->json(
+        array("src" => $item->thumb_url(),
+              "width" => $item->thumb_width,
+              "height" => $item->thumb_height));
+    }
   }
 
   // Return the width/height dimensions for the given item
