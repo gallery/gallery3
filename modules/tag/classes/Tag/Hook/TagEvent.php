@@ -80,7 +80,7 @@ class Tag_Hook_TagEvent {
 
   static function item_edit_form($item, $form) {
     $tag_names = array();
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $tag_names[] = $tag->name;
     }
     $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
@@ -108,7 +108,7 @@ class Tag_Hook_TagEvent {
   }
 
   static function item_index_data($item, $data) {
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $data[] = $tag->name;
     }
   }
@@ -136,7 +136,7 @@ class Tag_Hook_TagEvent {
 
   static function info_block_get_metadata($block, $item) {
     $tags = array();
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $tags[] = "<a href=\"{$tag->url()}\">" .
         HTML::clean($tag->name) . "</a>";
     }

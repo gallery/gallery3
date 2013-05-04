@@ -85,14 +85,6 @@ class Tag_Tag {
   }
 
   /**
-   * Return all the tags for a given item.
-   * @return array
-   */
-  static function item_tags($item) {
-    return $item->tags->find_all();
-  }
-
-  /**
    * Return all the items for a given tag.
    * @return array
    */
