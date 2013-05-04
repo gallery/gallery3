@@ -579,8 +579,19 @@ class Gallery_Controller_Items extends Controller {
                  "next_item" => $next_item,
                  "sibling_count" =>
                    $item->parent->children->viewable()->where("type", "!=", "album")->count_all(),
-                 "siblings_callback" => array("Controller_Albums::get_siblings", array($item)),
+                 "siblings_callback" => array("Controller_Items::get_siblings", array($item)),
                  "parents" => $item->parents->find_all()->as_array(),
                  "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
+  }
+
+  /**
+   * Siblings callback for albums.
+   *
+   * @see  View_Theme::siblings()
+   * @see  Controller_Search::get_siblings()
+   */
+  public static function get_siblings($item, $limit=null, $offset=null) {
+    // @todo consider creating Model_Item::siblings() if we use this more broadly.
+    return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
   }
 }
