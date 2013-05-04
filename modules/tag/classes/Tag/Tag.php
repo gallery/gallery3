@@ -84,14 +84,6 @@ class Tag_Tag {
     return strcasecmp($tag1->name, $tag2->name);
   }
 
-  /**
-   * Return all the items for a given tag.
-   * @return array
-   */
-  static function tag_items($tag) {
-    return $tag->items->find_all();
-  }
-
   static function get_add_form($item) {
     $form = new Forge("tags/create/{$item->id}", "", "post", array("id" => "g-add-tag-form", "class" => "g-short-form"));
     $label = $item->is_album() ?
