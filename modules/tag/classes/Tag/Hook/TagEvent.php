@@ -80,18 +80,17 @@ class Tag_Hook_TagEvent {
 
   static function item_edit_form($item, $form) {
     $tag_names = array();
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $tag_names[] = $tag->name;
     }
-    $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
-      ->value(implode(", ", $tag_names));
-
-    $form->script("")->text(self::_get_autocomplete_js());
+    $form->item->add("tags", "input", implode(", ", $tag_names));
+    $form->item->tags->set("label", t("Tags (comma separated)"));
+    $form->add_script_text(self::_get_autocomplete_js());
   }
 
   static function item_edit_form_completed($item, $form) {
     Tag::clear_all($item);
-    foreach (explode(",", $form->edit_item->tags->value) as $tag_name) {
+    foreach (explode(",", $form->item->tags->val()) as $tag_name) {
       if ($tag_name) {
         Tag::add($item, trim($tag_name));
       }
@@ -108,7 +107,7 @@ class Tag_Hook_TagEvent {
   }
 
   static function item_index_data($item, $data) {
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $data[] = $tag->name;
     }
   }
@@ -136,7 +135,7 @@ class Tag_Hook_TagEvent {
 
   static function info_block_get_metadata($block, $item) {
     $tags = array();
-    foreach (Tag::item_tags($item) as $tag) {
+    foreach ($item->tags->find_all() as $tag) {
       $tags[] = "<a href=\"{$tag->url()}\">" .
         HTML::clean($tag->name) . "</a>";
     }

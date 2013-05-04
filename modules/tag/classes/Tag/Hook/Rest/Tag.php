@@ -63,7 +63,7 @@ class Tag_Hook_Rest_Tag {
     switch ($resource_type) {
     case "item":
       $tags = array();
-      foreach (Tag::item_tags($resource) as $tag) {
+      foreach ($resource->tags->find_all() as $tag) {
         $tags[] = Rest::url("tag_item", $tag, $resource);
       }
       return array(

@@ -52,11 +52,11 @@ return array(
     "month"          => array(array("regex", array(":value", "/^\d{4}-(?:0[1-9]|1[0-2])$/"))),
     "range"          => array(
       array("digit"),
-      array("Formo_Validator::range", array(":field", ":form")),
+      array("Formo::range", array(":field", ":form")),
     ),
     "number"        => array(
       array("digit"),
-      array("Formo_Validator::range", array(":field", ":form")),
+      array("Formo::range", array(":field", ":form")),
     ),
   ),
 );

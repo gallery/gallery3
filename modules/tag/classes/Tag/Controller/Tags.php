@@ -26,25 +26,60 @@ class Tag_Controller_Tags extends Controller {
     $this->response->body(Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30)));
   }
 
-  public function action_create() {
+  public function action_add() {
     $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     Access::required("edit", $item);
 
-    $form = Tag::get_add_form($item);
-    if ($form->validate()) {
-      foreach (explode(",", $form->add_tag->inputs["name"]->value) as $tag_name) {
-        $tag_name = trim($tag_name);
-        if ($tag_name) {
-          $tag = Tag::add($item, $tag_name);
-        }
-      }
+    // Build our form.
+    $form = Formo::form()
+      ->add("tag", "group");
+    $form->tag
+      ->add("name", "input")
+      ->add("item_id", "input|hidden", $item->id)
+      ->add("submit", "input|submit", t("Add Tag"));
 
-      $this->response->json(array("result" => "success", "cloud" => (string)Tag::cloud(30)));
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
+    $form
+      ->attr("id", "g-add-tag-form")
+      ->add_class("g-short-form");
+    $form->tag
+      ->set("label", t("Add Tag"));
+    $form->tag->name
+      ->set("label", Arr::get(array(
+          "album" => t("Add tag to album"),
+          "photo" => t("Add tag to photo"),
+          "movie" => t("Add tag to movie")
+        ), $item->type))
+      ->add_rule("not_empty")
+      ->add_rule("max_length", array(":value", 64), t("Your tag is too long"));
+
+    // If sent, validate and create the tag.
+    if ($form->sent()) {
+      if ($form->load()->validate()) {
+        foreach (explode(",", $form->tag->name->val()) as $tag_name) {
+          $tag_name = trim($tag_name);
+          if ($tag_name) {
+            $tag = Tag::add($item, $tag_name);
+          }
+        }
+
+        $this->response->json(array(
+          "result" => "success",
+          "cloud"  => (string)Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30))
+        ));
+        return;
+      } else {
+        $this->response->json(array(
+          "result" => "error",
+          "html" => (string)$form
+        ));
+        return;
+      }
     }
+
+    // This is being called from TagBlock, which builds the view for us - return the raw form.
+    $this->response->body($form);
   }
 
   public function action_autocomplete() {

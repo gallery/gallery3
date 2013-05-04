@@ -106,7 +106,7 @@ class Gallery_Controller_Photos extends Controller_Items {
 
     // Link the ORM model and call the form event
     $form->item->orm("link", array("model" => $item));
-    //Module::event("item_edit_form", $item, $form);  // @todo: make these work.
+    Module::event("item_edit_form", $item, $form);
 
     // We can't edit the root item's name or slug.
     if ($item->id == 1) {
@@ -123,7 +123,7 @@ class Gallery_Controller_Photos extends Controller_Items {
       if ($form->load()->validate()) {
         // Passed - save item, run event, add to log, send message, then redirect to new item.
         $item->save();
-        //Module::event("item_edit_form_completed", $item, $form);  // @todo: make these work.
+        Module::event("item_edit_form_completed", $item, $form);
         GalleryLog::success("content", t("Updated photo"),
                             HTML::anchor($item->url(), t("view")));
         Message::success(t("Saved photo %photo_title",
