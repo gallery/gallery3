@@ -51,7 +51,8 @@ class Tag_Controller_Tags extends Controller {
           "photo" => t("Add tag to photo"),
           "movie" => t("Add tag to movie")
         ), $item->type))
-      ->add_rule("not_empty");
+      ->add_rule("not_empty")
+      ->add_rule("max_length", array(":value", 64), t("Your tag is too long"));
 
     // If sent, validate and create the tag.
     if ($form->sent()) {
