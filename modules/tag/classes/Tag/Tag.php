@@ -84,14 +84,6 @@ class Tag_Tag {
     return strcasecmp($tag1->name, $tag2->name);
   }
 
-  static function get_delete_form($tag) {
-    $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "g-delete-tag-form"));
-    $group = $form->group("delete_tag")
-      ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
-    $group->submit("")->value(t("Delete Tag"));
-    return $form;
-  }
-
   /**
    * Delete all tags associated with an item.
    */

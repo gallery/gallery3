@@ -34,34 +34,34 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $this->response->body($view);
   }
 
-  public function action_form_delete() {
-    $id = $this->request->arg(0, "digit");
-    $tag = ORM::factory("Tag", $id);
-    if ($tag->loaded()) {
-      $this->response->body(Tag::get_delete_form($tag));
-    }
-  }
-
   public function action_delete() {
-    $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-
-    $tag = ORM::factory("Tag", $id);
+    $tag_id = $this->request->arg(0, "digit");
+    $tag = ORM::factory("Tag", $tag_id);
     if (!$tag->loaded()) {
       throw HTTP_Exception::factory(404);
     }
 
-    $form = Tag::get_delete_form($tag);
-    if ($form->validate()) {
-      $name = $tag->name;
-      $tag->delete();
-      Message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
-      GalleryLog::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
+    $form = Formo::form()
+      ->attr("id", "g-delete-tag-form")
+      ->add("confirm", "group");
+    $form->confirm
+      ->set("label", t("Really delete tag %tag_name?", array("tag_name" => $tag->name)))
+      ->add("submit", "input|submit", t("Delete Tag"));
 
-      $this->response->json(array("result" => "success", "location" => URL::site("admin/tags")));
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
+    if ($form->sent()) {
+      if ($form->load()->validate()) {
+        $tag->delete();
+        Message::success(t("Deleted tag %tag_name", array("tag_name" => $tag->name)));
+        GalleryLog::success("tags", t("Deleted tag %tag_name", array("tag_name" => $tag->name)));
+
+        $this->response->json(array("result" => "success", "location" => URL::site("admin/tags")));
+      } else {
+        $this->response->json(array("result" => "error", "html" => (string)$form));
+      }
+      return;
     }
+
+    $this->response->body($form);
   }
 
   public function action_form_rename() {
