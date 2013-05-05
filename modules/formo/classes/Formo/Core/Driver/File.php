@@ -6,8 +6,15 @@ class Formo_Core_Driver_File extends Formo_Driver {
 	{
 		$field = $array['field'];
 
+		// Find the highest-level parent, not just the immediate parent
+		$parent = $field->parent();
+		while ($parent->parent())
+		{
+			$parent = $parent->parent();
+		}
+
 		// Add necessary multipart/form-data attribute
-		$field->parent(TRUE)->attr('enctype', 'multipart/form-data');
+		$parent->attr('enctype', 'multipart/form-data');
 	}
 
 	public static function get_tag()
