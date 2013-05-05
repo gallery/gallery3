@@ -47,7 +47,6 @@ class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
 
       Message::success(t("Added path %path", array("path" => $path)));
       ServerAdd::check_config($paths);
-      $this->redirect("admin/server_add");
     }
 
     $view = new View_Admin("required/admin.html");

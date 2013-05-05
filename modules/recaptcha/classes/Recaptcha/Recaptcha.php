@@ -18,29 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Recaptcha_Recaptcha {
-  static function get_configure_form() {
-    $form = new Forge("admin/recaptcha", "", "post", array("id" => "g-configure-recaptcha-form"));
-    $group = $form->group("configure_recaptcha")
-      ->label(t("Configure reCAPTCHA"));
-    $group->input("public_key")
-      ->label(t("Public Key"))
-      ->value(Module::get_var("recaptcha", "public_key"))
-      ->rules("required")
-      ->error_messages("required", t("You must enter a public key"))
-      ->error_messages("invalid", t("This public key is invalid"));
-    $group->input("private_key")
-      ->label(t("Private Key"))
-      ->value(Module::get_var("recaptcha", "private_key"))
-      ->callback("Recaptcha::verify_key")
-      ->error_messages("required", t("You must enter a private key"))
-      ->error_messages("invalid", t("This private key is invalid"));
-
-    $group->submit("")->value(t("Save"));
-    $site_domain = urlencode(stripslashes($_SERVER["SERVER_NAME"]));
-    $form->get_key_url = "http://www.google.com/recaptcha/admin/create?domains=$site_domain&app=Gallery3";
-    return $form;
-  }
-
   static function check_config() {
     $public_key = Module::get_var("recaptcha", "public_key");
     $private_key = Module::get_var("recaptcha", "private_key");
@@ -59,15 +36,10 @@ class Recaptcha_Recaptcha {
    * @param string $private_key
    * @return boolean
    */
-  static function verify_key($private_key_input) {
-    if (!$private_key_input->value) {
-      $private_key_input->add_error("required", 1);
-      return;
-    }
-
+  static function verify_key($private_key) {
     $remote_ip = $_SERVER["REMOTE_ADDR"];
     $response = self::_http_post("api-verify.recaptcha.net", "/verify",
-                                 array("privatekey" => $private_key_input->value,
+                                 array("privatekey" => $private_key,
                                        "remoteip" => $remote_ip,
                                        "challenge" => "right",
                                        "response" => "wrong"));
@@ -75,8 +47,9 @@ class Recaptcha_Recaptcha {
     if ($response[1] == "false\ninvalid-site-private-key") {
       // This is the only thing I can figure out how to verify.
       // See http://recaptcha.net/apidocs/captcha for possible return values
-      $private_key_input->add_error("invalid", 1);
+      return false;
     }
+    return true;
   }
 
   /**
@@ -121,6 +94,8 @@ class Recaptcha_Recaptcha {
 
   /**
    * Submits an HTTP POST to a reCAPTCHA server
+   * @todo: redo/simplify this with a sub-request.
+   *
    * @param string $host
    * @param string $path
    * @param array $data

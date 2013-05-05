@@ -49,8 +49,6 @@ class Akismet_Controller_Admin_Akismet extends Controller_Admin {
 
       GalleryLog::success("akismet",
         t("Akismet key changed to %new_key", array("new_key" => $new_key)));
-      Akismet::check_config();
-      $this->redirect("admin/akismet");
     }
 
     Akismet::check_config();
