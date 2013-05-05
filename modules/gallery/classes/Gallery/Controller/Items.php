@@ -567,7 +567,7 @@ class Gallery_Controller_Items extends Controller {
    * Get form labels for the item group.  This is a helper function for the edit/add forms.
    */
   public static function get_form_labels($item_group, $type) {
-		// Define all of the labels.
+    // Define all of the labels.
     $labels = array(
       "title" => array(
         "all"   => t("Title")
@@ -591,7 +591,7 @@ class Gallery_Controller_Items extends Controller {
       )
     );
 
-		// Add the labels we need.
+    // Add the labels we need.
     foreach (Arr::flatten($item_group->as_array(null, true)) as $alias => $field) {
       $field->set("label", Arr::path($labels, "$alias.$type",
                            Arr::path($labels, "$alias.all")));
