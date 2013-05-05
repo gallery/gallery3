@@ -149,7 +149,7 @@ class Gallery_Controller_Items extends Controller {
         ->add("sort_column", "select")
         ->add("sort_order", "select");
       $form->item->sorting->sort_column
-        ->set("opts", Album::get_sort_column_options());
+        ->set("opts", static::get_sort_column_options());
       $form->item->sorting->sort_order
         ->set("opts", array(
             "ASC"  => t("Ascending"),
@@ -596,5 +596,19 @@ class Gallery_Controller_Items extends Controller {
       $field->set("label", Arr::path($labels, "$alias.$type",
                            Arr::path($labels, "$alias.all")));
     }
+  }
+
+  /**
+   * Return a structured set of all the possible sort columns.
+   */
+  public static function get_sort_column_options() {
+    return array("weight"     => t("Manual"),
+                 "captured"   => t("Date captured"),
+                 "created"    => t("Date uploaded"),
+                 "title"      => t("Title"),
+                 "name"       => t("File name"),
+                 "updated"    => t("Date modified"),
+                 "view_count" => t("Number of views"),
+                 "rand_key"   => t("Random"));
   }
 }
