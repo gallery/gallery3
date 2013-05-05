@@ -190,7 +190,7 @@ class Gallery_Controller_Items extends Controller {
           "album" => t("Saved album %album_title", array("album_title" => HTML::purify($item->title))),
           "photo" => t("Saved photo %photo_title", array("photo_title" => HTML::purify($item->title))),
           "movie" => t("Saved movie %movie_title", array("movie_title" => HTML::purify($item->title)))
-        )));
+        ), $item->type));
 
         if ($this->request->is_ajax()) {
           // If from_id points to the item itself, redirect as the address may have changed.
