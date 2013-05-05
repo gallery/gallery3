@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Watermarks_Controller_Test extends Unittest_TestCase {
+  // @todo: redo these tests using the "custom" attribute of $_FILES that tells
+  // Formo to skip validation.
+
   public function setup() {
     parent::setup();
     $this->_save = array($_POST, $_SERVER);
