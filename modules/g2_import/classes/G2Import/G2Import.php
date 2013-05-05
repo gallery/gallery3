@@ -496,7 +496,7 @@ class G2Import_G2Import {
     $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
     $album->owner_id = self::map($g2_album->getOwnerId());
     try {
-      $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+      $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album->getId()));
     } catch (Exception $e) {
       // @todo log
       $album->view_count = 0;
