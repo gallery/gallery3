@@ -11,7 +11,7 @@ class remote_Core {
 
 	public static function status($url)
 	{
-		if ( ! valid::url($url, 'http'))
+		if ( ! valid::url($url))
 			return FALSE;
 
 		// Get the hostname and path
