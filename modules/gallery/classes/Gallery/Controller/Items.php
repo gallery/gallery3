@@ -122,92 +122,23 @@ class Gallery_Controller_Items extends Controller {
 
     // Build the form.
     $form = Formo::form()
+      ->attr("id", "g-edit-{$item->type}-form")
       ->add("from_id", "input|hidden", $from_id)
       ->add("item", "group")
       ->add("buttons", "group");
-    $form->item
-      ->add("title", "input")
-      ->add("description", "textarea")
-      ->add("name", "input")
-      ->add("slug", "input");
-    $form->buttons
-      ->add("submit", "input|submit", t("Modify"));
-
-    $form
-      ->attr("id", "g-edit-{$item->type}-form");
     $form->item
       ->set("label", Arr::get(array(
           "album" => t("Edit Album"),
           "photo" => t("Edit Photo"),
           "movie" => t("Edit Movie")
-        ), $item->type));
-    $form->item->title
-      ->set("label", t("Title"))
-      ->set("error_messages", array(
-          "not_empty" => t("You must provide a title"),
-          "max_length" => t("Your title is too long")
-        ));
-    $form->item->description
-      ->set("label", t("Description"));
-    $form->item->name
-      ->set("label", Arr::get(array(
-          "album" => t("Directory name"),
-          "photo" => t("Filename"),
-          "movie" => t("Filename")
         ), $item->type))
-      ->set("error_messages", array_merge(Arr::get(array(
-          "album" => array(
-            "no_slashes" => t("The directory name can't contain a \"/\""),
-            "no_backslashes" => t("The directory name can't contain a \"\\\""),
-            "no_trailing_period" => t("The directory name can't end in \".\""),
-            "not_empty" => t("You must provide a directory name"),
-            "max_length" => t("Your directory name is too long")
-          ),
-          "photo" => array(
-            "no_slashes" => t("The photo name can't contain a \"/\""),
-            "no_backslashes" => t("The photo name can't contain a \"\\\""),
-            "no_trailing_period" => t("The photo name can't end in \".\""),
-            "not_empty" => t("You must provide a photo file name"),
-            "max_length" => t("Your photo file name is too long"),
-            "data_file_extension" => t("You cannot change the photo file extension")
-          ),
-          "movie" => array(
-            "no_slashes" => t("The movie name can't contain a \"/\""),
-            "no_backslashes" => t("The movie name can't contain a \"\\\""),
-            "no_trailing_period" => t("The movie name can't end in \".\""),
-            "not_empty" => t("You must provide a movie file name"),
-            "max_length" => t("Your movie file name is too long"),
-            "data_file_extension" => t("You cannot change the movie file extension")
-          )), $item->type),
-          array("conflict" => t("There is already a movie, photo or album with this name"))
-        ));
-    $form->item->slug
-      ->set("label", t("Internet Address"))
-      ->set("error_messages", Arr::get(array(
-          "album" => array(
-            "conflict" => t("There is already a movie, photo or album with this internet address"),
-            "reserved" => t("This address is reserved and can't be used."),
-            "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
-            "not_empty" => t("You must provide an internet address"),
-            "max_length" => t("Your internet address is too long")
-          ),
-          "photo" => array(
-            "conflict" => t("There is already a movie, photo or album with this internet address"),
-            "reserved" => t("This address is reserved and can't be used."),
-            "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
-            "not_empty" => t("You must provide an internet address"),
-            "max_length" => t("Your internet address is too long")
-          ),
-          "movie" => array(
-            "conflict" => t("There is already a movie, movie or album with this internet address"),
-            "reserved" => t("This address is reserved and can't be used."),
-            "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
-            "not_empty" => t("You must provide an internet address"),
-            "max_length" => t("Your internet address is too long")
-          )), $item->type)
-        );
+      ->add("title", "input")
+      ->add("description", "textarea")
+      ->add("name", "input")
+      ->add("slug", "input");
     $form->buttons
-      ->set("label", "");
+      ->set("label", "")
+      ->add("submit", "input|submit", t("Modify"));
 
     // Add sorting options for albums.
     if ($item->is_album()) {
@@ -218,15 +149,17 @@ class Gallery_Controller_Items extends Controller {
         ->add("sort_column", "select")
         ->add("sort_order", "select");
       $form->item->sorting->sort_column
-        ->set("label", t("Sort by"))
         ->set("opts", Album::get_sort_column_options());
       $form->item->sorting->sort_order
-        ->set("label", t("Order"))
         ->set("opts", array(
             "ASC"  => t("Ascending"),
             "DESC" => t("Descending")
           ));
     }
+
+    // Get the labels and error messages for the item group.
+    static::get_form_labels($form->item, $item->type);
+    static::get_form_error_messages($form->item, $item->type);
 
     // Link the ORM model and call the form event.
     $form->item->orm("link", array("model" => $item));
@@ -315,50 +248,23 @@ class Gallery_Controller_Items extends Controller {
 
     // Build the form.
     $form = Formo::form()
+      ->attr("id", "g-add-album-form")
+      ->add_script_url("modules/gallery/assets/albums_form_add.js")
       ->add("item", "group")
       ->add("buttons", "group");
     $form->item
+      ->set("label", t("Add an album to %album_title", array("album_title" => $parent->title)))
       ->add("title", "input")
       ->add("description", "textarea")
       ->add("name", "input")
       ->add("slug", "input");
     $form->buttons
+      ->set("label", "")
       ->add("submit", "input|submit", t("Create"));
 
-    $form
-      ->attr("id", "g-add-album-form")
-      ->add_script_url("modules/gallery/assets/albums_form_add.js");
-    $form->item
-      ->set("label", t("Add an album to %album_title", array("album_title" => $parent->title)));
-    $form->item->title
-      ->set("label", t("Title"))
-      ->set("error_messages", array(
-          "not_empty" => t("You must provide a title"),
-          "max_length" => t("Your title is too long")
-        ));
-    $form->item->description
-      ->set("label", t("Description"));
-    $form->item->name
-      ->set("label", t("Directory name"))
-      ->set("error_messages", array(
-          "no_slashes" => t("The directory name can't contain a \"/\""),
-          "no_backslashes" => t("The directory name can't contain a \"\\\""),
-          "no_trailing_period" => t("The directory name can't end in \".\""),
-          "not_empty" => t("You must provide a directory name"),
-          "max_length" => t("Your directory name is too long"),
-          "conflict" => t("There is already a movie, photo or album with this name")
-        ));
-    $form->item->slug
-      ->set("label", t("Internet Address"))
-      ->set("error_messages", array(
-          "conflict" => t("There is already a movie, photo or album with this internet address"),
-          "reserved" => t("This address is reserved and can't be used."),
-          "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
-          "not_empty" => t("You must provide an internet address"),
-          "max_length" => t("Your internet address is too long")
-        ));
-    $form->buttons
-      ->set("label", "");
+    // Get the labels and error messages for the item group.
+    static::get_form_labels($form->item, $item->type);
+    static::get_form_error_messages($form->item, $item->type);
 
     // Link the ORM model and call the form event
     $form->item->orm("link", array("model" => $item));
@@ -595,5 +501,100 @@ class Gallery_Controller_Items extends Controller {
   public static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Model_Item::siblings() if we use this more broadly.
     return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
+  }
+
+  /**
+   * Get form error messages for the item group.  This is a helper function for the edit/add forms.
+   */
+  public static function get_form_error_messages($item_group, $type) {
+    // Define all of the error messages.
+    $error_messages = array(
+      "title" => array(
+        "all" => array(
+          "not_empty"  => t("You must provide a title"),
+          "max_length" => t("Your title is too long")
+        )
+      ),
+      "name" => array(
+        "album" => array(
+          "no_slashes"          => t("The directory name can't contain a \"/\""),
+          "no_backslashes"      => t("The directory name can't contain a \"\\\""),
+          "no_trailing_period"  => t("The directory name can't end in \".\""),
+          "not_empty"           => t("You must provide a directory name"),
+          "max_length"          => t("Your directory name is too long")
+        ),
+        "photo" => array(
+          "no_slashes"          => t("The photo name can't contain a \"/\""),
+          "no_backslashes"      => t("The photo name can't contain a \"\\\""),
+          "no_trailing_period"  => t("The photo name can't end in \".\""),
+          "not_empty"           => t("You must provide a photo file name"),
+          "max_length"          => t("Your photo file name is too long"),
+          "data_file_extension" => t("You cannot change the photo file extension")
+        ),
+        "movie" => array(
+          "no_slashes"          => t("The movie name can't contain a \"/\""),
+          "no_backslashes"      => t("The movie name can't contain a \"\\\""),
+          "no_trailing_period"  => t("The movie name can't end in \".\""),
+          "not_empty"           => t("You must provide a movie file name"),
+          "max_length"          => t("Your movie file name is too long"),
+          "data_file_extension" => t("You cannot change the movie file extension")
+        ),
+        "all" => array(
+          "conflict"            => t("There is already a movie, photo or album with this name")
+        )
+      ),
+      "slug" => array(
+        "all" => array(
+          "conflict"     => t("There is already a movie, photo or album with this internet address"),
+          "reserved"     => t("This address is reserved and can't be used."),
+          "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+          "not_empty"    => t("You must provide an internet address"),
+          "max_length"   => t("Your internet address is too long")
+        )
+      )
+    );
+
+    // Add the error messages we need.
+    foreach (Arr::flatten($item_group->as_array(null, true)) as $alias => $field) {
+      $field->set("error_messages", array_merge(
+        Arr::path($error_messages, "$alias.$type", array()),
+        Arr::path($error_messages, "$alias.all", array())
+      ));
+    }
+  }
+
+  /**
+   * Get form labels for the item group.  This is a helper function for the edit/add forms.
+   */
+  public static function get_form_labels($item_group, $type) {
+		// Define all of the labels.
+    $labels = array(
+      "title" => array(
+        "all"   => t("Title")
+      ),
+      "description" => array(
+        "all"   => t("Description")
+      ),
+      "name" => array(
+        "album" => t("Directory name"),
+        "photo" => t("Filename"),
+        "movie" => t("Filename")
+      ),
+      "slug" => array(
+        "all"   => t("Internet Address")
+      ),
+      "sort_column" => array(
+        "album" => t("Sort by")
+      ),
+      "sort_order" => array(
+        "album" => t("Order")
+      )
+    );
+
+		// Add the labels we need.
+    foreach (Arr::flatten($item_group->as_array(null, true)) as $alias => $field) {
+      $field->set("label", Arr::path($labels, "$alias.$type",
+                           Arr::path($labels, "$alias.all")));
+    }
   }
 }
