@@ -6,8 +6,8 @@
   </p>
 
   <div class="g-block-content">
-    <? if (empty($name)): ?>
-    <a href="<?= URL::site("admin/watermarks/form_add") ?>"
+    <? if (empty($url)): ?>
+    <a href="<?= URL::site("admin/watermarks/add") ?>"
        title="<?= t("Upload a watermark")->for_html_attr() ?>"
        class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-document-b"></span><?= t("Upload a watermark") ?></a>
     <? else: ?>
@@ -19,17 +19,17 @@
       <div class="g-photo">
         <img width="<?= $width ?>" height="<?= $height ?>" src="<?= $url ?>" />
         <p>
-          <?= t("Position: %position", array("position" => Watermark::position($position))) ?>
+          <?= t("Position: %position", array("position" => $position)) ?>
         </p>
         <p>
-          <?= t("Transparency: %transparency%", array("transparency" => Module::get_var("watermark", "transparency"))) ?>
+          <?= t("Transparency: %transparency%", array("transparency" => $transparency)) ?>
         </p>
       </div>
       <div class="controls">
-        <a href="<?= URL::site("admin/watermarks/form_edit") ?>"
+        <a href="<?= URL::site("admin/watermarks/edit") ?>"
            title="<?= t("Edit watermark")->for_html_attr() ?>"
            class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-pencil"></span><?= t("edit") ?></a>
-        <a href="<?= URL::site("admin/watermarks/form_delete") ?>"
+        <a href="<?= URL::site("admin/watermarks/delete") ?>"
            title="<?= t("Delete watermark")->for_html_attr() ?>"
            class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
       </div>
