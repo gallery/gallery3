@@ -53,13 +53,11 @@ class Movie_Helper_Test extends Unittest_TestCase {
                         Movie::get_file_metadata($movie->file_path()));
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_get_file_metadata_with_non_existent_file() {
-    try {
-      $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      // pass
-    }
+    $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
   }
 
   public function test_get_file_metadata_with_no_extension() {
@@ -74,13 +72,12 @@ class Movie_Helper_Test extends Unittest_TestCase {
     unlink(TMPPATH . "test_flv_with_no_extension");
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_get_file_metadata_with_illegal_extension() {
-    try {
-      $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      // pass
-    }
+    $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_get_file_metadata_with_illegal_extension_but_valid_file_contents() {

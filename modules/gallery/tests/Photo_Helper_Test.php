@@ -24,13 +24,11 @@ class Photo_Helper_Test extends Unittest_TestCase {
                         Photo::get_file_metadata($photo->file_path()));
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_get_file_metadata_with_non_existent_file() {
-    try {
-      $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      // pass
-    }
+    $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
   }
 
   public function test_get_file_metadata_with_no_extension() {
@@ -40,13 +38,12 @@ class Photo_Helper_Test extends Unittest_TestCase {
     unlink(TMPPATH . "test_jpg_with_no_extension");
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_get_file_metadata_with_illegal_extension() {
-    try {
-      $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/Photo_Helper_Test.php");
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      // pass
-    }
+    $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/Photo_Helper_Test.php");
+    $this->assertTrue(false, "Shouldn't get here");
   }
 
   public function test_get_file_metadata_with_illegal_extension_but_valid_file_contents() {

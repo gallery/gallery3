@@ -39,6 +39,9 @@ class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
     $this->assertEquals(array(1024, 768, "image/jpeg", "jpg"), Photo::get_file_metadata($output_file));
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_rotate_bad_jpg() {
     // Input is a garbled jpg, output is jpg autofit to 300x300
     $input_file = TMPPATH . Test::random_name() . ".jpg";
@@ -47,12 +50,7 @@ class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
     file_put_contents($input_file, Test::lorem_ipsum(200));
 
     // Should get passed to Image library and throw an exception
-    try {
-      GalleryGraphics::rotate($input_file, $output_file, $options, null);
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      // pass
-    }
+    GalleryGraphics::rotate($input_file, $output_file, $options, null);
   }
 
   public function test_resize_jpg() {
@@ -119,6 +117,9 @@ class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
     $this->assertEquals(array(1024, 768, "image/png", "png"), Photo::get_file_metadata($output_file));
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_resize_bad_jpg() {
     // Input is a garbled jpg, output is jpg autofit to 300x300
     $input_file = TMPPATH . Test::random_name() . ".jpg";
@@ -127,11 +128,6 @@ class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
     file_put_contents($input_file, Test::lorem_ipsum(200));
 
     // Should get passed to Image library and throw an exception
-    try {
-      GalleryGraphics::resize($input_file, $output_file, $options, null);
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (Exception $e) {
-      // pass
-    }
+    GalleryGraphics::resize($input_file, $output_file, $options, null);
   }
 }

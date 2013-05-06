@@ -39,15 +39,13 @@ class Tag_Item_Rest_Helper_Test extends Unittest_TestCase {
       Hook_Rest_TagItem::get($request));
   }
 
+  /**
+   * @expectedException HTTP_Exception_404
+   */
   public function test_get_with_invalid_url() {
     $request = new stdClass();
     $request->url = "bogus";
-    try {
-      Hook_Rest_TagItem::get($request);
-    } catch (HTTP_Exception_404 $e) {
-      return;  // pass
-    }
-    $this->assertTrue(false, "Shouldn't get here");
+    Hook_Rest_TagItem::get($request);
   }
 
   public function test_delete() {

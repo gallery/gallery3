@@ -183,6 +183,7 @@ class Legal_File_Helper_Test extends Unittest_TestCase {
     $this->assertEquals("movie.mp4", LegalFile::sanitize_filename(null, "mp4", "movie"));
   }
 
+  // Consider using @dataProvider here
   public function test_sanitize_filename_with_invalid_arguments() {
     foreach (array("flv" => "photo", "jpg" => "movie", "php" => "photo",
                    null => "movie", "jpg" => "album", "jpg" => null) as $extension => $type) {

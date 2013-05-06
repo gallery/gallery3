@@ -49,35 +49,29 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $this->assertEquals(json_encode($expected), $response);
   }
 
+  /**
+   * @expectedException     Rest_Exception
+   * @expectedExceptionCode 403
+   */
   public function test_login_failed() {
     $user = Test::random_user("password");
 
-    try {
-      $_POST["user"] = $user->name;
-      $_POST["password"] = "WRONG PASSWORD";
-      Test::call_and_capture(array(new Controller_Rest(), "index"));
-    } catch (Rest_Exception $e) {
-      $this->assertEquals(403, $e->getCode());
-      return;
-    }
-
-    $this->assertTrue(false, "Shouldn't get here");
+    $_POST["user"] = $user->name;
+    $_POST["password"] = "WRONG PASSWORD";
+    Test::call_and_capture(array(new Controller_Rest(), "index"));
   }
 
+  /**
+   * @expectedException     Rest_Exception
+   * @expectedExceptionCode 403
+   */
   public function test_get() {
     unset($_SERVER["HTTP_X_GALLERY_REQUEST_KEY"]);
 
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
     $_GET["key"] = "value";
 
-    try {
-      Test::call_and_capture(array(new Controller_Rest(), "mock"));
-    } catch (Rest_Exception $e) {
-      $this->assertSame(403, $e->getCode());
-      return;
-    }
-
-    $this->assertTrue(false, "Should be forbidden");
+    Test::call_and_capture(array(new Controller_Rest(), "mock"));
   }
 
   public function test_get_with_access_key() {
@@ -138,16 +132,14 @@ class Rest_Controller_Test extends Unittest_TestCase {
         true));
   }
 
+  /**
+   * @expectedException     Exception
+   * @expectedExceptionCode 400
+   */
   public function test_bogus_method() {
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
-    try {
-      Test::call_and_capture(array(new Controller_Rest(), "mock"));
-    } catch (Exception $e) {
-      $this->assertEquals(400, $e->getCode());
-      return;
-    }
-    $this->assertTrue(false, "Shouldn't get here");
+    Test::call_and_capture(array(new Controller_Rest(), "mock"));
   }
 }
 

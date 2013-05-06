@@ -157,13 +157,11 @@ class Access_Test extends Unittest_TestCase {
       ORM::factory("AccessIntent")->where("item_id", "=", $album->id)->find()->view_1);
   }
 
+  /**
+   * @expectedException Exception
+   */
   public function test_cant_reset_root_item() {
-    try {
-      Access::reset(Identity::everybody(), "view", ORM::factory("Item", 1));
-    } catch (Exception $e) {
-      return;
-    }
-    $this->assertTrue(false, "Should not be able to reset root intent");
+    Access::reset(Identity::everybody(), "view", ORM::factory("Item", 1));
   }
 
   public function test_can_view_item() {

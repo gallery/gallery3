@@ -56,6 +56,9 @@ class Albums_Controller_Test extends Unittest_TestCase {
     $this->assertEquals("new description", $album->description);
   }
 
+  /**
+   * @expectedException HTTP_Exception_403
+   */
   public function test_change_album_no_csrf_fails() {
     $controller = new Controller_Albums();
     $album = Test::random_album();
@@ -65,11 +68,6 @@ class Albums_Controller_Test extends Unittest_TestCase {
     $_POST["description"] = "new description";
     Access::allow(Identity::everybody(), "edit", Item::root());
 
-    try {
-      $controller->action_update($album->id);
-      $this->assertTrue(false, "This should fail");
-    } catch (HTTP_Exception_403 $e) {
-      // pass
-    }
+    $controller->action_update($album->id);
   }
 }

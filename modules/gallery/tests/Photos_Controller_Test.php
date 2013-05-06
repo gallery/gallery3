@@ -53,6 +53,9 @@ class Photos_Controller_Test extends Unittest_TestCase {
     $this->assertEquals("new name.jpg", $photo->name);
   }
 
+  /**
+   * @expectedException HTTP_Exception_403
+   */
   public function test_change_photo_no_csrf_fails() {
     $controller = new Controller_Photos();
     $photo = Test::random_photo();
@@ -63,11 +66,6 @@ class Photos_Controller_Test extends Unittest_TestCase {
     $_POST["slug"] = "new slug";
     Access::allow(Identity::everybody(), "edit", Item::root());
 
-    try {
-      $controller->action_update($photo);
-      $this->assertTrue(false, "This should fail");
-    } catch (HTTP_Exception_403 $e) {
-      // pass
-    }
+    $controller->action_update($photo);
   }
 }

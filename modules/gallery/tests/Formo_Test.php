@@ -29,6 +29,9 @@ class Formo_Test extends Unittest_TestCase {
     $this->assertTrue($form->load($mock_post)->validate());
   }
 
+  /**
+   * @expectedException HTTP_Exception_403
+   */
   public function test_invalid_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
@@ -37,14 +40,12 @@ class Formo_Test extends Unittest_TestCase {
       "csrf" => "invalid"
     );
 
-    try {
-      $valid = $form->load($mock_post)->validate();
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (HTTP_Exception $e) {
-      $this->assertEquals(403, $e->getCode());
-    }
+    $form->load($mock_post)->validate();
   }
 
+  /**
+   * @expectedException HTTP_Exception_403
+   */
   public function test_empty_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
@@ -53,14 +54,12 @@ class Formo_Test extends Unittest_TestCase {
       "csrf" => ""
     );
 
-    try {
-      $valid = $form->load($mock_post)->validate();
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (HTTP_Exception $e) {
-      $this->assertEquals(403, $e->getCode());
-    }
+    $form->load($mock_post)->validate();
   }
 
+  /**
+   * @expectedException HTTP_Exception_403
+   */
   public function test_unset_csrf() {
     $form = Formo::form(array("alias" => "test"))
       ->add("foo", "input", null);
@@ -69,11 +68,6 @@ class Formo_Test extends Unittest_TestCase {
       // csrf => unset
     );
 
-    try {
-      $valid = $form->load($mock_post)->validate();
-      $this->assertTrue(false, "Shouldn't get here");
-    } catch (HTTP_Exception $e) {
-      $this->assertEquals(403, $e->getCode());
-    }
+    $form->load($mock_post)->validate();
   }
 }

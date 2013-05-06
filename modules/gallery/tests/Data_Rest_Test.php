@@ -29,6 +29,9 @@ class Data_Rest_Test extends Unittest_TestCase {
     $this->assertEquals($photo->id, $resolved->id);
   }
 
+  /**
+   * @expectedException HTTP_Exception_404
+   */
   public function test_resolve_needs_permission() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
@@ -37,12 +40,7 @@ class Data_Rest_Test extends Unittest_TestCase {
     Access::deny(Identity::everybody(), "view", $album);
     Identity::set_active_user(Identity::guest());
 
-    try {
-      Hook_Rest_Data::resolve($photo->id);
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      // pass
-    }
+    Hook_Rest_Data::resolve($photo->id);
   }
 
   public function test_basic_get() {
@@ -62,6 +60,9 @@ class Data_Rest_Test extends Unittest_TestCase {
     $this->assertSame($photo->file_path(), Hook_Rest_Data::get($request));
   }
 
+  /**
+   * @expectedException HTTP_Exception_404
+   */
   public function test_illegal_access() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
@@ -75,14 +76,12 @@ class Data_Rest_Test extends Unittest_TestCase {
     $request->params = new stdClass();
     $request->params->size = "thumb";
 
-    try {
-      Hook_Rest_Data::get($request);
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      // pass
-    }
+    Hook_Rest_Data::get($request);
   }
 
+  /**
+   * @expectedException HTTP_Exception_404
+   */
   public function test_missing_file() {
     $photo = Test::random_photo();
 
@@ -93,12 +92,7 @@ class Data_Rest_Test extends Unittest_TestCase {
 
     unlink($photo->thumb_path());  // oops!
 
-    try {
-      Hook_Rest_Data::get($request);
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      // pass
-    }
+    Hook_Rest_Data::get($request);
   }
 
   public function test_cache_buster() {

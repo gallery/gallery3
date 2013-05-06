@@ -58,22 +58,19 @@ class Tags_Rest_Helper_Test extends Unittest_TestCase {
       Hook_Rest_Tags::post($request));
   }
 
+  /**
+   * @expectedException HTTP_Exception_403
+   */
   public function test_post_fails_without_permissions() {
     // We have to remove edit permissions from everywhere
     Database::instance()->query(Database::UPDATE, "UPDATE {access_caches} SET edit_1=0");
     Identity::set_active_user(Identity::guest());
 
-    try {
-      $request = new stdClass();
-      $request->params = new stdClass();
-      $request->params->entity = new stdClass();
-      $request->params->entity->name = "test tag";
-      Hook_Rest_Tags::post($request);
-    } catch (Exception $e) {
-      $this->assertEquals(403, $e->getCode());
-      return;
-    }
-    $this->assertTrue(false, "Shouldnt get here");
+    $request = new stdClass();
+    $request->params = new stdClass();
+    $request->params->entity = new stdClass();
+    $request->params->entity->name = "test tag";
+    Hook_Rest_Tags::post($request);
   }
 
 }
