@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Helper_Test extends Unittest_TestCase {
+  //@todo: move these tests to Comment_Model, as they have little to do with the helper class.
+
   protected $_client_ip;
   protected $_user_agent;
   protected $_save;
