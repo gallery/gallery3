@@ -32,9 +32,9 @@ class Comment_Model_Test extends Unittest_TestCase {
       $comment->server_name = "server_name";
       $comment->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals(array("guest_name" => array("required"),
-                                "guest_email" => array("required")),
-                          $e->errors());
+      $errors = $e->errors();
+      $this->assertEquals("not_empty", $errors["guest_name"][0]);
+      $this->assertEquals("not_empty", $errors["guest_email"][0]);
       return;
     }
   }
@@ -50,8 +50,8 @@ class Comment_Model_Test extends Unittest_TestCase {
       $comment->server_name = "server_name";
       $comment->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assertEquals(array("guest_email" => array("invalid")),
-                          $e->errors());
+      $errors = $e->errors();
+      $this->assertEquals("email", $errors["guest_email"][0]);
       return;
     }
   }
