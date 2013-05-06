@@ -52,20 +52,22 @@ class Comment_Model_Comment extends ORM {
   /**
    * Add some custom per-instance rules.
    */
-  public function validate(Validation $array=null) {
-    // validate() is recursive, only modify the rules on the outermost call.
-    if (!$array) {
-      $this->rules = array(
-        "guest_name"  => array("callbacks" => array(array($this, "valid_author"))),
-        "guest_email" => array("callbacks" => array(array($this, "valid_email"))),
-        "guest_url"   => array("rules"     => array("url")),
-        "item_id"     => array("callbacks" => array(array($this, "valid_item"))),
-        "state"       => array("rules"     => array("Model_Comment::valid_state")),
-        "text"        => array("rules"     => array("required")),
-      );
+  public function rules() {
+    $rules = array(
+      "author_id"   => array(array("not_empty")),
+      "item_id"     => array(array(array($this, "valid_item"), array(":validation"))),
+      "state"       => array(array(array($this, "valid_state"), array(":validation"))),
+      "text"        => array(array("not_empty")),
+    );
+
+    // If the active user is a guest, add some extra rules.
+    if ($this->author_id == Identity::guest()->id) {
+      $rules["guest_name"]  = array(array("not_empty"));
+      $rules["guest_email"] = array(array("not_empty"), array("email"));
+      $rules["guest_url"]   = array(array("url"));
     }
 
-    parent::validate($array);
+    return $rules;
   }
 
   /**
@@ -73,6 +75,13 @@ class Comment_Model_Comment extends ORM {
    * @see ORM::save()
    */
   public function save(Validation $validation=null) {
+    // If the author isn't a guest, blank the guest name, email, and url fields.
+    if ($this->author_id != Identity::guest()->id) {
+      $this->guest_name = null;
+      $this->guest_email = null;
+      $this->guest_url = null;
+    }
+
     $this->updated = time();
     $original_state = Arr::get($this->original_values(), "state");
 
@@ -103,19 +112,23 @@ class Comment_Model_Comment extends ORM {
     // check each one to see if it already exists before setting it, so just use server_name
     // as a semaphore for now (we use that in G2Import.php)
     if (empty($this->server_name)) {
-      $this->server_http_accept = substr($_SERVER["HTTP_ACCEPT"], 0, 128);
-      $this->server_http_accept_charset = substr($_SERVER["HTTP_ACCEPT_CHARSET"], 0, 64);
-      $this->server_http_accept_encoding = substr($_SERVER["HTTP_ACCEPT_ENCODING"], 0, 64);
-      $this->server_http_accept_language = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 64);
-      $this->server_http_connection = substr($_SERVER["HTTP_CONNECTION"], 0, 64);
-      $this->server_http_referer = substr($_SERVER["HTTP_REFERER"], 0, 255);
-      $this->server_http_user_agent = substr($_SERVER["HTTP_USER_AGENT"], 0, 128);
-      $this->server_name = substr((isset($_SERVER["SERVER_NAME"]) ?
-        $_SERVER["SERVER_NAME"] : $_SERVER["HTTP_HOST"]), 0, 64);
-      $this->server_query_string = substr($_SERVER["QUERY_STRING"], 0, 64);
-      $this->server_remote_addr = substr($_SERVER["REMOTE_ADDR"], 0, 40);
-      $this->server_remote_host = substr($_SERVER["REMOTE_HOST"], 0, 255);
-      $this->server_remote_port = substr($_SERVER["REMOTE_PORT"], 0, 16);
+      $this->server_name =
+        substr((isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] :
+               (isset($_SERVER["HTTP_HOST"])   ? $_SERVER["HTTP_HOST"]   : "")), 0, 64);
+      foreach (array("HTTP_ACCEPT" => 128,
+                     "HTTP_ACCEPT_CHARSET" => 64,
+                     "HTTP_ACCEPT_ENCODING" => 64,
+                     "HTTP_ACCEPT_LANGUAGE" => 64,
+                     "HTTP_CONNECTION" => 64,
+                     "HTTP_REFERER" => 255,
+                     "HTTP_USER_AGENT" => 128,
+                     "QUERY_STRING" => 64,
+                     "REMOTE_ADDR" => 40,
+                     "REMOTE_HOST" => 255,
+                     "REMOTE_PORT" => 16) as $var => $limit) {
+        $this->{strtolower("server_$var")} =
+          substr((isset($_SERVER[$var]) ? $_SERVER[$var] : ""), 0, $limit);
+      }
     }
 
     parent::create($validation);
@@ -148,43 +161,21 @@ class Comment_Model_Comment extends ORM {
   }
 
   /**
-   * Make sure we have an appropriate author id set, or a guest name.
-   */
-  public function valid_author(Validation $v, $field) {
-    if (empty($this->author_id)) {
-      $v->add_error("author_id", "required");
-    } else if ($this->author_id == Identity::guest()->id && empty($this->guest_name)) {
-      $v->add_error("guest_name", "required");
-    }
-  }
-
-  /**
-   * Make sure that the email address is legal.
-   */
-  public function valid_email(Validation $v, $field) {
-    if ($this->author_id == Identity::guest()->id) {
-      if (empty($v->guest_email)) {
-        $v->add_error("guest_email", "required");
-      } else if (!Valid::email($v->guest_email)) {
-        $v->add_error("guest_email", "invalid");
-      }
-    }
-  }
-
-  /**
    * Make sure we have a valid associated item id.
    */
-  public function valid_item(Validation $v, $field) {
+  public function valid_item(Validation $v) {
     if (!$this->item->loaded()) {
-      $v->add_error("item_id", "invalid");
+      $v->error("item_id", "invalid");
     }
   }
 
   /**
    * Make sure that the state is legal.
    */
-  static function valid_state($value) {
-    return in_array($value, array("published", "unpublished", "spam", "deleted"));
+  public function valid_state(Validation $v) {
+    if (!in_array($this->state, array("published", "unpublished", "spam", "deleted"))) {
+      $v->error("state", "invalid");
+    }
   }
 
   /**

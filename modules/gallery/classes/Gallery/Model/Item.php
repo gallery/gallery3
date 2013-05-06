@@ -902,22 +902,22 @@ class Gallery_Model_Item extends ORM_MPTT {
       "type" => array(
         array(array($this, "read_only"), array(":validation", ":field")),
         array(array($this, "valid_field"), array(":validation", ":field")))
-      );
+    );
 
-      // Conditional rules
-      if ($this->id == 1) {
-        // We don't care about the name and slug for the root album.
-        $rules["name"] = array();
-        $rules["slug"] = array();
-      }
+    // Conditional rules
+    if ($this->id == 1) {
+      // We don't care about the name and slug for the root album.
+      $rules["name"] = array();
+      $rules["slug"] = array();
+    }
 
-      // Movies and photos must have data files.  Verify the data file on new items, or if it has
-      // been replaced.
-      if (($this->is_photo() || $this->is_movie()) && $this->data_file) {
-        $rules["name"][] = array(array($this, "valid_data_file"), array(":validation"));
-      }
+    // Movies and photos must have data files.  Verify the data file on new items, or if it has
+    // been replaced.
+    if (($this->is_photo() || $this->is_movie()) && $this->data_file) {
+      $rules["name"][] = array(array($this, "valid_data_file"), array(":validation"));
+    }
 
-      return $rules;
+    return $rules;
   }
 
   /**

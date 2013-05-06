@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? if (Comment::can_comment()): ?>
-<a href="<?= URL::site("comments/form_add/{$item->id}") ?>#comment-form" id="g-add-comment"
+<a href="<?= URL::site("comments/add/{$item->id}") ?>" id="g-add-comment"
    class="g-button ui-corner-all ui-icon-left ui-state-default">
   <span class="ui-icon ui-icon-comment"></span>
   <?= t("Add a comment") ?>
@@ -12,7 +12,7 @@
   <p class="g-no-comments">
     <? if (Comment::can_comment()): ?>
     <?= t("No comments yet. Be the first to <a %attrs>comment</a>!",
-          array("attrs" => HTML::mark_clean("href=\"" . URL::site("comments/form_add/{$item->id}") . "\" class=\"showCommentForm\""))) ?>
+          array("attrs" => HTML::mark_clean("href=\"" . URL::site("comments/add/{$item->id}") . "\" class=\"showCommentForm\""))) ?>
     <? else: ?>
     <?= t("No comments yet.") ?>
     <? endif ?>
