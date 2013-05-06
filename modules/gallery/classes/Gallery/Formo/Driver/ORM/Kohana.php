@@ -70,8 +70,13 @@ class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
       $model->check();
     } catch (ORM_Validation_Exception $e) {
       foreach ($e->errors() as $alias => $errors) {
-        // This uses only the first error for each field.
-        $field->find($alias)->error($errors[0]);
+        if ($child = $field->find($alias)) {
+          // This uses only the first error for each child field.
+          $child->error($errors[0]);
+        } else {
+          // We don't have a field for this, so we can't catch this exception well - rethrow it.
+          throw $e;
+        }
       }
     }
   }
