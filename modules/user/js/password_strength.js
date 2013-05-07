@@ -9,7 +9,7 @@
                 'g-password-strength100']
     },
 
-    _init: function() {
+    _create: function() {
       var self = this;
       $(this.element).on("input keyup", function() {
         var strength = self.calculateStrength(this.value);
