@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Formo extends Formo_Core_Formo {
+  // Set our form status responses
+  const NOT_SENT = 1;
+  const PASSED = 2;
+  const FAILED = 3;
+
   /**
    * Add a CSRF element into every form that uses Access::verify_csrf() for validation.
    *
@@ -74,7 +79,27 @@ class Gallery_Formo extends Formo_Core_Formo {
   }
 
   /**
-   * Override Formo::add_rule() to allow us to define error messages inline.  We use this
+   * Overload Formo::validate() to set the form status.  We use this in Response::ajax_form().
+   *
+   * @see  Formo::validate()
+   * @see  Response::ajax_form()
+   */
+  public function validate() {
+    if (!$this->sent()) {
+      $this->set("status", Formo::NOT_SENT);
+      return false;
+    } else {
+      if ($result = parent::validate()) {
+        $this->set("status", Formo::PASSED);
+      } else {
+        $this->set("status", Formo::FAILED);
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * Overload Formo::add_rule() to allow us to define error messages inline.  We use this
    * approach instead of using Kohana message files.
    * @todo: consider recasting this as a patch to send upstream to the Formo project.
    *
