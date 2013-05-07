@@ -103,21 +103,7 @@ class User_Controller_Password extends Controller {
       ->add_rule("matches", array(":form_val", "password", "password2"),
         t("The password and the confirm password must match"));
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        $user = User::lookup_by_hash($form->reset->hash->val());
-        if (empty($user)) {
-          throw HTTP_Exception::factory(403);
-        }
-
-        $user->password = $form->reset->password->val();
-        $user->hash = null;
-        $user->save();
-        Message::success(t("Password reset successfully"));
-
-        $this->redirect(Item::root()->abs_url());
-      }
-    } else {
+    if (!$form->sent()) {
       // Form not yet sent - get the hash from the query key (should be in email sent to user)
       $user = User::lookup_by_hash($this->request->query("key"));
       if (empty($user)) {
@@ -125,6 +111,20 @@ class User_Controller_Password extends Controller {
       }
 
       $form->reset->hash->val($user->hash);
+    }
+
+    if ($form->load()->validate()) {
+      $user = User::lookup_by_hash($form->reset->hash->val());
+      if (empty($user)) {
+        throw HTTP_Exception::factory(403);
+      }
+
+      $user->password = $form->reset->password->val();
+      $user->hash = null;
+      $user->save();
+      Message::success(t("Password reset successfully"));
+
+      $this->redirect(Item::root()->abs_url());
     }
 
     $view = new View_Theme("required/page.html", "other", "reset");
