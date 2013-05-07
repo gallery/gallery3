@@ -68,7 +68,7 @@ class Gallery_Response extends Kohana_Response {
    */
   public function ajax_form($form) {
     if (!($form instanceof Formo)) {
-      throw Gallery_Exception("Using ajax_form() requires a Formo object");
+      throw new Gallery_Exception("Using ajax_form() requires a Formo object");
     }
 
     if (Request::current()->is_ajax()) {
@@ -97,7 +97,7 @@ class Gallery_Response extends Kohana_Response {
           break;
 
         default:
-          throw Gallery_Exception("Formo object has not been validated");
+          throw new Gallery_Exception("Formo object has not been validated");
       }
     } else {
       // The user got here by entering a the link directly in their address bar instead of
@@ -141,7 +141,7 @@ class Gallery_Response extends Kohana_Response {
           break;
 
         default:
-          throw Gallery_Exception("Formo object has not been validated");
+          throw new Gallery_Exception("Formo object has not been validated");
       }
     }
   }
