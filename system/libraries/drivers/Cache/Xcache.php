@@ -48,9 +48,9 @@ class Cache_Xcache_Driver extends Cache_Driver {
 
 		foreach ($keys as $key)
 		{
-			if (xcache_isset($id))
+			if (xcache_isset($key))
 			{
-				$items[$key] = xcache_get($id);
+				$items[$key] = xcache_get($key);
 			}
 			else
 			{
