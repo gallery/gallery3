@@ -27,18 +27,15 @@ class Gallery_Controller_Login extends Controller {
 
     // Define our login form.
     $form = Formo::form()
+      ->attr("id", "g-login-form")
+      ->add_class("g-narrow")
       ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
       ->add("login", "group");
     $form->login
+      ->set("label", t("Login"))
       ->add("username", "input")
       ->add("password", "input|password")
       ->add("submit", "input|submit", t("Login"));
-
-    $form
-      ->attr("id", "g-login-form")
-      ->attr("class", "g-narrow");
-    $form->login
-      ->set("label", t("Login"));
     $form->login->username
       ->attr("id", "g-username")
       ->set("label", t("Username"))

@@ -54,10 +54,11 @@ class Comment_Model_Comment extends ORM {
    */
   public function rules() {
     $rules = array(
-      "author_id"   => array(array("not_empty")),
-      "item_id"     => array(array(array($this, "valid_item"), array(":validation"))),
-      "state"       => array(array(array($this, "valid_state"), array(":validation"))),
-      "text"        => array(array("not_empty")),
+      "author_id" => array(array("not_empty")),
+      "item_id"   => array(array(array($this, "valid_item"), array(":validation"))),
+      "state"     => array(array("in_array", array(":value",
+                       array("published", "unpublished", "spam", "deleted")))),
+      "text"      => array(array("not_empty")),
     );
 
     // If the active user is a guest, add some extra rules.
@@ -166,15 +167,6 @@ class Comment_Model_Comment extends ORM {
   public function valid_item(Validation $v) {
     if (!$this->item->loaded()) {
       $v->error("item_id", "invalid");
-    }
-  }
-
-  /**
-   * Make sure that the state is legal.
-   */
-  public function valid_state(Validation $v) {
-    if (!in_array($this->state, array("published", "unpublished", "spam", "deleted"))) {
-      $v->error("state", "invalid");
     }
   }
 

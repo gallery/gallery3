@@ -20,16 +20,13 @@
 class ServerAdd_Controller_Admin_ServerAdd extends Controller_Admin {
   public function action_index() {
     $form = Formo::form()
+      ->attr("id", "g-server-add-admin-form")
+      ->add_class("g-short-form")
       ->add("add_path", "group");
     $form->add_path
+      ->set("label", t("Add Path"))
       ->add("path", "input")
       ->add("add", "input|submit", t("Add Path"));
-
-    $form
-      ->attr("id", "g-server-add-admin-form")
-      ->add_class("g-short-form");
-    $form->add_path
-      ->set("label", t("Add Path"));
     $form->add_path->path
       ->attr("id", "g-path")
       ->set("label", t("Path"))

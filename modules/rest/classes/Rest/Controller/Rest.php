@@ -54,18 +54,12 @@ class Rest_Controller_Rest extends Controller {
       ->html(t("Do you really want to reset your REST API key?  Any clients that use this key will need to be updated with the new value."))
       ->add("submit", "input|submit", t("Reset"));
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        Rest::reset_access_key();
-        Message::success(t("Your REST API key has been reset."));
-        $this->response->json(array("result" => "success"));
-      } else {
-        $this->response->json(array("result" => "error", "html" => (string)$form), true);
-      }
-      return;
+    if ($form->load()->validate()) {
+      Rest::reset_access_key();
+      Message::success(t("Your REST API key has been reset."));
     }
 
-    $this->response->body($form);
+    $this->response->ajax_form($form);
   }
 
   public function __call($function, $args) {
