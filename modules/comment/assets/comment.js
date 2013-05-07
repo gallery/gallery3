@@ -30,13 +30,13 @@ function ajaxify_comment_form() {
     dataType: "json",
     success: function(data) {
       if (data.result == "success") {
-        $("#g-comments #g-comment-detail ul").append(data.view);
+        $("#g-comments #g-comment-detail ul").append(data.html);
         $("#g-comments #g-comment-detail ul li:last").effect("highlight", {color: "#cfc"}, 8000);
         $("#g-comment-form").hide(2000).remove();
         $("#g-no-comments").hide(2000);
       } else {
-        if (data.form) {
-          $("#g-comments form").replaceWith(data.form);
+        if (data.html) {
+          $("#g-comments form").replaceWith(data.html);
           ajaxify_comment_form();
         }
       }

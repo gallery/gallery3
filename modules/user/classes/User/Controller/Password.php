@@ -38,48 +38,42 @@ class User_Controller_Password extends Controller {
       ->set("label", t("Username"))
       ->add_rule("not_empty", array(":value"), t("You must enter a user name"));
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        $user = User::lookup_by_name($form->reset->username->val());
-        if ($user && !empty($user->email)) {
-          $user->hash = Random::hash();
-          $user->save();
-          $message = new View("user/reset_password.html");
-          $message->confirm_url = URL::abs_site("password/do_reset?key=$user->hash");
-          $message->user = $user;
+    if ($form->load()->validate()) {
+      $user = User::lookup_by_name($form->reset->username->val());
+      if ($user && !empty($user->email)) {
+        $user->hash = Random::hash();
+        $user->save();
+        $message = new View("user/reset_password.html");
+        $message->confirm_url = URL::abs_site("password/do_reset?key=$user->hash");
+        $message->user = $user;
 
-          Sendmail::factory()
-            ->to($user->email)
-            ->subject(t("Password Reset Request"))
-            ->header("Mime-Version", "1.0")
-            ->header("Content-type", "text/html; charset=UTF-8")
-            ->message($message->render())
-            ->send();
+        Sendmail::factory()
+          ->to($user->email)
+          ->subject(t("Password Reset Request"))
+          ->header("Mime-Version", "1.0")
+          ->header("Content-type", "text/html; charset=UTF-8")
+          ->message($message->render())
+          ->send();
 
-          GalleryLog::success(
-            "user", t("Password reset email sent for user %name", array("name" => $user->name)));
-        } else if (!$user) {
-          // Don't include the username here until you're sure that it's XSS safe
-          GalleryLog::warning("user",
-            t("Password reset email requested for user %user_name, which does not exist.",
-              array("user_name" => HTML::purify($form->reset->username->val()))));
-        } else {
-          GalleryLog::warning("user",
-            t("Password reset failed for %user_name (has no email address on record).",
-              array("user_name" => $user->name)));
-        }
-
-        // Always pretend that an email has been sent to avoid leaking
-        // information on what user names are actually real.
-        Message::success(t("Password reset email sent"));
-        $this->response->json(array("result" => "success"));
+        GalleryLog::success(
+          "user", t("Password reset email sent for user %name", array("name" => $user->name)));
+      } else if (!$user) {
+        // Don't include the username here until you're sure that it's XSS safe
+        GalleryLog::warning("user",
+          t("Password reset email requested for user %user_name, which does not exist.",
+            array("user_name" => HTML::purify($form->reset->username->val()))));
       } else {
-        $this->response->json(array("result" => "error", "html" => (string)$form));
+        GalleryLog::warning("user",
+          t("Password reset failed for %user_name (has no email address on record).",
+            array("user_name" => $user->name)));
       }
-      return;
+
+      // Always pretend that an email has been sent to avoid leaking
+      // information on what user names are actually real.
+      Message::success(t("Password reset email sent"));
     }
 
-    $this->response->body($form);
+    $this->response->ajax_form($form);
   }
 
   /**

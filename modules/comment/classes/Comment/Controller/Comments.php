@@ -87,23 +87,15 @@ class Comment_Controller_Comments extends Controller {
     }
 
     // Load and validate the form.
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        $comment->save();
+    if ($form->load()->validate()) {
+      $comment->save();
 
-        $view = new View_Theme("comment/comment.html", "other", "comment-fragment");
-        $view->comment = $comment;
+      $view = new View_Theme("comment/comment.html", "other", "comment-fragment");
+      $view->comment = $comment;
 
-        $this->response->json(array("result" => "success",
-                                    "view"   => (string)$view,
-                                    "form"   => (string)$form));
-      } else {
-        $this->response->json(array("result" => "error",
-                                    "form"   => (string)$form));
-      }
-      return;
+      $form->set("response", array("html" => (string)$view));
     }
 
-    $this->response->body($form);
+    $this->response->ajax_form($form);
   }
 }

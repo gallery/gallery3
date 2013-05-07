@@ -68,49 +68,42 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       ->set("label", t("Transparency (100% = completely transparent)"))
       ->set("opts", static::get_transparencies());
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        $file_array = $form->watermark->data_file->val();
-        $name = $file_array["name"];
-        $path = $file_array["tmp_name"];
+    if ($form->load()->validate()) {
+      $file_array = $form->watermark->data_file->val();
+      $name = $file_array["name"];
+      $path = $file_array["tmp_name"];
 
-        try {
-          list ($width, $height, $mime_type, $extension) = Photo::get_file_metadata($path);
-          // Sanitize filename, which ensures a valid extension.  This renaming prevents the issues
-          // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
-          // php extension was previously accepted without changing its extension.
-          $name = LegalFile::sanitize_filename($name, $extension, "photo");
-        } catch (Exception $e) {
-          Message::error(t("Invalid or unidentifiable image file"));
-          System::delete_later($path);
-          return;
-        }
-
-        $new_path = VARPATH . "modules/watermark/$name";
-        rename($path, $new_path);
-        chmod($new_path, 0644);
+      try {
+        list ($width, $height, $mime_type, $extension) = Photo::get_file_metadata($path);
+        // Sanitize filename, which ensures a valid extension.  This renaming prevents the issues
+        // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
+        // php extension was previously accepted without changing its extension.
+        $name = LegalFile::sanitize_filename($name, $extension, "photo");
+      } catch (Exception $e) {
+        Message::error(t("Invalid or unidentifiable image file"));
         System::delete_later($path);
-
-        Module::set_var("watermark", "name",         $name);
-        Module::set_var("watermark", "width",        $width);
-        Module::set_var("watermark", "height",       $height);
-        Module::set_var("watermark", "mime_type",    $mime_type);
-
-        Module::set_var("watermark", "position",     $form->watermark->position->val());
-        Module::set_var("watermark", "transparency", $form->watermark->transparency->val());
-        $this->_update_graphics_rules();
-
-        Message::success(t("Watermark saved"));
-        GalleryLog::success("watermark", t("Watermark saved"));
-        // Send as json with $text_plain = true for iframe compatibility (see ticket #2022)
-        $this->response->json(
-          array("result" => "success", "location" => URL::site("admin/watermarks")), true);
-      } else {
-        $this->response->json(array("result" => "error", "html" => (string)$form), true);
+        return;
       }
-      return;
+
+      $new_path = VARPATH . "modules/watermark/$name";
+      rename($path, $new_path);
+      chmod($new_path, 0644);
+      System::delete_later($path);
+
+      Module::set_var("watermark", "name",         $name);
+      Module::set_var("watermark", "width",        $width);
+      Module::set_var("watermark", "height",       $height);
+      Module::set_var("watermark", "mime_type",    $mime_type);
+
+      Module::set_var("watermark", "position",     $form->watermark->position->val());
+      Module::set_var("watermark", "transparency", $form->watermark->transparency->val());
+      $this->_update_graphics_rules();
+
+      Message::success(t("Watermark saved"));
+      GalleryLog::success("watermark", t("Watermark saved"));
     }
-    $this->response->body($form);
+
+    $this->response->ajax_form($form);
   }
 
   /**
@@ -136,23 +129,16 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       ->set("label", t("Transparency (100% = completely transparent)"))
       ->set("opts", static::get_transparencies());
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        Module::set_var("watermark", "position",     $form->watermark->position->val());
-        Module::set_var("watermark", "transparency", $form->watermark->transparency->val());
-        $this->_update_graphics_rules();
+    if ($form->load()->validate()) {
+      Module::set_var("watermark", "position",     $form->watermark->position->val());
+      Module::set_var("watermark", "transparency", $form->watermark->transparency->val());
+      $this->_update_graphics_rules();
 
-        GalleryLog::success("watermark", t("Watermark changed"));
-        Message::success(t("Watermark changed"));
-        // Send as json with $text_plain = true for iframe compatibility (see ticket #2022)
-        $this->response->json(
-          array("result" => "success", "location" => URL::site("admin/watermarks")), true);
-      } else {
-        $this->response->json(array("result" => "error", "html" => (string)$form), true);
-      }
-      return;
+      GalleryLog::success("watermark", t("Watermark changed"));
+      Message::success(t("Watermark changed"));
     }
-    $this->response->body($form);
+
+    $this->response->ajax_form($form);
   }
 
   /**
@@ -168,33 +154,24 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
       ->html(t("Really delete Watermark?"))
       ->add("submit", "input|submit", t("Delete"));
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        if ($name = basename(Module::get_var("watermark", "name"))) {
-          System::delete_later(VARPATH . "modules/watermark/$name");
-          Module::clear_var("watermark", "name");
-          Module::clear_var("watermark", "width");
-          Module::clear_var("watermark", "height");
-          Module::clear_var("watermark", "mime_type");
+    if ($form->load()->validate()) {
+      if ($name = basename(Module::get_var("watermark", "name"))) {
+        System::delete_later(VARPATH . "modules/watermark/$name");
+        Module::clear_var("watermark", "name");
+        Module::clear_var("watermark", "width");
+        Module::clear_var("watermark", "height");
+        Module::clear_var("watermark", "mime_type");
 
-          Module::clear_var("watermark", "position");
-          Module::clear_var("watermark", "transparency");
-          $this->_update_graphics_rules();
+        Module::clear_var("watermark", "position");
+        Module::clear_var("watermark", "transparency");
+        $this->_update_graphics_rules();
 
-          GalleryLog::success("watermark", t("Watermark deleted"));
-          Message::success(t("Watermark deleted"));
-        }
-
-        // Send as json with $text_plain = true for iframe compatibility (see ticket #2022)
-        $this->response->json(
-          array("result" => "success", "location" => URL::site("admin/watermarks")), true);
-      } else {
-        $this->response->json(array("result" => "error", "html" => (string)$form), true);
+        GalleryLog::success("watermark", t("Watermark deleted"));
+        Message::success(t("Watermark deleted"));
       }
-      return;
     }
 
-    $this->response->body($form);
+    $this->response->ajax_form($form);
   }
 
   /**
