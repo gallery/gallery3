@@ -38,7 +38,7 @@ class Gallery_GalleryGraphics {
     } else {
       // No events made an image - proceed with standard process.
       if (@filesize($input_file) == 0) {
-        throw new Exception("@todo EMPTY_INPUT_FILE");
+        throw new Gallery_Exception("Empty input file");
       }
 
       if (!isset($options["degrees"])) {
@@ -75,7 +75,7 @@ class Gallery_GalleryGraphics {
     } else {
       // No events made an image - proceed with standard process.
       if (@filesize($input_file) == 0) {
-        throw new Exception("@todo EMPTY_INPUT_FILE");
+        throw new Gallery_Exception("Empty input file");
       }
 
       list ($input_width, $input_height, $input_mime, $input_extension) =

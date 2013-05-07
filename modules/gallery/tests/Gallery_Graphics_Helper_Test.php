@@ -40,7 +40,7 @@ class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Exception
+   * @expectedException Gallery_Exception
    */
   public function test_rotate_bad_jpg() {
     // Input is a garbled jpg, output is jpg autofit to 300x300
@@ -118,7 +118,7 @@ class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Exception
+   * @expectedException Gallery_Exception
    */
   public function test_resize_bad_jpg() {
     // Input is a garbled jpg, output is jpg autofit to 300x300

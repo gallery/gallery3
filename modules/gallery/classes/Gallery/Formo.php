@@ -104,7 +104,7 @@ class Gallery_Formo extends Formo_Core_Formo {
   public function close() {
     $script_data = (string) $this->get("script_data");
     if ($script_data && !$this->driver("is_a_parent")) {
-      throw new Exception("@todo CANNOT_ADD_SCRIPTS_TO_FORM_ELEMENTS");
+      throw new Gallery_Exception("Cannot add scripts to form elements");
     }
 
     return $script_data . parent::close();

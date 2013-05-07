@@ -176,7 +176,7 @@ class Akismet_Akismet {
       $response = new ArrayObject(
         array("headers" => $headers, "body" => $body), ArrayObject::ARRAY_AS_PROPS);
     } else {
-      throw new Exception("@todo CONNECTION TO SPAM SERVICE FAILED");
+      throw new Gallery_Exception("Connection to spam service failed");
     }
     Log::instance()->add(Log::DEBUG, "Received response\n" . print_r($response, 1));
 

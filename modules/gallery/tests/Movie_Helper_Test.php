@@ -54,7 +54,7 @@ class Movie_Helper_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Exception
+   * @expectedException Gallery_Exception
    */
   public function test_get_file_metadata_with_non_existent_file() {
     $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
@@ -73,7 +73,7 @@ class Movie_Helper_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Exception
+   * @expectedException Gallery_Exception
    */
   public function test_get_file_metadata_with_illegal_extension() {
     $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");

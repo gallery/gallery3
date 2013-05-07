@@ -70,7 +70,7 @@ class Gallery_Photo {
    */
   static function get_file_metadata($file_path) {
     if (!is_readable($file_path)) {
-      throw new Exception("@todo UNREADABLE_FILE");
+      throw new Gallery_Exception("Unreadable file");
     }
 
     $metadata = new stdClass();
@@ -106,7 +106,7 @@ class Gallery_Photo {
     // If the post-events results are invalid, throw an exception.
     if (!$metadata->width || !$metadata->height || !$metadata->mime_type || !$metadata->extension ||
         ($metadata->mime_type != LegalFile::get_photo_types_by_extension($metadata->extension))) {
-      throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
+      throw new Gallery_Exception("Illegal or unindentifiable file");
     }
 
     return array($metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension);

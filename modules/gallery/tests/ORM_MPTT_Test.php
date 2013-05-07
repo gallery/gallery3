@@ -80,7 +80,7 @@ class ORM_MPTT_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Exception
+   * @expectedException Gallery_Exception
    */
   public function test_cant_move_parent_into_own_subtree() {
     $album1 = Test::random_album(Item::root());

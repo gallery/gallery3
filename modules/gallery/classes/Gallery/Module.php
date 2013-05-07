@@ -256,7 +256,7 @@ class Gallery_Module {
       if (isset($available->$module_name->code_version)) {
         Module::set_version($module_name, $available->$module_name->code_version);
       } else {
-        throw new Exception("@todo UNKNOWN_MODULE");
+        throw new Gallery_Exception("Unknown module");
       }
     }
     // Similar to activate(), deactivate(), and install(), calling load_modules() here
@@ -273,7 +273,7 @@ class Gallery_Module {
     }
 
     if ($version_after != $available->$module_name->code_version) {
-      throw new Exception("@todo MODULE_FAILED_TO_UPGRADE");
+      throw new Gallery_Exception("Module failed to upgrade");
     }
   }
 

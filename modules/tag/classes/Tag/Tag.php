@@ -30,7 +30,7 @@ class Tag_Tag {
    */
   static function add($item, $tag_name) {
     if (empty($tag_name)) {
-      throw new Exception("@todo MISSING_TAG_NAME");
+      throw new Gallery_Exception("missing tag name");
     }
 
     $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();

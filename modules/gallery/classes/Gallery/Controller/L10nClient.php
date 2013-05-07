@@ -33,7 +33,7 @@ class Gallery_Controller_L10nClient extends Controller {
       ->find();
 
     if (!$root_message->loaded()) {
-      throw new Exception("@todo bad request data / illegal state");
+      throw new Gallery_Exception("Bad request data / illegal state");
     }
     $is_plural = I18n::is_plural_message(unserialize($root_message->message));
 
@@ -44,7 +44,7 @@ class Gallery_Controller_L10nClient extends Controller {
       foreach($plural_forms as $plural_form) {
         $value = $this->request->post("l10n-edit-plural-translation-$plural_form");
         if (null === $value || !is_string($value)) {
-          throw new Exception("@todo bad request data");
+          throw new Gallery_Exception("Bad request data");
         }
         $translation[$plural_form] = $value;
         $is_empty = $is_empty && empty($value);
@@ -53,7 +53,7 @@ class Gallery_Controller_L10nClient extends Controller {
       $translation = $this->request->post("l10n-edit-translation");
       $is_empty = empty($translation);
       if (null === $translation || !is_string($translation)) {
-        throw new Exception("@todo bad request data");
+        throw new Gallery_Exception("Bad request data");
       }
     }
 

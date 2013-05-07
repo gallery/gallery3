@@ -113,7 +113,7 @@ class Recaptcha_Recaptcha {
     $http_request .= $req;
     $response = "";
     if( false == ( $fs = @fsockopen($host, $port, $errno, $errstr, 10) ) ) {
-      throw new Exception("@todo COULD NOT OPEN SOCKET");
+      throw new Gallery_Exception("Could not open socket");
     }
     fwrite($fs, $http_request);
     while (!feof($fs)) {

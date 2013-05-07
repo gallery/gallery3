@@ -190,7 +190,7 @@ class Gallery_ORM_MPTT extends ORM {
    */
   protected function move_to($target) {
     if ($this->contains($target)) {
-      throw new Exception("@todo INVALID_TARGET can't move item inside itself");
+      throw new Gallery_Exception("Invalid target: can't move item inside itself");
     }
 
     $this->lock();
@@ -280,7 +280,7 @@ class Gallery_ORM_MPTT extends ORM {
       true)
       ->current();
     if (empty($result->l)) {
-      throw new Exception("@todo UNABLE_TO_LOCK_EXCEPTION");
+      throw new Gallery_Exception("Unable to acquire lock");
     }
   }
 

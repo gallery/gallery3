@@ -83,7 +83,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
-      throw new Exception("@todo MISSING_TASK");
+      throw new Gallery_Exception("Missing task");
     }
     $view = new View("admin/maintenance_task.html");
     $view->task = $task;
@@ -106,7 +106,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
-      throw new Exception("@todo MISSING_TASK");
+      throw new Gallery_Exception("Missing task");
     }
     $view = new View("admin/maintenance_show_log.html");
     $view->task = $task;
@@ -124,7 +124,7 @@ class Gallery_Controller_Admin_Maintenance extends Controller_Admin {
 
     $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
-      throw new Exception("@todo MISSING_TASK");
+      throw new Gallery_Exception("Missing task");
     }
 
     // Send the log as an attachment for download.

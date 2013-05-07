@@ -133,7 +133,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException     Exception
+   * @expectedException     Rest_Exception
    * @expectedExceptionCode 400
    */
   public function test_bogus_method() {

@@ -285,7 +285,7 @@ class Gallery_View_Theme extends View_Gallery {
       return implode("\n", $blocks);
 
     default:
-      throw new Exception("@todo UNKNOWN_THEME_FUNCTION: $function");
+      throw new Gallery_Exception("Unknown theme function: $function");
     }
   }
 }

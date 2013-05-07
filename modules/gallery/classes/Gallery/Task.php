@@ -61,7 +61,7 @@ class Gallery_Task {
   static function cancel($task_id) {
     $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
-      throw new Exception("@todo MISSING_TASK");
+      throw new Gallery_Exception("Missing task");
     }
     $task->done = 1;
     $task->state = "cancelled";
@@ -82,7 +82,7 @@ class Gallery_Task {
   static function run($task_id) {
     $task = ORM::factory("Task", $task_id);
     if (!$task->loaded()) {
-      throw new Exception("@todo MISSING_TASK");
+      throw new Gallery_Exception("Missing task");
     }
 
     try {

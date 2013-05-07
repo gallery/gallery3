@@ -133,7 +133,7 @@ class Gallery_L10nClient {
     $url = self::_server_url("fetch");
     list ($response_data, $response_status) = Remote::post($url, array("data" => $request_data));
     if (!Remote::success($response_status)) {
-      throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
+      throw new Gallery_Exception("Translations fetch request failed: $response_status");
     }
     if (empty($response_data)) {
       return $num_remaining;
@@ -149,7 +149,7 @@ class Gallery_L10nClient {
       // @todo Better input validation
       if (empty($message_data->key) || empty($message_data->translation) ||
           empty($message_data->locale) || empty($message_data->rev)) {
-        throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED: Invalid response data");
+        throw new Gallery_Exception("Translations fetch request failed: invalid response data");
       }
       $key = $message_data->key;
       $locale = $message_data->locale;
@@ -228,7 +228,7 @@ class Gallery_L10nClient {
                   "uid" => L10nClient::server_uid()));
 
     if (!Remote::success($response_status)) {
-      throw new Exception("@todo TRANSLATIONS_SUBMISSION_FAILED " . $response_status);
+      throw new Gallery_Exception("Translations submission failed: $response_status");
     }
     if (empty($response_data)) {
       return;

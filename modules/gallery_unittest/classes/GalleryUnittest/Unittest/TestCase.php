@@ -21,6 +21,7 @@ class GalleryUnittest_Unittest_TestCase extends Kohana_Unittest_TestCase {
   protected $_called_setup = null;
 
   public function setUp() {
+    set_time_limit(60);
     parent::setUp();
     $this->_called_setup = true;
   }

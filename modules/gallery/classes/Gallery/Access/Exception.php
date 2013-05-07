@@ -17,23 +17,4 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-/**
- * A wrapper for exceptions to report more details in case
- * it's a ORM validation exception.
- */
-class G2Import_G2Import_Exception extends Gallery_Exception {
-  public function __construct($message, $code=0, Exception $previous=null) {
-    if ($additional_messages) {
-      $message .= "\n" . implode("\n", $additional_messages);
-    }
-    if ($previous && $previous instanceof ORM_Validation_Exception) {
-      $message .= "\nORM validation errors: " . print_r($previous->errors(), true);
-    }
-    if ($previous) {
-      $message .= "\n" . (string) $previous;
-    }
-    // The $previous parameter is supported in PHP 5.3.0+.
-    parent::__construct($message, $code, $previous);
-  }
-}
+class Gallery_Access_Exception extends Gallery_Exception {}

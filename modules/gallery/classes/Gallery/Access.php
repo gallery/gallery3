@@ -210,10 +210,10 @@ class Gallery_Access {
    */
   protected static function _set(IdentityProvider_GroupDefinition $group, $perm_name, $album, $value) {
     if (!$album->loaded()) {
-      throw new Exception("@todo INVALID_ALBUM $album->id");
+      throw new Access_Exception("Invalid album id: {$album->id}");
     }
     if (!$album->is_album()) {
-      throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
+      throw new Access_Exception("Invalid item type: {$album->type}, expected an album");
     }
     $access = $album->access_intent;
     $access->__set("{$perm_name}_{$group->id}", $value);
@@ -259,7 +259,7 @@ class Gallery_Access {
    */
   static function reset($group, $perm_name, $item) {
     if ($item->id == 1) {
-      throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
+      throw new Access_Exception("Cant reset permissions on root album");
     }
     self::_set($group, $perm_name, $item, self::INHERIT);
   }
@@ -310,7 +310,7 @@ class Gallery_Access {
   static function register_permission($name, $display_name) {
     $permission = ORM::factory("Permission", $name);
     if ($permission->loaded()) {
-      throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
+      throw new Access_Exception("Permission already exists: $name");
     }
     $permission->name = $name;
     $permission->display_name = $display_name;
@@ -370,7 +370,7 @@ class Gallery_Access {
   static function add_item($item) {
     $access_intent = ORM::factory("AccessIntent", $item->id);
     if ($access_intent->loaded()) {
-      throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
+      throw new Access_Exception("Item already added: {$item->id}");
     }
     $access_intent = ORM::factory("AccessIntent");
     $access_intent->item_id = $item->id;

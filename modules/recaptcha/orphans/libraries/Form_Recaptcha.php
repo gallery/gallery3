@@ -35,8 +35,8 @@ class Form_Recaptcha_Core extends Form_Input {
   public function render() {
     $public_key = Module::get_var("recaptcha", "public_key");
     if (empty($public_key)) {
-      throw new Exception("@todo NEED KEY <a href=\"http://recaptcha.net/api/getkey\">" .
-                          "http://recaptcha.net/api/getkey</a>");
+      throw new Gallery_Exception("Need key <a href=\"http://recaptcha.net/api/getkey\">" .
+                                  "http://recaptcha.net/api/getkey</a>");
     }
 
     $view = new View("recaptcha/form.html");

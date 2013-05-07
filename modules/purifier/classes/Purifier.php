@@ -55,7 +55,7 @@ class Purifier {
    */
   public static function add_config_group($config_group, $settings) {
     if ($config_group == "default") {
-      throw new Exception("@todo: cannot change default Purifier config group.");
+      throw new Gallery_Exception("Cannot change default Purifier config group");
     }
     self::$_config[$config_group] = array_merge(self::$_config["default"], $settings);
   }
@@ -165,7 +165,8 @@ class Purifier {
 
     if (!isset(self::$_config[$config_group])) {
       // Specified config group doesn't exist - throw an exception
-      throw new Exception("@todo: invalid Purifier config group - see Purifier::add_config_group()");
+      throw new Gallery_Exception(
+        "Invalid Purifier config group. See Purifier::add_config_group()");
     }
 
     $config = HTMLPurifier_Config::createDefault();

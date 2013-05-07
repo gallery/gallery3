@@ -40,7 +40,7 @@ class G2Import_G2Import {
 
     $embed_path = Module::get_var("g2_import", "embed_path");
     if (empty($embed_path)) {
-      throw new Exception("@todo G2_IMPORT_NOT_CONFIGURED");
+      throw new Gallery_Exception("g2_import not configured");
     }
 
     G2Import::$init = G2Import::init_embed($embed_path);
@@ -1362,7 +1362,7 @@ function g2() {
   $ret = is_array($args) ? array_shift($args) : $args;
   if ($ret) {
     Log::instance()->add(Log::ERROR, "Gallery 2 call failed with: " . $ret->getAsText());
-    throw new Exception("@todo G2_FUNCTION_FAILED");
+    throw new Gallery_Exception("G2 function failed");
   }
   if (count($args) == 1) {
     return $args[0];

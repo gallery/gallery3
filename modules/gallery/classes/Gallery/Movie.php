@@ -38,7 +38,7 @@ class Gallery_Movie {
   static function extract_frame($input_file, $output_file, $movie_options=null) {
     $ffmpeg = Movie::find_ffmpeg();
     if (empty($ffmpeg)) {
-      throw new Exception("@todo MISSING_FFMPEG");
+      throw new Gallery_Exception("Missing FFMPEG");
     }
 
     list($width, $height, $mime_type, $extension, $duration) = Movie::get_file_metadata($input_file);
@@ -73,7 +73,7 @@ class Gallery_Movie {
 
       clearstatcache();
       if (filesize($output_file) == 0 || $exec_return) {
-        throw new Exception("@todo FFMPEG_FAILED");
+        throw new Gallery_Exception("FFMPEG failed");
       }
     }
   }
@@ -165,7 +165,7 @@ class Gallery_Movie {
    */
   static function get_file_metadata($file_path) {
     if (!is_readable($file_path)) {
-      throw new Exception("@todo UNREADABLE_FILE");
+      throw new Gallery_Exception("Unreadable file");
     }
 
     $metadata = new stdClass();
@@ -218,7 +218,7 @@ class Gallery_Movie {
     // zero width and height isn't considered invalid (as is the case when FFmpeg isn't installed).
     if (!$metadata->mime_type || !$metadata->extension ||
         ($metadata->mime_type != LegalFile::get_movie_types_by_extension($metadata->extension))) {
-      throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
+      throw new Gallery_Exception("Illegal or unindentifiable file");
     }
 
     return array($metadata->width, $metadata->height, $metadata->mime_type,

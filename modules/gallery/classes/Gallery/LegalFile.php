@@ -281,12 +281,12 @@ class Gallery_LegalFile {
         $original_mime_type = LegalFile::get_movie_types_by_extension($original_extension);
         break;
       default:
-        throw new Exception("@todo INVALID_TYPE");
+        throw new Gallery_Exception("Invalid type: $type");
     }
 
     // Check if the target extension is blank or invalid - if so, throw an exception.
     if (!$extension || !$mime_type) {
-      throw new Exception("@todo ILLEGAL_EXTENSION");
+      throw new Gallery_Exception("Illegal extension: $extension");
     }
 
     // Check if the mime types of the original and target extensions match - if not, fix it.
