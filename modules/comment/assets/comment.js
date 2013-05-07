@@ -3,23 +3,23 @@ $("document").ready(function() {
     event.preventDefault();
     if (!$("#g-comment-form").length) {
       $.get($(this).attr("href"),
-	    {},
-	    function(data) {
-	      $("#g-comment-detail").append(data);
-	      ajaxify_comment_form();
+      {},
+      function(data) {
+        $("#g-comment-detail").append(data);
+        ajaxify_comment_form();
         $.scrollTo("#g-comment-form-anchor", 800);
-	    });
+      });
     }
   });
   $(".g-no-comments a").click(function(event) {
     event.preventDefault();
     if (!$("#g-comment-form").length) {
       $.get($(this).attr("href"),
-	    {},
-	    function(data) {
-	      $("#g-comment-detail").append(data);
-	      ajaxify_comment_form();
-	    });
+      {},
+      function(data) {
+        $("#g-comment-detail").append(data);
+        ajaxify_comment_form();
+      });
       $(".g-no-comments").remove();
     }
   });
