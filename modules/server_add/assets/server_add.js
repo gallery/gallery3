@@ -1,6 +1,6 @@
 (function($) {
    $.widget("ui.gallery_server_add",  {
-     _init: function() {
+     _create: function() {
        var self = this;
        $("#g-server-add-add-button", this.element).click(function(event) {
          event.preventDefault();
