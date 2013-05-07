@@ -34,17 +34,14 @@ class Tag_Controller_Tags extends Controller {
 
     // Build our form.
     $form = Formo::form()
+      ->attr("id", "g-add-tag-form")
+      ->add_class("g-short-form")
       ->add("tag", "group");
     $form->tag
+      ->set("label", t("Add Tag"))
       ->add("name", "input")
       ->add("item_id", "input|hidden", $item->id)
       ->add("submit", "input|submit", t("Add Tag"));
-
-    $form
-      ->attr("id", "g-add-tag-form")
-      ->add_class("g-short-form");
-    $form->tag
-      ->set("label", t("Add Tag"));
     $form->tag->name
       ->set("label", Arr::get(array(
           "album" => t("Add tag to album"),

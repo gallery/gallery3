@@ -20,8 +20,10 @@
 class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
   public function action_index() {
     $form = Formo::form()
+      ->attr("id", "g-theme-options-form")
       ->add("theme", "group");
     $form->theme
+      ->set("label", t("Theme layout"))
       ->add("page_size",            "input",    Module::get_var("gallery", "page_size"))
       ->add("thumb_size",           "input",    Module::get_var("gallery", "thumb_size"))
       ->add("resize_size",          "input",    Module::get_var("gallery", "resize_size"))
@@ -31,11 +33,6 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
       ->add("footer_text",          "textarea", Module::get_var("gallery", "footer_text"))
       ->add("show_credits",         "checkbox", Module::get_var("gallery", "show_credits"))
       ->add("submit",               "input|submit", t("Save"));
-
-    $form
-      ->attr("id", "g-theme-options-form");
-    $form->theme
-      ->set("label", t("Theme layout"));
     $form->theme->page_size
       ->set("label", t("Items per page"))
       ->add_rule("not_empty", array(":value"),           t("You must enter a number"))

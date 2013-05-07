@@ -44,17 +44,14 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
    */
   public function action_add() {
     $form = Formo::form()
+      ->attr("id", "g-add-watermark-form")
       ->add("watermark", "group");
     $form->watermark
+      ->set("label", t("Upload watermark"))
       ->add("data_file",    "file")
       ->add("position",     "select", "southeast")
       ->add("transparency", "select", 1)
       ->add("submit",       "input|submit", t("Upload"));
-
-    $form
-      ->attr("id", "g-add-watermark-form");
-    $form->watermark
-      ->set("label", t("Upload watermark"));
     $form->watermark->data_file
       ->set("label", t("Watermark"))
       ->add_rule("not_empty",    array(":value"),       t("You must select a watermark"))
@@ -112,16 +109,13 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
    */
   public function action_edit() {
     $form = Formo::form()
+      ->attr("id", "g-edit-watermark-form")
       ->add("watermark", "group");
     $form->watermark
+      ->set("label", t("Edit Watermark"))
       ->add("position",     "select", Module::get_var("watermark", "position"))
       ->add("transparency", "select", Module::get_var("watermark", "transparency"))
       ->add("submit",       "input|submit", t("Save"));
-
-    $form
-      ->attr("id", "g-edit-watermark-form");
-    $form->watermark
-      ->set("label", t("Edit Watermark"));
     $form->watermark->position
       ->set("label", t("Watermark position"))
       ->set("opts", static::get_positions());

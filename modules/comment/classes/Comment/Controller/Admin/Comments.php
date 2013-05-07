@@ -20,16 +20,13 @@
 class Comment_Controller_Admin_Comments extends Controller_Admin {
   public function action_index() {
     $form = Formo::form()
+      ->attr("id", "g-comments-admin-form")
       ->add("comment", "group");
     $form->comment
+      ->set("label", t("Permissions"))
       ->add("access_permissions", "select", Module::get_var("comment", "access_permissions"))
       ->add("rss_visible",        "select", Module::get_var("comment", "rss_visible"))
       ->add("submit",             "input|submit", t("Save"));
-
-    $form
-      ->attr("id", "g-comments-admin-form");
-    $form->comment
-      ->set("label", t("Permissions"));
     $form->comment->access_permissions
       ->set("label", t("Who can leave comments?"))
       ->set("opts", array(
