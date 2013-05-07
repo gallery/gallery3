@@ -82,7 +82,8 @@ class Gallery_Hook_GalleryBlock {
       break;
 
     case "block_adder":
-      if ($form = Hook_GalleryBlock::get_add_block_form()) {
+      $form = Request::factory("admin/dashboard/add_block")->make_ajax()->execute()->body();
+      if ($form) {
         $block->css_id = "g-block-adder";
         $block->title = t("Dashboard content");
         $block->content = $form;
@@ -119,27 +120,5 @@ class Gallery_Hook_GalleryBlock {
       $block->content->build_number = Gallery::build_number();
     }
     return $block;
-  }
-
-  static function get_add_block_form() {
-    $available_blocks = BlockManager::get_available_admin_blocks();
-
-    $active = array();
-    foreach (array_merge(BlockManager::get_active("dashboard_sidebar"),
-                         BlockManager::get_active("dashboard_center")) as $b) {
-      unset($available_blocks[implode(":", $b)]);
-    }
-
-    if (!$available_blocks) {
-      return;
-    }
-
-    $form = new Forge("admin/dashboard/add_block", "", "post",
-                      array("id" => "g-add-dashboard-block-form"));
-    $group = $form->group("add_block")->label(t("Add Block"));
-    $group->dropdown("id")->label(t("Available blocks"))->options($available_blocks);
-    $group->submit("center")->value(t("Add to center"));
-    $group->submit("sidebar")->value(t("Add to sidebar"));
-    return $form;
   }
 }
