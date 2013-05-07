@@ -176,54 +176,28 @@ class Gallery_Controller_Items extends Controller {
     }
 
     // Load and validate the form.
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        // Passed - save item, run event, add to log, send message, then redirect to new item.
-        $item->save();
-        Module::event("item_edit_form_completed", $item, $form);
-        GalleryLog::success("content", Arr::get(array(
-            "album" => t("Updated album"),
-            "photo" => t("Updated photo"),
-            "movie" => t("Updated movie")
-          ), $item->type), HTML::anchor($item->url(), t("view")));
-        Message::success(Arr::get(array(
-          "album" => t("Saved album %album_title", array("album_title" => HTML::purify($item->title))),
-          "photo" => t("Saved photo %photo_title", array("photo_title" => HTML::purify($item->title))),
-          "movie" => t("Saved movie %movie_title", array("movie_title" => HTML::purify($item->title)))
-        ), $item->type));
+    if ($form->load()->validate()) {
+      // Passed - save item, run event, add to log, send message, then redirect to new item.
+      $item->save();
+      Module::event("item_edit_form_completed", $item, $form);
+      GalleryLog::success("content", Arr::get(array(
+          "album" => t("Updated album"),
+          "photo" => t("Updated photo"),
+          "movie" => t("Updated movie")
+        ), $item->type), HTML::anchor($item->url(), t("view")));
+      Message::success(Arr::get(array(
+        "album" => t("Saved album %album_title", array("album_title" => HTML::purify($item->title))),
+        "photo" => t("Saved photo %photo_title", array("photo_title" => HTML::purify($item->title))),
+        "movie" => t("Saved movie %movie_title", array("movie_title" => HTML::purify($item->title)))
+      ), $item->type));
 
-        if ($this->request->is_ajax()) {
-          // If from_id points to the item itself, redirect as the address may have changed.
-          if ($form->from_id->val() == $item->id) {
-            $this->response->json(array("result" => "success", "location" => $item->url()));
-          } else {
-            $this->response->json(array("result" => "success"));
-          }
-          return;
-        } else {
-          // We ignore the from_id for non-ajax responses.
-          $this->redirect($item->abs_url());
-        }
-      } else {
-        // Failed - if ajax, return an error.
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "error", "html" => (string)$form));
-          return;
-        }
+      // If from_id points to the item itself, redirect as the address may have changed.
+      if ($form->from_id->val() == $item->id) {
+        $form->set("response", $item->abs_url());
       }
     }
 
-    // Nothing sent yet (ajax or non-ajax) or item validation failed (non-ajax).
-    if ($this->request->is_ajax()) {
-      // Send the basic form.
-      $this->response->body($form);
-    } else {
-      // Wrap the basic form in a theme.
-      $view_theme = new View_Theme("required/page.html", "other", "item_edit");
-      $view_theme->page_title = $form->item->get("label");
-      $view_theme->content = $form;
-      $this->response->body($view_theme);
-    }
+    $this->response->ajax_form($form);
   }
 
   /**
@@ -271,42 +245,19 @@ class Gallery_Controller_Items extends Controller {
     Module::event("album_add_form", $parent, $form);
 
     // Load and validate the form.
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        // Passed - save item, run event, add to log, send message, then redirect to new item.
-        $item->save();
-        Module::event("album_add_form_completed", $item, $form);
-        GalleryLog::success("content", t("Created an album"),
-                            HTML::anchor($item->url(), t("view")));
-        Message::success(t("Created album %album_title",
-                           array("album_title" => HTML::purify($item->title))));
+    if ($form->load()->validate()) {
+      // Passed - save item, run event, add to log, send message, then redirect to new item.
+      $item->save();
+      Module::event("album_add_form_completed", $item, $form);
+      GalleryLog::success("content", t("Created an album"),
+                          HTML::anchor($item->url(), t("view")));
+      Message::success(t("Created album %album_title",
+                         array("album_title" => HTML::purify($item->title))));
 
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "success", "location" => $item->url()));
-          return;
-        } else {
-          $this->redirect($item->abs_url());
-        }
-      } else {
-        // Failed - if ajax, return an error.
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "error", "html" => (string)$form));
-          return;
-        }
-      }
+      $form->set("response", $item->abs_url());
     }
 
-    // Nothing sent yet (ajax or non-ajax) or item validation failed (non-ajax).
-    if ($this->request->is_ajax()) {
-      // Send the basic form.
-      $this->response->body($form);
-    } else {
-      // Wrap the basic form in a theme.
-      $view_theme = new View_Theme("required/page.html", "other", "item_add");
-      $view_theme->page_title = $form->item->get("label");
-      $view_theme->content = $form;
-      $this->response->body($view_theme);
-    }
+    $this->response->ajax_form($form);
   }
 
   /**
@@ -341,41 +292,32 @@ class Gallery_Controller_Items extends Controller {
         )
       ->add("submit", "input|submit", t("Delete"));
 
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        $msg = Arr::get(array(
-          "album" => t("Deleted album <b>%title</b>", array("title" => HTML::purify($item->title))),
-          "photo" => t("Deleted photo <b>%title</b>", array("title" => HTML::purify($item->title))),
-          "movie" => t("Deleted movie <b>%title</b>", array("title" => HTML::purify($item->title)))
-        ), $item->type);
+    if ($form->load()->validate()) {
+      $msg = Arr::get(array(
+        "album" => t("Deleted album <b>%title</b>", array("title" => HTML::purify($item->title))),
+        "photo" => t("Deleted photo <b>%title</b>", array("title" => HTML::purify($item->title))),
+        "movie" => t("Deleted movie <b>%title</b>", array("title" => HTML::purify($item->title)))
+      ), $item->type);
 
-        // If we just deleted the item we were viewing, we'll need to redirect to the parent.
-        $location = ($form->from_id->val() == $item->id) ? $item->parent->url() : null;
-
-        if ($item->is_album()) {
-          // Album delete will trigger deletes for all children.  Do this in a batch so that we can
-          // be smart about notifications, album cover updates, etc.
-          Batch::start();
-          $item->delete();
-          Batch::stop();
-        } else {
-          $item->delete();
-        }
-
-        Message::success($msg);
-
-        if (isset($location)) {
-          $this->response->json(array("result" => "success", "location" => $location));
-        } else {
-          $this->response->json(array("result" => "success", "reload" => 1));
-        }
-      } else {
-        $this->response->json(array("result" => "error", "html" => (string)$form));
+      // If we just deleted the item we were viewing, we'll need to redirect to the parent.
+      if ($form->from_id->val() == $item->id) {
+        $form->set("response", $item->parent->abs_url());
       }
-      return;
+
+      if ($item->is_album()) {
+        // Album delete will trigger deletes for all children.  Do this in a batch so that we can
+        // be smart about notifications, album cover updates, etc.
+        Batch::start();
+        $item->delete();
+        Batch::stop();
+      } else {
+        $item->delete();
+      }
+
+      Message::success($msg);
     }
 
-    $this->response->body($form);
+    $this->response->ajax_form($form);
   }
 
   /**

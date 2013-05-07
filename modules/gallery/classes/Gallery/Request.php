@@ -87,6 +87,15 @@ class Gallery_Request extends Kohana_Request {
   }
 
   /**
+   * Make the current request an ajax request.  This sets Request::requested_with() such that
+   * Request::is_ajax() will return true.  We use this in some sub-requests.
+   * @see  Request::is_ajax()
+   */
+  public function make_ajax() {
+    return $this->requested_with("xmlhttprequest");
+  }
+
+  /**
    * Initialize the args array if not already set or if the force argument is specified.
    * This pulls it from the param array and parses it.
    */

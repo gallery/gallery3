@@ -21,16 +21,13 @@ class Gallery_Controller_Admin_Movies extends Controller_Admin {
   public function action_index() {
     // Build the form.
     $form = Formo::form()
+      ->attr("id", "g-movies-admin-form")
       ->add("settings", "group")
       ->add("submit", "input|submit", t("Save"));
     $form->settings
+      ->set("label", t("Settings"))
       ->add("allow_uploads", "select", Module::get_var("gallery", "movie_allow_uploads", "autodetect"))
       ->add("rebuild_thumbs", "checkbox", false);  // always reset to false
-
-    $form
-      ->attr("id", "g-movies-admin-form");
-    $form->settings
-      ->set("label", t("Settings"));
     $form->settings->allow_uploads
       ->set("label", t("Allow movie uploads into Gallery (does not affect existing movies)"))
       ->set("opts", array(

@@ -48,18 +48,15 @@ class Gallery_Controller_Reauthenticate extends Controller {
 
     // Define our reauthenticate form.
     $form = Formo::form()
+      ->attr("id", "g-reauthenticate-form")
+      ->add_class("g-narrow")
       ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
       ->add("reauthenticate", "group");
     $form->reauthenticate
+      ->set("label", t("Re-authenticate"))
       ->add("username", "input|hidden", Identity::active_user()->name)
       ->add("password", "input|password")
       ->add("submit", "input|submit", t("Submit"));
-
-    $form
-      ->attr("id", "g-reauthenticate-form")
-      ->attr("class", "g-narrow");
-    $form->reauthenticate
-      ->set("label", t("Re-authenticate"));
     $form->reauthenticate->username
       ->set("can_be_empty", true)
       ->add_rule("equals", array(":value", $user->name))

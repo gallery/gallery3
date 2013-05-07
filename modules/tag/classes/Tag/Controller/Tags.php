@@ -34,17 +34,14 @@ class Tag_Controller_Tags extends Controller {
 
     // Build our form.
     $form = Formo::form()
+      ->attr("id", "g-add-tag-form")
+      ->add_class("g-short-form")
       ->add("tag", "group");
     $form->tag
+      ->set("label", t("Add Tag"))
       ->add("name", "input")
       ->add("item_id", "input|hidden", $item->id)
       ->add("submit", "input|submit", t("Add Tag"));
-
-    $form
-      ->attr("id", "g-add-tag-form")
-      ->add_class("g-short-form");
-    $form->tag
-      ->set("label", t("Add Tag"));
     $form->tag->name
       ->set("label", Arr::get(array(
           "album" => t("Add tag to album"),
@@ -55,31 +52,19 @@ class Tag_Controller_Tags extends Controller {
       ->add_rule("max_length", array(":value", 64), t("Your tag is too long"));
 
     // If sent, validate and create the tag.
-    if ($form->sent()) {
-      if ($form->load()->validate()) {
-        foreach (explode(",", $form->tag->name->val()) as $tag_name) {
-          $tag_name = trim($tag_name);
-          if ($tag_name) {
-            $tag = Tag::add($item, $tag_name);
-          }
+    if ($form->load()->validate()) {
+      foreach (explode(",", $form->tag->name->val()) as $tag_name) {
+        $tag_name = trim($tag_name);
+        if ($tag_name) {
+          $tag = Tag::add($item, $tag_name);
         }
-
-        $this->response->json(array(
-          "result" => "success",
-          "cloud"  => (string)Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30))
-        ));
-        return;
-      } else {
-        $this->response->json(array(
-          "result" => "error",
-          "html" => (string)$form
-        ));
-        return;
       }
+
+      $form->set("response", array(
+        "cloud" => (string)Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30))));
     }
 
-    // This is being called from TagBlock, which builds the view for us - return the raw form.
-    $this->response->body($form);
+    $this->response->ajax_form($form);
   }
 
   public function action_autocomplete() {

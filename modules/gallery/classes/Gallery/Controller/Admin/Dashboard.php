@@ -31,14 +31,38 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
   }
 
   public function action_add_block() {
-    Access::verify_csrf();
+    $available_blocks = BlockManager::get_available_admin_blocks();
 
-    $form = Hook_GalleryBlock::get_add_block_form();
-    if ($form->validate()) {
-      list ($module_name, $id) = explode(":", $form->add_block->id->value);
+    foreach (array_merge(BlockManager::get_active("dashboard_sidebar"),
+                         BlockManager::get_active("dashboard_center")) as $block) {
+      unset($available_blocks[implode(":", $block)]);
+    }
+
+    if (!$available_blocks) {
+      return;
+    }
+
+    $form = Formo::form()
+      ->attr("id", "g-add-dashboard-block-form")
+      ->add("block", "group");
+    $form->block
+      ->set("label", t("Add Block"))
+      ->add("id", "select")
+      ->add("center", "input|submit", t("Add to center"))
+      ->add("sidebar", "input|submit", t("Add to sidebar"));
+    $form->block->id
+      ->set("label", t("Available blocks"))
+      ->set("opts", $available_blocks);
+    $form->block->center
+      ->set("can_be_empty", true);  // Need this since only submit value is returned
+    $form->block->sidebar
+      ->set("can_be_empty", true);  // Need this since only submit value is returned
+
+    if ($form->load()->validate()) {
+      list ($module_name, $id) = explode(":", $form->block->id->val());
       $available = BlockManager::get_available_admin_blocks();
 
-      if ($form->add_block->center->value) {
+      if ($form->block->center->val()) {
         BlockManager::add("dashboard_center", $module_name, $id);
         Message::success(
           t("Added <b>%title</b> block to the dashboard center",
@@ -49,8 +73,11 @@ class Gallery_Controller_Admin_Dashboard extends Controller_Admin {
           t("Added <b>%title</b> to the dashboard sidebar",
             array("title" => $available["$module_name:$id"])));
       }
+
+      $form->set("response", URL::abs_site("admin"));
     }
-    $this->redirect("admin/dashboard");
+
+    $this->response->ajax_form($form);
   }
 
   public function action_remove_block() {

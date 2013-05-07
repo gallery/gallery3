@@ -20,15 +20,12 @@
 class Akismet_Controller_Admin_Akismet extends Controller_Admin {
   public function action_index() {
     $form = Formo::form()
+      ->attr("id", "g-configure-akismet-form")
       ->add("akismet", "group");
     $form->akismet
+      ->set("label", t("Configure Akismet"))
       ->add("api_key", "input", Module::get_var("akismet", "api_key"))
       ->add("submit", "input|submit", t("Save"));
-
-    $form
-      ->attr("id", "g-configure-akismet-form");
-    $form->akismet
-      ->set("label", t("Configure Akismet"));
     $form->akismet->api_key
       ->set("label", t("API Key"))
       ->add_rule("Akismet::validate_key", array(":value"), t("The API key you provided is invalid."));
