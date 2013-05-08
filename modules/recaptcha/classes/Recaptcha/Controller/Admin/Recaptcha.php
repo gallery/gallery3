@@ -34,7 +34,7 @@ class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
     $form->recaptcha->private_key
       ->set("label", t("Private Key"))
       ->set("error_messages", array("not_empty" => t("You must enter a private key")))
-      ->add_rule("Recaptcha::verify_key", array(":value"), t("This private key is invalid"));
+      ->add_rule("Recaptcha::validate_key", array(":value"), t("This private key is invalid"));
 
     if ($form->load()->validate()) {
       $public_key  = $form->recaptcha->public_key->val();
@@ -60,8 +60,8 @@ class Recaptcha_Controller_Admin_Recaptcha extends Controller_Admin {
     $view->content = new View("admin/recaptcha.html");
     $view->content->public_key =  Module::get_var("recaptcha", "public_key");
     $view->content->private_key = Module::get_var("recaptcha", "private_key");
-    $view->content->get_key_url =
-      "http://www.google.com/recaptcha/admin/create?domains=$site_domain&app=Gallery3";
+    $view->content->home_url    = Recaptcha::HOME_URL;
+    $view->content->get_key_url = Recaptcha::GET_KEY_URL . "?domains=$site_domain&app=Gallery3";
     $view->content->form = $form;
     $this->response->body($view);
   }
