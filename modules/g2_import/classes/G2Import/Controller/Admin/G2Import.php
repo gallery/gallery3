@@ -20,13 +20,38 @@
 class G2Import_Controller_Admin_G2Import extends Controller_Admin {
   public function action_index() {
     G2Import::lower_error_reporting();
-    if (G2Import::is_configured()) {
+
+    $embed_path = Module::get_var("g2_import", "embed_path", "");
+    if ($embed_path) {
       G2Import::init();
+    }
+
+    $form = Formo::form()
+      ->attr("id", "g-admin-configure-g2-import-form")
+      ->add("g2_import", "group");
+    $form->g2_import
+      ->add("embed_path", "input", $embed_path)
+      ->add("submit", "input|submit", $embed_path ? t("Change") : t("Continue"));
+    $form->g2_import->embed_path
+      ->set("label", t("Filesystem path to your Gallery 2 embed.php file"))
+      ->set("error_messages", array(
+          "invalid" => t("The path you entered is not a Gallery 2 installation."),
+          "broken" =>  t("Your Gallery 2 install isn't working properly.  Please verify it!"),
+          "missing" => t("The path you entered does not exist.")
+        ))
+      ->callback("pass", array("Controller_Admin_G2Import::embed_path_callback"));
+
+    if ($form->load()->validate()) {
+      Message::success(t("Gallery 2 path saved"));
+      Module::set_var("g2_import", "embed_path", $embed_path);
     }
 
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Gallery 2 import");
     $view->content = new View("admin/g2_import.html");
+    $view->content->form = $form;
+    $view->content->thumb_size = Module::get_var("gallery", "thumb_size");
+    $view->content->resize_size = Module::get_var("gallery", "resize_size");
 
     if (class_exists("GalleryCoreApi")) {
       $view->content->g2_stats = $g2_stats = G2Import::g2_stats();
@@ -43,10 +68,6 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
         $g3_stats["item"] + $g3_stats["comment"] + $g3_stats["tag"];
     }
 
-    $view->content->form = $this->_get_import_form();
-    $view->content->version = "";
-    $view->content->thumb_size = Module::get_var("gallery", "thumb_size");
-    $view->content->resize_size = Module::get_var("gallery", "resize_size");
 
     if (G2Import::is_initialized()) {
       if ((bool)ini_get("eaccelerator.enable") || (bool)ini_get("xcache.cacher")) {
@@ -66,35 +87,8 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
             array("url" => URL::site("admin/modules"))));
       }
     } else if (G2Import::is_configured()) {
-      $view->content->form->configure_g2_import->embed_path->add_error("invalid", 1);
+      $form->g2_import->embed_path->error("invalid");
     }
-    G2Import::restore_error_reporting();
-    $this->response->body($view);
-  }
-
-  public function action_save() {
-    Access::verify_csrf();
-    G2Import::lower_error_reporting();
-
-    $form = $this->_get_import_form();
-    if ($form->validate()) {
-      $embed_path = $form->configure_g2_import->embed_path->value;
-      if (!is_file($embed_path) && file_exists("$embed_path/embed.php")) {
-        $embed_path = "$embed_path/embed.php";
-      }
-
-      if (($g2_init_error = G2Import::is_valid_embed_path($embed_path)) == "ok") {
-        Message::success(t("Gallery 2 path saved"));
-        Module::set_var("g2_import", "embed_path", $embed_path);
-        $this->redirect("admin/g2_import");
-      } else {
-        $form->configure_g2_import->embed_path->add_error($g2_init_error, 1);
-      }
-    }
-
-    $view = new View_Admin("required/admin.html");
-    $view->content = new View("admin/g2_import.html");
-    $view->content->form = $form;
     G2Import::restore_error_reporting();
     $this->response->body($view);
   }
@@ -117,20 +111,18 @@ class G2Import_Controller_Admin_G2Import extends Controller_Admin {
     $this->response->ajax(json_encode($directories));
   }
 
-  protected function _get_import_form() {
-    $embed_path = Module::get_var("g2_import", "embed_path", "");
-    $form = new Forge(
-      "admin/g2_import/save", "", "post", array("id" => "g-admin-configure-g2-import-form"));
-    $group = $form->group("configure_g2_import")->label(t("Configure Gallery 2 Import"));
-    $group->input("embed_path")->label(t("Filesystem path to your Gallery 2 embed.php file"))
-      ->value($embed_path);
-    $group->embed_path->error_messages(
-      "invalid", t("The path you entered is not a Gallery 2 installation."));
-    $group->embed_path->error_messages(
-      "broken", t("Your Gallery 2 install isn't working properly.  Please verify it!"));
-    $group->embed_path->error_messages(
-      "missing", t("The path you entered does not exist."));
-    $group->submit("")->value($embed_path ? t("Change") : t("Continue"));
-    return $form;
+  /**
+   * This callback checks the embed path and adds errors as needed.
+   */
+  public static function embed_path_callback($field) {
+    $embed_path = $field->val();
+    if (!is_file($embed_path) && file_exists("$embed_path/embed.php")) {
+      $field->val("$embed_path/embed.php");
+    }
+
+    $code = G2Import::is_valid_embed_path($field->val());
+    if ($code != "ok") {
+      $field->error($code);
+    }
   }
 }
