@@ -18,6 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Recaptcha_Recaptcha {
+  const HOME_URL    = "http://www.google.com/recaptcha";
+  const VERIFY_URL  = "http://www.google.com/recaptcha/api/verify";
+  const GET_KEY_URL = "http://www.google.com/recaptcha/admin/create";
+  const INVALID_KEY = "invalid-site-private-key";
+  const INVALID_SOL = "incorrect-captcha-sol";
+
+  /**
+   * Check to see if we have the reCAPTCHA keys set, then set/clear the site message as needed.
+   */
   static function check_config() {
     $public_key = Module::get_var("recaptcha", "public_key");
     $private_key = Module::get_var("recaptcha", "private_key");
@@ -32,95 +41,47 @@ class Recaptcha_Recaptcha {
   }
 
   /**
-   * Verify that the recaptcha key is valid.
+   * Validate that the reCAPTCHA private key is valid.
+   *
+   * @see http://developers.google.com/recaptcha/docs/verify
    * @param string $private_key
    * @return boolean
    */
-  static function verify_key($private_key) {
-    $remote_ip = $_SERVER["REMOTE_ADDR"];
-    $response = self::_http_post("api-verify.recaptcha.net", "/verify",
-                                 array("privatekey" => $private_key,
-                                       "remoteip" => $remote_ip,
-                                       "challenge" => "right",
-                                       "response" => "wrong"));
-
-    if ($response[1] == "false\ninvalid-site-private-key") {
-      // This is the only thing I can figure out how to verify.
-      // See http://recaptcha.net/apidocs/captcha for possible return values
-      return false;
-    }
-    return true;
+  static function validate_key($private_key) {
+    // The string "gallery_test" has no special meaning to reCAPTCHA, so this validation
+    // attempt will certainly fail.  We're just checking to see *why* it fails.
+    $code = static::get_recaptcha_response("gallery_test", "gallery_test", $private_key);
+    return ($code != static::INVALID_KEY);
   }
 
   /**
-   * Form validation call back for captcha validation
+   * Get a response from reCAPTCHA, and return null if valid or the error code if not.
+   *
+   * @see http://developers.google.com/recaptcha/docs/verify
    * @param string $form
    * @return string error message or null
    */
-  static function is_recaptcha_valid($challenge, $response, $private_key) {
-    $remote_ip = $_SERVER["REMOTE_ADDR"];
-
+  static function get_recaptcha_response($challenge, $response, $private_key) {
     // discard spam submissions
     if (empty($challenge) || empty($response)) {
-      return  "incorrect-captcha-sol";
+      return static::INVALID_SOL;
     }
 
-    $response = self::_http_post("api-verify.recaptcha.net", "/verify",
-                              array("privatekey" => $private_key,
-                                    "remoteip" => $remote_ip,
-                                    "challenge" => $challenge,
-                                    "response" => $response));
+    $response = Request::factory(static::VERIFY_URL)
+                  ->method(Request::POST)
+                  ->post(array(
+                      "challenge" => $challenge,
+                      "response" => $response,
+                      "privatekey" => $private_key,
+                      "remoteip" => $_SERVER["REMOTE_ADDR"]
+                    ))
+                  ->execute()->body();
 
-    $answers = explode ("\n", $response [1]);
-    if (trim ($answers [0]) == "true") {
+    $response = explode("\n", $response);
+    if (trim($response[0]) == "true") {
       return null;
     } else {
-      return $answers[1];
+      return trim($response[1]);
     }
-  }
-
-  /**
-   * Encodes the given data into a query string format
-   * @param $data - array of string elements to be encoded
-   * @return string - encoded request
-   */
-  protected static function _encode(array $data){
-    $req = array();
-    foreach ($data as $key => $value){
-      $req[] = "$key=" . urlencode(stripslashes($value));
-    }
-    return implode("&", $req);
-  }
-
-  /**
-   * Submits an HTTP POST to a reCAPTCHA server
-   * @todo: redo/simplify this with a sub-request.
-   *
-   * @param string $host
-   * @param string $path
-   * @param array $data
-   * @param int port
-   * @return array response
-   */
-  protected static function _http_post($host, $path, $data, $port = 80) {
-    $req = self::_encode($data);
-    $http_request  = "POST $path HTTP/1.0\r\n";
-    $http_request .= "Host: $host\r\n";
-    $http_request .= "Content-Type: application/x-www-form-urlencoded;\r\n";
-    $http_request .= "Content-Length: " . strlen($req) . "\r\n";
-    $http_request .= "User-Agent: reCAPTCHA/PHP\r\n";
-    $http_request .= "\r\n";
-    $http_request .= $req;
-    $response = "";
-    if( false == ( $fs = @fsockopen($host, $port, $errno, $errstr, 10) ) ) {
-      throw new Gallery_Exception("Could not open socket");
-    }
-    fwrite($fs, $http_request);
-    while (!feof($fs)) {
-      $response .= fgets($fs, 1160); // One TCP-IP packet
-    }
-    fclose($fs);
-    $response = explode("\r\n\r\n", $response, 2);
-    return $response;
   }
 }
