@@ -113,7 +113,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       }
 
       if (!function_exists("phpunit_autoload")) {
-        print "PHPUnit not found, aborting.  To download and use a standalone version of PHPUnit: \n";
+        print "PHPUnit not found, aborting.  Download and use a standalone version of PHPUnit: \n";
         print "  $ cd gallery3/bin\n";
         print "  $ wget http://pear.phpunit.de/get/phpunit.phar\n";
         exit(1);
