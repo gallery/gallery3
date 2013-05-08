@@ -158,4 +158,30 @@ class Gallery_Formo extends Formo_Core_Formo {
   public function is_hidden() {
     return ($this->attr("type") == "hidden");
   }
+
+  /**
+   * Add a field to a form just before its first submit button.  If no submit button is found,
+   * the field is added to the end of the form.  We use this in events to add fields to pre-built
+   * forms (e.g. tag, reCAPTCHA...).  The syntax is the same as Formo::add().
+   *
+   * @see Formo::add()
+   */
+  public function add_before_submit($alias, $driver=null, $value=null, array $opts=null) {
+    $types = Arr::flatten($this->as_array("attr.type", true));
+    foreach ($types as $submit_alias => $type) {
+      if ($type != "submit") {
+        continue;
+      }
+
+      // Found a submit button - add the field to its parent, then reorder to be before the submit.
+      $target = $this->find($submit_alias)->parent();
+      $target->add($alias, $driver, $value, $opts);
+      $target->order($alias, "before", $submit_alias);
+      return $this;
+    }
+
+    // Couldn't find a submit button - add the field to the end of the form.
+    $this->add($alias, $driver, $value, $opts);
+    return $this;
+  }
 }
