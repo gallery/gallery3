@@ -77,7 +77,7 @@ class Gallery_Controller_UserProfile extends Controller {
       ->add_rule("not_empty",  array(":value"),      t("You must enter a message"));
 
     Module::event("user_profile_contact_form", $form);
-    //Module::event("captcha_protect_form", $form);  // @todo: make this work!
+    Module::event("captcha_protect_form", $form);
 
     if ($form->load()->validate()) {
       Sendmail::factory()

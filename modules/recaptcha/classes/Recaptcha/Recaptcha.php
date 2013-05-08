@@ -55,6 +55,25 @@ class Recaptcha_Recaptcha {
   }
 
   /**
+   * Callback to validate a reCAPTCHA field.  This adds errors to the Formo field as needed.
+   *
+   * @see http://developers.google.com/recaptcha/docs/verify
+   * @see RecaptchaEvent::captcha_protect_form()
+   * @param Formo $field
+   */
+  static function recaptcha_field_callback($field) {
+    $challenge = (string)Request::current()->post("recaptcha_challenge_field");
+    $response  = (string)Request::current()->post("recaptcha_response_field");
+
+    $code = static::get_recaptcha_response($challenge, $response,
+      Module::get_var("recaptcha", "private_key"));
+
+    if ($code) {
+      $field->error($code);
+    }
+  }
+
+  /**
    * Get a response from reCAPTCHA, and return null if valid or the error code if not.
    *
    * @see http://developers.google.com/recaptcha/docs/verify

@@ -71,7 +71,7 @@ class Comment_Controller_Comments extends Controller {
     // Link the ORM model and call the form events.
     $form->comment->orm("link", array("model" => $comment));
     //Module::event("comment_add_form", $form);      // @todo: make this work!
-    //Module::event("captcha_protect_form", $form);  // @todo: make this work!
+    Module::event("captcha_protect_form", $form);
 
     // If we have a registered user, fill in their name, email, and url, and disable the fields.
     if (!$author->guest) {
