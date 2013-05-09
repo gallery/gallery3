@@ -113,6 +113,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
              ->select(array(DB::expr('COUNT("*")'), "c"))
              ->from("comments")
              ->group_by("state")
+             ->as_object()
              ->execute() as $row) {
       $counts->{$row->state} = $row->c;
     }

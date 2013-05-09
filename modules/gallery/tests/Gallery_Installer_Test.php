@@ -35,7 +35,7 @@ class Gallery_Installer_Test extends Unittest_TestCase {
 
   public function test_install_creates_root_item() {
     $max_right_ptr = ORM::factory("Item")
-      ->select(DB::expr("MAX(`right_ptr`) AS `right_ptr`"))
+      ->select(array(DB::expr("MAX(`right_ptr`)"), "right_ptr"))
       ->find()->right_ptr;
     $root = ORM::factory('Item')->find(1);
     $this->assertEquals("Gallery", $root->title);

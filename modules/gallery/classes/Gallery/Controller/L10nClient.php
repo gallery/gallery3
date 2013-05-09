@@ -125,6 +125,7 @@ class Gallery_Controller_L10nClient extends Controller {
       foreach (DB::select("key", "message")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
+               ->as_object()
                ->execute() as $row) {
         $calls[$row->key] = array(unserialize($row->message), array());
       }
