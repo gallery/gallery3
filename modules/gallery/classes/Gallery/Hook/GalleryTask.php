@@ -744,10 +744,10 @@ class Gallery_Hook_GalleryTask {
 
   static function find_dupe_slugs() {
     return DB::select(
-        array("parent_slug" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
+        array(DB::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))"), "parent_slug"))
       ->distinct(true)
       ->select("id")
-      ->select(array("C" => "COUNT(\"*\")"))
+      ->select(array(DB::expr("COUNT(\"*\")"), "C"))
       ->from("items")
       ->having("C", ">", 1)
       ->group_by("parent_slug")
@@ -758,10 +758,10 @@ class Gallery_Hook_GalleryTask {
   static function find_dupe_names() {
     // looking for photos, movies, and albums
     return DB::select(
-        array("parent_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
+        array(DB::expr("CONCAT(`parent_id`, ':', LOWER(`name`))"), "parent_name"))
       ->distinct(true)
       ->select("id")
-      ->select(array("C" => "COUNT(\"*\")"))
+      ->select(array(DB::expr("COUNT(\"*\")"), "C"))
       ->from("items")
       ->having("C", ">", 1)
       ->group_by("parent_name")
@@ -772,10 +772,10 @@ class Gallery_Hook_GalleryTask {
   static function find_dupe_base_names() {
     // looking for photos or movies, not albums
     return DB::select(
-        array("parent_base_name" => DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+        array(DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))"), "parent_base_name"))
       ->distinct(true)
       ->select("id")
-      ->select(array("C" => "COUNT(\"*\")"))
+      ->select(array(DB::expr("COUNT(\"*\")"), "C"))
       ->from("items")
       ->where("type", "<>", "album")
       ->having("C", ">", 1)
