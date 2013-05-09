@@ -110,7 +110,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $counts->spam = 0;
     $counts->deleted = 0;
     foreach (DB::select("state")
-             ->select(array("c" => 'COUNT("*")'))
+             ->select(array(DB::expr('COUNT("*")'), "c"))
              ->from("comments")
              ->group_by("state")
              ->execute() as $row) {

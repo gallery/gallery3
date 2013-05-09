@@ -184,4 +184,20 @@ class Gallery_Formo extends Formo_Core_Formo {
     $this->add($alias, $driver, $value, $opts);
     return $this;
   }
+
+  /**
+   * Merge two groups in a form.  This takes all elements from the source, adds them
+   * to the target, then removes the target.  This could yield some odd results if
+   * Formo namespacing is turned on (which it isn't in Gallery).
+   *
+   * @param string $source alias of source group
+   * @param string $target alias of target group
+   */
+  public function merge_groups($source, $target) {
+    foreach ($this->$source->as_array() as $field) {
+      $this->$target->add($field);
+    }
+    $this->remove($source);
+    return $this;
+  }
 }
