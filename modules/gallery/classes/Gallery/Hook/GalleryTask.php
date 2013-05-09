@@ -398,40 +398,57 @@ class Gallery_Hook_GalleryTask {
       switch ($state) {
       case self::FIX_STATE_START_MPTT:
         $task->set_data("ptr", $ptr = 1);
-        $task->set_data("stack", Item::root()->id . ":L");
+        $task->set_data("stack", Item::root()->id . ":album:1:L");
         $state = self::FIX_STATE_RUN_MPTT;
         break;
 
       case self::FIX_STATE_RUN_MPTT:
         $ptr = $task->get_data("ptr");
         $stack = explode(" ", $task->get_data("stack"));
-        list ($id, $ptr_mode) = explode(":", array_pop($stack));
+        list ($id, $type, $level, $ptr_mode) = explode(":", array_pop($stack));
         if ($ptr_mode == "L") {
-          $stack[] = "$id:R";
-          DB::update("items")
-            ->set(array("left_ptr" => $ptr++))
-            ->where("id", "=", $id)
-            ->execute();
+          if ($type == "album") {
+            // Albums could be parent nodes.
+            $stack[] = "$id:$type:$level:R";
+            DB::update("items")
+              ->set(array("left_ptr" => $ptr++))
+              ->where("id", "=", $id)
+              ->execute();
 
-          foreach (DB::select("id")
-                   ->from("items")
-                   ->where("parent_id", "=", $id)
-                   ->order_by("left_ptr", "ASC")
-                   ->as_object()
-                   ->execute() as $child) {
-            array_push($stack, "{$child->id}:L");
+            $level++;
+            foreach (DB::select("id", "type")
+                     ->from("items")
+                     ->where("parent_id", "=", $id)
+                     ->order_by("left_ptr", "DESC") // DESC since array_pop effectively reverses them
+                     ->as_object()
+                     ->execute() as $child) {
+              $stack[] = "{$child->id}:{$child->type}:$level:L";
+            }
+            $completed++;
+          } else {
+            // Non-albums must be leaf nodes.
+            DB::update("items")
+              ->set(array("left_ptr" => $ptr++,
+                          "right_ptr" => $ptr++,
+                          "level" => $level,
+                          "relative_path_cache" => null,
+                          "relative_url_cache" => null))
+              ->where("id", "=", $id)
+              ->execute();
+            $completed += 2;  // we updated two pointers
           }
         } else if ($ptr_mode == "R") {
           DB::update("items")
             ->set(array("right_ptr" => $ptr++,
+                        "level" => $level,
                         "relative_path_cache" => null,
                         "relative_url_cache" => null))
             ->where("id", "=", $id)
             ->execute();
+          $completed++;
         }
         $task->set_data("ptr", $ptr);
         $task->set_data("stack", implode(" ", $stack));
-        $completed++;
 
         if (empty($stack)) {
           $state = self::FIX_STATE_START_DUPE_SLUGS;
