@@ -825,7 +825,7 @@ class Gallery_Hook_GalleryInstaller {
       $view_full_col = "view_full_{$everybody->id}";
       foreach (ORM::factory("Item")
                ->with("access_intent")
-               ->where("type", "=", "album")
+               ->where("item.type", "=", "album")
                ->and_where_open()
                ->where("access_intent.$view_col", "=", Access::DENY)
                ->or_where("access_intent.$view_full_col", "=", Access::DENY)

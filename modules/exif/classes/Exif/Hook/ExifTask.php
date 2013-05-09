@@ -44,7 +44,7 @@ class Exif_Hook_ExifTask {
       $start = microtime(true);
       foreach (ORM::factory("Item")
                ->with("exif_record")
-               ->where("type", "=", "photo")
+               ->where("item.type", "=", "photo")
                ->and_where_open()
                ->where("exif_record.item_id", "IS", null)
                ->or_where("exif_record.dirty", "=", 1)
