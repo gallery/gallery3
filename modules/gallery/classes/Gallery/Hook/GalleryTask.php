@@ -800,7 +800,7 @@ class Gallery_Hook_GalleryTask {
 
   static function find_missing_access_caches_limited($limit) {
     return ORM::factory("Item")
-      ->select("id")
+      ->select("item.id")
       ->with("access_cache")
       ->where("access_cache.id", "is", null)
       ->limit($limit)
