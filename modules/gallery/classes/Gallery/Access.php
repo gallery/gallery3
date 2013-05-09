@@ -703,18 +703,16 @@ class Gallery_Access {
         fclose($fp);
       }
 
+      $request = Request::factory(URL::abs_file("var/security_test/verify"));
+
       // Proxy our authorization headers so that if the entire Gallery is covered by Basic Auth
       // this callback will still work.
-      $headers = array();
-      if (function_exists("apache_request_headers")) {
-        $arh = apache_request_headers();
-        if (!empty($arh["Authorization"])) {
-          $headers["Authorization"] = $arh["Authorization"];
-        }
+      if ($auth = Request::initial()->headers("authorization")) {
+        $request->headers("authorization", $auth);
       }
-      list ($status, $headers, $body) =
-        Remote::do_request(URL::abs_file("var/security_test/verify"), HTTP_Request::GET, $headers);
-      $works = ($status == "HTTP/1.1 200 OK") && ($body == "success");
+
+      $response = $request->execute();
+      $works = (($response->status() == 200) && ($response->body() == "success"));
     } catch (Exception $e) {
       @System::unlink_dir(VARPATH . "security_test");
       throw $e;
