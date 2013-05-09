@@ -178,9 +178,7 @@ class Gallery_Access {
 
     // For view permissions, if any parent is Access::DENY, then those parents lock this one.
     // Return
-    $lock = ORM::factory("Item", $item->id)
-      ->where("item.left_ptr", "<=", $item->left_ptr)
-      ->where("item.right_ptr", ">=", $item->right_ptr)
+    $lock = $item->parents
       ->with("access_intent")
       ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
@@ -522,9 +520,7 @@ class Gallery_Access {
     // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
     // item, then its safe to propagate from here.
     if ($access->$field !== Access::DENY) {
-      $tmp_item = ORM::factory("Item")
-        ->where("item.left_ptr", "<", $item->left_ptr)
-        ->where("item.right_ptr", ">", $item->right_ptr)
+      $tmp_item = $item->parents
         ->with("access_intent")
         ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
@@ -605,10 +601,8 @@ class Gallery_Access {
     // @todo To optimize this, we wouldn't need to propagate from the parent, we could just
     //       propagate from here with the parent's intent.
     if ($access->$field === Access::INHERIT) {
-      $tmp_item = ORM::factory("Item")
+      $tmp_item = $item->parents
         ->with("access_intent")
-        ->where("item.left_ptr", "<", $item->left_ptr)
-        ->where("item.right_ptr", ">", $item->right_ptr)
         ->where("access_intent.$field", "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
         ->order_by("left_ptr", "DESC")
         ->find();
