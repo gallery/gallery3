@@ -91,8 +91,9 @@ class Tag_Hook_TagEvent {
   static function item_edit_form_completed($item, $form) {
     Tag::clear_all($item);
     foreach (explode(",", $form->find("tags")->val()) as $tag_name) {
-      if ($tag_name) {
-        Tag::add($item, trim($tag_name));
+      $tag_name = trim($tag_name);
+      if (!empty($tag_name)) {
+        Tag::add($item, $tag_name);
       }
     }
     Tag::compact();
