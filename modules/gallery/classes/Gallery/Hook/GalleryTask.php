@@ -78,8 +78,9 @@ class Gallery_Hook_GalleryTask {
       // Choose the dirty images in a random order so that if we run this task multiple times
       // concurrently each task is rebuilding different images simultaneously.
       $result = Graphics::find_dirty_images_query()->select("id")
-        ->select(DB::expr("RAND() as r"))
+        ->select(array(DB::expr("RAND()"), "r"))
         ->order_by("r", "ASC")
+        ->as_object()
         ->execute();
       $total_count = $task->get_data("total_count", $result->count());
       $mode = $task->get_data("mode", "init");

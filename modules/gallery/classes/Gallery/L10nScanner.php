@@ -31,6 +31,7 @@ class Gallery_L10nScanner {
       foreach (DB::select("key")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
+               ->as_object()
                ->execute() as $row) {
         $cache[$row->key] = true;
       }

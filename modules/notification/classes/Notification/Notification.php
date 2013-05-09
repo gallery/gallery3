@@ -160,6 +160,7 @@ class Notification_Notification {
     foreach (DB::select("email")
              ->distinct(true)
              ->from("pending_notifications")
+             ->as_object()
              ->execute() as $row) {
       $email = $row->email;
       $result = ORM::factory("PendingNotification")
