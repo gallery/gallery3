@@ -5,7 +5,7 @@ if (empty($_GET["token"])) {
   // We have not yet redirected
   $rand = rand();
   setcookie("uploadify_token", $rand);
-  header("Location: uploadify.allglyphs.php?token=$rand#");
+  header("Location: uploadify.allglyphs.php?token=$rand#.");
   exit;
 }
 
