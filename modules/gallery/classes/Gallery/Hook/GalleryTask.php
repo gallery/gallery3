@@ -80,6 +80,7 @@ class Gallery_Hook_GalleryTask {
       $result = Graphics::find_dirty_images_query()->select("id")
         ->select(array(DB::expr("RAND()"), "r"))
         ->order_by("r", "ASC")
+        ->as_object()
         ->execute();
       $total_count = $task->get_data("total_count", $result->count());
       $mode = $task->get_data("mode", "init");
