@@ -83,14 +83,14 @@ class Tag_Hook_TagEvent {
     foreach ($item->tags->find_all() as $tag) {
       $tag_names[] = $tag->name;
     }
-    $form->item->add("tags", "input", implode(", ", $tag_names));
-    $form->item->tags->set("label", t("Tags (comma separated)"));
+    $form->add_before_submit("tags", "input", implode(", ", $tag_names));
+    $form->find("tags")->set("label", t("Tags (comma separated)"));
     $form->add_script_text(self::_get_autocomplete_js());
   }
 
   static function item_edit_form_completed($item, $form) {
     Tag::clear_all($item);
-    foreach (explode(",", $form->item->tags->val()) as $tag_name) {
+    foreach (explode(",", $form->find("tags")->val()) as $tag_name) {
       if ($tag_name) {
         Tag::add($item, trim($tag_name));
       }
