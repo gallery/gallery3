@@ -67,7 +67,7 @@ class Notification_Notification {
   static function get_subscribers($item) {
     $subscriber_ids = array();
     foreach (ORM::factory("Subscription")
-             ->select("user_id")
+             ->select("subscription.user_id")
              ->with("item")
              ->where("item.left_ptr", "<=", $item->left_ptr)
              ->where("item.right_ptr", ">", $item->right_ptr)

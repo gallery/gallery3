@@ -179,8 +179,8 @@ class Gallery_Access {
     // For view permissions, if any parent is Access::DENY, then those parents lock this one.
     // Return
     $lock = ORM::factory("Item", $item->id)
-      ->where("left_ptr", "<=", $item->left_ptr)
-      ->where("right_ptr", ">=", $item->right_ptr)
+      ->where("item.left_ptr", "<=", $item->left_ptr)
+      ->where("item.right_ptr", ">=", $item->right_ptr)
       ->with("access_intent")
       ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
@@ -523,8 +523,8 @@ class Gallery_Access {
     // item, then its safe to propagate from here.
     if ($access->$field !== Access::DENY) {
       $tmp_item = ORM::factory("Item")
-        ->where("left_ptr", "<", $item->left_ptr)
-        ->where("right_ptr", ">", $item->right_ptr)
+        ->where("item.left_ptr", "<", $item->left_ptr)
+        ->where("item.right_ptr", ">", $item->right_ptr)
         ->with("access_intent")
         ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
@@ -547,9 +547,9 @@ class Gallery_Access {
     $query = ORM::factory("AccessIntent")
       ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
       ->with("item")
-      ->where("left_ptr", ">=", $item->left_ptr)
-      ->where("right_ptr", "<=", $item->right_ptr)
-      ->where("type", "=", "album")
+      ->where("item.left_ptr", ">=", $item->left_ptr)
+      ->where("item.right_ptr", "<=", $item->right_ptr)
+      ->where("item.type", "=", "album")
       ->where("access_intent.$field", "IS NOT", Access::INHERIT)
       ->order_by("level", "DESC")
       ->find_all();
@@ -607,9 +607,9 @@ class Gallery_Access {
     if ($access->$field === Access::INHERIT) {
       $tmp_item = ORM::factory("Item")
         ->with("access_intent")
-        ->where("left_ptr", "<", $item->left_ptr)
-        ->where("right_ptr", ">", $item->right_ptr)
-        ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
+        ->where("item.left_ptr", "<", $item->left_ptr)
+        ->where("item.right_ptr", ">", $item->right_ptr)
+        ->where("access_intent.$field", "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
         ->order_by("left_ptr", "DESC")
         ->find();
       if ($tmp_item->loaded()) {
@@ -622,9 +622,9 @@ class Gallery_Access {
     $query = ORM::factory("AccessIntent")
       ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
       ->with("item")
-      ->where("left_ptr", ">=", $item->left_ptr)
-      ->where("right_ptr", "<=", $item->right_ptr)
-      ->where($field, "IS NOT", Access::INHERIT)
+      ->where("item.left_ptr", ">=", $item->left_ptr)
+      ->where("item.right_ptr", "<=", $item->right_ptr)
+      ->where("access_intent.$field", "IS NOT", Access::INHERIT)
       ->order_by("level", "ASC")
       ->find_all();
     foreach ($query as $row) {

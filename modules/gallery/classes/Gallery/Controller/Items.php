@@ -197,6 +197,9 @@ class Gallery_Controller_Items extends Controller {
       }
     }
 
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "item");
+
     $this->response->ajax_form($form);
   }
 
@@ -256,6 +259,9 @@ class Gallery_Controller_Items extends Controller {
 
       $form->set("response", $item->abs_url());
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "item");
 
     $this->response->ajax_form($form);
   }
