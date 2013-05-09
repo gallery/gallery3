@@ -49,28 +49,24 @@ class Gallery_UpgradeChecker {
   }
 
   /**
-   * Fech version info from the Gallery website.
+   * Fetch version info from the Gallery website.
    */
   static function fetch_version_info() {
     $result = new stdClass();
-    try {
-      list ($status, $headers, $body) = Remote::do_request(UpgradeChecker::CHECK_URL);
-      if ($status == "HTTP/1.1 200 OK") {
-        $result->status = "success";
-        foreach (explode("\n", $body) as $line) {
-          if ($line) {
-            list($key, $val) = explode("=", $line, 2);
-            $result->data[$key] = $val;
-          }
+
+    $response = Request::factory(UpgradeChecker::CHECK_URL)->execute();
+    if ($response->status() == 200) {
+      $result->status = "success";
+      foreach (explode("\n", $response->body()) as $line) {
+        if ($line) {
+          list($key, $val) = explode("=", $line, 2);
+          $result->data[$key] = $val;
         }
-      } else {
-        $result->status = "error";
       }
-    } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR,
-                      sprintf("%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),
-                              $e->getLine(), $e->getTraceAsString()));
+    } else {
+      $result->status = "error";
     }
+
     $result->timestamp = time();
     Cache::instance()->set("upgrade_checker_version_info", serialize($result),
                            86400 * 365, array("upgrade"));
