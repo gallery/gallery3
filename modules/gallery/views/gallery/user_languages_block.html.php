@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?= Form::dropdown("g-select-session-locale", $installed_locales, $selected) ?>
+<?= Form::select("g-select-session-locale", $installed_locales, $selected) ?>
 <script type="text/javascript">
   $("select[name=g-select-session-locale]").change(function() {
     var old_locale_preference = <?= HTML::js_string($selected) ?>;
