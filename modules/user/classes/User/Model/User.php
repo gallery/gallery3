@@ -20,7 +20,7 @@
 class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   protected $password_length = null;
 
-  public function __set($column, $value) {
+  public function set($column, $value) {
     switch ($column) {
     case "hashed_password":
       $column = "password";
@@ -31,7 +31,7 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
       $value = User::hash_password($value);
       break;
     }
-    parent::__set($column, $value);
+    parent::set($column, $value);
   }
 
   /**
