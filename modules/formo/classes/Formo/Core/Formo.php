@@ -439,6 +439,8 @@ class Formo_Core_Formo extends Formo_Innards {
 		{
 			$this->merge('callbacks', array($type => $callbacks));
 		}
+		
+		return $this;
 	}
 
 	/**
@@ -1050,6 +1052,8 @@ class Formo_Core_Formo extends Formo_Innards {
 		{
 			$this->remove_rule($rule_to_remove);
 		}
+		
+		return $this;
 	}
 
 	/**
@@ -1072,6 +1076,8 @@ class Formo_Core_Formo extends Formo_Innards {
 
 			$field->remove_rule($rules);
 		}
+		
+		return $this;
 	}
 
 	/**
