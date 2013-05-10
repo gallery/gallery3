@@ -112,15 +112,22 @@ class Gallery_Controller_L10nClient extends Controller {
   }
 
   protected static function _l10n_client_search_form() {
-    $form = new Forge("#", "", "post", array("id" => "g-l10n-search-form"));
-    $group = $form->group("l10n_search");
-    $group->input("l10n-search")->id("g-l10n-search");
+    $form = Formo::form()
+      ->attr("id", "g-l10n-search-form")
+      ->attr("action", "#")
+      ->add("search", "group");
+    $form->search
+      ->set("label", "")
+      ->add("terms", "input");
+    $form->search->terms
+      ->set("label", "")
+      ->attr("id", "g-l10n-search");
 
     return $form;
   }
 
   public static function l10n_form() {
-    if ($this->request->query("show_all_l10n_messages")) {
+    if (Request::current()->query("show_all_l10n_messages")) {
       $calls = array();
       foreach (DB::select("key", "message")
                ->from("incoming_translations")
@@ -168,7 +175,7 @@ class Gallery_Controller_L10nClient extends Controller {
 
       $v = new View('gallery/l10n_client.html');
       $v->string_list = $string_list;
-      $v->l10n_search_form = self::_l10n_client_search_form();
+      $v->l10n_search_form = static::_l10n_client_search_form();
       $v->plural_forms = L10nClient::plural_forms($locale);
       return $v;
     }
