@@ -62,7 +62,7 @@
               <td> <?= Form::checkbox("installed_locales[]", $code, isset($installed_locales[$code])) ?> </td>
               <td> <?= $display_name ?> </td>
               <td>
-              <?= Form::radio("default_locale", $code, ($default_locale == $code), ((isset($installed_locales[$code]))?'':'disabled="disabled"') ) ?>
+              <?= Form::radio("default_locale", $code, ($default_locale == $code), ((isset($installed_locales[$code]))?array():array("disabled" => "disabled")) ) ?>
               </td>
             </tr>
             <? $i++ ?>

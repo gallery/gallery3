@@ -19,22 +19,16 @@
  */
 class Gallery_Controller_Admin_Languages extends Controller_Admin {
   public function action_index() {
-    $this->show_languages_view();
-  }
-
-  public function show_languages_view($share_translations_form=null) {
+    // This view has two forms - one provided by the admin/languages.html view,
+    // and one provided by the share_translations_form() view.
     $v = new View_Admin("required/admin.html");
     $v->page_title = t("Languages and translations");
     $v->content = new View("admin/languages.html");
-                $v->content->available_locales = Locales::available();
+    $v->content->available_locales = Locales::available();
     $v->content->installed_locales = Locales::installed();
     $v->content->default_locale = Module::get_var("gallery", "default_locale");
+    $v->content->share_translations_form = $this->share_translations_form();
 
-    if (empty($share_translations_form)) {
-      $share_translations_form = $this->get_share_translations_form();
-    }
-    $v->content->share_translations_form = $share_translations_form;
-    $this->_outgoing_translations_count();
     $this->response->body($v);
   }
 
@@ -57,82 +51,80 @@ class Gallery_Controller_Admin_Languages extends Controller_Admin {
     $this->response->json(array("result" => "success"));
   }
 
-  public function action_share() {
-    Access::verify_csrf();
-
-    $form = $this->get_share_translations_form();
-    if (!$form->validate()) {
-      // Show the page with form errors
-      return $this->show_languages_view($form);
-    }
-
-    if ($this->request->post("share")) {
-      L10nClient::submit_translations();
-      Message::success(t("Translations submitted"));
-    } else {
-      return $this->_save_api_key($form);
-    }
-    $this->redirect("admin/languages");
-  }
-
-  protected function _save_api_key($form) {
-    $new_key = $form->sharing->api_key->value;
-    if ($new_key) {
-      list($connected, $valid) = L10nClient::validate_api_key($new_key);
-      if (!$valid) {
-        $form->sharing->api_key->add_error($connected ? "invalid" : "no_connection", 1);
-      }
-    } else {
-      $valid = true;
-    }
-
-    if ($valid) {
-        $old_key = L10nClient::api_key();
-        L10nClient::api_key($new_key);
-        if ($old_key && !$new_key) {
-          Message::success(t("Your API key has been cleared."));
-        } else if ($old_key && $new_key && $old_key != $new_key) {
-          Message::success(t("Your API key has been changed."));
-        } else if (!$old_key && $new_key) {
-          Message::success(t("Your API key has been saved."));
-        } else if ($old_key && $new_key && $old_key == $new_key) {
-          Message::info(t("Your API key was not changed."));
-        }
-
-        GalleryLog::success(t("gallery"), t("l10n_client API key changed."));
-        $this->redirect("admin/languages");
-    } else {
-      // Show the page with form errors
-      $this->show_languages_view($form);
-    }
-  }
-
-  protected function _outgoing_translations_count() {
-    return ORM::factory("OutgoingTranslation")->count_all();
-  }
-
-  public function get_share_translations_form() {
-    $form = new Forge("admin/languages/share", "", "post", array("id" => "g-share-translations-form"));
-    $group = $form->group("sharing")
-      ->label("Translations API Key");
+  public function share_translations_form() {
     $api_key = L10nClient::api_key();
     $server_link = L10nClient::server_api_key_url();
-    $group->input("api_key")
-      ->label(empty($api_key)
-              ? t("This is a unique key that will allow you to send translations to the remote
-                  server. To get your API key go to %server-link.",
-                  array("server-link" => HTML::mark_clean(HTML::anchor($server_link))))
-              : t("API key"))
-      ->value($api_key)
-      ->error_messages("invalid", t("The API key you provided is invalid."))
-      ->error_messages(
-        "no_connection", t("Could not connect to remote server to validate the API key."));
-    $group->submit("save")->value(t("Save settings"));
-    if ($api_key && $this->_outgoing_translations_count()) {
-      // TODO: UI improvement: hide API key / save button when API key is set.
-      $group->submit("share")->value(t("Submit translations"));
+
+    $form = Formo::form()
+      ->attr("id", "g-share-translations-form")
+      ->add("sharing", "group");
+    $form->sharing
+      ->set("label", t("Translations API Key"))
+      ->add("api_key", "input")
+      ->add("save",  "input|submit", t("Save settings"))
+      ->add("share", "input|submit", t("Submit translations"));
+    $form->sharing->api_key
+      ->set("label", empty($api_key) ? t("This is a unique key that will allow you to send translations to the remote server. To get your API key go to %server-link.",
+          array("server-link" => HTML::mark_clean(HTML::anchor($server_link)))) : t("API key"))
+      ->set("error_messages", array(
+          "invalid"       => t("The API key you provided is invalid."),
+          "no_connection" => t("Could not connect to remote server to validate the API key.")
+        ))
+      ->val($api_key)
+      ->callback("pass", array("Controller_Admin_Languages::validate_api_key"));
+    $form->sharing->save
+      ->set("can_be_empty", true);  // We use this since we have multiple buttons on this form.
+    $form->sharing->share
+      ->set("can_be_empty", true);
+
+    if ($form->load()->validate()) {
+      if ($form->sharing->save->val()) {
+        // User hit save button - update API key.
+        $new_key = $form->sharing->api_key->val();
+        $old_key = L10nClient::api_key();
+        L10nClient::api_key($new_key);
+        if ($old_key && $new_key && $old_key == $new_key) {
+          Message::info(t("Your API key was not changed."));
+        } else {
+          if ($old_key && !$new_key) {
+            Message::success(t("Your API key has been cleared."));
+          } else if (!$old_key && $new_key) {
+            Message::success(t("Your API key has been saved."));
+          } else {
+            Message::success(t("Your API key has been changed."));
+          }
+          GalleryLog::success(t("gallery"), t("l10n_client API key changed."));
+        }
+      } else if ($form->sharing->share->val()) {
+        // User hit share button - submit translations.
+        L10nClient::submit_translations();
+        Message::success(t("Translations submitted"));
+      }
     }
+
+    if (!L10nClient::api_key() || !ORM::factory("OutgoingTranslation")->count_all()) {
+      // Nothing to share - hide the share button.
+      $form->sharing->remove("share");
+    }
+
     return $form;
   }
-}
 
+  /**
+   * Validate API key callback to translate L10nClient::validate_api_key() responses
+   * to form errors.
+   */
+  public static function validate_api_key($field) {
+    $api_key = $field->val();
+    if (empty($api_key)) {
+      return;
+    }
+
+    list ($connected, $validated) = L10nClient::validate_api_key($api_key);
+    if (!$connected) {
+      $field->error("no_connection");
+    } else if (!$validated) {
+      $field->error("invalid");
+    }
+  }
+}
