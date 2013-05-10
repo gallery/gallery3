@@ -178,9 +178,7 @@ class Gallery_Access {
 
     // For view permissions, if any parent is Access::DENY, then those parents lock this one.
     // Return
-    $lock = ORM::factory("Item", $item->id)
-      ->where("left_ptr", "<=", $item->left_ptr)
-      ->where("right_ptr", ">=", $item->right_ptr)
+    $lock = $item->parents
       ->with("access_intent")
       ->where("access_intent.view_$group->id", "=", Access::DENY)
       ->order_by("level", "DESC")
@@ -522,9 +520,7 @@ class Gallery_Access {
     // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
     // item, then its safe to propagate from here.
     if ($access->$field !== Access::DENY) {
-      $tmp_item = ORM::factory("Item")
-        ->where("left_ptr", "<", $item->left_ptr)
-        ->where("right_ptr", ">", $item->right_ptr)
+      $tmp_item = $item->parents
         ->with("access_intent")
         ->where("access_intent.$field", "=", Access::DENY)
         ->order_by("left_ptr", "DESC")
@@ -547,9 +543,9 @@ class Gallery_Access {
     $query = ORM::factory("AccessIntent")
       ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
       ->with("item")
-      ->where("left_ptr", ">=", $item->left_ptr)
-      ->where("right_ptr", "<=", $item->right_ptr)
-      ->where("type", "=", "album")
+      ->where("item.left_ptr", ">=", $item->left_ptr)
+      ->where("item.right_ptr", "<=", $item->right_ptr)
+      ->where("item.type", "=", "album")
       ->where("access_intent.$field", "IS NOT", Access::INHERIT)
       ->order_by("level", "DESC")
       ->find_all();
@@ -605,11 +601,9 @@ class Gallery_Access {
     // @todo To optimize this, we wouldn't need to propagate from the parent, we could just
     //       propagate from here with the parent's intent.
     if ($access->$field === Access::INHERIT) {
-      $tmp_item = ORM::factory("Item")
+      $tmp_item = $item->parents
         ->with("access_intent")
-        ->where("left_ptr", "<", $item->left_ptr)
-        ->where("right_ptr", ">", $item->right_ptr)
-        ->where($field, "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
+        ->where("access_intent.$field", "IS NOT", Access::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
         ->order_by("left_ptr", "DESC")
         ->find();
       if ($tmp_item->loaded()) {
@@ -622,9 +616,9 @@ class Gallery_Access {
     $query = ORM::factory("AccessIntent")
       ->select("access_intent.$field", "item.left_ptr", "item.right_ptr")
       ->with("item")
-      ->where("left_ptr", ">=", $item->left_ptr)
-      ->where("right_ptr", "<=", $item->right_ptr)
-      ->where($field, "IS NOT", Access::INHERIT)
+      ->where("item.left_ptr", ">=", $item->left_ptr)
+      ->where("item.right_ptr", "<=", $item->right_ptr)
+      ->where("access_intent.$field", "IS NOT", Access::INHERIT)
       ->order_by("level", "ASC")
       ->find_all();
     foreach ($query as $row) {
@@ -709,18 +703,16 @@ class Gallery_Access {
         fclose($fp);
       }
 
+      $request = Request::factory(URL::abs_file("var/security_test/verify"));
+
       // Proxy our authorization headers so that if the entire Gallery is covered by Basic Auth
       // this callback will still work.
-      $headers = array();
-      if (function_exists("apache_request_headers")) {
-        $arh = apache_request_headers();
-        if (!empty($arh["Authorization"])) {
-          $headers["Authorization"] = $arh["Authorization"];
-        }
+      if ($auth = Request::initial()->headers("authorization")) {
+        $request->headers("authorization", $auth);
       }
-      list ($status, $headers, $body) =
-        Remote::do_request(URL::abs_file("var/security_test/verify"), HTTP_Request::GET, $headers);
-      $works = ($status == "HTTP/1.1 200 OK") && ($body == "success");
+
+      $response = $request->execute();
+      $works = (($response->status() == 200) && ($response->body() == "success"));
     } catch (Exception $e) {
       @System::unlink_dir(VARPATH . "security_test");
       throw $e;

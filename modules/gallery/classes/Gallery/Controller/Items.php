@@ -125,7 +125,7 @@ class Gallery_Controller_Items extends Controller {
       ->attr("id", "g-edit-{$item->type}-form")
       ->add("from_id", "input|hidden", $from_id)
       ->add("item", "group")
-      ->add("buttons", "group");
+      ->add("other", "group");
     $form->item
       ->set("label", Arr::get(array(
           "album" => t("Edit Album"),
@@ -136,7 +136,7 @@ class Gallery_Controller_Items extends Controller {
       ->add("description", "textarea")
       ->add("name", "input")
       ->add("slug", "input");
-    $form->buttons
+    $form->other
       ->set("label", "")
       ->add("submit", "input|submit", t("Modify"));
 
@@ -197,6 +197,9 @@ class Gallery_Controller_Items extends Controller {
       }
     }
 
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "item");
+
     $this->response->ajax_form($form);
   }
 
@@ -225,14 +228,14 @@ class Gallery_Controller_Items extends Controller {
       ->attr("id", "g-add-album-form")
       ->add_script_url("modules/gallery/assets/albums_form_add.js")
       ->add("item", "group")
-      ->add("buttons", "group");
+      ->add("other", "group");
     $form->item
       ->set("label", t("Add an album to %album_title", array("album_title" => $parent->title)))
       ->add("title", "input")
       ->add("description", "textarea")
       ->add("name", "input")
       ->add("slug", "input");
-    $form->buttons
+    $form->other
       ->set("label", "")
       ->add("submit", "input|submit", t("Create"));
 
@@ -256,6 +259,9 @@ class Gallery_Controller_Items extends Controller {
 
       $form->set("response", $item->abs_url());
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "item");
 
     $this->response->ajax_form($form);
   }

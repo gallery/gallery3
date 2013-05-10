@@ -67,7 +67,7 @@ class Notification_Notification {
   static function get_subscribers($item) {
     $subscriber_ids = array();
     foreach (ORM::factory("Subscription")
-             ->select("user_id")
+             ->select("subscription.user_id")
              ->with("item")
              ->where("item.left_ptr", "<=", $item->left_ptr)
              ->where("item.right_ptr", ">", $item->right_ptr)
@@ -160,6 +160,7 @@ class Notification_Notification {
     foreach (DB::select("email")
              ->distinct(true)
              ->from("pending_notifications")
+             ->as_object()
              ->execute() as $row) {
       $email = $row->email;
       $result = ORM::factory("PendingNotification")

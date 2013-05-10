@@ -158,4 +158,46 @@ class Gallery_Formo extends Formo_Core_Formo {
   public function is_hidden() {
     return ($this->attr("type") == "hidden");
   }
+
+  /**
+   * Add a field to a form just before its first submit button.  If no submit button is found,
+   * the field is added to the end of the form.  We use this in events to add fields to pre-built
+   * forms (e.g. tag, reCAPTCHA...).  The syntax is the same as Formo::add().
+   *
+   * @see Formo::add()
+   */
+  public function add_before_submit($alias, $driver=null, $value=null, array $opts=null) {
+    $types = Arr::flatten($this->as_array("attr.type", true));
+    foreach ($types as $submit_alias => $type) {
+      if ($type != "submit") {
+        continue;
+      }
+
+      // Found a submit button - add the field to its parent, then reorder to be before the submit.
+      $target = $this->find($submit_alias)->parent();
+      $target->add($alias, $driver, $value, $opts);
+      $target->order($alias, "before", $submit_alias);
+      return $this;
+    }
+
+    // Couldn't find a submit button - add the field to the end of the form.
+    $this->add($alias, $driver, $value, $opts);
+    return $this;
+  }
+
+  /**
+   * Merge two groups in a form.  This takes all elements from the source, adds them
+   * to the target, then removes the target.  This could yield some odd results if
+   * Formo namespacing is turned on (which it isn't in Gallery).
+   *
+   * @param string $source alias of source group
+   * @param string $target alias of target group
+   */
+  public function merge_groups($source, $target) {
+    foreach ($this->$source->as_array() as $field) {
+      $this->$target->add($field);
+    }
+    $this->remove($source);
+    return $this;
+  }
 }

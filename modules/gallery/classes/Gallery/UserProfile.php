@@ -25,30 +25,4 @@ class Gallery_UserProfile {
   static function url($user_id) {
     return URL::site("user_profile/show/{$user_id}");
   }
-
-  static function get_contact_form($user) {
-    $form = new Forge("user_profile/send/{$user->id}", "", "post",
-                      array("id" => "g-user-profile-contact-form"));
-    $group = $form->group("message")
-      ->label(t("Compose message to %name", array("name" => $user->display_name())));
-    $group->input("reply_to")
-      ->label(t("From:"))
-      ->rules("required|length[1, 256]|valid_email")
-      ->error_messages("not_empty", t("You must enter a valid email address"))
-      ->error_messages("max_length", t("Your email address is too long"))
-      ->error_messages("valid_email", t("You must enter a valid email address"));
-    $group->input("subject")
-      ->label(t("Subject:"))
-      ->rules("required|length[1, 256]")
-      ->error_messages("not_empty", t("Your message must have a subject"))
-      ->error_messages("max_length", t("Your subject is too long"));
-    $group->textarea("message")
-      ->label(t("Message:"))
-      ->rules("not_empty")
-      ->error_messages("not_empty", t("You must enter a message"));
-    Module::event("user_profile_contact_form", $form);
-    Module::event("captcha_protect_form", $form);
-    $group->submit("")->value(t("Send"));
-    return $form;
-  }
 }

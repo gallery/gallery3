@@ -40,14 +40,14 @@ class Comment_Controller_Comments extends Controller {
     // Build the form.
     $form = Formo::form()
       ->attr("id", "g-comment-form")
-      ->add("comment", "group");
+      ->add("comment", "group")
+      ->add("other", "group");
     $form->comment
       ->set("label", t("Add comment"))
       ->add("guest_name", "input")
       ->add("guest_email", "input")
       ->add("guest_url", "input")
-      ->add("text", "textarea")
-      ->add("submit", "input|submit", t("Add"));
+      ->add("text", "textarea");
     $form->comment->guest_name
       ->attr("id", "g-author")
       ->set("label", t("Name"))
@@ -65,13 +65,16 @@ class Comment_Controller_Comments extends Controller {
       ->attr("id", "g-text")
       ->set("label", t("Comment"))
       ->set("error_messages", array("not_empty" => t("You must enter a comment")));
-    $form->comment->submit
+    $form->other
+      ->set("label", "")
+      ->add("submit", "input|submit", t("Add"));
+    $form->other->submit
       ->add_class("ui-state-default ui-corner-all");  // @todo: do this in js, and add "Cancel".
 
     // Link the ORM model and call the form events.
     $form->comment->orm("link", array("model" => $comment));
-    //Module::event("comment_add_form", $form);      // @todo: make this work!
-    //Module::event("captcha_protect_form", $form);  // @todo: make this work!
+    Module::event("comment_add_form", $form);
+    Module::event("captcha_protect_form", $form);
 
     // If we have a registered user, fill in their name, email, and url, and disable the fields.
     if (!$author->guest) {
@@ -95,6 +98,9 @@ class Comment_Controller_Comments extends Controller {
 
       $form->set("response", array("html" => (string)$view));
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "comment");
 
     $this->response->ajax_form($form);
   }

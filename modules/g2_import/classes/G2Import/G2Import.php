@@ -271,10 +271,11 @@ class G2Import_G2Import {
     $g3_stats = array(
       "album" => 0, "comment" => 0, "item" => 0, "user" => 0, "group" => 0, "tag" => 0);
     foreach (DB::select("resource_type")
-             ->select(array("C" => 'COUNT("*")'))
+             ->select(array(DB::expr('COUNT("*")'), "c"))
              ->from("g2_maps")
              ->where("resource_type", "IN", array("album", "comment", "item", "user", "group"))
              ->group_by("resource_type")
+             ->as_object()
              ->execute() as $row) {
       $g3_stats[$row->resource_type] = $row->C;
     }

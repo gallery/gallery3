@@ -133,7 +133,7 @@ class Exif_Exif {
   static function stats() {
     $missing_exif = ORM::factory("Item")
       ->with("exif_record")
-      ->where("type", "=", "photo")
+      ->where("item.type", "=", "photo")
       ->and_where_open()
       ->where("exif_record.item_id", "IS", null)
       ->or_where("exif_record.dirty", "=", 1)

@@ -741,10 +741,11 @@ class Gallery_Hook_GalleryInstaller {
 
       // Find and loop through each conflict (e.g. "foo.jpg", "foo.png", and "foo.flv" are one
       // conflict; "bar.jpg", "bar.png", and "bar.flv" are another)
-      foreach (DB::select(array("parent_base_name" =>
-                 DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+      foreach (DB::select(array(
+                 DB::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))"),
+                 "parent_base_name"))
                ->distinct(true)
-               ->select(array("C" => "COUNT(\"*\")"))
+               ->select(array(DB::expr('COUNT("*")'), "c"))
                ->from("items")
                ->where("type", "<>", "album")
                ->having("C", ">", 1)
@@ -824,7 +825,7 @@ class Gallery_Hook_GalleryInstaller {
       $view_full_col = "view_full_{$everybody->id}";
       foreach (ORM::factory("Item")
                ->with("access_intent")
-               ->where("type", "=", "album")
+               ->where("item.type", "=", "album")
                ->and_where_open()
                ->where("access_intent.$view_col", "=", Access::DENY)
                ->or_where("access_intent.$view_full_col", "=", Access::DENY)

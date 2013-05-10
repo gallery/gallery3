@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_UserProfile extends Controller {
-
   public function action_show() {
     $id = $this->request->arg(0, "digit");
     // If we get here, then we should have a user id other than guest.
@@ -55,32 +54,44 @@ class Gallery_Controller_UserProfile extends Controller {
       throw HTTP_Exception::factory(404);
     }
 
-    $this->response->body(UserProfile::get_contact_form($user));
-  }
+    $form = Formo::form()
+      ->attr("id", "g-user-profile-contact-form")
+      ->add("email", "group");
+    $form->email
+      ->set("label", t("Compose message to %name", array("name" => $user->display_name())))
+      ->add("reply_to", "input", Identity::active_user()->email)
+      ->add("subject", "input")
+      ->add("message", "textarea")
+      ->add("submit", "input|submit", t("Send"));
+    $form->email->reply_to
+      ->set("label", t("From:"))
+      ->add_rule("not_empty",  array(":value"),      t("You must enter a valid email address"))
+      ->add_rule("max_length", array(":value", 256), t("Your email address is too long"))
+      ->add_rule("email",      array(":value"),      t("You must enter a valid email address"));
+    $form->email->subject
+      ->set("label", t("Subject:"))
+      ->add_rule("not_empty",  array(":value"),      t("Your message must have a subject"))
+      ->add_rule("max_length", array(":value", 256), t("Your subject is too long"));
+    $form->email->message
+      ->set("label", t("Message:"))
+      ->add_rule("not_empty",  array(":value"),      t("You must enter a message"));
 
-  public function action_send() {
-    $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-    $user = Identity::lookup_user($id);
-    if (!$this->_can_view_profile_pages($user)) {
-      throw HTTP_Exception::factory(404);
-    }
+    Module::event("user_profile_contact_form", $form);
+    Module::event("captcha_protect_form", $form);
 
-    $form = UserProfile::get_contact_form($user);
-    if ($form->validate()) {
+    if ($form->load()->validate()) {
       Sendmail::factory()
         ->to($user->email)
-        ->subject(HTML::clean($form->message->subject->value))
+        ->subject(HTML::clean($form->email->subject->val()))
         ->header("Mime-Version", "1.0")
         ->header("Content-type", "text/html; charset=UTF-8")
-        ->reply_to($form->message->reply_to->value)
-        ->message(HTML::purify($form->message->message->value))
+        ->reply_to($form->email->reply_to->val())
+        ->message(HTML::purify($form->email->message->val()))
         ->send();
       Message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
-      $this->response->json(array("result" => "success"));
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
+
+    $this->response->ajax_form($form);
   }
 
   protected function _can_view_profile_pages($user) {

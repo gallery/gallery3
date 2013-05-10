@@ -59,11 +59,13 @@ class Gallery_Controller_Reauthenticate extends Controller {
       ->add("submit", "input|submit", t("Submit"));
     $form->reauthenticate->username
       ->set("can_be_empty", true)
+      ->add_rule("not_empty", array(":value"))
       ->add_rule("equals", array(":value", $user->name))
       ->callback("fail", array("Access::forbidden"));
     $form->reauthenticate->password
       ->attr("id", "g-password")
       ->set("label", t("Password"))
+      ->add_rule("not_empty", array(":value"), t("Incorrect password"))
       ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "username"),
                  t("Too many incorrect passwords.  Try again later"))
       ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),

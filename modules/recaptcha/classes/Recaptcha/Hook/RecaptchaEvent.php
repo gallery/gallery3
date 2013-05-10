@@ -20,15 +20,24 @@
 class Recaptcha_Hook_RecaptchaEvent {
   static function captcha_protect_form($form) {
     if (Module::get_var("recaptcha", "public_key")) {
-      foreach ($form->inputs as $input) {
-        if ($input instanceof Form_Group) {
-          $input->recaptcha("recaptcha")->label("")->id("g-recaptcha");
-          return;
-        }
-      }
+      // Get the reCAPTCHA form
+      $view = new View("recaptcha/form.html");
+      $view->public_key = Module::get_var("recaptcha", "public_key");
 
-      // If we haven't returned yet, then add the captcha at the end of the form
-      $form->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+      // Add an input with the reCAPTCHA form as its value, and give it the proper callback.
+      // Setting editable to false means that the field's rendering is just its value.
+      $form->add_before_submit("recaptcha", "input", $view);
+      $form->find("recaptcha")
+        ->attr("id", "g-recaptcha")
+        ->set("editable", false)
+        ->set("error_messages", array(
+            Recaptcha::INVALID_SOL => t("The values supplied to reCAPTCHA are incorrect."),
+            Recaptcha::INVALID_KEY => t("The site private key is incorrect.")
+          ))
+        ->callback("pass", array("Recaptcha::recaptcha_field_callback"));
+    } else {
+      throw new Gallery_Exception("Need reCAPTCHA key " .
+                                  HTML::anchor(Recaptcha::GET_KEY_URL, Recaptcha::GET_KEY_URL));
     }
   }
 
