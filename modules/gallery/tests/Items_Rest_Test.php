@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Items_Rest_Helper_Test extends Unittest_TestCase {
+class Items_Rest_Test extends Unittest_TestCase {
   public function test_get_url() {
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);

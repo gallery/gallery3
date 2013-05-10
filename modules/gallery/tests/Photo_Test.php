@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photo_Helper_Test extends Unittest_TestCase {
+class Photo_Test extends Unittest_TestCase {
   public function test_get_file_metadata() {
     $photo = Test::random_photo();
     $this->assertEquals(array(1024, 768, "image/jpeg", "jpg"),
@@ -42,7 +42,7 @@ class Photo_Helper_Test extends Unittest_TestCase {
    * @expectedException Gallery_Exception
    */
   public function test_get_file_metadata_with_illegal_extension() {
-    $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/Photo_Helper_Test.php");
+    $metadata = Photo::get_file_metadata(MODPATH . "gallery/tests/Photo_Test.php");
     $this->assertTrue(false, "Shouldn't get here");
   }
 
@@ -58,7 +58,7 @@ class Photo_Helper_Test extends Unittest_TestCase {
   }
 
   public function test_get_file_metadata_with_valid_extension_but_illegal_file_contents() {
-    copy(MODPATH . "gallery/tests/Photo_Helper_Test.php", TMPPATH . "test_php_with_jpg_extension.jpg");
+    copy(MODPATH . "gallery/tests/Photo_Test.php", TMPPATH . "test_php_with_jpg_extension.jpg");
     try {
       $metadata = Photo::get_file_metadata(TMPPATH . "test_php_with_jpg_extension.jpg");
       $this->assertTrue(false, "Shouldn't get here");

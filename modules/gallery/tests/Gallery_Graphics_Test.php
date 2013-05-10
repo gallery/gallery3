@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Graphics_Helper_Test extends Unittest_TestCase {
+class Gallery_Graphics_Test extends Unittest_TestCase {
   public function test_rotate_jpg() {
     // Input is a 1024x768 jpg, output is rotated 90 degrees
     $input_file = MODPATH . "gallery_unittest/assets/test.jpg";

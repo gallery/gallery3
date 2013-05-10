@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Movie_Helper_Test extends Unittest_TestCase {
+class Movie_Test extends Unittest_TestCase {
   public function test_seconds_to_hhmmssdd() {
     $times = array("00:00:00.50" => 0.5,
                    "00:00:06.00" => 6,
@@ -76,7 +76,7 @@ class Movie_Helper_Test extends Unittest_TestCase {
    * @expectedException Gallery_Exception
    */
   public function test_get_file_metadata_with_illegal_extension() {
-    $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
+    $metadata = Movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Test.php");
     $this->assertTrue(false, "Shouldn't get here");
   }
 
@@ -93,7 +93,7 @@ class Movie_Helper_Test extends Unittest_TestCase {
   }
 
   public function test_get_file_metadata_with_valid_extension_but_illegal_file_contents() {
-    copy(MODPATH . "gallery/tests/Photo_Helper_Test.php", TMPPATH . "test_php_with_flv_extension.flv");
+    copy(MODPATH . "gallery/tests/Photo_Test.php", TMPPATH . "test_php_with_flv_extension.flv");
     // Since mime type and extension are based solely on the filename, this is considered valid.
     // Of course, FFmpeg cannot extract width, height, or duration from the file.  Note that this
     // isn't a really a security problem, since the filename doesn't have a php extension and
