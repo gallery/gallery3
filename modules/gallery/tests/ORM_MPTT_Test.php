@@ -79,18 +79,6 @@ class ORM_MPTT_Test extends Unittest_TestCase {
     $this->assertEquals($album1_1_1->id, $album1_2->children->find_all()->current()->id);
   }
 
-  /**
-   * @expectedException Gallery_Exception
-   */
-  public function test_cant_move_parent_into_own_subtree() {
-    $album1 = Test::random_album(Item::root());
-    $album2 = Test::random_album($album1);
-    $album3 = Test::random_album($album2);
-
-    $album1->parent_id = $album3->id;
-    $album1->save();
-  }
-
   public function test_parent() {
     $album = Test::random_album();
 

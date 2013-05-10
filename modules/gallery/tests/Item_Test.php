@@ -66,6 +66,18 @@ class Item_Test extends Unittest_TestCase {
     $this->assertSame($dst_album->id, $photo->parent_id);
   }
 
+  /**
+   * @expectedException Gallery_Exception
+   */
+  public function test_cant_move_parent_into_own_subtree() {
+    $album1 = Test::random_album(Item::root());
+    $album2 = Test::random_album($album1);
+    $album3 = Test::random_album($album2);
+
+    $album1->parent_id = $album3->id;
+    $album1->save();
+  }
+
   public function test_move_updates_album_covers() {
     // 2 photos in the source album
     $src_album = Test::random_album();
