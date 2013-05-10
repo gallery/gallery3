@@ -54,7 +54,7 @@ class Tags_Rest_Test extends Unittest_TestCase {
     $request->params->entity = new stdClass();
     $request->params->entity->name = "test tag";
     $this->assertEquals(
-      array("url" => URL::site("rest/tag/1")),
+      array("url" => URL::abs_site("rest/tag/1")),
       Hook_Rest_Tags::post($request));
   }
 

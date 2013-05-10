@@ -26,21 +26,21 @@ class User_Installer_Test extends Unittest_TestCase {
   public function test_install_creates_admin_user() {
     $user = ORM::factory("User", 1);
     $this->assertEquals("guest", $user->name);
-    $this->assertTrue($user->guest);
+    $this->assertTrue((bool)$user->guest);
 
     $user = ORM::factory("User", 2);
     $this->assertEquals("admin", $user->name);
-    $this->assertFalse($user->guest);
+    $this->assertFalse((bool)$user->guest);
 
     $this->assertEquals(
       array("Everybody", "Registered Users"),
-      array_keys($user->groups->select_list("name")));
+      array_keys($user->groups->find_all()->as_array("name")));
   }
 
   public function test_install_creates_everybody_group() {
     $group = ORM::factory("Group", 1);
     $this->assertEquals("Everybody", $group->name);
-    $this->assertTrue($group->special);
+    $this->assertTrue((bool)$group->special);
   }
 
   public function test_install_creates_registered_group() {
