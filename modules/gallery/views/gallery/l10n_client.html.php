@@ -40,31 +40,31 @@
       <form method="post" action="<?= URL::site("l10n_client/save") ?>" id="g-l10n-client-save-form">
         <?= Access::csrf_form_field() ?>
         <?= Form::hidden("l10n-message-key") ?>
-        <?= Form::textarea("l10n-edit-translation", "", ' id="l10n-edit-translation" rows="5" class="translationField"') ?>
+        <?= Form::textarea("l10n-edit-translation", "", array("id" => "l10n-edit-translation", "rows" => "5", "class" => "translationField")) ?>
         <div id="plural-zero" class="translationField hidden">
           <label for="l10n-edit-plural-translation-zero">[zero]</label>
-          <?= Form::textarea("l10n-edit-plural-translation-zero", "", ' rows="2"') ?>
+          <?= Form::textarea("l10n-edit-plural-translation-zero", "", array("rows" => "2")) ?>
         </div>
         <div id="plural-one" class="translationField hidden">
           <label for="l10n-edit-plural-translation-one">[one]</label>
-          <?= Form::textarea("l10n-edit-plural-translation-one", "", ' rows="2"') ?>
+          <?= Form::textarea("l10n-edit-plural-translation-one", "", array("rows" => "2")) ?>
         </div>
         <div id="plural-two" class="translationField hidden">
           <label for="l10n-edit-plural-translation-two">[two]</label>
-          <?= Form::textarea("l10n-edit-plural-translation-two", "", ' rows="2"') ?>
+          <?= Form::textarea("l10n-edit-plural-translation-two", "", array("rows" => "2")) ?>
         </div>
         <div id="plural-few" class="translationField hidden">
           <label for="l10n-edit-plural-translation-few">[few]</label>
-          <?= Form::textarea("l10n-edit-plural-translation-few", "", ' rows="2"') ?>
+          <?= Form::textarea("l10n-edit-plural-translation-few", "", array("rows" => "2")) ?>
         </div>
         <div id="plural-many" class="translationField hidden">
           <label for="l10n-edit-plural-translation-many">[many]</label>
-          <?= Form::textarea("l10n-edit-plural-translation-many", "", ' rows="2"') ?>
+          <?= Form::textarea("l10n-edit-plural-translation-many", "", array("rows" => "2")) ?>
         </div>
         <div id="plural-other" class="translationField hidden">
           <label for="l10n-edit-plural-translation-other">[other]</label>
           (<a href="http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html"><?= t("learn more about plural forms") ?></a>)
-          <?= Form::textarea("l10n-edit-plural-translation-other", "", ' rows="2"') ?>
+          <?= Form::textarea("l10n-edit-plural-translation-other", "", array("rows" => "2")) ?>
         </div>
         <input type="submit" name="l10n-edit-save" value="<?= t("Save translation")->for_html_attr() ?>"/>
         <a href="javascript: Gallery.l10nClient.copySourceText()"
