@@ -18,19 +18,32 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_L10nClient {
+  const URL = "http://galleryproject.org/translations/";
+  const API_VERSION = "1.0";
 
-  protected static function _server_url($path) {
-    return "http://galleryproject.org/translations/$path";
-  }
+  const SERVER_API_KEY   = "userkey/";
+  const VALIDATE_API_KEY = "status";
+  const FETCH            = "fetch";
+  const SUBMIT           = "submit";
 
+  /**
+   * Get the server API KEY URL.  This isn't used in this class, but is used elsewhere
+   * (e.g. Controller_Languages::action_share()).
+   */
   static function server_api_key_url() {
-    return self::_server_url("userkey/" . self::client_token());
+    return static::URL . static::SERVER_API_KEY . static::client_token();
   }
 
+  /**
+   * Get the client token.
+   */
   static function client_token() {
     return md5("l10n_client_client_token" . Access::private_key());
   }
 
+  /**
+   * Get or set the API key.
+   */
   static function api_key($api_key=null) {
     if ($api_key !== null) {
       Module::set_var("gallery", "l10n_client_key", $api_key);
@@ -38,39 +51,56 @@ class Gallery_L10nClient {
     return Module::get_var("gallery", "l10n_client_key", "");
   }
 
+  /**
+   * Get the server UID.  If no API key is given, the configured key is used.
+   */
   static function server_uid($api_key=null) {
-    $api_key = $api_key == null ? L10nClient::api_key() : $api_key;
+    $api_key = $api_key == null ? static::api_key() : $api_key;
     $parts = explode(":", $api_key);
     return empty($parts) ? 0 : $parts[0];
   }
 
+  /**
+   * Get the signature for a data payload.  If no API key is given, the configured key is used.
+   * The payload should already be JSON encoded.
+   */
   protected static function _sign($payload, $api_key=null) {
-    $api_key = $api_key == null ? L10nClient::api_key() : $api_key;
-    return md5($api_key . $payload . L10nClient::client_token());
+    $api_key = $api_key == null ? static::api_key() : $api_key;
+    return md5($api_key . $payload . static::client_token());
   }
 
+  /**
+   * Validate an API key.  This returns an array of two booleans: the first is whether or not a
+   * server connection was made, and the second is whether or not the key was validated.
+   *
+   * @param  string $api_key candidate API key
+   * @return array           array([connected?], [validated?])
+   */
   static function validate_api_key($api_key) {
-    $version = "1.0";
-    $url = self::_server_url("status");
-    $signature = self::_sign($version, $api_key);
-
     try {
-      list ($response_data, $response_status) = Remote::post(
-        $url, array("version" => $version,
-                    "client_token" => L10nClient::client_token(),
-                    "signature" => $signature,
-                    "uid" => L10nClient::server_uid($api_key)));
-    } catch (ErrorException $e) {
+      $response = Request::factory(static::URL . static::VALIDATE_API_KEY)
+        ->method(Request::POST)
+        ->post(array(
+            "version"      => static::API_VERSION,
+            "client_token" => static::client_token(),
+            "signature"    => static::_sign(static::API_VERSION, $api_key),
+            "uid"          => static::server_uid($api_key)
+          ))
+        ->execute();
+    } catch (Exception $e) {
       // Log the error, but then return a "can't make connection" error
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
+      $response = null;
     }
-    if (!isset($response_data) && !isset($response_status)) {
+
+    if (!isset($response)) {
       return array(false, false);
     }
 
-    if (!Remote::success($response_status)) {
+    if (floor($response->status() / 100) != 2) {  // i.e. status isn't 2xx
       return array(true, false);
     }
+
     return array(true, true);
   }
 
@@ -84,13 +114,13 @@ class Gallery_L10nClient {
    *     translations for.
    */
   static function fetch_updates(&$num_fetched) {
-    $request = new stdClass();
-    $request->locales = array();
-    $request->messages = new stdClass();
+    $data = new stdClass();
+    $data->locales = array();
+    $data->messages = new stdClass();
 
     $locales = Locales::installed();
     foreach ($locales as $locale => $locale_data) {
-      $request->locales[] = $locale;
+      $data->locales[] = $locale;
     }
 
     // See the server side code for how we arrive at this
@@ -106,19 +136,19 @@ class Gallery_L10nClient {
       ->execute();
     $num_remaining = $rows->count();
     foreach ($rows as $row) {
-      if (!isset($request->messages->{$row->key})) {
+      if (!isset($data->messages->{$row->key})) {
         if ($num_messages >= $max_messages) {
           break;
         }
-        $request->messages->{$row->key} = 1;
+        $data->messages->{$row->key} = 1;
         $num_messages++;
       }
       if (!empty($row->revision) && !empty($row->translation) &&
           isset($locales[$row->locale])) {
-        if (!is_object($request->messages->{$row->key})) {
-          $request->messages->{$row->key} = new stdClass();
+        if (!is_object($data->messages->{$row->key})) {
+          $data->messages->{$row->key} = new stdClass();
         }
-        $request->messages->{$row->key}->{$row->locale} = (int) $row->revision;
+        $data->messages->{$row->key}->{$row->locale} = (int) $row->revision;
       }
       $num_fetched++;
       $num_remaining--;
@@ -129,17 +159,23 @@ class Gallery_L10nClient {
       return $num_remaining;
     }
 
-    $request_data = json_encode($request);
-    $url = self::_server_url("fetch");
-    list ($response_data, $response_status) = Remote::post($url, array("data" => $request_data));
-    if (!Remote::success($response_status)) {
-      throw new Gallery_Exception("Translations fetch request failed: $response_status");
+    $data = json_encode($data);
+    $response = Request::factory(static::URL . static::FETCH)
+      ->method(Request::POST)
+      ->post(array("data" => $data))
+      ->execute();
+
+    $code = $response->status();
+    if (floor($code / 100) != 2) {  // i.e. status isn't 2xx
+      throw new Gallery_Exception("Translations fetch request failed: response status $code");
     }
-    if (empty($response_data)) {
+
+    $response = $response->body();
+    if (empty($response)) {
       return $num_remaining;
     }
 
-    $response = json_decode($response_data);
+    $response = json_decode($response);
 
     // Response format (JSON payload):
     //   [{key:<key_1>, translation: <JSON encoded translation>, rev:<rev>, locale:<locale>},
@@ -187,6 +223,10 @@ class Gallery_L10nClient {
     return $num_remaining;
   }
 
+  /**
+   * Submit our outgoing translations to the server.
+   * @return void
+   */
   static function submit_translations() {
     // Request format (HTTP POST):
     //   client_token = <client_token>
@@ -202,39 +242,37 @@ class Gallery_L10nClient {
 
     // @todo Batch requests (max request size)
     // @todo include base_revision in submission / how to handle resubmissions / edit fights?
-    $request = new stdClass();
+    $data = new stdClass();
     foreach (DB::select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
              ->as_object()
              ->execute() as $row) {
       $key = $row->key;
-      if (!isset($request->{$key})) {
-        $request->{$key} = new stdClass();
-        $request->{$key}->translations = new stdClass();
-        $request->{$key}->message = json_encode(unserialize($row->message));
+      if (!isset($data->{$key})) {
+        $data->{$key} = new stdClass();
+        $data->{$key}->translations = new stdClass();
+        $data->{$key}->message = json_encode(unserialize($row->message));
       }
-      $request->{$key}->translations->{$row->locale} = json_encode(unserialize($row->translation));
+      $data->{$key}->translations->{$row->locale} = json_encode(unserialize($row->translation));
     }
 
-    // @todo reduce memory consumption, e.g. free $request
-    $request_data = json_encode($request);
-    $url = self::_server_url("submit");
-    $signature = self::_sign($request_data);
+    $data = json_encode($data);
+    $response = Request::factory(static::URL . static::SUBMIT)
+      ->method(Request::POST)
+      ->post(array(
+          "data"         => $data,
+          "client_token" => static::client_token(),
+          "signature"    => static::_sign($data),
+          "uid"          => static::server_uid()
+        ))
+      ->execute();
 
-    list ($response_data, $response_status) = Remote::post(
-      $url, array("data" => $request_data,
-                  "client_token" => L10nClient::client_token(),
-                  "signature" => $signature,
-                  "uid" => L10nClient::server_uid()));
-
-    if (!Remote::success($response_status)) {
-      throw new Gallery_Exception("Translations submission failed: $response_status");
-    }
-    if (empty($response_data)) {
-      return;
+    $code = $response->status();
+    if (floor($code / 100) != 2) {  // i.e. status isn't 2xx
+      throw new Gallery_Exception("Translations submission failed: response status $code");
     }
 
-    $response = json_decode($response_data);
+    // $response = json_decode($response->body());
     // Response format (JSON payload):
     //   [{key:<key_1>, locale:<locale_1>, rev:<rev_1>, status:<rejected|accepted|pending>},
     //    {key:<key_2>, ...}
@@ -245,7 +283,11 @@ class Gallery_L10nClient {
   }
 
   /**
-   * Plural forms.
+   * Plural forms.  This returns an array of which types of forms are needed for a given locale.
+   * The possible values are "zero", "one", "two", "few", "many", and "other".
+   *
+   * @param  string $locale
+   * @return array
    */
   static function plural_forms($locale) {
     $parts = explode('_', $locale);
