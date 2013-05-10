@@ -18,12 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Akismet_Test extends Unittest_TestCase {
+  // Use the Akismet-recommended test author to guarantee a spam response,
+  // which ensures that anything we send to Akismet will be flagged as a test.
+  // If this unit test lasts more than 4 hours, please contact your Gallery developer.  :-)
+  public static $test_author = "viagra-test-123";
+
   public function test_validate_key_request() {
     $request = Akismet::get_akismet_response("verify-key", "TEST_KEY", true);
+    $request->execute();
 
     $expected_url = "http://rest.akismet.com/1.1/verify-key";
     $expected_headers = array("user-agent"   => "Gallery/3 | Akismet/1",
-                              "content-type" => "application/x-www-form-urlencoded; charset=UTF-8");
+                              "content-type" => "application/x-www-form-urlencoded; charset=utf-8");
     $expected_post    = array("key"  => "TEST_KEY",
                               "blog" => "http://localhost/");
 
@@ -39,7 +45,7 @@ class Akismet_Test extends Unittest_TestCase {
     $comment->item_id = Item::root()->id;
     $comment->author_id = Identity::guest()->id;
     $comment->text = "This is a comment";
-    $comment->guest_name = "John Doe";
+    $comment->guest_name = static::$test_author;
     $comment->guest_email = "john@gallery2.org";
     $comment->guest_url = "http://gallery2.org";
     foreach ($comment->list_columns("comments") as $name => $field) {
@@ -53,12 +59,13 @@ class Akismet_Test extends Unittest_TestCase {
 
     Module::set_var("akismet", "api_key", "TEST_KEY");
     $request = Akismet::get_akismet_response("comment-check", $comment, true);
+    $request->execute();
 
     $expected_url = "http://TEST_KEY.rest.akismet.com/1.1/comment-check";
     $expected_headers = array("user-agent"   => "Gallery/3 | Akismet/1",
-                              "content-type" => "application/x-www-form-urlencoded; charset=UTF-8");
+                              "content-type" => "application/x-www-form-urlencoded; charset=utf-8");
     $expected_post    = array("blog"                 => "http://localhost/",
-                              "comment_author"       => "John Doe",
+                              "comment_author"       => static::$test_author,
                               "comment_author_email" => "john@gallery2.org",
                               "comment_author_url"   => "http://gallery2.org",
                               "comment_content"      => "This is a comment",
