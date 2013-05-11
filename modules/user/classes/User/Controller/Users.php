@@ -18,228 +18,199 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Controller_Users extends Controller {
-  public function action_update() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+  /**
+   * Edit a user.  This generates the form, validates it, edits the user, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
+  public function action_edit() {
+    $user_id = $this->request->arg(0, "digit");
+    $user = User::lookup($user_id);
+    if (empty($user) || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
     }
 
-    $form = $this->_get_edit_form($user);
-    try {
-      $valid = $form->validate();
-      $user->full_name = $form->edit_user->full_name->value;
-      $user->url = $form->edit_user->url->value;
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-edit-user-form")
+      ->add("user", "group")
+      ->add("other", "group");
+    $form->user
+      ->set("label", t("Edit your profile"))
+      ->add("name", "input")
+      ->add("full_name", "input")
+      ->add("url", "input")
+      ->add("locale", "select");
+    $form->user->locale
+      ->set("opts", Controller_Admin_Users::get_locale_options());
+    $form->other
+      ->add("submit", "input|submit", t("Save"));
 
-      if (count(Locales::installed()) > 1 &&
-          $user->locale != $form->edit_user->locale->value) {
-        $user->locale = $form->edit_user->locale->value;
-        $flush_locale_cookie = true;
-      }
+    // Get the labels and error messages for the user group.
+    Controller_Admin_Users::get_user_form_labels($form->user);
+    Controller_Admin_Users::get_user_form_error_messages($form->user);
 
-      $user->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->edit_user->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
-    }
+    // Link the ORM model and call the form event.
+    $form->user->orm("link", array("model" => $user));
+    Module::event("user_edit_form", $user, $form);
 
-    if ($valid) {
-      if (isset($flush_locale_cookie)) {
-        // Delete the session based locale preference
+    if ($form->load()->validate()) {
+      if ($user->changed("locale")) {
+        // Can't use Request or Cookie objects for client side cookies since
+        // they're not signed.
         setcookie("g_locale", "", time() - 24 * 3600, "/");
       }
-
       $user->save();
       Module::event("user_edit_form_completed", $user, $form);
       Message::success(t("User information updated"));
-      $this->response->json(array("result" => "success",
-                        "resource" => URL::site("users/{$user->id}")));
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "user");
+
+    $this->response->ajax_form($form);
   }
 
+  /**
+   * Change a user's password.  This form requires reauthentification to be processed.
+   * This generates the form, validates it, edits the user, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   *
+   * @see Controller_Reauthenticate::index()
+   */
   public function action_change_password() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+    $user_id = $this->request->arg(0, "digit");
+    $user = User::lookup($user_id);
+    if (empty($user) || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
     }
 
-    $form = $this->_get_change_password_form($user);
-    try {
-      $valid = $form->validate();
-      $user->password = $form->change_password->password->value;
-      $user->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->change_password->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
-    }
+    $form = Formo::form()
+      ->attr("id", "g-change-password-user-form")
+      ->add_script_text(Controller_Admin_Users::get_password_strength_script())
+      ->add("user", "group")
+      ->add("other", "group");
+    $form->user
+      ->set("label", t("Change your password"))
+      ->add("name", "input|hidden")
+      ->add("password_check", "input|password")
+      ->add("password", "input|password")
+      ->add("password2", "input|password");
+    $form->user->password
+      ->set("label", t("New password"));
+    $form->user->password2
+      ->set("label", t("Confirm new password"))
+      ->add_rule("matches", array(":form_val", "password", "password2"));
+    $form->other
+      ->add("submit", "input|submit", t("Save"));
 
-    if ($valid) {
+    // Get the error messages for the user group.
+    Controller_Admin_Users::get_user_form_error_messages($form->user);
+
+    // Link the ORM model and call the form event.
+    $form->user->orm("link", array("model" => $user));
+    Module::event("user_change_password_form", $user, $form);
+
+    // Add reauthentication-related details (largely copied from Controller_Reauthenticate)
+    $form->user->name
+      ->set("can_be_empty", true)
+      ->add_rule("not_empty", array(":value"))
+      ->add_rule("equals", array(":value", $user->name))
+      ->callback("fail", array("Access::forbidden"));
+    $form->user->password_check
+      ->set("label", t("Old password"))
+      ->add_rule("not_empty", array(":value"), t("Incorrect password"))
+      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "name"),
+                 t("Too many incorrect passwords.  Try again later"))
+      ->add_rule("Auth::validate_username_and_password", array(":form_val", "name", "password_check"),
+                 t("Incorrect password"));
+
+    if ($form->load()->validate()) {
+      // Reauthenticate attempt is valid.
+      Auth::reauthenticate($user);
+
       $user->save();
       Module::event("user_change_password_form_completed", $user, $form);
-      Message::success(t("Password changed"));
-      Module::event("user_auth", $user);
       Module::event("user_password_change", $user);
-      $this->response->json(array("result" => "success",
-                        "resource" => URL::site("users/{$user->id}")));
-    } else {
-      GalleryLog::warning("user", t("Failed password change for %name", array("name" => $user->name)));
+      Message::success(t("Password changed"));
+    } else if ($form->user->password_check->error()) {
+      // Reauthenticate attempt is invalid.
       $name = $user->name;
       Module::event("user_auth_failed", $name);
-      $this->response->json(array("result" => "error", "html" => (string)$form));
+      GalleryLog::warning("user", t("Failed password change for %name", array("name" => $name)));
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "user");
+
+    $this->response->ajax_form($form);
   }
 
+  /**
+   * Change a user's email.  This form requires reauthentification to be processed.
+   * This generates the form, validates it, edits the user, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   *
+   * @see Controller_Reauthenticate::index()
+   */
   public function action_change_email() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
+    $user_id = $this->request->arg(0, "digit");
+    $user = User::lookup($user_id);
+    if (empty($user) || $user->guest || $user->id != Identity::active_user()->id) {
       Access::forbidden();
     }
 
-    $form = $this->_get_change_email_form($user);
-    try {
-      $valid = $form->validate();
-      $user->email = $form->change_email->email->value;
-      $user->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->change_email->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
-    }
+    $form = Formo::form()
+      ->attr("id", "g-change-email-user-form")
+      ->add("user", "group")
+      ->add("other", "group");
+    $form->user
+      ->set("label", t("Change your email address"))
+      ->add("name", "input|hidden")
+      ->add("password_check", "input|password")
+      ->add("email", "input");
+    $form->user->email
+      ->set("label", t("New email address"));
+    $form->other
+      ->add("submit", "input|submit", t("Save"));
 
-    if ($valid) {
+    // Get the error messages for the user group.
+    Controller_Admin_Users::get_user_form_error_messages($form->user);
+
+    // Link the ORM model and call the form event.
+    $form->user->orm("link", array("model" => $user));
+    Module::event("user_change_email_form", $user, $form);
+
+    // Add reauthentication-related details (largely copied from Controller_Reauthenticate)
+    $form->user->name
+      ->set("can_be_empty", true)
+      ->add_rule("not_empty", array(":value"))
+      ->add_rule("equals", array(":value", $user->name))
+      ->callback("fail", array("Access::forbidden"));
+    $form->user->password_check
+      ->set("label", t("Current password"))
+      ->add_rule("not_empty", array(":value"), t("Incorrect password"))
+      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "name"),
+                 t("Too many incorrect passwords.  Try again later"))
+      ->add_rule("Auth::validate_username_and_password", array(":form_val", "name", "password_check"),
+                 t("Incorrect password"));
+
+    if ($form->load()->validate()) {
+      // Reauthenticate attempt is valid.
+      Auth::reauthenticate($user);
+
       $user->save();
       Module::event("user_change_email_form_completed", $user, $form);
       Message::success(t("Email address changed"));
-      Module::event("user_auth", $user);
-      $this->response->json(array("result" => "success",
-                        "resource" => URL::site("users/{$user->id}")));
-    } else {
-      GalleryLog::warning("user", t("Failed email change for %name", array("name" => $user->name)));
+    } else if ($form->user->password_check->error()) {
+      // Reauthenticate attempt is invalid.
       $name = $user->name;
       Module::event("user_auth_failed", $name);
-      $this->response->json(array("result" => "error", "html" => (string)$form));
-    }
-  }
-
-  public function action_form_edit() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
-      Access::forbidden();
+      GalleryLog::warning("user", t("Failed email change for %name", array("name" => $name)));
     }
 
-    $this->response->body($this->_get_edit_form($user));
-  }
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "user");
 
-  public function action_form_change_password() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
-      Access::forbidden();
-    }
-
-    $this->response->body($this->_get_change_password_form($user));
-  }
-
-  public function action_form_change_email() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (!$user || $user->guest || $user->id != Identity::active_user()->id) {
-      Access::forbidden();
-    }
-
-    $this->response->body($this->_get_change_email_form($user));
-  }
-
-  protected function _get_change_password_form($user) {
-    $form = new Forge(
-      "users/change_password/$user->id", "", "post", array("id" => "g-change-password-user-form"));
-    $group = $form->group("change_password")->label(t("Change your password"));
-    $group->password("old_password")->label(t("Old password"))->id("g-password")
-      ->callback("Auth::validate_too_many_failed_auth_attempts")
-      ->callback("User::valid_password")
-      ->error_messages("invalid_password", t("Incorrect password"))
-      ->error_messages(
-        "too_many_failed_auth_attempts",
-        t("Too many incorrect passwords.  Try again later"));
-    $group->password("password")->label(t("New password"))->id("g-password")
-      ->error_messages("min_length", t("Your new password is too short"));
-    $group->script("")
-      ->text(
-        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
-    $group->password("password2")->label(t("Confirm new password"))->id("g-password2")
-      ->matches($group->password)
-      ->error_messages("matches", t("The passwords you entered do not match"));
-
-    Module::event("user_change_password_form", $user, $form);
-    $group->submit("")->value(t("Save"));
-    return $form;
-  }
-
-  protected function _get_change_email_form($user) {
-    $form = new Forge(
-      "users/change_email/$user->id", "", "post", array("id" => "g-change-email-user-form"));
-    $group = $form->group("change_email")->label(t("Change your email address"));
-    $group->password("password")->label(t("Current password"))->id("g-password")
-      ->callback("Auth::validate_too_many_failed_auth_attempts")
-      ->callback("User::valid_password")
-      ->error_messages("invalid_password", t("Incorrect password"))
-      ->error_messages(
-        "too_many_failed_auth_attempts",
-        t("Too many incorrect passwords.  Try again later"));
-    $group->input("email")->label(t("New email address"))->id("g-email")->value($user->email)
-      ->error_messages("email", t("You must enter a valid email address"))
-      ->error_messages("length", t("Your email address is too long"))
-      ->error_messages("required", t("You must enter a valid email address"));
-
-    Module::event("user_change_email_form", $user, $form);
-    $group->submit("")->value(t("Save"));
-    return $form;
-  }
-
-  protected function _get_edit_form($user) {
-    $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
-    $group = $form->group("edit_user")->label(t("Edit your profile"));
-    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name)
-      ->error_messages("length", t("Your name is too long"));
-    self::_add_locale_dropdown($group, $user);
-    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url)
-      ->error_messages("url", t("You must enter a valid url"));
-
-    Module::event("user_edit_form", $user, $form);
-    $group->submit("")->value(t("Save"));
-    return $form;
-  }
-
-  /** @todo combine with Controller_Admin_Users::_add_locale_dropdown */
-  protected function _add_locale_dropdown(&$form, $user=null) {
-    $locales = Locales::installed();
-    if (count($locales) <= 1) {
-      return;
-    }
-
-    foreach ($locales as $locale => $display_name) {
-      $locales[$locale] = SafeString::of_safe_html($display_name);
-    }
-
-    // Put "none" at the first position in the array
-    $locales = array_merge(array("" => t("« none »")), $locales);
-    $selected_locale = ($user && $user->locale) ? $user->locale : "";
-    $form->dropdown("locale")
-      ->label(t("Language preference"))
-      ->options($locales)
-      ->selected($selected_locale);
+    $this->response->ajax_form($form);
   }
 }

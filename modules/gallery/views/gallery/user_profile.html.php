@@ -13,13 +13,13 @@
       <?= t("Return") ?>
     </a>
     <? if ($editable): ?>
-    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= URL::site("users/form_change_email/{$user->id}") ?>">
+    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= URL::site("users/change_email/$user->id") ?>">
       <?= t("Change email") ?>
     </a>
-    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= URL::site("users/form_change_password/{$user->id}") ?>">
+    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= URL::site("users/change_password/$user->id") ?>">
       <?= t("Change password") ?>
     </a>
-    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= URL::site("users/form_edit/{$user->id}") ?>">
+    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= URL::site("users/edit/$user->id") ?>">
       <?= t("Edit") ?>
     </a>
     <? endif ?>
