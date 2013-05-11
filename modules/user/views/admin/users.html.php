@@ -23,7 +23,7 @@
   });
 
   var reload_group = function(group_id) {
-    var reload_group_url = "<?= URL::site("admin/users/group/__GROUPID__") ?>";
+    var reload_group_url = "<?= URL::site("admin/users/show_group/__GROUPID__") ?>";
     $.get(reload_group_url.replace("__GROUPID__", group_id),
           {},
           function(data) {
@@ -48,7 +48,7 @@
   <div class="g-block-content">
 
     <div id="g-user-admin" class="g-block">
-      <a href="<?= URL::site("admin/users/add_user_form") ?>"
+      <a href="<?= URL::site("admin/users/add_user") ?>"
           class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
           title="<?= t("Create a new user")->for_html_attr() ?>">
         <span class="ui-icon ui-icon-circle-plus"></span>
@@ -91,12 +91,12 @@
               <?= DB::select()->from("items")->where("owner_id", "=", $user->id)->as_object()->execute()->count() ?>
             </td>
             <td>
-              <a href="<?= URL::site("admin/users/edit_user_form/$user->id") ?>"
+              <a href="<?= URL::site("admin/users/edit_user/$user->id") ?>"
                   data-open-text="<?= t("Close")->for_html_attr() ?>"
                   class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("Edit") ?></span></a>
               <? if (Identity::active_user()->id != $user->id && !$user->guest): ?>
-              <a href="<?= URL::site("admin/users/delete_user_form/$user->id") ?>"
+              <a href="<?= URL::site("admin/users/delete_user/$user->id") ?>"
                   class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-trash"></span><?= t("Delete") ?></a>
               <? else: ?>
@@ -117,7 +117,7 @@
     </div>
 
     <div id="g-group-admin" class="g-block ui-helper-clearfix">
-      <a href="<?= URL::site("admin/users/add_group_form") ?>"
+      <a href="<?= URL::site("admin/users/add_group") ?>"
           class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
           title="<?= t("Create a new group")->for_html_attr() ?>">
         <span class="ui-icon ui-icon-circle-plus"></span>
@@ -128,10 +128,9 @@
 
       <div class="g-block-content">
         <ul>
-          <? foreach ($groups as $i => $group): ?>
+          <? foreach ($groups as $group): ?>
           <li id="g-group-<?= $group->id ?>" class="g-group g-left <?= ($group->special ? "g-default-group" : "") ?>">
-            <? $v = new View("admin/users_group.html"); $v->group = $group; ?>
-            <?= $v ?>
+            <?= Request::factory("admin/users/show_group/$group->id")->execute()->body() ?>
           </li>
           <? endforeach ?>
         </ul>
