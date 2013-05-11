@@ -35,17 +35,14 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
   }
 
   /**
-   * Specify our rules here so that we have access to the instance of this model.
+   * Specify our validation rules.
    */
-  public function validate(Validation $array=null) {
-    // validate() is recursive, only modify the rules on the outermost call.
-    if (!$array) {
-      $this->rules = array(
-        "name" => array("rules" => array("required", "length[1,255]"),
-                        "callbacks" => array(array($this, "valid_name"))));
-    }
-
-    parent::validate($array);
+  public function rules() {
+    return array("name" => array(
+      array("not_empty"),
+      array("max_length", array(":value", 32)),
+      array(array($this, "valid_name"), array(":validation"))
+    ));
   }
 
   /**
@@ -78,16 +75,14 @@ class User_Model_Group extends ORM implements IdentityProvider_GroupDefinition {
   }
 
   /**
-   * Validate the user name.  Make sure there are no conflicts.
+   * Validate the group name.  Make sure there are no conflicts.
    */
-  public function valid_name(Validation $v, $field) {
-    if (DB::select()->from("groups")
+  public function valid_name(Validation $v) {
+    if (ORM::factory("Group")
         ->where("name", "=", $this->name)
         ->where("id", "<>", $this->id)
-        ->as_object()
-        ->execute()
-        ->count() == 1) {
-      $v->add_error("name", "conflict");
+        ->find()->loaded()) {
+      $v->error("name", "conflict");
     }
   }
 }

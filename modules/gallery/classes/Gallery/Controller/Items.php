@@ -137,7 +137,6 @@ class Gallery_Controller_Items extends Controller {
       ->add("name", "input")
       ->add("slug", "input");
     $form->other
-      ->set("label", "")
       ->add("submit", "input|submit", t("Modify"));
 
     // Add sorting options for albums.
@@ -236,7 +235,6 @@ class Gallery_Controller_Items extends Controller {
       ->add("name", "input")
       ->add("slug", "input");
     $form->other
-      ->set("label", "")
       ->add("submit", "input|submit", t("Create"));
 
     // Get the labels and error messages for the item group.

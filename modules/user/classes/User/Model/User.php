@@ -61,25 +61,41 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   }
 
   /**
-   * Specify our rules here so that we have access to the instance of this model.
+   * Specify our validation rules.
    */
-  public function validate(Validation $array=null) {
-    // validate() is recursive, only modify the rules on the outermost call.
-    if (!$array) {
-      $this->rules = array(
-        "admin"     => array("callbacks" => array(array($this, "valid_admin"))),
-        "email"     => array("rules"     => array("length[1,255]", "Valid::email"),
-                             "callbacks" => array(array($this, "valid_email"))),
-        "full_name" => array("rules"     => array("length[0,255]")),
-        "locale"    => array("rules"     => array("length[2,10]")),
-        "name"      => array("rules"     => array("length[1,32]", "required"),
-                             "callbacks" => array(array($this, "valid_name"))),
-        "password"  => array("callbacks" => array(array($this, "valid_password"))),
-        "url"       => array("rules"     => array("Valid::url")),
-      );
+  public function rules() {
+    $rules = array(
+      "admin" => array(
+        array(array($this, "valid_admin"), array(":validation"))
+      ),
+      "email" => array(
+        array("max_length", array(":value", 255)),
+        array("email")
+      ),
+      "full_name" => array(
+        array("max_length", array(":value", 255))
+      ),
+      "locale" => array(
+        array("min_length", array(":value", 2)),
+        array("max_length", array(":value", 10))
+      ),
+      "name" => array(
+        array("not_empty"),
+        array("max_length", array(":value", 32)),
+        array(array($this, "valid_name"), array(":validation"))
+      ),
+      "url" => array(
+        array("url")
+      )
+    );
+
+    // Registered users have additional rules for email and password
+    if (!$this->guest) {
+      $rules["email"][]    = array("not_empty");
+      $rules["password"][] = array(array($this, "valid_password"), array(":validation"));
     }
 
-    parent::validate($array);
+    return $rules;
   }
 
   /**
@@ -144,29 +160,23 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   /**
    * Validate the user name.  Make sure there are no conflicts.
    */
-  public function valid_name(Validation $v, $field) {
-    if (DB::select()->from("users")
+  public function valid_name(Validation $v) {
+    if (ORM::factory("User")
         ->where("name", "=", $this->name)
-        ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
-        ->as_object()
-        ->execute()
-        ->count() == 1) {
-      $v->add_error("name", "conflict");
+        ->where("id", "<>", $this->id)
+        ->find()->loaded()) {
+      $v->error("name", "conflict");
     }
   }
 
   /**
    * Validate the password.
    */
-  public function valid_password(Validation $v, $field) {
-    if ($this->guest) {
-      return;
-    }
-
+  public function valid_password(Validation $v) {
     if (!$this->loaded() || isset($this->password_length)) {
       $minimum_length = Module::get_var("user", "minimum_password_length", 5);
       if ($this->password_length < $minimum_length) {
-        $v->add_error("password", "min_length");
+        $v->error("password", "min_length");
       }
     }
   }
@@ -174,23 +184,10 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
   /**
    * Validate the admin bit.
    */
-  public function valid_admin(Validation $v, $field) {
+  public function valid_admin(Validation $v) {
     $active = Identity::active_user();
     if ($this->id == $active->id && $active->admin && !$this->admin) {
-      $v->add_error("admin", "locked");
-    }
-  }
-
-  /**
-   * Validate the email field.
-   */
-  public function valid_email(Validation $v, $field) {
-    if ($this->guest) {  // guests don't require an email address
-      return;
-    }
-
-    if (empty($this->email)) {
-      $v->add_error("email", "required");
+      $v->error("admin", "locked");
     }
   }
 }

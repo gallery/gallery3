@@ -1,10 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <h4>
-  <a href="<?= URL::site("admin/users/edit_group_form/$group->id") ?>"
+  <a href="<?= URL::site("admin/users/edit_group/$group->id") ?>"
    title="<?= t("Edit the %name group's name", array("name" => $group->name))->for_html_attr() ?>"
    class="g-dialog-link"><?= HTML::clean($group->name) ?></a>
   <? if (!$group->special): ?>
-  <a href="<?= URL::site("admin/users/delete_group_form/$group->id") ?>"
+  <a href="<?= URL::site("admin/users/delete_group/$group->id") ?>"
     title="<?= t("Delete the %name group", array("name" => $group->name))->for_html_attr() ?>"
     class="g-dialog-link g-button g-right">
     <span class="ui-icon ui-icon-trash"><?= t("Delete") ?></span></a>

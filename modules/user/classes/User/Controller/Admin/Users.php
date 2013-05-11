@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Controller_Admin_Users extends Controller_Admin {
+  /**
+   * Show the users admin screen.  Users and groups are managed from here.
+   */
   public function action_index() {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("Users and groups");
@@ -36,367 +39,392 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $view->children_count = $user_count;
     $view->max_pages = ceil($view->children_count / $view->page_size);
 
-    $view->content->pager = new Pagination();
-    $view->content->pager->initialize(
-      array("query_string" => "page",
-            "total_items" => $user_count,
-            "items_per_page" => $page_size,
-            "style" => "classic"));
+    $view->content->pager = Pagination::factory(array(
+      "total_items"    => $user_count,
+      "items_per_page" => $page_size
+    ));
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      $this->redirect(URL::query(array("page" => 1)));
+      $this->redirect($this->request->uri() . URL::query(array("page" => 1)));
     } else if ($page > $view->content->pager->total_pages) {
-      $this->redirect(URL::query(array("page" => $view->content->pager->total_pages)));
+      $this->redirect($this->request->uri() . URL::query(array("page" => $view->content->pager->total_pages)));
     }
 
-    // Join our users against the items table so that we can get a count of their items
-    // in the same query.
     $view->content->users = ORM::factory("User")
-      ->order_by("user.name", "ASC")
-      ->limit($page_size)->offset($view->content->pager->sql_offset)->find_all();
-    $view->content->groups = ORM::factory("Group")->order_by("name", "ASC")->find_all();
+      ->order_by("name", "ASC")
+      ->limit($page_size)
+      ->offset($view->content->pager->offset)
+      ->find_all();
+    $view->content->groups = ORM::factory("Group")
+      ->order_by("name", "ASC")
+      ->find_all();
 
     $this->response->body($view);
   }
 
+  /**
+   * Add a new user.  This generates the form, validates it, adds the user, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
   public function action_add_user() {
-    Access::verify_csrf();
+    $user = ORM::factory("User");
 
-    $form = $this->_get_user_add_form_admin();
-    try {
-      $user = ORM::factory("User");
-      $valid = $form->validate();
-      $user->name = $form->add_user->inputs["name"]->value;
-      $user->full_name = $form->add_user->full_name->value;
-      $user->password = $form->add_user->password->value;
-      $user->email = $form->add_user->email->value;
-      $user->url = $form->add_user->url->value;
-      $user->locale = $form->add_user->locale->value;
-      $user->admin = $form->add_user->admin->checked;
-      $user->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->add_user->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
-    }
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-add-user-form")
+      ->add_script_text(static::get_password_strength_script())
+      ->add("user", "group")
+      ->add("other", "group");
+    $form->user
+      ->set("label", t("Add user"))
+      ->add("name", "input")
+      ->add("full_name", "input")
+      ->add("password", "input|password")
+      ->add("password2", "input|password")
+      ->add("email", "input")
+      ->add("url", "input")
+      ->add("admin", "checkbox")
+      ->add("locale", "select");
+    $form->user->password2
+      ->add_rule("matches", array(":form_val", "password", "password2"));
+    $form->user->locale
+      ->set("opts", static::get_locale_options());
+    $form->other
+      ->add("submit", "input|submit", t("Add user"));
 
-    if ($valid) {
+    // Get the labels and error messages for the user group.
+    static::get_user_form_labels($form->user);
+    static::get_user_form_error_messages($form->user);
+
+    // Link the ORM model and call the form event.
+    $form->user->orm("link", array("model" => $user));
+    Module::event("user_add_form_admin", $user, $form);
+
+    if ($form->load()->validate()) {
       $user->save();
       Module::event("user_add_form_admin_completed", $user, $form);
       Message::success(t("Created user %user_name", array("user_name" => $user->name)));
-      $this->response->json(array("result" => "success"));
-    } else {
-      $this->response->body($this->response->json(array("result" => "error", "html" => (string)$form)));
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "user");
+
+    $this->response->ajax_form($form);
   }
 
-  public function action_add_user_form() {
-    $this->response->body($this->_get_user_add_form_admin());
-  }
-
+  /**
+   * Delete a user.  This generates the confirmation form, validates it,
+   * deletes the user, and returns a response.
+   */
   public function action_delete_user() {
     $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
+    $user = User::lookup($id);
+    if (empty($user)) {
+      throw HTTP_Exception::factory(404);
+    }
 
+    // You cannot delete yourself or the guest user.
     if ($id == Identity::active_user()->id || $id == User::guest()->id) {
       Access::forbidden();
     }
 
-    $user = User::lookup($id);
-    if (empty($user)) {
-      throw HTTP_Exception::factory(404);
-    }
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-delete-user-form")
+      ->add("confirm", "group");
+    $form->confirm
+      ->set("label", t("Delete user %name?", array("name" => $user->display_name())))
+      ->html(
+          t("Really delete <b>%name</b>?  Any photos, movies or albums owned by this user will transfer ownership to <b>%new_owner</b>.",
+            array("name"      => $user->display_name(),
+                  "new_owner" => Identity::active_user()->display_name()
+        )))
+      ->add("submit", "input|submit", t("Delete"));
 
-    $form = $this->_get_user_delete_form_admin($user);
-    if($form->validate()) {
-      $name = $user->name;
+    if ($form->load()->validate()) {
+      $message = t("Deleted user %user_name", array("user_name" => $user->name));
       $user->delete();
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
+      GalleryLog::success("user", $message);
+      Message::success($message);
     }
 
-    $message = t("Deleted user %user_name", array("user_name" => $name));
-    GalleryLog::success("user", $message);
-    Message::success($message);
-    $this->response->json(array("result" => "success"));
+    $this->response->ajax_form($form);
   }
 
-  public function action_delete_user_form() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (empty($user)) {
-      throw HTTP_Exception::factory(404);
-    }
-    $v = new View("admin/users_delete_user.html");
-    $v->user = $user;
-    $v->form = $this->_get_user_delete_form_admin($user);
-    $this->response->body($v);
-  }
-
+  /**
+   * Edit a user.  This generates the form, validates it, edits the user, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
   public function action_edit_user() {
     $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-
     $user = User::lookup($id);
     if (empty($user)) {
       throw HTTP_Exception::factory(404);
     }
 
-    $form = $this->_get_user_edit_form_admin($user);
-    try {
-      $valid = $form->validate();
-      $user->name = $form->edit_user->inputs["name"]->value;
-      $user->full_name = $form->edit_user->full_name->value;
-      if ($form->edit_user->password->value) {
-        $user->password = $form->edit_user->password->value;
-      }
-      $user->email = $form->edit_user->email->value;
-      $user->url = $form->edit_user->url->value;
-      $user->locale = $form->edit_user->locale->value;
-      if ($user->id != Identity::active_user()->id) {
-        $user->admin = $form->edit_user->admin->checked;
-      }
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-edit-user-form")
+      ->add_script_text(static::get_password_strength_script())
+      ->add("user", "group")
+      ->add("other", "group");
+    $form->user
+      ->set("label", t("Edit user"))
+      ->add("name", "input")
+      ->add("full_name", "input")
+      ->add("password", "input|password")
+      ->add("password2", "input|password")
+      ->add("email", "input")
+      ->add("url", "input")
+      ->add("admin", "checkbox")
+      ->add("locale", "select");
+    $form->user->password2
+      ->add_rule("matches", array(":form_val", "password", "password2"));
+    $form->user->locale
+      ->set("opts", static::get_locale_options());
+    $form->other
+      ->add("submit", "input|submit", t("Modify user"));
 
-      $user->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->edit_user->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
+    // Get the labels and error messages for the user group.
+    static::get_user_form_labels($form->user);
+    static::get_user_form_error_messages($form->user);
+
+    // Link the ORM model and call the form event.
+    $form->user->orm("link", array("model" => $user, "write_only" => array("password")));
+    Module::event("user_edit_form_admin", $user, $form);
+
+    // Don't allow the user to control their own admin bit, else you can lock yourself out
+    if ($user->id == Identity::active_user()->id) {
+      $form->user->admin->attr("disabled", "disabled");
     }
 
-    if ($valid) {
+    if ($form->load()->validate()) {
       $user->save();
       Module::event("user_edit_form_admin_completed", $user, $form);
       Message::success(t("Changed user %user_name", array("user_name" => $user->name)));
-      $this->response->json(array("result" => "success"));
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string) $form));
-    }
-  }
-
-  public function action_edit_user_form() {
-    $id = $this->request->arg(0, "digit");
-    $user = User::lookup($id);
-    if (empty($user)) {
-      throw HTTP_Exception::factory(404);
     }
 
-    $this->response->body($this->_get_user_edit_form_admin($user));
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "user");
+
+    $this->response->ajax_form($form);
   }
 
+  /**
+   * Add a user to a group.  There is no form with this action.
+   */
   public function action_add_user_to_group() {
     $user_id = $this->request->arg(0, "digit");
     $group_id = $this->request->arg(1, "digit");
     Access::verify_csrf();
 
-    $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
+    $group = Group::lookup($group_id);
+    if (empty($user) || empty($group) || $group->has("users", $user_id)) {
+      throw HTTP_Exception::factory(404);
+    }
+
     $group->add("users", $user);
     $group->save();
   }
 
+  /**
+   * Remove a user from a group.  There is no form with this action.
+   */
   public function action_remove_user_from_group() {
     $user_id = $this->request->arg(0, "digit");
     $group_id = $this->request->arg(1, "digit");
     Access::verify_csrf();
 
-    $group = Group::lookup($group_id);
     $user = User::lookup($user_id);
+    $group = Group::lookup($group_id);
+    if (empty($user) || empty($group) || !$group->has("users", $user_id)) {
+      throw HTTP_Exception::factory(404);
+    }
+
     $group->remove("users", $user);
     $group->save();
   }
 
-  public function action_group() {
+  /**
+   * Show a group.  This is accessed as a sub-request and by link in the main users view.
+   */
+  public function action_show_group() {
     $group_id = $this->request->arg(0, "digit");
     $view = new View("admin/users_group.html");
     $view->group = Group::lookup($group_id);
     $this->response->body($view);
   }
 
+  /**
+   * Add a new group.  This generates the form, validates it, adds the group, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
   public function action_add_group() {
-    Access::verify_csrf();
+    $group = ORM::factory("Group");
 
-    $form = $this->_get_group_add_form_admin();
-    try {
-      $valid = $form->validate();
-      $group = ORM::factory("Group");
-      $group->name = $form->add_group->inputs["name"]->value;
-      $group->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->add_group->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
-    }
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-add-group-form")
+      ->add("group", "group")
+      ->add("other", "group");
+    $form->group
+      ->set("label", t("Add group"))
+      ->add("name", "input");
+    $form->group->name
+      ->set("label", t("Name"))
+      ->set("error_messages", array(
+          "not_empty"  => t("You must enter a group name"),
+          "conflict"   => t("There is already a group with that name"),
+          "max_length" => t("The group name must be less than %max_length characters",
+                            array("max_length" => 255))
+        ));
+    $form->other
+      ->add("submit", "input|submit", t("Add group"));
 
-    if ($valid) {
+    // Link the ORM model
+    $form->group->orm("link", array("model" => $group));
+
+    if ($form->load()->validate()) {
       $group->save();
-      Message::success(
-        t("Created group %group_name", array("group_name" => $group->name)));
-      $this->response->json(array("result" => "success"));
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string)$form));
+      Message::success(t("Created group %group_name", array("group_name" => $group->name)));
     }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "group");
+
+    $this->response->ajax_form($form);
   }
 
-  public function action_add_group_form() {
-    $this->response->body($this->_get_group_add_form_admin());
-  }
-
+  /**
+   * Delete a group.  This generates the confirmation form, validates it,
+   * deletes the group, and returns a response.
+   */
   public function action_delete_group() {
     $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-
     $group = Group::lookup($id);
     if (empty($group)) {
       throw HTTP_Exception::factory(404);
     }
 
-    $form = $this->_get_group_delete_form_admin($group);
-    if ($form->validate()) {
-      $name = $group->name;
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-delete-group-form")
+      ->add("confirm", "group");
+    $form->confirm
+      ->set("label", t("Confirm Deletion"))
+      ->html(t("Are you sure you want to delete group %group_name?",
+               array("group_name" => $group->name)))
+      ->add("submit", "input|submit", t("Delete"));
+
+    if ($form->load()->validate()) {
+      $message = t("Deleted group %group_name", array("group_name" => $group->name));
       $group->delete();
-    } else {
-      $this->response->json(array("result" => "error", "html" => (string) $form));
+      GalleryLog::success("group", $message);
+      Message::success($message);
     }
 
-    $message = t("Deleted group %group_name", array("group_name" => $name));
-    GalleryLog::success("group", $message);
-    Message::success($message);
-    $this->response->json(array("result" => "success"));
+    $this->response->ajax_form($form);
   }
 
-  public function action_delete_group_form() {
-    $id = $this->request->arg(0, "digit");
-    $group = Group::lookup($id);
-    if (empty($group)) {
-      throw HTTP_Exception::factory(404);
-    }
-
-    $this->response->body($this->_get_group_delete_form_admin($group));
-  }
-
+  /**
+   * Edit a group.  This generates the form, validates it, edits the group, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
   public function action_edit_group() {
     $id = $this->request->arg(0, "digit");
-    Access::verify_csrf();
-
-    $group = Group::lookup($id);
-    if (empty($group)) {
-       throw HTTP_Exception::factory(404);
-    }
-
-    $form = $this->_get_group_edit_form_admin($group);
-    try {
-      $valid = $form->validate();
-      $group->name = $form->edit_group->inputs["name"]->value;
-      $group->validate();
-    } catch (ORM_Validation_Exception $e) {
-      // Translate ORM validation errors into form error messages
-      foreach ($e->errors() as $key => $error) {
-        $form->edit_group->inputs[$key]->add_error($error[0], 1);
-      }
-      $valid = false;
-    }
-
-    if ($valid) {
-      $group->save();
-      Message::success(
-        t("Changed group %group_name", array("group_name" => $group->name)));
-      $this->response->json(array("result" => "success"));
-    } else {
-      $group->reload();
-      Message::error(
-        t("Failed to change group %group_name", array("group_name" => $group->name)));
-      $this->response->json(array("result" => "error", "html" => (string) $form));
-    }
-  }
-
-  public function action_edit_group_form() {
-    $id = $this->request->arg(0, "digit");
     $group = Group::lookup($id);
     if (empty($group)) {
       throw HTTP_Exception::factory(404);
     }
 
-    $this->response->body($this->_get_group_edit_form_admin($group));
-  }
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-edit-group-form")
+      ->add("group", "group")
+      ->add("other", "group");
+    $form->group
+      ->set("label", t("Edit group"))
+      ->add("name", "input");
+    $form->group->name
+      ->set("label", t("Name"))
+      ->set("error_messages", array(
+          "not_empty"  => t("You must enter a group name"),
+          "conflict"   => t("There is already a group with that name"),
+          "max_length" => t("The group name must be less than %max_length characters",
+                            array("max_length" => 255))
+        ));
+    $form->other
+      ->add("submit", "input|submit", t("Save"));
 
-  /* User Form Definitions */
-  protected static function _get_user_edit_form_admin($user) {
-    $form = new Forge(
-      "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
-    $group = $form->group("edit_user")->label(t("Edit user"));
-    $group->input("name")->label(t("Username"))->id("g-username")->value($user->name)
-      ->error_messages("required", t("A name is required"))
-      ->error_messages("conflict", t("There is already a user with that username"))
-      ->error_messages("length", t("This name is too long"));
-    $group->input("full_name")->label(t("Full name"))->id("g-fullname")->value($user->full_name)
-      ->error_messages("length", t("This name is too long"));
-    $group->password("password")->label(t("Password"))->id("g-password")
-      ->error_messages("min_length", t("This password is too short"));
-    $group->script("")
-      ->text(
-        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
-    $group->password("password2")->label(t("Confirm password"))->id("g-password2")
-      ->error_messages("matches", t("The passwords you entered do not match"))
-      ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email)
-      ->error_messages("required", t("You must enter a valid email address"))
-      ->error_messages("length", t("This email address is too long"))
-      ->error_messages("email", t("You must enter a valid email address"));
-    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url)
-      ->error_messages("url", t("You must enter a valid URL"));
-    self::_add_locale_dropdown($group, $user);
-    $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
+    // Link the ORM model
+    $form->group->orm("link", array("model" => $group));
 
-    // Don't allow the user to control their own admin bit, else you can lock yourself out
-    if ($user->id == Identity::active_user()->id) {
-      $group->admin->disabled(1);
+    if ($form->load()->validate()) {
+      $group->save();
+      Message::success(t("Changed group %group_name", array("group_name" => $group->name)));
+    //} else if ($form->sent()) {
+    //  // Sent but failed validation.
+    //  Message::error(t("Failed to change group %group_name", array("group_name" => $group->name)));
     }
 
-    Module::event("user_edit_form_admin", $user, $form);
-    $group->submit("")->value(t("Modify user"));
-    return $form;
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "group");
+
+    $this->response->ajax_form($form);
   }
 
-  protected static function _get_user_add_form_admin() {
-    $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
-    $group = $form->group("add_user")->label(t("Add user"));
-    $group->input("name")->label(t("Username"))->id("g-username")
-      ->error_messages("required", t("A name is required"))
-      ->error_messages("length", t("This name is too long"))
-      ->error_messages("conflict", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full name"))->id("g-fullname")
-      ->error_messages("length", t("This name is too long"));
-    $group->password("password")->label(t("Password"))->id("g-password")
-      ->error_messages("min_length", t("This password is too short"));
-    $group->script("")
-      ->text(
-        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
-    $group->password("password2")->label(t("Confirm password"))->id("g-password2")
-      ->error_messages("matches", t("The passwords you entered do not match"))
-      ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("g-email")
-      ->error_messages("required", t("You must enter a valid email address"))
-      ->error_messages("length", t("This email address is too long"))
-      ->error_messages("email", t("You must enter a valid email address"));
-    $group->input("url")->label(t("URL"))->id("g-url")
-      ->error_messages("url", t("You must enter a valid URL"));
-    self::_add_locale_dropdown($group);
-    $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
+  /**
+   * Get user form labels.  This is a helper function for the edit/add forms.
+   */
+  public static function get_user_form_labels($user_group) {
+    // Define all of the labels.
+    $labels = array(
+      "name"      => t("Username"),
+      "full_name" => t("Full name"),
+      "password"  => t("Password"),
+      "password2" => t("Confirm password"),
+      "email"     => t("Email"),
+      "url"       => t("URL"),
+      "locale"    => t("Language preference"),
+      "admin"     => t("Admin")
+    );
 
-    Module::event("user_add_form_admin", $user, $form);
-    $group->submit("")->value(t("Add user"));
-    return $form;
+    // Add the labels we need.
+    foreach (Arr::flatten($user_group->as_array(null, true)) as $alias => $field) {
+      $field->set("label", Arr::get($labels, $alias));
+    }
   }
 
-  protected static function _add_locale_dropdown(&$form, $user=null) {
+  /**
+   * Get user form error messages.  This is a helper function for the edit/add forms.
+   */
+  public static function get_user_form_error_messages($user_group) {
+    // Define all of the error messages.
+    $error_messages = array(
+      "name"      => array("not_empty"  => t("A name is required"),
+                           "length"     => t("This name is too long"),
+                           "conflict"   => t("There is already a user with that username")),
+      "full_name" => array("length"     => t("This name is too long")),
+      "password"  => array("min_length" => t("This password is too short")),
+      "password2" => array("matches"    => t("The passwords you entered do not match")),
+      "email"     => array("not_empty"  => t("You must enter a valid email address"),
+                           "length"     => t("This email address is too long"),
+                           "email"      => t("You must enter a valid email address")),
+      "url"       => array("url"        => t("You must enter a valid URL"))
+    );
+
+    // Add the error messages we need.
+    foreach (Arr::flatten($user_group->as_array(null, true)) as $alias => $field) {
+      $field->set("error_messages", Arr::get($error_messages, $alias));
+    }
+  }
+
+  /**
+   * Return a structured set of all the possible locales.
+   */
+  public static function get_locale_options() {
     $locales = Locales::installed();
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);
@@ -404,53 +432,16 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     // Put "none" at the first position in the array
     $locales = array_merge(array("" => t("« none »")), $locales);
-    $selected_locale = ($user && $user->locale) ? $user->locale : "";
-    $form->dropdown("locale")
-      ->label(t("Language preference"))
-      ->options($locales)
-      ->selected($selected_locale);
+
+    return $locales;
   }
 
-  protected function _get_user_delete_form_admin($user) {
-    $form = new Forge("admin/users/delete_user/$user->id", "", "post",
-                      array("id" => "g-delete-user-form"));
-    $group = $form->group("delete_user")->label(
-      t("Delete user %name?", array("name" => $user->display_name())));
-    $group->submit("")->value(t("Delete"));
-    return $form;
-  }
-
-  /* Group Form Definitions */
-  protected function _get_group_edit_form_admin($group) {
-    $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
-    $form_group = $form->group("edit_group")->label(t("Edit group"));
-    $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name)
-      ->error_messages("required", t("A name is required"));
-    $form_group->inputs["name"]->error_messages("conflict", t("There is already a group with that name"))
-      ->error_messages("required", t("You must enter a group name"))
-      ->error_messages("length",
-                       t("The group name must be less than %max_length characters",
-                         array("max_length" => 255)));
-    $form_group->submit("")->value(t("Save"));
-    return $form;
-  }
-
-  protected function _get_group_add_form_admin() {
-    $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
-    $form_group = $form->group("add_group")->label(t("Add group"));
-    $form_group->input("name")->label(t("Name"))->id("g-name");
-    $form_group->inputs["name"]->error_messages("conflict", t("There is already a group with that name"))
-      ->error_messages("required", t("You must enter a group name"));
-    $form_group->submit("")->value(t("Add group"));
-    return $form;
-  }
-
-  protected function _get_group_delete_form_admin($group) {
-    $form = new Forge("admin/users/delete_group/$group->id", "", "post",
-                      array("id" => "g-delete-group-form"));
-    $form_group = $form->group("delete_group")->label(
-      t("Are you sure you want to delete group %group_name?", array("group_name" => $group->name)));
-    $form_group->submit("")->value(t("Delete"));
-    return $form;
+  /**
+   * Get the script to activate the password strength indicator.
+   */
+  public static function get_password_strength_script() {
+    return '$("form").ready(function() {
+              $(\'input[name="password"]\').user_password_strength();
+            });';
   }
 }

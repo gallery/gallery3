@@ -43,14 +43,18 @@ class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
   public static function link(array $array) {
     $model = $array["model"];
     $field = $array["field"];
+    $write_only = Arr::get($array, "write_only", array());
 
     // Load the values in the form.  Arr::overwrite() silently discards fields that don't exist.
     $vals = Arr::overwrite(Arr::flatten($field->as_array("val")), $model->as_array());
     foreach ($vals as $alias => $val) {
-      $field->find($alias)->val($val);
+      if (!in_array($alias, $write_only)) {
+        $field->find($alias)->val($val);
+      }
     }
 
     $field->set("linked_orm_model", $model);
+    $field->set("linked_orm_model_write_only", $write_only);
     $field->callback("pass", array("Formo_Driver_ORM_Kohana::validate_linked_orm_model_callback"));
   }
 
@@ -61,9 +65,18 @@ class Gallery_Formo_Driver_ORM_Kohana extends Formo_Core_Driver_ORM_Kohana {
    */
   public static function validate_linked_orm_model_callback($field) {
     $model = $field->get("linked_orm_model");
+    $write_only = $field->get("linked_orm_model_write_only");
+
+    // Get the values from the form, and remove any empty write-only values.
+    $form_vals = Arr::flatten($field->as_array("val"));
+    foreach ($write_only as $alias) {
+      if (empty($form_vals[$alias])) {
+        unset($form_vals[$alias]);
+      }
+    }
 
     // Load the values in the model.  ORM silently discards fields that don't exist.
-    $model->values(Arr::flatten($field->as_array("val")));
+    $model->values($form_vals);
 
     // Save it and translate ORM errors if needed.
     try {
