@@ -54,13 +54,13 @@ class Gallery_View_Gallery extends View {
       $v->total = $this->children_count;
 
       if ($this->page != 1) {
-        $v->first_page_url = URL::site(URL::query(array("page" => 1)));
-        $v->previous_page_url = URL::site(URL::query(array("page" => $this->page - 1)));
+        $v->first_page_url = Request::current()->url() . URL::query(array("page" => 1));
+        $v->previous_page_url = Request::current()->url() . URL::query(array("page" => $this->page - 1));
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = URL::site(URL::query(array("page" => $this->page + 1)));
-        $v->last_page_url = URL::site(URL::query(array("page" => $this->max_pages)));
+        $v->next_page_url = Request::current()->url() . URL::query(array("page" => $this->page + 1));
+        $v->last_page_url = Request::current()->url() . URL::query(array("page" => $this->max_pages));
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
