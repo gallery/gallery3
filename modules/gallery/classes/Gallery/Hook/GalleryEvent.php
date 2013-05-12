@@ -311,7 +311,7 @@ class Gallery_Hook_GalleryEvent {
               $add_menu->append(Menu::factory("dialog")
                                 ->id("add_album_item")
                                 ->label(t("Add an album"))
-                                ->url(URL::site("items/add/$item->id")));
+                                ->url(URL::site("items/add_album/$item->id")));
             }
           } else {
             Message::warning(t("The album '%album_name' is not writable.",
@@ -576,7 +576,7 @@ class Gallery_Hook_GalleryEvent {
                    ->id("add_album")
                    ->label(t("Add an album"))
                    ->css_class("ui-icon-note")
-                   ->url(URL::site("items/add/$item->id")))
+                   ->url(URL::site("items/add_album/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("edit_permissions")
                    ->label(t("Edit permissions"))

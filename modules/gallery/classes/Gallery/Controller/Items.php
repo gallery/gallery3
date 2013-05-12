@@ -203,12 +203,10 @@ class Gallery_Controller_Items extends Controller {
   }
 
   /**
-   * Add a new item.  This generates the form, validates it, adds the item, and returns a response.
+   * Add a new album.  This generates the form, validates it, adds the item, and returns a response.
    * This can be used as an ajax dialog (preferable) or a normal view.
-   *
-   * @todo: this is only for albums right now; update the uploader and get it in here.
    */
-  public function action_add() {
+  public function action_add_album() {
     $parent_id = $this->request->arg(0, "digit");
     $parent = ORM::factory("Item", $parent_id);
     if (!$parent->loaded() || !$parent->is_album()) {
