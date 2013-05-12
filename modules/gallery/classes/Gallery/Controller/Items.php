@@ -122,7 +122,7 @@ class Gallery_Controller_Items extends Controller {
 
     // Build the form.
     $form = Formo::form()
-      ->attr("id", "g-edit-{$item->type}-form")
+      ->attr("id", "g-edit-item-form")
       ->add("from_id", "input|hidden", $from_id)
       ->add("item", "group")
       ->add("other", "group");
@@ -227,7 +227,8 @@ class Gallery_Controller_Items extends Controller {
       ->add("item", "group")
       ->add("other", "group");
     $form->item
-      ->set("label", t("Add an album to %album_title", array("album_title" => $parent->title)))
+      ->set("label", t("Add an album to %album_title",
+                       array("album_title" => HTML::purify($parent->title))))
       ->add("title", "input")
       ->add("description", "textarea")
       ->add("name", "input")
