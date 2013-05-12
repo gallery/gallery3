@@ -93,12 +93,10 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $form->other
       ->add("submit", "input|submit", t("Add user"));
 
-    // Get the labels and error messages for the user group.
-    static::get_user_form_labels($form->user);
-    static::get_user_form_error_messages($form->user);
-
-    // Link the ORM model and call the form event.
+    // Get the labels and error messages, link the ORM model, and call the form event.
     $form->user->orm("link", array("model" => $user));
+    $form->user->set_var_fields("label", static::get_user_form_labels());
+    $form->user->set_var_fields("error_messages", static::get_user_form_error_messages());
     Module::event("user_add_form_admin", $user, $form);
 
     if ($form->load()->validate()) {
@@ -186,12 +184,10 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $form->other
       ->add("submit", "input|submit", t("Modify user"));
 
-    // Get the labels and error messages for the user group.
-    static::get_user_form_labels($form->user);
-    static::get_user_form_error_messages($form->user);
-
-    // Link the ORM model and call the form event.
+    // Get the labels and error messages, link the ORM model, and call the form event.
     $form->user->orm("link", array("model" => $user, "write_only" => array("password")));
+    $form->user->set_var_fields("label", static::get_user_form_labels());
+    $form->user->set_var_fields("error_messages", static::get_user_form_error_messages());
     Module::event("user_edit_form_admin", $user, $form);
 
     // Don't allow the user to control their own admin bit, else you can lock yourself out
@@ -378,9 +374,8 @@ class User_Controller_Admin_Users extends Controller_Admin {
   /**
    * Get user form labels.  This is a helper function for the edit/add forms.
    */
-  public static function get_user_form_labels($user_group) {
-    // Define all of the labels.
-    $labels = array(
+  public static function get_user_form_labels() {
+    return array(
       "name"      => t("Username"),
       "full_name" => t("Full name"),
       "password"  => t("Password"),
@@ -390,19 +385,13 @@ class User_Controller_Admin_Users extends Controller_Admin {
       "locale"    => t("Language preference"),
       "admin"     => t("Admin")
     );
-
-    // Add the labels we need.
-    foreach (Arr::flatten($user_group->as_array(null, true)) as $alias => $field) {
-      $field->set("label", Arr::get($labels, $alias));
-    }
   }
 
   /**
    * Get user form error messages.  This is a helper function for the edit/add forms.
    */
-  public static function get_user_form_error_messages($user_group) {
-    // Define all of the error messages.
-    $error_messages = array(
+  public static function get_user_form_error_messages() {
+    return array(
       "name"      => array("not_empty"  => t("A name is required"),
                            "length"     => t("This name is too long"),
                            "conflict"   => t("There is already a user with that username")),
@@ -414,11 +403,6 @@ class User_Controller_Admin_Users extends Controller_Admin {
                            "email"      => t("You must enter a valid email address")),
       "url"       => array("url"        => t("You must enter a valid URL"))
     );
-
-    // Add the error messages we need.
-    foreach (Arr::flatten($user_group->as_array(null, true)) as $alias => $field) {
-      $field->set("error_messages", Arr::get($error_messages, $alias));
-    }
   }
 
   /**

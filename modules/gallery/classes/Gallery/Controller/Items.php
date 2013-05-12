@@ -156,12 +156,10 @@ class Gallery_Controller_Items extends Controller {
           ));
     }
 
-    // Get the labels and error messages for the item group.
-    static::get_form_labels($form->item, $item->type);
-    static::get_form_error_messages($form->item, $item->type);
-
-    // Link the ORM model and call the form event.
+    // Get the labels and error messages, link the ORM model, and call the form event.
     $form->item->orm("link", array("model" => $item));
+    $form->item->set_var_fields("label", static::get_form_labels($item->type));
+    $form->item->set_var_fields("error_messages", static::get_form_error_messages($item->type));
     Module::event("item_edit_form", $item, $form);
 
     // We can't edit the root item's name or slug.
@@ -236,12 +234,10 @@ class Gallery_Controller_Items extends Controller {
     $form->other
       ->add("submit", "input|submit", t("Create"));
 
-    // Get the labels and error messages for the item group.
-    static::get_form_labels($form->item, $item->type);
-    static::get_form_error_messages($form->item, $item->type);
-
-    // Link the ORM model and call the form event
+    // Get the labels and error messages, link the ORM model, and call the form event.
     $form->item->orm("link", array("model" => $item));
+    $form->item->set_var_fields("label", static::get_form_labels($item->type));
+    $form->item->set_var_fields("error_messages", static::get_form_error_messages($item->type));
     Module::event("album_add_form", $parent, $form);
 
     // Load and validate the form.
@@ -531,7 +527,7 @@ class Gallery_Controller_Items extends Controller {
   /**
    * Get form error messages for the item group.  This is a helper function for the edit/add forms.
    */
-  public static function get_form_error_messages($item_group, $type) {
+  public static function get_form_error_messages($type) {
     // Define all of the error messages.
     $error_messages = array(
       "title" => array(
@@ -579,19 +575,20 @@ class Gallery_Controller_Items extends Controller {
       )
     );
 
-    // Add the error messages we need.
-    foreach (Arr::flatten($item_group->as_array(null, true)) as $alias => $field) {
-      $field->set("error_messages", array_merge(
-        Arr::path($error_messages, "$alias.$type", array()),
-        Arr::path($error_messages, "$alias.all", array())
-      ));
+    // Flatten the array by type.
+    foreach ($error_messages as $key => &$value) {
+      $value = array_merge_recursive(
+        Arr::get($value, $type, array()),
+        Arr::get($value, "all", array())
+      );
     }
+    return $error_messages;
   }
 
   /**
    * Get form labels for the item group.  This is a helper function for the edit/add forms.
    */
-  public static function get_form_labels($item_group, $type) {
+  public static function get_form_labels($type) {
     // Define all of the labels.
     $labels = array(
       "title" => array(
@@ -616,11 +613,11 @@ class Gallery_Controller_Items extends Controller {
       )
     );
 
-    // Add the labels we need.
-    foreach (Arr::flatten($item_group->as_array(null, true)) as $alias => $field) {
-      $field->set("label", Arr::path($labels, "$alias.$type",
-                           Arr::path($labels, "$alias.all")));
+    // Flatten the array by type.
+    foreach ($labels as $key => &$value) {
+      $value = isset($value[$type]) ? $value[$type] : $value["all"];
     }
+    return $labels;
   }
 
   /**
