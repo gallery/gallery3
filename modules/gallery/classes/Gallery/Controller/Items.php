@@ -264,6 +264,60 @@ class Gallery_Controller_Items extends Controller {
   }
 
   /**
+   * Add a new item.  This generates the form, validates it, adds the item, and returns a response.
+   * This can be used as an ajax dialog (preferable) or a normal view.
+   */
+  public function action_add() {
+    $parent_id = $this->request->arg(0, "digit");
+    $parent = ORM::factory("Item", $parent_id);
+    if (!$parent->loaded() || !$parent->is_album()) {
+      throw HTTP_Exception::factory(404);
+    }
+    Access::required("view", $parent);
+    Access::required("add", $parent);
+
+    // Build the item model.
+    $item = ORM::factory("Item");
+    $item->parent_id = $parent->id;
+
+    // Build the form.
+    $form = Formo::form()
+      ->attr("id", "g-add-item-form")
+      ->add("item", "group")
+      ->add("other", "group");
+    $form->item
+      ->set("label", t("Add photos to %album_title",             // @todo: make this "photos/movies"
+                       array("album_title" => HTML::purify($parent->title))))
+      ->add("data_file", "file");
+    $form->item->data_file
+      ->set("label", t("File"))
+      ->add_rule("not_empty", array(":value"),          t("You must select a file"))
+      ->add_rule("Upload::type",
+          array(":value", LegalFile::get_extensions()), t("The file's extension is invalid"));
+    $form->other
+      ->add("submit", "input|submit", t("Upload"));
+
+    // Link the ORM model (using a callback, not the typical ORM link) and call the form event.
+    $form->item->set("linked_orm_model", $item);
+    $form->item->callback("pass", array("Controller_Items::item_add_callback"));
+    Module::event("item_add_form", $parent, $form);
+
+    // Load and validate the form.
+    if ($form->load()->validate()) {
+      Module::event("item_add_form_completed", $item, $form);
+      GalleryLog::success("content", Arr::get(array(
+        "photo" => t("Added a photo"),
+        "movie" => t("Added a movie")
+      ), $item->type), HTML::anchor($item->url(), t("view")));
+    }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "item");
+
+    $this->response->ajax_form($form);
+  }
+
+  /**
    * Delete an item.  This generates the confirmation form, validates it,
    * deletes the item, and returns a response.
    */
@@ -446,6 +500,32 @@ class Gallery_Controller_Items extends Controller {
   public static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Model_Item::siblings() if we use this more broadly.
     return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
+  }
+
+  /**
+   * Item add callback to process file uploads.  This is used in the item add form.
+   */
+  public static function item_add_callback($item_group) {
+    // Process the data file.
+    $file_array = $item_group->data_file->val();
+    $path = Upload::save($file_array);
+    System::delete_later($path);
+
+    // Add to the item model.
+    $item = $item_group->get("linked_orm_model");
+    $item->name = $file_array["name"];
+    $item->set_data_file($path);
+    $item->type = LegalFile::get_photo_extensions(pathinfo($item->name, PATHINFO_EXTENSION)) ?
+      "photo" : "movie";
+
+    // Try to save the item model, and add an error if it failed.
+    try {
+      $item->save();
+      return true;
+    } catch (ORM_Validation_Exception $e) {
+      Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->errors(), 1));
+      $item_group->data_file->error(t("Invalid upload"));
+    }
   }
 
   /**
