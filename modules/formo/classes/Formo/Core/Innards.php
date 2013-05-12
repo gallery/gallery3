@@ -451,7 +451,7 @@ abstract class Formo_Core_Innards {
 	}
 
 	/**
-	 * Congert an error returned from the Validation object to a formatted message
+	 * Convert an error returned from the Validation object to a formatted message
 	 * 
 	 * @access protected
 	 * @param array $errors_array (default: NULL)
@@ -479,14 +479,13 @@ abstract class Formo_Core_Innards {
 				}
 			}
 
-			// Start the translation values list
-			$values = array(
-				':field' => $label,
-				':value' => $this->val(),
-			);
-
-			if ($file === FALSE)
+			if ($message = $this->get("error_messages.{$error}"))
 			{
+				// Found a locally-defined message for this error in this field
+			}
+			elseif ($file === FALSE)
+			{
+				// No message found in this field and no external message file
 				$message = $error;
 			}
 			else
@@ -509,6 +508,12 @@ abstract class Formo_Core_Innards {
 					$message = "{$file}.{$field}.{$error}";
 				}
 	
+				// Start the translation values list
+				$values = array(
+					':field' => $label,
+					':value' => $this->val(),
+				);
+
 				if ($params)
 				{
 					foreach ($params as $key => $value)

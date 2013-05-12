@@ -244,13 +244,27 @@ abstract class Formo_Core_Driver {
 			return $field->alias();
 		}
 
-		if ($parent = $field->parent())
+		if ( ! $parent = $field->parent())
 		{
-			$name = $parent->alias().'['.$field->alias().']';
+			$name = $field->alias();
 		}
 		else
 		{
-			$name = $field->alias();
+			$name = '['.$field->alias().']';
+
+			// Prefix the field alias with all parent aliases
+			while ($parent = $field->parent())
+			{
+				if (!$parent->parent())
+				{
+					$name = $parent->alias().$name;
+				}
+				else
+				{
+					$name = '['.$parent->alias().']'.$name;
+				}
+				$field = $parent;
+			}
 		}
 
 		return $name;
