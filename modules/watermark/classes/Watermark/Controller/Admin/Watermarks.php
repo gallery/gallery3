@@ -68,7 +68,7 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
     if ($form->load()->validate()) {
       $file_array = $form->watermark->data_file->val();
       $name = $file_array["name"];
-      $path = $file_array["tmp_name"];
+      $path = Upload::save($file_array, $name, VARPATH . "modules/watermark");
 
       try {
         list ($width, $height, $mime_type, $extension) = Photo::get_file_metadata($path);
@@ -81,11 +81,6 @@ class Watermark_Controller_Admin_Watermarks extends Controller_Admin {
         System::delete_later($path);
         return;
       }
-
-      $new_path = VARPATH . "modules/watermark/$name";
-      rename($path, $new_path);
-      chmod($new_path, 0644);
-      System::delete_later($path);
 
       Module::set_var("watermark", "name",         $name);
       Module::set_var("watermark", "width",        $width);

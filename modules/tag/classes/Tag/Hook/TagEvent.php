@@ -99,6 +99,21 @@ class Tag_Hook_TagEvent {
     Tag::compact();
   }
 
+  static function item_add_form($parent, $form) {
+    $form->add_before_submit("tags", "input");
+    $form->find("tags")->set("label", t("Add tags to all uploaded files"));
+    $form->add_script_text(self::_get_autocomplete_js());
+  }
+
+  static function item_add_form_completed($item, $form) {
+    foreach (explode(",", $form->find("tags")->val()) as $tag_name) {
+      $tag_name = trim($tag_name);
+      if (!empty($tag_name)) {
+        $tag = Tag::add($item, $tag_name);
+      }
+    }
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
@@ -110,27 +125,6 @@ class Tag_Hook_TagEvent {
   static function item_index_data($item, $data) {
     foreach ($item->tags->find_all() as $tag) {
       $data[] = $tag->name;
-    }
-  }
-
-  static function add_photos_form($album, $form) {
-    $group = $form->add_photos;
-
-    $group->input("tags")
-      ->label(t("Add tags to all uploaded files"))
-      ->value("");
-
-    $group->script("")->text(self::_get_autocomplete_js());
-  }
-
-  static function add_photos_form_completed($item, $form) {
-    $group = $form->add_photos;
-
-    foreach (explode(",", $group->tags->value) as $tag_name) {
-      $tag_name = trim($tag_name);
-      if ($tag_name) {
-        $tag = Tag::add($item, $tag_name);
-      }
     }
   }
 
