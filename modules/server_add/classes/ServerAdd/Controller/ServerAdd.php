@@ -240,50 +240,40 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
           $parent = ORM::factory("Item", $parent_entry->item_id);
         }
 
-        $name = basename($entry->path);
+        // Build our item model.
+        $item = ORM::factory("Item");
+        $item->name = basename($entry->path);
+        $item->parent_id = $parent->id;
+        $item->owner_id = $owner_id;
+
         if ($entry->is_directory) {
-          $album = ORM::factory("Item");
-          $album->type = "album";
-          $album->parent_id = $parent->id;
-          $album->name = $name;
-          $album->owner_id = $owner_id;
-          $album->sort_order = $parent->sort_order;
-          $album->sort_column = $parent->sort_column;
-          $album->save();
-          $entry->item_id = $album->id;
+          $item->type = "album";
+          $item->sort_order = $parent->sort_order;
+          $item->sort_column = $parent->sort_column;
         } else {
-          try {
-            $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-            if (LegalFile::get_photo_extensions($extension)) {
-              $photo = ORM::factory("Item");
-              $photo->type = "photo";
-              $photo->parent_id = $parent->id;
-              $photo->set_data_file($entry->path);
-              $photo->name = $name;
-              $photo->owner_id = $owner_id;
-              $photo->save();
-              $entry->item_id = $photo->id;
-            } else if (LegalFile::get_movie_extensions($extension)) {
-              $movie = ORM::factory("Item");
-              $movie->type = "movie";
-              $movie->parent_id = $parent->id;
-              $movie->set_data_file($entry->path);
-              $movie->name = $name;
-              $movie->owner_id = $owner_id;
-              $movie->save();
-              $entry->item_id = $movie->id;
-            } else {
-              // This should never happen, because we don't add stuff to the list that we can't
-              // process.  But just in, case.. set this to a non-null value so that we skip this
-              // entry.
-              $entry->item_id = 0;
-              $task->log("Skipping unknown file type: {$entry->path}");
-            }
-          } catch (Exception $e) {
-            // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
+          $extension = strtolower(pathinfo($item->name, PATHINFO_EXTENSION));
+          if (LegalFile::get_photo_extensions($extension)) {
+            $item->type = "photo";
+          } else if (LegalFile::get_movie_extensions($extension)) {
+            $item->type = "movie";
+          } else {
+            // This should never happen, because we don't add stuff to the list that we can't
+            // process.  But just in case, set this to a non-null value so that we skip this
+            // entry.
             $entry->item_id = 0;
-            $task->log("Skipping invalid file: {$entry->path}");
+            $task->log("Skipping unknown file type: {$entry->path}");
+            continue;
           }
+          $item->set_data_file($entry->path);
+        }
+
+        try {
+          $item->save();
+          $entry->item_id = $item->id;
+        } catch (Exception $e) {
+          // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
+          $entry->item_id = 0;
+          $task->log("Skipping invalid file: {$entry->path}");
         }
 
         $completed_files++;
