@@ -42,8 +42,6 @@ class Gallery_Hook_GalleryTheme {
     $buf .= $theme->script("mediaelementjs/mediaelementplayer.js");
     $buf .= $theme->css("mediaelementjs/mediaelementplayer.css");
 
-    $buf .= $theme->css("uploadify/uploadify.css");
-
     // Add MSG_CANCEL, which is required by gallery.dialog.js and gallery.in_place_edit.js.
     $buf .=
       '<script type="text/javascript">var MSG_CANCEL = ' . t("Cancel")->for_js() . ';</script>';
