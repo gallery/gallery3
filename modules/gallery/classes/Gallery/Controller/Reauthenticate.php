@@ -54,7 +54,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
             $("#g-password").focus();
           });'
         )
-      ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
+      ->add("continue_url", "input|hidden", Session::instance()->get_once("continue_url"))
       ->add("reauthenticate", "group");
     $form->reauthenticate
       ->set("label", t("Re-authenticate"))

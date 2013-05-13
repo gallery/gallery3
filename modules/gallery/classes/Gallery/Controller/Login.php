@@ -29,7 +29,7 @@ class Gallery_Controller_Login extends Controller {
     $form = Formo::form()
       ->attr("id", "g-login-form")
       ->add_class("g-narrow")
-      ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
+      ->add("continue_url", "input|hidden", Session::instance()->get_once("continue_url"))
       ->add("login", "group");
     $form->login
       ->set("label", t("Login"))
