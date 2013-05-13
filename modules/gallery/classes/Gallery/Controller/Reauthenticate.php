@@ -66,12 +66,15 @@ class Gallery_Controller_Reauthenticate extends Controller {
       ->add_rule("Auth::validate_reauthenticate", array(":validation", ":field", ":value"))
       ->set("error_messages", static::get_reauthenticate_error_messages());
 
+    Module::event("user_reauthenticate_form", $form);
+
     if ($form->sent()) {
       // Reauthenticate attempted - regenerate the session id to avoid session trapping.
       Session::instance()->regenerate();
     }
 
     if ($form->load()->validate()) {
+      Module::event("user_reauthenticate_form_completed", $form);
       $continue_url = $form->continue_url->val();
       $form->set("response", $continue_url ? $continue_url : Item::root()->abs_url());
     }

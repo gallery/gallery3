@@ -45,6 +45,8 @@ class Gallery_Controller_Login extends Controller {
       ->attr("id", "g-password")
       ->set("label", t("Password"));
 
+    Module::event("user_login_form", $form);
+
     // Define our basic form view.
     $view = new View("gallery/login.html");
     $view->form = $form;
@@ -56,6 +58,7 @@ class Gallery_Controller_Login extends Controller {
 
     if ($form->load()->validate()) {
       // Login attempt is valid
+      Module::event("user_login_form_completed", $form);
       if ($this->request->is_ajax()) {
         $this->response->json(array("result" => "success"));
         return;
