@@ -186,6 +186,32 @@ class Gallery_Formo extends Formo_Core_Formo {
   }
 
   /**
+   * Add a field to a form just after its last submit button.  If no submit button is found,
+   * the field is added to the end of the form.  We use this in events to add fields to pre-built
+   * forms (e.g. tag, reCAPTCHA...).  The syntax is the same as Formo::add().
+   *
+   * @see Formo::add()
+   */
+  public function add_after_submit($alias, $driver=null, $value=null, array $opts=null) {
+    $types = Arr::flatten($this->as_array("attr.type", true));
+    foreach (array_reverse($types) as $submit_alias => $type) {
+      if ($type != "submit") {
+        continue;
+      }
+
+      // Found a submit button - add the field to its parent, then reorder to be after the submit.
+      $target = $this->find($submit_alias)->parent();
+      $target->add($alias, $driver, $value, $opts);
+      $target->order($alias, "after", $submit_alias);
+      return $this;
+    }
+
+    // Couldn't find a submit button - add the field to the end of the form.
+    $this->add($alias, $driver, $value, $opts);
+    return $this;
+  }
+
+  /**
    * Merge two groups in a form.  This takes all elements from the source, adds them
    * to the target, then removes the target.  This could yield some odd results if
    * Formo namespacing is turned on (which it isn't in Gallery).

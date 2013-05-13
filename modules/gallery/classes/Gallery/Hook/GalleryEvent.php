@@ -224,17 +224,6 @@ class Gallery_Hook_GalleryEvent {
       Graphics::choose_default_toolkit();
       Module::clear_var("gallery", "choose_default_tookit");
     }
-    Session::instance()->set("active_auth_timestamp", time());
-    Auth::clear_failed_attempts($user);
-  }
-
-  static function user_auth_failed($name) {
-    Auth::record_failed_attempt($name);
-  }
-
-  static function user_auth($user) {
-    Auth::clear_failed_attempts($user);
-    Session::instance()->set("active_auth_timestamp", time());
   }
 
   static function item_index_data($item, $data) {

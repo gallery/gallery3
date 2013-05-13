@@ -91,10 +91,13 @@ class User_Controller_Users extends Controller {
       ->add("other", "group");
     $form->user
       ->set("label", t("Change your password"))
-      ->add("name", "input|hidden")
       ->add("password_check", "input|password")
       ->add("password", "input|password")
       ->add("password2", "input|password");
+    $form->user->password_check
+      ->set("label", t("Old password"))
+      ->add_rule("Auth::validate_reauthenticate", array(":validation", ":field", ":value"))
+      ->set("error_messages", Controller_Reauthenticate::get_reauthenticate_error_messages());
     $form->user->password
       ->set("label", t("New password"));
     $form->user->password2
@@ -103,40 +106,19 @@ class User_Controller_Users extends Controller {
     $form->other
       ->add("submit", "input|submit", t("Save"));
 
-    // Get the error messages for the user group.
-    Controller_Admin_Users::get_user_form_error_messages($form->user);
-
-    // Link the ORM model and call the form event.
+    // Get the error messages, link the ORM model, and call the form event.
     $form->user->orm("link", array("model" => $user));
+    $form->user->set_var_fields("error_messages",
+      Controller_Admin_Users::get_user_form_error_messages());
     Module::event("user_change_password_form", $user, $form);
 
-    // Add reauthentication-related details (largely copied from Controller_Reauthenticate)
-    $form->user->name
-      ->set("can_be_empty", true)
-      ->add_rule("not_empty", array(":value"))
-      ->add_rule("equals", array(":value", $user->name))
-      ->callback("fail", array("Access::forbidden"));
-    $form->user->password_check
-      ->set("label", t("Old password"))
-      ->add_rule("not_empty", array(":value"), t("Incorrect password"))
-      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "name"),
-                 t("Too many incorrect passwords.  Try again later"))
-      ->add_rule("Auth::validate_username_and_password", array(":form_val", "name", "password_check"),
-                 t("Incorrect password"));
-
     if ($form->load()->validate()) {
-      // Reauthenticate attempt is valid.
-      Auth::reauthenticate($user);
-
       $user->save();
       Module::event("user_change_password_form_completed", $user, $form);
       Module::event("user_password_change", $user);
       Message::success(t("Password changed"));
-    } else if ($form->user->password_check->error()) {
-      // Reauthenticate attempt is invalid.
-      $name = $user->name;
-      Module::event("user_auth_failed", $name);
-      GalleryLog::warning("user", t("Failed password change for %name", array("name" => $name)));
+    } else if ($form->sent()) {
+      GalleryLog::warning("user", t("Failed password change for %name", array("name" => $user->name)));
     }
 
     // Merge the groups together for presentation purposes
@@ -165,47 +147,29 @@ class User_Controller_Users extends Controller {
       ->add("other", "group");
     $form->user
       ->set("label", t("Change your email address"))
-      ->add("name", "input|hidden")
       ->add("password_check", "input|password")
       ->add("email", "input");
+    $form->user->password_check
+      ->set("label", t("Old password"))
+      ->add_rule("Auth::validate_reauthenticate", array(":validation", ":field", ":value"))
+      ->set("error_messages", Controller_Reauthenticate::get_reauthenticate_error_messages());
     $form->user->email
       ->set("label", t("New email address"));
     $form->other
       ->add("submit", "input|submit", t("Save"));
 
-    // Get the error messages for the user group.
-    Controller_Admin_Users::get_user_form_error_messages($form->user);
-
-    // Link the ORM model and call the form event.
+    // Get the error messages, link the ORM model, and call the form event.
     $form->user->orm("link", array("model" => $user));
+    $form->user->set_var_fields("error_messages",
+      Controller_Admin_Users::get_user_form_error_messages());
     Module::event("user_change_email_form", $user, $form);
 
-    // Add reauthentication-related details (largely copied from Controller_Reauthenticate)
-    $form->user->name
-      ->set("can_be_empty", true)
-      ->add_rule("not_empty", array(":value"))
-      ->add_rule("equals", array(":value", $user->name))
-      ->callback("fail", array("Access::forbidden"));
-    $form->user->password_check
-      ->set("label", t("Current password"))
-      ->add_rule("not_empty", array(":value"), t("Incorrect password"))
-      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "name"),
-                 t("Too many incorrect passwords.  Try again later"))
-      ->add_rule("Auth::validate_username_and_password", array(":form_val", "name", "password_check"),
-                 t("Incorrect password"));
-
     if ($form->load()->validate()) {
-      // Reauthenticate attempt is valid.
-      Auth::reauthenticate($user);
-
       $user->save();
       Module::event("user_change_email_form_completed", $user, $form);
       Message::success(t("Email address changed"));
-    } else if ($form->user->password_check->error()) {
-      // Reauthenticate attempt is invalid.
-      $name = $user->name;
-      Module::event("user_auth_failed", $name);
-      GalleryLog::warning("user", t("Failed email change for %name", array("name" => $name)));
+    } else if ($form->sent()) {
+      GalleryLog::warning("user", t("Failed email change for %name", array("name" => $user->name)));
     }
 
     // Merge the groups together for presentation purposes

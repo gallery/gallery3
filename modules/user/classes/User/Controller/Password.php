@@ -27,14 +27,14 @@ class User_Controller_Password extends Controller {
    */
   public function action_reset() {
     $form = Formo::form()
-      ->attr("id", "g-reset-form")
+      ->attr("id", "g-reset-password-form")
       ->add("reset", "group");
     $form->reset
       ->set("label", t("Reset Password"))
       ->add("username", "input")
       ->add("submit", "input|submit", t("Reset"));
     $form->reset->username
-      ->attr("id", "g-name")
+      ->attr("id", "g-username")
       ->set("label", t("Username"))
       ->add_rule("not_empty", array(":value"), t("You must enter a user name"));
 

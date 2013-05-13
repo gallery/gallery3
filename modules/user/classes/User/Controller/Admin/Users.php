@@ -360,9 +360,6 @@ class User_Controller_Admin_Users extends Controller_Admin {
     if ($form->load()->validate()) {
       $group->save();
       Message::success(t("Changed group %group_name", array("group_name" => $group->name)));
-    //} else if ($form->sent()) {
-    //  // Sent but failed validation.
-    //  Message::error(t("Failed to change group %group_name", array("group_name" => $group->name)));
     }
 
     // Merge the groups together for presentation purposes
