@@ -36,4 +36,23 @@ class User_Hook_UserEvent {
 
     return $menu;
   }
+
+  static function user_login_form($form) {
+    // Add "Forgot your password?" link to login form
+    if (Identity::is_writable() && !Module::get_var("gallery", "maintenance_mode")) {
+      $form
+        ->add_after_submit("forgot_password", "input")
+        ->add_script_text(
+          // Setting the focus when ready doesn't always work with IE7, perhaps because the field is
+          // not ready yet?  So set a timeout and do it the next time we're idle.
+            '$("#g-reset-password-form").ready(function() {
+              setTimeout(\'$("#g-username").focus()\', 100);
+            });'
+          );
+      $form->find("forgot_password")
+        ->set("editable", false)
+        ->val(HTML::anchor("password/reset", t("Forgot your password?"),
+              array("id" => "g-reset-password", "class" => "g-dialog-link g-right g-text-small")));
+    }
+  }
 }

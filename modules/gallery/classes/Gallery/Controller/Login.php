@@ -29,7 +29,14 @@ class Gallery_Controller_Login extends Controller {
     $form = Formo::form()
       ->attr("id", "g-login-form")
       ->add_class("g-narrow")
-      ->add("continue_url", "input|hidden", Session::instance()->get("continue_url"))
+      ->add_script_text(
+        // Setting the focus when ready doesn't always work with IE7, perhaps because the field is
+        // not ready yet?  So set a timeout and do it the next time we're idle.
+          '$("#g-login-form").ready(function() {
+            setTimeout(\'$("#g-username").focus()\', 100);
+          });'
+        )
+      ->add("continue_url", "input|hidden", Session::instance()->get_once("continue_url"))
       ->add("login", "group");
     $form->login
       ->set("label", t("Login"))
@@ -39,58 +46,32 @@ class Gallery_Controller_Login extends Controller {
     $form->login->username
       ->attr("id", "g-username")
       ->set("label", t("Username"))
-      ->add_rule("not_empty", array(":value"), t("Invalid name or password"))
-      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "username"),
-                 t("Too many failed login attempts.  Try again later"))
-      ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),
-                 t("Invalid name or password"));
+      ->add_rule("Auth::validate_login", array(":validation", ":form_val", "username", "password"))
+      ->set("error_messages", static::get_login_error_messages());
     $form->login->password
       ->attr("id", "g-password")
       ->set("label", t("Password"));
 
-    // Define our basic form view.
-    $view = new View("gallery/login.html");
-    $view->form = $form;
+    Module::event("user_login_form", $form);
 
     if ($form->sent()) {
       // Login attempted - regenerate the session id to avoid session trapping.
       Session::instance()->regenerate();
-
-      if ($form->load()->validate()) {
-        // Login attempt is valid.
-        $user = Identity::lookup_user_by_name($form->login->username->val());
-        Auth::login($user);
-
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "success"));
-          return;
-        } else {
-          $continue_url = $form->continue_url->val();
-          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
-        }
-      } else {
-        // Login attempt is invalid.
-        $name = $form->login->username->val();
-        GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
-        Module::event("user_auth_failed", $name);
-
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "error", "html" => (string)$view));
-          return;
-        }
-      }
     }
 
-    // Login not yet attempted (ajax or non-ajax) or login failed (non-ajax).
-    if ($this->request->is_ajax()) {
-      // Send the basic login view.
-      $this->response->body($view);
-    } else {
-      // Wrap the basic login view in a theme.
-      $view_theme = new View_Theme("required/page.html", "other", "login");
-      $view_theme->page_title = t("Log in to Gallery");
-      $view_theme->content = $view;
-      $this->response->body($view_theme);
+    if ($form->load()->validate()) {
+      Module::event("user_login_form_completed", $form);
+      $continue_url = $form->continue_url->val();
+      $form->set("response", $continue_url ? $continue_url : Item::root()->abs_url());
     }
+
+    $this->response->ajax_form($form);
+  }
+
+  public static function get_login_error_messages() {
+    return array(
+      "invalid"           => t("Invalid name or password"),
+      "too_many_failures" => t("Too many failed login attempts.  Try again later")
+    );
   }
 }

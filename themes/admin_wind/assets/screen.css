@@ -173,7 +173,7 @@ input[type=radio] {
 
 form li {
   margin: 0;
-  padding: 0 0 .2em 0;
+  padding: 0 0 .8em 0;
 }
 
 form ul {
@@ -204,10 +204,6 @@ input[type="reset"] {
 }
 
 /* Forms in dialogs and panels ~~~~~~~~~ */
-
-#g-dialog ul li {
-  padding-bottom: .8em;
-}
 
 #g-dialog fieldset,
 #g-panel fieldset {
@@ -776,11 +772,11 @@ form .g-error {
 
 .g-loading-large,
 .g-dialog-loading-large {
-  background: #e8e8e8 url('../assets/loading-large.gif') no-repeat center center !important;
+  background: url('../assets/loading-large.gif') no-repeat center center !important;
 }
 
 .g-loading-small {
-  background: #e8e8e8 url('../assets/loading-small.gif') no-repeat center center !important;
+  background: url('../assets/loading-small.gif') no-repeat center center !important;
 }
 
 /** *******************************************************************
