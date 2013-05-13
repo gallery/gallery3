@@ -103,11 +103,10 @@ class User_Controller_Users extends Controller {
     $form->other
       ->add("submit", "input|submit", t("Save"));
 
-    // Get the error messages for the user group.
-    Controller_Admin_Users::get_user_form_error_messages($form->user);
-
-    // Link the ORM model and call the form event.
+    // Get the error messages, link the ORM model, and call the form event.
     $form->user->orm("link", array("model" => $user));
+    $form->user->set_var_fields("error_messages",
+      Controller_Admin_Users::get_user_form_error_messages());
     Module::event("user_change_password_form", $user, $form);
 
     // Add reauthentication-related details (largely copied from Controller_Reauthenticate)
@@ -173,11 +172,10 @@ class User_Controller_Users extends Controller {
     $form->other
       ->add("submit", "input|submit", t("Save"));
 
-    // Get the error messages for the user group.
-    Controller_Admin_Users::get_user_form_error_messages($form->user);
-
-    // Link the ORM model and call the form event.
+    // Get the error messages, link the ORM model, and call the form event.
     $form->user->orm("link", array("model" => $user));
+    $form->user->set_var_fields("error_messages",
+      Controller_Admin_Users::get_user_form_error_messages());
     Module::event("user_change_email_form", $user, $form);
 
     // Add reauthentication-related details (largely copied from Controller_Reauthenticate)
