@@ -18,6 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Auth {
+  /**
+   * Login a user.  This is intended as a callback after passing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param object $user
+   */
   static function login($user) {
     Identity::set_active_user($user);
     if (Identity::is_writable()) {
@@ -26,16 +32,32 @@ class Gallery_Auth {
       $user->save();
     }
     GalleryLog::info("user", t("User %name logged in", array("name" => $user->name)));
+    Session::instance()->set("active_auth_timestamp", time());
+    static::clear_failed_attempts($user);
     Module::event("user_login", $user);
   }
 
+  /**
+   * Reauthenticate a user.  This is intended as a callback after passing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param object $user
+   */
   static function reauthenticate($user) {
     if (!Request::current()->is_ajax()) {
       Message::success(t("Successfully re-authenticated!"));
     }
+    Session::instance()->set("active_auth_timestamp", time());
+    static::clear_failed_attempts($user);
     Module::event("user_auth", $user);
   }
 
+  /**
+   * Logout a user.  This is intended as a callback after passing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param object $user
+   */
   static function logout() {
     $user = Identity::active_user();
     if (!$user->guest) {
@@ -53,32 +75,88 @@ class Gallery_Auth {
   }
 
   /**
-   * Validate the username and password.  This uses a syntax similar to Valid::matches().
+   * Process a login failure.  This is intended as a callback after failing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param string $name
    */
-  static function validate_username_and_password($array, $name, $password) {
-    $user = Identity::lookup_user_by_name($array[$name]);
-    return (!empty($user) && Identity::is_correct_password($user, $array[$password]));
+  static function login_failed($name) {
+    GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
+    static::record_failed_attempt($name);
+    Module::event("user_auth_failed", $name);
   }
 
   /**
-   * After there have been 5 failed auth attempts, any failure leads to getting locked out for a
-   * minute.
+   * Process a re-authenticate failure.  This is intended as a callback after failing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param string $name
    */
-  static function too_many_failures($name) {
+  static function reauthenticate_failed($name) {
+    GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
+    static::record_failed_attempt($name);
+    Module::event("user_auth_failed", $name);
+  }
+
+  /**
+   * Validate a login attempt, and add error messages or run callbacks as needed.
+   *
+   * @param  Validation $v        validation object (":validation")
+   * @param  array      $data     data array        (":data" in Validation, ":form_val" in Formo)
+   * @param  string     $name     username field name, to which errors are attached
+   * @param  string     $password password field name
+   */
+  static function validate_login(Validation $v, $data, $name, $password) {
+    if (empty($data[$name])) {
+      $v->error($name, "invalid");
+    } else if (!static::validate_too_many_failures($data[$name])) {
+      $v->error($name, "too_many_failures");
+    } else {
+      $user = Identity::lookup_user_by_name($data[$name]);
+      if (!empty($user) && Identity::is_correct_password($user, $data[$password])) {
+        static::login($user);
+      } else {
+        static::login_failed($data[$name]);
+        $v->error($name, "invalid");
+      }
+    }
+  }
+
+  /**
+   * Validate a re-authenticate attempt, and add error messages or run callbacks as needed.
+   *
+   * @param  Validation $v     validation object   (":validation")
+   * @param  string     $field password field name (":field")
+   * @param  string     $value password value      (":value")
+   */
+  static function validate_reauthenticate(Validation $v, $field, $value) {
+    $user = Identity::active_user();
+    if (!static::validate_too_many_failures($user->name)) {
+      $v->error($field, "too_many_failures");
+    } else {
+      if (Identity::is_correct_password($user, $value)) {
+        static::reauthenticate($user);
+      } else {
+        static::reauthenticate_failed($user->name);
+        $v->error($field, "invalid");
+      }
+    }
+  }
+
+  /**
+   * Validate that there haven't been too many failed login/re-authenticate attempts.
+   * After 5 failed auth attempts, any failure leads to getting locked out for a minute.
+   *
+   * @param  string $name
+   * @return boolean
+   */
+  static function validate_too_many_failures($name) {
     $failed = ORM::factory("FailedAuth")
       ->where("name", "=", $name)
       ->find();
-    return ($failed->loaded() &&
+    return !($failed->loaded() &&
             $failed->count > 5 &&
             (time() - $failed->time < 60));
-  }
-
-  /**
-   * Validate that there haven't been too many failed login attempts.
-   * This uses a syntax similar to Valid::matches().
-   */
-  static function validate_too_many_failed_logins($array, $name) {
-    return !Auth::too_many_failures($array[$name]);
   }
 
   /**

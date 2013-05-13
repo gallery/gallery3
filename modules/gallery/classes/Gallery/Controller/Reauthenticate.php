@@ -54,55 +54,40 @@ class Gallery_Controller_Reauthenticate extends Controller {
       ->add("reauthenticate", "group");
     $form->reauthenticate
       ->set("label", t("Re-authenticate"))
-      ->add("username", "input|hidden", Identity::active_user()->name)
       ->add("password", "input|password")
       ->add("submit", "input|submit", t("Submit"));
-    $form->reauthenticate->username
-      ->set("can_be_empty", true)
-      ->add_rule("not_empty", array(":value"))
-      ->add_rule("equals", array(":value", $user->name))
-      ->callback("fail", array("Access::forbidden"));
     $form->reauthenticate->password
       ->attr("id", "g-password")
       ->set("label", t("Password"))
-      ->add_rule("not_empty", array(":value"), t("Incorrect password"))
-      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "username"),
-                 t("Too many incorrect passwords.  Try again later"))
-      ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),
-                 t("Incorrect password"));
+      ->add_rule("Auth::validate_reauthenticate", array(":validation", ":field", ":value"))
+      ->set("error_messages", static::get_reauthenticate_error_messages());
 
     // Define our basic form view.
     $view = new View("gallery/reauthenticate.html");
     $view->form = $form;
-    $view->username = $form->reauthenticate->username->val();
+    $view->username = $user->name;
 
     if ($form->sent()) {
       // Reauthenticate attempted - regenerate the session id to avoid session trapping.
       Session::instance()->regenerate();
+    }
 
-      if ($form->load()->validate()) {
-        // Reauthenticate attempt is valid.
-        Auth::reauthenticate($user);
-
-        if ($this->request->is_ajax()) {
-          // @todo: make reauthenticate and login use the same type of response here
-          $continue_url = $form->continue_url->val();
-          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
-        } else {
-          $continue_url = $form->continue_url->val();
-          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
-        }
+    if ($form->load()->validate()) {
+      // Reauthenticate attempt is valid.
+      if ($this->request->is_ajax()) {
+        // @todo: make reauthenticate and login use the same type of response here
+        $continue_url = $form->continue_url->val();
+        $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
       } else {
-        // Reauthenticate attempt is invalid.
-        $name = $form->reauthenticate->username->val();
-        GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
-        Module::event("user_auth_failed", $name);
-
-        if ($this->request->is_ajax()) {
-          // @todo: make reauthenticate and login use the same type of response here
-          $this->response->json(array("html" => (string)$view));
-          return;
-        }
+        $continue_url = $form->continue_url->val();
+        $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
+      }
+    } else {
+      // Reauthenticate attempt is invalid.
+      if ($this->request->is_ajax()) {
+        // @todo: make reauthenticate and login use the same type of response here
+        $this->response->json(array("html" => (string)$view));
+        return;
       }
     }
 
@@ -117,5 +102,12 @@ class Gallery_Controller_Reauthenticate extends Controller {
       $view_theme->content = $view;
       $this->response->body($view_theme);
     }
+  }
+
+  public static function get_reauthenticate_error_messages() {
+    return array(
+      "invalid"           => t("Incorrect password"),
+      "too_many_failures" => t("Too many incorrect passwords.  Try again later")
+    );
   }
 }

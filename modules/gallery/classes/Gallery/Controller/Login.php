@@ -39,11 +39,8 @@ class Gallery_Controller_Login extends Controller {
     $form->login->username
       ->attr("id", "g-username")
       ->set("label", t("Username"))
-      ->add_rule("not_empty", array(":value"), t("Invalid name or password"))
-      ->add_rule("Auth::validate_too_many_failed_logins", array(":form_val", "username"),
-                 t("Too many failed login attempts.  Try again later"))
-      ->add_rule("Auth::validate_username_and_password", array(":form_val", "username", "password"),
-                 t("Invalid name or password"));
+      ->add_rule("Auth::validate_login", array(":validation", ":form_val", "username", "password"))
+      ->set("error_messages", static::get_login_error_messages());
     $form->login->password
       ->attr("id", "g-password")
       ->set("label", t("Password"));
@@ -55,29 +52,21 @@ class Gallery_Controller_Login extends Controller {
     if ($form->sent()) {
       // Login attempted - regenerate the session id to avoid session trapping.
       Session::instance()->regenerate();
+    }
 
-      if ($form->load()->validate()) {
-        // Login attempt is valid.
-        $user = Identity::lookup_user_by_name($form->login->username->val());
-        Auth::login($user);
-
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "success"));
-          return;
-        } else {
-          $continue_url = $form->continue_url->val();
-          $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
-        }
+    if ($form->load()->validate()) {
+      // Login attempt is valid
+      if ($this->request->is_ajax()) {
+        $this->response->json(array("result" => "success"));
+        return;
       } else {
-        // Login attempt is invalid.
-        $name = $form->login->username->val();
-        GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
-        Module::event("user_auth_failed", $name);
-
-        if ($this->request->is_ajax()) {
-          $this->response->json(array("result" => "error", "html" => (string)$view));
-          return;
-        }
+        $continue_url = $form->continue_url->val();
+        $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
+      }
+    } else if ($form->sent()) {
+      if ($this->request->is_ajax()) {
+        $this->response->json(array("result" => "error", "html" => (string)$view));
+        return;
       }
     }
 
@@ -92,5 +81,12 @@ class Gallery_Controller_Login extends Controller {
       $view_theme->content = $view;
       $this->response->body($view_theme);
     }
+  }
+
+  public static function get_login_error_messages() {
+    return array(
+      "invalid"           => t("Invalid name or password"),
+      "too_many_failures" => t("Too many failed login attempts.  Try again later")
+    );
   }
 }

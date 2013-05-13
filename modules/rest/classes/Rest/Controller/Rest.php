@@ -21,20 +21,12 @@ class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
   public function action_index() {
-    $username = $this->request->post("user");
-    $password = $this->request->post("password");
-
-    if (empty($username) || Auth::too_many_failures($username)) {
+    // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
+    if (!Validation::factory($this->request->post())
+      ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
+      ->check()) {
       throw new Rest_Exception("Forbidden", 403);
     }
-
-    $user = Identity::lookup_user_by_name($username);
-    if (empty($user) || !Identity::is_correct_password($user, $password)) {
-      Module::event("user_login_failed", $username);
-      throw new Rest_Exception("Forbidden", 403);
-    }
-
-    Auth::login($user);
 
     Rest::reply(Rest::access_key(), $this->response);
   }
