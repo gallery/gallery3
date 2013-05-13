@@ -29,6 +29,13 @@ class Gallery_Controller_Login extends Controller {
     $form = Formo::form()
       ->attr("id", "g-login-form")
       ->add_class("g-narrow")
+      ->add_script_text(
+        // Setting the focus when ready doesn't always work with IE7, perhaps because the field is
+        // not ready yet?  So set a timeout and do it the next time we're idle.
+          '$("#g-login-form").ready(function() {
+            setTimeout(\'$("#g-username").focus()\', 100);
+          });'
+        )
       ->add("continue_url", "input|hidden", Session::instance()->get_once("continue_url"))
       ->add("login", "group");
     $form->login
@@ -47,43 +54,18 @@ class Gallery_Controller_Login extends Controller {
 
     Module::event("user_login_form", $form);
 
-    // Define our basic form view.
-    $view = new View("gallery/login.html");
-    $view->form = $form;
-
     if ($form->sent()) {
       // Login attempted - regenerate the session id to avoid session trapping.
       Session::instance()->regenerate();
     }
 
     if ($form->load()->validate()) {
-      // Login attempt is valid
       Module::event("user_login_form_completed", $form);
-      if ($this->request->is_ajax()) {
-        $this->response->json(array("result" => "success"));
-        return;
-      } else {
-        $continue_url = $form->continue_url->val();
-        $this->redirect($continue_url ? $continue_url : Item::root()->abs_url());
-      }
-    } else if ($form->sent()) {
-      if ($this->request->is_ajax()) {
-        $this->response->json(array("result" => "error", "html" => (string)$view));
-        return;
-      }
+      $continue_url = $form->continue_url->val();
+      $form->set("response", $continue_url ? $continue_url : Item::root()->abs_url());
     }
 
-    // Login not yet attempted (ajax or non-ajax) or login failed (non-ajax).
-    if ($this->request->is_ajax()) {
-      // Send the basic login view.
-      $this->response->body($view);
-    } else {
-      // Wrap the basic login view in a theme.
-      $view_theme = new View_Theme("required/page.html", "other", "login");
-      $view_theme->page_title = t("Log in to Gallery");
-      $view_theme->content = $view;
-      $this->response->body($view_theme);
-    }
+    $this->response->ajax_form($form);
   }
 
   public static function get_login_error_messages() {
