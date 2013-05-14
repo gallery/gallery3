@@ -44,7 +44,6 @@ class Gallery_Controller_Reauthenticate extends Controller {
     // Define our reauthenticate form.
     $form = Formo::form()
       ->attr("id", "g-reauthenticate-form")
-      ->add_class("g-narrow")
       ->html(array(
           t("The administration session has expired, please re-authenticate to access the administration area."),
           t("You are currently logged in as %user_name.", array("user_name" => $user->name))

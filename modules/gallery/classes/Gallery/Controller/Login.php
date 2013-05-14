@@ -28,7 +28,6 @@ class Gallery_Controller_Login extends Controller {
     // Define our login form.
     $form = Formo::form()
       ->attr("id", "g-login-form")
-      ->add_class("g-narrow")
       ->add_script_text(
         // Setting the focus when ready doesn't always work with IE7, perhaps because the field is
         // not ready yet?  So set a timeout and do it the next time we're idle.
