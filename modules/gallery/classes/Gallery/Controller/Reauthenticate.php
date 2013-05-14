@@ -76,6 +76,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       Module::event("user_reauthenticate_form_completed", $form);
       $continue_url = $form->continue_url->val();
       $form->set("response", $continue_url ? $continue_url : Item::root()->abs_url());
+      $form->set("show_in_dialog", Session::instance()->get_once("is_ajax_request"));
     }
 
     $this->response->ajax_form($form);
