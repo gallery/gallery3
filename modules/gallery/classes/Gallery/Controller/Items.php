@@ -615,7 +615,7 @@ class Gallery_Controller_Items extends Controller {
 
     // Flatten the array by type.
     foreach ($labels as $key => &$value) {
-      $value = isset($value[$type]) ? $value[$type] : $value["all"];
+      $value = Arr::get($value, $type, Arr::get($value, "all", ""));
     }
     return $labels;
   }
