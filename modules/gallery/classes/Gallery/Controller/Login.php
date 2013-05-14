@@ -28,7 +28,6 @@ class Gallery_Controller_Login extends Controller {
     // Define our login form.
     $form = Formo::form()
       ->attr("id", "g-login-form")
-      ->add_class("g-narrow")
       ->add_script_text(
         // Setting the focus when ready doesn't always work with IE7, perhaps because the field is
         // not ready yet?  So set a timeout and do it the next time we're idle.
@@ -63,6 +62,7 @@ class Gallery_Controller_Login extends Controller {
       Module::event("user_login_form_completed", $form);
       $continue_url = $form->continue_url->val();
       $form->set("response", $continue_url ? $continue_url : Item::root()->abs_url());
+      $form->set("show_in_dialog", Session::instance()->get_once("is_ajax_request"));
     }
 
     $this->response->ajax_form($form);

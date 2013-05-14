@@ -1255,13 +1255,14 @@ class Formo_Core_Formo extends Formo_Innards {
 	 * 
 	 * @access public
 	 * @param array $array
+	 * @param boolean $not_recursive (default: TRUE)
 	 * @return void
 	 */
-	public function set_fields( array $array)
+	public function set_fields( array $array, $not_recursive = TRUE)
 	{
 		foreach ($array as $alias => $vals)
 		{
-			$field = $this->find($alias, TRUE);
+			$field = $this->find($alias, $not_recursive);
 
 			if ( ! $field)
 			{
@@ -1280,13 +1281,14 @@ class Formo_Core_Formo extends Formo_Innards {
 	 * @access public
 	 * @param mixed $var
 	 * @param array $array
+	 * @param boolean $not_recursive (default: TRUE)
 	 * @return void
 	 */
-	public function set_var_fields($var, array $array)
+	public function set_var_fields($var, array $array, $not_recursive = TRUE)
 	{
 		foreach ($array as $alias => $val)
 		{
-			$field = $this->find($alias, TRUE);
+			$field = $this->find($alias, $not_recursive);
 
 			if ( ! $field)
 			{

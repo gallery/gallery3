@@ -44,7 +44,6 @@ class Gallery_Controller_Reauthenticate extends Controller {
     // Define our reauthenticate form.
     $form = Formo::form()
       ->attr("id", "g-reauthenticate-form")
-      ->add_class("g-narrow")
       ->html(array(
           t("The administration session has expired, please re-authenticate to access the administration area."),
           t("You are currently logged in as %user_name.", array("user_name" => $user->name))
@@ -77,6 +76,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       Module::event("user_reauthenticate_form_completed", $form);
       $continue_url = $form->continue_url->val();
       $form->set("response", $continue_url ? $continue_url : Item::root()->abs_url());
+      $form->set("show_in_dialog", Session::instance()->get_once("is_ajax_request"));
     }
 
     $this->response->ajax_form($form);

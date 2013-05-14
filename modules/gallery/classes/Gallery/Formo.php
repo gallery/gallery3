@@ -167,22 +167,7 @@ class Gallery_Formo extends Formo_Core_Formo {
    * @see Formo::add()
    */
   public function add_before_submit($alias, $driver=null, $value=null, array $opts=null) {
-    $types = Arr::flatten($this->as_array("attr.type", true));
-    foreach ($types as $submit_alias => $type) {
-      if ($type != "submit") {
-        continue;
-      }
-
-      // Found a submit button - add the field to its parent, then reorder to be before the submit.
-      $target = $this->find($submit_alias)->parent();
-      $target->add($alias, $driver, $value, $opts);
-      $target->order($alias, "before", $submit_alias);
-      return $this;
-    }
-
-    // Couldn't find a submit button - add the field to the end of the form.
-    $this->add($alias, $driver, $value, $opts);
-    return $this;
+    return $this->_add_next_to_submit("before", $alias, $driver, $value, $opts);
   }
 
   /**
@@ -193,16 +178,27 @@ class Gallery_Formo extends Formo_Core_Formo {
    * @see Formo::add()
    */
   public function add_after_submit($alias, $driver=null, $value=null, array $opts=null) {
+    return $this->_add_next_to_submit("after", $alias, $driver, $value, $opts);
+  }
+
+  /**
+   * Process the add before/after submit functions.
+   */
+  protected function _add_next_to_submit($position, $alias, $driver, $value, $opts) {
     $types = Arr::flatten($this->as_array("attr.type", true));
-    foreach (array_reverse($types) as $submit_alias => $type) {
+    if ($position == "after") {
+      $types = array_reverse($types);
+    }
+
+    foreach ($types as $submit_alias => $type) {
       if ($type != "submit") {
         continue;
       }
 
-      // Found a submit button - add the field to its parent, then reorder to be after the submit.
+      // Found a submit button - add the field to its parent, then reorder to be next to the submit.
       $target = $this->find($submit_alias)->parent();
       $target->add($alias, $driver, $value, $opts);
-      $target->order($alias, "after", $submit_alias);
+      $target->order($alias, $position, $submit_alias);
       return $this;
     }
 
