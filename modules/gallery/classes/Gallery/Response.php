@@ -76,13 +76,16 @@ class Gallery_Response extends Kohana_Response {
         case Formo::PASSED:
           $response = $form->get("response");
           if (!$response) {
-            $this->json(array("result" => "success"));
+            $response = array("result" => "success");
           } else if (is_array($response)) {
             $response["result"] = "success";
-            $this->json($response);
           } else {
-            $this->json(array("result" => "success", "location" => $response));
+            $response = array("result" => "success", "location" => $response);
+            if ($form->get("show_in_dialog")) {
+              $response["show_in_dialog"] = 1;
+            }
           }
+          $this->json($response);
           break;
 
         case Formo::FAILED:
