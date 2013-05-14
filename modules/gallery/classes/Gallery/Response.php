@@ -54,8 +54,9 @@ class Gallery_Response extends Kohana_Response {
    * other than a validated Formo object, this will throw an exception.
    *
    * This uses two custom form variables:
-   *   $form->get("status");   // the status, which is automatically set by Formo::validate().
-   *   $form->get("response"); // the desired response upon a valid, completed form.
+   *   $form->get("status");         // the status, which is automatically set by Formo::validate().
+   *   $form->get("response");       // the desired response upon a valid, completed form.
+   *   $form->get("show_in_dialog"); // put the response in the dialog instead of closing it (bool).
    * The "response" variable can be set as a string, an array, or left empty.  Examples:
    *   (form's "response" left unset or empty)        // Reload current URL (default)
    *   $form->set("response", $item->abs_url());      // Redirect to absolute URL
