@@ -24,7 +24,7 @@ class Gallery_Auth {
    *
    * @param object $user
    */
-  static function login($user) {
+  protected static function _login($user) {
     Identity::set_active_user($user);
     if (Identity::is_writable()) {
       $user->login_count += 1;
@@ -33,7 +33,7 @@ class Gallery_Auth {
     }
     GalleryLog::info("user", t("User %name logged in", array("name" => $user->name)));
     Session::instance()->set("active_auth_timestamp", time());
-    static::clear_failed_attempts($user);
+    static::_clear_failed_attempts($user);
     Module::event("user_login", $user);
   }
 
@@ -43,18 +43,18 @@ class Gallery_Auth {
    *
    * @param object $user
    */
-  static function reauthenticate($user) {
+  protected static function _reauthenticate($user) {
     if (!Request::current()->is_ajax()) {
       Message::success(t("Successfully re-authenticated!"));
     }
     Session::instance()->set("active_auth_timestamp", time());
-    static::clear_failed_attempts($user);
+    static::_clear_failed_attempts($user);
     Module::event("user_auth", $user);
   }
 
   /**
-   * Logout a user.  This is intended as a callback after passing validation.
-   * As such, this function performs no validation of its own.
+   * Logout a user.  Unlike login and re-authenticate, little validation is needed for logout
+   * aside from CSRF, so controllers can call this function directly.
    *
    * @param object $user
    */
@@ -80,9 +80,9 @@ class Gallery_Auth {
    *
    * @param string $name
    */
-  static function login_failed($name) {
+  protected static function _login_failed($name) {
     GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
-    static::record_failed_attempt($name);
+    static::_record_failed_attempt($name);
     Module::event("user_auth_failed", $name);
   }
 
@@ -92,9 +92,9 @@ class Gallery_Auth {
    *
    * @param string $name
    */
-  static function reauthenticate_failed($name) {
+  protected static function _reauthenticate_failed($name) {
     GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
-    static::record_failed_attempt($name);
+    static::_record_failed_attempt($name);
     Module::event("user_auth_failed", $name);
   }
 
@@ -114,9 +114,9 @@ class Gallery_Auth {
     } else {
       $user = Identity::lookup_user_by_name($data[$name]);
       if (!empty($user) && Identity::is_correct_password($user, $data[$password])) {
-        static::login($user);
+        static::_login($user);
       } else {
-        static::login_failed($data[$name]);
+        static::_login_failed($data[$name]);
         $v->error($name, "invalid");
       }
     }
@@ -135,9 +135,9 @@ class Gallery_Auth {
       $v->error($field, "too_many_failures");
     } else {
       if (Identity::is_correct_password($user, $value)) {
-        static::reauthenticate($user);
+        static::_reauthenticate($user);
       } else {
-        static::reauthenticate_failed($user->name);
+        static::_reauthenticate_failed($user->name);
         $v->error($field, "invalid");
       }
     }
@@ -162,7 +162,7 @@ class Gallery_Auth {
   /**
    * Record a failed authentication for this user
    */
-  static function record_failed_attempt($name) {
+  protected static function _record_failed_attempt($name) {
     $failed = ORM::factory("FailedAuth")
       ->where("name", "=", $name)
       ->find();
@@ -177,7 +177,7 @@ class Gallery_Auth {
   /**
    * Clear any failed logins for this user
    */
-  static function clear_failed_attempts($user) {
+  protected static function _clear_failed_attempts($user) {
     DB::delete("failed_auths")
       ->where("name", "=", $user->name)
       ->execute();
