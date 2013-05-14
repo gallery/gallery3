@@ -158,8 +158,8 @@ class Gallery_Controller_Items extends Controller {
 
     // Get the labels and error messages, link the ORM model, and call the form event.
     $form->item->orm("link", array("model" => $item));
-    $form->item->set_var_fields("label", static::get_form_labels($item->type));
-    $form->item->set_var_fields("error_messages", static::get_form_error_messages($item->type));
+    $form->item->set_var_fields("label", static::get_form_labels($item->type), false);
+    $form->item->set_var_fields("error_messages", static::get_form_error_messages($item->type), false);
     Module::event("item_edit_form", $item, $form);
 
     // We can't edit the root item's name or slug.
@@ -236,8 +236,8 @@ class Gallery_Controller_Items extends Controller {
 
     // Get the labels and error messages, link the ORM model, and call the form event.
     $form->item->orm("link", array("model" => $item));
-    $form->item->set_var_fields("label", static::get_form_labels($item->type));
-    $form->item->set_var_fields("error_messages", static::get_form_error_messages($item->type));
+    $form->item->set_var_fields("label", static::get_form_labels($item->type), false);
+    $form->item->set_var_fields("error_messages", static::get_form_error_messages($item->type), false);
     Module::event("album_add_form", $parent, $form);
 
     // Load and validate the form.
