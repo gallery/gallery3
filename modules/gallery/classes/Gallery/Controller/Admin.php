@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_Admin extends Controller {
+abstract class Gallery_Controller_Admin extends Controller {
   /**
    * Do auth checks for the admin area.
    */

@@ -74,8 +74,9 @@ abstract class Gallery_Controller extends Kohana_Controller {
     // Restrict all response frames to the same origin for security.
     $this->response->headers("X-Frame-Options", "SAMEORIGIN");
 
-    // If is_ajax_request was previously set, make this request ajax.
-    if (Session::instance()->get_once("is_ajax_request")) {
+    // If is_ajax_request was previously set, make this request ajax.  We leave the parameter
+    // set here for login and reauthenticate to use.
+    if (Session::instance()->get("is_ajax_request")) {
       $this->request->make_ajax();
     }
 
