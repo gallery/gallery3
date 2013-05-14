@@ -19,86 +19,6 @@
  */
 class Gallery_Auth {
   /**
-   * Login a user.  This is intended as a callback after passing validation.
-   * As such, this function performs no validation of its own.
-   *
-   * @param object $user
-   */
-  protected static function _login($user) {
-    Identity::set_active_user($user);
-    if (Identity::is_writable()) {
-      $user->login_count += 1;
-      $user->last_login = time();
-      $user->save();
-    }
-    GalleryLog::info("user", t("User %name logged in", array("name" => $user->name)));
-    Session::instance()->set("active_auth_timestamp", time());
-    static::_clear_failed_attempts($user);
-    Module::event("user_login", $user);
-  }
-
-  /**
-   * Reauthenticate a user.  This is intended as a callback after passing validation.
-   * As such, this function performs no validation of its own.
-   *
-   * @param object $user
-   */
-  protected static function _reauthenticate($user) {
-    if (!Request::current()->is_ajax()) {
-      Message::success(t("Successfully re-authenticated!"));
-    }
-    Session::instance()->set("active_auth_timestamp", time());
-    static::_clear_failed_attempts($user);
-    Module::event("user_auth", $user);
-  }
-
-  /**
-   * Logout a user.  Unlike login and re-authenticate, little validation is needed for logout
-   * aside from CSRF, so controllers can call this function directly.
-   *
-   * @param object $user
-   */
-  static function logout() {
-    $user = Identity::active_user();
-    if (!$user->guest) {
-      try {
-        Session::instance()->destroy();
-      } catch (Exception $e) {
-        Log::instance()->add(Log::ERROR, $e);
-      }
-      Module::event("user_logout", $user);
-    }
-    GalleryLog::info("user", t("User %name logged out", array("name" => $user->name)),
-              t('<a href="%url">%user_name</a>',
-                array("url" => UserProfile::url($user->id),
-                      "user_name" => HTML::clean($user->name))));
-  }
-
-  /**
-   * Process a login failure.  This is intended as a callback after failing validation.
-   * As such, this function performs no validation of its own.
-   *
-   * @param string $name
-   */
-  protected static function _login_failed($name) {
-    GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
-    static::_record_failed_attempt($name);
-    Module::event("user_auth_failed", $name);
-  }
-
-  /**
-   * Process a re-authenticate failure.  This is intended as a callback after failing validation.
-   * As such, this function performs no validation of its own.
-   *
-   * @param string $name
-   */
-  protected static function _reauthenticate_failed($name) {
-    GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
-    static::_record_failed_attempt($name);
-    Module::event("user_auth_failed", $name);
-  }
-
-  /**
    * Validate a login attempt, and add error messages or run callbacks as needed.
    *
    * @param  Validation $v        validation object (":validation")
@@ -141,6 +61,86 @@ class Gallery_Auth {
         $v->error($field, "invalid");
       }
     }
+  }
+
+  /**
+   * Logout a user.  Unlike login and re-authenticate, little validation is needed for logout
+   * aside from CSRF, so controllers can call this function directly.
+   *
+   * @param object $user
+   */
+  static function logout() {
+    $user = Identity::active_user();
+    if (!$user->guest) {
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        Log::instance()->add(Log::ERROR, $e);
+      }
+      Module::event("user_logout", $user);
+    }
+    GalleryLog::info("user", t("User %name logged out", array("name" => $user->name)),
+              t('<a href="%url">%user_name</a>',
+                array("url" => UserProfile::url($user->id),
+                      "user_name" => HTML::clean($user->name))));
+  }
+
+  /**
+   * Login a user.  This is intended as a callback after passing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param object $user
+   */
+  protected static function _login($user) {
+    Identity::set_active_user($user);
+    if (Identity::is_writable()) {
+      $user->login_count += 1;
+      $user->last_login = time();
+      $user->save();
+    }
+    GalleryLog::info("user", t("User %name logged in", array("name" => $user->name)));
+    Session::instance()->set("active_auth_timestamp", time());
+    static::_clear_failed_attempts($user);
+    Module::event("user_login", $user);
+  }
+
+  /**
+   * Reauthenticate a user.  This is intended as a callback after passing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param object $user
+   */
+  protected static function _reauthenticate($user) {
+    if (!Request::current()->is_ajax()) {
+      Message::success(t("Successfully re-authenticated!"));
+    }
+    Session::instance()->set("active_auth_timestamp", time());
+    static::_clear_failed_attempts($user);
+    Module::event("user_auth", $user);
+  }
+
+  /**
+   * Process a login failure.  This is intended as a callback after failing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param string $name
+   */
+  protected static function _login_failed($name) {
+    GalleryLog::warning("user", t("Failed login for %name", array("name" => $name)));
+    static::_record_failed_attempt($name);
+    Module::event("user_auth_failed", $name);
+  }
+
+  /**
+   * Process a re-authenticate failure.  This is intended as a callback after failing validation.
+   * As such, this function performs no validation of its own.
+   *
+   * @param string $name
+   */
+  protected static function _reauthenticate_failed($name) {
+    GalleryLog::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
+    static::_record_failed_attempt($name);
+    Module::event("user_auth_failed", $name);
   }
 
   /**
