@@ -399,46 +399,48 @@ class Gallery_Hook_GalleryTask {
       switch ($state) {
       case self::FIX_STATE_START_MPTT:
         $task->set_data("ptr", $ptr = 1);
-        $task->set_data("stack", Item::root()->id . ":album:1:L");
+        $task->set_data("stack", Item::root()->id . "L1");
         $state = self::FIX_STATE_RUN_MPTT;
         break;
 
       case self::FIX_STATE_RUN_MPTT:
         $ptr = $task->get_data("ptr");
         $stack = explode(" ", $task->get_data("stack"));
-        list ($id, $type, $level, $ptr_mode) = explode(":", array_pop($stack));
-        if ($ptr_mode == "L") {
-          if ($type == "album") {
-            // Albums could be parent nodes.
-            $stack[] = "$id:$type:$level:R";
-            DB::update("items")
-              ->set(array("left_ptr" => $ptr++))
-              ->where("id", "=", $id)
-              ->execute();
+        preg_match("/([0-9]+)([A-Z])([0-9]+)/", array_pop($stack), $matches);  // e.g. "12345L10"
+        list ( , $id, $ptr_mode, $level) = $matches;  // Skip the 0th entry of matches.
+        switch ($ptr_mode) {
+        case "L":
+          // Albums could be parent nodes.
+          $stack[] = "{$id}R{$level}";
+          DB::update("items")
+            ->set(array("left_ptr" => $ptr++))
+            ->where("id", "=", $id)
+            ->execute();
 
-            $level++;
-            foreach (DB::select("id", "type")
-                     ->from("items")
-                     ->where("parent_id", "=", $id)
-                     ->order_by("left_ptr", "DESC") // DESC since array_pop effectively reverses them
-                     ->as_object()
-                     ->execute() as $child) {
-              $stack[] = "{$child->id}:{$child->type}:$level:L";
-            }
-            $completed++;
-          } else {
-            // Non-albums must be leaf nodes.
-            DB::update("items")
-              ->set(array("left_ptr" => $ptr++,
-                          "right_ptr" => $ptr++,
-                          "level" => $level,
-                          "relative_path_cache" => null,
-                          "relative_url_cache" => null))
-              ->where("id", "=", $id)
-              ->execute();
-            $completed += 2;  // we updated two pointers
+          $level++;
+          foreach (DB::select("id", "type")
+                   ->from("items")
+                   ->where("parent_id", "=", $id)
+                   ->order_by("left_ptr", "DESC") // DESC since array_pop effectively reverses them
+                   ->as_object()
+                   ->execute() as $child) {
+            $stack[] = ($child->type == "album") ? "{$child->id}L{$level}" : "{$child->id}B{$level}";
           }
-        } else if ($ptr_mode == "R") {
+          $completed++;
+          break;
+        case "B":
+          // Non-albums must be leaf nodes.
+          DB::update("items")
+            ->set(array("left_ptr" => $ptr++,
+                        "right_ptr" => $ptr++,
+                        "level" => $level,
+                        "relative_path_cache" => null,
+                        "relative_url_cache" => null))
+            ->where("id", "=", $id)
+            ->execute();
+          $completed += 2;  // we updated two pointers
+          break;
+        case "R":
           DB::update("items")
             ->set(array("right_ptr" => $ptr++,
                         "level" => $level,
