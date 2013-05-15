@@ -77,11 +77,11 @@ class Gallery_BlockManager {
   }
 
   static function get_available_admin_blocks() {
-    return self::_get_blocks("get_admin_list");
+    return static::_get_blocks("get_admin_list");
   }
 
   static function get_available_site_blocks() {
-    return self::_get_blocks("get_site_list");
+    return static::_get_blocks("get_site_list");
   }
 
   protected static function _get_blocks($function) {

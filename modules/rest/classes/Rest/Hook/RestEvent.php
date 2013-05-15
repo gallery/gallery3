@@ -49,7 +49,7 @@ class Rest_Hook_RestEvent {
    * Called when admin is editing a user
    */
   static function user_edit_form_admin($user, $form) {
-    self::_get_access_key_form($user, $form);
+    static::_get_access_key_form($user, $form);
   }
 
   /**

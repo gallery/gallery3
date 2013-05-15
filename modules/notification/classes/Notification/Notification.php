@@ -91,7 +91,7 @@ class Notification_Notification {
   }
 
   static function send_item_updated($original, $item) {
-    foreach (self::get_subscribers($item) as $email => $locale) {
+    foreach (static::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/item_updated.html");
       $v->original = $original;
       $v->item = $item;
@@ -100,13 +100,13 @@ class Notification_Notification {
         ($item->is_photo() ?
          t("Photo \"%title\" updated", array("title" => $original->title, "locale" => $locale))
          : t("Movie \"%title\" updated", array("title" => $original->title, "locale" => $locale)));
-      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+      static::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
   static function send_item_add($item) {
     $parent = $item->parent;
-    foreach (self::get_subscribers($item) as $email => $locale) {
+    foreach (static::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/item_added.html");
       $v->item = $item;
       $v->subject = $item->is_album() ?
@@ -117,13 +117,13 @@ class Notification_Notification {
            array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
          t("Movie \"%title\" added to \"%parent_title\"",
            array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)));
-      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+      static::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
   static function send_item_deleted($item) {
     $parent = $item->parent;
-    foreach (self::get_subscribers($item) as $email => $locale) {
+    foreach (static::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/item_deleted.html");
       $v->item = $item;
       $v->subject = $item->is_album() ?
@@ -135,13 +135,13 @@ class Notification_Notification {
          : t("Movie \"%title\" removed from \"%parent_title\"",
              array("title" => $item->title, "parent_title" => $parent->title,
                    "locale" => $locale)));
-      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+      static::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
   static function send_comment_published($comment) {
     $item = $comment->item;
-    foreach (self::get_subscribers($item) as $email => $locale) {
+    foreach (static::get_subscribers($item) as $email => $locale) {
       $v = new View("notification/comment_published.html");
       $v->comment = $comment;
       $v->subject = $item->is_album() ?
@@ -152,7 +152,7 @@ class Notification_Notification {
          array("title" => $item->title, "locale" => $locale))
        : t("A new comment was published for movie \"%title\"",
            array("title" => $item->title, "locale" => $locale)));
-      self::_notify($email, $locale, $item, $v->render(), $v->subject);
+      static::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 

@@ -112,7 +112,7 @@ class Gallery_L10nScanner {
       if ($parens == "(") {
         if (in_array($next_token, array(")", ","))
             && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {
-          $message = self::_escape_quoted_string($first_param[1]);
+          $message = static::_escape_quoted_string($first_param[1]);
           L10nScanner::process_message($message, $cache);
         } else {
           if (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING)) {
@@ -142,8 +142,8 @@ class Gallery_L10nScanner {
         if ($first_separator == "," && $next_token == ","
             && is_array($first_param) && $first_param[0] == T_CONSTANT_ENCAPSED_STRING
             && is_array($second_param) && $second_param[0] == T_CONSTANT_ENCAPSED_STRING) {
-          $singular = self::_escape_quoted_string($first_param[1]);
-          $plural = self::_escape_quoted_string($second_param[1]);
+          $singular = static::_escape_quoted_string($first_param[1]);
+          $plural = static::_escape_quoted_string($second_param[1]);
           L10nScanner::process_message(array("one" => $singular, "other" => $plural), $cache);
         } else {
           if (is_array($first_param) && $first_param[0] == T_CONSTANT_ENCAPSED_STRING) {

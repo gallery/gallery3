@@ -46,7 +46,7 @@ class Xss_Security_Test extends Unittest_TestCase {
           $inline_html = $token[1];
           // T_INLINE_HTML blocks can be split. Need to handle the case
           // where one token has "<scr" and the next has "ipt"
-          while (self::_token_matches(array(T_INLINE_HTML), $tokens, $token_number + 1)) {
+          while (static::_token_matches(array(T_INLINE_HTML), $tokens, $token_number + 1)) {
             $token_number++;
             $token = $tokens[$token_number];
             $inline_html .= $token[1];
@@ -124,7 +124,7 @@ class Xss_Security_Test extends Unittest_TestCase {
           }
         } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
           // No need for a stack here - assume < ? = cannot be nested.
-          $frame = self::_create_frame($token, $in_script_block,
+          $frame = static::_create_frame($token, $in_script_block,
                                        $href_attribute_start, $in_attribute_js_context,
                                        $in_attribute, $preceded_by_quote);
           $href_attribute_start = false;
@@ -135,8 +135,8 @@ class Xss_Security_Test extends Unittest_TestCase {
         } else if ($frame && $token[0] == T_VARIABLE) {
           $frame->expr_append($token[1]);
           if ($token[1] == '$theme') {
-            if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (static::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
+                static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1],
                          array("thumb_proportion", "site_menu", "album_menu", "tag_menu", "photo_menu",
                                "context_menu", "pager", "site_status", "messages", "album_blocks",
@@ -146,7 +146,7 @@ class Xss_Security_Test extends Unittest_TestCase {
                                "photo_top", "resize_bottom", "resize_top", "sidebar_blocks", "sidebar_bottom",
                                "sidebar_top", "thumb_bottom", "thumb_info", "thumb_top",
                                "movie_menu")) &&
-                self::_token_matches("(", $tokens, $token_number + 3)) {
+                static::_token_matches("(", $tokens, $token_number + 3)) {
 
               $method = $tokens[$token_number + 2][1];
               $frame->expr_append("->$method(");
@@ -155,13 +155,13 @@ class Xss_Security_Test extends Unittest_TestCase {
               $token = $tokens[$token_number];
 
               $frame->is_safe_html(true);
-            } else if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
-                       self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            } else if (static::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
+                       static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
                        in_array($tokens[$token_number + 2][1],
                                 array("css", "script", "url")) &&
-                       self::_token_matches("(", $tokens, $token_number + 3) &&
+                       static::_token_matches("(", $tokens, $token_number + 3) &&
                        // Only allow constant strings here
-                       self::_token_matches(array(T_CONSTANT_ENCAPSED_STRING), $tokens, $token_number + 4)) {
+                       static::_token_matches(array(T_CONSTANT_ENCAPSED_STRING), $tokens, $token_number + 4)) {
 
               $method = $tokens[$token_number + 2][1];
               $frame->expr_append("->$method(");
@@ -176,7 +176,7 @@ class Xss_Security_Test extends Unittest_TestCase {
           $frame->expr_append($token[1]);
           // t() and t2() are special in that they're guaranteed to return a SafeString().
           if (in_array($token[1], array("t", "t2"))) {
-            if (self::_token_matches("(", $tokens, $token_number + 1)) {
+            if (static::_token_matches("(", $tokens, $token_number + 1)) {
               $frame->is_safe_html(true);
               $frame->expr_append("(");
 
@@ -185,10 +185,10 @@ class Xss_Security_Test extends Unittest_TestCase {
             }
           } else if ($token[1] == "SafeString") {
             // Looking for SafeString::of(...
-            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1], array("of", "purify")) &&
-                self::_token_matches("(", $tokens, $token_number + 3)) {
+                static::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for of_safe_html(). We want such calls to be marked dirty (thus reviewed).
 
               $frame->is_safe_html(true);
@@ -200,7 +200,7 @@ class Xss_Security_Test extends Unittest_TestCase {
               $token = $tokens[$token_number];
             }
           } else if ($token[1] == "json_encode") {
-            if (self::_token_matches("(", $tokens, $token_number + 1)) {
+            if (static::_token_matches("(", $tokens, $token_number + 1)) {
               $frame->is_safe_js(true);
               $frame->expr_append("(");
 
@@ -209,12 +209,12 @@ class Xss_Security_Test extends Unittest_TestCase {
             }
           } else if ($token[1] == "url") {
             // url methods return safe HTML
-            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1],
                          array("site", "current", "base", "file", "abs_site", "abs_current",
                                "abs_file", "merge")) &&
-                self::_token_matches("(", $tokens, $token_number + 3)) {
+                static::_token_matches("(", $tokens, $token_number + 3)) {
               $frame->is_safe_html(true);
               $frame->is_safe_href_attr(true);
               $frame->is_safe_attr(true);
@@ -226,11 +226,11 @@ class Xss_Security_Test extends Unittest_TestCase {
               $token = $tokens[$token_number];
             }
           } else if ($token[1] == "html") {
-            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1],
                          array("clean", "purify", "js_string", "clean_attribute")) &&
-                self::_token_matches("(", $tokens, $token_number + 3)) {
+                static::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for mark_clean(). We want such calls to be marked dirty (thus reviewed).
 
               $method = $tokens[$token_number + 2][1];
@@ -252,10 +252,10 @@ class Xss_Security_Test extends Unittest_TestCase {
         } else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
           $frame->expr_append($token[1]);
 
-          if (self::_token_matches(array(T_STRING), $tokens, $token_number + 1) &&
+          if (static::_token_matches(array(T_STRING), $tokens, $token_number + 1) &&
               in_array($tokens[$token_number + 1][1],
                        array("for_js", "for_html", "purified_html", "for_html_attr")) &&
-              self::_token_matches("(", $tokens, $token_number + 2)) {
+              static::_token_matches("(", $tokens, $token_number + 2)) {
             $method = $tokens[$token_number + 1][1];
             $frame->expr_append("$method(");
 

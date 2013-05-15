@@ -360,7 +360,7 @@ class Gallery_Hook_GalleryTask {
       // one operation for each dupe slug, dupe name, dupe base name, and missing access cache
       foreach (array("find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
                      "find_missing_access_caches") as $func) {
-        foreach (self::$func() as $row) {
+        foreach (static::$func() as $row) {
           $total++;
         }
       }
@@ -369,7 +369,7 @@ class Gallery_Hook_GalleryTask {
       $total += 1 * $item_count;
 
       $task->set_data("total", $total);
-      $task->set_data("state", $state = self::FIX_STATE_START_MPTT);
+      $task->set_data("state", $state = static::FIX_STATE_START_MPTT);
       $task->set_data("ptr", 1);
       $task->set_data("completed", 0);
     }
@@ -395,50 +395,52 @@ class Gallery_Hook_GalleryTask {
     // NOTE: the MPTT check will only traverse items that have valid parents.  It's possible that
     // we have some tree corruption where there are items with parent ids to non-existent items.
     // We should probably do something about that.
-    while ($state != self::FIX_STATE_DONE && microtime(true) - $start < 1.5) {
+    while ($state != static::FIX_STATE_DONE && microtime(true) - $start < 1.5) {
       switch ($state) {
-      case self::FIX_STATE_START_MPTT:
+      case static::FIX_STATE_START_MPTT:
         $task->set_data("ptr", $ptr = 1);
-        $task->set_data("stack", Item::root()->id . ":album:1:L");
-        $state = self::FIX_STATE_RUN_MPTT;
+        $task->set_data("stack", Item::root()->id . "L1");
+        $state = static::FIX_STATE_RUN_MPTT;
         break;
 
-      case self::FIX_STATE_RUN_MPTT:
+      case static::FIX_STATE_RUN_MPTT:
         $ptr = $task->get_data("ptr");
         $stack = explode(" ", $task->get_data("stack"));
-        list ($id, $type, $level, $ptr_mode) = explode(":", array_pop($stack));
-        if ($ptr_mode == "L") {
-          if ($type == "album") {
-            // Albums could be parent nodes.
-            $stack[] = "$id:$type:$level:R";
-            DB::update("items")
-              ->set(array("left_ptr" => $ptr++))
-              ->where("id", "=", $id)
-              ->execute();
+        preg_match("/([0-9]+)([A-Z])([0-9]+)/", array_pop($stack), $matches);  // e.g. "12345L10"
+        list ( , $id, $ptr_mode, $level) = $matches;  // Skip the 0th entry of matches.
+        switch ($ptr_mode) {
+        case "L":
+          // Albums could be parent nodes.
+          $stack[] = "{$id}R{$level}";
+          DB::update("items")
+            ->set(array("left_ptr" => $ptr++))
+            ->where("id", "=", $id)
+            ->execute();
 
-            $level++;
-            foreach (DB::select("id", "type")
-                     ->from("items")
-                     ->where("parent_id", "=", $id)
-                     ->order_by("left_ptr", "DESC") // DESC since array_pop effectively reverses them
-                     ->as_object()
-                     ->execute() as $child) {
-              $stack[] = "{$child->id}:{$child->type}:$level:L";
-            }
-            $completed++;
-          } else {
-            // Non-albums must be leaf nodes.
-            DB::update("items")
-              ->set(array("left_ptr" => $ptr++,
-                          "right_ptr" => $ptr++,
-                          "level" => $level,
-                          "relative_path_cache" => null,
-                          "relative_url_cache" => null))
-              ->where("id", "=", $id)
-              ->execute();
-            $completed += 2;  // we updated two pointers
+          $level++;
+          foreach (DB::select("id", "type")
+                   ->from("items")
+                   ->where("parent_id", "=", $id)
+                   ->order_by("left_ptr", "DESC") // DESC since array_pop effectively reverses them
+                   ->as_object()
+                   ->execute() as $child) {
+            $stack[] = ($child->type == "album") ? "{$child->id}L{$level}" : "{$child->id}B{$level}";
           }
-        } else if ($ptr_mode == "R") {
+          $completed++;
+          break;
+        case "B":
+          // Non-albums must be leaf nodes.
+          DB::update("items")
+            ->set(array("left_ptr" => $ptr++,
+                        "right_ptr" => $ptr++,
+                        "level" => $level,
+                        "relative_path_cache" => null,
+                        "relative_url_cache" => null))
+            ->where("id", "=", $id)
+            ->execute();
+          $completed += 2;  // we updated two pointers
+          break;
+        case "R":
           DB::update("items")
             ->set(array("right_ptr" => $ptr++,
                         "level" => $level,
@@ -452,26 +454,26 @@ class Gallery_Hook_GalleryTask {
         $task->set_data("stack", implode(" ", $stack));
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_DUPE_SLUGS;
+          $state = static::FIX_STATE_START_DUPE_SLUGS;
         }
         break;
 
 
-      case self::FIX_STATE_START_DUPE_SLUGS:
+      case static::FIX_STATE_START_DUPE_SLUGS:
         $stack = array();
-        foreach (self::find_dupe_slugs() as $row) {
+        foreach (static::find_dupe_slugs() as $row) {
           list ($parent_id, $slug) = explode(":", $row->parent_slug, 2);
           $stack[] = join(":", array($parent_id, $slug));
         }
         if ($stack) {
           $task->set_data("stack", implode(" ", $stack));
-          $state = self::FIX_STATE_RUN_DUPE_SLUGS;
+          $state = static::FIX_STATE_RUN_DUPE_SLUGS;
         } else {
-          $state = self::FIX_STATE_START_DUPE_NAMES;
+          $state = static::FIX_STATE_START_DUPE_NAMES;
         }
         break;
 
-      case self::FIX_STATE_RUN_DUPE_SLUGS:
+      case static::FIX_STATE_RUN_DUPE_SLUGS:
         $stack = explode(" ", $task->get_data("stack"));
         list ($parent_id, $slug) = explode(":", array_pop($stack));
 
@@ -500,25 +502,25 @@ class Gallery_Hook_GalleryTask {
         $completed++;
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_DUPE_NAMES;
+          $state = static::FIX_STATE_START_DUPE_NAMES;
         }
         break;
 
-      case self::FIX_STATE_START_DUPE_NAMES:
+      case static::FIX_STATE_START_DUPE_NAMES:
         $stack = array();
-        foreach (self::find_dupe_names() as $row) {
+        foreach (static::find_dupe_names() as $row) {
           list ($parent_id, $name) = explode(":", $row->parent_name, 2);
           $stack[] = join(":", array($parent_id, $name));
         }
         if ($stack) {
           $task->set_data("stack", implode(" ", $stack));
-          $state = self::FIX_STATE_RUN_DUPE_NAMES;
+          $state = static::FIX_STATE_RUN_DUPE_NAMES;
         } else {
-          $state = self::FIX_STATE_START_DUPE_BASE_NAMES;
+          $state = static::FIX_STATE_START_DUPE_BASE_NAMES;
         }
         break;
 
-      case self::FIX_STATE_RUN_DUPE_NAMES:
+      case static::FIX_STATE_RUN_DUPE_NAMES:
         // NOTE: This does *not* attempt to fix the file system!
         $stack = explode(" ", $task->get_data("stack"));
         list ($parent_id, $name) = explode(":", array_pop($stack));
@@ -556,25 +558,25 @@ class Gallery_Hook_GalleryTask {
         $completed++;
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_DUPE_BASE_NAMES;
+          $state = static::FIX_STATE_START_DUPE_BASE_NAMES;
         }
         break;
 
-      case self::FIX_STATE_START_DUPE_BASE_NAMES:
+      case static::FIX_STATE_START_DUPE_BASE_NAMES:
         $stack = array();
-        foreach (self::find_dupe_base_names() as $row) {
+        foreach (static::find_dupe_base_names() as $row) {
           list ($parent_id, $base_name) = explode(":", $row->parent_base_name, 2);
           $stack[] = join(":", array($parent_id, $base_name));
         }
         if ($stack) {
           $task->set_data("stack", implode(" ", $stack));
-          $state = self::FIX_STATE_RUN_DUPE_BASE_NAMES;
+          $state = static::FIX_STATE_RUN_DUPE_BASE_NAMES;
         } else {
-          $state = self::FIX_STATE_START_ALBUMS;
+          $state = static::FIX_STATE_START_ALBUMS;
         }
         break;
 
-      case self::FIX_STATE_RUN_DUPE_BASE_NAMES:
+      case static::FIX_STATE_RUN_DUPE_BASE_NAMES:
         // NOTE: This *does* attempt to fix the file system!  So, it must go *after* run_dupe_names.
         $stack = explode(" ", $task->get_data("stack"));
         list ($parent_id, $base_name) = explode(":", array_pop($stack));
@@ -625,11 +627,11 @@ class Gallery_Hook_GalleryTask {
         $completed++;
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_ALBUMS;
+          $state = static::FIX_STATE_START_ALBUMS;
         }
         break;
 
-      case self::FIX_STATE_START_ALBUMS:
+      case static::FIX_STATE_START_ALBUMS:
         $stack = array();
         foreach (DB::select("id")
                  ->from("items")
@@ -639,10 +641,10 @@ class Gallery_Hook_GalleryTask {
           $stack[] = $row->id;
         }
         $task->set_data("stack", implode(" ", $stack));
-        $state = self::FIX_STATE_RUN_ALBUMS;
+        $state = static::FIX_STATE_RUN_ALBUMS;
         break;
 
-      case self::FIX_STATE_RUN_ALBUMS:
+      case static::FIX_STATE_RUN_ALBUMS:
         $stack = explode(" ", $task->get_data("stack"));
         $id = array_pop($stack);
 
@@ -670,20 +672,20 @@ class Gallery_Hook_GalleryTask {
         $completed++;
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_REBUILD_ITEM_CACHES;
+          $state = static::FIX_STATE_START_REBUILD_ITEM_CACHES;
         }
         break;
 
-      case self::FIX_STATE_START_REBUILD_ITEM_CACHES:
+      case static::FIX_STATE_START_REBUILD_ITEM_CACHES:
         $stack = array();
-        foreach (self::find_empty_item_caches(500) as $row) {
+        foreach (static::find_empty_item_caches(500) as $row) {
           $stack[] = $row->id;
         }
         $task->set_data("stack", implode(" ", $stack));
-        $state = self::FIX_STATE_RUN_REBUILD_ITEM_CACHES;
+        $state = static::FIX_STATE_RUN_REBUILD_ITEM_CACHES;
         break;
 
-      case self::FIX_STATE_RUN_REBUILD_ITEM_CACHES:
+      case static::FIX_STATE_RUN_REBUILD_ITEM_CACHES:
         $stack = explode(" ", $task->get_data("stack"));
         if (!empty($stack)) {
           $id = array_pop($stack);
@@ -695,27 +697,27 @@ class Gallery_Hook_GalleryTask {
 
         if (empty($stack)) {
           // Try refilling the stack
-          foreach (self::find_empty_item_caches(500) as $row) {
+          foreach (static::find_empty_item_caches(500) as $row) {
             $stack[] = $row->id;
           }
           $task->set_data("stack", implode(" ", $stack));
 
           if (empty($stack)) {
-            $state = self::FIX_STATE_START_MISSING_ACCESS_CACHES;
+            $state = static::FIX_STATE_START_MISSING_ACCESS_CACHES;
           }
         }
         break;
 
-      case self::FIX_STATE_START_MISSING_ACCESS_CACHES:
+      case static::FIX_STATE_START_MISSING_ACCESS_CACHES:
         $stack = array();
-        foreach (self::find_missing_access_caches_limited(500) as $row) {
+        foreach (static::find_missing_access_caches_limited(500) as $row) {
           $stack[] = $row->id;
         }
         $task->set_data("stack", implode(" ", $stack));
-        $state = self::FIX_STATE_RUN_MISSING_ACCESS_CACHES;
+        $state = static::FIX_STATE_RUN_MISSING_ACCESS_CACHES;
         break;
 
-      case self::FIX_STATE_RUN_MISSING_ACCESS_CACHES:
+      case static::FIX_STATE_RUN_MISSING_ACCESS_CACHES:
         $stack = array_filter(explode(" ", $task->get_data("stack"))); // filter removes empty/zero ids
         if (!empty($stack)) {
           $id = array_pop($stack);
@@ -728,7 +730,7 @@ class Gallery_Hook_GalleryTask {
 
         if (empty($stack)) {
           // Try refilling the stack
-          foreach (self::find_missing_access_caches_limited(500) as $row) {
+          foreach (static::find_missing_access_caches_limited(500) as $row) {
             $stack[] = $row->id;
           }
           $task->set_data("stack", implode(" ", $stack));
@@ -738,7 +740,7 @@ class Gallery_Hook_GalleryTask {
             // them.  If this turns out to be too slow, we'll have to refactor
             // Access::recalculate_permissions to allow us to do it in slices.
             Access::recalculate_album_permissions(Item::root());
-            $state = self::FIX_STATE_DONE;
+            $state = static::FIX_STATE_DONE;
           }
         }
         break;
@@ -748,7 +750,7 @@ class Gallery_Hook_GalleryTask {
     $task->set_data("state", $state);
     $task->set_data("completed", $completed);
 
-    if ($state == self::FIX_STATE_DONE) {
+    if ($state == static::FIX_STATE_DONE) {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
@@ -813,7 +815,7 @@ class Gallery_Hook_GalleryTask {
   }
 
   static function find_missing_access_caches() {
-    return self::find_missing_access_caches_limited(1 << 16);
+    return static::find_missing_access_caches_limited(1 << 16);
   }
 
   static function find_missing_access_caches_limited($limit) {

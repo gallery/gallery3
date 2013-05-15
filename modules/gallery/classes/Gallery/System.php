@@ -97,14 +97,14 @@ class Gallery_System {
    * the deletion time until shutdown to keep page load time quick.
    */
   static function delete_later($filename) {
-    self::$files_marked_for_deletion[] = $filename;
+    static::$files_marked_for_deletion[] = $filename;
   }
 
   /**
    * Delete all files marked using System::delete_later.  This is called at gallery shutdown.
    */
   static function delete_marked_files() {
-    foreach (self::$files_marked_for_deletion as $filename) {
+    foreach (static::$files_marked_for_deletion as $filename) {
       // We want to suppress all errors, as it's possible that some of these
       // files may have been deleted/moved before we got here.
       @unlink($filename);

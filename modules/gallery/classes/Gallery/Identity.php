@@ -26,16 +26,16 @@ class Gallery_Identity {
    * @return boolean true if the driver supports updates; false if read only
    */
   static function providers() {
-    if (empty(self::$available)) {
+    if (empty(static::$available)) {
       $drivers = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
       foreach (Module::available() as $module_name => $module) {
         if (file_exists(MODPATH . "{$module_name}/config/identity.php")) {
           $drivers->$module_name = $module->description;
         }
       }
-      self::$available = $drivers;
+      static::$available = $drivers;
     }
-    return self::$available;
+    return static::$available;
   }
 
   /**
@@ -67,6 +67,10 @@ class Gallery_Identity {
       // upconvert into a user.
       // @todo set the user name into the session instead of 2 and then use it to get the
       //       user object
+      // @todo: In K3, the sessions work differently and the web installer's auto-login no longer
+      // works.  We should take this as an opportunity to replace this method entirely, as it is the
+      // only place in the code we login a user without verifying their password.  One possibility
+      // is to login via a post request, just like Controller_Rest::index().
       if ($user === 2) {
         $session->delete("user");  // delete it so that identity code isn't confused by the integer
         Auth::login(IdentityProvider::instance()->admin_user());

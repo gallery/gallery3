@@ -21,8 +21,8 @@ define("DOCROOT", dirname(dirname(__FILE__)) . "/");
 define("VARPATH", DOCROOT . "var/");
 define("SYSPATH", "DEFINED_TO_SOMETHING_SO_THAT_WE_CAN_KEEP_CONSISTENT_PREAMBLES_IN_THE_INSTALLER");
 
-if (version_compare(PHP_VERSION, "5.2.3", "<")) {
-  print "Gallery 3 requires PHP 5.2.3 or newer.\n";
+if (version_compare(PHP_VERSION, "5.3.3", "<")) {
+  print "Gallery 3 requires PHP 5.3.3 or newer.\n";
   exit;
 }
 
