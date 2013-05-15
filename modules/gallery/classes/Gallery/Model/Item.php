@@ -942,6 +942,18 @@ class Gallery_Model_Item extends ORM_MPTT {
     }
 
     if ($this->parent_id == 1 && Kohana::auto_load("Controller_{$this->slug}")) {
+      // @todo: revise this to look for routes instead of just controller names.  It seems that
+      // it should use Request::process() (*not* execute()) and Route::name() like:
+      //   $processed = Request::factory($this->slug)->process();
+      //   if ($processed) {
+      //     $route = $processed[1];
+      //     if ($route->name() != "item") {
+      //       $v->error("slug, "reserved")
+      //     }
+      //   }
+      // ... but I wonder if this will allow an album named "items" (which has no index),
+      // then raise issue when it gets a photo called "show", i.e. "items/show".  One solution
+      // is to put an empty action_index() in the Controller class, but that seems like a hack...
       $v->error("slug", "reserved");
       return;
     }
