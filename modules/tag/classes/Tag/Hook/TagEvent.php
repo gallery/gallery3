@@ -85,7 +85,7 @@ class Tag_Hook_TagEvent {
     }
     $form->add_before_submit("tags", "input", implode(", ", $tag_names));
     $form->find("tags")->set("label", t("Tags (comma separated)"));
-    $form->add_script_text(self::_get_autocomplete_js());
+    $form->add_script_text(static::_get_autocomplete_js());
   }
 
   static function item_edit_form_completed($item, $form) {
@@ -102,7 +102,7 @@ class Tag_Hook_TagEvent {
   static function item_add_form($parent, $form) {
     $form->add_before_submit("tags", "input");
     $form->find("tags")->set("label", t("Add tags to all uploaded files"));
-    $form->add_script_text(self::_get_autocomplete_js());
+    $form->add_script_text(static::_get_autocomplete_js());
   }
 
   static function item_add_form_completed($item, $form) {

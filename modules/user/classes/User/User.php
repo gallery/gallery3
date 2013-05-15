@@ -91,7 +91,7 @@ class User_User {
   }
 
   static function valid_username($text_input) {
-    if (!self::lookup_by_name($text_input->value)) {
+    if (!static::lookup_by_name($text_input->value)) {
       $text_input->add_error("invalid_username", 1);
     }
   }
@@ -113,7 +113,7 @@ class User_User {
    * @return Model_User  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return self::_lookup_user_by_field("id", $id);
+    return static::_lookup_user_by_field("id", $id);
   }
 
   /**
@@ -122,7 +122,7 @@ class User_User {
    * @return Model_User  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    return self::_lookup_user_by_field("name", $name);
+    return static::_lookup_user_by_field("name", $name);
   }
 
   /**
@@ -131,7 +131,7 @@ class User_User {
    * @return Model_User  the user object, or null if the name was invalid.
    */
   static function lookup_by_hash($hash) {
-    return self::_lookup_user_by_field("hash", $hash);
+    return static::_lookup_user_by_field("hash", $hash);
   }
 
   /**

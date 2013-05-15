@@ -57,7 +57,7 @@ class Purifier {
     if ($config_group == "default") {
       throw new Gallery_Exception("Cannot change default Purifier config group");
     }
-    self::$_config[$config_group] = array_merge(self::$_config["default"], $settings);
+    static::$_config[$config_group] = array_merge(static::$_config["default"], $settings);
   }
 
   /**
@@ -73,8 +73,8 @@ class Purifier {
    */
   public static function clean_html($html, $config_group="default") {
     // Initialize HTMLPurifier if needed.
-    if (!isset(self::$_purifier[$config_group])) {
-      self::_init($config_group);
+    if (!isset(static::$_purifier[$config_group])) {
+      static::_init($config_group);
     }
 
     // Ensure that null/false/0 are returned as such (HTMLPurifier would return "" instead).
@@ -85,12 +85,12 @@ class Purifier {
     // Recurse if needed.
     if (is_array($html) || is_object($html)) {
       foreach ($html as $key => $value) {
-        $html[$key] = self::clean_html($value, $config_group);
+        $html[$key] = static::clean_html($value, $config_group);
       }
       return $html;
     }
 
-    return self::$_purifier[$config_group]->purify($html);
+    return static::$_purifier[$config_group]->purify($html);
   }
 
   /**
@@ -148,14 +148,14 @@ class Purifier {
    * Initialize an instance of HTMLPurifier and load the library if needed.
    */
   protected static function _init($config_group) {
-    if (empty(self::$_purifier)) {
+    if (empty(static::$_purifier)) {
       // To further reinforce the fact that the purifier module cannot be overridden,
       // the library path is hard-coded and doesn't use Kohana::find_file().
       require MODPATH . "purifier/vendor/htmlpurifier/HTMLPurifier.standalone.php";
 
       // Set our default configuration.  We can't set the default configuration in a
       // static variable declaration since we use Kohana::$cache_dir.
-      self::$_config = array(
+      static::$_config = array(
         "default" => array(
           "Cache.SerializerPath" => Kohana::$cache_dir,
           "Attr.EnableID" => true
@@ -163,14 +163,14 @@ class Purifier {
       );
     }
 
-    if (!isset(self::$_config[$config_group])) {
+    if (!isset(static::$_config[$config_group])) {
       // Specified config group doesn't exist - throw an exception
       throw new Gallery_Exception(
         "Invalid Purifier config group. See Purifier::add_config_group()");
     }
 
     $config = HTMLPurifier_Config::createDefault();
-    $config->loadArray(self::$_config[$config_group]);
-    self::$_purifier[$config_group] = new HTMLPurifier($config);
+    $config->loadArray(static::$_config[$config_group]);
+    static::$_purifier[$config_group] = new HTMLPurifier($config);
   }
 }

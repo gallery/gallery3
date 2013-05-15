@@ -193,9 +193,9 @@ class G2Import_G2Import {
       }
 
       if ($g2_embed_location) {
-        self::$g2_base_url = $g2_embed_location;
+        static::$g2_base_url = $g2_embed_location;
       } else {
-        self::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
+        static::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
           array(),
           array("forceSessionId" => false,
                 "htmlEntities" => false,
@@ -288,7 +288,7 @@ class G2Import_G2Import {
   static function import_group(&$queue) {
     $messages = array();
     $g2_group_id = array_shift($queue);
-    if (self::map($g2_group_id)) {
+    if (static::map($g2_group_id)) {
       return;
     }
 
@@ -339,7 +339,7 @@ class G2Import_G2Import {
     }
 
     if (isset($group)) {
-      self::set_map($g2_group->getId(), $group->id, "group");
+      static::set_map($g2_group->getId(), $group->id, "group");
     }
 
     return $messages;
@@ -351,13 +351,13 @@ class G2Import_G2Import {
   static function import_user(&$queue) {
     $messages = array();
     $g2_user_id = array_shift($queue);
-    if (self::map($g2_user_id)) {
+    if (static::map($g2_user_id)) {
       return t("User with id: %id already imported, skipping",
                array("id" => $g2_user_id));
     }
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
-      self::set_map($g2_user_id, Identity::guest()->id, "group");
+      static::set_map($g2_user_id, Identity::guest()->id, "group");
       return t("Skipping anonymous user");
     }
 
@@ -410,7 +410,7 @@ class G2Import_G2Import {
         $user->admin = true;
         $messages[] = t("Added 'admin' flag to user");
       } else {
-        $group = Identity::lookup_group(self::map($g2_group_id));
+        $group = Identity::lookup_group(static::map($g2_group_id));
         $user->add($group);
         $messages[] = t("Added user to group '%group'.", array("group" => $group->name));
       }
@@ -418,7 +418,7 @@ class G2Import_G2Import {
 
     try {
       $user->save();
-      self::set_map($g2_user->getId(), $user->id, "user");
+      static::set_map($g2_user->getId(), $user->id, "user");
     } catch (Exception $e) {
       throw new G2Import_Exception(
           t("Failed to create user: '%name'", array("name" => $user->name)),
@@ -444,7 +444,7 @@ class G2Import_G2Import {
       $queue[$key] = $value;
     }
 
-    if (self::map($g2_album_id)) {
+    if (static::map($g2_album_id)) {
       return;
     }
 
@@ -459,11 +459,11 @@ class G2Import_G2Import {
     if ($g2_album->getParentId() == null) {
       $album = Item::root();
     } else {
-      $parent_album = ORM::factory("Item", self::map($g2_album->getParentId()));
+      $parent_album = ORM::factory("Item", static::map($g2_album->getParentId()));
 
       $album = ORM::factory("Item");
       $album->type = "album";
-      $album->parent_id = self::map($g2_album->getParentId());
+      $album->parent_id = static::map($g2_album->getParentId());
 
       G2Import::set_album_values($album, $g2_album);
 
@@ -476,15 +476,15 @@ class G2Import_G2Import {
             $e);
       }
 
-      self::import_keywords_as_tags($g2_album->getKeywords(), $album);
+      static::import_keywords_as_tags($g2_album->getKeywords(), $album);
     }
 
-    self::set_map(
+    static::set_map(
       $g2_album_id, $album->id,
       "album",
-      self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_album->getId())));
+      static::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_album->getId())));
 
-    self::_import_permissions($g2_album, $album);
+    static::_import_permissions($g2_album, $album);
   }
 
   /**
@@ -492,10 +492,10 @@ class G2Import_G2Import {
    */
   static function set_album_values($album, $g2_album) {
     $album->name = $g2_album->getPathComponent();
-    $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+    $album->title = static::_decode_html_special_chars($g2_album->getTitle());
     $album->title or $album->title = $album->name;
-    $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
-    $album->owner_id = self::map($g2_album->getOwnerId());
+    $album->description = static::_decode_html_special_chars(static::extract_description($g2_album));
+    $album->owner_id = static::map($g2_album->getOwnerId());
     try {
       $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album->getId()));
     } catch (Exception $e) {
@@ -551,7 +551,7 @@ class G2Import_G2Import {
     }
 
     $messages = array();
-    $g3_album_id = self::map($g2_album_id);
+    $g3_album_id = static::map($g2_album_id);
     if (!$g3_album_id) {
       return t("Album with id: %id not imported", array("id" => $g3_album_id));
     }
@@ -563,7 +563,7 @@ class G2Import_G2Import {
       while (GalleryUtilities::isA($g2_source, "GalleryDerivative")) {
         $g2_source = g2(GalleryCoreApi::loadEntitiesById($g2_source->getDerivativeSourceId()));
       }
-      $item_id = self::map($g2_source->getId());
+      $item_id = static::map($g2_source->getId());
       if ($item_id) {
         $item = ORM::factory("Item", $item_id);
         $g3_album = ORM::factory("Item", $g3_album_id);
@@ -584,10 +584,10 @@ class G2Import_G2Import {
               $e);
         }
 
-        self::set_map(
+        static::set_map(
           $orig_g2_source->getId(), $g3_album->id,
           "thumbnail",
-          self::g2_url(array("view" => "core.DownloadItem", "itemId" => $orig_g2_source->getId())));
+          static::g2_url(array("view" => "core.DownloadItem", "itemId" => $orig_g2_source->getId())));
       }
     }
   }
@@ -598,19 +598,19 @@ class G2Import_G2Import {
   static function import_item(&$queue) {
     $g2_item_id = array_shift($queue);
 
-    if (self::map($g2_item_id)) {
+    if (static::map($g2_item_id)) {
       return;
     }
 
     try {
-      self::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
+      static::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
       $g2_path = g2($g2_item->fetchPath());
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 item with id: %id\n%exception",
                array("id" => $g2_item_id, "exception" => (string)$e));
     }
 
-    $parent = ORM::factory("Item", self::map($g2_item->getParentId()));
+    $parent = ORM::factory("Item", static::map($g2_item->getParentId()));
 
     $g2_type = $g2_item->getEntityType();
     $corrupt = 0;
@@ -645,10 +645,10 @@ class G2Import_G2Import {
         $item->parent_id = $parent->id;
         $item->set_data_file($g2_path);
         $item->name = $g2_item->getPathComponent();
-        $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+        $item->title = static::_decode_html_special_chars($g2_item->getTitle());
         $item->title or $item->title = $item->name;
-        $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
-        $item->owner_id = self::map($g2_item->getOwnerId());
+        $item->description = static::_decode_html_special_chars(static::extract_description($g2_item));
+        $item->owner_id = static::map($g2_item->getOwnerId());
         $item->save();
 
         // If the item has a preferred derivative with a rotation, then rotate this image
@@ -684,10 +684,10 @@ class G2Import_G2Import {
           $item->parent_id = $parent->id;
           $item->set_data_file($g2_path);
           $item->name = $g2_item->getPathComponent();
-          $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+          $item->title = static::_decode_html_special_chars($g2_item->getTitle());
           $item->title or $item->title = $item->name;
-          $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
-          $item->owner_id = self::map($g2_item->getOwnerId());
+          $item->description = static::_decode_html_special_chars(static::extract_description($g2_item));
+          $item->owner_id = static::map($g2_item->getOwnerId());
           $item->save();
         } catch (Exception $e) {
           $exception_info = (string) new G2Import_Exception(
@@ -712,10 +712,10 @@ class G2Import_G2Import {
     }
 
     if (!empty($item)) {
-      self::import_keywords_as_tags($g2_item->getKeywords(), $item);
+      static::import_keywords_as_tags($g2_item->getKeywords(), $item);
     }
 
-    $g2_item_url = self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_item->getId()));
+    $g2_item_url = static::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_item->getId()));
     if (isset($item)) {
       try {
         $item->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
@@ -724,10 +724,10 @@ class G2Import_G2Import {
       }
       $item->save();
 
-      self::set_map($g2_item_id, $item->id, "item", $g2_item_url);
+      static::set_map($g2_item_id, $item->id, "item", $g2_item_url);
 
-      self::set_map($g2_item_id, $item->id, "file",
-                    self::g2_url(array("view" => "core.DownloadItem", "itemId" => $g2_item_id)));
+      static::set_map($g2_item_id, $item->id, "file",
+                    static::g2_url(array("view" => "core.DownloadItem", "itemId" => $g2_item_id)));
 
       $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
       if (!empty($derivatives[$g2_item_id])) {
@@ -738,10 +738,10 @@ class G2Import_G2Import {
           case DERIVATIVE_TYPE_IMAGE_PREFERRED: $resource_type = "full"; break;
           }
 
-          self::set_map(
+          static::set_map(
             $derivative->getId(), $item->id,
             $resource_type,
-            self::g2_url(array("view" => "core.DownloadItem", "itemId" => $derivative->getId())));
+            static::g2_url(array("view" => "core.DownloadItem", "itemId" => $derivative->getId())));
         }
       }
     }
@@ -762,7 +762,7 @@ class G2Import_G2Import {
       }
     }
 
-    self::$current_g2_item = null;
+    static::$current_g2_item = null;
     return $messages;
   }
 
@@ -808,7 +808,7 @@ class G2Import_G2Import {
       return;
     }
 
-    $granted_permissions = self::_map_permissions($g2_album->getId());
+    $granted_permissions = static::_map_permissions($g2_album->getId());
 
     if ($g2_album->getParentId() == null) {
       // Compare to current permissions, and change them if necessary.
@@ -817,7 +817,7 @@ class G2Import_G2Import {
       $g3_parent_album = $g3_album->parent;
     }
     $granted_parent_permissions = array();
-    $perm_ids = array_unique(array_values(self::$_permission_map));
+    $perm_ids = array_unique(array_values(static::$_permission_map));
     foreach (Identity::groups() as $group) {
       $granted_parent_permissions[$group->id] = array();
       foreach ($perm_ids as $perm_id) {
@@ -877,15 +877,15 @@ class G2Import_G2Import {
         continue;
       }
       $g2_permission_id = $entry["permission"];
-      if (!isset(self::$_permission_map[$g2_permission_id])) {
+      if (!isset(static::$_permission_map[$g2_permission_id])) {
         continue;
       }
-      $group_id = self::map($entry["groupId"]);
+      $group_id = static::map($entry["groupId"]);
       if ($group_id == null) {
         // E.g. the G2 admin group isn't mapped.
         continue;
       }
-      $permission_id = self::$_permission_map[$g2_permission_id];
+      $permission_id = static::$_permission_map[$g2_permission_id];
       if (!isset($permissions[$group_id])) {
         $permissions[$group_id] = array();
       }
@@ -907,7 +907,7 @@ class G2Import_G2Import {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
-    if ($id = self::map($g2_comment->getId())) {
+    if ($id = static::map($g2_comment->getId())) {
       if (ORM::factory("Comment", $id)->loaded()) {
         // Already imported and still exists
         return;
@@ -916,7 +916,7 @@ class G2Import_G2Import {
       // ticket #1736.
     }
 
-    $item_id = self::map($g2_comment->getParentId());
+    $item_id = static::map($g2_comment->getParentId());
     if (empty($item_id)) {
       // Item was not mapped.
       return;
@@ -928,7 +928,7 @@ class G2Import_G2Import {
     // Just import the fields we know about.  Do this outside of the comment API for now so that
     // we don't trigger spam filtering events
     $comment = ORM::factory("Comment");
-    $comment->author_id = self::map($g2_comment->getCommenterId());
+    $comment->author_id = static::map($g2_comment->getCommenterId());
     $comment->guest_name = "";
     if ($comment->author_id == Identity::guest()->id) {
       $comment->guest_name = $g2_comment->getAuthor();
@@ -936,7 +936,7 @@ class G2Import_G2Import {
       $comment->guest_email = "unknown@nobody.com";
     }
     $comment->item_id = $item_id;
-    $comment->text = self::_transform_bbcode($text);
+    $comment->text = static::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_name = $g2_comment->getHost();
     try {
@@ -948,7 +948,7 @@ class G2Import_G2Import {
           $e);
     }
 
-    self::set_map($g2_comment->getId(), $comment->id, "comment");
+    static::set_map($g2_comment->getId(), $comment->id, "comment");
 
     // Backdate the creation date.  We can't do this at creation time because
     // Model_Comment::save() will override it.  Leave the updated date alone
@@ -970,7 +970,7 @@ class G2Import_G2Import {
 
     GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
     $g2_item_id = array_shift($queue);
-    $g3_item = ORM::factory("Item", self::map($g2_item_id));
+    $g3_item = ORM::factory("Item", static::map($g2_item_id));
     if (!$g3_item->loaded()) {
       return;
     }
@@ -1016,7 +1016,7 @@ class G2Import_G2Import {
    */
   static function copy_matching_thumbnails_and_resizes($item) {
     // We only operate on items that are being imported
-    if (empty(self::$current_g2_item)) {
+    if (empty(static::$current_g2_item)) {
       return;
     }
 
@@ -1035,7 +1035,7 @@ class G2Import_G2Import {
       return;
     }
 
-    $g2_item_id = self::$current_g2_item->getId();
+    $g2_item_id = static::$current_g2_item->getId();
     $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
 
     $target_thumb_size = Module::get_var("gallery", "thumb_size");
@@ -1147,7 +1147,7 @@ class G2Import_G2Import {
     } else {
       $description = $g2_summary . " " . $g2_description;
     }
-    return self::_transform_bbcode($description);
+    return static::_transform_bbcode($description);
   }
 
   static $bbcode_mappings = array(
@@ -1167,7 +1167,7 @@ class G2Import_G2Import {
   );
   protected static function _transform_bbcode($text) {
     if (strpos($text, "[") !== false) {
-      $text = preg_replace(array_keys(self::$bbcode_mappings), array_values(self::$bbcode_mappings),
+      $text = preg_replace(array_keys(static::$bbcode_mappings), array_values(static::$bbcode_mappings),
                            $text);
     }
     return $text;
@@ -1284,31 +1284,31 @@ class G2Import_G2Import {
    * Look in our map to find the corresponding Gallery 3 id for the given Gallery 2 id.
    */
   static function map($g2_id) {
-    if (!array_key_exists($g2_id, self::$map)) {
+    if (!array_key_exists($g2_id, static::$map)) {
       $g2_map = ORM::factory("G2Map")->where("g2_id", "=", $g2_id)->find();
-      self::$map[$g2_id] = $g2_map->loaded() ? $g2_map->g3_id : null;
+      static::$map[$g2_id] = $g2_map->loaded() ? $g2_map->g3_id : null;
     }
 
-    return self::$map[$g2_id];
+    return static::$map[$g2_id];
   }
 
   /**
    * Associate a Gallery 2 id with a Gallery 3 item id.
    */
   static function set_map($g2_id, $g3_id, $resource_type, $g2_url=null) {
-    self::clear_map($g2_id, $resource_type);
+    static::clear_map($g2_id, $resource_type);
     $g2_map = ORM::factory("G2Map");
     $g2_map->g3_id = $g3_id;
     $g2_map->g2_id = $g2_id;
     $g2_map->resource_type = $resource_type;
 
-    if (strpos($g2_url, self::$g2_base_url) === 0) {
-      $g2_url = substr($g2_url, strlen(self::$g2_base_url));
+    if (strpos($g2_url, static::$g2_base_url) === 0) {
+      $g2_url = substr($g2_url, strlen(static::$g2_base_url));
     }
 
     $g2_map->g2_url = $g2_url;
     $g2_map->save();
-    self::$map[$g2_id] = $g3_id;
+    static::$map[$g2_id] = $g3_id;
   }
 
   /**
@@ -1339,11 +1339,11 @@ class G2Import_G2Import {
   static function lower_error_reporting() {
     // Gallery 2 was not designed to run in E_STRICT mode and will barf out errors.  So dial down
     // the error reporting when we make G2 calls.
-    self::$error_reporting = error_reporting(error_reporting() & ~E_STRICT);
+    static::$error_reporting = error_reporting(error_reporting() & ~E_STRICT);
   }
 
   static function restore_error_reporting() {
-    error_reporting(self::$error_reporting);
+    error_reporting(static::$error_reporting);
   }
 }
 

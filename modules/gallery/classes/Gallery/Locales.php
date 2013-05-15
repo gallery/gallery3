@@ -29,15 +29,15 @@ class Gallery_Locales {
    * Return the list of available locales.
    */
   static function available() {
-    if (empty(self::$locales)) {
-      self::_init_language_data();
+    if (empty(static::$locales)) {
+      static::_init_language_data();
     }
 
-    return self::$locales;
+    return static::$locales;
   }
 
   static function installed() {
-    $available = self::available();
+    $available = static::available();
     $default = Module::get_var("gallery", "default_locale");
     $codes = explode("|", Module::get_var("gallery", "installed_locales", $default));
     foreach ($codes as $code) {
@@ -58,7 +58,7 @@ class Gallery_Locales {
     Module::set_var("gallery", "installed_locales", join("|", $locales));
 
     // Clear the cache
-    self::$locales = null;
+    static::$locales = null;
   }
 
   // @todo Might want to add a localizable language name as well.
@@ -118,7 +118,7 @@ class Gallery_Locales {
     $l["zh_CN"] = "简体中文";                  // Chinese (CN)
     $l["zh_TW"] = "繁體中文";                  // Chinese (TW)
     asort($l, SORT_LOCALE_STRING);
-    self::$locales = $l;
+    static::$locales = $l;
 
     // Language subtag to (default) locale mapping
     foreach ($l as $locale => $name) {
@@ -128,16 +128,16 @@ class Gallery_Locales {
         $d[$language] = $locale;
       }
     }
-    self::$language_subtag_to_locale = $d;
+    static::$language_subtag_to_locale = $d;
   }
 
   static function display_name($locale=null) {
-    if (empty(self::$locales)) {
-      self::_init_language_data();
+    if (empty(static::$locales)) {
+      static::_init_language_data();
     }
     $locale or $locale = I18n::instance()->locale();
 
-    return self::$locales[$locale];
+    return static::$locales[$locale];
   }
 
   static function is_rtl($locale=null) {
@@ -195,7 +195,7 @@ class Gallery_Locales {
         }
         foreach ($requested_locales as $requested_locale => $qvalue) {
           list ($matched_locale, $match_score) =
-              self::_locale_match_score($requested_locale, $qvalue, $fallback_adjustment_factor);
+              static::_locale_match_score($requested_locale, $qvalue, $fallback_adjustment_factor);
           if ($matched_locale &&
               (!isset($scored_locales[$matched_locale]) ||
                $match_score > $scored_locales[$matched_locale])) {
@@ -219,10 +219,10 @@ class Gallery_Locales {
       return array($requested_locale, $qvalue);
     }
     list ($language) = explode("_", $requested_locale . "_");
-    if (isset(self::$language_subtag_to_locale[$language]) &&
-        isset($installed[self::$language_subtag_to_locale[$language]])) {
+    if (isset(static::$language_subtag_to_locale[$language]) &&
+        isset($installed[static::$language_subtag_to_locale[$language]])) {
       $score = $adjustment_factor * $qvalue;
-      return array(self::$language_subtag_to_locale[$language], $score);
+      return array(static::$language_subtag_to_locale[$language], $score);
     }
     return array(null, 0);
   }

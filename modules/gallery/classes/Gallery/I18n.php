@@ -59,15 +59,15 @@ class Gallery_I18n extends Kohana_I18n {
   }
 
   public static function instance($config=null) {
-    if (self::$_instance == NULL || isset($config)) {
+    if (static::$_instance == NULL || isset($config)) {
       $config = isset($config) ? $config : Kohana::$config->load('locale');
       if (empty($config['default_locale'])) {
         $config['default_locale'] = Module::get_var('gallery', 'default_locale');
       }
-      self::$_instance = new I18n($config);
+      static::$_instance = new I18n($config);
     }
 
-    return self::$_instance;
+    return static::$_instance;
   }
 
   public function locale($locale=null) {
@@ -150,10 +150,10 @@ class Gallery_I18n extends Kohana_I18n {
 
   protected function lookup($locale, $message) {
     if (!isset($this->_message_cache[$locale])) {
-      $this->_message_cache[$locale] = self::load_translations($locale);
+      $this->_message_cache[$locale] = static::load_translations($locale);
     }
 
-    $key = self::get_message_key($message);
+    $key = static::get_message_key($message);
 
     if (isset($this->_message_cache[$locale][$key])) {
       return $this->_message_cache[$locale][$key];
@@ -243,7 +243,7 @@ class Gallery_I18n extends Kohana_I18n {
       return $entry;
     }
 
-    $plural_key = self::get_plural_key($locale, $count);
+    $plural_key = static::get_plural_key($locale, $count);
     if (!isset($entry[$plural_key])) {
       // Fallback to the default plural form.
       $plural_key = 'other';
@@ -259,7 +259,7 @@ class Gallery_I18n extends Kohana_I18n {
   }
 
   protected function log($message, $options) {
-    $key = self::get_message_key($message);
+    $key = static::get_message_key($message);
     isset($this->_call_log[$key]) or $this->_call_log[$key] = array($message, $options);
   }
 

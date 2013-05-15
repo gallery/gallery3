@@ -218,9 +218,9 @@ class Gallery_Access {
     $access->save();
 
     if ($perm_name == "view") {
-      self::_update_access_view_cache($group, $album);
+      static::_update_access_view_cache($group, $album);
     } else {
-      self::_update_access_non_view_cache($group, $perm_name, $album);
+      static::_update_access_non_view_cache($group, $perm_name, $album);
     }
 
     Access::update_htaccess_files($album, $group, $perm_name, $value);
@@ -234,7 +234,7 @@ class Gallery_Access {
    * @param  Model_Item $item
    */
   static function allow($group, $perm_name, $item) {
-    self::_set($group, $perm_name, $item, self::ALLOW);
+    static::_set($group, $perm_name, $item, static::ALLOW);
   }
 
   /**
@@ -245,7 +245,7 @@ class Gallery_Access {
    * @param  Model_Item $item
    */
   static function deny($group, $perm_name, $item) {
-    self::_set($group, $perm_name, $item, self::DENY);
+    static::_set($group, $perm_name, $item, static::DENY);
   }
 
   /**
@@ -259,19 +259,19 @@ class Gallery_Access {
     if ($item->id == 1) {
       throw new Access_Exception("Cant reset permissions on root album");
     }
-    self::_set($group, $perm_name, $item, self::INHERIT);
+    static::_set($group, $perm_name, $item, static::INHERIT);
   }
 
   /**
    * Recalculate the permissions for an album's hierarchy.
    */
   static function recalculate_album_permissions($album) {
-    foreach (self::_get_all_groups() as $group) {
+    foreach (static::_get_all_groups() as $group) {
       foreach (ORM::factory("Permission")->find_all() as $perm) {
         if ($perm->name == "view") {
-          self::_update_access_view_cache($group, $album);
+          static::_update_access_view_cache($group, $album);
         } else {
-          self::_update_access_non_view_cache($group, $perm->name, $album);
+          static::_update_access_non_view_cache($group, $perm->name, $album);
         }
       }
     }
@@ -284,7 +284,7 @@ class Gallery_Access {
     $parent = $photo->parent;
     $parent_access_cache = $parent->access_cache;
     $photo_access_cache = $photo->access_cache;
-    foreach (self::_get_all_groups() as $group) {
+    foreach (static::_get_all_groups() as $group) {
       foreach (ORM::factory("Permission")->find_all() as $perm) {
         $field = "{$perm->name}_{$group->id}";
         if ($perm->name == "view") {
@@ -314,8 +314,8 @@ class Gallery_Access {
     $permission->display_name = $display_name;
     $permission->save();
 
-    foreach (self::_get_all_groups() as $group) {
-      self::_add_columns($name, $group);
+    foreach (static::_get_all_groups() as $group) {
+      static::_add_columns($name, $group);
     }
   }
 
@@ -326,8 +326,8 @@ class Gallery_Access {
    * @return void
    */
   static function delete_permission($name) {
-    foreach (self::_get_all_groups() as $group) {
-      self::_drop_columns($name, $group);
+    foreach (static::_get_all_groups() as $group) {
+      static::_drop_columns($name, $group);
     }
     $permission = ORM::factory("Permission")->where("name", "=", $name)->find();
     if ($permission->loaded()) {
@@ -343,7 +343,7 @@ class Gallery_Access {
    */
   static function add_group($group) {
     foreach (ORM::factory("Permission")->find_all() as $perm) {
-      self::_add_columns($perm->name, $group);
+      static::_add_columns($perm->name, $group);
     }
   }
 
@@ -355,7 +355,7 @@ class Gallery_Access {
    */
   static function delete_group($group) {
     foreach (ORM::factory("Permission")->find_all() as $perm) {
-      self::_drop_columns($perm->name, $group);
+      static::_drop_columns($perm->name, $group);
     }
   }
 
@@ -379,7 +379,7 @@ class Gallery_Access {
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {
       $parent_access_cache = $item->parent->access_cache;
-      foreach (self::_get_all_groups() as $group) {
+      foreach (static::_get_all_groups() as $group) {
         foreach (ORM::factory("Permission")->find_all() as $perm) {
           $field = "{$perm->name}_{$group->id}";
           if ($perm->name == "view") {

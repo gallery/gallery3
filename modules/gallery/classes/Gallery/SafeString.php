@@ -53,7 +53,7 @@ class Gallery_SafeString {
         $string = $string->unescaped();
       }
     }
-    $safe_string = self::of_safe_html(self::_purify_for_html($string));
+    $safe_string = static::of_safe_html(static::_purify_for_html($string));
     return $safe_string;
   }
 
@@ -74,7 +74,7 @@ class Gallery_SafeString {
     if ($this->_is_safe_html) {
       return $this->_raw_string;
     } else {
-      return self::_escape_for_html($this->_raw_string);
+      return static::_escape_for_html($this->_raw_string);
     }
   }
 
@@ -132,7 +132,7 @@ class Gallery_SafeString {
    * @return the string escaped for use in HTML.
    */
   function purified_html() {
-    return self::purify($this);
+    return static::purify($this);
   }
 
   /**
