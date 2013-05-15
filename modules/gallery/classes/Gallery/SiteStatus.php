@@ -29,7 +29,7 @@ class Gallery_SiteStatus {
    * @param string  $permanent_key make this message permanent and store it under this key
    */
   static function success($msg, $permanent_key) {
-    self::_add($msg, self::SUCCESS, $permanent_key);
+    static::_add($msg, static::SUCCESS, $permanent_key);
   }
 
   /**
@@ -38,7 +38,7 @@ class Gallery_SiteStatus {
    * @param string  $permanent_key make this message permanent and store it under this key
    */
   static function info($msg, $permanent_key) {
-    self::_add($msg, self::INFO, $permanent_key);
+    static::_add($msg, static::INFO, $permanent_key);
   }
 
   /**
@@ -47,7 +47,7 @@ class Gallery_SiteStatus {
    * @param string  $permanent_key make this message permanent and store it under this key
    */
   static function warning($msg, $permanent_key) {
-    self::_add($msg, self::WARNING, $permanent_key);
+    static::_add($msg, static::WARNING, $permanent_key);
   }
 
   /**
@@ -56,7 +56,7 @@ class Gallery_SiteStatus {
    * @param string  $permanent_key make this message permanent and store it under this key
    */
   static function error($msg, $permanent_key) {
-    self::_add($msg, self::ERROR, $permanent_key);
+    static::_add($msg, static::ERROR, $permanent_key);
   }
 
   /**

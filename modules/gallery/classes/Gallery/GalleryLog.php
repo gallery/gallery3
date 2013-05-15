@@ -31,7 +31,7 @@ class Gallery_GalleryLog {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function success($category, $message, $html="") {
-    self::_add($category, $message, $html, GalleryLog::SUCCESS);
+    static::_add($category, $message, $html, GalleryLog::SUCCESS);
   }
 
   /**
@@ -41,7 +41,7 @@ class Gallery_GalleryLog {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function info($category, $message, $html="") {
-    self::_add($category, $message, $html, GalleryLog::INFO);
+    static::_add($category, $message, $html, GalleryLog::INFO);
   }
 
   /**
@@ -51,7 +51,7 @@ class Gallery_GalleryLog {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function warning($category, $message, $html="") {
-    self::_add($category, $message, $html, GalleryLog::WARNING);
+    static::_add($category, $message, $html, GalleryLog::WARNING);
   }
 
   /**
@@ -61,7 +61,7 @@ class Gallery_GalleryLog {
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
   static function error($category, $message, $html="") {
-    self::_add($category, $message, $html, GalleryLog::ERROR);
+    static::_add($category, $message, $html, GalleryLog::ERROR);
   }
 
   /**

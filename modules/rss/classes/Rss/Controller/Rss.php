@@ -31,7 +31,7 @@ class Rss_Controller_Rss extends Controller {
     }
 
     // Configurable page size between 1 and 100, default 20
-    $page_size = max(1, min(100, (int) Arr::get($this->request->query(), "page_size", self::$page_size)));
+    $page_size = max(1, min(100, (int) Arr::get($this->request->query(), "page_size", static::$page_size)));
 
     // Run the appropriate feed callback
     if (Module::is_active($module_id)) {

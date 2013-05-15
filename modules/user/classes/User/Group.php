@@ -48,7 +48,7 @@ class User_Group {
    * @return IdentityProvider_GroupDefinition  the group object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return self::_lookup_by_field("id", $id);
+    return static::_lookup_by_field("id", $id);
   }
 
   /**
@@ -57,7 +57,7 @@ class User_Group {
    * @return IdentityProvider_GroupDefinition  the group object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    return self::_lookup_by_field("name", $name);
+    return static::_lookup_by_field("name", $name);
   }
 
   /**

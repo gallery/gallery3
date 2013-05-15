@@ -42,7 +42,7 @@ class Slideshow_Hook_SlideshowEvent {
                     ->id("slideshow")
                     ->label(t("View slideshow"))
                     ->url("javascript:cooliris.embed.show(" .
-                          "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
+                          "{maxScale:$max_scale,feed:'" . static::_feed_url($theme) . "'})")
                     ->css_id("g-slideshow-link"));
     }
   }
@@ -53,7 +53,7 @@ class Slideshow_Hook_SlideshowEvent {
                   ->id("slideshow")
                   ->label(t("View slideshow"))
                   ->url("javascript:cooliris.embed.show(" .
-                        "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
+                        "{maxScale:$max_scale,feed:'" . static::_feed_url($theme) . "'})")
                   ->css_id("g-slideshow-link"));
   }
 
@@ -63,7 +63,7 @@ class Slideshow_Hook_SlideshowEvent {
                   ->id("slideshow")
                   ->label(t("View slideshow"))
                   ->url("javascript:cooliris.embed.show(" .
-                        "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
+                        "{maxScale:$max_scale,feed:'" . static::_feed_url($theme) . "'})")
                   ->css_id("g-slideshow-link"));
   }
 

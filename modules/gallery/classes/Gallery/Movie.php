@@ -83,22 +83,22 @@ class Gallery_Movie {
    * "movie_allow_uploads" Gallery variable as well as whether or not ffmpeg is found.
    */
   static function allow_uploads() {
-    if (empty(self::$allow_uploads)) {
+    if (empty(static::$allow_uploads)) {
       // Refresh ffmpeg settings
       $ffmpeg = Movie::find_ffmpeg();
       switch (Module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
         case "always":
-          self::$allow_uploads = true;
+          static::$allow_uploads = true;
           break;
         case "never":
-          self::$allow_uploads = false;
+          static::$allow_uploads = false;
           break;
         default:
-          self::$allow_uploads = !empty($ffmpeg);
+          static::$allow_uploads = !empty($ffmpeg);
           break;
       }
     }
-    return self::$allow_uploads;
+    return static::$allow_uploads;
   }
 
   /**

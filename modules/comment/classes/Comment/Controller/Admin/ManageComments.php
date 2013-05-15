@@ -53,8 +53,8 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->order_by("created", "DESC")
       ->order_by("id", "DESC")
       ->where("state", "=", $state)
-      ->limit(self::$items_per_page)
-      ->offset(($page - 1) * self::$items_per_page)
+      ->limit(static::$items_per_page)
+      ->offset(($page - 1) * static::$items_per_page)
       ->find_all();
 
     // This view is not themed so we can't use $theme->url() in the view and have to
@@ -65,7 +65,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $view->page = $page;
     $view->page_type = "collection";
     $view->page_subtype = "admin_comments";
-    $view->page_size = self::$items_per_page;
+    $view->page_size = static::$items_per_page;
     $view->children_count = $this->_counts()->$state;
     $view->max_pages = ceil($view->children_count / $view->page_size);
 

@@ -22,7 +22,7 @@ class Gallery_Debug extends Kohana_Debug {
    * @see Kohana_Debug::dump()
    */
   public static function dump($value, $length=128, $max_level=5) {
-    return self::safe_dump($value, null, $length, $max_level);
+    return static::safe_dump($value, null, $length, $max_level);
   }
 
   /**
@@ -30,7 +30,7 @@ class Gallery_Debug extends Kohana_Debug {
    * data, such as session ids and passwords / hashes.
    */
   public static function safe_dump($value, $key, $length=128, $max_level=5) {
-    return parent::dump(self::_sanitize_for_dump($value, $key, $max_level), $length, $max_level);
+    return parent::dump(static::_sanitize_for_dump($value, $key, $max_level), $length, $max_level);
   }
 
   /**
@@ -57,7 +57,7 @@ class Gallery_Debug extends Kohana_Debug {
       } else if ($value instanceof Model_User) {
         return get_class($value) . ' object for "' . $value->name . '" - details omitted for display';
       }
-      return self::_sanitize_for_dump((array) $value, $key, $max_level - 1);
+      return static::_sanitize_for_dump((array) $value, $key, $max_level - 1);
     } else if (is_array($value)) {
       $result = array();
       foreach ($value as $k => $v) {
@@ -72,7 +72,7 @@ class Gallery_Debug extends Kohana_Debug {
         if (is_object($v)) {
           $key_for_display .= ' (type: ' . get_class($v) . ')';
         }
-        $result[$key_for_display] = self::_sanitize_for_dump($v, $actual_key, $max_level - 1);
+        $result[$key_for_display] = static::_sanitize_for_dump($v, $actual_key, $max_level - 1);
       }
     } else {
       $result = $value;

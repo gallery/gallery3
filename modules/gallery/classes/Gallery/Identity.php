@@ -26,16 +26,16 @@ class Gallery_Identity {
    * @return boolean true if the driver supports updates; false if read only
    */
   static function providers() {
-    if (empty(self::$available)) {
+    if (empty(static::$available)) {
       $drivers = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
       foreach (Module::available() as $module_name => $module) {
         if (file_exists(MODPATH . "{$module_name}/config/identity.php")) {
           $drivers->$module_name = $module->description;
         }
       }
-      self::$available = $drivers;
+      static::$available = $drivers;
     }
-    return self::$available;
+    return static::$available;
   }
 
   /**

@@ -41,7 +41,7 @@ class Search_Search {
   static function search_within_album($q, $album, $limit, $offset) {
     $db = Database::instance();
 
-    $query = self::_build_query_base($q, $album) .
+    $query = static::_build_query_base($q, $album) .
       "ORDER BY `score` DESC " .
       "LIMIT $limit OFFSET " . (int)$offset;
 
@@ -128,7 +128,7 @@ class Search_Search {
 
   static function get_position_within_album($item, $q, $album) {
     $page_size = Module::get_var("gallery", "page_size", 9);
-    $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
+    $query = static::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
       "ORDER BY `score` DESC ";
     $db = Database::instance();
 
@@ -148,7 +148,7 @@ class Search_Search {
 
     // Redo the query but only look for results greater than or equal to our current location
     // then seek backwards until we find our item.
-    $data = $db->query(Database::SELECT, self::_build_query_base($q, $album) .
+    $data = $db->query(Database::SELECT, static::_build_query_base($q, $album) .
                        " HAVING `score` >= " . $score . " ORDER BY `score` DESC ");
     $data->seek($data->count() - 1);
 

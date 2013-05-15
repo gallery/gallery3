@@ -163,7 +163,7 @@ class Gallery_Graphics {
 
         case "photo":
           // Run the graphics rules (for both movies and photos)
-          foreach (self::_get_rules($target) as $rule) {
+          foreach (static::_get_rules($target) as $rule) {
             $args = array($working_file, $output_file, unserialize($rule->args), $item);
             call_user_func_array($rule->operation, $args);
             $working_file = $output_file;
@@ -292,7 +292,7 @@ class Gallery_Graphics {
   }
 
   protected static function _get_rules($target) {
-    if (empty(self::$_rules_cache[$target])) {
+    if (empty(static::$_rules_cache[$target])) {
       $rules = array();
       foreach (ORM::factory("GraphicsRule")
                ->where("target", "=", $target)
@@ -301,9 +301,9 @@ class Gallery_Graphics {
                ->find_all() as $rule) {
         $rules[] = (object)$rule->as_array();
       }
-      self::$_rules_cache[$target] = $rules;
+      static::$_rules_cache[$target] = $rules;
     }
-    return self::$_rules_cache[$target];
+    return static::$_rules_cache[$target];
   }
 
   /**
@@ -478,7 +478,7 @@ class Gallery_Graphics {
    * Choose which driver the Kohana Image library uses.
    */
   static function init_toolkit() {
-    if (self::$init) {
+    if (static::$init) {
       return;
     }
     switch(Module::get_var("gallery", "graphics_toolkit")) {
@@ -495,7 +495,7 @@ class Gallery_Graphics {
       break;
     }
 
-    self::$init = 1;
+    static::$init = 1;
   }
 
   /**

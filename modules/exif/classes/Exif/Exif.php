@@ -33,7 +33,7 @@ class Exif_Exif {
       require_once(MODPATH . "exif/vendor/exifer/exif.php");
       $exif_raw = read_exif_data_raw($item->file_path(), false);
       if (isset($exif_raw['ValidEXIFData'])) {
-        foreach(self::_keys() as $field => $exifvar) {
+        foreach(static::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
             $keys[$field] = Encoding::convert_to_utf8($value);
@@ -84,7 +84,7 @@ class Exif_Exif {
       return array();
     }
 
-    $definitions = self::_keys();
+    $definitions = static::_keys();
     $keys = unserialize($record->data);
     foreach ($keys as $key => $value) {
       $exif[] = array("caption" => $definitions[$key][2], "value" => $value);
@@ -94,8 +94,8 @@ class Exif_Exif {
   }
 
   protected static function _keys() {
-    if (!isset(self::$exif_keys)) {
-      self::$exif_keys = array(
+    if (!isset(static::$exif_keys)) {
+      static::$exif_keys = array(
         "Make"            => array("IFD0",   "Make",              t("Camera Maker"),     ),
         "Model"           => array("IFD0",   "Model",             t("Camera Model"),     ),
         "Aperture"        => array("SubIFD", "FNumber",           t("Aperture"),         ),
@@ -127,7 +127,7 @@ class Exif_Exif {
         "Keywords"        => array("IPTC",   "Keywords",          t("Keywords"),         )
       );
     }
-    return self::$exif_keys;
+    return static::$exif_keys;
   }
 
   static function stats() {

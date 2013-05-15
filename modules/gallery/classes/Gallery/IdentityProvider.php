@@ -38,12 +38,12 @@ class Gallery_IdentityProvider {
    * @return  Identity_Core
    */
   static function &instance() {
-   if (empty(self::$instance)) {
+   if (empty(static::$instance)) {
       // Create a new instance
-      self::$instance = new IdentityProvider();
+      static::$instance = new IdentityProvider();
     }
 
-    return self::$instance;
+    return static::$instance;
   }
 
   /**
@@ -53,7 +53,7 @@ class Gallery_IdentityProvider {
    * @return  Identity_Core
    */
   static function reset() {
-    self::$instance = null;
+    static::$instance = null;
   }
 
   /**

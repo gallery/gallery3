@@ -179,8 +179,8 @@ class Item_Test extends Unittest_TestCase {
     $this->assertSame(Item::root()->id, Item::find_by_path("")->id);
 
     // Verify that we don't get confused by the part names, using the fallback code.
-    self::_remove_relative_path_caches();
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
 
     $this->assertSame(
       $level3->id,
@@ -215,17 +215,17 @@ class Item_Test extends Unittest_TestCase {
     $this->assertEquals(null, Item::find_by_path($flv_path)->id);
 
     // Check normal operation without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($jpg->id, Item::find_by_path($jpg_path, "albums")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($jpg->id, Item::find_by_path($jpg_path, "resizes")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($jpg->id, Item::find_by_path($jpg_path, "thumbs")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($jpg->id, Item::find_by_path($jpg_path)->id);
 
     // Check that we don't get false positives without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals(null, Item::find_by_path($flv_path, "albums")->id);
     $this->assertEquals(null, Item::find_by_path($flv_path, "resizes")->id);
     $this->assertEquals(null, Item::find_by_path($flv_path, "thumbs")->id);
@@ -254,17 +254,17 @@ class Item_Test extends Unittest_TestCase {
     $this->assertEquals(null, Item::find_by_path($jpg_path)->id);
 
     // Check normal operation without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($png->id, Item::find_by_path($png_path, "albums")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($png->id, Item::find_by_path($png_path, "resizes")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($png->id, Item::find_by_path($png_path, "thumbs")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($png->id, Item::find_by_path($png_path)->id);
 
     // Check that we don't get false positives without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals(null, Item::find_by_path($jpg_path, "albums")->id);
     $this->assertEquals(null, Item::find_by_path($jpg_path, "resizes")->id);
     $this->assertEquals(null, Item::find_by_path($jpg_path, "thumbs")->id);
@@ -289,15 +289,15 @@ class Item_Test extends Unittest_TestCase {
     $this->assertEquals(null, Item::find_by_path($jpg_path)->id);
 
     // Check normal operation without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($flv->id, Item::find_by_path($flv_path, "albums")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($flv->id, Item::find_by_path($jpg_path, "thumbs")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($flv->id, Item::find_by_path($flv_path)->id);
 
     // Check that we don't get false positives without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals(null, Item::find_by_path($jpg_path, "albums")->id);
     $this->assertEquals(null, Item::find_by_path($flv_path, "thumbs")->id);
     $this->assertEquals(null, Item::find_by_path($jpg_path)->id);
@@ -321,15 +321,15 @@ class Item_Test extends Unittest_TestCase {
     $this->assertEquals(null, Item::find_by_path($thumb_path)->id);
 
     // Check normal operation without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($album->id, Item::find_by_path($album_path, "albums")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($album->id, Item::find_by_path($thumb_path, "thumbs")->id);
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals($album->id, Item::find_by_path($album_path)->id);
 
     // Check that we don't get false positives without relative path cache.
-    self::_remove_relative_path_caches();
+    static::_remove_relative_path_caches();
     $this->assertEquals(null, Item::find_by_path($thumb_path, "albums")->id);
     $this->assertEquals(null, Item::find_by_path($album_path, "thumbs")->id);
     $this->assertEquals(null, Item::find_by_path($thumb_path)->id);

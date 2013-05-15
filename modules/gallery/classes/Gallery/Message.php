@@ -28,7 +28,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function success($msg) {
-    self::_add($msg, Message::SUCCESS);
+    static::_add($msg, Message::SUCCESS);
   }
 
   /**
@@ -36,7 +36,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function info($msg) {
-    self::_add($msg, Message::INFO);
+    static::_add($msg, Message::INFO);
   }
 
   /**
@@ -44,7 +44,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function warning($msg) {
-    self::_add($msg, Message::WARNING);
+    static::_add($msg, Message::WARNING);
   }
 
   /**
@@ -52,7 +52,7 @@ class Gallery_Message {
    * @param string  $msg           a detailed message
    */
   static function error($msg) {
-    self::_add($msg, Message::ERROR);
+    static::_add($msg, Message::ERROR);
   }
 
   /**

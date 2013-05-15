@@ -215,7 +215,7 @@ class Gallery_Hook_GalleryInstaller {
     foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
       @mkdir(VARPATH . $dir);
       if (in_array($dir, array("logs", "tmp", "uploads"))) {
-        self::_protect_directory(VARPATH . $dir);
+        static::_protect_directory(VARPATH . $dir);
       }
     }
 
@@ -526,7 +526,7 @@ class Gallery_Hook_GalleryInstaller {
 
     if ($version == 24) {
       foreach (array("logs", "tmp", "uploads") as $dir) {
-        self::_protect_directory(VARPATH . $dir);
+        static::_protect_directory(VARPATH . $dir);
       }
       Module::set_version("gallery", $version = 25);
     }

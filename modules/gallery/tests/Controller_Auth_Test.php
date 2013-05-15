@@ -67,7 +67,7 @@ class Controller_Auth_Test extends Unittest_TestCase {
           // An array token
 
           if ($open_braces == 0 && $token[0] == T_EXTENDS) {
-            if (self::_token_matches(array(T_STRING, "Controller_Admin"), $tokens, $token_number + 1)) {
+            if (static::_token_matches(array(T_STRING, "Controller_Admin"), $tokens, $token_number + 1)) {
               $is_admin_controller = true;
             }
           } else if ($open_braces == 1 && $token[0] == T_FUNCTION) {
@@ -84,7 +84,7 @@ class Controller_Auth_Test extends Unittest_TestCase {
             // Search forward to get function name
             do {
               $token_number++;
-              if (self::_token_matches(array(T_STRING), $tokens, $token_number)) {
+              if (static::_token_matches(array(T_STRING), $tokens, $token_number)) {
                 $token = $tokens[$token_number];
                 $name = $token[1];
                 break;
@@ -94,7 +94,7 @@ class Controller_Auth_Test extends Unittest_TestCase {
             $is_rss_feed = $name == "feed" && strpos(basename($controller), "Rss.php");
 
             if ((!$is_static || $is_rss_feed) && !$is_private) {
-              $function = self::_function($name, $line, $is_admin_controller);
+              $function = static::_function($name, $line, $is_admin_controller);
             }
           }
 
@@ -108,33 +108,33 @@ class Controller_Auth_Test extends Unittest_TestCase {
           if ($function && $open_braces >= 2) {
             if ($token[0] == T_STRING) {
               if ($token[1] == "access" &&
-                  self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                  self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+                  static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                  static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
                   in_array($tokens[$token_number + 2][1], array("forbidden", "required")) &&
-                  self::_token_matches("(", $tokens, $token_number + 3)) {
+                  static::_token_matches("(", $tokens, $token_number + 3)) {
                 $token_number += 3;
                 $function->checks_authorization(true);
               } else if ($token[1] == "access" &&
-                  self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                  self::_token_matches(array(T_STRING, "verify_csrf"), $tokens, $token_number + 2) &&
-                  self::_token_matches("(", $tokens, $token_number + 3)) {
+                  static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                  static::_token_matches(array(T_STRING, "verify_csrf"), $tokens, $token_number + 2) &&
+                  static::_token_matches("(", $tokens, $token_number + 3)) {
                 $token_number += 3;
                 $function->checks_csrf(true);
               } else if (in_array($token[1], array("Input", "Forge")) &&
-                         self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1)) {
+                         static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1)) {
                 $token_number++;
                 $function->uses_input(true);
               }
             } else if ($token[0] == T_VARIABLE) {
               if ($token[1] == '$this' &&
-                  self::_token_matches(array(T_OBJECT_OPERATOR), $tokens, $token_number + 1) &&
-                  self::_token_matches(array(T_STRING, "input"), $tokens, $token_number + 2)) {
+                  static::_token_matches(array(T_OBJECT_OPERATOR), $tokens, $token_number + 1) &&
+                  static::_token_matches(array(T_STRING, "input"), $tokens, $token_number + 2)) {
                 $token_number += 2;
                 $function->uses_input(true);
               }
             } else if ($token[0] == T_OBJECT_OPERATOR) {
-              if (self::_token_matches(array(T_STRING, "validate"), $tokens, $token_number + 1) &&
-                  self::_token_matches("(", $tokens, $token_number + 2)) {
+              if (static::_token_matches(array(T_STRING, "validate"), $tokens, $token_number + 1) &&
+                  static::_token_matches("(", $tokens, $token_number + 2)) {
                 $token_number += 2;
                 $function->checks_csrf(true);
               }
