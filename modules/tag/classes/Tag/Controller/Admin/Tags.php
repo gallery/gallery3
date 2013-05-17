@@ -83,7 +83,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
       ->add("submit", "input|submit", t("Save"));
     $form->input
       ->add_rule("not_empty")
-      ->add_rule("max_length", array(":value", 64), t("Your tag is too long"));
+      ->add_rule("max_length", array(":value", 128), t("Your tag is too long"));
 
     if ($form->load()->validate()) {
       $old_name = $tag->name;
