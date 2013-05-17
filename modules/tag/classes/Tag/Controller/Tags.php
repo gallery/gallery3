@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Tags extends Controller {
+  /**
+   * Show a tag cloud.
+   */
   public function action_index() {
     // Far from perfection, but at least require view permission for the root album
     $album = ORM::factory("Item", 1);
@@ -26,6 +29,10 @@ class Tag_Controller_Tags extends Controller {
     $this->response->body(Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30)));
   }
 
+  /**
+   * Add a tag to an item.  This generates the form, validates it, adds the tag, and returns a
+   * response.  This can be used as an ajax form (preferable) or a normal view.
+   */
   public function action_add() {
     $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);
@@ -67,6 +74,9 @@ class Tag_Controller_Tags extends Controller {
     $this->response->ajax_form($form);
   }
 
+  /**
+   * Return a list of tag names for autocomplete.
+   */
   public function action_autocomplete() {
     $tags = array();
     $tag_parts = explode(",", $this->request->query("term"));

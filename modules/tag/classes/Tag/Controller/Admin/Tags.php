@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Admin_Tags extends Controller_Admin {
+  /**
+   * Display the main tag admin form, from which the other three actions below are called.
+   */
   public function action_index() {
     $filter = $this->request->query("filter");
 
@@ -34,6 +37,10 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $this->response->body($view);
   }
 
+  /**
+   * Delete a tag.  This generates the confirmation form, validates it,
+   * deletes the tag, and returns a response.
+   */
   public function action_delete() {
     $tag_id = $this->request->arg(0, "digit");
     $tag = ORM::factory("Tag", $tag_id);
@@ -58,6 +65,9 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $this->response->ajax_form($form);
   }
 
+  /**
+   * Edit a tag's name.  This is a short form (i.e. one field) that uses gallery.in_place_edit.js.
+   */
   public function action_edit() {
     $tag_id = $this->request->arg(0, "digit");
     $tag = ORM::factory("Tag", $tag_id);

@@ -83,6 +83,15 @@ class Tag_Controller_Tag extends Controller {
     $this->redirect($tag->abs_url(), 301);
   }
 
+  /**
+   * Display context callback for a tag.
+   *
+   * @see  Item::set_display_context_callback()
+   * @see  Item::get_display_context_callback()
+   * @see  Item::clear_display_context_callback()
+   * @see  Controller_Search::get_display_context()
+   * @see  Controller_Tag::get_display_context()
+   */
   public static function get_display_context($item, $tag_id) {
     $tag = ORM::factory("Tag", $tag_id);
     $where = array(array("type", "!=", "album"));
