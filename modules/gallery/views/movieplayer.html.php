@@ -20,19 +20,20 @@
   // setup flowplayer
   flowplayer(id,
     $.extend(true, {
-      "src": "<?= url::abs_file("lib/flowplayer.swf") ?>",
+      "src": "<?= url::abs_file("lib/flowplayer.swf.php") ?>",
       "wmode": "transparent",
       "provider": "pseudostreaming"
     }, <?= json_encode($fp_params) ?>),
     $.extend(true, {
       "plugins": {
         "pseudostreaming": {
-          "url": "<?= url::abs_file("lib/flowplayer.pseudostreaming-byterange.swf") ?>"
+          "url": "<?= url::abs_file("lib/flowplayer.pseudostreaming-byterange.swf.php") ?>"
         },
         "controls": {
           "autoHide": "always",
           "hideDelay": 2000,
-          "height": 24
+          "height": 24,
+          "url": "<?= url::abs_file("lib/flowplayer.controls.swf.php") ?>"
         }
       },
       "clip": {
