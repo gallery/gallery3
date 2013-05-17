@@ -6,8 +6,8 @@
     $("#g-tag-admin .g-delete-link").attr("title", $(".g-delete-link:first span").html());
 
     // In-place editing for tag admin
-    $(".g-editable").gallery_in_place_edit({
-      form_url: <?= HTML::js_string(URL::site("admin/tags/edit/__ID__")) ?>
+    $(".g-tag-name").gallery_in_place_edit({
+      form_url: <?= HTML::js_string(URL::site("admin/tags/edit_name/__ID__")) ?>
     });
   });
 </script>

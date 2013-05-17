@@ -68,7 +68,7 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
   /**
    * Edit a tag's name.  This is a short form (i.e. one field) that uses gallery.in_place_edit.js.
    */
-  public function action_edit() {
+  public function action_edit_name() {
     $tag_id = $this->request->arg(0, "digit");
     $tag = ORM::factory("Tag", $tag_id);
     if (!$tag->loaded()) {
