@@ -79,15 +79,15 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $form = Formo::form()
       ->attr("id", "g-in-place-edit-form")
       ->add_class("g-short-form")
-      ->add("input", "input", $tag->name)
+      ->add("name", "input", $tag->name)
       ->add("submit", "input|submit", t("Save"));
-    $form->input
+    $form->name
       ->add_rule("not_empty")
       ->add_rule("max_length", array(":value", 128), t("Your tag is too long"));
 
     if ($form->load()->validate()) {
       $old_name = $tag->name;
-      $new_name_or_list = $form->input->val();
+      $new_name_or_list = $form->name->val();
       $tag_list = explode(",", $new_name_or_list);
 
       $tag->name = trim(array_shift($tag_list));
