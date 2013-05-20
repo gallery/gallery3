@@ -1,6 +1,6 @@
 name = "Info"
 description = "Display extra information about photos and albums"
-version = 2
+version = 3
 author_name = "Gallery Team"
 author_url = "http://codex.galleryproject.org/Gallery:Team"
 info_url = "http://codex.galleryproject.org/Gallery3:Modules:info"
