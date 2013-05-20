@@ -24,6 +24,7 @@ class Info_Hook_InfoInstaller {
     Module::set_var("info", "show_owner", 1);
     Module::set_var("info", "show_name", 1);
     Module::set_var("info", "show_captured", 1);
+    Module::set_var("info", "show_size", 1);
   }
 
   static function upgrade($version) {
@@ -34,6 +35,10 @@ class Info_Hook_InfoInstaller {
       Module::set_var("info", "show_name", 1);
       Module::set_var("info", "show_captured", 1);
       Module::set_version("info", $version = 2);
+    }
+    if ($version == 2) {
+      Module::set_var("info", "show_size", 1);
+      Module::set_version("info", $version = 3);
     }
   }
 }
