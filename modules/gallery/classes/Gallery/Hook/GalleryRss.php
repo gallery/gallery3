@@ -64,7 +64,7 @@ class Gallery_Hook_GalleryRss {
         ->find_all();
       $feed->max_pages = ceil(
         $item->descendants->viewable()->where("type", "=", "photo")->count_all() / $limit);
-      if ($item->id == Item::root()->id) {
+      if ($item->is_root()) {
         $feed->title = HTML::purify($item->title);
       } else {
         $feed->title = t("%site_title - %item_title",

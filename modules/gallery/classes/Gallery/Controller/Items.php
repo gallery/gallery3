@@ -163,7 +163,7 @@ class Gallery_Controller_Items extends Controller {
     Module::event("item_edit_form", $item, $form);
 
     // We can't edit the root item's name or slug.
-    if ($item->id == 1) {
+    if ($item->is_root()) {
       $form->item->name
         ->attr("type", "hidden")
         ->add_rule("equals", array(":value", $item->name));
