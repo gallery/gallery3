@@ -71,13 +71,21 @@ class Gallery_Model_Item extends ORM_MPTT {
     return $this->type == 'movie';
   }
 
+  /**
+   * Is this the root item?
+   * @return true if it's the root item
+   */
+  public function is_root() {
+    return $this->id == Item::ROOT_ID;
+  }
+
   public function delete() {
     if (!$this->loaded()) {
       // Concurrent deletes may result in this item already being gone.  Ignore it.
       return;
     }
 
-    if ($this->id == 1) {
+    if ($this->is_root()) {
       $v = new Validation(array("id"));
       $v->error("id", "cant_delete_root_album");
       throw new ORM_Validation_Exception($this->object_name(), $v);
@@ -905,7 +913,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     );
 
     // Conditional rules
-    if ($this->id == 1) {
+    if ($this->is_root()) {
       // We don't care about the name and slug for the root album.
       $rules["name"] = array();
       $rules["slug"] = array();
@@ -941,7 +949,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       $v->error("slug", "conflict");
     }
 
-    if ($this->parent_id == 1 && Kohana::auto_load("Controller_{$this->slug}")) {
+    if ($this->parent_id == Item::ROOT_ID && Kohana::auto_load("Controller_{$this->slug}")) {
       // @todo: revise this to look for routes instead of just controller names.  It seems that
       // it should use Request::process() (*not* execute()) and Route::name() like:
       //   $processed = Request::factory($this->slug)->process();
@@ -1052,7 +1060,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * Make sure that the parent id refers to an album.
    */
   public function valid_parent(Validation $v) {
-    if ($this->id == 1) {
+    if ($this->is_root()) {
       if ($this->parent_id != 0) {
         $v->error("parent_id", "invalid");
       }
@@ -1075,7 +1083,7 @@ class Gallery_Model_Item extends ORM_MPTT {
    * Make sure the album cover item id refers to a valid item, or is null.
    */
   public function valid_album_cover(Validation $v) {
-    if ($this->id == 1) {
+    if ($this->is_root()) {
       return;
     }
 

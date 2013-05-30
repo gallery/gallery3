@@ -7,7 +7,7 @@
     </legend>
     <ul>
       <li>
-        <? if ($album->id == Item::root()->id): ?>
+        <? if ($album->is_root()): ?>
           <label for="q"><?= t("Search the gallery") ?></label>
         <? else: ?>
           <label for="q"><?= t("Search this album") ?></label>
@@ -25,14 +25,14 @@
 <div id="g-search-results">
   <h1><?= t("Search results") ?></h1>
 
-  <? if ($album->id == Item::root()->id): ?>
+  <? if ($album->is_root()): ?>
     <div>
       <?= t("Searched the whole gallery.") ?>
     </div>
   <? else: ?>
     <div>
       <?= t("Searched within album <b>%album</b>.", array("album" => HTML::purify($album->title))) ?>
-      <a href="<?= URL::site(URL::query(array("album" => Item::root()->id))) ?>"><?= t("Search whole gallery") ?></a>
+      <a href="<?= URL::site(URL::query(array("album" => Item::ROOT_ID))) ?>"><?= t("Search whole gallery") ?></a>
     </div>
   <? endif; ?>
 

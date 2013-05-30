@@ -251,7 +251,7 @@ class Item_Model_Test extends Unittest_TestCase {
     $fullsize_file = file_get_contents($photo->file_path());
 
     // Now move the album
-    $album1->parent_id = Item::root()->id;
+    $album1->parent_id = Item::ROOT_ID;
     $album1->save();
     $photo->reload();
 
@@ -306,7 +306,7 @@ class Item_Model_Test extends Unittest_TestCase {
     // $source and $album have the same name, so if we move $source into the root they should
     // conflict and get randomized
 
-    $source->parent_id = Item::root()->id;
+    $source->parent_id = Item::ROOT_ID;
     $source->save();
 
     // foo should become foo-01
@@ -341,7 +341,7 @@ class Item_Model_Test extends Unittest_TestCase {
     // $photo1 and $photo2 have the same name, so if we move $photo1 into the root they should
     // conflict and get uniquified.
 
-    $photo2->parent_id = Item::root()->id;
+    $photo2->parent_id = Item::ROOT_ID;
     $photo2->save();
 
     // foo.jpg should become foo-01.jpg

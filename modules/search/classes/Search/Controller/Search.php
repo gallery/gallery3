@@ -24,7 +24,7 @@ class Search_Controller_Search extends Controller {
     $q_with_more_terms = Search::add_query_terms($q);
     $show = $this->request->query("show");
 
-    $album_id = Arr::get($this->request->query(), "album", Item::root()->id);
+    $album_id = Arr::get($this->request->query(), "album", Item::ROOT_ID);
     $album = ORM::factory("Item", $album_id);
     if (!Access::can("view", $album) || !$album->is_album()) {
       $album = Item::root();
