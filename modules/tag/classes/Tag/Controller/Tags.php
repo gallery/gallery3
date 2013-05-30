@@ -33,8 +33,6 @@ class Tag_Controller_Tags extends Controller {
    * Show a tag's items.  This finds the tag by its URL and generates a view.
    */
   public function action_show() {
-    $tag_url = $this->request->param("tag_url");
-
     // See if we got here via "tags/show/<id>" - if so, fire a 301.
     if ($tag_id = $this->request->arg_optional(0)) {
       $tag = ORM::factory("Tag", $tag_id);
@@ -42,6 +40,12 @@ class Tag_Controller_Tags extends Controller {
         throw HTTP_Exception::factory(404);
       }
       $this->redirect($tag->abs_url(), 301);
+    }
+
+    $tag_url = $this->request->param("tag_url");
+    if (empty($tag_url)) {
+      // @todo: this is the future home of the album of all tags.  For now, we 404.
+      throw HTTP_Exception::factory(404);
     }
 
     // See if we have a slash in the URL, which might be a Gallery 3.0.x canonical URL with
@@ -56,24 +60,19 @@ class Tag_Controller_Tags extends Controller {
     }
 
     // Find the tag by its canonical URL, which has the form "tag(/<slug>)".
-    if (empty($tag_url)) {
-      // @todo: this is the future home of the album of all tags.  For now, we 404.
-      throw HTTP_Exception::factory(404);
-    } else {
-      $tag = ORM::factory("Tag")
-        ->where("slug", "=", $tag_url)
-        ->find();
-      if (!$tag->loaded()) {
-        // See if we have a numeric URL, which might be a malformed Gallery 3.0.x URL
-        // with the form "tag/<id>" - if so, fire a 301.
-        if (!preg_match("/[^0-9]/", $tag_url)) {
-          $tag = ORM::factory("Tag", $tag_url);
-          if ($tag->loaded()) {
-            $this->redirect($tag->abs_url(), 301);
-          }
+    $tag = ORM::factory("Tag")
+      ->where("slug", "=", $tag_url)
+      ->find();
+    if (!$tag->loaded()) {
+      // See if we have a numeric URL, which might be a malformed Gallery 3.0.x URL
+      // with the form "tag/<id>" - if so, fire a 301.
+      if (!preg_match("/[^0-9]/", $tag_url)) {
+        $tag = ORM::factory("Tag", $tag_url);
+        if ($tag->loaded()) {
+          $this->redirect($tag->abs_url(), 301);
         }
-        throw HTTP_Exception::factory(404);
       }
+      throw HTTP_Exception::factory(404);
     }
 
     $page_size = Module::get_var("gallery", "page_size", 9);
