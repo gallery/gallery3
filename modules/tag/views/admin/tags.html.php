@@ -3,6 +3,7 @@
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
     $("#g-tag-admin .g-tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
+    $("#g-tag-admin .g-edit-link").attr("title", $(".g-edit-link:first span").html());
     $("#g-tag-admin .g-delete-link").attr("title", $(".g-delete-link:first span").html());
 
     // In-place editing for tag admin
@@ -43,7 +44,11 @@
           <? endif ?>
               <li>
                 <span class="g-editable g-tag-name" rel="<?= $tag->id ?>"><?= HTML::clean($tag->name) ?></span>
-                <span class="g-understate">(<?= $tag->count ?>)</span>
+                <? $url = (strpos($tag->url(), URL::site()) === 0) ? substr($tag->url(), strlen(URL::site())) : $tag->url() ?>
+                <span class="g-understate">(<?= HTML::clean($url) ?> - <?= t2("1 item", "%count items", $tag->count) ?>)</span>
+                <a href="<?= URL::site("admin/tags/edit/$tag->id") ?>"
+                    class="g-dialog-link g-edit-link g-button">
+                  <span class="ui-icon ui-icon-pencil"><?= t("Edit this tag") ?></span></a>
                 <a href="<?= URL::site("admin/tags/delete/$tag->id") ?>"
                     class="g-dialog-link g-delete-link g-button">
                   <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>

@@ -18,11 +18,51 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Tag extends Controller {
+  /**
+   * Show a tag's items.  This finds the tag by its URL and generates a view.
+   */
   public function action_show() {
-    $tag_id = $this->request->arg(0, "digit");
-    $tag = ORM::factory("Tag", $tag_id);
-    if (!$tag->loaded()) {
+    $tag_url = $this->request->param("tag_url");
+
+    // See if we got here via "tag/show/<id>" - if so, fire a 301.
+    if ($tag_id = $this->request->arg_optional(0)) {
+      $tag = ORM::factory("Tag", $tag_id);
+      if (!$tag->loaded()) {
+        throw HTTP_Exception::factory(404);
+      }
+      $this->redirect($tag->abs_url(), 301);
+    }
+
+    // See if we have a slash in the URL, which might be a Gallery 3.0.x canonical URL with
+    // the form "tag/<id>/<name>" - if so, fire a 301.
+    if (($slash_pos = strpos($tag_url, "/")) !== false) {
+      $tag_id = substr($tag_url, 0, $slash_pos);
+      $tag = ORM::factory("Tag", $tag_id);
+      if (!$tag->loaded()) {
+        throw HTTP_Exception::factory(404);
+      }
+      $this->redirect($tag->abs_url(), 301);
+    }
+
+    // Find the tag by its canonical URL, which has the form "tag(/<slug>)".
+    if (empty($tag_url)) {
+      // @todo: this is the future home of the album of all tags.  For now, we 404.
       throw HTTP_Exception::factory(404);
+    } else {
+      $tag = ORM::factory("Tag")
+        ->where("slug", "=", $tag_url)
+        ->find();
+      if (!$tag->loaded()) {
+        // See if we have a numeric URL, which might be a malformed Gallery 3.0.x URL
+        // with the form "tag/<id>" - if so, fire a 301.
+        if (!preg_match("/[^0-9]/", $tag_url)) {
+          $tag = ORM::factory("Tag", $tag_url);
+          if ($tag->loaded()) {
+            $this->redirect($tag->abs_url(), 301);
+          }
+        }
+        throw HTTP_Exception::factory(404);
+      }
     }
 
     $page_size = Module::get_var("gallery", "page_size", 9);
@@ -71,15 +111,17 @@ class Tag_Controller_Tag extends Controller {
     Item::set_display_context_callback("Controller_Tag::get_display_context", $tag->id);
   }
 
+  /**
+   * Find a tag by its name.  This is used in the "tag_name" route, which allows URLs like
+   * "tag_name/<tag_name>".  This is deprecated in Gallery 3.1, but we keep it here for
+   * backward compatibility.  If found, this will fire a 301 redirect to the canonical URL.
+   */
   public function action_find_by_name() {
     $tag_name = $this->request->arg(0);
     $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
-      // No matching tag was found. If this was an imported tag, this is probably a bug.
-      // If the user typed the URL manually, it might just be wrong.
       throw HTTP_Exception::factory(404);
     }
-    // We have a matching tag, but this is not the canonical URL - redirect them.
     $this->redirect($tag->abs_url(), 301);
   }
 

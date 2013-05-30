@@ -526,6 +526,7 @@ class Gallery_Controller_Items extends Controller {
 
   /**
    * Get form error messages for the item group.  This is a helper function for the edit/add forms.
+   * @see Controller_Admin_Tags::action_edit_slug(), which uses some of the same messages.
    */
   public static function get_form_error_messages($type) {
     // Define all of the error messages.
@@ -587,6 +588,7 @@ class Gallery_Controller_Items extends Controller {
 
   /**
    * Get form labels for the item group.  This is a helper function for the edit/add forms.
+   * @see Controller_Admin_Tags::action_edit_slug(), which uses some of the same labels.
    */
   public static function get_form_labels($type) {
     // Define all of the labels.
