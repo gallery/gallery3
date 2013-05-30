@@ -42,6 +42,7 @@ class Gallery_Controller_Packager extends Controller {
     foreach (Database::instance()->list_tables() as $table) {
       Database::instance()->query(Database::DROP, "DROP TABLE IF EXISTS {{$table}}");
     }
+    ORM::reinitialize();
 
     // Clean out data
     System::unlink_dir(VARPATH . "uploads");
@@ -94,9 +95,9 @@ class Gallery_Controller_Packager extends Controller {
     }
     $command = sprintf(
       "mysqldump --compact --skip-extended-insert --add-drop-table %s %s %s %s > $sql_file",
-      escapeshellarg("-h{$conn['host']}"),
-      escapeshellarg("-u{$conn['user']}"),
-      $conn['pass'] ? escapeshellarg("-p{$conn['pass']}") : "",
+      escapeshellarg("-h{$conn['hostname']}"),
+      escapeshellarg("-u{$conn['username']}"),
+      $conn['password'] ? escapeshellarg("-p{$conn['password']}") : "",
       escapeshellarg($conn['database']));
     exec($command, $output, $status);
     if ($status) {
@@ -161,6 +162,8 @@ class Gallery_Controller_Packager extends Controller {
       if ($basename == "database.php" || $basename == "." || $basename == "..") {
         continue;
       } else if (basename($path) == "logs" && $basename != ".htaccess") {
+        continue;
+      } else if (strpos($name, Kohana::$cache_dir . "/HTML") === 0) {  // HTMLPurifier cache
         continue;
       }
 
