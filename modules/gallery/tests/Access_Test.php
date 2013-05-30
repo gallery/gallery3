@@ -161,7 +161,7 @@ class Access_Test extends Unittest_TestCase {
    * @expectedException Access_Exception
    */
   public function test_cant_reset_root_item() {
-    Access::reset(Identity::everybody(), "view", ORM::factory("Item", 1));
+    Access::reset(Identity::everybody(), "view", Item::root());
   }
 
   public function test_can_view_item() {

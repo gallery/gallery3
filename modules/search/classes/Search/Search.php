@@ -64,7 +64,7 @@ class Search_Search {
       $access_sql = "";
     }
 
-    if ($album->id == Item::root()->id) {
+    if ($album->is_root()) {
       $album_sql = "";
     } else {
       $album_sql =
