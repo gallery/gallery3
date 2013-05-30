@@ -100,3 +100,7 @@
 #g-tag-admin form ul {
   margin-bottom: 0;
 }
+
+#g-tag-admin .g-edit-link {
+  padding-right: 0;
+}

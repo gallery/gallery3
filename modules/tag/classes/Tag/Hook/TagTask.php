@@ -55,7 +55,7 @@ class Tag_Hook_TagTask {
         Log::instance()->add(Log::ERROR,print_r(Database::instance()->last_query(),1));
         while ($current < $total && microtime(true) - $start < 1 && $tag = $tags->current()) {
           $last_tag_id = $tag->id;
-          $real_count = $tag->items_count();
+          $real_count = $tag->items->count_all();
           if ($tag->count != $real_count) {
             $tag->count = $real_count;
             if ($tag->count) {

@@ -129,12 +129,12 @@ abstract class Formo_Core_Innards {
 	/**
 	 * Label string
 	 * 
-	 * (default value: static::NOTSET)
+	 * (default value: self::NOTSET)
 	 * 
 	 * @var mixed
 	 * @access protected
 	 */
-	protected $_label = static::NOTSET;
+	protected $_label = self::NOTSET;
 
 	/**
 	 * Array of options used for select, checkboxes and radios
@@ -182,8 +182,8 @@ abstract class Formo_Core_Innards {
 	 */
 	protected $_vals = array
 	(
-		'original' => static::NOTSET,
-		'new' => static::NOTSET,
+		'original' => self::NOTSET,
+		'new' => self::NOTSET,
 	);
 
 	/**
@@ -206,9 +206,9 @@ abstract class Formo_Core_Innards {
 	 */
 	public function config($param, $default = NULL)
 	{
-		$val = Arr::path($this->_config, $param, static::NOTSET);
+		$val = Arr::path($this->_config, $param, self::NOTSET);
 
-		if ($val !== static::NOTSET)
+		if ($val !== self::NOTSET)
 		{
 			return $val;
 		}
@@ -216,8 +216,8 @@ abstract class Formo_Core_Innards {
 		$parent = $this->parent();
 		if ($parent)
 		{
-			$val = $parent->config($param, static::NOTSET);
-			if ($val !== static::NOTSET)
+			$val = $parent->config($param, self::NOTSET);
+			if ($val !== self::NOTSET)
 			{
 				return $val;
 			}
@@ -387,11 +387,11 @@ abstract class Formo_Core_Innards {
 	 */
 	protected function _get_val()
 	{
-		$val = ($this->_vals['new'] !== static::NOTSET)
+		$val = ($this->_vals['new'] !== self::NOTSET)
 			? $this->_vals['new']
 			: $this->_vals['original'];
 
-		if ($val === static::NOTSET)
+		if ($val === self::NOTSET)
 		{
 			$val = NULL;
 		}
@@ -799,7 +799,7 @@ abstract class Formo_Core_Innards {
 	 */
 	protected function _set_val($val, $force_new = FALSE)
 	{
-		if ($this->_vals['original'] === static::NOTSET AND $force_new !== TRUE)
+		if ($this->_vals['original'] === self::NOTSET AND $force_new !== TRUE)
 		{
 			$this->_vals['original'] = $val;
 		}

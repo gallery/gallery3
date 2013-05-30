@@ -35,7 +35,13 @@ class Tag_Hook_TagRss {
       }
 
       $feed = new stdClass();
-      $feed->items = $tag->items($limit, $offset, "photo");
+      $feed->items = $tag->items
+        ->viewable()
+        ->where("item.type", "!=", "album")
+        ->limit($limit)
+        ->offset($offset)
+        ->order_by("item.id")
+        ->find_all();
       $feed->max_pages = ceil($tag->count / $limit);
       $feed->title = t("%site_title - %tag_name",
                        array("site_title" => Item::root()->title, "tag_name" => $tag->name));

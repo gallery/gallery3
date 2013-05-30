@@ -294,6 +294,29 @@ class Formo_Core_Formo extends Formo_Innards {
 	}
 
 	/**
+	 * Add a single rule accross a group of fields
+	 * 
+	 * @access public
+	 * @param array $rule
+	 * @param array $fields
+	 * @return void
+	 */
+	public function add_rule_fields( array $rule, array $fields)
+	{
+		foreach ($fields as $alias)
+		{
+			$field = $this->find($alias);
+
+			if ($field)
+			{
+				$field->add_rule($rule);
+			}
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Add rules for multiple fields
 	 * 
 	 * @access public
