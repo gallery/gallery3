@@ -56,7 +56,10 @@ class Tag_Controller_Tags extends Controller {
           "movie" => t("Add tag to movie")
         ), $item->type))
       ->add_rule("not_empty")
-      ->add_rule("max_length", array(":value", 128), t("Your tag is too long"));
+      ->add_rule("max_length", array(":value", 128));
+
+    // Get the error messages.
+    $form->tag->set_var_fields("error_messages", Controller_Admin_Tags::get_form_error_messages());
 
     // If sent, validate and create the tag.
     if ($form->load()->validate()) {
