@@ -89,7 +89,7 @@ class Tag_Controller_Tags extends Controller {
       $page = (int) Arr::get($this->request->query(), "page", "1");
     }
 
-    $children_count = $tag->items_count();
+    $children_count = $tag->items->viewable()->count_all();
     $offset = ($page-1) * $page_size;
     $max_pages = max(ceil($children_count / $page_size), 1);
 
@@ -235,7 +235,8 @@ class Tag_Controller_Tags extends Controller {
     return array("position" => $position,
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
-                 "sibling_count" => $tag->items_count($where),
+                 "sibling_count" =>
+                   $tag->items->viewable()->where("type", "!=", "album")->count_all(),
                  "siblings_callback" => array(array($tag, "items"), array()),
                  "breadcrumbs" => array(
                    Breadcrumb::instance($root->title, $root->url())->set_first(),

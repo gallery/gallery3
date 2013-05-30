@@ -27,22 +27,6 @@ class Tag_Model_Tag extends ORM {
     }
   }
 
-  /**
-   * Return the count of all viewable items associated with this tag.
-   * @param string   $where   an array of arrays, each compatible with ORM::where()
-   * @return integer
-   */
-  public function items_count($where=array()) {
-    if (is_scalar($where)) {
-      // backwards compatibility
-      $where = array(array("item.type", "=", $where));
-    }
-    return $this->items
-      ->viewable()
-      ->merge_where($where)
-      ->count_all();
-  }
-
   public function rules() {
     return array(
       "count" => array(
