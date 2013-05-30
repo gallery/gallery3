@@ -20,7 +20,7 @@
 Route::set("tag", "tag(/<tag_url>)",
            array("tag_url" => "[A-Za-z0-9-_/]++")) // Ref: Model_Tag::valid_slug, Route::REGEX_SEGMENT
   ->defaults(array(
-      "controller" => "tag",
+      "controller" => "tags",
       "action" => "show"
     ));
 
@@ -28,6 +28,6 @@ Route::set("tag", "tag(/<tag_url>)",
 Route::set("tag_name", "tag_name/<args>",
            array("args" => "[^.,;?\\n]++"))
   ->defaults(array(
-      "controller" => "tag",
+      "controller" => "tags",
       "action" => "find_by_name"
     ));

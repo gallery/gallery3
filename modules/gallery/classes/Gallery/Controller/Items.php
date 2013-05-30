@@ -455,7 +455,7 @@ class Gallery_Controller_Items extends Controller {
    * @see  Item::get_display_context_callback()
    * @see  Item::clear_display_context_callback()
    * @see  Controller_Search::get_display_context()
-   * @see  Controller_Tag::get_display_context()
+   * @see  Controller_Tags::get_display_context()
    */
   public static function get_display_context($item) {
     $where = array(array("type", "!=", "album"));
