@@ -37,7 +37,7 @@ class Tag_Hook_TagRss {
       $feed = new stdClass();
       $feed->items = $tag->items
         ->viewable()
-        ->where("item.type", "=", "photo")
+        ->where("item.type", "!=", "album")
         ->limit($limit)
         ->offset($offset)
         ->order_by("item.id")
