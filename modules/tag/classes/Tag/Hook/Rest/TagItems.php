@@ -21,10 +21,8 @@ class Tag_Hook_Rest_TagItems {
   static function get($request) {
     $tag = Rest::resolve($request->url);
     $items = array();
-    foreach ($tag->items() as $item) {
-      if (Access::can("view", $item)) {
-        $items[] = Rest::url("tag_item", $tag, $item);
-      }
+    foreach ($tag->items->viewable()->order_by("item.id")->find_all() as $item) {
+      $items[] = Rest::url("tag_item", $tag, $item);
     }
 
     return array(

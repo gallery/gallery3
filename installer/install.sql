@@ -101,8 +101,8 @@ CREATE TABLE {graphics_rules} (
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'thumb');
-INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:640;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'resize');
+INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:4;}','gallery','GalleryGraphics::resize',100,'thumb');
+INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:640;s:6:\"master\";i:4;}','gallery','GalleryGraphics::resize',100,'resize');
 DROP TABLE IF EXISTS {groups};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -254,7 +254,7 @@ INSERT INTO {modules} VALUES (6,1,'info',2,6);
 INSERT INTO {modules} VALUES (7,1,'rss',1,7);
 INSERT INTO {modules} VALUES (8,1,'search',1,8);
 INSERT INTO {modules} VALUES (9,1,'slideshow',2,9);
-INSERT INTO {modules} VALUES (10,1,'tag',3,10);
+INSERT INTO {modules} VALUES (10,1,'tag',4,10);
 DROP TABLE IF EXISTS {outgoing_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -314,8 +314,9 @@ DROP TABLE IF EXISTS {tags};
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE {tags} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) NOT NULL,
   `count` int(10) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(128) NOT NULL,
+  `slug` varchar(128) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;

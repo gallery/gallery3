@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Admin_Tags extends Controller_Admin {
+  /**
+   * Display the main tag admin form, from which the other three actions below are called.
+   */
   public function action_index() {
     $filter = $this->request->query("filter");
 
@@ -34,6 +37,10 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $this->response->body($view);
   }
 
+  /**
+   * Delete a tag.  This generates the confirmation form, validates it,
+   * deletes the tag, and returns a response.
+   */
   public function action_delete() {
     $tag_id = $this->request->arg(0, "digit");
     $tag = ORM::factory("Tag", $tag_id);
@@ -58,7 +65,10 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $this->response->ajax_form($form);
   }
 
-  public function action_edit() {
+  /**
+   * Edit a tag's name.  This is a short form (i.e. one field) that uses gallery.in_place_edit.js.
+   */
+  public function action_edit_name() {
     $tag_id = $this->request->arg(0, "digit");
     $tag = ORM::factory("Tag", $tag_id);
     if (!$tag->loaded()) {
@@ -69,15 +79,18 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
     $form = Formo::form()
       ->attr("id", "g-in-place-edit-form")
       ->add_class("g-short-form")
-      ->add("input", "input", $tag->name)
+      ->add("name", "input", $tag->name)
       ->add("submit", "input|submit", t("Save"));
-    $form->input
+    $form->name
       ->add_rule("not_empty")
-      ->add_rule("max_length", array(":value", 64), t("Your tag is too long"));
+      ->add_rule("max_length", array(":value", 128));
+
+    // Get the error messages.
+    $form->set_var_fields("error_messages", static::get_form_error_messages());
 
     if ($form->load()->validate()) {
       $old_name = $tag->name;
-      $new_name_or_list = $form->input->val();
+      $new_name_or_list = $form->name->val();
       $tag_list = explode(",", $new_name_or_list);
 
       $tag->name = trim(array_shift($tag_list));
@@ -102,5 +115,75 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
 
     // This is being called using in_place_edit - use Response::ajax_form().
     $this->response->ajax_form($form);
+  }
+
+  /**
+   * Edit a tag.  This generates the form, validates it, updates the tag, and returns a response.
+   */
+  public function action_edit() {
+    $tag_id = $this->request->arg(0, "digit");
+    $tag = ORM::factory("Tag", $tag_id);
+    if (!$tag->loaded()) {
+      throw HTTP_Exception::factory(404);
+    }
+
+    // Build our form.
+    $form = Formo::form()
+      ->attr("id", "g-edit-tag-form")
+      ->add("tag", "group")
+      ->add("other", "group");
+    $form->tag
+      ->set("label", t("Edit Tag"))
+      ->add("name", "input")
+      ->add("slug", "input");
+    $form->other
+      ->add("submit", "input|submit", t("Modify"));
+
+    // Get the labels and error messages and link the ORM model.
+    $form->tag->orm("link", array("model" => $tag));
+    $form->tag->set_var_fields("label", static::get_form_labels());
+    $form->tag->set_var_fields("error_messages", static::get_form_error_messages());
+
+    if ($form->load()->validate()) {
+      $tag->save();
+      $message = t("Updated tag %name", array("name" => $tag->name));
+      Message::success($message);
+      GalleryLog::success("tags", $message);
+    }
+
+    // Merge the groups together for presentation purposes
+    $form->merge_groups("other", "tag");
+
+    $this->response->ajax_form($form);
+  }
+
+  /**
+   * Get form labels for the tag group.  This is a helper function for the edit/add forms.
+   * @see Controller_Items::get_form_labels(), which uses some of the same labels.
+   */
+  public static function get_form_labels() {
+    return array(
+      "name" => t("Tag Name"),
+      "slug" => t("Internet Address")
+    );
+  }
+
+  /**
+   * Get form error messages for the tag group.  This is a helper function for the edit/add forms.
+   * @see Controller_Items::get_form_error_messages(), which uses some of the same error messages.
+   */
+  public static function get_form_error_messages() {
+    return array(
+      "name" => array(
+        "not_empty" => t("You must provide a name"),
+        "max_length" => t("Your tag is too long")
+      ),
+      "slug" => array(
+        "conflict" => t("There is already a tag with this internet address"),
+        "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
+        "not_empty" => t("You must provide an internet address"),
+        "max_length" => t("Your internet address is too long")
+      )
+    );
   }
 }
