@@ -47,7 +47,6 @@ class Tag_Controller_Tags extends Controller {
     $form->tag
       ->set("label", t("Add Tag"))
       ->add("name", "input")
-      ->add("item_id", "input|hidden", $item->id)
       ->add("submit", "input|submit", t("Add Tag"));
     $form->tag->name
       ->set("label", Arr::get(array(
