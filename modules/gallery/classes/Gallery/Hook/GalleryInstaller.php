@@ -238,8 +238,7 @@ class Gallery_Hook_GalleryInstaller {
             "sort_column", "sort_order", "thumb_dirty", "title", "type", "updated", "weight"))
       ->values(array($now, "", 1, 1, 0, 1, 2, "weight", "ASC", 1, "Gallery", "album", $now, 1))
       ->execute();
-    $root = ORM::factory("Item", 1);
-    Access::add_item($root);
+    Access::add_item(Item::root());
 
     Module::set_var("gallery", "active_site_theme", "wind");
     Module::set_var("gallery", "active_admin_theme", "admin_wind");

@@ -23,8 +23,7 @@ class Tag_Controller_Tags extends Controller {
    */
   public function action_index() {
     // Far from perfection, but at least require view permission for the root album
-    $album = ORM::factory("Item", 1);
-    Access::required("view", $album);
+    Access::required("view", Item::root());
 
     $this->response->body(Tag::cloud(Module::get_var("tag", "tag_cloud_size", 30)));
   }

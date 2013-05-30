@@ -129,7 +129,7 @@ class User_Hook_UserInstaller {
     $admin->admin = true;
     $admin->save();
 
-    $root = ORM::factory("Item", 1);
+    $root = Item::root();
     Access::allow($everybody, "view", $root);
     Access::allow($everybody, "view_full", $root);
 
