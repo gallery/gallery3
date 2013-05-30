@@ -107,7 +107,7 @@ class Tag_Controller_Tags extends Controller {
             "max_pages" => $max_pages,
             "page_size" => $page_size,
             "tag" => $tag,
-            "children" => $tag->items($page_size, $offset),
+            "children" => $tag->items->viewable()->limit($page_size)->offset($offset)->find_all(),
             "breadcrumbs" => array(
               Breadcrumb::instance($root->title, $root->url())->set_first(),
               Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),
@@ -211,14 +211,24 @@ class Tag_Controller_Tags extends Controller {
    */
   public static function get_display_context($item, $tag_id) {
     $tag = ORM::factory("Tag", $tag_id);
-    $where = array(array("type", "!=", "album"));
 
+    $where = array(array("type", "!=", "album"));
     $position = Tag::get_position($tag, $item, $where);
     if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) = $tag->items(3, $position - 2, $where);
+      list ($previous_item, $ignore, $next_item) = $tag->items
+        ->viewable()
+        ->where("type", "!=", "album")
+        ->limit(3)
+        ->offset($position - 2)
+        ->find_all();
     } else {
       $previous_item = null;
-      list ($next_item) = $tag->items(1, $position, $where);
+      list ($next_item) = $tag->items
+        ->viewable()
+        ->where("type", "!=", "album")
+        ->limit(1)
+        ->offset($position)
+        ->find_all();
     }
 
     $root = Item::root();

@@ -28,25 +28,6 @@ class Tag_Model_Tag extends ORM {
   }
 
   /**
-   * Return all viewable items associated with this tag.
-   * @param integer  $limit   number of rows to limit result to
-   * @param integer  $offset  offset in result to start returning rows from
-   * @param string   $where   an array of arrays, each compatible with ORM::where()
-   * @return Database_Result
-   */
-  public function items($limit=null, $offset=null, $where=array()) {
-    if (is_scalar($where)) {
-      // backwards compatibility
-      $where = array(array("item.type", "=", $where));
-    }
-    return $this->items
-      ->viewable()
-      ->merge_where($where)
-      ->order_by("item.id")
-      ->limit($limit)->offset($offset)->find_all();
-  }
-
-  /**
    * Return the count of all viewable items associated with this tag.
    * @param string   $where   an array of arrays, each compatible with ORM::where()
    * @return integer
