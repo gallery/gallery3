@@ -90,20 +90,14 @@ class SafeString_Test extends Unittest_TestCase {
   }
 
   public function test_purify() {
-    $safe_string = SafeString::purify("hello <p  >world</p>");
-    $expected = (class_exists("Purifier") && method_exists("Purifier", "purify"))
-      ? "hello <p>world</p>"
-      : "hello &lt;p  &gt;world&lt;/p&gt;";
-    $this->assertEquals($expected, $safe_string);
+    $safe_string = SafeString::purify("<script>alert('evil')</script>hello <p  >world</p>");
+    $this->assertEquals("hello <p>world</p>", (string)$safe_string);
   }
 
   public function test_purify_twice() {
-    $safe_string = SafeString::purify("hello <p  >world</p>");
+    $safe_string = SafeString::purify("<script>alert('evil')</script>hello <p  >world</p>");
     $safe_string_2 = SafeString::purify($safe_string);
-    $expected = (class_exists("Purifier") && method_exists("Purifier", "purify"))
-      ? "hello <p>world</p>"
-      : "hello &lt;p  &gt;world&lt;/p&gt;";
-    $this->assertEquals($expected, $safe_string_2);
+    $this->assertEquals("hello <p>world</p>", (string)$safe_string_2);
   }
 
   public function test_purify_safe_html() {

@@ -26,11 +26,8 @@ class HTML_Test extends Unittest_TestCase {
   }
 
   public function test_purify() {
-    $safe_string = HTML::purify("hello <p  >world</p>");
-    $expected = (class_exists("Purifier") && method_exists("Purifier", "purify"))
-      ? "hello <p>world</p>"
-      : "hello &lt;p  &gt;world&lt;/p&gt;";
-    $this->assertEquals($expected, $safe_string->unescaped());
+    $safe_string = HTML::purify("<script>alert('evil')</script>hello <p  >world</p>");
+    $this->assertEquals("hello <p>world</p>", $safe_string->unescaped());
     $this->assertTrue($safe_string instanceof SafeString);
   }
 
