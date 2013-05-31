@@ -238,8 +238,7 @@ class Gallery_Hook_GalleryInstaller {
             "sort_column", "sort_order", "thumb_dirty", "title", "type", "updated", "weight"))
       ->values(array($now, "", 1, 1, 0, 1, 2, "weight", "ASC", 1, "Gallery", "album", $now, 1))
       ->execute();
-    $root = ORM::factory("Item", 1);
-    Access::add_item($root);
+    Access::add_item(Item::root());
 
     Module::set_var("gallery", "active_site_theme", "wind");
     Module::set_var("gallery", "active_admin_theme", "admin_wind");
@@ -842,10 +841,36 @@ class Gallery_Hook_GalleryInstaller {
       Module::set_version("gallery", $version = 59);
     }
 
-    // @TODO for the next upgrade - Image::AUTO in K2 was "2" and now in K3 it's "4" so we have to
-    // upgrade all graphics rules accordingly; "gallery_graphics" should be removed/renamed in the
-    // graphics rules definitions; "purifier" should be activated (3.1.x requires v2, 3.0.x could
-    // have had v1).
+    if ($version == 59) {
+      // In v60 we updated the graphics rules for Kohana 3.  In particular, the class name has
+      // changed from "gallery_graphics" to "GalleryGraphics" and the image master constants
+      // have changed.
+
+      // Define how Kohana 2 image master constants (1-4) are mapped to Kohana 3 constants.
+      $image_master_translation = array(
+        1 => Image::NONE,
+        2 => Image::AUTO,
+        3 => Image::HEIGHT,
+        4 => Image::WIDTH
+      );
+
+      // Update all graphics rules that still have the old class name from Kohana 2.
+      foreach (ORM::factory("GraphicsRule")
+               ->where("operation", "LIKE", "gallery_graphics::%")
+               ->find_all() as $rule) {
+        $args = unserialize($rule->args);
+        if (isset($args["master"])) {
+          $args["master"] = $image_master_translation[$args["master"]];
+          $rule->args = serialize($args);
+        }
+        $rule->operation = str_replace("gallery_graphics::", "GalleryGraphics::", $rule->operation);
+        $rule->save();
+      }
+      Module::set_version("gallery", $version = 60);
+    }
+
+    // @todo: still need special upgrade to fix "database.php" config file and activate "purifier"
+    // module (3.1.x requires v2, 3.0.x could have had v1).
   }
 
   static function uninstall() {

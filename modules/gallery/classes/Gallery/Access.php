@@ -256,7 +256,7 @@ class Gallery_Access {
    * @param  Model_Item $item
    */
   static function reset($group, $perm_name, $item) {
-    if ($item->id == 1) {
+    if ($item->is_root()) {
       throw new Access_Exception("Cant reset permissions on root album");
     }
     static::_set($group, $perm_name, $item, static::INHERIT);

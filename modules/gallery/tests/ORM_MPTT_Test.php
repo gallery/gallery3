@@ -82,7 +82,7 @@ class ORM_MPTT_Test extends Unittest_TestCase {
   public function test_parent() {
     $album = Test::random_album();
 
-    $parent = ORM::factory("Item", 1);
+    $parent = Item::root();
     $this->assertEquals($parent->id, $album->parent->id);
   }
 

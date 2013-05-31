@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class File_Proxy_Controller_Test extends Unittest_TestCase {
+  public $var;
+
   public function setup() {
+    $this->var = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
     parent::setup();
     $this->_save = array($_SERVER);
   }
@@ -31,102 +34,91 @@ class File_Proxy_Controller_Test extends Unittest_TestCase {
 
   public function test_basic() {
     $photo = Test::random_photo();
-    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
-    $controller = new Controller_FileProxy();
-    $this->assertSame($photo->file_path(), $controller->__call("", array()));
+    $response = Request::factory("{$this->var}/albums/{$photo->name}")->execute();
+    $this->assertEquals($photo->file_path(), $response->body());
   }
 
   public function test_query_params_are_ignored() {
     $photo = Test::random_photo();
-    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}?a=1&b=2");
-    $controller = new Controller_FileProxy();
-    $this->assertSame($photo->file_path(), $controller->__call("", array()));
+    $response = Request::factory("{$this->var}/albums/{$photo->name}?a=1&b=2")->execute();
+    $this->assertEquals($photo->file_path(), $response->body());
   }
 
-  public function test_file_must_be_in_var() {
-    $_SERVER["REQUEST_URI"] = URL::file("index.php");
-    $controller = new Controller_FileProxy();
-    try {
-      $controller->__call("", array());
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      $this->assertSame(1, $e->test_fail_code);
-    }
+  public function test_file_proxy_cannot_be_called_directly() {
+    $response = Request::factory("file_proxy/index")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(1, substr($response->body(), 0, 1));
   }
 
   public function test_file_must_be_in_albums_thumbs_or_resizes() {
-    $_SERVER["REQUEST_URI"] = URL::file("var/test/var/uploads/.htaccess");
-    $controller = new Controller_FileProxy();
-    try {
-      $controller->__call("", array());
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      $this->assertSame(2, $e->test_fail_code);
-    }
+    $response = Request::factory("{$this->var}/uploads/.htaccess")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(2, substr($response->body(), 0, 1));
   }
 
   public function test_movie_thumbnails_are_jpgs() {
     $movie = Test::random_movie();
     $name = LegalFile::change_extension($movie->name, "jpg");
-    $_SERVER["REQUEST_URI"] = URL::file("var/thumbs/$name");
-    $controller = new Controller_FileProxy();
-    $this->assertSame($movie->thumb_path(), $controller->__call("", array()));
+    $response = Request::factory("{$this->var}/thumbs/$name")->execute();
+    $this->assertEquals($movie->thumb_path(), $response->body());
   }
 
   public function test_invalid_item() {
     $photo = Test::random_photo();
-    $_SERVER["REQUEST_URI"] = URL::file("var/albums/x_{$photo->name}");
-    $controller = new Controller_FileProxy();
-    try {
-      $controller->__call("", array());
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      $this->assertSame(3, $e->test_fail_code);
-    }
+    $response = Request::factory("{$this->var}/albums/x_{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(3, substr($response->body(), 0, 1));
+  }
+
+  public function test_need_view_permission() {
+    $album = Test::random_album();
+    $photo = Test::random_photo($album);
+    $album = $album->reload(); // adding the photo changed the album in the db
+
+    Access::deny(Identity::everybody(), "view", $album);
+    Identity::set_active_user(Identity::guest());
+
+    // Cannot see thumb.
+    $response = Request::factory("{$this->var}/thumbs/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(4, substr($response->body(), 0, 1));
+    // Cannot see original.
+    $response = Request::factory("{$this->var}/albums/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(4, substr($response->body(), 0, 1));
   }
 
   public function test_need_view_full_permission_to_view_original() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album = $album->reload(); // adding the photo changed the album in the db
-    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}/{$photo->name}");
-    $controller = new Controller_FileProxy();
 
     Access::deny(Identity::everybody(), "view_full", $album);
     Identity::set_active_user(Identity::guest());
 
-    try {
-      $controller->__call("", array());
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      $this->assertSame(5, $e->test_fail_code);
-    }
+    // Can see thumb.
+    $response = Request::factory("{$this->var}/thumbs/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals($photo->thumb_path(), $response->body());
+    // Cannot see original.
+    $response = Request::factory("{$this->var}/albums/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(5, substr($response->body(), 0, 1));
   }
 
   public function test_cant_proxy_an_album() {
     $album = Test::random_album();
-    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$album->name}");
-    $controller = new Controller_FileProxy();
 
-    try {
-      $controller->__call("", array());
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      $this->assertSame(6, $e->test_fail_code);
-    }
+    $response = Request::factory("{$this->var}/albums/{$album->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(6, substr($response->body(), 0, 1));
   }
 
   public function test_missing_file() {
     $photo = Test::random_photo();
-    $_SERVER["REQUEST_URI"] = URL::file("var/albums/{$photo->name}");
     unlink($photo->file_path());
-    $controller = new Controller_FileProxy();
 
-    try {
-      $controller->__call("", array());
-      $this->assertTrue(false);
-    } catch (HTTP_Exception_404 $e) {
-      $this->assertSame(7, $e->test_fail_code);
-    }
+    $response = Request::factory("{$this->var}/albums/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(7, substr($response->body(), 0, 1));
   }
 }

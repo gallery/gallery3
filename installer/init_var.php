@@ -1,6 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?php
 !file_exists(VARPATH . "albums") && mkdir(VARPATH . "albums");
+!file_exists(VARPATH . "cache") && mkdir(VARPATH . "cache");
 !file_exists(VARPATH . "logs") && mkdir(VARPATH . "logs");
 !file_exists(VARPATH . "modules") && mkdir(VARPATH . "modules");
 !file_exists(VARPATH . "resizes") && mkdir(VARPATH . "resizes");

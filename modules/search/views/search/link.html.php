@@ -3,11 +3,11 @@
   <? if (isset($item)): ?>
     <? $album_id = $item->is_album() ? $item->id : $item->parent_id; ?>
   <? else: ?>
-    <? $album_id = Item::root()->id; ?>
+    <? $album_id = Item::ROOT_ID; ?>
   <? endif; ?>
   <ul>
     <li>
-      <? if ($album_id == Item::root()->id): ?>
+      <? if ($album_id == Item::ROOT_ID): ?>
         <label for="g-search"><?= t("Search the gallery") ?></label>
       <? else: ?>
         <label for="g-search"><?= t("Search this album") ?></label>

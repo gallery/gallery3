@@ -155,7 +155,7 @@ class Items_Rest_Test extends Unittest_TestCase {
     $album1->reload();
     $album2->reload();
 
-    $root = ORM::factory("Item", 1);
+    $root = Item::root();
     $restful_root = array(
       "url" => Rest::url("item", $root),
       "entity" => $root->as_restful_array(),

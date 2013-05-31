@@ -368,7 +368,7 @@ class Gallery_Hook_GalleryEvent {
               ->url(URL::site("items/rotate/$item->id/cw?csrf=$csrf")));
         }
 
-        if ($item->id != Item::root()->id) {
+        if (!$item->is_root()) {
           $parent = $item->parent;
           if (Access::can("edit", $parent)) {
             // We can't make this item the highlight if it's an album with no album cover, or if it's

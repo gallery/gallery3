@@ -163,7 +163,7 @@ class Gallery_Controller_Items extends Controller {
     Module::event("item_edit_form", $item, $form);
 
     // We can't edit the root item's name or slug.
-    if ($item->id == 1) {
+    if ($item->is_root()) {
       $form->item->name
         ->attr("type", "hidden")
         ->add_rule("equals", array(":value", $item->name));
@@ -455,7 +455,7 @@ class Gallery_Controller_Items extends Controller {
    * @see  Item::get_display_context_callback()
    * @see  Item::clear_display_context_callback()
    * @see  Controller_Search::get_display_context()
-   * @see  Controller_Tag::get_display_context()
+   * @see  Controller_Tags::get_display_context()
    */
   public static function get_display_context($item) {
     $where = array(array("type", "!=", "album"));
@@ -526,6 +526,7 @@ class Gallery_Controller_Items extends Controller {
 
   /**
    * Get form error messages for the item group.  This is a helper function for the edit/add forms.
+   * @see Controller_Admin_Tags::action_edit_slug(), which uses some of the same messages.
    */
   public static function get_form_error_messages($type) {
     // Define all of the error messages.
@@ -587,6 +588,7 @@ class Gallery_Controller_Items extends Controller {
 
   /**
    * Get form labels for the item group.  This is a helper function for the edit/add forms.
+   * @see Controller_Admin_Tags::action_edit_slug(), which uses some of the same labels.
    */
   public static function get_form_labels($type) {
     // Define all of the labels.

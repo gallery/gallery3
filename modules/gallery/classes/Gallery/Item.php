@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Item {
+  const ROOT_ID = 1;
+
   static function move($source, $target) {
     Access::required("view", $source);
     Access::required("view", $target);
@@ -299,7 +301,7 @@ class Gallery_Item {
    * @return Model_Item
    */
   static function root() {
-    return ORM::factory("Item", 1);
+    return ORM::factory("Item", static::ROOT_ID);
   }
 
   /**

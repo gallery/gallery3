@@ -45,39 +45,30 @@ class Gallery_Controller_FileProxy extends Controller {
     // to this controller (e.g. "/gallery3/index.php/file_proxy/index/foo.jpg"), in which case
     // type would be empty.
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 2;
-      throw $e;
+      $code = $type ? 2 : 1;  // 1 is no type at all, 2 is invalid type
+      throw HTTP_Exception::factory(404, TEST_MODE ? $code : null);
     }
 
     // Get the item model using the path and type (which corresponds to a var subdir)
     $item = Item::find_by_path($path, $type);
 
     if (!$item->loaded()) {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 3;
-      throw $e;
+      throw HTTP_Exception::factory(404, TEST_MODE ? 3 : null);
     }
 
     // Make sure we have access to the item
     if (!Access::can("view", $item)) {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 4;
-      throw $e;
+      throw HTTP_Exception::factory(404, TEST_MODE ? 4 : null);
     }
 
     // Make sure we have view_full access to the original
     if ($type == "albums" && !Access::can("view_full", $item)) {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 5;
-      throw $e;
+      throw HTTP_Exception::factory(404, TEST_MODE ? 5 : null);
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 6;
-      throw $e;
+      throw HTTP_Exception::factory(404, TEST_MODE ? 6 : null);
     }
 
     // Note: this code is roughly duplicated in Hook_Rest_Data, so if you modify this, please look to
@@ -92,9 +83,7 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     if (!file_exists($file)) {
-      $e = HTTP_Exception::factory(404);
-      $e->test_fail_code = 7;
-      throw $e;
+      throw HTTP_Exception::factory(404, TEST_MODE ? 7 : null);
     }
 
     if (Gallery::show_profiler()) {
@@ -118,7 +107,7 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     if (TEST_MODE) {
-      return $file;
+      $this->response->body($file);
     } else {
       // Send the file as the response.  The filename will be set automatically from the path.
       // Note: send_file() will automatically halt script execution after sending the file.

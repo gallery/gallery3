@@ -71,7 +71,7 @@ class Comment_Hook_CommentRss {
               "thumb_width" => $item->thumb_width,
               "item_uri" => URL::abs_site("{$item->type}s/$item->id"),
               "title" => (
-                ($item->id == Item::root()->id) ?
+                ($item->is_root()) ?
                 HTML::purify($item->title) :
                 t("%site_title - %item_title",
                   array("site_title" => Item::root()->title,

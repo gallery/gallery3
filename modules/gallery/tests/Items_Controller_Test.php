@@ -17,55 +17,48 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photos_Controller_Test extends Unittest_TestCase {
-  public function setup() {
-    parent::setup();
-    $this->_save = array($_POST, $_SERVER);
-    $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
-  }
-
-  public function teardown() {
-    list($_POST, $_SERVER) = $this->_save;
-    parent::teardown();
-  }
-
+class Items_Controller_Test extends Unittest_TestCase {
   public function test_change_photo() {
-    $controller = new Controller_Photos();
     $photo = Test::random_photo();
-
-    $_POST["name"] = "new name.jpg";
-    $_POST["title"] = "new title";
-    $_POST["description"] = "new description";
-    $_POST["slug"] = "new-slug";
-    $_POST["csrf"] = Access::csrf_token();
     Access::allow(Identity::everybody(), "edit", Item::root());
 
-    ob_start();
-    $controller->action_update($photo->id);
-    $photo->reload();
-    $results = ob_get_contents();
-    ob_end_clean();
+    $response = Request::factory("items/edit/{$photo->id}")
+      ->method(Request::POST)
+      ->post(array(
+          "name"        => "new name.jpg",
+          "title"       => "new title",
+          "description" => "new description",
+          "slug"        => "new-slug",
+          "csrf"        => Access::csrf_token()
+        ))
+      ->make_ajax()
+      ->execute();
 
-    $this->assertEquals(json_encode(array("result" => "success")), $results);
+    $json = json_decode($response->body(), true);
+    $this->assertEquals("success", $json["result"]);
+
+    $photo->reload();
     $this->assertEquals("new-slug", $photo->slug);
     $this->assertEquals("new title", $photo->title);
     $this->assertEquals("new description", $photo->description);
     $this->assertEquals("new name.jpg", $photo->name);
   }
 
-  /**
-   * @expectedException HTTP_Exception_403
-   */
   public function test_change_photo_no_csrf_fails() {
-    $controller = new Controller_Photos();
     $photo = Test::random_photo();
-
-    $_POST["name"] = "new name.jpg";
-    $_POST["title"] = "new title";
-    $_POST["description"] = "new description";
-    $_POST["slug"] = "new slug";
     Access::allow(Identity::everybody(), "edit", Item::root());
 
-    $controller->action_update($photo);
+    $response = Request::factory("items/edit/{$photo->id}")
+      ->method(Request::POST)
+      ->post(array(
+          "name"        => "new name.jpg",
+          "title"       => "new title",
+          "description" => "new description",
+          "slug"        => "new-slug"
+        ))
+      ->make_ajax()
+      ->execute();
+
+    $this->assertSame(403, $response->status());
   }
 }

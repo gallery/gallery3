@@ -58,7 +58,7 @@
                 title="<?= t('click to allow')->for_html_attr() ?>">
                 <img src="<?= URL::file(Gallery::find_file("assets", "required/ico-success-inactive.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
               </a>
-              <? if ($item->id == 1): ?>
+              <? if ($item->is_root()): ?>
                 <img src="<?= URL::file(Gallery::find_file("assets", "required/ico-denied.png")) ?>" alt="<?= t('denied icon')->for_html_attr() ?>" title="<?= t('denied')->for_html_attr() ?>"/>
               <? else: ?>
                 <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
@@ -69,7 +69,7 @@
             </td>
           <? elseif ($intent === Access::ALLOW): ?>
             <td class="g-allowed">
-              <? if ($item->id == 1): ?>
+              <? if ($item->is_root()): ?>
                 <img src="<?= URL::file(Gallery::find_file("assets", "required/ico-success.png")) ?>" title="<?= t("allowed")->for_html_attr() ?>" alt="<?= t('allowed icon')->for_html_attr() ?>" />
               <? else: ?>
                 <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
