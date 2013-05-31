@@ -40,7 +40,7 @@ class Gallery_Graphics_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Gallery_Exception
+   * @expectedException Kohana_Exception
    */
   public function test_rotate_bad_jpg() {
     // Input is a garbled jpg, output is jpg autofit to 300x300
@@ -49,7 +49,8 @@ class Gallery_Graphics_Test extends Unittest_TestCase {
     $options = array("degrees" => 90);
     file_put_contents($input_file, Test::lorem_ipsum(200));
 
-    // Should get passed to Image library and throw an exception
+    // Should get passed to Image library and throw an exception.
+    // Since it's image and not gallery that throws the exception, it's a Kohana_Exception.
     GalleryGraphics::rotate($input_file, $output_file, $options, null);
   }
 
