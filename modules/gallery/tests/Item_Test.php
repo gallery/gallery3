@@ -67,7 +67,7 @@ class Item_Test extends Unittest_TestCase {
   }
 
   /**
-   * @expectedException Gallery_Exception
+   * @expectedException ORM_Validation_Exception
    */
   public function test_cant_move_parent_into_own_subtree() {
     $album1 = Test::random_album(Item::root());
