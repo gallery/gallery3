@@ -39,9 +39,9 @@ class Akismet_Akismet {
       return;
     }
     switch (static::get_akismet_response(static::SUBMIT_HAM, $comment)) {
-      case static::REPLY_SPAM: return "spam";    break;
-      case static::REPLY_HAM:  return "ham";     break;
-      default:                 return "unknown"; break;
+    case static::REPLY_SPAM: return "spam";    break;
+    case static::REPLY_HAM:  return "ham";     break;
+    default:                 return "unknown"; break;
     }
   }
 
@@ -108,8 +108,7 @@ class Akismet_Akismet {
       $sub = "";
       $post = array(
         "blog" => URL::base("http", false),
-        "key"  => $comment
-      );
+        "key"  => $comment);
     } else {
       $sub = Module::get_var("akismet", "api_key") . ".";
       $post = array(
@@ -131,14 +130,13 @@ class Akismet_Akismet {
         "QUERY_STRING"         => $comment->server_query_string,
         "user_ip"              => $comment->server_remote_addr,
         "REMOTE_HOST"          => $comment->server_remote_host,
-        "REMOTE_PORT"          => $comment->server_remote_port
-      );
+        "REMOTE_PORT"          => $comment->server_remote_port);
     }
 
     $request = Request::factory("http://$sub" . static::URL . $function)
-                 ->headers("user-agent", "Gallery/3 | Akismet/" . Module::get_version("akismet"))
-                 ->method(Request::POST)
-                 ->post($post);
+      ->headers("user-agent", "Gallery/3 | Akismet/" . Module::get_version("akismet"))
+      ->method(Request::POST)
+      ->post($post);
 
     if ($return_request) {
       return $request;
