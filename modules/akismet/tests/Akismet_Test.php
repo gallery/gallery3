@@ -25,11 +25,9 @@ class Akismet_Test extends Unittest_TestCase {
 
   public function test_validate_key_request() {
     $request = Akismet::get_akismet_response("verify-key", "TEST_KEY", true);
-    $request->execute();
 
     $expected_url = "http://rest.akismet.com/1.1/verify-key";
-    $expected_headers = array("user-agent"   => "Gallery/3 | Akismet/1",
-                              "content-type" => "application/x-www-form-urlencoded; charset=utf-8");
+    $expected_headers = array("user-agent"   => "Gallery/3 | Akismet/1");
     $expected_post    = array("key"  => "TEST_KEY",
                               "blog" => "http://localhost/");
 
@@ -59,11 +57,9 @@ class Akismet_Test extends Unittest_TestCase {
 
     Module::set_var("akismet", "api_key", "TEST_KEY");
     $request = Akismet::get_akismet_response("comment-check", $comment, true);
-    $request->execute();
 
     $expected_url = "http://TEST_KEY.rest.akismet.com/1.1/comment-check";
-    $expected_headers = array("user-agent"   => "Gallery/3 | Akismet/1",
-                              "content-type" => "application/x-www-form-urlencoded; charset=utf-8");
+    $expected_headers = array("user-agent"   => "Gallery/3 | Akismet/1");
     $expected_post    = array("blog"                 => "http://localhost/",
                               "comment_author"       => static::$test_author,
                               "comment_author_email" => "john@gallery2.org",
