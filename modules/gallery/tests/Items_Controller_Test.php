@@ -32,11 +32,10 @@ class Items_Controller_Test extends Unittest_TestCase {
           "csrf"        => Access::csrf_token()
         ))
       ->make_ajax()
-      ->execute()
-      ->body();
+      ->execute();
 
-    $response = json_decode($response, true);
-    $this->assertEquals("success", $response["result"]);
+    $json = json_decode($response->body(), true);
+    $this->assertEquals("success", $json["result"]);
 
     $photo->reload();
     $this->assertEquals("new-slug", $photo->slug);
@@ -58,10 +57,8 @@ class Items_Controller_Test extends Unittest_TestCase {
           "slug"        => "new-slug"
         ))
       ->make_ajax()
-      ->execute()
-      ->body();
+      ->execute();
 
-    $response = explode("\n", $response);
-    $this->assertSame("HTTP:403", $response[0]);
+    $this->assertSame(403, $response->status());
   }
 }

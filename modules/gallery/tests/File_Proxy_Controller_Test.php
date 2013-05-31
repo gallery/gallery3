@@ -34,43 +34,40 @@ class File_Proxy_Controller_Test extends Unittest_TestCase {
 
   public function test_basic() {
     $photo = Test::random_photo();
-    $request = Request::factory("{$this->var}/albums/{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame($photo->file_path(), $response[0]);
+    $response = Request::factory("{$this->var}/albums/{$photo->name}")->execute();
+    $this->assertEquals($photo->file_path(), $response->body());
   }
 
   public function test_query_params_are_ignored() {
     $photo = Test::random_photo();
-    $request = Request::factory("{$this->var}/albums/{$photo->name}?a=1&b=2");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame($photo->file_path(), $response[0]);
+    $response = Request::factory("{$this->var}/albums/{$photo->name}?a=1&b=2")->execute();
+    $this->assertEquals($photo->file_path(), $response->body());
   }
 
   public function test_file_proxy_cannot_be_called_directly() {
-    $request = Request::factory("file_proxy/index");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:1", $response[0]);
+    $response = Request::factory("file_proxy/index")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(1, substr($response->body(), 0, 1));
   }
 
   public function test_file_must_be_in_albums_thumbs_or_resizes() {
-    $request = Request::factory("{$this->var}/uploads/.htaccess");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:2", $response[0]);
+    $response = Request::factory("{$this->var}/uploads/.htaccess")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(2, substr($response->body(), 0, 1));
   }
 
   public function test_movie_thumbnails_are_jpgs() {
     $movie = Test::random_movie();
     $name = LegalFile::change_extension($movie->name, "jpg");
-    $request = Request::factory("{$this->var}/thumbs/$name");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame($movie->thumb_path(), $response[0]);
+    $response = Request::factory("{$this->var}/thumbs/$name")->execute();
+    $this->assertEquals($movie->thumb_path(), $response->body());
   }
 
   public function test_invalid_item() {
     $photo = Test::random_photo();
-    $request = Request::factory("{$this->var}/albums/x_{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:3", $response[0]);
+    $response = Request::factory("{$this->var}/albums/x_{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(3, substr($response->body(), 0, 1));
   }
 
   public function test_need_view_permission() {
@@ -82,13 +79,13 @@ class File_Proxy_Controller_Test extends Unittest_TestCase {
     Identity::set_active_user(Identity::guest());
 
     // Cannot see thumb.
-    $request = Request::factory("{$this->var}/thumbs/{$album->name}/{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:4", $response[0]);
+    $response = Request::factory("{$this->var}/thumbs/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(4, substr($response->body(), 0, 1));
     // Cannot see original.
-    $request = Request::factory("{$this->var}/albums/{$album->name}/{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:4", $response[0]);
+    $response = Request::factory("{$this->var}/albums/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(4, substr($response->body(), 0, 1));
   }
 
   public function test_need_view_full_permission_to_view_original() {
@@ -100,29 +97,28 @@ class File_Proxy_Controller_Test extends Unittest_TestCase {
     Identity::set_active_user(Identity::guest());
 
     // Can see thumb.
-    $request = Request::factory("{$this->var}/thumbs/{$album->name}/{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame($photo->thumb_path(), $response[0]);
+    $response = Request::factory("{$this->var}/thumbs/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals($photo->thumb_path(), $response->body());
     // Cannot see original.
-    $request = Request::factory("{$this->var}/albums/{$album->name}/{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:5", $response[0]);
+    $response = Request::factory("{$this->var}/albums/{$album->name}/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(5, substr($response->body(), 0, 1));
   }
 
   public function test_cant_proxy_an_album() {
     $album = Test::random_album();
 
-    $request = Request::factory("{$this->var}/albums/{$album->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:6", $response[0]);
+    $response = Request::factory("{$this->var}/albums/{$album->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(6, substr($response->body(), 0, 1));
   }
 
   public function test_missing_file() {
     $photo = Test::random_photo();
     unlink($photo->file_path());
 
-    $request = Request::factory("{$this->var}/albums/{$photo->name}");
-    $response = explode("\n", $request->execute()->body());
-    $this->assertSame("HTTP:404:7", $response[0]);
+    $response = Request::factory("{$this->var}/albums/{$photo->name}")->execute();
+    $this->assertEquals(404, $response->status());
+    $this->assertEquals(7, substr($response->body(), 0, 1));
   }
 }
