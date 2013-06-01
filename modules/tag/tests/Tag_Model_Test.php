@@ -18,49 +18,55 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Model_Test extends Unittest_TestCase {
-  public function setup() {
-    parent::setup();
-    // We use ORM instead of DB to delete tags so the pivot table is cleared, too.
-    foreach (ORM::factory("Tag")->find_all() as $tag) {
-      $tag->delete();
-    }
-  }
-
   public function test_rename_merge_tag() {
+    $name1 = Test::random_name();
+    $name2 = Test::random_name();
+
     $album1 = Test::random_album();
     $album2 = Test::random_album();
 
-    Tag::add($album1, "tag1");
-    Tag::add($album2, "tag2");
+    Tag::add($album1, $name1);
+    Tag::add($album2, $name2);
 
-    $tag1 = ORM::factory("Tag")->where("name", "=", "tag1")->find();
-    $tag1->name = "tag2";
+    $tag1 = ORM::factory("Tag")->where("name", "=", $name1)->find();
+    $tag2 = ORM::factory("Tag")->where("name", "=", $name2)->find();
+
+    // Rename tag1 using tag2's name, effectively merging them
+    $tag1->name = $name2;
     $tag1->save();
 
-    // Tags should be merged; $tag2 should be deleted
     $tag1->reload();
+    $tag2->reload();
 
+    // Tags should be merged; $tag2 should be deleted
     $this->assertEquals(2, $tag1->count);
     $this->assertTrue($tag1->has("items", $album1));
     $this->assertTrue($tag1->has("items", $album2));
-    $this->assertEquals(1, ORM::factory("Tag")->count_all());
+    $this->assertFalse($tag2->loaded());
   }
 
   public function test_rename_merge_tag_with_same_items() {
+    $name1 = Test::random_name();
+    $name2 = Test::random_name();
+
     $album = Test::random_album();
 
-    Tag::add($album, "tag1");
-    Tag::add($album, "tag2");
+    Tag::add($album, $name1);
+    Tag::add($album, $name2);
 
-    $tag1 = ORM::factory("Tag")->where("name", "=", "tag1")->find();
-    $tag1->name = "tag2";
+    $tag1 = ORM::factory("Tag")->where("name", "=", $name1)->find();
+    $tag2 = ORM::factory("Tag")->where("name", "=", $name2)->find();
+
+    // Rename tag1 using tag2's name, effectively merging them
+    $tag1->name = $name2;
     $tag1->save();
 
-    // Tags should be merged
     $tag1->reload();
+    $tag2->reload();
 
+    // Tags should be merged; $tag2 should be deleted
     $this->assertEquals(1, $tag1->count);
     $this->assertTrue($tag1->has("items", $album));
-    $this->assertEquals(1, ORM::factory("Tag")->count_all());
+    $this->assertFalse($tag2->loaded());
   }
 }
