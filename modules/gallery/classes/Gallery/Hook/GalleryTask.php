@@ -399,7 +399,7 @@ class Gallery_Hook_GalleryTask {
       switch ($state) {
       case static::FIX_STATE_START_MPTT:
         $task->set_data("ptr", $ptr = 1);
-        $task->set_data("stack", Item::ROOT_ID . "L1");
+        $task->set_data("stack", Item::root()->id . "L1");
         $state = static::FIX_STATE_RUN_MPTT;
         break;
 

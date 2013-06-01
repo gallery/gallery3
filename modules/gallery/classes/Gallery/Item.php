@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Item {
-  const ROOT_ID = 1;
-
   static function move($source, $target) {
     Access::required("view", $source);
     Access::required("view", $target);
@@ -297,11 +295,12 @@ class Gallery_Item {
   }
 
   /**
-   * Return the root Model_Item
+   * Return the root Model_Item.  Note that this is, in effect,
+   * where the root item id is defined as "1".
    * @return Model_Item
    */
   static function root() {
-    return ORM::factory("Item", static::ROOT_ID);
+    return ORM::factory("Item", 1);
   }
 
   /**

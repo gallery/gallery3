@@ -23,7 +23,7 @@ class GalleryUnittest_Test {
 
     $album = ORM::factory("Item");
     $album->type = "album";
-    $album->parent_id = $parent ? $parent->id : Item::ROOT_ID;
+    $album->parent_id = $parent ? $parent->id : Item::root()->id;
     $album->name = "name_$rand";
     $album->title = "title_$rand";
     return $album;
@@ -37,7 +37,7 @@ class GalleryUnittest_Test {
     $rand = Test::random_string(6);
     $photo = ORM::factory("Item");
     $photo->type = "movie";
-    $photo->parent_id = $parent ? $parent->id : Item::ROOT_ID;
+    $photo->parent_id = $parent ? $parent->id : Item::root()->id;
     $photo->set_data_file(MODPATH . "gallery_unittest/assets/test.flv");
     $photo->name = "name_$rand.flv";
     $photo->title = "title_$rand";
@@ -52,7 +52,7 @@ class GalleryUnittest_Test {
     $rand = Test::random_string(6);
     $photo = ORM::factory("Item");
     $photo->type = "photo";
-    $photo->parent_id = $parent ? $parent->id : Item::ROOT_ID;
+    $photo->parent_id = $parent ? $parent->id : Item::root()->id;
     $photo->set_data_file(MODPATH . "gallery_unittest/assets/test.jpg");
     $photo->name = "name_$rand.jpg";
     $photo->title = "title_$rand";
@@ -69,7 +69,7 @@ class GalleryUnittest_Test {
     $rand = Test::random_string(6);
     $photo = ORM::factory("Item");
     $photo->type = "photo";
-    $photo->parent_id = $parent ? $parent->id : Item::ROOT_ID;
+    $photo->parent_id = $parent ? $parent->id : Item::root()->id;
     if (function_exists("gd_info")) {
       // Make image unique - color the black dot of test.jpg to the 6-digit hex code of rand.
       $image = imagecreatefromjpeg(MODPATH . "gallery_unittest/assets/test.jpg");
