@@ -68,6 +68,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       // arrange to preserve that one file.
       @system("rm -rf test/var");
       @mkdir("test/var/logs", 0777, true);
+      @mkdir("test/var/cache", 0777, true);
 
       $active_modules = Module::$active;
 
