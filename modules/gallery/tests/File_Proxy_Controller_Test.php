@@ -21,13 +21,11 @@ class File_Proxy_Controller_Test extends Unittest_TestCase {
   public $var;
 
   public function setup() {
-    $this->var = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
     parent::setup();
-    $this->_save = array($_SERVER);
+    $this->var = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
   }
 
   public function teardown() {
-    list($_SERVER) = $this->_save;
     Identity::set_active_user(Identity::admin_user());
     parent::teardown();
   }
