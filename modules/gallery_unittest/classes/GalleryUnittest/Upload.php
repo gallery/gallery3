@@ -27,12 +27,21 @@
  * For clarity, below are verbatim copies of the original functions with the relevant pieces
  * commented out (identified with "// EDIT:..."), which still use Kohana-style formatting.
  */
+if (md5_file(SYSPATH . "classes/Kohana/Upload.php") != "034760b30518689559940009961d4e3f") {
+  throw new Exception(
+    "Kohana Upload has changed - new checksum: " . md5_file(SYSPATH . "classes/Kohana/Upload.php"));
+}
+
 class GalleryUnittest_Upload extends Kohana_Upload {
   /**
    * @see Upload::save()
    */
   public static function save(array $file, $filename = NULL, $directory = NULL, $chmod = 0644)
   {
+    if (!TEST_MODE) {
+      throw new Kohana_Exception();
+    }
+
     // if ( ! isset($file['tmp_name']) OR ! is_uploaded_file($file['tmp_name']))
     if ( ! isset($file['tmp_name'])) // EDIT: replaces line above
     {
