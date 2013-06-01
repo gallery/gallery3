@@ -26,7 +26,7 @@ class Comment_Model_Test extends Unittest_TestCase {
   public function test_guest_name_and_email_is_required() {
     try {
       $comment = ORM::factory("Comment");
-      $comment->item_id = Item::ROOT_ID;
+      $comment->item_id = Item::root()->id;
       $comment->author_id = Identity::guest()->id;
       $comment->text = "text";
       $comment->server_name = "server_name";
@@ -42,7 +42,7 @@ class Comment_Model_Test extends Unittest_TestCase {
   public function test_guest_email_must_be_well_formed() {
     try {
       $comment = ORM::factory("Comment");
-      $comment->item_id = Item::ROOT_ID;
+      $comment->item_id = Item::root()->id;
       $comment->author_id = Identity::guest()->id;
       $comment->guest_name = "guest";
       $comment->guest_email = "bogus";

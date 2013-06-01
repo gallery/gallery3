@@ -55,7 +55,7 @@ class Comment_Test extends Unittest_TestCase {
 
   public function test_create_comment_for_guest() {
     $comment = ORM::factory("Comment");
-    $comment->item_id = Item::ROOT_ID;
+    $comment->item_id = Item::root()->id;
     $comment->text = "text";
     $comment->author_id = Identity::guest()->id;
     $comment->guest_name = "name";
@@ -91,7 +91,7 @@ class Comment_Test extends Unittest_TestCase {
     $admin = Identity::admin_user();
 
     $comment = ORM::factory("Comment");
-    $comment->item_id = Item::ROOT_ID;
+    $comment->item_id = Item::root()->id;
     $comment->text = "text";
     $comment->author_id = $admin->id;
     $comment->save();

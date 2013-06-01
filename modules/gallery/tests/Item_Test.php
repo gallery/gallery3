@@ -125,7 +125,7 @@ class Item_Test extends Unittest_TestCase {
 
     Item::move($photo2, Item::root());
 
-    $this->assertSame(Item::ROOT_ID, $photo2->parent_id);
+    $this->assertSame(Item::root()->id, $photo2->parent_id);
     $this->assertNotSame("{$rand}.jpg", $photo2->name);
     $this->assertNotSame($rand, $photo2->slug);
   }
@@ -176,7 +176,7 @@ class Item_Test extends Unittest_TestCase {
       Item::find_by_path("/{$level1->name}/{$level2->name}")->id);
 
     // Return root if "" is passed
-    $this->assertSame(Item::ROOT_ID, Item::find_by_path("")->id);
+    $this->assertSame(Item::root()->id, Item::find_by_path("")->id);
 
     // Verify that we don't get confused by the part names, using the fallback code.
     static::_remove_relative_path_caches();
@@ -365,7 +365,7 @@ class Item_Test extends Unittest_TestCase {
       Item::find_by_relative_url("{$level1->slug}/{$level2->slug}")->id);
 
     // Return root if "" is passed
-    $this->assertSame(Item::ROOT_ID, Item::find_by_relative_url("")->id);
+    $this->assertSame(Item::root()->id, Item::find_by_relative_url("")->id);
 
     // Verify that we don't get confused by the part slugs, using the fallback code.
     DB::update("items")

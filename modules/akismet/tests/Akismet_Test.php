@@ -40,7 +40,7 @@ class Akismet_Test extends Unittest_TestCase {
   public function test_comment_check_request() {
     // First, we need a test comment.
     $comment = ORM::factory("Comment");
-    $comment->item_id = Item::ROOT_ID;
+    $comment->item_id = Item::root()->id;
     $comment->author_id = Identity::guest()->id;
     $comment->text = "This is a comment";
     $comment->guest_name = static::$test_author;

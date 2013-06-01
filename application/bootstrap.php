@@ -185,10 +185,6 @@ isset($_GET["g3sid"]) && $_COOKIE["g3sid"] = $_GET["g3sid"];
 isset($_POST["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_POST["user_agent"];
 isset($_GET["user_agent"]) && $_SERVER["HTTP_USER_AGENT"] = $_GET["user_agent"];
 
-// Setup our file upload configuration.
-Upload::$remove_spaces = false;
-Upload::$default_directory = VARPATH . "uploads";
-
 // Setup our cookie configuration.
 // An empty $domain should restrict cookie access to the current domain (and, for some browsers,
 // its subdomains).  Change this only if you want to keep the same cookie across multiple domains.
@@ -204,6 +200,11 @@ Cookie::$salt = "g3";
 // Enable the complete set of all active modules.  This will trigger each module to load its own
 // init.php file which can, among other things, load its own routes which can override those below.
 Module::load_modules();
+
+// Setup our file upload configuration.  This must occur after Module::load_modules()
+// so gallery_unittest can provide its Upload overrides.
+Upload::$remove_spaces = false;
+Upload::$default_directory = VARPATH . "uploads";
 
 // Set our routes.  This will match all valid Gallery URLs (including the empty root URL).
 //

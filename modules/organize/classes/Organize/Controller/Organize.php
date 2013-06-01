@@ -42,7 +42,7 @@ class Organize_Controller_Organize extends Controller {
 
   public function action_tree() {
     $selected_album_id = $this->request->arg(0, "digit");
-    $root_id = Arr::get($this->request->post(), "root_id", Item::ROOT_ID);
+    $root_id = Arr::get($this->request->post(), "root_id", Item::root()->id);
     $selected_album = ORM::factory("Item", $selected_album_id);
     $root = ORM::factory("Item", $root_id);
     Access::required("view", $root);

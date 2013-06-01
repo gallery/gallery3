@@ -151,8 +151,9 @@ class File_Structure_Test extends Unittest_TestCase {
 
   public function test_code_files_start_with_preamble() {
     $dir = new PhpCodeFilterIterator(
-        new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
-
+      new GalleryCodeFilterIterator(
+        new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(DOCROOT))));
     $errors = array();
     foreach ($dir as $file) {
       $path = $file->getPathname();

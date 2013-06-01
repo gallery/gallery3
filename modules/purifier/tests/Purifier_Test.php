@@ -41,18 +41,23 @@ class Purifier_Test extends Unittest_TestCase {
   }
 
   public function test_add_config_group() {
-    // Add test config group which doesn't tidy HTML
-    $settings = array("HTML.TidyLevel" => "none");
+    // Add test config group which tidies up HTML
+    $settings = array("HTML.TidyLevel" => "heavy");
     Purifier::add_config_group("test", $settings);
-    // Test config group doesn't fix center
-    $this->assertEquals('<center>Centered</center>',
-      Purifier::clean_html('<center>Centered</center>', "test"));
-    // Default config group still does
+    // Test config group fixes center
     $this->assertEquals('<div style="text-align:center;">Centered</div>',
+      Purifier::clean_html('<center>Centered</center>', "test"));
+    // Default config group still doesn't fix center
+    $this->assertEquals('<center>Centered</center>',
       Purifier::clean_html('<center>Centered</center>'));
     // Test config group works when recursed
-    $this->assertEquals(array('<center>Hello</center>', '<center>World</center>'),
-      Purifier::clean_html(array('<center>Hello</center>', '<center>World</center>'), "test"));
+    $this->assertEquals(array(
+        '<div style="text-align:center;">Hello</div>',
+        '<div style="text-align:center;">World</div>'
+      ), Purifier::clean_html(array(
+        '<center>Hello</center>',
+        '<center>World</center>'
+      ), "test"));
   }
 
   public function test_clean_input_array_keys() {
@@ -65,8 +70,8 @@ class Purifier_Test extends Unittest_TestCase {
 
   public function test_clean_input_array_charset() {
     // Note: this test file is not UTF8-encoded.
-    $utf8 = utf8_encode("Àçéñöû");
-    $iso88591 = utf8_decode($utf8);
+    $iso88591 = "Àçéñöû-Acenou";
+    $utf8 = UTF8::clean($iso88591);
     // Both clean and raw will convert values to UTF8
     $dirty = array("test" => $iso88591);
     $raw   = array("test" => $utf8);
