@@ -17,21 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Event_Test extends Unittest_TestCase {
-  public function test_deleting_an_item_deletes_its_comments_too() {
+class Tags_Controller_Test extends Unittest_TestCase {
+  public function test_redirect_30x_url() {
+    $name = Test::random_name();
     $album = Test::random_album();
+    Tag::add($album, $name);
+    $tag = ORM::factory("Tag")->where("name", "=", $name)->find();
 
-    $comment = ORM::factory("Comment");
-    $comment->item_id = $album->id;
-    $comment->author_id = Identity::guest()->id;
-    $comment->guest_name = "test";
-    $comment->guest_email = "test@test.com";
-    $comment->text = "text";
-    $comment->server_name = "server_name";
-    $comment->save();
+    // Check that correct Gallery 3.0.x tag URL is redirected
+    $url = "tag/{$tag->id}/$name";
+    $redirected_url = Request::factory($url)->execute()->headers("location");
+    $this->assertEquals($tag->abs_url(), $redirected_url);
 
-    $album->delete();
-
-    $this->assertFalse(ORM::factory("Comment", $comment->id)->loaded());
+    // Check that malformed Gallery 3.0.x tag URL is redirected
+    $url = "tag/{$tag->id}";
+    $redirected_url = Request::factory($url)->execute()->headers("location");
+    $this->assertEquals($tag->abs_url(), $redirected_url);
   }
 }

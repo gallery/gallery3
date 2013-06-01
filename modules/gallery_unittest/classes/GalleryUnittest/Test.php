@@ -35,13 +35,13 @@ class GalleryUnittest_Test {
 
   static function random_movie_unsaved($parent=null) {
     $rand = Test::random_string(6);
-    $photo = ORM::factory("Item");
-    $photo->type = "movie";
-    $photo->parent_id = $parent ? $parent->id : Item::root()->id;
-    $photo->set_data_file(MODPATH . "gallery_unittest/assets/test.flv");
-    $photo->name = "name_$rand.flv";
-    $photo->title = "title_$rand";
-    return $photo;
+    $movie = ORM::factory("Item");
+    $movie->type = "movie";
+    $movie->parent_id = $parent ? $parent->id : Item::root()->id;
+    $movie->set_data_file(MODPATH . "gallery_unittest/assets/test.flv");
+    $movie->name = "name_$rand.flv";
+    $movie->title = "title_$rand";
+    return $movie;
   }
 
   static function random_movie($parent=null) {
