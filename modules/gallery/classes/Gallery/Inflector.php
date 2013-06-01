@@ -54,6 +54,6 @@ class Gallery_Inflector extends Kohana_Inflector {
    * @return  string        module_or_model_name
    */
   public static function convert_class_to_module_name($name) {
-    return strtolower(preg_replace("/([^_])([A-Z])/", "$1_$2", trim($name, "_")));
+    return trim(strtolower(preg_replace("/([A-Z])/", "_$1", $name)), "_");
   }
 }

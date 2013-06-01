@@ -32,7 +32,7 @@
   <? else: ?>
     <div>
       <?= t("Searched within album <b>%album</b>.", array("album" => HTML::purify($album->title))) ?>
-      <a href="<?= URL::site(URL::query(array("album" => Item::ROOT_ID))) ?>"><?= t("Search whole gallery") ?></a>
+      <a href="<?= URL::site(URL::query(array("album" => Item::root()->id))) ?>"><?= t("Search whole gallery") ?></a>
     </div>
   <? endif; ?>
 

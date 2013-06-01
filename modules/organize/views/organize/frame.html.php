@@ -574,7 +574,7 @@
         nodeType: "async",
         text: "<?= HTML::clean(Item::root()->title) ?>",
         draggable: false,
-        id: "<?= Item::ROOT_ID ?>",
+        id: "<?= Item::root()->id ?>",
         expanded: true
       }
     });
