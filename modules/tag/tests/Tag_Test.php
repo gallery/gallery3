@@ -18,64 +18,22 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Test extends Unittest_TestCase {
-  public function setup() {
-    parent::setup();
-    // We use ORM instead of DB to delete tags so the pivot table is cleared, too.
-    foreach (ORM::factory("Tag")->find_all() as $tag) {
-      $tag->delete();
-    }
-  }
-
   public function test_create_tag() {
-    $album = Test::random_album();
+    $name = Test::random_name();
 
-    Tag::add($album, "tag1");
-    $tag = ORM::factory("Tag")->where("name", "=", "tag1")->find();
-    $this->assertEquals(1, $tag->count);
-
-    // Make sure adding the tag again doesn't increase the count
-    Tag::add($album, "tag1");
-    $this->assertEquals(1, $tag->reload()->count);
-
-    Tag::add(Test::random_album(), "tag1");
-    $this->assertEquals(2, $tag->reload()->count);
-  }
-
-  public function test_rename_merge_tag() {
     $album1 = Test::random_album();
     $album2 = Test::random_album();
 
-    Tag::add($album1, "tag1");
-    Tag::add($album2, "tag2");
+    Tag::add($album1, $name);
+    $tag = ORM::factory("Tag")->where("name", "=", $name)->find();
+    $this->assertEquals(1, $tag->count);
 
-    $tag1 = ORM::factory("Tag")->where("name", "=", "tag1")->find();
-    $tag1->name = "tag2";
-    $tag1->save();
+    // Make sure adding the tag again doesn't increase the count
+    Tag::add($album1, $name);
+    $this->assertEquals(1, $tag->reload()->count);
 
-    // Tags should be merged; $tag2 should be deleted
-    $tag1->reload();
-
-    $this->assertEquals(2, $tag1->count);
-    $this->assertTrue($tag1->has("items", $album1));
-    $this->assertTrue($tag1->has("items", $album2));
-    $this->assertEquals(1, ORM::factory("Tag")->count_all());
-  }
-
-  public function test_rename_merge_tag_with_same_items() {
-    $album = Test::random_album();
-
-    Tag::add($album, "tag1");
-    Tag::add($album, "tag2");
-
-    $tag1 = ORM::factory("Tag")->where("name", "=", "tag1")->find();
-    $tag1->name = "tag2";
-    $tag1->save();
-
-    // Tags should be merged
-    $tag1->reload();
-
-    $this->assertEquals(1, $tag1->count);
-    $this->assertTrue($tag1->has("items", $album));
-    $this->assertEquals(1, ORM::factory("Tag")->count_all());
+    // Make sure adding a second tag does increase the count
+    Tag::add($album2, $name);
+    $this->assertEquals(2, $tag->reload()->count);
   }
 }
