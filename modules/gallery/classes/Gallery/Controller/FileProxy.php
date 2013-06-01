@@ -94,6 +94,8 @@ class Gallery_Controller_FileProxy extends Controller {
       Profiler::enable();
       $profiler = new Profiler();
       $profiler->render();
+      // @todo: we probably shouldn't force a hard exit here, as it's the only non-CLI place in
+      // our core code that we do this.  This can be tidied up when we fix Profiler for K3.
       exit;
     }
 
