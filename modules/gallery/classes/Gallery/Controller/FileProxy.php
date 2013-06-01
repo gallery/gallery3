@@ -46,6 +46,10 @@ class Gallery_Controller_FileProxy extends Controller {
     // type would be empty.
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       $code = $type ? 2 : 1;  // 1 is no type at all, 2 is invalid type
+      // For security purposes, we do not leak the error code unless we're in TEST_MODE.
+      // Otherwise, navigating to "/gallery3/var/albums/image_to_steal.jpg" could produce
+      // an error screen with something like "Kohana_HTTP_Exception [ 404 ]: 3".  This
+      // applies to the other 5 instances like this below, too.
       throw HTTP_Exception::factory(404, TEST_MODE ? $code : null);
     }
 
