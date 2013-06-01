@@ -30,7 +30,6 @@ class Comment_Event_Test extends Unittest_TestCase {
     $comment->server_name = "server_name";
     $comment->save();
 
-
     $album->delete();
 
     $this->assertFalse(ORM::factory("Comment", $comment->id)->loaded());
