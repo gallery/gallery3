@@ -163,7 +163,7 @@ class Tag_Model_Tag extends ORM {
    * @param string $query the query string (eg "page=3")
    */
   public function url($query=null) {
-    $url = URL::site("tag/" . rawurlencode($this->slug));
+    $url = URL::site("tag/{$this->slug}");
     if ($query) {
       $url .= "?$query";
     }
@@ -177,7 +177,7 @@ class Tag_Model_Tag extends ORM {
    * @param string $query the query string (eg "page=3")
    */
   public function abs_url($query=null) {
-    $url = URL::abs_site("tag/" . rawurlencode($this->slug));
+    $url = URL::abs_site("tag/{$this->slug}");
     if ($query) {
       $url .= "?$query";
     }

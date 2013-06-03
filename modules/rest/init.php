@@ -17,4 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Gallery_Exception extends Kohana_Exception {}
+Route::set("rest", "<directory>(/<controller>(/<action>(/<args>)))",
+           array("directory" => "rest", "args" => "[^.,;?\\n]++"))
+  ->filter(function($route, $params, $request) {
+      // Set the error view to be the restful view.  We do this here so that even an
+      // unmatched route (e.g. "rest/imaginary_resource/post") will use this view.
+      Kohana_Exception::$error_view = "rest/error.json";
+      Kohana_Exception::$error_view_content_type = "application/json";
+
+      $params["controller"] = str_replace("_", "", $params["controller"]);
+      return $params;
+    })
+  ->defaults(array(
+      "controller" => "login"
+    ));

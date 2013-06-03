@@ -53,7 +53,7 @@ class Gallery_Hook_Rest_Item {
     }
 
     if (!in_array($p->scope, array("direct", "all"))) {
-      throw new Rest_Exception("Bad Request", 400);
+      throw Rest_Exception::factory(400);
     }
 
     if ($p->scope == "direct") {
@@ -168,8 +168,7 @@ class Gallery_Hook_Rest_Item {
     case "photo":
     case "movie":
       if (empty($request->file)) {
-        throw new Rest_Exception(
-          "Bad Request", 400, array("errors" => array("file" => t("Upload failed"))));
+        throw Rest_Exception::factory(400, array("file" => t("Upload failed")));
       }
     $item->type = $entity->type;
     $item->parent_id = $parent->id;
@@ -182,8 +181,7 @@ class Gallery_Hook_Rest_Item {
     break;
 
     default:
-      throw new Rest_Exception(
-        "Bad Request", 400, array("errors" => array("type" => "invalid")));
+      throw Rest_Exception::factory(400, array("type" => "invalid"));
     }
 
     return array("url" => Rest::url("item", $item));
