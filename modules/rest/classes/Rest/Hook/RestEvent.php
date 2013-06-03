@@ -46,13 +46,6 @@ class Rest_Hook_RestEvent {
    * Called when admin is editing a user
    */
   static function user_edit_form_admin($user, $form) {
-    static::_get_access_key_form($user, $form);
-  }
-
-  /**
-   * Get the form fields for user edit
-   */
-  static function _get_access_key_form($user, $form) {
     $form->edit_user->input("user_access_key")
       ->value(Rest::access_key($user))
       ->readonly("readonly")
