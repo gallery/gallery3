@@ -6,8 +6,12 @@
 //   $data = array("errors" => array("other" => (string)$message))
 // If not:
 //   $data = array()
-$data = isset($e->rest_array) ? $e->rest_array :
-  (empty((string)$message) ? array("other" => (string)$message) : array());
+if (!empty($e->rest_array)) {
+  $data = $e->rest_array;
+} else {
+  $message = (string)$message;
+  $data = empty($message) ? array() : array("other" => $message);
+}
 
 $data = empty($data) ? array() : array("errors" => $data);
 ?>
