@@ -26,10 +26,6 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
-  public $uploads = array();
-  public $entity = array();
-  public $members = array();
-
   public function check_auth($auth) {
     // Get the access key (if provided) and attempt to login the user.
     $key = $this->request->headers("x-gallery-request-key");
@@ -64,29 +60,38 @@ abstract class Rest_Controller_Rest extends Controller {
     // Set the action as the method.
     $this->request->action(strtolower($this->request->method()));
 
-    // If using POST or PUT, check for and process any uploads, storing them in $this->uploads.
-    // Example: $_FILES["file"] will be stored in $this->uploads["file"], and will have uploaded
-    // filename $this->uploads["file"]["name"] and temp path $this->uploads["file"]["tmp_name"].
+    // If using POST or PUT, check for and process any uploads, storing them along with the other
+    // request-related parameters in $this->request->post().
+    // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
+    //   $this->request->post("file") = array(
+    //     "name"     => "foobar.jpg",
+    //     "tmp_name" => "/path/to/gallery3/var/tmp/uniquified_temp_filename.jpg",
+    //     "size"     => 1234,
+    //     "type"     => "image/jpeg",
+    //     "error"    => UPLOAD_ERR_OK
+    //   );
     if (isset($_FILES) && in_array($this->request->method(), array(
         HTTP_Request::POST,
         HTTP_Request::PUT))) {
       foreach ($_FILES as $key => $file_array) {
-        if (!$file_array["tmp_name"] = Upload::save($file_array)) {
-          // Upload failed validation - fire a 400 Bad Request.
+        // If $this->request->post() already has an element of the same name or the upload
+        // failed validation, fire a 400 Bad Request.
+        if ($this->request->post($key) || (!$path = Upload::save($file_array))) {
           throw Rest_Exception::factory(400, array($key => t("Upload failed")));
         }
 
-        $this->uploads[$key] = $file_array;
+        $file_array["tmp_name"] = $path
+        $this->request->post($key, $file_array);
         System::delete_later($path);
       }
     }
 
-    // Process the entity and members parameters, if specified.
+    // Process the "entity" and "members" parameters, if specified.
+    $param_func = ($this->request->method == HTTP_Request::GET) ? "query" : "post";
     foreach (array("entity", "members") as $key) {
-      $value = ($this->request->method == HTTP_Request::GET) ?
-                $this->request->query($key) : $this->request->post($key);
+      $value = $this->request->$param_func($key);
       if (isset($value)) {
-        $this->$key = json_decode($value);
+        $this->request->$param_func($key) = json_decode($value);
       }
     }
   }
