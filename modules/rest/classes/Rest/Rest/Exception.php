@@ -17,20 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Rest_Exception extends Gallery_Exception {
-  var $response = array();
+class Rest_Rest_Exception extends HTTP_Exception {
+  public $message_array;
 
-  public function __construct($message, $code=0, Exception $previous=null, array $response) {
-    parent::__construct($message, $code, $previous);
-    $this->response = $response;
-  }
+  /**
+   * Similar to HTTP_Exception::factory() except that the message can be an array
+   * and the error is independently logged to ease debugging.
+   *
+   * @see  HTTP_Exception::factory()
+   */
+  public static function factory($code, $message=null, array $variables=null, Exception $previous=null) {
+    $this->message_array = empty($message) ? array() : array("errors" =>
+      is_array($message) ? $message : array("other" => $message));
 
-  public function __toString() {
     // Log error response to ease debugging.
-    Log::instance()->add(Log::ERROR, "Rest error details: " . print_r($this->response, 1));
+    Log::instance()->add(Log::ERROR, "Rest error details: " . print_r($this->message_array, true));
 
-    $view = View::factory("rest/error.json");
-    $view->e = $this;
-    return $view->render();
+    return parent::factory($code, (string)$message, $variables, $previous);
   }
 }
