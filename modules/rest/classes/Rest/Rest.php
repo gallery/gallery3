@@ -102,13 +102,15 @@ class Rest_Rest {
     return Rest::access_key();
   }
 
-  static function access_key() {
+  static function access_key($user=null) {
+    $user_id = empty($user) ? Identity::active_user()->id : $user->id;
+
     $key = ORM::factory("UserAccessKey")
-      ->where("user_id", "=", Identity::active_user()->id)
+      ->where("user_id", "=", $user_id)
       ->find();
 
     if (!$key->loaded()) {
-      $key->user_id = Identity::active_user()->id;
+      $key->user_id = $user_id;
       $key->access_key = md5(Random::hash() . Access::private_key());
       $key->save();
     }
