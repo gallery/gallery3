@@ -27,6 +27,8 @@ abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
   public $uploads = array();
+  public $entity = array();
+  public $members = array();
 
   public function check_auth($auth) {
     // Get the access key (if provided) and attempt to login the user.
@@ -76,6 +78,15 @@ abstract class Rest_Controller_Rest extends Controller {
 
         $this->uploads[$key] = $file_array;
         System::delete_later($path);
+      }
+    }
+
+    // Process the entity and members parameters, if specified.
+    foreach (array("entity", "members") as $key) {
+      $value = ($this->request->method == HTTP_Request::GET) ?
+                $this->request->query($key) : $this->request->post($key);
+      if (isset($value)) {
+        $this->$key = json_decode($value);
       }
     }
   }
