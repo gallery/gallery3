@@ -26,6 +26,8 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
+  public $uploads = array();
+
   public function check_auth($auth) {
     // Get the access key (if provided) and attempt to login the user.
     $key = $this->request->headers("x-gallery-request-key");
@@ -59,6 +61,23 @@ abstract class Rest_Controller_Rest extends Controller {
 
     // Set the action as the method.
     $this->request->action(strtolower($this->request->method()));
+
+    // If using POST or PUT, check for and process any uploads, storing them in $this->uploads.
+    // Example: $_FILES["file"] will be stored in $this->uploads["file"], and will have uploaded
+    // filename $this->uploads["file"]["name"] and temp path $this->uploads["file"]["tmp_name"].
+    if (isset($_FILES) && in_array($this->request->method(), array(
+        HTTP_Request::POST,
+        HTTP_Request::PUT))) {
+      foreach ($_FILES as $key => $file_array) {
+        if (!$file_array["tmp_name"] = Upload::save($file_array)) {
+          // Upload failed validation - fire a 400 Bad Request.
+          throw HTTP_Exception::factory(400);
+        }
+
+        $this->uploads[$key] = $file_array;
+        System::delete_later($path);
+      }
+    }
   }
 
   /**
