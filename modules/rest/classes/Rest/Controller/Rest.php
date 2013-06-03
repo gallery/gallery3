@@ -80,7 +80,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array($key => t("Upload failed")));
         }
 
-        $file_array["tmp_name"] = $path
+        $file_array["tmp_name"] = $path;
         $this->request->post($key, $file_array);
         System::delete_later($path);
       }
