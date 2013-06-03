@@ -96,6 +96,60 @@ abstract class Rest_Controller_Rest extends Controller {
     }
   }
 
+  public function after() {
+    // We don't need to save REST sessions.
+    Session::instance()->abort_save();
+
+    $this->response->headers("x-gallery-api-version", Rest::API_VERSION);
+
+    // Get the data and output format, which will default to json unless we've used
+    // the GET method and specified the "output" query parameter.
+    $data = $this->response->body();
+    $output = Arr::get($this->request->query(), "output", "json");
+
+    // Reformat the response body based on the output format
+    switch ($output) {
+    case "json":
+      $this->headers("content-type", "application/json; charset=" . Kohana::$charset);
+      $this->response->body(json_encode($data));
+      break;
+
+    case "jsonp":
+      if (!$callback = $this->request->query("callback")) {
+        throw Rest_Exception::factory(400, array("callback" => "missing"));
+      }
+
+      if (!preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback)) {
+        throw Rest_Exception::factory(400, array("callback" => "invalid"));
+      }
+
+      $this->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
+      $this->response->body("$callback(" . json_encode($data) . ")");
+      break;
+
+    case "html":
+      $html = !$data ? t("Empty response") : preg_replace(
+        "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
+        var_export($data, true));
+
+      $this->headers("content-type", "text/html; charset=" . Kohana::$charset);
+      $this->response->body("<pre>$html</pre>");
+
+      // @todo: the profiler needs to be updated for K3.
+      if (Gallery::show_profiler()) {
+        Profiler::enable();
+        $profiler = new Profiler();
+        $profiler->render();
+      }
+      break;
+
+    default:
+      throw Rest_Exception::factory(400, array("output" => "invalid"));
+    }
+
+    parent::after();
+  }
+
   /**
    * Overload Controller::execute() to translate any Exception that isn't already an HTTP_Exception
    * to a Rest_Exception (which, itself, returns an HTTP_Exception).
