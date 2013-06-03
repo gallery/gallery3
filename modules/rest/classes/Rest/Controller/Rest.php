@@ -17,44 +17,103 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Controller_Rest extends Controller {
+/**
+ * The base class for Gallery's REST API.  All REST resources should be extensions of this class.
+ *
+ * Note: Kohana includes custom headers from the $_SERVER array in HTTP::request_headers(),
+ * so it's sufficient to look in $this->request->headers().
+ */
+abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
-  public function action_index() {
-    // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
-    if (!Validation::factory($this->request->post())
-      ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
-      ->check()) {
-      throw new Rest_Exception("Forbidden", 403);
+  public $uploads = array();
+  public $entity = array();
+  public $members = array();
+
+  public function check_auth($auth) {
+    // Get the access key (if provided) and attempt to login the user.
+    $key = $this->request->headers("x-gallery-request-key");
+    if (empty($key)) {
+      $key = ($this->request->method == HTTP_Request::GET) ?
+              $this->request->query("access_key") : $this->request->post("access_key");
     }
 
-    Rest::reply(Rest::access_key(), $this->response);
+    Rest::set_active_user($key);
+
+    return parent::check_auth($auth);
+  }
+
+  public function before() {
+    parent::before();
+
+    // If the X-Gallery-Request-Method header is defined, use it as the method.
+    // Otherwise, the method detected by the Request object will be retained.
+    if ($method = $this->request->headers("x-gallery-request-method")) {
+      $this->request->method(strtoupper($method));
+    }
+
+    // If the method is not one of GET, POST, PUT, or DELETE, fire a 405 Method Not Allowed.
+    if (!in_array($this->request->method(), array(
+        HTTP_Request::GET,
+        HTTP_Request::POST,
+        HTTP_Request::PUT,
+        HTTP_Request::DELETE))) {
+      throw Rest_Exception::factory(405);
+    }
+
+    // Set the action as the method.
+    $this->request->action(strtolower($this->request->method()));
+
+    // If using POST or PUT, check for and process any uploads, storing them in $this->uploads.
+    // Example: $_FILES["file"] will be stored in $this->uploads["file"], and will have uploaded
+    // filename $this->uploads["file"]["name"] and temp path $this->uploads["file"]["tmp_name"].
+    if (isset($_FILES) && in_array($this->request->method(), array(
+        HTTP_Request::POST,
+        HTTP_Request::PUT))) {
+      foreach ($_FILES as $key => $file_array) {
+        if (!$file_array["tmp_name"] = Upload::save($file_array)) {
+          // Upload failed validation - fire a 400 Bad Request.
+          throw Rest_Exception::factory(400, array($key => t("Upload failed")));
+        }
+
+        $this->uploads[$key] = $file_array;
+        System::delete_later($path);
+      }
+    }
+
+    // Process the entity and members parameters, if specified.
+    foreach (array("entity", "members") as $key) {
+      $value = ($this->request->method == HTTP_Request::GET) ?
+                $this->request->query($key) : $this->request->post($key);
+      if (isset($value)) {
+        $this->$key = json_decode($value);
+      }
+    }
   }
 
   /**
-   * Reset the REST API key.  This generates the form, validates it, resets the key,
-   * and returns a response.  This is an ajax dialog from the user_profile view.
+   * Overload Controller::execute() to translate any Exception that isn't already an HTTP_Exception
+   * to a Rest_Exception (which, itself, returns an HTTP_Exception).
    *
-   * @todo: this should be moved to an admin controller to control access.
+   * @see  Controller::execute()
+   * @see  Gallery_Controller::execute()
    */
-  public function action_reset_api_key() {
-    $form = Formo::form()
-      ->attr("id", "g-reset-api-key")
-      ->add("confirm", "group");
-    $form->confirm
-      ->set("label", t("Confirm resetting your REST API key"))
-      ->html(t("Do you really want to reset your REST API key?  Any clients that use this key will need to be updated with the new value."))
-      ->add("submit", "input|submit", t("Reset"));
-
-    if ($form->load()->validate()) {
-      Rest::reset_access_key();
-      Message::success(t("Your REST API key has been reset."));
+  public function execute() {
+    try {
+      return parent::execute();
+    } catch (Exception $e) {
+      if (!($e instanceof HTTP_Exception)) {
+        if ($e instanceof ORM_Validation_Exception) {
+          throw Rest_Exception::factory(400, $e->errors(), null, $e->getPrevious());
+        } else {
+          throw Rest_Exception::factory(500, $e->getMessage(), null, $e->getPrevious());
+        }
+      }
+      throw $e;
     }
-
-    $this->response->ajax_form($form);
   }
 
-  public function __call($function, $args) {
+  public function gallery_30x_call($function, $args) {
     try {
       $request = new stdClass();
 
@@ -94,7 +153,7 @@ class Rest_Controller_Rest extends Controller {
       $handler_method = $request->method;
 
       if (!class_exists($handler_class) || !method_exists($handler_class, $handler_method)) {
-        throw new Rest_Exception("Bad Request", 400);
+        throw Rest_Exception::factory(400);
       }
 
       if (($handler_class == "Hook_Rest_Data") && isset($request->params->m)) {
@@ -113,9 +172,9 @@ class Rest_Controller_Rest extends Controller {
       // Note: this is totally insufficient because it doesn't take into account localization.  We
       // either need to map the result values to localized strings in the application code, or every
       // client needs its own l10n string set.
-      throw new Rest_Exception("Bad Request", 400, null, $e->errors());
+      throw Rest_Exception::factory(400, $e->errors());
     } catch (HTTP_Exception_404 $e) {
-      throw new Rest_Exception("Not Found", 404);
+      throw Rest_Exception::factory(404);
     }
   }
 }

@@ -58,7 +58,7 @@ class Tag_Hook_Rest_Tags {
     }
 
     if (empty($request->params->entity->name)) {
-      throw new Rest_Exception("Bad Request", 400);
+      throw Rest_Exception::factory(400);
     }
 
     $tag = ORM::factory("Tag")->where("name", "=", $request->params->entity->name)->find();

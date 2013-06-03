@@ -39,35 +39,15 @@ class Rest_Hook_RestEvent {
    * on every add.
    */
   static function user_add_form_admin_completed($user, $form) {
-    $key = ORM::factory("UserAccessKey");
-    $key->user_id = $user->id;
-    $key->access_key = Random::hash();
-    $key->save();
+    Rest::access_key($user);
   }
 
   /**
    * Called when admin is editing a user
    */
   static function user_edit_form_admin($user, $form) {
-    static::_get_access_key_form($user, $form);
-  }
-
-  /**
-   * Get the form fields for user edit
-   */
-  static function _get_access_key_form($user, $form) {
-    $key = ORM::factory("UserAccessKey")
-      ->where("user_id", "=", $user->id)
-      ->find();
-
-    if (!$key->loaded()) {
-      $key->user_id = $user->id;
-      $key->access_key = Random::hash();
-      $key->save();
-    }
-
     $form->edit_user->input("user_access_key")
-      ->value($key->access_key)
+      ->value(Rest::access_key($user))
       ->readonly("readonly")
       ->class("g-form-static")
       ->label(t("Remote access key"));
@@ -85,16 +65,8 @@ class Rest_Hook_RestEvent {
     }
 
     $view = new View("rest/user_profile.html");
-    $key = ORM::factory("UserAccessKey")
-      ->where("user_id", "=", $data->user->id)
-      ->find();
+    $view->rest_key = Rest::access_key();
 
-    if (!$key->loaded()) {
-      $key->user_id = $data->user->id;
-      $key->access_key = Random::hash();
-      $key->save();
-    }
-    $view->rest_key = $key->access_key;
     $data->content[] = (object)array("title" => t("REST API"), "view" => $view);
   }
 }

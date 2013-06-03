@@ -29,7 +29,7 @@ class Gallery_Hook_Rest_Data {
 
     $p = $request->params;
     if (!isset($p->size) || !in_array($p->size, array("thumb", "resize", "full"))) {
-      throw new Rest_Exception("Bad Request", 400, array("errors" => array("size" => "invalid")));
+      throw Rest_Exception::factory(400, array("size" => "invalid"));
     }
 
     // Note: this code is roughly duplicated in FileProxy, so if you modify this, please look to

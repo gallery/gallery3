@@ -17,4 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Gallery_Exception extends Kohana_Exception {}
+class Rest_Controller_Rest_Login extends Controller_Rest {
+  public function action_post() {
+    // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
+    if (!Validation::factory($this->request->post())
+      ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
+      ->check()) {
+      throw HTTP_Exception::factory(403);
+    }
+
+    Rest::reply(Rest::access_key(), $this->response);
+  }
+}
