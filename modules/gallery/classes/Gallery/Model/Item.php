@@ -111,8 +111,7 @@ class Gallery_Model_Item extends ORM_MPTT {
       if ($delete_resize_path == VARPATH . "resizes" ||
           $delete_thumb_path == VARPATH . "thumbs" ||
           $path == VARPATH . "albums") {
-        throw new Exception(
-          "@todo DELETING_TOO_MUCH ($delete_resize_path, $delete_thumb_path, $path)");
+        throw new Gallery_Exception("Deleting too much: $delete_resize_path, $delete_thumb_path, $path");
       }
       @System::unlink_dir($path);
       @System::unlink_dir($delete_resize_path);

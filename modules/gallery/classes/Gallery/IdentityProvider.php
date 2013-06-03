@@ -86,7 +86,7 @@ class Gallery_IdentityProvider {
       }
 
       if (!$provider->admin_user()) {
-        throw new Exception("IdentityProvider $new_provider: Couldn't find the admin user!");
+        throw new Gallery_Exception("IdentityProvider $new_provider: Couldn't find the admin user!");
       }
 
       Module::event("identity_provider_changed", $current_provider, $new_provider);
