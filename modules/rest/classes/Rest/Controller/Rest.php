@@ -158,7 +158,7 @@ abstract class Rest_Controller_Rest extends Controller {
       $handler_method = $request->method;
 
       if (!class_exists($handler_class) || !method_exists($handler_class, $handler_method)) {
-        throw new Rest_Exception("Bad Request", 400);
+        throw Rest_Exception::factory(400);
       }
 
       if (($handler_class == "Hook_Rest_Data") && isset($request->params->m)) {
@@ -177,9 +177,9 @@ abstract class Rest_Controller_Rest extends Controller {
       // Note: this is totally insufficient because it doesn't take into account localization.  We
       // either need to map the result values to localized strings in the application code, or every
       // client needs its own l10n string set.
-      throw new Rest_Exception("Bad Request", 400, null, $e->errors());
+      throw Rest_Exception::factory(400, $e->errors());
     } catch (HTTP_Exception_404 $e) {
-      throw new Rest_Exception("Not Found", 404);
+      throw Rest_Exception::factory(404);
     }
   }
 }

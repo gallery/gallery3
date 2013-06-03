@@ -31,16 +31,14 @@ class Rest_Rest {
 
     case "jsonp":
       if (!($callback = Request::current()->query("callback"))) {
-        throw new Rest_Exception(
-          "Bad Request", 400, array("errors" => array("callback" => "missing")));
+        throw Rest_Exception::factory(400, array("callback" => "missing"));
       }
 
       if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
         $response->headers("Content-Type", "application/javascript; charset=UTF-8");
         $response->body("$callback(" . json_encode($data) . ")");
       } else {
-        throw new Rest_Exception(
-          "Bad Request", 400, array("errors" => array("callback" => "invalid")));
+        throw Rest_Exception::factory(400, array("callback" => "invalid"));
       }
       break;
 
@@ -62,7 +60,7 @@ class Rest_Rest {
       break;
 
     default:
-      throw new Rest_Exception("Bad Request", 400);
+      throw Rest_Exception::factory(400);
     }
   }
 
@@ -72,7 +70,7 @@ class Rest_Rest {
         Identity::set_active_user(Identity::guest());
         return;
       } else {
-        throw new Rest_Exception("Forbidden", 403);
+        throw Rest_Exception::factory(403);
       }
     }
 
@@ -81,12 +79,12 @@ class Rest_Rest {
       ->find();
 
     if (!$key->loaded()) {
-      throw new Rest_Exception("Forbidden", 403);
+      throw Rest_Exception::factory(403);
     }
 
     $user = Identity::lookup_user($key->user_id);
     if (empty($user)) {
-      throw new Rest_Exception("Forbidden", 403);
+      throw Rest_Exception::factory(403);
     }
 
     Identity::set_active_user($user);
@@ -157,7 +155,7 @@ class Rest_Rest {
 
     $class = "Hook_Rest_" . Inflector::convert_module_to_class_name($resource_type);
     if (!class_exists($class) || !method_exists($class, "url")) {
-      throw new Rest_Exception("Bad Request", 400);
+      throw Rest_Exception::factory(400);
     }
 
     $url = call_user_func_array(array($class, "url"), $args);
