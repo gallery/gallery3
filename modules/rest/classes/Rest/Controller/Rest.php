@@ -17,18 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Controller_Rest extends Controller {
+abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
-  public function action_index() {
-    // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
-    if (!Validation::factory($this->request->post())
-      ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
-      ->check()) {
-      throw new Rest_Exception("Forbidden", 403);
-    }
+  public function before() {
+    parent::before();
 
-    Rest::reply(Rest::access_key(), $this->response);
+    // Make sure the action is one of GET, POST, PUT, or DELETE.  We do this here instead
+    // of in the route definition so that we can throw a 405 Method Not Allowed.
+    if (!in_array($this->request->action(), array("get", "post", "put", "delete"))) {
+      throw HTTP_Exception::factory(405);
+    }
   }
 
   public function __call($function, $args) {
