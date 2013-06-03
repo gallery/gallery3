@@ -20,6 +20,19 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
+  public function check_auth($auth) {
+    // Get the access key (if provided) and attempt to login the user.
+    $key = $this->request->headers("x-gallery-request-key");
+    if (empty($key)) {
+      $key = ($this->request->method == HTTP_Request::GET) ?
+              $this->request->query("access_key") : $this->request->post("access_key");
+    }
+
+    Rest::set_active_user($key);
+
+    return parent::check_auth($auth);
+  }
+
   public function before() {
     parent::before();
 
