@@ -17,6 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/**
+ * The base class for Gallery's REST API.  All REST resources should be extensions of this class.
+ *
+ * Note: Kohana includes custom headers from the $_SERVER array in HTTP::request_headers(),
+ * so it's sufficient to look in $this->request->headers().
+ */
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
