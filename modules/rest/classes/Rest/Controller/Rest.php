@@ -58,7 +58,7 @@ abstract class Rest_Controller_Rest extends Controller {
         HTTP_Request::POST,
         HTTP_Request::PUT,
         HTTP_Request::DELETE))) {
-      throw HTTP_Exception::factory(405);
+      throw Rest_Exception::factory(405);
     }
 
     // Set the action as the method.
@@ -73,7 +73,7 @@ abstract class Rest_Controller_Rest extends Controller {
       foreach ($_FILES as $key => $file_array) {
         if (!$file_array["tmp_name"] = Upload::save($file_array)) {
           // Upload failed validation - fire a 400 Bad Request.
-          throw HTTP_Exception::factory(400);
+          throw Rest_Exception::factory(400, array($key => t("Upload failed")));
         }
 
         $this->uploads[$key] = $file_array;
@@ -104,16 +104,11 @@ abstract class Rest_Controller_Rest extends Controller {
     } catch (Exception $e) {
       if (!($e instanceof HTTP_Exception)) {
         if ($e instanceof ORM_Validation_Exception) {
-          $code = 400;
-          $message = $e->errors();
+          throw Rest_Exception::factory(400, $e->errors(), null, $e->getPrevious());
         } else {
-          $code = 500;
-          $message = $e->getMessage();
+          throw Rest_Exception::factory(500, $e->getMessage(), null, $e->getPrevious());
         }
-
-        $e = Rest_Exception::factory($code, $message, null, $e->getPrevious());
       }
-
       throw $e;
     }
   }
