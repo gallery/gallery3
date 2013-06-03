@@ -23,11 +23,23 @@ abstract class Rest_Controller_Rest extends Controller {
   public function before() {
     parent::before();
 
-    // Make sure the action is one of GET, POST, PUT, or DELETE.  We do this here instead
-    // of in the route definition so that we can throw a 405 Method Not Allowed.
-    if (!in_array($this->request->action(), array("get", "post", "put", "delete"))) {
+    // If the X-Gallery-Request-Method header is defined, use it as the method.
+    // Otherwise, the method detected by the Request object will be retained.
+    if ($method = $this->request->headers("x-gallery-request-method")) {
+      $this->request->method(strtoupper($method));
+    }
+
+    // If the method is not one of GET, POST, PUT, or DELETE, fire a 405 Method Not Allowed.
+    if (!in_array($this->request->method(), array(
+        HTTP_Request::GET,
+        HTTP_Request::POST,
+        HTTP_Request::PUT,
+        HTTP_Request::DELETE))) {
       throw HTTP_Exception::factory(405);
     }
+
+    // Set the action as the method.
+    $this->request->action(strtolower($this->request->method()));
   }
 
   /**
