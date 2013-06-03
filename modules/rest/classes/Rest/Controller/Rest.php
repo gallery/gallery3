@@ -26,10 +26,6 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
-  public $uploads = array();
-  public $entity = array();
-  public $members = array();
-
   public function check_auth($auth) {
     // Get the access key (if provided) and attempt to login the user.
     $key = $this->request->headers("x-gallery-request-key");
@@ -64,31 +60,94 @@ abstract class Rest_Controller_Rest extends Controller {
     // Set the action as the method.
     $this->request->action(strtolower($this->request->method()));
 
-    // If using POST or PUT, check for and process any uploads, storing them in $this->uploads.
-    // Example: $_FILES["file"] will be stored in $this->uploads["file"], and will have uploaded
-    // filename $this->uploads["file"]["name"] and temp path $this->uploads["file"]["tmp_name"].
+    // If using POST or PUT, check for and process any uploads, storing them along with the other
+    // request-related parameters in $this->request->post().
+    // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
+    //   $this->request->post("file") = array(
+    //     "name"     => "foobar.jpg",
+    //     "tmp_name" => "/path/to/gallery3/var/tmp/uniquified_temp_filename.jpg",
+    //     "size"     => 1234,
+    //     "type"     => "image/jpeg",
+    //     "error"    => UPLOAD_ERR_OK
+    //   );
     if (isset($_FILES) && in_array($this->request->method(), array(
         HTTP_Request::POST,
         HTTP_Request::PUT))) {
       foreach ($_FILES as $key => $file_array) {
-        if (!$file_array["tmp_name"] = Upload::save($file_array)) {
-          // Upload failed validation - fire a 400 Bad Request.
+        // If $this->request->post() already has an element of the same name or the upload
+        // failed validation, fire a 400 Bad Request.
+        if ($this->request->post($key) || (!$path = Upload::save($file_array))) {
           throw Rest_Exception::factory(400, array($key => t("Upload failed")));
         }
 
-        $this->uploads[$key] = $file_array;
+        $file_array["tmp_name"] = $path;
+        $this->request->post($key, $file_array);
         System::delete_later($path);
       }
     }
 
-    // Process the entity and members parameters, if specified.
+    // Process the "entity" and "members" parameters, if specified.
+    $param_func = ($this->request->method == HTTP_Request::GET) ? "query" : "post";
     foreach (array("entity", "members") as $key) {
-      $value = ($this->request->method == HTTP_Request::GET) ?
-                $this->request->query($key) : $this->request->post($key);
+      $value = $this->request->$param_func($key);
       if (isset($value)) {
-        $this->$key = json_decode($value);
+        $this->request->$param_func($key) = json_decode($value);
       }
     }
+  }
+
+  public function after() {
+    // We don't need to save REST sessions.
+    Session::instance()->abort_save();
+
+    $this->response->headers("x-gallery-api-version", Rest::API_VERSION);
+
+    // Get the data and output format, which will default to json unless we've used
+    // the GET method and specified the "output" query parameter.
+    $data = $this->response->body();
+    $output = Arr::get($this->request->query(), "output", "json");
+
+    // Reformat the response body based on the output format
+    switch ($output) {
+    case "json":
+      $this->headers("content-type", "application/json; charset=" . Kohana::$charset);
+      $this->response->body(json_encode($data));
+      break;
+
+    case "jsonp":
+      if (!$callback = $this->request->query("callback")) {
+        throw Rest_Exception::factory(400, array("callback" => "missing"));
+      }
+
+      if (!preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback)) {
+        throw Rest_Exception::factory(400, array("callback" => "invalid"));
+      }
+
+      $this->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
+      $this->response->body("$callback(" . json_encode($data) . ")");
+      break;
+
+    case "html":
+      $html = !$data ? t("Empty response") : preg_replace(
+        "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
+        var_export($data, true));
+
+      $this->headers("content-type", "text/html; charset=" . Kohana::$charset);
+      $this->response->body("<pre>$html</pre>");
+
+      // @todo: the profiler needs to be updated for K3.
+      if (Gallery::show_profiler()) {
+        Profiler::enable();
+        $profiler = new Profiler();
+        $profiler->render();
+      }
+      break;
+
+    default:
+      throw Rest_Exception::factory(400, array("output" => "invalid"));
+    }
+
+    parent::after();
   }
 
   /**

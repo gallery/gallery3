@@ -26,6 +26,6 @@ class Rest_Controller_Rest_Login extends Controller_Rest {
       throw HTTP_Exception::factory(403);
     }
 
-    Rest::reply(Rest::access_key(), $this->response);
+    $this->response->body(Rest::access_key());
   }
 }
