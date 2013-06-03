@@ -92,7 +92,9 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   /**
-   * Overload Controller::execute() to translate any Exception to a Rest_Exception.
+   * Overload Controller::execute() to translate any Exception that isn't already an HTTP_Exception
+   * to a Rest_Exception (which, itself, returns an HTTP_Exception).
+   *
    * @see  Controller::execute()
    * @see  Gallery_Controller::execute()
    */
@@ -100,13 +102,12 @@ abstract class Rest_Controller_Rest extends Controller {
     try {
       return parent::execute();
     } catch (Exception $e) {
-      if (!($e instanceof Rest_Exception)) {
+      if (!($e instanceof HTTP_Exception)) {
         if ($e instanceof ORM_Validation_Exception) {
           $code = 400;
           $message = $e->errors();
         } else {
-          // Anything that isn't already an HTTP_Exception should fire a 500 Internal Server Error.
-          $code = ($e instanceof HTTP_Exception) ? $e->getCode() : 500;
+          $code = 500;
           $message = $e->getMessage();
         }
 

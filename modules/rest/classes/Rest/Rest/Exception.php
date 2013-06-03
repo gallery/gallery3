@@ -18,21 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Rest_Exception extends HTTP_Exception {
-  public $message_array;
-
   /**
-   * Similar to HTTP_Exception::factory() except that the message can be an array
-   * and the error is independently logged to ease debugging.
+   * Similar to HTTP_Exception::factory() except that the message can be an array.
    *
    * @see  HTTP_Exception::factory()
    */
   public static function factory($code, $message=null, array $variables=null, Exception $previous=null) {
-    $this->message_array = empty($message) ? array() : array("errors" =>
-      is_array($message) ? $message : array("other" => $message));
+    $e = parent::factory($code, (string)$message, $variables, $previous);
 
-    // Log error response to ease debugging.
-    Log::instance()->add(Log::ERROR, "Rest error details: " . print_r($this->message_array, true));
+    if (is_array($message)) {
+      $e->rest_array = $message;
+    }
 
-    return parent::factory($code, (string)$message, $variables, $previous);
+    return $e;
   }
 }
