@@ -31,29 +31,6 @@ class Rest_Controller_Rest extends Controller {
     Rest::reply(Rest::access_key(), $this->response);
   }
 
-  /**
-   * Reset the REST API key.  This generates the form, validates it, resets the key,
-   * and returns a response.  This is an ajax dialog from the user_profile view.
-   *
-   * @todo: this should be moved to an admin controller to control access.
-   */
-  public function action_reset_api_key() {
-    $form = Formo::form()
-      ->attr("id", "g-reset-api-key")
-      ->add("confirm", "group");
-    $form->confirm
-      ->set("label", t("Confirm resetting your REST API key"))
-      ->html(t("Do you really want to reset your REST API key?  Any clients that use this key will need to be updated with the new value."))
-      ->add("submit", "input|submit", t("Reset"));
-
-    if ($form->load()->validate()) {
-      Rest::reset_access_key();
-      Message::success(t("Your REST API key has been reset."));
-    }
-
-    $this->response->ajax_form($form);
-  }
-
   public function __call($function, $args) {
     try {
       $request = new stdClass();
