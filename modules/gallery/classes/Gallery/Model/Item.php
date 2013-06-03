@@ -291,7 +291,7 @@ class Gallery_Model_Item extends ORM_MPTT {
              ->execute($this->_db) as $row) {
       // Don't encode the names segment
       $names[] = rawurlencode($row->name);
-      $slugs[] = rawurlencode($row->slug);
+      $slugs[] = $row->slug;
     }
     $this->relative_path_cache = implode($names, "/");
     $this->relative_url_cache = implode($slugs, "/");
