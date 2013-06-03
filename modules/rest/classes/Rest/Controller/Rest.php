@@ -117,7 +117,7 @@ abstract class Rest_Controller_Rest extends Controller {
     }
   }
 
-  public function __call($function, $args) {
+  public function gallery_30x_call($function, $args) {
     try {
       $request = new stdClass();
 
