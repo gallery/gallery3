@@ -43,7 +43,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Get the access key (if provided)
     $key = $this->request->headers("x-gallery-request-key");
     if (empty($key)) {
-      $key = ($this->request->method == HTTP_Request::GET) ?
+      $key = ($this->request->method() == HTTP_Request::GET) ?
               $this->request->query("access_key") : $this->request->post("access_key");
     }
 
