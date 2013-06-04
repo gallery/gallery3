@@ -28,5 +28,5 @@ Route::set("rest", "<directory>(/<controller>(/<args>))",
       return $params;
     })
   ->defaults(array(
-      "controller" => "login"
+      "controller" => "access_key"
     ));
