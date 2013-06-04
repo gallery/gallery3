@@ -97,11 +97,6 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   public function after() {
-    // We don't need to save REST sessions.
-    Session::instance()->abort_save();
-
-    $this->response->headers("x-gallery-api-version", Rest::API_VERSION);
-
     // Get the data and output format, which will default to json unless we've used
     // the GET method and specified the "output" query parameter.
     $data = $this->response->body();

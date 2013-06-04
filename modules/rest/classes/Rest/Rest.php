@@ -20,6 +20,20 @@
 class Rest_Rest {
   const API_VERSION = "3.0";
 
+  static function init() {
+    // Add the REST API version to the header.  Since we're adding it to Response::$default_config,
+    // even error responses (e.g. 404) will have this header.
+    Response::$default_config = array_merge_recursive(Response::$default_config,
+      array("_header" => array("x-gallery-api-version" => Rest::API_VERSION)));
+
+    // Set the error view to be the restful view.
+    Kohana_Exception::$error_view = "rest/error.json";
+    Kohana_Exception::$error_view_content_type = "application/json";
+
+    // We don't need to save REST sessions.
+    Session::instance()->abort_save();
+  }
+
   static function reply($data=array(), $response) {
     Session::instance()->abort_save();
 

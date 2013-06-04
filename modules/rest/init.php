@@ -17,13 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Route::set("rest", "<directory>(/<controller>(/<action>(/<args>)))",
+Route::set("rest", "<directory>(/<controller>(/<args>))",
            array("directory" => "rest", "args" => "[^.,;?\\n]++"))
   ->filter(function($route, $params, $request) {
-      // Set the error view to be the restful view.  We do this here so that even an
-      // unmatched route (e.g. "rest/imaginary_resource/post") will use this view.
-      Kohana_Exception::$error_view = "rest/error.json";
-      Kohana_Exception::$error_view_content_type = "application/json";
+      // If we're here, we know that we're in REST mode, even if we have an unmatched
+      // route (e.g. "gallery3/rest/nonexistent_resource") - initialize the REST API.
+      Rest::init();
 
       $params["controller"] = str_replace("_", "", $params["controller"]);
       return $params;
