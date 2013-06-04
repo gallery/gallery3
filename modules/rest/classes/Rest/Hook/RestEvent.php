@@ -46,11 +46,10 @@ class Rest_Hook_RestEvent {
    * Called when admin is editing a user
    */
   static function user_edit_form_admin($user, $form) {
-    $form->edit_user->input("user_access_key")
-      ->value(Rest::access_key($user))
-      ->readonly("readonly")
-      ->class("g-form-static")
-      ->label(t("Remote access key"));
+    $form->add_before_submit("user_access_key", "input", Rest::access_key($user));
+    $form->find("user_access_key")
+      ->set("label", t("Remote access key"))
+      ->attr("disabled", "disabled");
   }
 
   static function show_user_profile($data) {
