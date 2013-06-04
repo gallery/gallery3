@@ -20,48 +20,28 @@
 class Rest_Rest {
   const API_VERSION = "3.0";
 
-  static function reply($data=array(), $response) {
+  static $allowed_methods = array(
+    HTTP_Request::GET,
+    HTTP_Request::POST,
+    HTTP_Request::PUT,
+    HTTP_Request::DELETE
+  );
+
+  static function init() {
+    // Add the REST API version and allowed methods to the header.  Since we're adding it to
+    // Response::$default_config, even error responses (e.g. 404) will have these headers.
+    Response::$default_config = array_merge_recursive(Response::$default_config,
+      array("_header" => array(
+        "x-gallery-api-version" => Rest::API_VERSION,
+        "allow" => static::$allowed_methods
+      )));
+
+    // Set the error view to be the restful view.
+    Kohana_Exception::$error_view = "rest/error.json";
+    Kohana_Exception::$error_view_content_type = "application/json";
+
+    // We don't need to save REST sessions.
     Session::instance()->abort_save();
-
-    $response->headers("X-Gallery-API-Version", Rest::API_VERSION);
-    switch (Arr::get(Request::current()->query(), "output", "json")) {
-    case "json":
-      $response->json($data);
-      break;
-
-    case "jsonp":
-      if (!($callback = Request::current()->query("callback"))) {
-        throw Rest_Exception::factory(400, array("callback" => "missing"));
-      }
-
-      if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
-        $response->headers("Content-Type", "application/javascript; charset=UTF-8");
-        $response->body("$callback(" . json_encode($data) . ")");
-      } else {
-        throw Rest_Exception::factory(400, array("callback" => "invalid"));
-      }
-      break;
-
-    case "html":
-      $response->headers("Content-Type", "text/html; charset=UTF-8");
-      if ($data) {
-        $html = preg_replace(
-          "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
-          var_export($data, 1));
-      } else {
-        $html = t("Empty response");
-      }
-      $response->body("<pre>$html</pre>");
-      if (Gallery::show_profiler()) {
-        Profiler::enable();
-        $profiler = new Profiler();
-        $profiler->render();
-      }
-      break;
-
-    default:
-      throw Rest_Exception::factory(400);
-    }
   }
 
   static function set_active_user($access_key) {

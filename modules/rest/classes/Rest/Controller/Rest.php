@@ -26,39 +26,68 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
+  /**
+   * Get the REST access key (if provided), attempt to login the user, and check auth.
+   * The only two possible results are a successful login or a 403 Forbidden.  Because
+   * of this, the $auth variable is simply passed through without modification.
+   *
+   * NOTE: this doesn't extend Controller::check_auth(), but rather *replaces* it with
+   * its restful counterpart (i.e. parent::check_auth() is never called).
+   *
+   * @see  Controller::check_auth(), which is replaced by this implementation
+   * @see  Controller::auth_for_private_gallery()
+   * @see  Controller::auth_for_maintenance_mode()
+   * @see  Rest::set_active_user()
+   */
   public function check_auth($auth) {
-    // Get the access key (if provided) and attempt to login the user.
+    // Get the access key (if provided)
     $key = $this->request->headers("x-gallery-request-key");
     if (empty($key)) {
       $key = ($this->request->method == HTTP_Request::GET) ?
               $this->request->query("access_key") : $this->request->post("access_key");
     }
 
+    // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
     Rest::set_active_user($key);
 
-    return parent::check_auth($auth);
+    // Check for maintenance mode or private gallery restrictions.  Since there is no
+    // redirection to login/reauthenticate screen in REST, fire a 403 Forbidden if found.
+    if ($this->auth_for_maintenance_mode() || $this->auth_for_private_gallery()) {
+      throw Rest_Exception::factory(403);
+    }
+
+    return $auth;
   }
 
+  /**
+   * Overload Controller::before() to process the Request object for REST.
+   */
   public function before() {
     parent::before();
 
-    // If the X-Gallery-Request-Method header is defined, use it as the method.
-    // Otherwise, the method detected by the Request object will be retained.
+    // Check if the X-Gallery-Request-Method header is defined.
+    // @todo: consider checking other common REST method overrides, such as
+    // X-HTTP-Method (Microsoft), X-HTTP-Method-Override (Google/GData), X-METHOD-OVERRIDE, etc.
     if ($method = $this->request->headers("x-gallery-request-method")) {
+      // Set the X-Gallery-Request-Method header as the method.
       $this->request->method(strtoupper($method));
+    } else {
+      // Leave the method as detected by the Request object, but get a local copy.
+      $method = $this->request->method();
     }
 
     // If the method is not one of GET, POST, PUT, or DELETE, fire a 405 Method Not Allowed.
-    if (!in_array($this->request->method(), array(
-        HTTP_Request::GET,
-        HTTP_Request::POST,
-        HTTP_Request::PUT,
-        HTTP_Request::DELETE))) {
+    if (!in_array($method, Rest::$allowed_methods)) {
       throw Rest_Exception::factory(405);
     }
 
+    // If the method is not defined for this resource, fire a 400 Bad Request.
+    if (!method_exists($this, "action_" . strtolower($method))) {
+      throw Rest_Exception::factory(400, array("method" => "invalid"));
+    }
+
     // Set the action as the method.
-    $this->request->action(strtolower($this->request->method()));
+    $this->request->action(strtolower($method));
 
     // If using POST or PUT, check for and process any uploads, storing them along with the other
     // request-related parameters in $this->request->post().
@@ -70,7 +99,7 @@ abstract class Rest_Controller_Rest extends Controller {
     //     "type"     => "image/jpeg",
     //     "error"    => UPLOAD_ERR_OK
     //   );
-    if (isset($_FILES) && in_array($this->request->method(), array(
+    if (isset($_FILES) && in_array($method, array(
         HTTP_Request::POST,
         HTTP_Request::PUT))) {
       foreach ($_FILES as $key => $file_array) {
@@ -87,21 +116,19 @@ abstract class Rest_Controller_Rest extends Controller {
     }
 
     // Process the "entity" and "members" parameters, if specified.
-    $param_func = ($this->request->method == HTTP_Request::GET) ? "query" : "post";
+    $param_func = ($method == HTTP_Request::GET) ? "query" : "post";
     foreach (array("entity", "members") as $key) {
       $value = $this->request->$param_func($key);
       if (isset($value)) {
-        $this->request->$param_func($key) = json_decode($value);
+        $this->request->$param_func($key, json_decode($value));
       }
     }
   }
 
+  /**
+   * Overload Controller::after() to process the Response object for REST.
+   */
   public function after() {
-    // We don't need to save REST sessions.
-    Session::instance()->abort_save();
-
-    $this->response->headers("x-gallery-api-version", Rest::API_VERSION);
-
     // Get the data and output format, which will default to json unless we've used
     // the GET method and specified the "output" query parameter.
     $data = $this->response->body();
@@ -110,7 +137,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Reformat the response body based on the output format
     switch ($output) {
     case "json":
-      $this->headers("content-type", "application/json; charset=" . Kohana::$charset);
+      $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
       $this->response->body(json_encode($data));
       break;
 
@@ -123,7 +150,7 @@ abstract class Rest_Controller_Rest extends Controller {
         throw Rest_Exception::factory(400, array("callback" => "invalid"));
       }
 
-      $this->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
+      $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
       $this->response->body("$callback(" . json_encode($data) . ")");
       break;
 
@@ -132,7 +159,7 @@ abstract class Rest_Controller_Rest extends Controller {
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
         var_export($data, true));
 
-      $this->headers("content-type", "text/html; charset=" . Kohana::$charset);
+      $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");
 
       // @todo: the profiler needs to be updated for K3.
@@ -172,48 +199,9 @@ abstract class Rest_Controller_Rest extends Controller {
     }
   }
 
-  public function gallery_30x_call($function, $args) {
-    try {
-      $request = new stdClass();
-
-      switch ($method = strtolower($_SERVER["REQUEST_METHOD"])) {
-      case "get":
-        $request->params = (object) $this->request->query();
-        break;
-
-      default:
-        $request->params = (object) $this->request->post();
-        if (isset($_FILES["file"])) {
-          $request->file = Upload::save("file");
-          System::delete_later($request->file);
-        }
-        break;
-      }
-
-      if (isset($request->params->entity)) {
-        $request->params->entity = json_decode($request->params->entity);
-      }
-      if (isset($request->params->members)) {
-        $request->params->members = json_decode($request->params->members);
-      }
-
-      $request->method = strtolower(Arr::get($_SERVER, "HTTP_X_GALLERY_REQUEST_METHOD", $method));
-      $request->access_key = $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"];
-
-      if (empty($request->access_key) && !empty($request->params->access_key)) {
-        $request->access_key = $request->params->access_key;
-      }
-
-      $request->url = $this->request->url(true) . URL::query();
-
-      Rest::set_active_user($request->access_key);
-
-      $handler_class = "Hook_Rest_" . Inflector::convert_module_to_class_name($function);
-      $handler_method = $request->method;
-
-      if (!class_exists($handler_class) || !method_exists($handler_class, $handler_method)) {
-        throw Rest_Exception::factory(400);
-      }
+  /**
+   * @todo: the stanzas below are left over from 3.0.x's Controller_Rest::__call(), and
+   * haven't yet been re-implemented.  Once finished, delete this.
 
       if (($handler_class == "Hook_Rest_Data") && isset($request->params->m)) {
         // Set the cache buster value as the etag, use to check if cache needs refreshing.
@@ -221,19 +209,9 @@ abstract class Rest_Controller_Rest extends Controller {
         $this->check_cache($request->params->m);
       }
 
-      $response = call_user_func(array($handler_class, $handler_method), $request);
       if ($handler_method == "post") {
         // post methods must return a response containing a URI.
         $this->response->status(201)->headers("Location", $response["url"]);
       }
-      Rest::reply($response, $this->response);
-    } catch (ORM_Validation_Exception $e) {
-      // Note: this is totally insufficient because it doesn't take into account localization.  We
-      // either need to map the result values to localized strings in the application code, or every
-      // client needs its own l10n string set.
-      throw Rest_Exception::factory(400, $e->errors());
-    } catch (HTTP_Exception_404 $e) {
-      throw Rest_Exception::factory(404);
-    }
-  }
+   */
 }

@@ -18,6 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Response extends Kohana_Response {
+  // Restrict all response frames to the same origin for security.
+  public static $default_config = array("_header" => array("x-frame-options" => "SAMEORIGIN"));
+
+  /**
+   * Overload Response::factory() to add our default config.  This is used to ensure
+   * that even error responses have the headers we want.
+   * @see  Response::factory()
+   * @see  Kohana_Exception::response(), which uses this to generate error responses.
+   */
+  public static function factory(array $config=array()) {
+    return parent::factory(array_merge_recursive(static::$default_config, $config));
+  }
+
   /**
    * Encode an Ajax response so that it's UTF-7 safe.
    *

@@ -27,7 +27,7 @@ class Gallery_Auth {
    * @param  string     $password password field name
    */
   static function validate_login(Validation $v, $data, $name, $password) {
-    if (empty($data[$name])) {
+    if (empty($data[$name]) || empty($data[$password])) {
       $v->error($name, "invalid");
     } else if (!static::validate_too_many_failures($data[$name])) {
       $v->error($name, "too_many_failures");

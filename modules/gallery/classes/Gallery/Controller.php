@@ -23,6 +23,25 @@ abstract class Gallery_Controller extends Kohana_Controller {
   public $allow_private_gallery = false;
 
   /**
+   * Returns whether or not we need to auth due to maintenance mode.
+   */
+  public function auth_for_maintenance_mode() {
+    return (Module::get_var("gallery", "maintenance_mode", 0) &&
+            !Identity::active_user()->admin &&
+            !$this->allow_maintenance_mode);
+  }
+
+  /**
+   * Returns whether or not we need to auth due to private gallery.
+   */
+  public function auth_for_private_gallery() {
+    return (Identity::active_user()->guest &&
+            !Access::user_can(Identity::guest(), "view", Item::root()) &&
+            (php_sapi_name() != "cli") &&
+            !$this->allow_private_gallery);
+  }
+
+  /**
    * Check if we need to halt controller execution and send an auth-related reponse to the user
    * instead.  Controllers can overload this function to add checks of their own.  For example:
    *   public function check_auth($auth) {
@@ -41,19 +60,14 @@ abstract class Gallery_Controller extends Kohana_Controller {
     // See if we need to login because we're in maintenance mode.  This will force all non-admins
     // back to the login page, unless the controller has "$allow_maintenance_mode == true".
     // The site theme will put a "This site is down for maintenance" message on the login page.
-    if (Module::get_var("gallery", "maintenance_mode", 0) &&
-        !Identity::active_user()->admin &&
-        !$this->allow_maintenance_mode) {
+    if ($this->auth_for_maintenance_mode()) {
       $auth->continue_url = "admin/maintenance";
       $auth->login = true;
     }
 
     // See if we need to login because we have a private gallery.  This will force all guests
     // back to the login page, unless the controller has "$allow_private_gallery == true".
-    if (Identity::active_user()->guest &&
-        !Access::user_can(Identity::guest(), "view", Item::root()) &&
-        (php_sapi_name() != "cli") &&
-        !$this->allow_private_gallery) {
+    if ($this->auth_for_private_gallery()) {
       $auth->login = true;
     }
 
@@ -70,9 +84,6 @@ abstract class Gallery_Controller extends Kohana_Controller {
     if ($this->request->is_initial()) {
       Gallery::ready();
     }
-
-    // Restrict all response frames to the same origin for security.
-    $this->response->headers("X-Frame-Options", "SAMEORIGIN");
 
     // If is_ajax_request was previously set, make this request ajax.  We leave the parameter
     // set here for login and reauthenticate to use.
