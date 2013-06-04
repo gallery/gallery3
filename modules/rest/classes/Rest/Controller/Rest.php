@@ -59,6 +59,9 @@ abstract class Rest_Controller_Rest extends Controller {
     return $auth;
   }
 
+  /**
+   * Overload Controller::before() to process the Request object for REST.
+   */
   public function before() {
     parent::before();
 
@@ -107,15 +110,18 @@ abstract class Rest_Controller_Rest extends Controller {
     }
 
     // Process the "entity" and "members" parameters, if specified.
-    $param_func = ($this->request->method == HTTP_Request::GET) ? "query" : "post";
+    $param_func = ($this->request->method() == HTTP_Request::GET) ? "query" : "post";
     foreach (array("entity", "members") as $key) {
       $value = $this->request->$param_func($key);
       if (isset($value)) {
-        $this->request->$param_func($key) = json_decode($value);
+        $this->request->$param_func($key, json_decode($value));
       }
     }
   }
 
+  /**
+   * Overload Controller::before() to process the Response object for REST.
+   */
   public function after() {
     // Get the data and output format, which will default to json unless we've used
     // the GET method and specified the "output" query parameter.
@@ -125,7 +131,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Reformat the response body based on the output format
     switch ($output) {
     case "json":
-      $this->headers("content-type", "application/json; charset=" . Kohana::$charset);
+      $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
       $this->response->body(json_encode($data));
       break;
 
@@ -138,7 +144,7 @@ abstract class Rest_Controller_Rest extends Controller {
         throw Rest_Exception::factory(400, array("callback" => "invalid"));
       }
 
-      $this->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
+      $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
       $this->response->body("$callback(" . json_encode($data) . ")");
       break;
 
@@ -147,7 +153,7 @@ abstract class Rest_Controller_Rest extends Controller {
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
         var_export($data, true));
 
-      $this->headers("content-type", "text/html; charset=" . Kohana::$charset);
+      $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");
 
       // @todo: the profiler needs to be updated for K3.
