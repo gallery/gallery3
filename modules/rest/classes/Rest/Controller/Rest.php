@@ -126,7 +126,7 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   /**
-   * Overload Controller::before() to process the Response object for REST.
+   * Overload Controller::after() to process the Response object for REST.
    */
   public function after() {
     // Get the data and output format, which will default to json unless we've used
