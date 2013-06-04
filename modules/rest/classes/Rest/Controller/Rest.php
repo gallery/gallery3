@@ -26,6 +26,10 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
+  // Reply used to generate the Response body.
+  // @see  Controller_Rest::after()
+  public $reply = array();
+
   /**
    * Get the REST access key (if provided), attempt to login the user, and check auth.
    * The only two possible results are a successful login or a 403 Forbidden.  Because
@@ -43,7 +47,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Get the access key (if provided)
     $key = $this->request->headers("x-gallery-request-key");
     if (empty($key)) {
-      $key = ($this->request->method == HTTP_Request::GET) ?
+      $key = ($this->request->method() == HTTP_Request::GET) ?
               $this->request->query("access_key") : $this->request->post("access_key");
     }
 
@@ -129,16 +133,15 @@ abstract class Rest_Controller_Rest extends Controller {
    * Overload Controller::after() to process the Response object for REST.
    */
   public function after() {
-    // Get the data and output format, which will default to json unless we've used
+    // Get the output format, which will default to json unless we've used
     // the GET method and specified the "output" query parameter.
-    $data = $this->response->body();
     $output = Arr::get($this->request->query(), "output", "json");
 
-    // Reformat the response body based on the output format
+    // Format $this->reply into the Response body based on the output format
     switch ($output) {
     case "json":
       $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
-      $this->response->body(json_encode($data));
+      $this->response->body(json_encode($this->reply));
       break;
 
     case "jsonp":
@@ -151,13 +154,13 @@ abstract class Rest_Controller_Rest extends Controller {
       }
 
       $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
-      $this->response->body("$callback(" . json_encode($data) . ")");
+      $this->response->body("$callback(" . json_encode($this->reply) . ")");
       break;
 
     case "html":
-      $html = !$data ? t("Empty response") : preg_replace(
+      $html = !$this->reply ? t("Empty response") : preg_replace(
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
-        var_export($data, true));
+        var_export($this->reply, true));
 
       $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");

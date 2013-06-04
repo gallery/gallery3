@@ -235,10 +235,6 @@ Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))",
 Route::set("site", "<controller>(/<action>(/<args>))",
            array("args" => "[^.,;?\\n]++"))
   ->filter(function($route, $params, $request) {
-      if (substr($params["controller"], 0, 6) == "Admin_") {
-        // Admin controllers are not available, except via /admin
-        return false;
-      }
       $params["controller"] = str_replace("_", "", $params["controller"]);
       if (!class_exists("Controller_" . $params["controller"])) {
         // No controller found - abort match so we can try to find an item URL.
