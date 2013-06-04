@@ -34,50 +34,6 @@ class Rest_Rest {
     Session::instance()->abort_save();
   }
 
-  static function reply($data=array(), $response) {
-    Session::instance()->abort_save();
-
-    $response->headers("X-Gallery-API-Version", Rest::API_VERSION);
-    switch (Arr::get(Request::current()->query(), "output", "json")) {
-    case "json":
-      $response->json($data);
-      break;
-
-    case "jsonp":
-      if (!($callback = Request::current()->query("callback"))) {
-        throw Rest_Exception::factory(400, array("callback" => "missing"));
-      }
-
-      if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
-        $response->headers("Content-Type", "application/javascript; charset=UTF-8");
-        $response->body("$callback(" . json_encode($data) . ")");
-      } else {
-        throw Rest_Exception::factory(400, array("callback" => "invalid"));
-      }
-      break;
-
-    case "html":
-      $response->headers("Content-Type", "text/html; charset=UTF-8");
-      if ($data) {
-        $html = preg_replace(
-          "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
-          var_export($data, 1));
-      } else {
-        $html = t("Empty response");
-      }
-      $response->body("<pre>$html</pre>");
-      if (Gallery::show_profiler()) {
-        Profiler::enable();
-        $profiler = new Profiler();
-        $profiler->render();
-      }
-      break;
-
-    default:
-      throw Rest_Exception::factory(400);
-    }
-  }
-
   static function set_active_user($access_key) {
     if (empty($access_key)) {
       if (Module::get_var("rest", "allow_guest_access")) {
