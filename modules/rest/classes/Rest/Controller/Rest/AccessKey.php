@@ -18,14 +18,22 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Controller_Rest_AccessKey extends Controller_Rest {
-  public function action_post() {
+  public function check_auth($auth) {
     // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
     if (!Validation::factory($this->request->post())
       ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
       ->check()) {
-      throw HTTP_Exception::factory(403);
+      throw Rest_Exception::factory(403);
     }
 
+    // Set the access key
+    $this->request->headers("x-gallery-request-key", Rest::access_key());
+
+    return parent::check_auth($auth);
+  }
+
+  public function action_post() {
+    // If we got here, login was already successful - simply return the key.
     $this->response->body(Rest::access_key());
   }
 }

@@ -26,17 +26,37 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
+  /**
+   * Get the REST access key (if provided), attempt to login the user, and check auth.
+   * The only two possible results are a successful login or a 403 Forbidden.  Because
+   * of this, the $auth variable is simply passed through without modification.
+   *
+   * NOTE: this doesn't extend Controller::check_auth(), but rather *replaces* it with
+   * its restful counterpart (i.e. parent::check_auth() is never called).
+   *
+   * @see  Controller::check_auth(), which is replaced by this implementation
+   * @see  Controller::auth_for_private_gallery()
+   * @see  Controller::auth_for_maintenance_mode()
+   * @see  Rest::set_active_user()
+   */
   public function check_auth($auth) {
-    // Get the access key (if provided) and attempt to login the user.
+    // Get the access key (if provided)
     $key = $this->request->headers("x-gallery-request-key");
     if (empty($key)) {
       $key = ($this->request->method == HTTP_Request::GET) ?
               $this->request->query("access_key") : $this->request->post("access_key");
     }
 
+    // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
     Rest::set_active_user($key);
 
-    return parent::check_auth($auth);
+    // Check for maintenance mode or private gallery restrictions.  Since there is no
+    // redirection to login/reauthenticate screen in REST, fire a 403 Forbidden if found.
+    if ($this->auth_for_maintenance_mode() || $this->auth_for_private_gallery()) {
+      throw Rest_Exception::factory(403);
+    }
+
+    return $auth;
   }
 
   public function before() {
