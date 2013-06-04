@@ -65,23 +65,29 @@ abstract class Rest_Controller_Rest extends Controller {
   public function before() {
     parent::before();
 
-    // If the X-Gallery-Request-Method header is defined, use it as the method.
-    // Otherwise, the method detected by the Request object will be retained.
+    // Check if the X-Gallery-Request-Method header is defined.
+    // @todo: consider checking other common REST method overrides, such as
+    // X-HTTP-Method (Microsoft), X-HTTP-Method-Override (Google/GData), X-METHOD-OVERRIDE, etc.
     if ($method = $this->request->headers("x-gallery-request-method")) {
+      // Set the X-Gallery-Request-Method header as the method.
       $this->request->method(strtoupper($method));
+    } else {
+      // Leave the method as detected by the Request object, but get a local copy.
+      $method = $this->request->method();
     }
 
     // If the method is not one of GET, POST, PUT, or DELETE, fire a 405 Method Not Allowed.
-    if (!in_array($this->request->method(), array(
-        HTTP_Request::GET,
-        HTTP_Request::POST,
-        HTTP_Request::PUT,
-        HTTP_Request::DELETE))) {
+    if (!in_array($method, Rest::$allowed_methods)) {
       throw Rest_Exception::factory(405);
     }
 
+    // If the method is not defined for this resource, fire a 400 Bad Request.
+    if (!method_exists($this, "action_" . strtolower($method))) {
+      throw Rest_Exception::factory(400, array("method" => "invalid"));
+    }
+
     // Set the action as the method.
-    $this->request->action(strtolower($this->request->method()));
+    $this->request->action(strtolower($method));
 
     // If using POST or PUT, check for and process any uploads, storing them along with the other
     // request-related parameters in $this->request->post().
@@ -93,7 +99,7 @@ abstract class Rest_Controller_Rest extends Controller {
     //     "type"     => "image/jpeg",
     //     "error"    => UPLOAD_ERR_OK
     //   );
-    if (isset($_FILES) && in_array($this->request->method(), array(
+    if (isset($_FILES) && in_array($method, array(
         HTTP_Request::POST,
         HTTP_Request::PUT))) {
       foreach ($_FILES as $key => $file_array) {
@@ -110,7 +116,7 @@ abstract class Rest_Controller_Rest extends Controller {
     }
 
     // Process the "entity" and "members" parameters, if specified.
-    $param_func = ($this->request->method() == HTTP_Request::GET) ? "query" : "post";
+    $param_func = ($method == HTTP_Request::GET) ? "query" : "post";
     foreach (array("entity", "members") as $key) {
       $value = $this->request->$param_func($key);
       if (isset($value)) {

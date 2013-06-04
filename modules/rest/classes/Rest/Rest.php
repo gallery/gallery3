@@ -20,11 +20,22 @@
 class Rest_Rest {
   const API_VERSION = "3.0";
 
+  static $allowed_methods = array(
+    HTTP_Request::GET,
+    HTTP_Request::POST,
+    HTTP_Request::PUT,
+    HTTP_Request::DELETE
+  );
+
+
   static function init() {
-    // Add the REST API version to the header.  Since we're adding it to Response::$default_config,
-    // even error responses (e.g. 404) will have this header.
+    // Add the REST API version and allowed methods to the header.  Since we're adding it to
+    // Response::$default_config, even error responses (e.g. 404) will have these headers.
     Response::$default_config = array_merge_recursive(Response::$default_config,
-      array("_header" => array("x-gallery-api-version" => Rest::API_VERSION)));
+      array("_header" => array(
+        "x-gallery-api-version" => Rest::API_VERSION,
+        "allow" => static::$allowed_methods
+      )));
 
     // Set the error view to be the restful view.
     Kohana_Exception::$error_view = "rest/error.json";
