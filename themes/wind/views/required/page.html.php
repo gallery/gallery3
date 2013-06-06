@@ -100,7 +100,7 @@
            <li class="<?= $breadcrumb->last ? "g-active" : "" ?>
                       <?= $breadcrumb->first ? "g-first" : "" ?>">
             <? if (!$breadcrumb->last): ?> <a href="<?= $breadcrumb->url ?>"><? endif ?>
-            <?= HTML::purify(Text::limit_chars($breadcrumb->title, Module::get_var("gallery", "visible_title_length"))) ?>
+            <?= HTML::clean(Text::limit_chars($breadcrumb->title, Module::get_var("gallery", "visible_title_length"))) ?>
             <? if (!$breadcrumb->last): ?></a><? endif ?>
            </li>
           <? endforeach ?>
