@@ -11,7 +11,8 @@
       defaultVideoHeight: <?= $height ?>,
       startVolume: 1.0,
       features: ["playpause", "progress", "current", "duration", "volume", "fullscreen"],
-      pluginPath: "<?= url::abs_file("lib/mediaelementjs/") ?>"
+      pluginPath: "<?= url::abs_file("lib/mediaelementjs/") ?>",
+      flashName: "flashmediaelement.swf.php"
     }, <?= json_encode($player_options) ?>)
   );
 </script>
