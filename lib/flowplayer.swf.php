@@ -18,9 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// Redirect to strip off any query parameters
-if (!empty($_GET)) {
-  header("Location: flowplayer.swf.php");
+// Redirect the initial request to strip off any query parameters or URL fragments
+// We know it's an initial request if the token is missing
+if (empty($_GET["token"])) {
+  // We have not yet redirected
+  $rand = rand();
+  setcookie("flowplayer_3_token", $rand);
+  header("Location: flowplayer.swf.php?token=$rand#.");
+  exit;
+}
+
+// If the token exists but there's no cookie, then this is a bogus token
+// or the user does not support cookies.  Ignore this request.
+if (empty($_COOKIE["flowplayer_3_token"])) {
+  exit;
+}
+
+// If the token exists but it doesn't match our cookie, then this is a bogus
+// request.  Ignore this request.
+if ($_GET["token"] != $_COOKIE["flowplayer_3_token"]) {
   exit;
 }
 
