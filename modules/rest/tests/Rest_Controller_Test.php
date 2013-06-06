@@ -32,6 +32,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_login() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $user = Test::random_user("password");
 
     // There's no access key at first
@@ -54,6 +56,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
    * @expectedExceptionCode 403
    */
   public function test_login_failed() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $user = Test::random_user("password");
 
     $_POST["user"] = $user->name;
@@ -66,6 +70,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
    * @expectedExceptionCode 403
    */
   public function test_get() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     unset($_SERVER["HTTP_X_GALLERY_REQUEST_KEY"]);
 
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
@@ -75,6 +81,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_get_with_access_key() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
     $_GET["key"] = "value";
 
@@ -89,6 +97,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_post() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_POST["key"] = "value";
 
@@ -103,6 +113,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_put() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "put";
     $_POST["key"] = "value";
@@ -118,6 +130,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_delete() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "delete";
     $_POST["key"] = "value";
@@ -137,6 +151,8 @@ class Rest_Controller_Test extends Unittest_TestCase {
    * @expectedExceptionCode 400
    */
   public function test_bogus_method() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
     Test::call_and_capture(array(new Controller_Rest(), "mock"));
