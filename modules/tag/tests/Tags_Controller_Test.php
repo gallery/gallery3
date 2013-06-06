@@ -24,14 +24,18 @@ class Tags_Controller_Test extends Unittest_TestCase {
     Tag::add($album, $name);
     $tag = ORM::factory("Tag")->where("name", "=", $name)->find();
 
-    // Check that correct Gallery 3.0.x tag URL is redirected
-    $url = "tag/{$tag->id}/$name";
-    $redirected_url = Request::factory($url)->execute()->headers("location");
-    $this->assertEquals($tag->abs_url(), $redirected_url);
+    $urls = array(
+      "tag/{$tag->id}/{$tag->name}",  // Correct Gallery 3.0.x tag URL
+      "tag/{$tag->id}",               // Malformed Gallery 3.0.x tag URL
+      "tag_name/{$tag->name}",        // Correct Gallery 3.0.x tag_name URL
+    );
 
-    // Check that malformed Gallery 3.0.x tag URL is redirected
-    $url = "tag/{$tag->id}";
-    $redirected_url = Request::factory($url)->execute()->headers("location");
-    $this->assertEquals($tag->abs_url(), $redirected_url);
+    $canonical_url = $tag->abs_url(); // Correct Gallery 3.1.x tag URL
+
+    foreach ($urls as $url) {
+      // Check that URL is redirected to canonical URL.
+      $redirected_url = Request::factory($url)->execute()->headers("location");
+      $this->assertEquals($canonical_url, $redirected_url);
+    }
   }
 }
