@@ -17,16 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Route::set("tag", "tag(/<tag_url>)",
-           array("tag_url" => "[A-Za-z0-9-_/]++")) // Ref: Model_Tag::valid_slug, Route::REGEX_SEGMENT
+// @see  Model_Tag::valid_slug()
+Route::set("tag", "tag(/<tag_url>)", array("tag_url" => "[A-Za-z0-9-_/]++"))
   ->defaults(array(
       "controller" => "tags",
       "action" => "show"
     ));
 
 // This route is for Gallery 3.0.x tag_name URLs, and will fire a 301 redirect to the canonical URL.
-Route::set("tag_name", "tag_name/<args>",
-           array("args" => "[^.,;?\\n]++"))
+Route::set("tag_name", "tag_name/<args>")
   ->defaults(array(
       "controller" => "tags",
       "action" => "find_by_name"
