@@ -35,7 +35,7 @@ class Gallery_Theme {
    */
   static function load_themes() {
     $override = Request::current()->query("theme");
-    Theme::$is_admin = Request::current()->param("is_admin", false);
+    Theme::$is_admin = (Request::current()->directory() == "Admin");
     Theme::$site_theme_name = Module::get_var("gallery", "active_site_theme");
 
 

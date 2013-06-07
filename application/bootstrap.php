@@ -212,30 +212,20 @@ Upload::$default_directory = VARPATH . "uploads";
 // other underscores.  In Route::matches(), filters are called *after* ucwords, so
 // for example "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings".
 $rel_varpath = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
-Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))",
-           array("path" => ".*"))
-  ->filter(function($route, $params, $request) {
-      $params["controller"] = "FileProxy";
-      $params["action"] = "index";
-      return $params;
-    });
+Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))", array("path" => ".*"))
+  ->defaults(array(
+      "controller" => "file_proxy",
+      "action" => "index"
+    ));
 
-Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))",
-           array("directory" => "admin", "args" => "[^.,;?\\n]++"))
-  ->filter(function($route, $params, $request) {
-      $params["controller"] = str_replace("_", "", $params["controller"]);
-      $params["is_admin"] = true;
-      return $params;
-    })
+Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))", array("directory" => "admin"))
   ->defaults(array(
       "controller" => "dashboard",
       "action" => "index"
     ));
 
-Route::set("site", "<controller>(/<action>(/<args>))",
-           array("args" => "[^.,;?\\n]++"))
+Route::set("site", "<controller>(/<action>(/<args>))")
   ->filter(function($route, $params, $request) {
-      $params["controller"] = str_replace("_", "", $params["controller"]);
       if (!class_exists("Controller_" . $params["controller"])) {
         // No controller found - abort match so we can try to find an item URL.
         return false;
@@ -246,8 +236,8 @@ Route::set("site", "<controller>(/<action>(/<args>))",
       "action" => "index"
     ));
 
-Route::set("item", "(<item_url>)",
-           array("item_url" => "[A-Za-z0-9-_/]++")) // Ref: Model_Item::valid_slug, Route::REGEX_SEGMENT
+// @see  Model_Item::valid_slug()
+Route::set("item", "(<item_url>)", array("item_url" => "[A-Za-z0-9-_/]++"))
   ->defaults(array(
       "controller" => "items",
       "action" => "show"
