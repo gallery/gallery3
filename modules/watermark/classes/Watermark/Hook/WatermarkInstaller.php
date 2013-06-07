@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Watermark_Hook_WatermarkInstaller {
+  // @todo: upgrade to the next version and remove this table, as it's never used.
+  // rather, module vars are used to store everything.
   static function install() {
     $db = Database::instance();
     $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {watermarks} (
