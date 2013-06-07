@@ -219,10 +219,6 @@ Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))", array("path" => ".*")
     ));
 
 Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))", array("directory" => "admin"))
-  ->filter(function($route, $params, $request) {
-      $params["is_admin"] = true;
-      return $params;
-    })
   ->defaults(array(
       "controller" => "dashboard",
       "action" => "index"
