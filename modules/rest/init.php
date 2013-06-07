@@ -17,14 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Route::set("rest", "<directory>(/<controller>(/<args>))",
-           array("directory" => "rest", "args" => "[^.,;?\\n]++"))
+Route::set("rest", "<directory>(/<controller>(/<args>))", array("directory" => "rest"))
   ->filter(function($route, $params, $request) {
       // If we're here, we know that we're in REST mode, even if we have an unmatched
       // route (e.g. "gallery3/rest/nonexistent_resource") - initialize the REST API.
       Rest::init();
-
-      $params["controller"] = str_replace("_", "", $params["controller"]);
       return $params;
     })
   ->defaults(array(
