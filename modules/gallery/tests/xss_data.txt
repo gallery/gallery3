@@ -180,7 +180,7 @@ modules/gallery/views/error_admin.html.php                   286 DIRTY_ATTR $env
 modules/gallery/views/error_admin.html.php                   296 DIRTY    Kohana_Exception::safe_dump($value,$key)
 modules/gallery/views/form_uploadify.html.php                16  DIRTY_JS url::site("uploader/status/_S/_E")
 modules/gallery/views/form_uploadify.html.php                24  DIRTY_JS $flash_minimum_version
-modules/gallery/views/form_uploadify.html.php                28  DIRTY_JS url::file("lib/uploadify/uploadify.php")
+modules/gallery/views/form_uploadify.html.php                28  DIRTY_JS url::file("lib/uploadify/uploadify.swf.php")
 modules/gallery/views/form_uploadify.html.php                29  DIRTY_JS url::site("uploader/add_photo/{$album->id}")
 modules/gallery/views/form_uploadify.html.php                31  DIRTY_JS implode(";",$extensions)
 modules/gallery/views/form_uploadify.html.php                33  DIRTY_JS url::file("lib/uploadify/cancel.png")
