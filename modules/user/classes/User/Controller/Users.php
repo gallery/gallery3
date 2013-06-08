@@ -46,8 +46,10 @@ class User_Controller_Users extends Controller {
       ->add("submit", "input|submit", t("Save"));
 
     // Get the labels and error messages for the user group.
-    Controller_Admin_Users::get_user_form_labels($form->user);
-    Controller_Admin_Users::get_user_form_error_messages($form->user);
+    $form->user->set_var_fields("label",
+      Controller_Admin_Users::get_user_form_labels($form->user));
+    $form->user->set_var_fields("error_messages",
+      Controller_Admin_Users::get_user_form_error_messages($form->user));
 
     // Link the ORM model and call the form event.
     $form->user->orm("link", array("model" => $user));
