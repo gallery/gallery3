@@ -42,8 +42,8 @@ class Search_Search {
     $db = Database::instance();
 
     $query = static::_build_query_base($q, $album) .
-      "ORDER BY `score` DESC " .
-      "LIMIT $limit OFFSET " . (int)$offset;
+      " ORDER BY `score` DESC " .
+      " LIMIT $limit OFFSET " . (int)$offset;
 
     $data = $db->query(Database::SELECT, $query, "Model_Item");
     $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c", true)->current()->c;
@@ -68,7 +68,7 @@ class Search_Search {
       $album_sql = "";
     } else {
       $album_sql =
-        " AND {items}.left_ptr > " .$db->escape($album->left_ptr) .
+        " AND {items}.left_ptr > " . $db->escape($album->left_ptr) .
         " AND {items}.right_ptr <= " . $db->escape($album->right_ptr);
     }
 
@@ -79,8 +79,7 @@ class Search_Search {
       "WHERE MATCH({search_records}.`data`) AGAINST ($q IN BOOLEAN MODE) " .
       $album_sql .
       (empty($where) ? "" : " AND " . join(" AND ", $where)) .
-      $access_sql .
-      " ";
+      $access_sql;
   }
 
   /**
@@ -129,7 +128,7 @@ class Search_Search {
   static function get_position_within_album($item, $q, $album) {
     $page_size = Module::get_var("gallery", "page_size", 9);
     $query = static::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
-      "ORDER BY `score` DESC ";
+      " ORDER BY `score` DESC ";
     $db = Database::instance();
 
     // Truncate the score by two decimal places as this resolves the issues

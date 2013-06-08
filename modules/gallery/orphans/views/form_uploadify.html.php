@@ -25,7 +25,7 @@
       $("#g-uploadify").uploadify({
         width: 298,
         height: 32,
-        uploader: "<?= URL::file("lib/uploadify/uploadify.swf") ?>",
+        uploader: "<?= URL::file("lib/uploadify/uploadify.swf.php") ?>",
         script: "<?= URL::site("uploader/add_photo/{$album->id}") ?>",
         scriptData: <?= json_encode($script_data) ?>,
         fileExt: "<?= implode(";", $extensions) ?>",

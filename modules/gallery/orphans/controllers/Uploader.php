@@ -49,6 +49,7 @@ class Gallery_Controller_Uploader extends Controller {
 
     $form = $this->_get_add_form($album);
 
+<<<<<<< HEAD:modules/gallery/orphans/controllers/Uploader.php
     // Uploadify adds its own field to the form, so validate that separately.
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
@@ -94,6 +95,27 @@ class Gallery_Controller_Uploader extends Controller {
         return;
       }
       $this->response->body("FILEID: $item->id");
+=======
+    if ($form->validate()) {
+      // Uploadify puts the result in $_FILES["Filedata"] - process it.
+      try {
+        list ($tmp_name, $name) = $this->_process_upload("Filedata");
+      } catch (Exception $e) {
+        header("HTTP/1.1 400 Bad Request");
+        print "ERROR: " . $e->getMessage();
+        return;
+      }
+
+      // We have a valid upload file (of unknown type) - build an item from it.
+      try {
+        $item = $this->_add_item($id, $tmp_name, $name);
+        module::event("add_photos_form_completed", $item, $form);
+        print "FILEID: $item->id";
+      } catch (Exception $e) {
+        header("HTTP/1.1 500 Internal Server Error");
+        print "ERROR: " . $e->getMessage();
+      }
+>>>>>>> master:modules/gallery/controllers/uploader.php
     } else {
       $this->response->status(400);
       $this->response->body("ERROR: " . t("Invalid upload"));
@@ -111,6 +133,7 @@ class Gallery_Controller_Uploader extends Controller {
                                (int)$success_count,
                                array("error" => (int)$error_count)));
     } else {
+<<<<<<< HEAD:modules/gallery/orphans/controllers/Uploader.php
       $this->response->body(t2("Uploaded %count photo", "Uploaded %count photos", $success_count));
     }
   }
@@ -123,6 +146,19 @@ class Gallery_Controller_Uploader extends Controller {
   }
 
   protected function _get_add_form($album)  {
+=======
+      print t2("Uploaded %count photo", "Uploaded %count photos", $success_count);
+    }
+  }
+
+  public function finish() {
+    access::verify_csrf();
+    batch::stop();
+    json::reply(array("result" => "success"));
+  }
+
+  private function _get_add_form($album) {
+>>>>>>> master:modules/gallery/controllers/uploader.php
     $form = new Forge("uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
       ->label(t("Add photos to %album_title", array("album_title" => HTML::purify($album->title))));
@@ -149,5 +185,85 @@ class Gallery_Controller_Uploader extends Controller {
     }
 
     return $form;
+  }
+
+  /**
+   * Process the uploaded file.  This handles the interface with Kohana's upload and validation
+   * code, and marks the new temp file for deletion on shutdown.  It returns the temp file path
+   * (tmp_name) and filename (name), analogous to their respective $_FILES elements.
+   * If the upload is invalid, it will throw an exception.  Note that no type-checking (e.g. jpg,
+   * mp4,...) is performed here.
+   * @TODO: consider moving this to a common controller which is extended by various uploaders.
+   *
+   * @param  string name of $_FILES input
+   * @return array  array($tmp_name, $name)
+   */
+  private function _process_upload($file) {
+    // Validate file data.  At this point, any file extension is still valid.
+    $file_validation = new Validation($_FILES);
+    $file_validation->add_rules($file, "upload::valid",  "upload::required");
+    if (!$file_validation->validate()) {
+      throw new Exception(t("Invalid upload"));
+    }
+
+    // Save temp file and mark for deletion when done.
+    $tmp_name = upload::save($file);
+    system::delete_later($tmp_name);
+
+    // Get uploaded filename.  This is different than tmp_name since it hasn't been uniquified.
+    $name = $_FILES[$file]["name"];
+
+    return array($tmp_name, $name);
+  }
+
+  /**
+   * Add photo or movie from upload.  Once we have a valid file, this generates an item model
+   * from it.  It returns the item model on success, and throws an exception and adds log entries
+   * on failure.
+   * @TODO: consider moving this to a common controller which is extended by various uploaders.
+   *
+   * @param  int    parent album id
+   * @param  string temp file path (analogous to $_FILES[...]["tmp_name"])
+   * @param  string filename       (analogous to $_FILES[...]["name"])
+   * @return object new item model
+   */
+  private function _add_item($album_id, $tmp_name, $name) {
+    $extension = pathinfo($name, PATHINFO_EXTENSION);
+
+    try {
+      $item = ORM::factory("item");
+      $item->name = $name;
+      $item->title = item::convert_filename_to_title($name);
+      $item->parent_id = $album_id;
+      $item->set_data_file($tmp_name);
+
+      if (!$extension) {
+        throw new Exception(t("Uploaded file has no extension"));
+      } else if (legal_file::get_photo_extensions($extension)) {
+        $item->type = "photo";
+        $item->save();
+        log::success("content", t("Added a photo"),
+                     html::anchor("photos/$item->id", t("view photo")));
+      } else if (movie::allow_uploads() && legal_file::get_movie_extensions($extension)) {
+        $item->type = "movie";
+        $item->save();
+        log::success("content", t("Added a movie"),
+                     html::anchor("movies/$item->id", t("view movie")));
+      } else {
+        throw new Exception(t("Uploaded file has illegal extension"));
+      }
+    } catch (Exception $e) {
+      // Log errors then re-throw exception.
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+
+      // If we have a validation error, add an additional log entry.
+      if ($e instanceof ORM_Validation_Exception) {
+        Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+      }
+
+      throw $e;
+    }
+
+    return $item;
   }
 }
