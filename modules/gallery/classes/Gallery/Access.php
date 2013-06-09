@@ -656,7 +656,7 @@ class Gallery_Access {
       $dirs[] = dirname($album->thumb_path());
     }
 
-    $base_url = URL::base(null, true);
+    $base_url = URL::base();  // base URL *without* index.php (same whether clean URLs on or off)
 
     foreach ($dirs as $dir) {
       if ($value === Access::DENY) {
