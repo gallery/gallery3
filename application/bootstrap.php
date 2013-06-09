@@ -56,6 +56,11 @@ if (isset($_SERVER["KOHANA_ENV"])) {
   Kohana::$environment = constant("Kohana::" . strtoupper($_SERVER["KOHANA_ENV"]));
 }
 
+// See if we're using clean URLs.  If so, the clean_url parameter should have been
+// set in Gallery's .htaccess file.
+$index_file = (empty($_GET["clean_url"]) ? "index.php" : false);
+unset($_GET["clean_url"]);
+
 // Initialize Kohana, setting the default options.
 //
 // The following options are available:
@@ -99,7 +104,7 @@ Kohana::init(
           substr($_SERVER["SCRIPT_NAME"], 0,
                  strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"])))))),
 
-    "index_file" => "index.php",
+    "index_file" => $index_file,
     "charset" => "utf-8",
     "cache_dir" => VARPATH . "cache",
     "cache_life" => 60,
