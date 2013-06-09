@@ -169,11 +169,6 @@ class File_Structure_Test extends Unittest_TestCase {
         // Front controllers
         break;
 
-      case DOCROOT . "lib/uploadify/uploadify.php":
-      case DOCROOT . "lib/uploadify/uploadify.allglyphs.php":
-        // Uploadify wrappers - directly accessible
-        break;
-
       case DOCROOT . "local.php":
         // Special case optional file, not part of the codebase
         break;
