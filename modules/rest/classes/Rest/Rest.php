@@ -27,6 +27,15 @@ class Rest_Rest {
     HTTP_Request::DELETE
   );
 
+  static $default_params = array(
+    "start" => 0,
+    "num" => 100,
+    "expand_members" => false,
+    "type" => null,
+    "access_key" => null,
+    "output" => "json"
+  );
+
   static function init() {
     // Add the REST API version and allowed methods to the header.  Since we're adding it to
     // Response::$default_config, even error responses (e.g. 404) will have these headers.
@@ -97,67 +106,146 @@ class Rest_Rest {
   }
 
   /**
-   * Convert a REST url into an object.
+   * Convert a REST url into a type/id/params triad.
    * Eg:
-   *   http://example.com/gallery3/index.php/rest/item/35          -> Model_Item
-   *   http://example.com/gallery3/index.php/rest/tag/16           -> Model_Tag
-   *   http://example.com/gallery3/index.php/rest/tagged_item/1,16 -> [Model_Tag, Model_Item]
+   *   http://example.com/gallery3/index.php/rest/item/35          -> "item", 35, array()
+   *   http://example.com/gallery3/index.php/rest/item_comments    -> "item_comments", null, array()
+   *   http://example.com/gallery3/index.php/rest/data/1?size=full -> "data", 1, array("size" => "full")
    *
    * @param string  the fully qualified REST url
-   * @return mixed  the corresponding object (usually a model of some kind)
+   * @return array  the type/id/params triad
    */
   static function resolve($url) {
-    $relative_url = substr($url, strlen(URL::abs_site("rest")));
+    $relative_url = substr($url, strlen(URL::abs_site("rest")));  // e.g. "/data/1?size=full"
 
-    $path = parse_url($relative_url, PHP_URL_PATH);
+    $path =  parse_url($relative_url, PHP_URL_PATH);
+    $query = parse_url($relative_url, PHP_URL_QUERY);
     $components = explode("/", $path, 3);
 
-    if (count($components) != 3) {
+    if (empty($components[1])) {
       throw HTTP_Exception::factory(404, $url);
     }
+    $type = $components[1];
 
-    $class = "Hook_Rest_" . Inflector::convert_module_to_class_name($components[1]);
-    if (!class_exists($class) || !method_exists($class, "resolve")) {
-      throw HTTP_Exception::factory(404, $url);
+    $id = empty($components[2]) ? null : $components[2];
+
+    $params = array();
+    if (!empty($query)) {
+      // @todo: we really shouldn't do raw query parsing at this level - move this elsewhere.
+      $pairs = explode("&", $query);
+      foreach ($pairs as $pair) {
+        list ($key, $value) = (strpos($pair, "=") === false) ?
+          array($pair, "") : explode("=", $pair, 2);
+        $params[urldecode($key)] = urldecode($value);
+      }
     }
 
-    return call_user_func(array($class, "resolve"), !empty($components[2]) ? $components[2] : null);
+    return array($type, $id, $params);
   }
 
   /**
    * Return an absolute url used for REST resource location.
-   * @param  string  resource type (eg, "item", "tag")
-   * @param  object  resource
+   * @param  string  resource type (e.g. "item", "tag")
+   * @param  mixed   resource id (typically an integer, but can be more complex (e.g. "3,5")
+   * @param  array   resource query params (e.g. "data" requires a "size" param)
+   * @return string  REST resource url with "sticky" query params carried over as needed
    */
-  static function url() {
-    $args = func_get_args();
-    $resource_type = array_shift($args);
-
-    $class = "Hook_Rest_" . Inflector::convert_module_to_class_name($resource_type);
-    if (!class_exists($class) || !method_exists($class, "url")) {
-      throw Rest_Exception::factory(400);
-    }
-
-    $url = call_user_func_array(array($class, "url"), $args);
-    if (Request::current()->query("output") == "html") {
-      if (strpos($url, "?") === false) {
-        $url .= "?output=html";
-      } else {
-        $url .= "&output=html";
+  static function url($type, $id=null, $params=array()) {
+    // Carry over the "sticky" params.
+    foreach (array("access_key", "num", "expand_members", "type") as $key) {
+      $value = Request::current()->query($key);
+      if (isset($value)) {
+        $params[$key] = $value;
       }
     }
+
+    // Output is only "sticky" if set to html.
+    if (Request::current()->query("output") == "html") {
+      $params["output"] = "html";
+    }
+
+    $url = URL::abs_site("rest/$type");
+    $url .= empty($id)     ? "" : "/$id";
+    $url .= empty($params) ? "" : URL::query($params, false);
     return $url;
   }
 
-  static function relationships($resource_type, $resource) {
+  /**
+   * Get a resource's entity array.
+   */
+  static function entity($type, $id=null, $params=array()) {
+    $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
+    if (!class_exists($class) || !method_exists($class, "entity")) {
+      return null;
+    }
+
+    return call_user_func("$class::entity", $id, $params);
+  }
+
+  /**
+   * Get a resource's members.  This should return an array of type/id/params triads.
+   */
+  static function members($type, $id=null, $params=array()) {
+    $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
+    if (!class_exists($class) || !method_exists($class, "members")) {
+      return null;
+    }
+
+    return call_user_func("$class::members", $id, $params);
+  }
+
+  /**
+   * Get a resource's relationships.  This should return an array of type/id/params triads.
+   */
+  static function relationships($type, $id=null, $params=array()) {
     $results = array();
-    foreach (Module::active() as $module) {
-      foreach (glob(MODPATH . "{$module->name}/classes/Hook/Rest/*.php") as $filename) {
-        $class = "Hook_Rest_" . str_replace(".php", "", basename($filename));
-        if (class_exists($class) && method_exists($class, "relationships")) {
-          if ($tmp = call_user_func(array($class, "relationships"), $resource_type, $resource)) {
-            $results = array_merge($results, $tmp);
-          }
+    foreach (static::registry(true) as $resource) {
+      $class = "Controller_Rest_$resource";
+      if (class_exists($class) && method_exists($class, "relationships")) {
+        if ($tmp = call_user_func("$class::relationships", $type, $id, $params)) {
+          $results = array_merge($results, $tmp);
+        }
+      }
+    }
+
+    return $results;
+  }
+
+  /**
+   * Get a resource's output.  This returns an array of the url, entity, members, and
+   * relationships of the resource.
+   *
+   * When building the members and relationship members lists, we maintain the array keys
+   * (useful for showing item weights, etc) and the distinction between null and array()
+   * (e.g. "comment" members is null, but "comments" with no members is array()).
+   */
+  static function get_resource($type, $id=null, $params=array()) {
+    $results = array();
+
+    $results["url"] = Rest::url($type, $id, $params);
+
+    $data = Rest::entity($type, $id, $params);
+    if (isset($data)) {
+      $results["entity"] = $entity;
+    }
+
+    $data = Rest::members($type, $id, $params);
+    if (isset($data)) {
+      $results["members"] = array();
+      foreach ($data as $key => $member) {
+        $results["members"][$key] = Rest::url($member[0], $member[1], $member[2]);
+      }
+    }
+
+    $data = Rest::relationships($type, $id, $params);
+    if (isset($data)) {
+      foreach ($data as $type => $rel) {
+        $results["relationships"][$type]["url"] = Rest::url($rel[0], $rel[1], $rel[2]);
+        $rel_members = Rest::members($rel[0], $rel[1], $rel[2]);
+
+        $results["relationships"][$key]["members"] = array();
+        foreach ($rel_members as $key => $member) {
+          $results["relationships"][$key]["members"] = Rest::url($member[0], $member[1], $member[2]);
         }
       }
     }
