@@ -95,38 +95,37 @@ abstract class Rest_Controller_Rest extends Controller {
     // Set the action as the method.
     $this->request->action(strtolower($method));
 
-    // If using POST or PUT, check for and process any uploads, storing them along with the other
-    // request-related parameters in $this->request->post().
-    // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
-    //   $this->request->post("file") = array(
-    //     "name"     => "foobar.jpg",
-    //     "tmp_name" => "/path/to/gallery3/var/tmp/uniquified_temp_filename.jpg",
-    //     "size"     => 1234,
-    //     "type"     => "image/jpeg",
-    //     "error"    => UPLOAD_ERR_OK
-    //   );
-    if (isset($_FILES) && in_array($method, array(
-        HTTP_Request::POST,
-        HTTP_Request::PUT))) {
-      foreach ($_FILES as $key => $file_array) {
-        // If $this->request->post() already has an element of the same name or the upload
-        // failed validation, fire a 400 Bad Request.
-        if ($this->request->post($key) || (!$path = Upload::save($file_array))) {
-          throw Rest_Exception::factory(400, array($key => t("Upload failed")));
+    // If using POST or PUT, process some additional fields.
+    if (in_array($method, array(HTTP_Request::POST, HTTP_Request::PUT))) {
+      // Check for and process any uploads, storing them along with the other
+      // request-related parameters in $this->request->post().
+      // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
+      //   $this->request->post("file") = array(
+      //     "name"     => "foobar.jpg",
+      //     "tmp_name" => "/path/to/gallery3/var/tmp/uniquified_temp_filename.jpg",
+      //     "size"     => 1234,
+      //     "type"     => "image/jpeg",
+      //     "error"    => UPLOAD_ERR_OK
+      //   );
+      if (isset($_FILES)) {
+        foreach ($_FILES as $key => $file_array) {
+          // If $this->request->post() already has an element of the same name or the upload
+          // failed validation, fire a 400 Bad Request.
+          if ($this->request->post($key) || (!$path = Upload::save($file_array))) {
+            throw Rest_Exception::factory(400, array($key => "upload_failed"));
+          }
+
+          $file_array["tmp_name"] = $path;
+          $this->request->post($key, $file_array);
+          System::delete_later($path);
         }
-
-        $file_array["tmp_name"] = $path;
-        $this->request->post($key, $file_array);
-        System::delete_later($path);
       }
-    }
-
-    // Process the "entity" and "members" parameters, if specified.
-    $param_func = ($method == HTTP_Request::GET) ? "query" : "post";
-    foreach (array("entity", "members") as $key) {
-      $value = $this->request->$param_func($key);
-      if (isset($value)) {
-        $this->request->$param_func($key, json_decode($value));
+      // Process the "entity", "members", and "relationships" parameters, if specified.
+      foreach (array("entity", "members", "relationships") as $key) {
+        $value = $this->request->post($key);
+        if (isset($value)) {
+          $this->request->post($key, json_decode($value));
+        }
       }
     }
   }
