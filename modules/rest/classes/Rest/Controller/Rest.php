@@ -32,6 +32,10 @@ abstract class Rest_Controller_Rest extends Controller {
   // @see  Controller_Rest::after()
   public $rest_response = array();
 
+  // REST resource type and id.  These are set in Controller_Rest::before().
+  public $rest_type;
+  public $rest_id;
+
   // Default REST query parameters.  These can be altered as needed in each resource class.
   public $default_params = array(
     "start" => 0,
@@ -104,6 +108,10 @@ abstract class Rest_Controller_Rest extends Controller {
 
     // Set the action as the method.
     $this->request->action(strtolower($method));
+
+    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
+    $this->rest_type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
+    $this->rest_id = $this->request->arg_optional(0);
 
     // If using POST or PUT, process some additional fields.
     if (in_array($method, array(HTTP_Request::POST, HTTP_Request::PUT))) {
@@ -221,12 +229,8 @@ abstract class Rest_Controller_Rest extends Controller {
    * (e.g. data, tree, registry), most resources can use this default implementation.
    */
   public function action_get() {
-    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
-    $type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
-    $id = $this->arg_optional(0);
-
     if ($this->request->query("expand_members", $this->default_params["expand_members"])) {
-      $members = Rest::members($type, $id, $this->request->query());
+      $members = Rest::members($this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
         throw Rest_Exception(400, array("expand_members" => "not_a_collection"));
@@ -236,7 +240,8 @@ abstract class Rest_Controller_Rest extends Controller {
         $this->rest_response[$key] = Rest::get_resource($member[0], $member[1], $member[2]);
       }
     } else {
-      $this->rest_response = Rest::get_resource($type, $id, $this->request->query());
+      $this->rest_response =
+        Rest::get_resource($this->rest_type, $this->rest_id, $this->request->query());
     }
   }
 
