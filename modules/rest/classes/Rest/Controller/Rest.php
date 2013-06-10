@@ -37,7 +37,7 @@ abstract class Rest_Controller_Rest extends Controller {
   public $rest_id;
 
   // Default REST query parameters.  These can be altered as needed in each resource class.
-  public $default_params = array(
+  public static $default_params = array(
     "start" => 0,
     "num" => 100,
     "expand_members" => false,
@@ -230,7 +230,7 @@ abstract class Rest_Controller_Rest extends Controller {
    */
   public function action_get() {
     if (Arr::get($this->request->query(), "expand_members",
-        $this->default_params["expand_members"])) {
+        static::$default_params["expand_members"])) {
       $members = Rest::members($this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
