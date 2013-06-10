@@ -229,15 +229,16 @@ abstract class Rest_Controller_Rest extends Controller {
    * (e.g. data, tree, registry), most resources can use this default implementation.
    */
   public function action_get() {
-    if ($this->request->query("expand_members", $this->default_params["expand_members"])) {
+    if (Arr::get($this->request->query(), "expand_members",
+        $this->default_params["expand_members"])) {
       $members = Rest::members($this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
-        throw Rest_Exception(400, array("expand_members" => "not_a_collection"));
+        throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
       }
 
       foreach ($members as $key => $member) {
-        $this->rest_response[$key] = Rest::get_resource($member[0], $member[1], $member[2]);
+        $this->rest_response[$key] = Rest::get_resource($member);
       }
     } else {
       $this->rest_response =
