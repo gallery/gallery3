@@ -164,4 +164,21 @@ class Rest_Rest {
 
     return $results;
   }
+
+  /**
+   * Return an array of all available REST resource types.
+   * @param  boolean  flag to return class instead of resource names (e.g. "TagItems" vs. "tag_items")
+   */
+  static function registry($return_class_names=false) {
+    $results = array();
+    foreach (Module::active() as $module) {
+      foreach (glob(MODPATH . "{$module->name}/classes/Controller/Rest/*.php") as $filename) {
+        $class_name = str_replace(".php", "", basename($filename));
+        $results[] = $return_class_names ? $class_name :
+          Inflector::convert_class_to_module_name($class_name);
+      }
+    }
+
+    return array_unique($results);
+  }
 }
