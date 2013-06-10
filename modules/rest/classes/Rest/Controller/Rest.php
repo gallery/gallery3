@@ -26,9 +26,11 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
-  // Reply used to generate the Response body.
+  // REST response used by Controller_Rest::after() to generate the Response body.  Since
+  // the default action_get() sets this and since POST/PUT/DELETE typically have no output,
+  // most resources don't need to access this directly.
   // @see  Controller_Rest::after()
-  public $reply = array();
+  public $rest_response = array();
 
   /**
    * Get the REST access key (if provided), attempt to login the user, and check auth.
@@ -137,11 +139,11 @@ abstract class Rest_Controller_Rest extends Controller {
     // the GET method and specified the "output" query parameter.
     $output = Arr::get($this->request->query(), "output", "json");
 
-    // Format $this->reply into the Response body based on the output format
+    // Format $this->rest_response into the Response body based on the output format
     switch ($output) {
     case "json":
       $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
-      $this->response->body(json_encode($this->reply));
+      $this->response->body(json_encode($this->rest_response));
       break;
 
     case "jsonp":
@@ -154,13 +156,13 @@ abstract class Rest_Controller_Rest extends Controller {
       }
 
       $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
-      $this->response->body("$callback(" . json_encode($this->reply) . ")");
+      $this->response->body("$callback(" . json_encode($this->rest_response) . ")");
       break;
 
     case "html":
-      $html = !$this->reply ? t("Empty response") : preg_replace(
+      $html = !$this->rest_response ? t("Empty response") : preg_replace(
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
-        var_export($this->reply, true));
+        var_export($this->rest_response, true));
 
       $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");

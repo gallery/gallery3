@@ -26,6 +26,6 @@ class Rest_Controller_Rest_Registry extends Controller_Rest {
           str_replace(".php", "", basename($filename)));
       }
     }
-    $this->reply = array_unique($results);
+    $this->rest_response = array_unique($results);
   }
 }
