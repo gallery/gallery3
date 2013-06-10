@@ -34,6 +34,6 @@ class Rest_Controller_Rest_AccessKey extends Controller_Rest {
 
   public function action_post() {
     // If we got here, login was already successful - simply return the key.
-    $this->reply = Rest::access_key();
+    $this->rest_response = Rest::access_key();
   }
 }
