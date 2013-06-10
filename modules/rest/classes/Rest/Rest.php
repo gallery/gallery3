@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Rest {
-  const API_VERSION = "3.0";
+  const API_VERSION = "3.1";
 
   static $allowed_methods = array(
     HTTP_Request::GET,
