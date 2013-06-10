@@ -19,13 +19,6 @@
  */
 class Rest_Controller_Rest_Registry extends Controller_Rest {
   public function action_get() {
-    $results = array();
-    foreach (Module::active() as $module) {
-      foreach (glob(MODPATH . "{$module->name}/classes/Controller/Rest/*.php") as $filename) {
-        $results[] = Inflector::convert_class_to_module_name(
-          str_replace(".php", "", basename($filename)));
-      }
-    }
-    $this->rest_response = array_unique($results);
+    $this->rest_response = Rest::registry();
   }
 }
