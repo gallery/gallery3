@@ -18,14 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Controller_UserProfile extends Controller {
-  public function action_show() {
-    $id = $this->request->arg(0, "digit");
-    // If we get here, then we should have a user id other than guest.
-    $user = Identity::lookup_user($id);
-    if (!$user) {
-      throw HTTP_Exception::factory(404);
+  /**
+   * If user profiles shouldn't be seen by guests and the active user is a guest, redirect
+   * to the login.  We get here if a valid user is viewing a profile, then they logout.
+   *
+   * @see  Controller::check_auth()
+   * @see  Controller_Admin::check_auth(), which does something similar.
+   */
+  public function check_auth($auth) {
+    if ((Module::get_var("gallery", "show_user_profiles_to") != "everybody") &&
+        Identity::active_user()->guest) {
+      $auth->login = true;
     }
 
+    return parent::check_auth($auth);
+  }
+
+  public function action_show() {
+    $id = $this->request->arg(0, "digit");
+    $user = Identity::lookup_user($id);
     if (!$this->_can_view_profile_pages($user)) {
       throw HTTP_Exception::factory(404);
     }
@@ -95,7 +106,7 @@ class Gallery_Controller_UserProfile extends Controller {
   }
 
   protected function _can_view_profile_pages($user) {
-    if (!$user->loaded()) {
+    if (!$user || !$user->loaded()) {
       return false;
     }
 
@@ -104,7 +115,8 @@ class Gallery_Controller_UserProfile extends Controller {
       return true;
     }
 
-    switch (Module::get_var("gallery", "show_user_profiles_to")) {
+    $mode = Module::get_var("gallery", "show_user_profiles_to");
+    switch ($mode) {
     case "admin_users":
       return Identity::active_user()->admin;
 
@@ -115,8 +127,8 @@ class Gallery_Controller_UserProfile extends Controller {
       return true;
 
     default:
-      // Fail in private mode on an invalid setting
-      return false;
+      // Fail if setting is invalid
+      throw new Gallery_Exception("Invalid show_user_profiles_to setting: $mode");
     }
   }
 }
