@@ -27,15 +27,6 @@ class Rest_Rest {
     HTTP_Request::DELETE
   );
 
-  static $default_params = array(
-    "start" => 0,
-    "num" => 100,
-    "expand_members" => false,
-    "type" => null,
-    "access_key" => null,
-    "output" => "json"
-  );
-
   static function init() {
     // Add the REST API version and allowed methods to the header.  Since we're adding it to
     // Response::$default_config, even error responses (e.g. 404) will have these headers.

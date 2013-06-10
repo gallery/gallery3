@@ -32,6 +32,16 @@ abstract class Rest_Controller_Rest extends Controller {
   // @see  Controller_Rest::after()
   public $rest_response = array();
 
+  // Default REST query parameters.  These can be altered as needed in each resource class.
+  public $default_params = array(
+    "start" => 0,
+    "num" => 100,
+    "expand_members" => false,
+    "type" => null,
+    "access_key" => null,
+    "output" => "json"
+  );
+
   /**
    * Get the REST access key (if provided), attempt to login the user, and check auth.
    * The only two possible results are a successful login or a 403 Forbidden.  Because
@@ -215,7 +225,7 @@ abstract class Rest_Controller_Rest extends Controller {
     $type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
     $id = $this->arg_optional(0);
 
-    if ($this->request->query("expand_members", Rest::$default_params["expand_members"])) {
+    if ($this->request->query("expand_members", $this->default_params["expand_members"])) {
       $members = Rest::members($type, $id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
