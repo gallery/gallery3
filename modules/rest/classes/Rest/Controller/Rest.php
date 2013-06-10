@@ -26,9 +26,21 @@
 abstract class Rest_Controller_Rest extends Controller {
   public $allow_private_gallery = true;
 
-  // Reply used to generate the Response body.
+  // REST response used by Controller_Rest::after() to generate the Response body.  Since
+  // the default action_get() sets this and since POST/PUT/DELETE typically have no output,
+  // most resources don't need to access this directly.
   // @see  Controller_Rest::after()
-  public $reply = array();
+  public $rest_response = array();
+
+  // Default REST query parameters.  These can be altered as needed in each resource class.
+  public $default_params = array(
+    "start" => 0,
+    "num" => 100,
+    "expand_members" => false,
+    "type" => null,
+    "access_key" => null,
+    "output" => "json"
+  );
 
   /**
    * Get the REST access key (if provided), attempt to login the user, and check auth.
@@ -93,38 +105,37 @@ abstract class Rest_Controller_Rest extends Controller {
     // Set the action as the method.
     $this->request->action(strtolower($method));
 
-    // If using POST or PUT, check for and process any uploads, storing them along with the other
-    // request-related parameters in $this->request->post().
-    // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
-    //   $this->request->post("file") = array(
-    //     "name"     => "foobar.jpg",
-    //     "tmp_name" => "/path/to/gallery3/var/tmp/uniquified_temp_filename.jpg",
-    //     "size"     => 1234,
-    //     "type"     => "image/jpeg",
-    //     "error"    => UPLOAD_ERR_OK
-    //   );
-    if (isset($_FILES) && in_array($method, array(
-        HTTP_Request::POST,
-        HTTP_Request::PUT))) {
-      foreach ($_FILES as $key => $file_array) {
-        // If $this->request->post() already has an element of the same name or the upload
-        // failed validation, fire a 400 Bad Request.
-        if ($this->request->post($key) || (!$path = Upload::save($file_array))) {
-          throw Rest_Exception::factory(400, array($key => t("Upload failed")));
+    // If using POST or PUT, process some additional fields.
+    if (in_array($method, array(HTTP_Request::POST, HTTP_Request::PUT))) {
+      // Check for and process any uploads, storing them along with the other
+      // request-related parameters in $this->request->post().
+      // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
+      //   $this->request->post("file") = array(
+      //     "name"     => "foobar.jpg",
+      //     "tmp_name" => "/path/to/gallery3/var/tmp/uniquified_temp_filename.jpg",
+      //     "size"     => 1234,
+      //     "type"     => "image/jpeg",
+      //     "error"    => UPLOAD_ERR_OK
+      //   );
+      if (isset($_FILES)) {
+        foreach ($_FILES as $key => $file_array) {
+          // If $this->request->post() already has an element of the same name or the upload
+          // failed validation, fire a 400 Bad Request.
+          if ($this->request->post($key) || (!$path = Upload::save($file_array))) {
+            throw Rest_Exception::factory(400, array($key => "upload_failed"));
+          }
+
+          $file_array["tmp_name"] = $path;
+          $this->request->post($key, $file_array);
+          System::delete_later($path);
         }
-
-        $file_array["tmp_name"] = $path;
-        $this->request->post($key, $file_array);
-        System::delete_later($path);
       }
-    }
-
-    // Process the "entity" and "members" parameters, if specified.
-    $param_func = ($method == HTTP_Request::GET) ? "query" : "post";
-    foreach (array("entity", "members") as $key) {
-      $value = $this->request->$param_func($key);
-      if (isset($value)) {
-        $this->request->$param_func($key, json_decode($value));
+      // Process the "entity", "members", and "relationships" parameters, if specified.
+      foreach (array("entity", "members", "relationships") as $key) {
+        $value = $this->request->post($key);
+        if (isset($value)) {
+          $this->request->post($key, json_decode($value));
+        }
       }
     }
   }
@@ -137,11 +148,11 @@ abstract class Rest_Controller_Rest extends Controller {
     // the GET method and specified the "output" query parameter.
     $output = Arr::get($this->request->query(), "output", "json");
 
-    // Format $this->reply into the Response body based on the output format
+    // Format $this->rest_response into the Response body based on the output format
     switch ($output) {
     case "json":
       $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
-      $this->response->body(json_encode($this->reply));
+      $this->response->body(json_encode($this->rest_response));
       break;
 
     case "jsonp":
@@ -154,13 +165,13 @@ abstract class Rest_Controller_Rest extends Controller {
       }
 
       $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
-      $this->response->body("$callback(" . json_encode($this->reply) . ")");
+      $this->response->body("$callback(" . json_encode($this->rest_response) . ")");
       break;
 
     case "html":
-      $html = !$this->reply ? t("Empty response") : preg_replace(
+      $html = !$this->rest_response ? t("Empty response") : preg_replace(
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
-        var_export($this->reply, true));
+        var_export($this->rest_response, true));
 
       $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");
@@ -199,6 +210,33 @@ abstract class Rest_Controller_Rest extends Controller {
         }
       }
       throw $e;
+    }
+  }
+
+  /**
+   * Get a "standard" REST response.  This generates the REST response following Gallery's
+   * standard format, and expands members if specified.
+   *
+   * While some resources are different enough to warrant their own action_get() function,
+   * (e.g. data, tree, registry), most resources can use this default implementation.
+   */
+  public function action_get() {
+    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
+    $type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
+    $id = $this->arg_optional(0);
+
+    if ($this->request->query("expand_members", $this->default_params["expand_members"])) {
+      $members = Rest::members($type, $id, $this->request->query());
+      if (!isset($members)) {
+        // A null members array means the resource has no members function - fire a 400 Bad Request.
+        throw Rest_Exception(400, array("expand_members" => "not_a_collection"));
+      }
+
+      foreach ($members as $key => $member) {
+        $this->rest_response[$key] = Rest::get_resource($member[0], $member[1], $member[2]);
+      }
+    } else {
+      $this->rest_response = Rest::get_resource($type, $id, $this->request->query());
     }
   }
 

@@ -212,10 +212,6 @@ Upload::$remove_spaces = false;
 Upload::$default_directory = VARPATH . "uploads";
 
 // Set our routes.  This will match all valid Gallery URLs (including the empty root URL).
-//
-// Since there are the only two controller directories we use (root and admin), we can remove all
-// other underscores.  In Route::matches(), filters are called *after* ucwords, so
-// for example "admin/advanced_settings" maps to "Controller_Admin_AdvancedSettings".
 $rel_varpath = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
 Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))", array("path" => ".*"))
   ->defaults(array(
