@@ -193,16 +193,4 @@ class Gallery_Controller_Rest_Item {
 
     $item->delete();
   }
-
-  static function resolve($id) {
-    $item = ORM::factory("Item", $id);
-    if (!Access::can("view", $item)) {
-      throw HTTP_Exception::factory(404);
-    }
-    return $item;
-  }
-
-  static function url($item) {
-    return URL::abs_site("rest/item/{$item->id}");
-  }
 }
