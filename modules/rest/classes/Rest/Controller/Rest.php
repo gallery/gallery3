@@ -204,6 +204,33 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   /**
+   * Get a "standard" REST response.  This generates the REST response following Gallery's
+   * standard format, and expands members if specified.
+   *
+   * While some resources are different enough to warrant their own action_get() function,
+   * (e.g. data, tree, registry), most resources can use this default implementation.
+   */
+  public function action_get() {
+    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
+    $type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
+    $id = $this->arg_optional(0);
+
+    if ($this->request->query("expand_members", Rest::$default_params["expand_members"])) {
+      $members = Rest::members($type, $id, $this->request->query());
+      if (!isset($members)) {
+        // A null members array means the resource has no members function - fire a 400 Bad Request.
+        throw Rest_Exception(400, array("expand_members" => "not_a_collection"));
+      }
+
+      foreach ($members as $key => $member) {
+        $this->rest_response[$key] = Rest::get_resource($member[0], $member[1], $member[2]);
+      }
+    } else {
+      $this->rest_response = Rest::get_resource($type, $id, $this->request->query());
+    }
+  }
+
+  /**
    * @todo: the stanzas below are left over from 3.0.x's Controller_Rest::__call(), and
    * haven't yet been re-implemented.  Once finished, delete this.
 
