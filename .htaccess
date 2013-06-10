@@ -79,5 +79,5 @@
 #   RewriteCond %{REQUEST_FILENAME} !-d
 #   RewriteRule .* index.php/$0?clean_url=1 [QSA,PT,L]
 #   RewriteCond %{QUERY_STRING} !^clean_url=1
-#   RewriteRule ^index.php/(.*) $1 [R,L]
+#   RewriteRule ^index.php/?(.*) $1 [R,L]
 # </IfModule>
