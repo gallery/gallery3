@@ -69,28 +69,5 @@ class Gallery_Controller_Rest_Data extends Controller_Rest {
       $this->response->send_file($file, null, $options);
     }
   }
-
-  static function resolve($id) {
-    $item = ORM::factory("Item", $id);
-    if (!Access::can("view", $item)) {
-      throw HTTP_Exception::factory(404);
-    }
-    return $item;
-  }
-
-  static function url($item, $size) {
-    if ($size == "full") {
-      $file = $item->file_path();
-    } else if ($size == "resize") {
-      $file = $item->resize_path();
-    } else {
-      $file = $item->thumb_path();
-    }
-    if (!file_exists($file)) {
-      throw HTTP_Exception::factory(404);
-    }
-
-    return URL::abs_site("rest/data/{$item->id}?size=$size&m=" . filemtime($file));
-  }
 }
 
