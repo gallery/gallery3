@@ -169,12 +169,6 @@ if (isset($_SERVER["SERVER_NAME"])) {
 }
 $_SERVER = UTF8::clean($_SERVER);
 
-// If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
-// and send users to the installer.
-if (!file_exists(VARPATH . "database.php")) {
-  HTTP::redirect(URL::abs_file("installer"));
-}
-
 // Simple and cheap test to make sure that the database config is ok.  Do this before we do
 // anything else database related.
 try {
