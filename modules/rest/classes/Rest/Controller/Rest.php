@@ -345,15 +345,4 @@ abstract class Rest_Controller_Rest extends Controller {
       break;
     }
   }
-
-  /**
-   * @todo: the stanzas below are left over from 3.0.x's Controller_Rest::__call(), and
-   * haven't yet been re-implemented.  Once finished, delete this.
-
-      if (($handler_class == "Hook_Rest_Data") && isset($request->params->m)) {
-        // Set the cache buster value as the etag, use to check if cache needs refreshing.
-        // This is easiest to do at the controller level, hence why it's here.
-        $this->check_cache($request->params->m);
-      }
-   */
 }
