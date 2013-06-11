@@ -75,7 +75,7 @@ class info_block_Core {
         if (($theme->item->width && $theme->item->height) && module::get_var("info", "show_size")) {
             $info["size"] = array(
                 "label" => t("Size:"),
-                "value" => $theme->item->width . " x " . $theme->item->height
+                "value" => t("%width x %height", array("width" => $theme->item->width, "height" => $theme->item->height))
             );
         }
 
