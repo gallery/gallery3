@@ -142,8 +142,12 @@ class Rest_Rest {
    * @return string  REST resource url with "sticky" query params carried over as needed
    */
   static function url($type, $id=null, $params=array()) {
+    if (is_array($type)) {
+      list ($type, $id, $params) = static::_split_triad($type);
+    }
+
     // Carry over the "sticky" params.
-    foreach (array("access_key", "num", "expand_members", "type") as $key) {
+    foreach (array("access_key", "num", "type", "fields") as $key) {
       $value = Request::current()->query($key);
       if (isset($value)) {
         $params[$key] = $value;
@@ -162,33 +166,70 @@ class Rest_Rest {
   }
 
   /**
-   * Get a resource's entity array.
+   * GET a resource's entity.
+   * @return  array  entity fields
    */
-  static function entity($type, $id=null, $params=array()) {
-    $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
-    if (!class_exists($class) || !method_exists($class, "entity")) {
-      return null;
-    }
-
-    return call_user_func("$class::entity", $id, $params);
+  static function get_entity($type, $id=null, $params=array()) {
+    return static::_call_rest_func("get_entity", $type, $id, $params);
   }
 
   /**
-   * Get a resource's members.  This should return an array of type/id/params triads.
+   * GET a resource's members.
+   * @return  array  type/id/params triads
    */
-  static function members($type, $id=null, $params=array()) {
-    $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
-    if (!class_exists($class) || !method_exists($class, "members")) {
-      return null;
-    }
-
-    return call_user_func("$class::members", $id, $params);
+  static function get_members($type, $id=null, $params=array()) {
+    return static::_call_rest_func("get_members", $type, $id, $params);
   }
 
   /**
-   * Get a resource's relationships.  This should return an array of type/id/params triads.
+   * PUT a resource's entity.
+   * @return  null
+   */
+  static function put_entity($type, $id=null, $params=array()) {
+    return static::_call_rest_func("put_entity", $type, $id, $params);
+  }
+
+  /**
+   * PUT a resource's members.
+   * @return  null
+   */
+  static function put_members($type, $id=null, $params=array()) {
+    return static::_call_rest_func("put_members", $type, $id, $params);
+  }
+
+  /**
+   * POST a resource's entity.
+   * @return  array  type/id/params triad
+   */
+  static function post_entity($type, $id=null, $params=array()) {
+    return static::_call_rest_func("post_entity", $type, $id, $params);
+  }
+
+  /**
+   * POST a resource's members.
+   * @return  null
+   */
+  static function post_members($type, $id=null, $params=array()) {
+    return static::_call_rest_func("post_members", $type, $id, $params);
+  }
+
+  /**
+   * DELETE a resource.
+   * @return  null
+   */
+  static function delete($type, $id=null, $params=array()) {
+    return static::_call_rest_func("delete", $type, $id, $params);
+  }
+
+  /**
+   * Find a resource's relationships.
+   * @return  array  type/id/params triads
    */
   static function relationships($type, $id=null, $params=array()) {
+    if (is_array($type)) {
+      list ($type, $id, $params) = static::_split_triad($type);
+    }
+
     $results = array();
     foreach (static::registry(true) as $resource) {
       $class = "Controller_Rest_$resource";
@@ -203,7 +244,7 @@ class Rest_Rest {
   }
 
   /**
-   * Get a resource's output.  This returns an array of the url, entity, members, and
+   * GET a resource's output.  This returns an array of the url, entity, members, and
    * relationships of the resource.
    *
    * When building the members and relationship members lists, we maintain the array keys
@@ -211,32 +252,48 @@ class Rest_Rest {
    * (e.g. "comment" members is null, but "comments" with no members is array()).
    */
   static function get_resource($type, $id=null, $params=array()) {
+    if (is_array($type)) {
+      list ($type, $id, $params) = static::_split_triad($type);
+    }
+
     $results = array();
 
     $results["url"] = Rest::url($type, $id, $params);
 
-    $data = Rest::entity($type, $id, $params);
+    $data = Rest::get_entity($type, $id, $params);
     if (isset($data)) {
-      $results["entity"] = $entity;
+      if (isset($params["fields"])) {
+        // Only show specified fields
+        foreach ($fields as $field) {
+          if (isset($data[$field])) {
+            $results["entity"][$field] = $data[$field];
+          }
+        }
+      } else {
+        // Show all fields
+        $results["entity"] = $data;
+      }
     }
 
-    $data = Rest::members($type, $id, $params);
+    $data = Rest::get_members($type, $id, $params);
     if (isset($data)) {
       $results["members"] = array();
       foreach ($data as $key => $member) {
-        $results["members"][$key] = Rest::url($member[0], $member[1], $member[2]);
+        $results["members"][$key] = Rest::url($member);
       }
     }
 
     $data = Rest::relationships($type, $id, $params);
     if (isset($data)) {
-      foreach ($data as $type => $rel) {
-        $results["relationships"][$type]["url"] = Rest::url($rel[0], $rel[1], $rel[2]);
-        $rel_members = Rest::members($rel[0], $rel[1], $rel[2]);
+      foreach ($data as $r_key => $rel) {
+        $results["relationships"][$r_key]["url"] = Rest::url($rel);
 
-        $results["relationships"][$key]["members"] = array();
-        foreach ($rel_members as $key => $member) {
-          $results["relationships"][$key]["members"] = Rest::url($member[0], $member[1], $member[2]);
+        $rel_members = Rest::get_members($r_type, $r_id, $r_params);
+        if (isset($rel_members)) {
+          $results["relationships"][$r_key]["members"] = array();
+          foreach ($rel_members as $key => $member) {
+            $results["relationships"][$r_key]["members"][$key] = Rest::url($member);
+          }
         }
       }
     }
@@ -259,5 +316,22 @@ class Rest_Rest {
     }
 
     return array_unique($results);
+  }
+
+  static protected function _call_rest_func($func, $type, $id, $params) {
+    if (is_array($type)) {
+      list ($type, $id, $params) = static::_split_triad($type);
+    }
+
+    $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
+    if (!class_exists($class) || !method_exists($class, $func)) {
+      return null;
+    }
+
+    return call_user_func("$class::$func", $id, $params);
+  }
+
+  static protected function _split_triad($triad) {
+    return array(Arr::get($triad, 0), Arr::get($triad, 1), Arr::get($triad, 2, array()));
   }
 }

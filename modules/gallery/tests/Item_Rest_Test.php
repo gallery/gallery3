@@ -24,12 +24,16 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_resolve() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album = Test::random_album();
     $resolved = Rest::resolve(Rest::url("item", $album));
     $this->assertEquals($album->id, $resolved->id);
   }
 
   public function test_get_scope() {
+    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
+
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -92,6 +96,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_get_children_like() {
+    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
+
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $photo2 = Test::random_photo_unsaved($album1);
@@ -119,6 +125,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_get_children_type() {
+    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
+
     $album1 = Test::random_album();
     $photo1 = Test::random_photo($album1);
     $album2 = Test::random_album($album1);
@@ -144,6 +152,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_update_album() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -158,6 +168,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_update_album_illegal_value_fails() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -178,6 +190,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_add_album() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -196,6 +210,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_add_album_illegal_value_fails() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -219,6 +235,8 @@ class Item_Rest_Test extends Unittest_TestCase {
 
 
   public function test_add_photo() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -237,6 +255,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_delete_album() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::allow(Identity::everybody(), "edit", $album1);
 
@@ -249,6 +269,8 @@ class Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_delete_album_fails_without_permission() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album1 = Test::random_album();
     Access::deny(Identity::everybody(), "edit", $album1);
     Identity::set_active_user(Identity::guest());
