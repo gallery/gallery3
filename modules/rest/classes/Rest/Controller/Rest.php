@@ -88,9 +88,9 @@ abstract class Rest_Controller_Rest extends Controller {
     // Check if the X-Gallery-Request-Method header is defined.
     // @todo: consider checking other common REST method overrides, such as
     // X-HTTP-Method (Microsoft), X-HTTP-Method-Override (Google/GData), X-METHOD-OVERRIDE, etc.
-    if ($method = $this->request->headers("x-gallery-request-method")) {
+    if ($method = strtoupper($this->request->headers("x-gallery-request-method"))) {
       // Set the X-Gallery-Request-Method header as the method.
-      $this->request->method(strtoupper($method));
+      $this->request->method($method);
     } else {
       // Leave the method as detected by the Request object, but get a local copy.
       $method = $this->request->method();
