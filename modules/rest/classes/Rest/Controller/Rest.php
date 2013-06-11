@@ -222,7 +222,7 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   /**
-   * Get a "standard" REST response.  This generates the REST response following Gallery's
+   * GET a typical REST response.  This generates the REST response following Gallery's
    * standard format, and expands members if specified.
    *
    * While some resources are different enough to warrant their own action_get() function,
@@ -247,6 +247,76 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   /**
+   * PUT a typical REST resource.  As needed, this runs put_entity() and put_members() for
+   * the resource, as well as put_members() for the resource's relationships.
+   */
+  public function action_put() {
+    if (Arr::get($this->request->post(), "entity")) {
+      Rest::put_entity($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    if (Arr::get($this->request->post(), "members")) {
+      Rest::put_members($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    $put_rels = $this->request->post("relationships");
+    if (isset($put_rels)) {
+      $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
+      foreach ($put_rels as $r_key => $r_params) {
+        if (empty($actual_rels[$r_key])) {
+          // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
+          throw Rest_Exception::factory(400, array("relationships" => "invalid"));
+        }
+
+        Rest::put_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+      }
+    }
+  }
+
+  /**
+   * POST a typical REST resource.  As needed, this runs post_entity() and post_members() for
+   * the resource, as well as post_members() for the resource's relationships.  It also sets
+   * the response status (201), header (Location: url), and body ("url" => url).
+   */
+  public function action_post() {
+    // By default, a successful POST returns a 201 response.  If a post_entity() function
+    // decides that the resource already exists, they can change it back to a 200.
+    $this->response->status(201);
+
+    if (Arr::get($this->request->post(), "entity")) {
+      $result = Rest::post_entity($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    if (Arr::get($this->request->post(), "members")) {
+      Rest::post_members($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    $post_rels = $this->request->post("relationships");
+    if (isset($post_rels)) {
+      $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
+      foreach ($post_rels as $r_key => $r_params) {
+        if (empty($actual_rels[$r_key])) {
+          // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
+          throw Rest_Exception::factory(400, array("relationships" => "invalid"));
+        }
+
+        Rest::post_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+      }
+    }
+
+    $url = Rest::url($result);
+    $this->rest_response = array("url" => $url);
+    $this->response->headers("location", $url);
+  }
+
+  /**
+   * DELETE a typical REST resource.
+   */
+  public function action_delete() {
+    Rest::delete($this->rest_type, $this->rest_id, $this->request->post());
+  }
+
+  /**
    * @todo: the stanzas below are left over from 3.0.x's Controller_Rest::__call(), and
    * haven't yet been re-implemented.  Once finished, delete this.
 
@@ -254,11 +324,6 @@ abstract class Rest_Controller_Rest extends Controller {
         // Set the cache buster value as the etag, use to check if cache needs refreshing.
         // This is easiest to do at the controller level, hence why it's here.
         $this->check_cache($request->params->m);
-      }
-
-      if ($handler_method == "post") {
-        // post methods must return a response containing a URI.
-        $this->response->status(201)->headers("Location", $response["url"]);
       }
    */
 }
