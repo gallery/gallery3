@@ -64,7 +64,8 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
 
     // Generate/remove the full-size fields.
     if (Access::can("view_full", $item) && !$item->is_album()) {
-      $data["file_url"]  = Rest::url("data", $id, array("size" => "full"));
+      $data["file_url"] =
+        Rest::url("data", $id, array("size" => "full", "m" => filemtime($item->file_path())));
       $data["file_size"] = filesize($item->file_path());
       if (Access::user_can(Identity::guest(), "view_full", $item)) {
         $data["file_url_public"] = $item->file_url(true);
@@ -75,7 +76,8 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
 
     // Generate/remove the resize fields.
     if (Access::can("view", $item) && $item->is_photo()) {
-      $data["resize_url"]  = Rest::url("data", $id, array("size" => "resize"));
+      $data["resize_url"] =
+        Rest::url("data", $id, array("size" => "resize", "m" => filemtime($item->resize_path())));
       $data["resize_size"] = filesize($item->resize_path());
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["resize_url_public"] = $item->resize_url(true);
@@ -85,8 +87,9 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
     }
 
     // Generate/remove the thumb fields.
-    if (Access::can("view", $item) && $item->has_thumb()) {
-      $data["thumb_url"]  = Rest::url("data", $id, array("size" => "thumb"));
+    if (Access::can("view", $item)) {
+      $data["thumb_url"] =
+        Rest::url("data", $id, array("size" => "thumb", "m" => filemtime($item->thumb_path())));
       $data["thumb_size"] = filesize($item->thumb_path());
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["thumb_url_public"] = $item->thumb_url(true);

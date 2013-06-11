@@ -23,35 +23,39 @@
  * FileProxy controller, but it uses the REST authentication model.
  */
 class Gallery_Controller_Rest_Data extends Controller_Rest {
-  static function get($request) {
-    $item = Rest::resolve($request->url);
+  public function action_get() {
+    $item = ORM::factory("Item", $this->rest_id);
     Access::required("view", $item);
 
-    $p = $request->params;
-    if (!isset($p->size) || !in_array($p->size, array("thumb", "resize", "full"))) {
+    $size = $this->request->query("size");
+    if (!in_array($size, array("thumb", "resize", "full"))) {
       throw Rest_Exception::factory(400, array("size" => "invalid"));
     }
 
     // Note: this code is roughly duplicated in FileProxy, so if you modify this, please look to
     // see if you should make the same change there as well.
 
-    if ($p->size == "full") {
+    if ($size == "full") {
+      Access::required("view_full", $item);
       $file = $item->file_path();
-    } else if ($p->size == "resize") {
+    } else if ($size == "resize") {
       $file = $item->resize_path();
     } else {
       $file = $item->thumb_path();
     }
 
     if (!file_exists($file)) {
-      throw HTTP_Exception::factory(404);
+      throw Rest_Exception::factory(404);
     }
+
+    // Set the filemtime as the etag (same as cache buster), use to check if cache needs refreshing.
+    $this->check_cache(filemtime($file));
 
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
     // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
-    if (($item->is_movie() || $item->is_album()) && $p->size == "thumb") {
+    if (($item->is_movie() || $item->is_album()) && $size == "thumb") {
       $mime_type = "image/jpeg";
     } else {
       $mime_type = $item->mime_type;
@@ -63,11 +67,10 @@ class Gallery_Controller_Rest_Data extends Controller_Rest {
       // Send the file as the response.  The filename will be set automatically from the path.
       // Note: send_file() will automatically halt script execution after sending the file.
       $options = array("inline" => "true", "mime_type" => $mime_type);
-      if (isset($p->encoding) && $p->encoding == "base64") {
+      if ($this->request->query("encoding") == "base64") {
         $options["encoding"] = "base64";
       }
       $this->response->send_file($file, null, $options);
     }
   }
 }
-
