@@ -285,14 +285,14 @@ class Rest_Rest {
 
     $data = Rest::relationships($type, $id, $params);
     if (isset($data)) {
-      foreach ($data as $type => $rel) {
-        $results["relationships"][$type]["url"] = Rest::url($rel);
+      foreach ($data as $r_key => $rel) {
+        $results["relationships"][$r_key]["url"] = Rest::url($rel);
 
         $rel_members = Rest::get_members($r_type, $r_id, $r_params);
         if (isset($rel_members)) {
-          $results["relationships"][$key]["members"] = array();
+          $results["relationships"][$r_key]["members"] = array();
           foreach ($rel_members as $key => $member) {
-            $results["relationships"][$key]["members"] = Rest::url($member);
+            $results["relationships"][$r_key]["members"][$key] = Rest::url($member);
           }
         }
       }
