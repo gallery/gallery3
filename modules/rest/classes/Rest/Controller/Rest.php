@@ -32,8 +32,12 @@ abstract class Rest_Controller_Rest extends Controller {
   // @see  Controller_Rest::after()
   public $rest_response = array();
 
+  // REST resource type and id.  These are set in Controller_Rest::before().
+  public $rest_type;
+  public $rest_id;
+
   // Default REST query parameters.  These can be altered as needed in each resource class.
-  public $default_params = array(
+  public static $default_params = array(
     "start" => 0,
     "num" => 100,
     "expand_members" => false,
@@ -84,9 +88,9 @@ abstract class Rest_Controller_Rest extends Controller {
     // Check if the X-Gallery-Request-Method header is defined.
     // @todo: consider checking other common REST method overrides, such as
     // X-HTTP-Method (Microsoft), X-HTTP-Method-Override (Google/GData), X-METHOD-OVERRIDE, etc.
-    if ($method = $this->request->headers("x-gallery-request-method")) {
+    if ($method = strtoupper($this->request->headers("x-gallery-request-method"))) {
       // Set the X-Gallery-Request-Method header as the method.
-      $this->request->method(strtoupper($method));
+      $this->request->method($method);
     } else {
       // Leave the method as detected by the Request object, but get a local copy.
       $method = $this->request->method();
@@ -97,13 +101,12 @@ abstract class Rest_Controller_Rest extends Controller {
       throw Rest_Exception::factory(405);
     }
 
-    // If the method is not defined for this resource, fire a 400 Bad Request.
-    if (!method_exists($this, "action_" . strtolower($method))) {
-      throw Rest_Exception::factory(400, array("method" => "invalid"));
-    }
-
     // Set the action as the method.
     $this->request->action(strtolower($method));
+
+    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
+    $this->rest_type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
+    $this->rest_id = $this->request->arg_optional(0);
 
     // If using POST or PUT, process some additional fields.
     if (in_array($method, array(HTTP_Request::POST, HTTP_Request::PUT))) {
@@ -214,29 +217,132 @@ abstract class Rest_Controller_Rest extends Controller {
   }
 
   /**
-   * Get a "standard" REST response.  This generates the REST response following Gallery's
+   * GET a typical REST response.  This generates the REST response following Gallery's
    * standard format, and expands members if specified.
    *
    * While some resources are different enough to warrant their own action_get() function,
    * (e.g. data, tree, registry), most resources can use this default implementation.
    */
   public function action_get() {
-    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
-    $type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
-    $id = $this->arg_optional(0);
+    $this->check_method();
 
-    if ($this->request->query("expand_members", $this->default_params["expand_members"])) {
-      $members = Rest::members($type, $id, $this->request->query());
+    if (Arr::get($this->request->query(), "expand_members",
+        static::$default_params["expand_members"])) {
+      $members = Rest::members($this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
-        throw Rest_Exception(400, array("expand_members" => "not_a_collection"));
+        throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
       }
 
       foreach ($members as $key => $member) {
-        $this->rest_response[$key] = Rest::get_resource($member[0], $member[1], $member[2]);
+        $this->rest_response[$key] = Rest::get_resource($member);
       }
     } else {
-      $this->rest_response = Rest::get_resource($type, $id, $this->request->query());
+      $this->rest_response =
+        Rest::get_resource($this->rest_type, $this->rest_id, $this->request->query());
+    }
+  }
+
+  /**
+   * PUT a typical REST resource.  As needed, this runs put_entity() and put_members() for
+   * the resource, as well as put_members() for the resource's relationships.
+   */
+  public function action_put() {
+    $this->check_method();
+
+    if (Arr::get($this->request->post(), "entity")) {
+      Rest::put_entity($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    if (Arr::get($this->request->post(), "members")) {
+      Rest::put_members($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    $put_rels = $this->request->post("relationships");
+    if (isset($put_rels)) {
+      $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
+      foreach ($put_rels as $r_key => $r_params) {
+        if (empty($actual_rels[$r_key])) {
+          // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
+          throw Rest_Exception::factory(400, array("relationships" => "invalid"));
+        }
+
+        Rest::put_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+      }
+    }
+  }
+
+  /**
+   * POST a typical REST resource.  As needed, this runs post_entity() and post_members() for
+   * the resource, as well as post_members() for the resource's relationships.  It also sets
+   * the response status (201), header (Location: url), and body ("url" => url).
+   */
+  public function action_post() {
+    $this->check_method();
+
+    // By default, a successful POST returns a 201 response.  If a post_entity() function
+    // decides that the resource already exists, they can change it back to a 200.
+    $this->response->status(201);
+
+    if (Arr::get($this->request->post(), "entity")) {
+      $result = Rest::post_entity($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    if (Arr::get($this->request->post(), "members")) {
+      Rest::post_members($this->rest_type, $this->rest_id, $this->request->post());
+    }
+
+    $post_rels = $this->request->post("relationships");
+    if (isset($post_rels)) {
+      $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
+      foreach ($post_rels as $r_key => $r_params) {
+        if (empty($actual_rels[$r_key])) {
+          // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
+          throw Rest_Exception::factory(400, array("relationships" => "invalid"));
+        }
+
+        Rest::post_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+      }
+    }
+
+    $url = Rest::url($result);
+    $this->rest_response = array("url" => $url);
+    $this->response->headers("location", $url);
+  }
+
+  /**
+   * DELETE a typical REST resource.
+   */
+  public function action_delete() {
+    $this->check_method();
+
+    Rest::delete($this->rest_type, $this->rest_id, $this->request->post());
+  }
+
+  /**
+   * Check if a method is defined for this resource.  This is called by the standard
+   * implementations of action_get(), action_post(), etc., and fires a 400 Bad Request
+   * if they shouldn't be used.  If a resource implements their own actions, this
+   * function is (intentionally) not called.
+   */
+  public function check_method() {
+    $method = $this->request->method();
+
+    switch ($method) {
+    case HTTP_Request::GET:
+    case HTTP_Request::POST:
+    case HTTP_Request::PUT:
+      if (!method_exists($this, strtolower($method) . "_entity") &&
+          !method_exists($this, strtolower($method) . "_members")) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      break;
+
+    case HTTP_Request::DELETE:
+      if (!method_exists($this, strtolower($method))) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      break;
     }
   }
 
@@ -248,11 +354,6 @@ abstract class Rest_Controller_Rest extends Controller {
         // Set the cache buster value as the etag, use to check if cache needs refreshing.
         // This is easiest to do at the controller level, hence why it's here.
         $this->check_cache($request->params->m);
-      }
-
-      if ($handler_method == "post") {
-        // post methods must return a response containing a URI.
-        $this->response->status(201)->headers("Location", $response["url"]);
       }
    */
 }

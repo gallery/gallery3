@@ -27,6 +27,8 @@ class Tag_Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_get() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
@@ -43,12 +45,16 @@ class Tag_Item_Rest_Test extends Unittest_TestCase {
    * @expectedException HTTP_Exception_404
    */
   public function test_get_with_invalid_url() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $request = new stdClass();
     $request->url = "bogus";
     Hook_Rest_TagItem::get($request);
   }
 
   public function test_delete() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
@@ -59,6 +65,8 @@ class Tag_Item_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_resolve() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album = Test::random_album();
     $tag = Tag::add($album, "tag1")->reload();
 
