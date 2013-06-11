@@ -104,6 +104,13 @@ if (PHP_SAPI == "cli") {
 } else {
   define("TEST_MODE", 0);
   define("VARPATH", realpath("var") . "/");
+
+  // If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
+  // and send users to the installer.  At this point it's not safe to try using any Kohana functions.
+  if (!file_exists(VARPATH . "database.php")) {
+    header("LOCATION: installer");
+    exit(0);
+  }
 }
 
 define("TMPPATH", VARPATH . "tmp/");
