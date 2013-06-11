@@ -114,13 +114,6 @@ Kohana::init(
     "expose" => false
 ));
 
-// If var/logs directory doesn't exist, then we assume that the Gallery is not properly installed
-// and send users to the installer.  At this point it's not safe to try using any Kohana functions
-if (!file_exists(VARPATH . "logs")) {
-  header("LOCATION: " . dirname($_SERVER["PHP_SELF"]) . "/installer");
-  exit;;
-}
-
 // Attach the file write to logging. Multiple writers are supported.
 // The second parameter is the log threshold, which uses the standard
 // PHP constants (see http://php.net/manual/en/function.syslog.php).
@@ -175,12 +168,6 @@ if (isset($_SERVER["SERVER_NAME"])) {
   unset($_SERVER["HTTP_HOST"]);
 }
 $_SERVER = UTF8::clean($_SERVER);
-
-// If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
-// and send users to the installer.
-if (!file_exists(VARPATH . "database.php")) {
-  HTTP::redirect(URL::abs_file("installer"));
-}
 
 // Simple and cheap test to make sure that the database config is ok.  Do this before we do
 // anything else database related.
