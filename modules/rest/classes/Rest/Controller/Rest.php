@@ -101,11 +101,6 @@ abstract class Rest_Controller_Rest extends Controller {
       throw Rest_Exception::factory(405);
     }
 
-    // If the method is not defined for this resource, fire a 400 Bad Request.
-    if (!method_exists($this, "action_" . strtolower($method))) {
-      throw Rest_Exception::factory(400, array("method" => "invalid"));
-    }
-
     // Set the action as the method.
     $this->request->action(strtolower($method));
 
@@ -229,6 +224,8 @@ abstract class Rest_Controller_Rest extends Controller {
    * (e.g. data, tree, registry), most resources can use this default implementation.
    */
   public function action_get() {
+    $this->check_method();
+
     if (Arr::get($this->request->query(), "expand_members",
         static::$default_params["expand_members"])) {
       $members = Rest::members($this->rest_type, $this->rest_id, $this->request->query());
@@ -251,6 +248,8 @@ abstract class Rest_Controller_Rest extends Controller {
    * the resource, as well as put_members() for the resource's relationships.
    */
   public function action_put() {
+    $this->check_method();
+
     if (Arr::get($this->request->post(), "entity")) {
       Rest::put_entity($this->rest_type, $this->rest_id, $this->request->post());
     }
@@ -279,6 +278,8 @@ abstract class Rest_Controller_Rest extends Controller {
    * the response status (201), header (Location: url), and body ("url" => url).
    */
   public function action_post() {
+    $this->check_method();
+
     // By default, a successful POST returns a 201 response.  If a post_entity() function
     // decides that the resource already exists, they can change it back to a 200.
     $this->response->status(201);
@@ -313,7 +314,36 @@ abstract class Rest_Controller_Rest extends Controller {
    * DELETE a typical REST resource.
    */
   public function action_delete() {
+    $this->check_method();
+
     Rest::delete($this->rest_type, $this->rest_id, $this->request->post());
+  }
+
+  /**
+   * Check if a method is defined for this resource.  This is called by the standard
+   * implementations of action_get(), action_post(), etc., and fires a 400 Bad Request
+   * if they shouldn't be used.  If a resource implements their own actions, this
+   * function is (intentionally) not called.
+   */
+  public function check_method() {
+    $method = $this->request->method();
+
+    switch ($method) {
+    case HTTP_Request::GET:
+    case HTTP_Request::POST:
+    case HTTP_Request::PUT:
+      if (!method_exists($this, strtolower($method) . "_entity") &&
+          !method_exists($this, strtolower($method) . "_members")) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      break;
+
+    case HTTP_Request::DELETE:
+      if (!method_exists($this, strtolower($method))) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      break;
+    }
   }
 
   /**
