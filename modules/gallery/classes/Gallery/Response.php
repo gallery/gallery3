@@ -174,10 +174,10 @@ class Gallery_Response extends Kohana_Response {
         case "base64":
           if ($filename === true) {
             // Use the response body.
-            $this->response->body(base64_encode($this->response->body()));
+            $this->body(base64_encode($this->body()));
           } else {
             // Load file into the response body, set download name if empty, reset the filename.
-            $this->response->body(base64_encode(file_get_contents($filename)));
+            $this->body(base64_encode(file_get_contents($filename)));
             if (empty($download)) {
               $download = pathinfo($filename, PATHINFO_BASENAME);
             }
