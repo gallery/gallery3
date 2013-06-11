@@ -87,7 +87,7 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
     }
 
     // Generate/remove the thumb fields.
-    if (Access::can("view", $item)) {
+    if (Access::can("view", $item) && $item->has_thumb()) {
       $data["thumb_url"] =
         Rest::url("data", $id, array("size" => "thumb", "m" => filemtime($item->thumb_path())));
       $data["thumb_size"] = filesize($item->thumb_path());
