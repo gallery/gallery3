@@ -25,7 +25,7 @@ class info_installer {
     module::set_var("info", "show_owner", 1);
     module::set_var("info", "show_name", 1);
     module::set_var("info", "show_captured", 1);
-	module::set_var("info", "show_size", 1);
+    module::set_var("info", "show_size", 1);
   }
 
   static function upgrade($version) {
@@ -37,7 +37,7 @@ class info_installer {
       module::set_var("info", "show_captured", 1);
       module::set_version("info", $version = 2);
     }
-	else if ($version == 2) {
+    else if ($version == 2) {
       module::set_var("info", "show_size", 1);
       module::set_version("info", $version = 3);
     }
