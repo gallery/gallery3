@@ -22,7 +22,7 @@
  * This resource returns the raw contents of Model_Item data files.  It's analogous to the
  * FileProxy controller, but it uses the REST authentication model.
  */
-class Gallery_Hook_Rest_Data {
+class Gallery_Controller_Rest_Data extends Controller_Rest {
   static function get($request) {
     $item = Rest::resolve($request->url);
     Access::required("view", $item);
