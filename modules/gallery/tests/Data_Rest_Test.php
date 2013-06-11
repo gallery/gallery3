@@ -24,6 +24,8 @@ class Data_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_resolve() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $photo = Test::random_photo();
     $resolved = Rest::resolve(Rest::url("data", $photo, 640));
     $this->assertEquals($photo->id, $resolved->id);
@@ -33,6 +35,8 @@ class Data_Rest_Test extends Unittest_TestCase {
    * @expectedException HTTP_Exception_404
    */
   public function test_resolve_needs_permission() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album->reload();  // new photo changed the album in the db
@@ -44,6 +48,8 @@ class Data_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_basic_get() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $photo = Test::random_photo();
 
     $request = new stdClass();
@@ -64,6 +70,8 @@ class Data_Rest_Test extends Unittest_TestCase {
    * @expectedException HTTP_Exception_404
    */
   public function test_illegal_access() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album->reload();
@@ -83,6 +91,8 @@ class Data_Rest_Test extends Unittest_TestCase {
    * @expectedException HTTP_Exception_404
    */
   public function test_missing_file() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $photo = Test::random_photo();
 
     $request = new stdClass();
@@ -96,6 +106,8 @@ class Data_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_cache_buster() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $photo = Test::random_photo();
 
     $this->assertSame(

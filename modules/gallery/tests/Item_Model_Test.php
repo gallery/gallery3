@@ -455,6 +455,8 @@ class Item_Model_Test extends Unittest_TestCase {
   }
 
   public function test_as_restful_array() {
+    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
+
     $album = Test::random_album();
     $photo = Test::random_photo($album);
     $album->reload();
@@ -467,6 +469,8 @@ class Item_Model_Test extends Unittest_TestCase {
   }
 
   public function test_as_restful_array_with_edit_bit() {
+    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
+
     $response = Item::root()->as_restful_array();
     $this->assertTrue($response["can_edit"]);
 
@@ -477,6 +481,8 @@ class Item_Model_Test extends Unittest_TestCase {
   }
 
   public function test_as_restful_array_with_add_bit() {
+    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
+
     $response = Item::root()->as_restful_array();
     $this->assertTrue($response["can_add"]);
 

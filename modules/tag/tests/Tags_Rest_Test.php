@@ -33,6 +33,8 @@ class Tags_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_get() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     $t1 = Tag::add(Item::root(), "t1");
     $t2 = Tag::add(Item::root(), "t2");
 
@@ -47,6 +49,8 @@ class Tags_Rest_Test extends Unittest_TestCase {
   }
 
   public function test_post() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     Identity::set_active_user(Identity::admin_user());
 
     $request = new stdClass();
@@ -62,6 +66,8 @@ class Tags_Rest_Test extends Unittest_TestCase {
    * @expectedException HTTP_Exception_403
    */
   public function test_post_fails_without_permissions() {
+    $this->markTestIncomplete("REST API is currently under re-construction...");
+
     // We have to remove edit permissions from everywhere
     Database::instance()->query(Database::UPDATE, "UPDATE {access_caches} SET edit_1=0");
     Identity::set_active_user(Identity::guest());
