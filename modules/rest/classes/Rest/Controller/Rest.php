@@ -243,7 +243,7 @@ abstract class Rest_Controller_Rest extends Controller {
 
     if (Arr::get($this->request->query(), "expand_members",
         static::$default_params["expand_members"])) {
-      $members = Rest::members($this->rest_type, $this->rest_id, $this->request->query());
+      $members = Rest::get_members($this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
         throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
