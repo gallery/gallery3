@@ -169,6 +169,10 @@ class File_Structure_Test extends Unittest_TestCase {
         // Front controllers
         break;
 
+      case DOCROOT . "lib/mediaelementjs/flashmediaelement.swf.php":
+        // SWF wrappers - directly accessible
+        break;
+
       case DOCROOT . "local.php":
         // Special case optional file, not part of the codebase
         break;

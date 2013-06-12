@@ -75,11 +75,10 @@ class Info_Hook_InfoBlock {
         if (($theme->item->width && $theme->item->height) &&
             Module::get_var("info", "show_dimensions")) {
             $info["size"] = array(
-                "label" => t("Dimensions:"),
-                "value" => t(
-                  "%width x %height px",
-                  array("width" => $theme->item->width, "height" => $theme->item->height))
-            );
+              "label" => t("Dimensions:"),
+              "value" => t(
+                "%width x %height px",
+                array("width" => $theme->item->width, "height" => $theme->item->height)));
         }
 
         $block->content->metadata = $info;
