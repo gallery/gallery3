@@ -25,7 +25,6 @@
 class Gallery_Controller_Rest_Data extends Controller_Rest {
   public function action_get() {
     $item = ORM::factory("Item", $this->rest_id);
-    Access::required("view", $item);
 
     $size = $this->request->query("size");
     if (!in_array($size, array("thumb", "resize", "full"))) {
@@ -36,11 +35,16 @@ class Gallery_Controller_Rest_Data extends Controller_Rest {
     // see if you should make the same change there as well.
 
     if ($size == "full") {
+      if ($item->is_album()) {
+        throw Rest_Exception::factory(404);
+      }
       Access::required("view_full", $item);
       $file = $item->file_path();
     } else if ($size == "resize") {
+      Access::required("view", $item);
       $file = $item->resize_path();
     } else {
+      Access::required("view", $item);
       $file = $item->thumb_path();
     }
 
