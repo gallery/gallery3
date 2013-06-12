@@ -29,12 +29,17 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
    *     Also limits the types returned in the member collections (i.e. sub-albums).
    *   @see  Controller_Rest_TagItems::get_members()
    *
+   * PUT can accept the following post parameters:
+   *   members
+   *     Replace the collection of items on the tag with this list
+   *   @see  Controller_Rest_TagItems::put_members()
+   *
    * DELETE removes all items from the tag, which deletes the tag entirely (no parameters accepted).
    *   @see  Controller_Rest_TagItems::delete()
    *
    * RELATIONSHIPS: "tag_items" is the "items" relationship of a "tag" resource.
    *
-   * Note: similar to the standard UI, only admins can DELETE a tag.
+   * Note: similar to the standard UI, only admins can PUT or DELETE tag_items.
    */
 
   /**
@@ -65,6 +70,44 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
     }
 
     return $data;
+  }
+
+  /**
+   * PUT the item members of the tag_items resource.  This replaces the list of items with
+   * the specified tag, and is only for admins.
+   */
+  static function put_members($id, $params) {
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    // Check if all the members have valid types and ids, and build our array of items.
+    $items = array();
+    foreach ($params["members"] as $member) {
+      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
+      if ($m_type != "item") {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+
+      $item = ORM::factory("Item", $m_id);
+      if (!$item->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+
+      $items[] = $item;
+    }
+
+    // Clear all items from the tag, then add the new set.
+    Tag::remove_items($tag);
+    foreach ($items as $item) {
+      Tag::add($item, $tag->name);
+    }
+    Tag::compact();
   }
 
   /* @todo: add back in deprecated tag_item post.

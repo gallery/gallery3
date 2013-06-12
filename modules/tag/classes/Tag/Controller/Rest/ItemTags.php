@@ -32,6 +32,11 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    *     is "name"; otherwise, the default is "count".
    *   @see  Controller_Rest_ItemTags::get_members()
    *
+   * PUT can accept the following post parameters:
+   *   members
+   *     Replace the collection of tags on the item with this list
+   *   @see  Controller_Rest_ItemTags::put_members()
+   *
    * DELETE removes the all tags from the item (no parameters accepted).
    *   @see  Controller_Rest_ItemTags::delete()
    *
@@ -76,6 +81,38 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     }
 
     return $data;
+  }
+
+  /**
+   * PUT the tag members of the item_tags resource.  This replaces the tag list with the one given.
+   * @see  TagEvent::item_edit_form_completed(), which does a similar task.
+   */
+  static function put_members($id, $params) {
+    $item = ORM::factory("Item", $id);
+    Access::required("edit", $item);
+
+    // Check if all the members have valid types and ids, and build our array of names.
+    $tag_names = array();
+    foreach ($params["members"] as $member) {
+      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
+      if ($m_type != "tag") {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+
+      $tag = ORM::factory("Tag", $m_id);
+      if (!$tag->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+
+      $tag_names[] = $tag->name;
+    }
+
+    // Clear all tags from the item, then add the new set.
+    Tag::clear_all($item);
+    foreach ($tag_names as $tag_name) {
+      Tag::add($item, $tag_name);
+    }
+    Tag::compact();
   }
 
   /* @todo: add back in deprecated tag_item post.
