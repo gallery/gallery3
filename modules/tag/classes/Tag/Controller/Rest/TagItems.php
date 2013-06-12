@@ -34,6 +34,12 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
    *     Replace the collection of items on the tag with this list
    *   @see  Controller_Rest_TagItems::put_members()
    *
+   * POST can accept the following post parameters:
+   *   members
+   *     Add the tag to the items in the list.  Unlike PUT, this only *adds* items.
+   *     Since there is no entity function, this is only accessible using relationships.
+   *   @see  Controller_Rest_TagItems::post_members()
+   *
    * DELETE removes all items from the tag, which deletes the tag entirely (no parameters accepted).
    *   @see  Controller_Rest_TagItems::delete()
    *
@@ -108,6 +114,39 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
       Tag::add($item, $tag->name);
     }
     Tag::compact();
+  }
+
+  /**
+   * POST item members of the tag_items resource.  Unlike PUT, this only *adds* the tag
+   * to the items, and is not admin-only.
+   */
+  static function post_members($id, $params) {
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    // Check if all the members have valid types and ids, and build our array of items.
+    $items = array();
+    foreach ($params["members"] as $member) {
+      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
+      if ($m_type != "item") {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+
+      $item = ORM::factory("Item", $m_id);
+      if (!$item->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      Access::required("edit", $item);
+
+      $items[] = $item;
+    }
+
+    // Add the tag to the items.
+    foreach ($items as $item) {
+      Tag::add($item, $tag->name);
+    }
   }
 
   /* @todo: add back in deprecated tag_item post.
