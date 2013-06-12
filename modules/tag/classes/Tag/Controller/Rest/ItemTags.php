@@ -18,18 +18,67 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Rest_ItemTags extends Controller_Rest {
-  static function get($request) {
-    $item = Rest::resolve($request->url);
-    $tags = array();
-    foreach ($item->tags->find_all() as $tag) {
-      $tags[] = Rest::url("tag_item", $tag, $item);
+  /**
+   * This resource represents a collection of tag resources on a specified item.
+   *
+   * GET can accept the following query parameters:
+   *   name=<substring>
+   *     Only return tags that start with this substring.
+   *     This is typically used for tag autocomplete.
+   *   order=count, order=name
+   *     Return the tags in decreasing order by count ("count", typically used for tag
+   *     clouds) or increasing order by name ("name", typically used for autocomplete
+   *     or other alphabetic lists).  If the "name" parameter is also set, the default
+   *     is "name"; otherwise, the default is "count".
+   *   @see  Controller_Rest_ItemTags::get_members()
+   *
+   * DELETE removes the all tags from the item (no parameters accepted).
+   *   @see  Controller_Rest_ItemTags::delete()
+   *
+   * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "item" resource.
+   */
+
+  /**
+   * GET the tag members of the item_tags resource.
+   * @see  Controller_Rest_Tags::get_members().
+   */
+  static function get_members($id, $params) {
+    $item = ORM::factory("Item", $id);
+    Access::required("view", $item);
+
+    $members = $item->tags
+      ->limit(Arr::get($params, "num", static::$default_params["num"]))
+      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+
+    if (isset($params["name"])) {
+      $members->where("name", "LIKE", Database::escape_for_like($params["name"]) . "%");
+      $default_order = "name";  // Useful for autocomplete
+    } else {
+      $default_order = "count"; // Useful for cloud
     }
 
-    return array(
-      "url" => $request->url,
-      "members" => $tags);
+    switch (Arr::get($params, "order", $default_order)) {
+    case "count":
+      $members->order_by("count", "DESC");
+      break;
+
+    case "name":
+      $members->order_by("name", "ASC");
+      break;
+
+    default:
+      throw Rest_Exception::factory(400, array("order" => "invalid"));
+    }
+
+    $data = array();
+    foreach ($members->find_all() as $member) {
+      $data[] = array("tag", $member->id);
+    }
+
+    return $data;
   }
 
+  /* @todo: add back in deprecated tag_item post.
   static function post($request) {
     $tag = Rest::resolve($request->params->entity->tag);
     $item = Rest::resolve($request->params->entity->item);
@@ -42,25 +91,23 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
         Rest::url("tag", $tag),
         Rest::url("item", $item)));
   }
+  */
 
-  static function delete($request) {
-    $item = Rest::resolve($request->url);
+  /**
+   * DELETE removes all tags from the item.
+   */
+  static function delete($id, $params) {
+    $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
-    // Deleting this collection means removing all tags associated with the item.
     Tag::clear_all($item);
   }
 
-  static function resolve($id) {
-    $item = ORM::factory("Item", $id);
-    if (!Access::can("view", $item)) {
-      throw HTTP_Exception::factory(404);
-    }
-
-    return $item;
-  }
-
-  static function url($item) {
-    return URL::abs_site("rest/item_tags/{$item->id}");
+  /**
+   * Return the relationship established by item_tags.  This adds "tags"
+   * as a relationship of an "item" resource.
+   */
+  static function relationships($type, $id, $params) {
+    return ($type == "item") ? array("tags" => array("item_tags", $id)) : null;
   }
 }
