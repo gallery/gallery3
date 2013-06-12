@@ -18,69 +18,71 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Controller_Rest_Tag extends Controller_Rest {
-  static function get($request) {
-    $tag = Rest::resolve($request->url);
-    $tag_items = array();
-    foreach ($tag->items->viewable()->order_by("item.id")->find_all() as $item) {
-      $tag_items[] = Rest::url("tag_item", $tag, $item);
-    }
+  /**
+   * This resource represents a Model_Tag object.
+   *
+   * GET displays the tag (no parameters accepted).
+   *   @see  Controller_Rest_Tag::get_entity()
+   *
+   * PUT can accept the following post parameters:
+   *   entity
+   *     Edit the tag
+   *   @see  Controller_Rest_Tag::put_entity()
+   *
+   * DELETE removes the tag entirely (no parameters accepted).
+   *   @see  Controller_Rest_Tag::delete()
+   *
+   * Note: similar to the standard UI, only admins can PUT or DELETE a tag.
+   */
 
-    return array(
-      "url" => $request->url,
-      "entity" => $tag->as_array(),
-      "relationships" => array(
-        "items" => array(
-          "url" => Rest::url("tag_items", $tag),
-          "members" => $tag_items)));
-  }
-
-  static function put($request) {
-    // Who can we allow to edit a tag name?  If we allow anybody to do it then any logged in
-    // user can rename all your tags to something offensive.  Right now limit renaming to admins.
-    if (!Identity::active_user()->admin) {
-      Access::forbidden();
-    }
-    $tag = Rest::resolve($request->url);
-    if (isset($request->params->entity->name)) {
-      $tag->name = $request->params->entity->name;
-      $tag->save();
-    }
-  }
-
-  static function delete($request) {
-    // Restrict deleting tags to admins.  Otherwise, a logged in user can do great harm to an
-    // install.
-    if (!Identity::active_user()->admin) {
-      Access::forbidden();
-    }
-    $tag = Rest::resolve($request->url);
-    $tag->delete();
-  }
-
-  static function relationships($resource_type, $resource) {
-    switch ($resource_type) {
-    case "item":
-      $tags = array();
-      foreach ($resource->tags->find_all() as $tag) {
-        $tags[] = Rest::url("tag_item", $tag, $resource);
-      }
-      return array(
-        "tags" => array(
-          "url" => Rest::url("item_tags", $resource),
-          "members" => $tags));
-    }
-  }
-
-  static function resolve($id) {
+  /**
+   * GET the tag's entity.
+   */
+  static function get_entity($id, $params) {
     $tag = ORM::factory("Tag", $id);
     if (!$tag->loaded()) {
-      throw HTTP_Exception::factory(404);
+      throw Rest_Exception::factory(404);
     }
 
-    return $tag;
+    return $tag->as_array();
   }
 
-  static function url($tag) {
-    return URL::abs_site("rest/tag/{$tag->id}");
+  /**
+   * PUT the tag's entity.  This edits the tag model, and is only for admins.
+   */
+  static function put_entity($id, $params) {
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    // Add fields from a whitelist.
+    foreach (array("name", "slug") as $field) {
+      if (property_exists($params["entity"], $field)) {
+        $tag->$field = $params["entity"]->$field;
+      }
+    }
+
+    $tag->save();
+  }
+
+  /**
+   * DELETE the tag.  This is only for admins.
+   */
+  static function delete($id, $params) {
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    $tag->delete();
   }
 }
