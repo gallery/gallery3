@@ -147,7 +147,7 @@ class Rest_Rest {
     }
 
     // Carry over the "sticky" params.
-    foreach (array("access_key", "num", "type", "fields") as $key) {
+    foreach (array("access_key", "num", "type") as $key) {
       $value = Request::current()->query($key);
       if (isset($value)) {
         $params[$key] = $value;
@@ -262,17 +262,7 @@ class Rest_Rest {
 
     $data = Rest::get_entity($type, $id, $params);
     if (isset($data)) {
-      if (isset($params["fields"])) {
-        // Only show specified fields
-        foreach ($fields as $field) {
-          if (isset($data[$field])) {
-            $results["entity"][$field] = $data[$field];
-          }
-        }
-      } else {
-        // Show all fields
-        $results["entity"] = $data;
-      }
+      $results["entity"] = $data;
     }
 
     $data = Rest::get_members($type, $id, $params);
