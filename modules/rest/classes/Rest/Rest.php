@@ -278,7 +278,7 @@ class Rest_Rest {
       foreach ($data as $r_key => $rel) {
         $results["relationships"][$r_key]["url"] = Rest::url($rel);
 
-        $rel_members = Rest::get_members($r_type, $r_id, $r_params);
+        $rel_members = Rest::get_members($rel);
         if (isset($rel_members)) {
           $results["relationships"][$r_key]["members"] = array();
           foreach ($rel_members as $key => $member) {
