@@ -108,8 +108,22 @@ abstract class Rest_Controller_Rest extends Controller {
     $this->rest_type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
     $this->rest_id = $this->request->arg_optional(0);
 
-    // If using POST or PUT, process some additional fields.
-    if (in_array($method, array(HTTP_Request::POST, HTTP_Request::PUT))) {
+    // Process some additional fields, depending on the method.
+    switch ($method) {
+    case HTTP_Request::GET:
+      // Process the "types" list, if specified.
+      if ($types = $this->request->query("types")) {
+        $types = explode(",", trim($types, ","));
+        // If one or more of the types is invalid, fire a 400 Bad Request.
+        if (array_diff($types, array("album", "photo", "movie"))) {
+          throw Rest_Exception::factory(400, array("types" => "invalid"));
+        }
+        $this->request->query("types", $types);
+      }
+      break;
+
+    case HTTP_Request::PUT:
+    case HTTP_Request::POST:
       // Check for and process any uploads, storing them along with the other
       // request-related parameters in $this->request->post().
       // Example: $_FILES["file"], if valid, will be processed and stored to produce something like:
@@ -140,6 +154,7 @@ abstract class Rest_Controller_Rest extends Controller {
           $this->request->post($key, json_decode($value));
         }
       }
+      break;
     }
   }
 
