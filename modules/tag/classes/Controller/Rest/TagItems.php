@@ -1,3 +1,3 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
-class Hook_Rest_TagItems extends Tag_Hook_Rest_TagItems {}
+class Controller_Rest_TagItems extends Tag_Controller_Rest_TagItems {}
