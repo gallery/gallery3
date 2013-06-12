@@ -19,75 +19,127 @@
  */
 class Gallery_Controller_Rest_Tree extends Controller_Rest {
   /**
+   * This read-only resource can be considered both an object and a collection of other trees.
    * The tree is rooted in a single item and can have modifiers which adjust what data is shown
    * for items inside the given tree, up to the depth that you want.  The entity for this resource
-   * is a series of items.
+   * is a series of items, and its members are trees rooted at the maximum depth (if specified).
    *
-   *  depth=<number>
-   *    Only traverse this far down into the tree.  If there are more albums
-   *    below this depth, provide RESTful urls to other tree resources in
-   *    the members section.  Default is infinite.
+   * GET can accept the following query parameters:
+   *   depth=<number>
+   *     Only traverse this far down into the tree.  If there are more albums
+   *     below this depth, provide RESTful urls to other tree resources in
+   *     the members section.  Default is infinite.
+   *   type=<comma-separated list of photo, movie or album>
+   *     Limit the type to types in this list (e.g. "type=photo,movie").
+   *   fields=<comma separated list of field names>
+   *     In the entity section only return these fields for each item.
+   *     Default is all fields.
+   *   @see  Controller_Rest_Tree::get_entity()
+   *   @see  Controller_Rest_Tree::get_members()
    *
-   *  type=<album|photo|movie>
-   *    Restrict the items displayed to the given type.  Default is all types.
-   *
-   *  fields=<comma separated list of field names>
-   *    In the entity section only return these fields for each item.
-   *    Default is all fields.
+   * Notes:
+   *   Unlike other collections, "start" and "num" parameters are ignored, and any
+   *   "expand_members" parameter is removed (so it will not be "sticky").
+   *   @see  Controller_Rest_Tree::action_get()
    */
-  static function get($request) {
-    $item = Rest::resolve($request->url);
+
+   /**
+   * GET the tree's entity, which is an array of item urls and entities.
+   */
+  static function get_entity($id, $params) {
+    $item = ORM::factory("Item", $id);
     Access::required("view", $item);
-
-    $descendants = $item->descendants->viewable();
-    $query_params = array();
-    $p = $request->params;
-    $where = array();
-    if (isset($p->type)) {
-      $descendants->where("type", "=", $p->type);
-      $query_params[] = "type={$p->type}";
+    if (!$item->is_album()) {
+      throw Rest_Exception::factory(400, array("tree" => "not_an_album"));
     }
 
-    if (isset($p->depth)) {
-      $lowest_depth = $item->level + $p->depth;
-      $descendants->where("level", "<=", $lowest_depth);
-      $query_params[] = "depth={$p->depth}";
+    $members = $item->descendants;
+
+    if (isset($params["depth"])) {
+      // Only include items up to the maximum depth.
+      $members->where("level", "<=", $item->level + $params["depth"]);
     }
 
-    $fields = array();
-    if (isset($p->fields)) {
-      $fields = explode(",", $p->fields);
-      $query_params[] = "fields={$p->fields}";
+    if (isset($params["types"])) {
+      $members->where("type", "IN", $params["types"]);
     }
 
-    $entity = array(array("url" => Rest::url("item", $item),
-                           "entity" => $item->as_restful_array($fields)));
-    $members = array();
-    foreach ($descendants->find_all() as $child) {
-      $entity[] = array("url" => Rest::url("item", $child),
-                        "entity" => $child->as_restful_array($fields));
-      if (isset($lowest_depth) && $child->level == $lowest_depth) {
-        $members[] = URL::merge_querystring(Rest::url("tree", $child), $query_params);
+    $members = $members->viewable()->find_all();
+
+    // Build the entity.
+    $data = array();
+    foreach (array_merge(array($item), iterator_to_array($members)) as $member) {
+      $url    = Rest::url("item", $member->id);
+      $entity = Rest::get_entity("item", $member->id);
+
+      if (isset($params["fields"])) {
+        // Filter by the specified fields.
+        $fields = explode(",", trim($params["fields"], ","));
+        foreach ($entity as $field => $value) {
+          if (!in_array($field, $fields)) {
+            unset($entity[$field]);
+          }
+        }
+      }
+
+      $data[] = array("url" => $url, "entity" => $entity);
+    }
+
+    return $data;
+  }
+
+  /**
+   * GET the tree's members, which are trees that extend beyond the maximum depth.
+   */
+  static function get_members($id, $params) {
+    $item = ORM::factory("Item", $id);
+    Access::required("view", $item);
+    if (!$item->is_album()) {
+      throw Rest_Exception::factory(400, array("tree" => "not_an_album"));
+    }
+
+    $members = $item->descendants;
+
+    if (isset($params["depth"])) {
+      // Only include items *at* the maximum depth that are albums.
+      $members->where("level", "=", $item->level + $params["depth"])
+              ->where("type", "=", "album");
+    } else {
+      // Depth not defined - members list is empty.
+      return array();
+    }
+
+    if (isset($params["types"])) {
+      $members->where("type", "IN", $params["types"]);
+    }
+
+    $members = $members->viewable()->find_all();
+
+    // Set the member params - "depth" and "fields" are sticky for trees.
+    $m_params = array();
+    foreach (array("depth", "fields") as $key) {
+      if (isset($params[$key])) {
+        $m_params[$key] = $params[$key];
       }
     }
 
-    $result = array(
-      "url" => $request->url,
-      "entity" => $entity,
-      "members" => $members,
-      "relationships" => Rest::relationships("tree", $item));
-    return $result;
-  }
-
-  static function resolve($id) {
-    $item = ORM::factory("Item", $id);
-    if (!Access::can("view", $item)) {
-      throw HTTP_Exception::factory(404);
+    // Build the members array.
+    $data = array();
+    foreach ($members as $member) {
+      $data[] = array("tree", $member->id, $m_params);
     }
-    return $item;
+
+    return $data;
   }
 
-  static function url($item) {
-    return URL::abs_site("rest/tree/{$item->id}");
+  /**
+   * Override Controller_Rest::action_get() to remove the expand_members parameter, if set.
+   */
+  public function action_get() {
+    $query = $this->request->query();
+    unset($query["expand_members"]);
+    $this->request->query($query);
+
+    return parent::action_get();
   }
 }
