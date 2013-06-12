@@ -107,7 +107,7 @@ if (PHP_SAPI == "cli") {
   // If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
   // and send users to the installer.
   if (!file_exists(VARPATH . "database.php")) {
-    header("location: installer");
+    header("Location: installer");
     exit;
   }
 }
