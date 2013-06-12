@@ -286,9 +286,10 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
 
     $data = array();
     $key = 0;
+    $use_weights = (($item->sort_column == "weight") && ($scope == "direct"));
     foreach ($members->find_all() as $member) {
       // If the album's sort is "weight", use the weights as the array keys.
-      $data[($item->sort_column == "weight") ? $member->weight : $key++] =
+      $data[$use_weights ? $member->weight : $key++] =
         array("item", $member->id);
     }
 
