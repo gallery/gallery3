@@ -19,26 +19,42 @@
  */
 class Gallery_Controller_Rest_Item extends Controller_Rest {
   /**
-   * GET for an item can be used (optionally) with the following query parameters:
+   * This resource represents a Model_Item object.  If the item is
+   * an album, it's considered both an object *and* a collection.
    *
+   * GET can accept the following query parameters:
    *   random=true
    *     Return a single random item.
-   *     @see  Controller_Rest_Item::action_get()
-   *
-   *   scope=direct
-   *     Only return items that are immediately under this one (default).
-   *   scope=all
-   *     Return items anywhere under this one.
-   *     @see  Controller_Rest_Item::get_members()
-   *
+   *   scope=direct (default), scope=all
+   *     Return items that are immediately under this one ("direct") or anywhere
+   *     under this one ("all").
    *   name=<substring>
    *     Only return items where the name contains this substring.
-   *     @see  Controller_Rest_Item::get_members()
-   *
    *   type=<comma-separated list of photo, movie or album>
    *     Limit the type to types in this list (e.g. "type=photo,movie").
    *     Also limits the types returned in the member collections (i.e. sub-albums).
-   *     @see  Controller_Rest_Item::get_members()
+   *   @see  Controller_Rest_Item::action_get()
+   *   @see  Controller_Rest_Item::get_members()
+   *
+   * PUT can accept the following post parameters:
+   *   entity
+   *     Edit the item
+   *   file
+   *     Replace the item's data file (only for photos or movies)
+   *   members
+   *     Reorder the items in an album (only for albums with sort_column=weight)
+   *   @see  Controller_Rest_Item::put_entity()
+   *   @see  Controller_Rest_Item::put_members()
+   *
+   * POST is only for album resources, and *requires* the following post parameters:
+   *   entity
+   *     Add an item
+   *   file
+   *     Add an item's data file (only for movies and photos)
+   *   @see  Controller_Rest_Item::post_entity()
+   *
+   * DELETE removes the item entirely (no parameters accepted).
+   *   @see  Controller_Rest_Item::delete()
    */
 
   /**
