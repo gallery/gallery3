@@ -19,32 +19,66 @@
  */
 class Tag_Controller_Rest_Tags extends Controller_Rest {
   /**
-   * Possible request parameters:
-   *   start=#
-   *     start at the Nth comment (zero based)
+   * This resource represents a collection of tag resources.
    *
-   *   num=#
-   *     return up to N comments (max 100)
+   * GET can accept the following query parameters:
+   *   name=<substring>
+   *     Only return tags that start with this substring.
+   *     This is typically used for tag autocomplete.
+   *   order=count, order=name
+   *     Return the tags in decreasing order by count ("count", typically used for tag
+   *     clouds) or increasing order by name ("name", typically used for autocomplete
+   *     or other alphabetic lists).  If the "name" parameter is also set, the default
+   *     is "name"; otherwise, the default is "count".
+   *   @see  Controller_Rest_Tags::get_members()
+   *
+   * POST *requires* the following post parameters:
+   *   entity
+   *     Add a tag.  This is best used when also POSTing item relationships.  Otherwise, the
+   *     tag will have 0 count, and Gallery may unexpectedly "clean it up" (i.e. delete it).
+   *   @see  Controller_Rest_Tags::post_entity()
    */
-  static function get($request) {
-    $tags = array();
 
-    $num = 10;
-    $start = 0;
-    if (isset($request->params)) {
-      $p = $request->params;
-      $num = isset($p->num) ? min((int)$p->num, 100) : 10;
-      $start = isset($p->start) ? (int)$p->start : 0;
+  /**
+   * GET the members of the tags resource.
+   */
+  static function get_members($id, $params) {
+    $members = ORM::factory("Tag")
+      ->limit(Arr::get($params, "num", static::$default_params["num"]))
+      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+
+    if (isset($params["name"])) {
+      $members->where("name", "LIKE", Database::escape_for_like($params["name"]) . "%");
+      $default_order = "name";  // Useful for autocomplete
+    } else {
+      $default_order = "count"; // Useful for cloud
     }
 
-    foreach (ORM::factory("Tag")->limit($num)->offset($start)->find_all() as $tag) {
-      $tags[] = Rest::url("tag", $tag);
+    switch (Arr::get($params, "order", $default_order)) {
+    case "count":
+      $members->order_by("count", "DESC");
+      break;
+
+    case "name":
+      $members->order_by("name", "ASC");
+      break;
+
+    default:
+      throw Rest_Exception::factory(400, array("order" => "invalid"));
     }
-    return array("url" => Rest::url("tags"),
-                 "members" => $tags);
+
+    $data = array();
+    foreach ($members->find_all() as $member) {
+      $data[] = array("tag", $member->id);
+    }
+
+    return $data;
   }
 
-  static function post($request) {
+  /**
+   * POST a tag's entity.  This generates a new tag model.
+   */
+  static function post_entity($id, $params) {
     // The user must have some edit permission somewhere to create a tag.
     if (!Identity::active_user()->admin) {
       $query = DB::select()->from("access_caches")->and_where_open();
@@ -53,25 +87,29 @@ class Tag_Controller_Rest_Tags extends Controller_Rest {
       }
       $has_any_edit_perm = $query->and_where_close()->execute()->count();
       if (!$has_any_edit_perm) {
-        Access::forbidden();
+        throw Rest_Exception::factory(403);
       }
     }
 
-    if (empty($request->params->entity->name)) {
-      throw Rest_Exception::factory(400);
+    // The name field is required.
+    if (!property_exists($params["entity"], "name")) {
+      throw Rest_Exception::factory(400, array("name" => "required"));
     }
 
-    $tag = ORM::factory("Tag")->where("name", "=", $request->params->entity->name)->find();
-    if (!$tag->loaded()) {
-      $tag->name = $request->params->entity->name;
-      $tag->count = 0;
+    // See if we already have a tag with the same name.
+    $tag = ORM::factory("Tag")->where("name", "=", $params["entity"]->name)->find();
+    if ($new = !$tag->loaded()) {
+      // New tag - add fields from a whitelist.
+      foreach (array("name", "slug") as $field) {
+        if (property_exists($params["entity"], $field)) {
+          $tag->$field = $params["entity"]->$field;
+        }
+      }
+
       $tag->save();
     }
 
-    return array("url" => Rest::url("tag", $tag));
-  }
-
-  static function url() {
-    return URL::abs_site("rest/tags");
+    // Success!  Return the resource triad with the new flag.
+    return array("tag", $tag->id, null, $new);
   }
 }
