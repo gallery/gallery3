@@ -25,7 +25,6 @@
 class data_rest_Core {
   static function get($request) {
     $item = rest::resolve($request->url);
-    access::required("view", $item);
 
     $p = $request->params;
     if (!isset($p->size) || !in_array($p->size, array("thumb", "resize", "full"))) {
@@ -36,10 +35,16 @@ class data_rest_Core {
     // see if you should make the same change there as well.
 
     if ($p->size == "full") {
+      if ($item->is_album()) {
+        throw new Kohana_404_Exception();
+      }
+      access::required("view_full", $item);
       $file = $item->file_path();
     } else if ($p->size == "resize") {
+      access::required("view", $item);
       $file = $item->resize_path();
     } else {
+      access::required("view", $item);
       $file = $item->thumb_path();
     }
 
