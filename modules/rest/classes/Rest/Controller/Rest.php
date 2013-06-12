@@ -302,15 +302,17 @@ abstract class Rest_Controller_Rest extends Controller {
 
     if (Arr::get($this->request->post(), "entity")) {
       $result = Rest::post_entity($this->rest_type, $this->rest_id, $this->request->post());
+    } else {
+      throw Rest_Exception::factory(400, array("entity" => "required"));
     }
 
     if (Arr::get($this->request->post(), "members")) {
-      Rest::post_members($this->rest_type, $this->rest_id, $this->request->post());
+      Rest::post_members($result[0], $result[1], $this->request->post());
     }
 
     $post_rels = (array)$this->request->post("relationships");
     if (isset($post_rels)) {
-      $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
+      $actual_rels = Rest::relationships($result[0], $result[1]);
       foreach ($post_rels as $r_key => $r_params) {
         if (empty($actual_rels[$r_key])) {
           // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
@@ -321,11 +323,9 @@ abstract class Rest_Controller_Rest extends Controller {
       }
     }
 
-    if (!empty($result)) {
-      // Set the response body.
-      $url = Rest::url($result);
-      $this->rest_response = array("url" => $url);
-    }
+    // Set the response body.
+    $url = Rest::url($result);
+    $this->rest_response = array("url" => $url);
 
     if (Arr::get($result, 3, true)) {
       // New resource - set the status and headers.
@@ -354,15 +354,23 @@ abstract class Rest_Controller_Rest extends Controller {
 
     switch ($method) {
     case HTTP_Request::GET:
-    case HTTP_Request::POST:
     case HTTP_Request::PUT:
+      // Must have entity *or* members functions.
       if (!method_exists($this, strtolower($method) . "_entity") &&
           !method_exists($this, strtolower($method) . "_members")) {
         throw Rest_Exception::factory(400, array("method" => "invalid"));
       }
       break;
 
+    case HTTP_Request::POST:
+      // Must have entity function.
+      if (!method_exists($this, strtolower($method) . "_entity")) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      break;
+
     case HTTP_Request::DELETE:
+      // Must have delete function.
       if (!method_exists($this, strtolower($method))) {
         throw Rest_Exception::factory(400, array("method" => "invalid"));
       }
