@@ -19,78 +19,80 @@
  */
 class Gallery_Controller_Rest_Items extends Controller_Rest {
   /**
-   * To retrieve a collection of items, you can specify the following query parameters to specify
-   * the type of the collection.  If both are specified, then the url parameter is used and the
-   * ancestors_for is ignored.  Specifying the "type" parameter with the urls parameter, will
-   * filter the results based on the specified type.  Using the type parameter with the
-   * ancestors_for parameter makes no sense and will be ignored.
+   * This resource represents a collection of item resources.
    *
-   *   urls=["url1","url2","url3"]
-   *     Return items that match the specified urls.  Typically used to return the member detail
-   *
+   * GET can accept the following query parameters:
    *   ancestors_for=url
-   *     Return the ancestors of the specified item
+   *     Return the ancestors of the specified item.  If specified, all
+   *     other query parameters described below will be ignored.
+   *     This is typically used to create breadcrumbs for an item.
+   *   urls=["url1","url2","url3"]
+   *     Return items that match the specified urls.
+   *     This is typically used to return the member detail.
+   *   name=<substring>
+   *     Only return items where the name contains this substring.
+   *   type=<comma-separated list of photo, movie or album>
+   *     Limit the type to types in this list (e.g. "type=photo,movie").
+   *     Also limits the types returned in the member collections (i.e. sub-albums).
+   *   @see  Controller_Rest_Items::get_members()
    *
-   *   type=<comma separate list of photo, movie or album>
-   *     Limit the type to types in this list, eg: "type=photo,movie".
-   *     Also limits the types returned in the member collections (same behaviour as Hook_Rest_Item).
-   *     Ignored if ancestors_for is set.
+   * Notes:
+   *   Unlike other collections, "expand_members" is true by default (backward-compatible with v3.0).
+   *   @see  Controller_Rest_Items::action_get()
    */
-  static function get($request) {
-    $items = array();
-    $types = array();
 
-    if (isset($request->params->urls)) {
-      if (isset($request->params->type)) {
-        $types = explode(",", $request->params->type);
+  /**
+   * GET the members of the items resource.
+   */
+  public static function get_members($id, $params) {
+    $types = Arr::get($params, "types");
+    $name = Arr::get($params, "name");
+
+    $data = array();
+    if ($ancestors_for = Arr::get($params, "ancestors_for")) {
+      // Members are the ancestors of the url given.
+      list ($i_type, $i_id, $i_params) = Rest::resolve($ancestors_for);
+      if ($i_type != "item") {
+        throw Rest_Exception::factory(400, array("urls" => "invalid"));
       }
 
-      foreach (json_decode($request->params->urls) as $url) {
-        $item = Rest::resolve($url);
-        if (!Access::can("view", $item)) {
-          continue;
+      $item = ORM::factory("Item", $i_id);
+      Access::required("view", $item);
+
+      $members = $item->parents->viewable()->find_all();
+      foreach ($members as $member) {
+        $data[] = array("item", $member->id);
+      }
+    } else if ($urls = Arr::get($params, "urls")) {
+      // Members are taken from a list of urls, filtered by name and type.
+      // @todo: json_decode is what was used in 3.0, but should we allow comma-separated lists, too?
+      foreach (json_decode($urls) as $url) {
+        list ($m_type, $m_id, $m_params) = Rest::resolve($url);
+        if ($m_type != "item") {
+          throw Rest_Exception::factory(400, array("urls" => "invalid"));
         }
 
-        if (empty($types) || in_array($item->type, $types)) {
-          $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
+        $member = ORM::factory("Item", $m_id);
+        Access::required("view", $member);
+
+        if ((empty($types) || in_array($member->type, $types)) &&
+            (empty($name) || (strpos($member->name, $name) !== false))) {
+          $data[] = array("item", $member->id);
         }
       }
-    } else if (isset($request->params->ancestors_for)) {
-      $item = Rest::resolve($request->params->ancestors_for);
-      if (!Access::can("view", $item)) {
-        throw HTTP_Exception::factory(404);
-      }
-      $items[] = Hook_Rest_Items::_format_restful_item($item, $types);
-      while ($item->parent_id && $item = $item->parent) {
-        array_unshift($items, Hook_Rest_Items::_format_restful_item($item, $types));
-      };
+    } else {
+      // Members are the standard item collection member list - same as rest/items/1.
+      $data = Rest::get_members("item", 1, $params);
     }
 
-    return $items;
+    return $data;
   }
 
-  static function resolve($id) {
-    $item = ORM::factory("Item", $id);
-    if (!Access::can("view", $item)) {
-      throw HTTP_Exception::factory(404);
-    }
-    return $item;
-  }
-
-  protected static function _format_restful_item($item, $types) {
-    $item_rest = array("url" => Rest::url("item", $item),
-                       "entity" => $item->as_restful_array(),
-                       "relationships" => Rest::relationships("item", $item));
-    if ($item->type == "album") {
-      $members = array();
-      foreach ($item->children->viewable()->find_all() as $child) {
-        if (empty($types) || in_array($child->type, $types)) {
-          $members[] = Rest::url("item", $child);
-        }
-      }
-      $item_rest["members"] = $members;
-    }
-
-    return $item_rest;
+  /**
+   * Override Controller_Rest::action_get() to expand members by default.
+   */
+  public function action_get() {
+    static::$default_params["expand_members"] = true;
+    return parent::action_get();
   }
 }
