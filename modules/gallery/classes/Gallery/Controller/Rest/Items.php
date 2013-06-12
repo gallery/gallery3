@@ -36,6 +36,13 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    *     Also limits the types returned in the member collections (i.e. sub-albums).
    *   @see  Controller_Rest_Items::get_members()
    *
+   * POST *requires* the following post parameters:
+   *   entity
+   *     Add an item, using the "parent" field as its parent.
+   *   file
+   *     Add an item's data file (only for movies and photos)
+   *   @see  Controller_Rest_Items::post_entity()
+   *
    * Notes:
    *   Unlike other collections, "expand_members" is true by default (backward-compatible with v3.0).
    *   @see  Controller_Rest_Items::action_get()
@@ -43,6 +50,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
 
   /**
    * GET the members of the items resource.
+   * @see  Controller_Rest_Item::get_members().
    */
   public static function get_members($id, $params) {
     $types = Arr::get($params, "types");
@@ -86,6 +94,23 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     }
 
     return $data;
+  }
+
+  /**
+   * POST an item's entity (and possibly file).  This generates a new item model.
+   * @see  Controller_Rest_Item::post_entity().
+   */
+  public static function post_entity($id, $params) {
+    if (!property_exists($params["entity"], "parent")) {
+      throw Rest_Exception::factory(400, array("parent" => "required"));
+    }
+
+    list ($p_type, $p_id, $p_params) = Rest::resolve($params["entity"]->parent);
+    if ($p_type != "item") {
+      throw Rest_Exception::factory(400, array("parent" => "invalid"));
+    }
+
+    return Rest::post_entity("item", $p_id, $params);
   }
 
   /**
