@@ -289,15 +289,16 @@ abstract class Rest_Controller_Rest extends Controller {
 
   /**
    * POST a typical REST resource.  As needed, this runs post_entity() and post_members() for
-   * the resource, as well as post_members() for the resource's relationships.  It also sets
-   * the response status (201), header (Location: url), and body ("url" => url).
+   * the resource, as well as post_members() for the resource's relationships, as well as setting
+   * the response body as array("url" => $url).
+   *
+   * By default, a successful POST returns a 201 response with a "Location" header.  However,
+   * if a post_entity() function decides that the resource already exists, they can override this
+   * by adding a *fourth* element to the returned array that's false (e.g. posting a tag that
+   * already exists should return array("tag", 123, null, false)).
    */
   public function action_post() {
     $this->check_method();
-
-    // By default, a successful POST returns a 201 response.  If a post_entity() function
-    // decides that the resource already exists, they can change it back to a 200.
-    $this->response->status(201);
 
     if (Arr::get($this->request->post(), "entity")) {
       $result = Rest::post_entity($this->rest_type, $this->rest_id, $this->request->post());
@@ -320,9 +321,17 @@ abstract class Rest_Controller_Rest extends Controller {
       }
     }
 
-    $url = Rest::url($result);
-    $this->rest_response = array("url" => $url);
-    $this->response->headers("location", $url);
+    if (!empty($result)) {
+      // Set the response body.
+      $url = Rest::url($result);
+      $this->rest_response = array("url" => $url);
+    }
+
+    if (Arr::get($result, 3, true)) {
+      // New resource - set the status and headers.
+      $this->response->status(201);
+      $this->response->headers("location", $url);
+    }
   }
 
   /**
