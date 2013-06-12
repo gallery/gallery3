@@ -23,11 +23,12 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    *
    * GET can accept the following query parameters:
    *   ancestors_for=url
-   *     Return the ancestors of the specified item.  If specified, all
-   *     other query parameters described below will be ignored.
+   *     Return the ancestors of the specified item.  If specified,
+   *     all other query parameters described below will be ignored.
    *     This is typically used to create breadcrumbs for an item.
    *   urls=["url1","url2","url3"]
-   *     Return items that match the specified urls.
+   *     Return items that match the specified urls.  If specified,
+   *     the "start" and "num" parameters will be ignored.
    *     This is typically used to return the member detail.
    *   name=<substring>
    *     Only return items where the name contains this substring.
