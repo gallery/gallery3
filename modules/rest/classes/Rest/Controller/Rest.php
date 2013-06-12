@@ -273,7 +273,7 @@ abstract class Rest_Controller_Rest extends Controller {
       Rest::put_members($this->rest_type, $this->rest_id, $this->request->post());
     }
 
-    $put_rels = $this->request->post("relationships");
+    $put_rels = (array)$this->request->post("relationships");
     if (isset($put_rels)) {
       $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
       foreach ($put_rels as $r_key => $r_params) {
@@ -282,7 +282,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::put_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+        Rest::put_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
       }
     }
   }
@@ -308,7 +308,7 @@ abstract class Rest_Controller_Rest extends Controller {
       Rest::post_members($this->rest_type, $this->rest_id, $this->request->post());
     }
 
-    $post_rels = $this->request->post("relationships");
+    $post_rels = (array)$this->request->post("relationships");
     if (isset($post_rels)) {
       $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
       foreach ($post_rels as $r_key => $r_params) {
@@ -317,7 +317,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::post_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+        Rest::post_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
       }
     }
 
