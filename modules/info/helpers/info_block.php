@@ -72,6 +72,13 @@ class info_block_Core {
             );
           }
         }
+        if (($theme->item->width && $theme->item->height) && module::get_var("info", "show_dimensions")) {
+            $info["size"] = array(
+                "label" => t("Dimensions:"),
+                "value" => t("%width x %height px", array("width" => $theme->item->width, "height" => $theme->item->height))
+            );
+        }
+
         $block->content->metadata = $info;
 
         module::event("info_block_get_metadata", $block, $theme->item);
