@@ -199,7 +199,7 @@ class Rest_Rest {
 
   /**
    * POST a resource's entity.
-   * @return  array  type/id/params triad
+   * @return  array  type/id/params/new_flag array (default new_flag is true)
    */
   static function post_entity($type, $id=null, $params=array()) {
     return static::_call_rest_func("post_entity", $type, $id, $params);
