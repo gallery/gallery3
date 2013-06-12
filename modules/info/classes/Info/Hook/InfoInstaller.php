@@ -24,7 +24,6 @@ class Info_Hook_InfoInstaller {
     Module::set_var("info", "show_owner", 1);
     Module::set_var("info", "show_name", 1);
     Module::set_var("info", "show_captured", 1);
-    Module::set_var("info", "show_size", 1);
     Module::set_var("info", "show_dimensions", 1);
   }
 

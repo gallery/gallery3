@@ -72,10 +72,13 @@ class Info_Hook_InfoBlock {
             );
           }
         }
-        if (($theme->item->width && $theme->item->height) && module::get_var("info", "show_dimensions")) {
+        if (($theme->item->width && $theme->item->height) &&
+            Module::get_var("info", "show_dimensions")) {
             $info["size"] = array(
                 "label" => t("Dimensions:"),
-                "value" => t("%width x %height px", array("width" => $theme->item->width, "height" => $theme->item->height))
+                "value" => t(
+                  "%width x %height px",
+                  array("width" => $theme->item->width, "height" => $theme->item->height))
             );
         }
 
