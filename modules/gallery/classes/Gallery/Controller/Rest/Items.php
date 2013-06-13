@@ -90,8 +90,8 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
         }
       }
     } else {
-      // Members are the standard item collection member list - same as rest/items/1.
-      $data = Rest::get_members("item", 1, $params);
+      // Members are the standard item collection member list - same as members of root item.
+      $data = Rest::get_members("item", Item::root()->id, $params);
     }
 
     return $data;
