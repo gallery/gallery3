@@ -25,8 +25,7 @@ class Comment_Controller_Comments extends Controller {
   public function action_add() {
     $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);
-    Access::required("view", $item);
-    if (!Comment::can_comment()) {
+    if (!Comment::can_comment($item)) {
       throw HTTP_Exception::factory(403);
     }
     $author = Identity::active_user();

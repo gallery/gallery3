@@ -136,6 +136,37 @@ class Gallery_Identity {
   }
 
   /**
+   * Can the active user view a user's profile?
+   * @return boolean
+   */
+  static function can_view_profile($user) {
+    if (!$user) {
+      return false;
+    }
+
+    if ($user->id == Identity::active_user()->id) {
+      // You can always view your own profile
+      return true;
+    }
+
+    $mode = Module::get_var("gallery", "show_user_profiles_to");
+    switch ($mode) {
+    case "admin_users":
+      return Identity::active_user()->admin;
+
+    case "registered_users":
+      return !Identity::active_user()->guest;
+
+    case "everybody":
+      return true;
+
+    default:
+      // Fail if setting is invalid
+      throw new Gallery_Exception("Invalid show_user_profiles_to setting: $mode");
+    }
+  }
+
+  /**
    * Determine if if the current driver supports updates.
    *
    * @return boolean true if the driver supports updates; false if read only

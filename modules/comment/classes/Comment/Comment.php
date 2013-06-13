@@ -18,8 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Comment {
-  static function can_comment() {
-    return !Identity::active_user()->guest ||
-      Module::get_var("comment", "access_permissions") == "everybody";
+  static function can_comment($item) {
+    return (Access::can("view", $item) &&
+            (!Identity::active_user()->guest ||
+            Module::get_var("comment", "access_permissions") == "everybody"));
   }
 }

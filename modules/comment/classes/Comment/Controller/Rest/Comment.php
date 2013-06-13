@@ -58,6 +58,13 @@ class Comment_Controller_Rest_Comment extends Controller_Rest {
     }
     unset($data["item_id"]);
 
+    // Convert "author_id" to "author" REST URL.
+    $author = Identity::lookup_user($comment->author_id);
+    if (Identity::can_view_profile($author)) {
+      $data["author"] = Rest::url("user", $author->id);
+    }
+    unset($data["author_id"]);
+
     return $data;
   }
 
