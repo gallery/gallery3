@@ -366,6 +366,11 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
       } while (!$id);
 
       $this->rest_id = $id;
+
+      // Remove the "random" query parameter so it doesn't appear in URLs downstream.
+      $query = $this->request->query();
+      unset($query["random"]);
+      $this->request->query($query);
     }
 
     return parent::action_get();
