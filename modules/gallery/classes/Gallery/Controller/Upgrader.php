@@ -57,7 +57,7 @@ class Gallery_Controller_Upgrader extends Controller {
       $_SERVER["SERVER_NAME"] = "example.com";
     } else {
       if (!Identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
-        Access::forbidden();
+        throw HTTP_Exception::factory(403);
       }
 
       try {

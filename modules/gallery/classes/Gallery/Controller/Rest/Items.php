@@ -54,7 +54,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    * @see  Controller_Rest_Item::get_members().
    */
   public static function get_members($id, $params) {
-    $types = Arr::get($params, "types");
+    $types = Arr::get($params, "type");
     $name = Arr::get($params, "name");
 
     $data = array();
@@ -75,7 +75,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     } else if ($urls = Arr::get($params, "urls")) {
       // Members are taken from a list of urls, filtered by name and type.
       // @todo: json_decode is what was used in 3.0, but should we allow comma-separated lists, too?
-      foreach (json_decode($urls) as $url) {
+      foreach (json_decode($urls, true) as $url) {
         list ($m_type, $m_id, $m_params) = Rest::resolve($url);
         if ($m_type != "item") {
           throw Rest_Exception::factory(400, array("urls" => "invalid"));

@@ -20,7 +20,7 @@
 class Gallery_Controller_Packager extends Controller {
   public function action_package() {
     if (PHP_SAPI != "cli") {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $_SERVER["SERVER_NAME"] = "example.com";

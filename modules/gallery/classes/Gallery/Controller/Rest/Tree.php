@@ -60,8 +60,8 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
       $members->where("level", "<=", $item->level + $params["depth"]);
     }
 
-    if (isset($params["types"])) {
-      $members->where("type", "IN", $params["types"]);
+    if (isset($params["type"])) {
+      $members->where("type", "IN", $params["type"]);
     }
 
     $members = $members->viewable()->find_all();
@@ -109,8 +109,8 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
       return array();
     }
 
-    if (isset($params["types"])) {
-      $members->where("type", "IN", $params["types"]);
+    if (isset($params["type"])) {
+      $members->where("type", "IN", $params["type"]);
     }
 
     $members = $members->viewable()->find_all();

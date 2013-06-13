@@ -117,7 +117,7 @@ class ServerAdd_Controller_ServerAdd extends Controller_Admin {
 
     $task = ORM::factory("Task", $task_id);
     if (!$task->loaded() || $task->owner_id != Identity::active_user()->id) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $task = Task::run($task_id);

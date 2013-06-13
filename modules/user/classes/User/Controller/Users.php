@@ -26,7 +26,7 @@ class User_Controller_Users extends Controller {
     $user_id = $this->request->arg(0, "digit");
     $user = User::lookup($user_id);
     if (empty($user) || $user->guest || $user->id != Identity::active_user()->id) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     // Build the form.
@@ -83,7 +83,7 @@ class User_Controller_Users extends Controller {
     $user_id = $this->request->arg(0, "digit");
     $user = User::lookup($user_id);
     if (empty($user) || $user->guest || $user->id != Identity::active_user()->id) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $form = Formo::form()
@@ -140,7 +140,7 @@ class User_Controller_Users extends Controller {
     $user_id = $this->request->arg(0, "digit");
     $user = User::lookup($user_id);
     if (empty($user) || $user->guest || $user->id != Identity::active_user()->id) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $form = Formo::form()

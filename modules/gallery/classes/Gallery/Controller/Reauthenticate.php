@@ -33,7 +33,7 @@ class Gallery_Controller_Reauthenticate extends Controller {
       if ($this->request->is_ajax()) {
         // We should never be able to get here since the admin reauth_check
         // won't work for non-admins.
-        Access::forbidden();
+        throw HTTP_Exception::factory(403);
       } else {
         // The user could have navigated here directly.  This isn't a security
         // breach, but they still shouldn't be here.

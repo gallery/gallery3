@@ -169,20 +169,4 @@ class Comment_Model_Comment extends ORM {
       $v->error("item_id", "invalid");
     }
   }
-
-  /**
-   * Same as ORM::as_array() but convert id fields into their RESTful form.
-   */
-  public function as_restful_array() {
-    $data = array();
-    foreach ($this->as_array() as $key => $value) {
-      if (strncmp($key, "server_", 7)) {
-        $data[$key] = $value;
-      }
-    }
-    $data["item"] = Rest::url("item", $this->item);
-    unset($data["item_id"]);
-
-    return $data;
-  }
 }
