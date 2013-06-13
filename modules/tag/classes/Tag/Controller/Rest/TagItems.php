@@ -65,8 +65,8 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
       ->limit(Arr::get($params, "num", static::$default_params["num"]))
       ->offset(Arr::get($params, "start", static::$default_params["start"]));
 
-    if (isset($params["types"])) {
-      $members->where("type", "IN", $params["types"]);
+    if (isset($params["type"])) {
+      $members->where("type", "IN", $params["type"]);
     }
 
     if (isset($params["name"])) {

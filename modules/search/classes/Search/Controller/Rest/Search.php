@@ -66,7 +66,7 @@ class Search_Controller_Rest_Search extends Controller_Rest {
 
     // Build the members array.
     $data = array();
-    $types = Arr::get($params, "types");
+    $types = Arr::get($params, "type");
     foreach ($result[1] as $item) {
       if (!$types || in_array($item->type, $types)) {
         $data[] = array("item", $item->id);

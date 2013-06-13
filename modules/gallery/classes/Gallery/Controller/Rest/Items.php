@@ -54,7 +54,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    * @see  Controller_Rest_Item::get_members().
    */
   public static function get_members($id, $params) {
-    $types = Arr::get($params, "types");
+    $types = Arr::get($params, "type");
     $name = Arr::get($params, "name");
 
     $data = array();
