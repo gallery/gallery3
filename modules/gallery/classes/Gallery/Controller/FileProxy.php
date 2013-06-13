@@ -75,8 +75,8 @@ class Gallery_Controller_FileProxy extends Controller {
       throw HTTP_Exception::factory(404, TEST_MODE ? 6 : null);
     }
 
-    // Note: this code is roughly duplicated in Hook_Rest_Data, so if you modify this, please look to
-    // see if you should make the same change there as well.
+    // Note: this code is roughly duplicated in Controller_Rest_Data, so if you modify this,
+    // please look to see if you should make the same change there as well.
 
     if ($type == "albums") {
       $file = $item->file_path();
