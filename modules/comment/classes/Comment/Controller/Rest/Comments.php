@@ -61,8 +61,7 @@ class Comment_Controller_Rest_Comments extends Controller_Rest {
     }
 
     $item = ORM::factory("Item", $i_id);
-    Access::required("view", $item);
-    if (!Comment::can_comment()) {
+    if (!Comment::can_comment($item)) {
       throw Rest_Exception::factory(403);
     }
 
