@@ -18,57 +18,85 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Controller_Rest_Comment extends Controller_Rest {
-  static function get($request) {
-    $comment = Rest::resolve($request->url);
+  /**
+   * This resource represents a Model_Comment object.
+   *
+   * GET displays the comment (no parameters accepted).
+   *   @see  Controller_Rest_Comment::get_entity()
+   *
+   * PUT can accept the following post parameters:
+   *   entity
+   *     Edit the comment
+   *   @see  Controller_Rest_Comment::put_entity()
+   *
+   * DELETE removes the comment entirely (no parameters accepted).
+   *   @see  Controller_Rest_Comment::delete()
+   *
+   * Note: similar to the standard UI, only admins can PUT or DELETE a comment.
+   */
+
+  /**
+   * GET the comment's entity.
+   */
+  static function get_entity($id, $params) {
+    $comment = ORM::factory("Comment", $id);
     Access::required("view", $comment->item);
 
-    return array(
-      "url" => $request->url,
-      "entity" => $comment->as_restful_array(),
-      "relationships" => Rest::relationships("comment", $comment));
-  }
+    $data = $comment->as_array();
 
-  static function put($request) {
-    // Only admins can edit comments, for now
-    if (!Identity::active_user()->admin) {
-      throw HTTP_Exception::factory(403);
+    // Remove "server_" fields and "guest_" fields if the author isn't a guest.
+    foreach ($data as $key => $value) {
+      if ((substr($key, 0, 7) == "server_") ||
+          ((substr($key, 0, 6) == "guest_") && ($comment->author_id != Identity::guest()->id))) {
+        unset($data[$key]);
+      }
     }
 
-    $comment = Rest::resolve($request->url);
-    $comment = ORM::factory("Comment");
-    $comment->text = $request->params->text;
+    // Convert "item_id" to "item" REST URL.
+    if ($comment->item->loaded()) {
+      $data["item"] = Rest::url("item", $comment->item->id);
+    }
+    unset($data["item_id"]);
+
+    return $data;
+  }
+
+  /**
+   * PUT the comment's entity.  This edits the comment model, and is only for admins.
+   */
+  static function put_entity($id, $params) {
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $comment = ORM::factory("Comment", $id);
+    if (!$comment->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    // Add fields from a whitelist.
+    foreach (array("text", "state", "guest_name", "guest_email", "guest_url") as $field) {
+      if (property_exists($params["entity"], $field)) {
+        $comment->$field = $params["entity"]->$field;
+      }
+    }
+
     $comment->save();
   }
 
-  static function delete($request) {
+  /**
+   * DELETE the comment.  This is only for admins.
+   */
+  static function delete($id, $params) {
     if (!Identity::active_user()->admin) {
-      throw HTTP_Exception::factory(403);
+      throw Rest_Exception::factory(403);
     }
 
-    $comment = Rest::resolve($request->url);
-    Access::required("edit", $comment->item);
+    $comment = ORM::factory("Comment", $id);
+    if (!$comment->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
 
     $comment->delete();
-  }
-
-  static function relationships($resource_type, $resource) {
-    switch ($resource_type) {
-    case "item":
-      return array(
-        "comments" => array(
-          "url" => Rest::url("item_comments", $resource)));
-    }
-  }
-
-  static function resolve($id) {
-    $comment = ORM::factory("Comment", $id);
-    if (!Access::can("view", $comment->item)) {
-      throw HTTP_Exception::factory(404);
-    }
-    return $comment;
-  }
-
-  static function url($comment) {
-    return URL::abs_site("rest/comment/{$comment->id}");
   }
 }

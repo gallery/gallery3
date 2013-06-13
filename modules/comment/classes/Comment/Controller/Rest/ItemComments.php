@@ -18,31 +18,97 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Controller_Rest_ItemComments extends Controller_Rest {
-  static function get($request) {
-    $item = Rest::resolve($request->url);
+  /**
+   * This resource represents a collection of tag resources on a specified item.
+   *
+   * GET displays the collection of comments (no parameters accepted).
+   *   @see  Controller_Rest_ItemComments::get_members()
+   *
+   * PUT can accept the following post parameters:
+   *   members
+   *     Replace the collection of comment on the item with this list (remove only, no add)
+   *   @see  Controller_Rest_ItemComments::put_members()
+   *
+   * DELETE removes all comments from the item (no parameters accepted).
+   *   @see  Controller_Rest_ItemComments::delete()
+   *
+   * RELATIONSHIPS: "item_comments" is the "comments" relationship of an "item" resource.
+   */
+
+  /**
+   * GET the comment members of the item_comments resource.
+   * @see  Controller_Rest_Comments::get_members().
+   */
+  static function get_members($id, $params) {
+    $item = ORM::factory("Item", $id);
     Access::required("view", $item);
 
-    $comments = array();
-    foreach ($item->comments
-             ->order_by("created", "DESC")
-             ->find_all() as $comment) {
-      $comments[] = Rest::url("comment", $comment);
+    $members = $item->comments
+      ->limit(Arr::get($params, "num", static::$default_params["num"]))
+      ->offset(Arr::get($params, "start", static::$default_params["start"]))
+      ->order_by("created", "DESC");
+
+    $data = array();
+    foreach ($members->find_all() as $member) {
+      $data[] = array("comment", $member->id);
     }
 
-    return array(
-      "url" => $request->url,
-      "members" => $comments);
+    return $data;
   }
 
-  static function resolve($id) {
+  /**
+   * PUT the comment members of the item_comments resource.  This replaces the comments list
+   * with this one, and removes (but doesn't add) comments as needed.  This is only for admins.
+   */
+  static function put_members($id, $params) {
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
     $item = ORM::factory("Item", $id);
-    if (!Access::can("view", $item)) {
-      throw HTTP_Exception::factory(404);
+    if (!$item->loaded()) {
+      throw Rest_Exception::factory(404);
     }
-    return $item;
+
+    // Resolve our members list into an array of comment ids.
+    $member_ids = Rest::resolve_members($params["members"],
+      function($type, $id, $params, $data) {
+        $comment = ORM::factory("Comment", $id);
+        return (($type == "comment") && ($comment->item_id == $data)) ? $id : false;
+      }, $item->id);
+
+    // Delete any comments that are not in the list.
+    foreach ($item->comments->find_all() as $comment) {
+      if (!in_array($comment->id, $member_ids)) {
+        $comment->delete();
+      }
+    }
   }
 
-  static function url($item) {
-    return URL::abs_site("rest/item_comments/{$item->id}");
+  /**
+   * DELETE removes all comments from the item, and is only for admins.
+   */
+  static function delete($id, $params) {
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $item = ORM::factory("Item", $id);
+    if (!$item->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    // Delete all comments from the item.
+    foreach ($item->comments->find_all() as $comment) {
+      $comment->delete();
+    }
+  }
+
+  /**
+   * Return the relationship established by item_comments.  This adds "comments"
+   * as a relationship of an "item" resource.
+   */
+  static function relationships($type, $id, $params) {
+    return ($type == "item") ? array("comments" => array("item_comments", $id)) : null;
   }
 }

@@ -19,44 +19,65 @@
  */
 class Comment_Controller_Rest_Comments extends Controller_Rest {
   /**
-   * Possible request parameters:
-   *   start=#
-   *     start at the Nth comment (zero based)
+   * This resource represents a collection of comment resources.
    *
-   *   num=#
-   *     return up to N comments (max 100)
+   * GET displays the collection of comments (no parameters accepted).
+   *   @see  Controller_Rest_Comments::get_members()
+   *
+   * POST *requires* the following post parameters:
+   *   entity
+   *     Add a comment
+   *   @see  Controller_Rest_Comments::post_entity()
    */
-  static function get($request) {
-    $comments = array();
 
-    $p = $request->params;
-    $num = isset($p->num) ? min((int)$p->num, 100) : 10;
-    $start = isset($p->start) ? (int)$p->start : 0;
+  /**
+   * GET the members of the comments resource.
+   */
+  static function get_members($id, $params) {
+    $members = ORM::factory("Comment")
+      ->limit(Arr::get($params, "num", static::$default_params["num"]))
+      ->offset(Arr::get($params, "start", static::$default_params["start"]))
+      ->order_by("created", "DESC");
 
-    foreach (ORM::factory("Comment")->viewable()->limit($num)->offset($start)->find_all() as $comment) {
-      $comments[] = Rest::url("comment", $comment);
+    $data = array();
+    foreach ($members->find_all() as $member) {
+      $data[] = array("comment", $member->id);
     }
-    return array("url" => Rest::url("comments"),
-                 "members" => $comments);
+
+    return $data;
   }
 
+  /**
+   * POST a comment's entity.  This generates a new comment model.
+   */
+  static function post_entity($id, $params) {
+    if (!property_exists($params["entity"], "item")) {
+      throw Rest_Exception::factory(400, array("item" => "required"));
+    }
 
-  static function post($request) {
-    $entity = $request->params->entity;
+    list ($i_type, $i_id, $i_params) = Rest::resolve($params["entity"]->item);
+    if ($i_type != "item") {
+      throw Rest_Exception::factory(400, array("item" => "invalid"));
+    }
 
-    $item = Rest::resolve($entity->item);
+    $item = ORM::factory("Item", $i_id);
     Access::required("edit", $item);
 
+    // Build the comment model.
     $comment = ORM::factory("Comment");
     $comment->author_id = Identity::active_user()->id;
     $comment->item_id = $item->id;
-    $comment->text = $entity->text;
+
+    // Add fields from a whitelist.
+    foreach (array("text", "state", "guest_name", "guest_email", "guest_url") as $field) {
+      if (property_exists($params["entity"], $field)) {
+        $comment->$field = $params["entity"]->$field;
+      }
+    }
+
     $comment->save();
 
-    return array("url" => Rest::url("comment", $comment));
-  }
-
-  static function url() {
-    return URL::abs_site("rest/comments");
+    // Success!  Return the resource triad.
+    return array("comment", $comment->id);
   }
 }
