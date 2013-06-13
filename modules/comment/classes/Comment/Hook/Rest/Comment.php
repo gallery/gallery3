@@ -31,7 +31,7 @@ class Comment_Hook_Rest_Comment {
   static function put($request) {
     // Only admins can edit comments, for now
     if (!Identity::active_user()->admin) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $comment = Rest::resolve($request->url);
@@ -42,7 +42,7 @@ class Comment_Hook_Rest_Comment {
 
   static function delete($request) {
     if (!Identity::active_user()->admin) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $comment = Rest::resolve($request->url);

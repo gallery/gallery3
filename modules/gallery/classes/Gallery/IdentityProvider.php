@@ -66,7 +66,7 @@ class Gallery_IdentityProvider {
   static function change_provider($new_provider) {
     if (!Identity::active_user()->admin && PHP_SAPI != "cli") {
       // Below, the active user is set to the primary admin.
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $current_provider = Module::get_var("gallery", "identity_provider");

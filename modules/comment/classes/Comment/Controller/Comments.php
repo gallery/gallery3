@@ -27,7 +27,7 @@ class Comment_Controller_Comments extends Controller {
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
     if (!Comment::can_comment()) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
     $author = Identity::active_user();
 

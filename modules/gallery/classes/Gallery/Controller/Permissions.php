@@ -25,7 +25,7 @@ class Gallery_Controller_Permissions extends Controller {
     Access::required("edit", $item);
 
     if (!$item->is_album()) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $view = new View("gallery/permissions_browse.html");
@@ -44,7 +44,7 @@ class Gallery_Controller_Permissions extends Controller {
     Access::required("edit", $item);
 
     if (!$item->is_album()) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $this->response->body($this->_get_form($item));
