@@ -37,7 +37,7 @@ class Gallery_Controller_UserProfile extends Controller {
   public function action_show() {
     $id = $this->request->arg(0, "digit");
     $user = Identity::lookup_user($id);
-    if (!$this->_can_view_profile_pages($user)) {
+    if (!Identity::can_view_profile($user)) {
       throw HTTP_Exception::factory(404);
     }
 
@@ -61,7 +61,7 @@ class Gallery_Controller_UserProfile extends Controller {
   public function action_contact() {
     $id = $this->request->arg(0, "digit");
     $user = Identity::lookup_user($id);
-    if (!$this->_can_view_profile_pages($user)) {
+    if (!Identity::can_view_profile($user)) {
       throw HTTP_Exception::factory(404);
     }
 
@@ -103,32 +103,5 @@ class Gallery_Controller_UserProfile extends Controller {
     }
 
     $this->response->ajax_form($form);
-  }
-
-  protected function _can_view_profile_pages($user) {
-    if (!$user || !$user->loaded()) {
-      return false;
-    }
-
-    if ($user->id == Identity::active_user()->id) {
-      // You can always view your own profile
-      return true;
-    }
-
-    $mode = Module::get_var("gallery", "show_user_profiles_to");
-    switch ($mode) {
-    case "admin_users":
-      return Identity::active_user()->admin;
-
-    case "registered_users":
-      return !Identity::active_user()->guest;
-
-    case "everybody":
-      return true;
-
-    default:
-      // Fail if setting is invalid
-      throw new Gallery_Exception("Invalid show_user_profiles_to setting: $mode");
-    }
   }
 }
