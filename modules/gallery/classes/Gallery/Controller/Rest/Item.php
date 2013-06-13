@@ -333,10 +333,12 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
           ->where("weight", ">=", $m_weight)
           ->execute();
       }
-      // Update the member weight.
+      // Update the member weight.  We check parent_id again to make sure the item hasn't been
+      // reparented (i.e. protect against "losing the race").
       DB::update("items")
         ->set(array("weight" => $m_weight))
         ->where("id", "=", $m_id)
+        ->where("parent_id", "=", $item->id)
         ->execute();
     }
   }
