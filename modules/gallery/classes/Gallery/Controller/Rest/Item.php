@@ -78,6 +78,13 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
     }
     unset($data["album_cover_item_id"]);
 
+    // Convert "owner_id" to "owner" REST URL.
+    $owner = Identity::lookup_user($item->owner_id);
+    if (Identity::can_view_profile($owner)) {
+      $data["owner"] = Rest::url("user", $owner->id);
+    }
+    unset($data["owner_id"]);
+
     // Generate/remove the full-size fields.
     if (Access::can("view_full", $item) && !$item->is_album()) {
       $data["file_url"] =
