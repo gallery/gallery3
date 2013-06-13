@@ -43,7 +43,7 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    *     Since there is no entity function, this is only accessible using relationships.
    *   @see  Controller_Rest_ItemTags::post_members()
    *
-   * DELETE removes the all tags from the item (no parameters accepted).
+   * DELETE removes all tags from the item (no parameters accepted).
    *   @see  Controller_Rest_ItemTags::delete()
    *
    * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "item" resource.
