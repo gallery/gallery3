@@ -135,6 +135,38 @@ class Rest_Rest {
   }
 
   /**
+   * Convert a list of member REST urls into an array.  If no callback is given, then each
+   * array element is a type/id/params triad.  If a callback (and optionally callback_data)
+   * is given, then each array element is the return value of the callback.  If the callback
+   * returns false, then this fires a 400 Bad Request.
+   *
+   * This function maintains the original array keys of the members list.
+   *
+   * @param  array  REST urls
+   * @param  mixed  callback function (optional, can be anonymous or named)
+   * @param  mixed  callback data (optional)
+   * @return array
+   */
+  static function resolve_members($members, $callback=null, $callback_data=null) {
+    $data = array();
+    foreach ($members as $key => $member) {
+      list ($type, $id, $params) = Rest::resolve($member);
+
+      if ($callback) {
+        $result = call_user_func($callback, $type, $id, $params, $callback_data);
+        if (empty($result)) {
+          throw Rest_Exception::factory(400, array("members" => "invalid"));
+        }
+        $data[$key] = $result;
+      } else {
+        $data[$key] = array($type, $id, $params);
+      }
+    }
+
+    return $data;
+  }
+
+  /**
    * Return an absolute url used for REST resource location.
    * @param  string  resource type (e.g. "item", "tag")
    * @param  mixed   resource id (typically an integer, but can be more complex (e.g. "3,5")
