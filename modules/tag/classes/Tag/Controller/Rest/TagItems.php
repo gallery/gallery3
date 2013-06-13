@@ -95,21 +95,12 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
       throw Rest_Exception::factory(404);
     }
 
-    // Check if all the members have valid types and ids, and build our array of items.
-    $items = array();
-    foreach ($params["members"] as $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if ($m_type != "item") {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $item = ORM::factory("Item", $m_id);
-      if (!$item->loaded()) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $items[] = $item;
-    }
+    // Resolve our members list into an array of item models.
+    $items = Rest::resolve_members($params["members"],
+      function($type, $id, $params) {
+        $item = ORM::factory("Item", $id);
+        return (($type == "item") && $item->loaded()) ? $item : false;
+      });
 
     // Clear all items from the tag, then add the new set.
     Tag::remove_items($tag);
@@ -129,47 +120,18 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
       throw Rest_Exception::factory(404);
     }
 
-    // Check if all the members have valid types and ids, and build our array of items.
-    $items = array();
-    foreach ($params["members"] as $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if ($m_type != "item") {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $item = ORM::factory("Item", $m_id);
-      if (!$item->loaded()) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-      Access::required("edit", $item);
-
-      $items[] = $item;
-    }
+    // Resolve our members list into an array of item models.
+    $items = Rest::resolve_members($params["members"],
+      function($type, $id, $params) {
+        $item = ORM::factory("Item", $id);
+        return (($type == "item") && $item->loaded()) ? $item : false;
+      });
 
     // Add the tag to the items.
     foreach ($items as $item) {
       Tag::add($item, $tag->name);
     }
   }
-
-  /* @todo: add back in deprecated tag_item post.
-  static function post($request) {
-    $tag = Rest::resolve($request->params->entity->tag);
-    $item = Rest::resolve($request->params->entity->item);
-    Access::required("view", $item);
-
-    if (!$tag->loaded()) {
-      throw HTTP_Exception::factory(404);
-    }
-
-    Tag::add($item, $tag->name);
-    return array(
-      "url" => Rest::url("tag_item", $tag, $item),
-      "members" => array(
-        "tag" => Rest::url("tag", $tag),
-        "item" => Rest::url("item", $item)));
-  }
-  */
 
   /**
    * DELETE the tag.  This is only for admins.

@@ -100,21 +100,11 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
-    // Check if all the members have valid types and ids, and build our array of names.
-    $tag_names = array();
-    foreach ($params["members"] as $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if ($m_type != "tag") {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag = ORM::factory("Tag", $m_id);
-      if (!$tag->loaded()) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag_names[] = $tag->name;
-    }
+    // Resolve our members list into an array of tag names.
+    $tag_names = Rest::resolve_members($params["members"],
+      function($type, $id, $params) {
+        return ($type == "tag") ? ORM::factory("Tag", $id)->name : false;
+      });
 
     // Clear all tags from the item, then add the new set.
     Tag::clear_all($item);
@@ -131,21 +121,11 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
-    // Check if all the members have valid types and ids, and build our array of names.
-    $tag_names = array();
-    foreach ($params["members"] as $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if ($m_type != "tag") {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag = ORM::factory("Tag", $m_id);
-      if (!$tag->loaded()) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag_names[] = $tag->name;
-    }
+    // Resolve our members list into an array of tag names.
+    $tag_names = Rest::resolve_members($params["members"],
+      function($type, $id, $params) {
+        return ($type == "tag") ? ORM::factory("Tag", $id)->name : false;
+      });
 
     // Add the tags to the item.
     foreach ($tag_names as $tag_name) {
