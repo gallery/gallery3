@@ -276,8 +276,8 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
       ->limit(Arr::get($params, "num", static::$default_params["num"]))
       ->offset(Arr::get($params, "start", static::$default_params["start"]));
 
-    if (isset($params["types"])) {
-      $members->where("type", "IN", $params["types"]);
+    if (isset($params["type"])) {
+      $members->where("type", "IN", $params["type"]);
     }
 
     if (isset($params["name"])) {
@@ -307,23 +307,11 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
       throw Rest_Exception::factory(400, array("members" => "cannot_reorder"));
     }
 
-    // Get the ids of all of the album's children.
-    $child_ids = array_keys(
-      DB::select("id")
-      ->from("items")
-      ->where("parent_id", "=", $item->id)
-      ->execute()
-      ->as_array("id"));
-
-    // Check if all the members have valid types and ids, and build our array of weights => ids.
-    $members_array = array();
-    foreach ($params["members"] as $m_weight => $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if (($m_type != "item") || !in_array($m_id, $child_ids)) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-      $members_array[$m_weight] = $m_id;
-    }
+    // Resolve our members list into an array of weights => ids.
+    $members_array = Rest::resolve_members($param["members"],
+      function($type, $id, $param, $data) {
+        return (($type == "item") && (ORM::factory("Item", $id)->parent_id == $data));
+      }, $item->id);
 
     // Sort members by their weights (given by their keys).
     ksort($members_array);
@@ -345,10 +333,12 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
           ->where("weight", ">=", $m_weight)
           ->execute();
       }
-      // Update the member weight.
+      // Update the member weight.  We check parent_id again to make sure the item hasn't been
+      // reparented (i.e. protect against "losing the race").
       DB::update("items")
         ->set(array("weight" => $m_weight))
         ->where("id", "=", $m_id)
+        ->where("parent_id", "=", $item->id)
         ->execute();
     }
   }

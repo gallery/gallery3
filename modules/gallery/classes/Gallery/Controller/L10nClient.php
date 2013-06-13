@@ -21,7 +21,7 @@ class Gallery_Controller_L10nClient extends Controller {
   public function action_save() {
     Access::verify_csrf();
     if (!Identity::active_user()->admin) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $locale = I18n::instance()->locale();
@@ -96,7 +96,7 @@ class Gallery_Controller_L10nClient extends Controller {
   public function action_toggle_l10n_mode() {
     Access::verify_csrf();
     if (!Identity::active_user()->admin) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     $session = Session::instance();

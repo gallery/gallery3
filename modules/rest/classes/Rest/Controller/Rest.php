@@ -111,14 +111,14 @@ abstract class Rest_Controller_Rest extends Controller {
     // Process some additional fields, depending on the method.
     switch ($method) {
     case HTTP_Request::GET:
-      // Process the "types" list, if specified.
-      if ($types = $this->request->query("types")) {
+      // Process the "type" list, if specified.
+      if ($types = $this->request->query("type")) {
         $types = explode(",", trim($types, ","));
         // If one or more of the types is invalid, fire a 400 Bad Request.
         if (array_diff($types, array("album", "photo", "movie"))) {
-          throw Rest_Exception::factory(400, array("types" => "invalid"));
+          throw Rest_Exception::factory(400, array("type" => "invalid"));
         }
-        $this->request->query("types", $types);
+        $this->request->query("type", $types);
       }
       break;
 

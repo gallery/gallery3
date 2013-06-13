@@ -124,7 +124,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     // You cannot delete yourself or the guest user.
     if ($id == Identity::active_user()->id || $id == User::guest()->id) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
 
     // Build the form.

@@ -43,10 +43,13 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    *     Since there is no entity function, this is only accessible using relationships.
    *   @see  Controller_Rest_ItemTags::post_members()
    *
-   * DELETE removes the all tags from the item (no parameters accepted).
+   * DELETE removes all tags from the item (no parameters accepted).
    *   @see  Controller_Rest_ItemTags::delete()
    *
    * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "item" resource.
+   *
+   * Deprecated features: POST a "tag_item" entity.  This is deprecated from 3.1,
+   * but functionality is maintained for backward compatibility.
    */
 
   /**
@@ -97,21 +100,11 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
-    // Check if all the members have valid types and ids, and build our array of names.
-    $tag_names = array();
-    foreach ($params["members"] as $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if ($m_type != "tag") {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag = ORM::factory("Tag", $m_id);
-      if (!$tag->loaded()) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag_names[] = $tag->name;
-    }
+    // Resolve our members list into an array of tag names.
+    $tag_names = Rest::resolve_members($params["members"],
+      function($type, $id, $params) {
+        return ($type == "tag") ? ORM::factory("Tag", $id)->name : false;
+      });
 
     // Clear all tags from the item, then add the new set.
     Tag::clear_all($item);
@@ -128,21 +121,11 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
-    // Check if all the members have valid types and ids, and build our array of names.
-    $tag_names = array();
-    foreach ($params["members"] as $member) {
-      list ($m_type, $m_id, $m_params) = Rest::resolve($member);
-      if ($m_type != "tag") {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag = ORM::factory("Tag", $m_id);
-      if (!$tag->loaded()) {
-        throw Rest_Exception::factory(400, array("members" => "invalid"));
-      }
-
-      $tag_names[] = $tag->name;
-    }
+    // Resolve our members list into an array of tag names.
+    $tag_names = Rest::resolve_members($params["members"],
+      function($type, $id, $params) {
+        return ($type == "tag") ? ORM::factory("Tag", $id)->name : false;
+      });
 
     // Add the tags to the item.
     foreach ($tag_names as $tag_name) {
@@ -150,21 +133,6 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     }
     Tag::compact();
   }
-
-  /* @todo: add back in deprecated tag_item post.
-  static function post($request) {
-    $tag = Rest::resolve($request->params->entity->tag);
-    $item = Rest::resolve($request->params->entity->item);
-    Access::required("view", $item);
-
-    Tag::add($item, $tag->name);
-    return array(
-      "url" => Rest::url("tag_item", $tag, $item),
-      "members" => array(
-        Rest::url("tag", $tag),
-        Rest::url("item", $item)));
-  }
-  */
 
   /**
    * DELETE removes all tags from the item.
@@ -182,5 +150,49 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    */
   static function relationships($type, $id, $params) {
     return ($type == "item") ? array("tags" => array("item_tags", $id)) : null;
+  }
+
+  /**
+   * POST a tag_item.  This feature is deprecated in v3.1, and is here to maintain
+   * backward-compatibility with v3.0.
+   */
+  static function post_entity($id, $params) {
+    list ($t_type, $t_id, $t_params) = Rest::resolve($params["entity"]->tag);
+    list ($i_type, $i_id, $i_params) = Rest::resolve($params["entity"]->item);
+
+    if (($t_type != "tag") || ($i_type != "item")) {
+      throw Rest_Exception::factory(404);
+    }
+
+    $tag  = ORM::factory("Tag",  $t_id);
+    $item = ORM::factory("Item", $i_id);
+
+
+    Access::required("edit", $item);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    Tag::add($item, $tag->name);
+
+    return array("tag_item", "$t_id,$i_id");
+  }
+
+  /**
+   * Overload Controller_Rest::action_post() to block access unless they've sent a
+   * well-formed tag_item entity POST.  If so, add the deprecated header and carry on.
+   */
+  public function action_post() {
+    if (($entity = $this->request->post("entity")) &&
+        property_exists($entity, "tag") &&
+        property_exists($entity, "item") &&
+        !$this->request->post("members") &&
+        !$this->request->post("relationships")) {
+      $this->response->headers("x-gallery-api-notice",
+        "Deprecated from 3.1 - POSTing a tag_item resource to tag_items or item_tags");
+      return parent::action_post();
+    }
+
+    throw Rest_Exception::factory(400, array("method" => "invalid"));
   }
 }

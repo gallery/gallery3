@@ -114,7 +114,7 @@ class Gallery_Access {
   }
 
   /**
-   * If the active user does not have this permission, failed with an Access::forbidden().
+   * If the active user does not have this permission, fire a 403 Forbidden.
    *
    * @param  string     $perm_name
    * @param  Model_Item $item
@@ -126,7 +126,7 @@ class Gallery_Access {
         // Treat as if the item didn't exist, don't leak any information.
         throw HTTP_Exception::factory(404);
       } else {
-        Access::forbidden();
+        throw HTTP_Exception::factory(403);
       }
     }
   }
@@ -189,13 +189,6 @@ class Gallery_Access {
     } else {
       return null;
     }
-  }
-
-  /**
-   * Terminate immediately with an HTTP 403 Forbidden response.
-   */
-  static function forbidden() {
-    throw HTTP_Exception::factory(403);
   }
 
   /**
@@ -415,7 +408,7 @@ class Gallery_Access {
     }
 
     if ($csrf !== Session::instance()->get("csrf")) {
-      Access::forbidden();
+      throw HTTP_Exception::factory(403);
     }
   }
 

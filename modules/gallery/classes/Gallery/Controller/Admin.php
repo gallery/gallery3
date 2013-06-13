@@ -27,7 +27,7 @@ abstract class Gallery_Controller_Admin extends Controller {
       if (Identity::active_user()->guest) {
         $auth->login = true;
       } else {
-        Access::forbidden();
+        throw HTTP_Exception::factory(403);
       }
     } else {
       $time_remaining = Auth::get_time_remaining_for_admin_area();

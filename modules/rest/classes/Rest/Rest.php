@@ -114,7 +114,7 @@ class Rest_Rest {
     $components = explode("/", $path, 3);
 
     if (empty($components[1])) {
-      throw HTTP_Exception::factory(404, $url);
+      throw Rest_Exception::factory(404);
     }
     $type = $components[1];
 
@@ -132,6 +132,38 @@ class Rest_Rest {
     }
 
     return array($type, $id, $params);
+  }
+
+  /**
+   * Convert a list of member REST urls into an array.  If no callback is given, then each
+   * array element is a type/id/params triad.  If a callback (and optionally callback_data)
+   * is given, then each array element is the return value of the callback.  If the callback
+   * returns false, then this fires a 400 Bad Request.
+   *
+   * This function maintains the original array keys of the members list.
+   *
+   * @param  array  REST urls
+   * @param  mixed  callback function (optional, can be anonymous or named)
+   * @param  mixed  callback data (optional)
+   * @return array
+   */
+  static function resolve_members($members, $callback=null, $callback_data=null) {
+    $data = array();
+    foreach ($members as $key => $member) {
+      list ($type, $id, $params) = Rest::resolve($member);
+
+      if ($callback) {
+        $result = call_user_func($callback, $type, $id, $params, $callback_data);
+        if (empty($result)) {
+          throw Rest_Exception::factory(400, array("members" => "invalid"));
+        }
+        $data[$key] = $result;
+      } else {
+        $data[$key] = array($type, $id, $params);
+      }
+    }
+
+    return $data;
   }
 
   /**
