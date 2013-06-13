@@ -114,7 +114,7 @@ class Rest_Rest {
     $components = explode("/", $path, 3);
 
     if (empty($components[1])) {
-      throw HTTP_Exception::factory(404, $url);
+      throw Rest_Exception::factory(404);
     }
     $type = $components[1];
 
