@@ -35,7 +35,7 @@ class Gallery_Controller_Rest_User extends Controller_Rest {
   static function get_entity($id, $params) {
     $user = Identity::lookup_user($id);
     if (!Identity::can_view_profile($user)) {
-      throw Rest_Exception::factory(403);
+      throw Rest_Exception::factory(404);
     }
 
     // Add fields from a whitelist.
