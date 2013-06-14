@@ -19,17 +19,25 @@
  */
 class Rest_Controller_Rest_AccessKey extends Controller_Rest {
   public function check_auth($auth) {
-    // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
-    if (!Validation::factory($this->request->post())
-      ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
-      ->check()) {
-      throw Rest_Exception::factory(403);
+    if ($this->request->method() != HTTP_Request::GET) {
+      // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
+      if (!Validation::factory($this->request->post())
+        ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
+        ->check()) {
+        throw Rest_Exception::factory(403);
+      }
+
+      // Set the access key
+      $this->request->headers("x-gallery-request-key", Rest::access_key());
     }
 
-    // Set the access key
-    $this->request->headers("x-gallery-request-key", Rest::access_key());
-
     return parent::check_auth($auth);
+  }
+
+  public function action_get() {
+    // We want to return an empty response with either status 200 or 403, depending on if guest
+    // access is allowed.  Since Controller_Rest::check_auth() would have already fired a 403
+    // if a login was required, we have nothing left to do here - this will return a 200.
   }
 
   public function action_post() {
