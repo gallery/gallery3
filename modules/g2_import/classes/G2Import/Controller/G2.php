@@ -44,12 +44,12 @@ class G2Import_Controller_G2 extends Controller {
         $tag_name = $this->request->query("g2_tagName");
       }
 
-      if (!$id) {
-        $this->redirect("tag_name/$tag_name", 301);
-      }
-
       $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
       if ($tag->loaded()) {
+        if (!$id) {
+          $this->redirect($tag->abs_url(), 301);
+        }
+
         Item::set_display_context_callback("Controller_Tags::get_display_context", $tag->id);
         // We want to show the item as part of the tag virtual album. Most of this code is below; we'll
         // change $path and $view to let it fall through

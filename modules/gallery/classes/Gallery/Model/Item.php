@@ -715,17 +715,6 @@ class Gallery_Model_Item extends ORM_MPTT {
   }
 
   /**
-   * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
-   * the first child in the album is at position 1.
-   *
-   * This method stands as a backward compatibility for gallery 3.0, and will
-   * be deprecated in version 3.1.
-   */
-  public function get_position($child, $where=array()) {
-    return Item::get_position($child, $where);
-  }
-
-  /**
    * Return an <img> tag for the thumbnail.
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @param int (optional) $max Maximum size of the thumbnail (default: null)
