@@ -47,9 +47,6 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    *   @see  Controller_Rest_ItemTags::delete()
    *
    * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "item" resource.
-   *
-   * Deprecated features: POST a "tag_item" entity.  This is deprecated from 3.1,
-   * but functionality is maintained for backward compatibility.
    */
 
   /**
@@ -150,49 +147,5 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    */
   static function relationships($type, $id, $params) {
     return ($type == "item") ? array("tags" => array("item_tags", $id)) : null;
-  }
-
-  /**
-   * POST a tag_item.  This feature is deprecated in v3.1, and is here to maintain
-   * backward-compatibility with v3.0.
-   */
-  static function post_entity($id, $params) {
-    list ($t_type, $t_id, $t_params) = Rest::resolve($params["entity"]->tag);
-    list ($i_type, $i_id, $i_params) = Rest::resolve($params["entity"]->item);
-
-    if (($t_type != "tag") || ($i_type != "item")) {
-      throw Rest_Exception::factory(404);
-    }
-
-    $tag  = ORM::factory("Tag",  $t_id);
-    $item = ORM::factory("Item", $i_id);
-
-
-    Access::required("edit", $item);
-    if (!$tag->loaded()) {
-      throw Rest_Exception::factory(404);
-    }
-
-    Tag::add($item, $tag->name);
-
-    return array("tag_item", "$t_id,$i_id");
-  }
-
-  /**
-   * Overload Controller_Rest::action_post() to block access unless they've sent a
-   * well-formed tag_item entity POST.  If so, add the deprecated header and carry on.
-   */
-  public function action_post() {
-    if (($entity = $this->request->post("entity")) &&
-        property_exists($entity, "tag") &&
-        property_exists($entity, "item") &&
-        !$this->request->post("members") &&
-        !$this->request->post("relationships")) {
-      $this->response->headers("x-gallery-api-notice",
-        "Deprecated from 3.1 - POSTing a tag_item resource to tag_items or item_tags");
-      return parent::action_post();
-    }
-
-    throw Rest_Exception::factory(400, array("method" => "invalid"));
   }
 }
