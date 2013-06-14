@@ -239,6 +239,7 @@ Route::set("item", "(<item_url>)", array("item_url" => "[A-Za-z0-9-_/]++"))
     ));
 
 // Initialize our session support
+Session::$default = "database";
 Session::instance();
 
 register_shutdown_function(array("Gallery", "shutdown"));
