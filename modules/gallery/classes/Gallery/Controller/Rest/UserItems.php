@@ -100,6 +100,7 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
     foreach (ORM::factory("Item")
              ->where("owner_id", "=", $user->id)
              ->where("id", "<>", Item::root()->id) // If root included, Model_Item will throw a 500.
+             ->order_by("left_ptr", "DESC")        // Delete children before parents.
              ->find_all() as $item) {
       if (!in_array($item->id, $member_ids)) {
         $item->delete();
@@ -124,6 +125,7 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
     foreach (ORM::factory("Item")
              ->where("owner_id", "=", $user->id)
              ->where("id", "<>", Item::root()->id) // If root included, Model_Item will throw a 500.
+             ->order_by("left_ptr", "DESC")        // Delete children before parents.
              ->find_all() as $item) {
       $item->delete();
     }
