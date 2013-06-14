@@ -19,14 +19,14 @@
  */
 class Comment_Controller_Rest_ItemComments extends Controller_Rest {
   /**
-   * This resource represents a collection of tag resources on a specified item.
+   * This resource represents a collection of comment resources on a specified item.
    *
    * GET displays the collection of comments (no parameters accepted).
    *   @see  Controller_Rest_ItemComments::get_members()
    *
    * PUT can accept the following post parameters:
    *   members
-   *     Replace the collection of comment on the item with this list (remove only, no add)
+   *     Replace the collection of comments on the item with this list (remove only, no add)
    *   @see  Controller_Rest_ItemComments::put_members()
    *
    * DELETE removes all comments from the item (no parameters accepted).
@@ -59,6 +59,7 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
   /**
    * PUT the comment members of the item_comments resource.  This replaces the comments list
    * with this one, and removes (but doesn't add) comments as needed.  This is only for admins.
+   * @see  Controller_Rest_UserComments::put_members()
    */
   static function put_members($id, $params) {
     if (!Identity::active_user()->admin) {

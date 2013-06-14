@@ -19,7 +19,7 @@
  */
 class Gallery_Controller_Rest_User extends Controller_Rest {
   /**
-   * This read-only resource represents a user.
+   * This read-only resource represents a user profile.
    *
    * GET can accept the following query parameters:
    *   show=self
