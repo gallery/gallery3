@@ -26,7 +26,7 @@ class Gallery_Controller_Rest_User extends Controller_Rest {
    *     Return the active user
    *   show=guest
    *     Return the guest user
-   *   @see  Controller_Rest_User::get_entity()
+   *   @see  Controller_Rest_User::before()
    */
 
   /**
@@ -48,9 +48,11 @@ class Gallery_Controller_Rest_User extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::action_get() to use the "show" parameter, if specified.
+   * Override Controller_Rest::before() to use the "show" parameter, if specified.
    */
-  public function action_get() {
+  public function before() {
+    parent::before();
+
     if ($show = $this->request->query("show")) {
       switch ($show) {
       case "self":
@@ -70,7 +72,5 @@ class Gallery_Controller_Rest_User extends Controller_Rest {
       unset($query["show"]);
       $this->request->query($query);
     }
-
-    return parent::action_get();
   }
 }

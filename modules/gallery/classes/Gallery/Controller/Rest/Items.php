@@ -46,7 +46,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    *
    * Notes:
    *   Unlike other collections, "expand_members" is true by default (backward-compatible with v3.0).
-   *   @see  Controller_Rest_Items::action_get()
+   *   @see  Controller_Rest_Items::before()
    */
 
   /**
@@ -91,7 +91,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
       }
     } else {
       // Members are the standard item collection member list - same as members of root item.
-      $data = Rest::get_members("item", Item::root()->id, $params);
+      $data = Rest::resource_func("get_members", "item", Item::root()->id, $params);
     }
 
     return $data;
@@ -111,14 +111,14 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
       throw Rest_Exception::factory(400, array("parent" => "invalid"));
     }
 
-    return Rest::post_entity("item", $p_id, $params);
+    return Rest::resource_func("post_entity", "item", $p_id, $params);
   }
 
   /**
-   * Override Controller_Rest::action_get() to expand members by default.
+   * Override Controller_Rest::before() to expand members by default.
    */
-  public function action_get() {
+  public function before() {
+    parent::before();
     static::$default_params["expand_members"] = true;
-    return parent::action_get();
   }
 }
