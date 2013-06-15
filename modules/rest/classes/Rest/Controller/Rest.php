@@ -358,7 +358,7 @@ abstract class Rest_Controller_Rest extends Controller {
     $headers = $this->request->headers("Access-Control-Request-Headers");  // optional
 
     $allow_origin = Rest::approve_origin($origin);
-    $allow_method = (!$method || in_array(strtoupper($method), Rest::$allowed_methods));
+    $allow_method = ($method && in_array(strtoupper($method), Rest::$allowed_methods));
     $allow_headers = true;
     if (!empty($headers)) {
       $allowed_headers = array_map("strtolower", Rest::$allowed_headers);
