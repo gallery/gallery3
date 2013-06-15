@@ -68,4 +68,12 @@ class Rest_Hook_RestEvent {
 
     $data->content[] = (object)array("title" => t("REST API"), "view" => $view);
   }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("rest")
+               ->label(t("REST API"))
+               ->url(URL::site("admin/rest")));
+  }
 }
