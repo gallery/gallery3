@@ -376,8 +376,10 @@ class Rest_Rest {
       foreach (unserialize(Module::get_var("rest", "approved_domains", array())) as $domain) {
         // Check the end of the sent origin against our list.  So, if "example.com" is approved,
         // then "foo.example.com", "http://example.com", and "https://foo.example.com" are also
-        // approved.
-        if (substr($origin, -strlen($domain)) == $domain) {
+        // approved, but "badexample.com" is not.
+        if ((substr($origin, -strlen($domain)-1) == ".$domain") ||
+            (substr($origin, -strlen($domain)-1) == "/$domain") ||
+            ($origin == $domain)) {
           return $origin;
         }
       }
