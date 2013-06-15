@@ -245,7 +245,7 @@ abstract class Rest_Controller_Rest extends Controller {
 
     if (Arr::get($this->request->query(), "expand_members",
         static::$default_params["expand_members"])) {
-      $members = Rest::get_members($this->rest_type, $this->rest_id, $this->request->query());
+      $members = Rest::resource_func("get_members", $this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
         throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
@@ -268,11 +268,11 @@ abstract class Rest_Controller_Rest extends Controller {
     $this->check_method();
 
     if (Arr::get($this->request->post(), "entity")) {
-      Rest::put_entity($this->rest_type, $this->rest_id, $this->request->post());
+      Rest::resource_func("put_entity", $this->rest_type, $this->rest_id, $this->request->post());
     }
 
     if (Arr::get($this->request->post(), "members")) {
-      Rest::put_members($this->rest_type, $this->rest_id, $this->request->post());
+      Rest::resource_func("put_members", $this->rest_type, $this->rest_id, $this->request->post());
     }
 
     $put_rels = (array)$this->request->post("relationships");
@@ -284,7 +284,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::put_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+        Rest::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
       }
     }
   }
@@ -303,13 +303,13 @@ abstract class Rest_Controller_Rest extends Controller {
     $this->check_method();
 
     if (Arr::get($this->request->post(), "entity")) {
-      $result = Rest::post_entity($this->rest_type, $this->rest_id, $this->request->post());
+      $result = Rest::resource_func("post_entity", $this->rest_type, $this->rest_id, $this->request->post());
     } else {
       throw Rest_Exception::factory(400, array("entity" => "required"));
     }
 
     if (Arr::get($this->request->post(), "members")) {
-      Rest::post_members($result[0], $result[1], $this->request->post());
+      Rest::resource_func("post_members", $result[0], $result[1], $this->request->post());
     }
 
     $post_rels = (array)$this->request->post("relationships");
@@ -321,7 +321,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::post_members($actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+        Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
       }
     }
 
@@ -342,7 +342,7 @@ abstract class Rest_Controller_Rest extends Controller {
   public function action_delete() {
     $this->check_method();
 
-    Rest::delete($this->rest_type, $this->rest_id, $this->request->post());
+    Rest::resource_func("delete", $this->rest_type, $this->rest_id, $this->request->post());
   }
 
   /**

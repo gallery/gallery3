@@ -91,7 +91,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
       }
     } else {
       // Members are the standard item collection member list - same as members of root item.
-      $data = Rest::get_members("item", Item::root()->id, $params);
+      $data = Rest::resource_func("get_members", "item", Item::root()->id, $params);
     }
 
     return $data;
@@ -111,7 +111,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
       throw Rest_Exception::factory(400, array("parent" => "invalid"));
     }
 
-    return Rest::post_entity("item", $p_id, $params);
+    return Rest::resource_func("post_entity", "item", $p_id, $params);
   }
 
   /**

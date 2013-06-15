@@ -70,7 +70,7 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
     $data = array();
     foreach (array_merge(array($item), iterator_to_array($members)) as $member) {
       $url    = Rest::url("item", $member->id);
-      $entity = Rest::get_entity("item", $member->id);
+      $entity = Rest::resource_func("get_entity", "item", $member->id);
 
       if (isset($params["fields"])) {
         // Filter by the specified fields.
