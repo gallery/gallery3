@@ -46,7 +46,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    *
    * Notes:
    *   Unlike other collections, "expand_members" is true by default (backward-compatible with v3.0).
-   *   @see  Controller_Rest_Items::action_get()
+   *   @see  Controller_Rest_Items::before()
    */
 
   /**
@@ -115,10 +115,10 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::action_get() to expand members by default.
+   * Override Controller_Rest::before() to expand members by default.
    */
-  public function action_get() {
+  public function before() {
+    parent::before();
     static::$default_params["expand_members"] = true;
-    return parent::action_get();
   }
 }

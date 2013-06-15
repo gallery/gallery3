@@ -40,7 +40,7 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
    * Notes:
    *   Unlike other collections, "start" and "num" parameters are ignored, and any
    *   "expand_members" parameter is removed (so it will not be "sticky").
-   *   @see  Controller_Rest_Tree::action_get()
+   *   @see  Controller_Rest_Tree::before()
    */
 
    /**
@@ -133,13 +133,13 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::action_get() to remove the expand_members parameter, if set.
+   * Override Controller_Rest::before() to remove the expand_members parameter, if set.
    */
-  public function action_get() {
+  public function before() {
+    parent::before();
+
     $query = $this->request->query();
     unset($query["expand_members"]);
     $this->request->query($query);
-
-    return parent::action_get();
   }
 }
