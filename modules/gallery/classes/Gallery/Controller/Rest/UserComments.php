@@ -115,6 +115,6 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
    * as a relationship of an "user" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "user") ? array("comments" => array("user_comments", $id)) : null;
+    return ($type == "user") ? array("comments" => array("user_comments", $id, $params)) : null;
   }
 }

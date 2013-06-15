@@ -146,6 +146,6 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    * as a relationship of an "item" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "item") ? array("tags" => array("item_tags", $id)) : null;
+    return ($type == "item") ? array("tags" => array("item_tags", $id, $params)) : null;
   }
 }
