@@ -61,7 +61,7 @@ abstract class Rest_Controller_Rest extends Controller {
    */
   public function check_auth($auth) {
     // Get the access key (if provided)
-    $key = $this->request->headers("x-gallery-request-key");
+    $key = $this->request->headers("X-Gallery-Request-Key");
     if (empty($key)) {
       $key = ($this->request->method() == HTTP_Request::GET) ?
               $this->request->query("access_key") : $this->request->post("access_key");
@@ -88,7 +88,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Check if the X-Gallery-Request-Method header is defined.
     // @todo: consider checking other common REST method overrides, such as
     // X-HTTP-Method (Microsoft), X-HTTP-Method-Override (Google/GData), X-METHOD-OVERRIDE, etc.
-    if ($method = strtoupper($this->request->headers("x-gallery-request-method"))) {
+    if ($method = strtoupper($this->request->headers("X-Gallery-Request-Method"))) {
       // Set the X-Gallery-Request-Method header as the method.
       $this->request->method($method);
     } else {
@@ -169,7 +169,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Format $this->rest_response into the Response body based on the output format
     switch ($output) {
     case "json":
-      $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
+      $this->response->headers("Content-Type", "application/json; charset=" . Kohana::$charset);
       $this->response->body(json_encode($this->rest_response));
       break;
 
@@ -182,7 +182,7 @@ abstract class Rest_Controller_Rest extends Controller {
         throw Rest_Exception::factory(400, array("callback" => "invalid"));
       }
 
-      $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
+      $this->response->headers("Content-Type", "application/javascript; charset=" . Kohana::$charset);
       $this->response->body("$callback(" . json_encode($this->rest_response) . ")");
       break;
 
@@ -191,7 +191,7 @@ abstract class Rest_Controller_Rest extends Controller {
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
         var_export($this->rest_response, true));
 
-      $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
+      $this->response->headers("Content-Type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");
 
       // @todo: the profiler needs to be updated for K3.
@@ -330,7 +330,7 @@ abstract class Rest_Controller_Rest extends Controller {
     if (Arr::get($result, 3, true)) {
       // New resource - set the status and headers.
       $this->response->status(201);
-      $this->response->headers("location", $url);
+      $this->response->headers("Location", $url);
     }
   }
 

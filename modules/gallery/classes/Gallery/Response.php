@@ -19,7 +19,7 @@
  */
 class Gallery_Response extends Kohana_Response {
   // Restrict all response frames to the same origin for security.
-  public static $default_config = array("_header" => array("x-frame-options" => "SAMEORIGIN"));
+  public static $default_config = array("_header" => array("X-Frame-Options" => "SAMEORIGIN"));
 
   /**
    * Overload Response::factory() to add our default config.  This is used to ensure

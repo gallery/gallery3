@@ -32,8 +32,8 @@ class Rest_Rest {
     // Response::$default_config, even error responses (e.g. 404) will have these headers.
     Response::$default_config = array_merge_recursive(Response::$default_config,
       array("_header" => array(
-        "x-gallery-api-version" => Rest::API_VERSION,
-        "allow" => static::$allowed_methods
+        "X-Gallery-Api-Version" => Rest::API_VERSION,
+        "Allow" => static::$allowed_methods
       )));
 
     // Set the error view to be the restful view.

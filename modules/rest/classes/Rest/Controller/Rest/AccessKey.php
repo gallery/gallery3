@@ -28,7 +28,7 @@ class Rest_Controller_Rest_AccessKey extends Controller_Rest {
       }
 
       // Set the access key
-      $this->request->headers("x-gallery-request-key", Rest::access_key());
+      $this->request->headers("X-Gallery-Request-Key", Rest::access_key());
     }
 
     return parent::check_auth($auth);
