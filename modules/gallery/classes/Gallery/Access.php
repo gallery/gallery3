@@ -700,8 +700,8 @@ class Gallery_Access {
 
       // Proxy our authorization headers so that if the entire Gallery is covered by Basic Auth
       // this callback will still work.
-      if ($auth = Request::initial()->headers("authorization")) {
-        $request->headers("authorization", $auth);
+      if ($auth = Request::initial()->headers("Authorization")) {
+        $request->headers("Authorization", $auth);
       }
 
       $response = $request->execute();

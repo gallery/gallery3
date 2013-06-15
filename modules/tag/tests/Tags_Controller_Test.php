@@ -34,7 +34,7 @@ class Tags_Controller_Test extends Unittest_TestCase {
 
     foreach ($urls as $url) {
       // Check that URL is redirected to canonical URL.
-      $redirected_url = Request::factory($url)->execute()->headers("location");
+      $redirected_url = Request::factory($url)->execute()->headers("Location");
       $this->assertEquals($canonical_url, $redirected_url);
     }
   }
