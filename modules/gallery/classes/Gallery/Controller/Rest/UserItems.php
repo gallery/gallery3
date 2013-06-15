@@ -136,6 +136,6 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
    * as a relationship of a "user" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "user") ? array("items" => array("user_items", $id)) : null;
+    return ($type == "user") ? array("items" => array("user_items", $id, $params)) : null;
   }
 }

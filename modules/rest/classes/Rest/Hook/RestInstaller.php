@@ -44,6 +44,13 @@ class Rest_Hook_RestInstaller {
       Module::set_var("rest", "allow_guest_access", false);
       Module::set_version("rest", $version = 3);
     }
+
+    if ($version == 3) {
+      Module::set_var("rest", "allow_jsonp_output", true);
+      Module::set_var("rest", "cors_embedding", "none");
+      Module::set_var("rest", "approved_domains", "");
+      Module::set_version("rest", $version = 4);
+    }
   }
 
   static function uninstall() {

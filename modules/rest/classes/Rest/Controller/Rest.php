@@ -91,11 +91,17 @@ abstract class Rest_Controller_Rest extends Controller {
       return;
     }
 
-    // Get the access key (if provided)
+    // Get the access key (if provided - key is empty for guest access).
     $key = $this->request->headers("X-Gallery-Request-Key");
     if (empty($key)) {
       $key = ($this->request->method() == HTTP_Request::GET) ?
               $this->request->query("access_key") : $this->request->post("access_key");
+    }
+
+    // Disallow JSONP output with access keys (public access only) or if blocked by configuration.
+    if ((strtolower($this->request->query("output")) == "jsonp") &&
+        ($key || !Module::get_var("rest", "allow_jsonp_output", true))) {
+      throw Rest_Exception::factory(403);
     }
 
     // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
@@ -168,7 +174,7 @@ abstract class Rest_Controller_Rest extends Controller {
   public function after() {
     // Get the output format, which will default to json unless we've used
     // the GET method and specified the "output" query parameter.
-    $output = Arr::get($this->request->query(), "output", "json");
+    $output = strtolower(Arr::get($this->request->query(), "output", "json"));
 
     // Format $this->rest_response into the Response body based on the output format
     switch ($output) {
@@ -358,7 +364,7 @@ abstract class Rest_Controller_Rest extends Controller {
     $headers = $this->request->headers("Access-Control-Request-Headers");  // optional
 
     $allow_origin = Rest::approve_origin($origin);
-    $allow_method = (!$method || in_array(strtoupper($method), Rest::$allowed_methods));
+    $allow_method = ($method && in_array(strtoupper($method), Rest::$allowed_methods));
     $allow_headers = true;
     if (!empty($headers)) {
       $allowed_headers = array_map("strtolower", Rest::$allowed_headers);

@@ -110,6 +110,6 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
    * as a relationship of an "item" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "item") ? array("comments" => array("item_comments", $id)) : null;
+    return ($type == "item") ? array("comments" => array("item_comments", $id, $params)) : null;
   }
 }
