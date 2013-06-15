@@ -100,7 +100,7 @@ abstract class Rest_Controller_Rest extends Controller {
 
     // Disallow JSONP output with access keys (public access only) or if blocked by configuration.
     if ((strtolower($this->request->query("output")) == "jsonp") &&
-        ($key || !Module::get_var("rest", "allow_jsonp_access", true))) {
+        ($key || !Module::get_var("rest", "allow_jsonp_output", true))) {
       throw Rest_Exception::factory(403);
     }
 
