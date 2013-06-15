@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Controller_Rest_AccessKey extends Controller_Rest {
-  public function check_auth($auth) {
+  public function before() {
     if ($this->request->method() != HTTP_Request::GET) {
       // Check login using "user" and "password" fields in POST.  Fire a 403 Forbidden if it fails.
       if (!Validation::factory($this->request->post())
@@ -31,12 +31,12 @@ class Rest_Controller_Rest_AccessKey extends Controller_Rest {
       $this->request->headers("X-Gallery-Request-Key", Rest::access_key());
     }
 
-    return parent::check_auth($auth);
+    return parent::before();
   }
 
   public function action_get() {
     // We want to return an empty response with either status 200 or 403, depending on if guest
-    // access is allowed.  Since Controller_Rest::check_auth() would have already fired a 403
+    // access is allowed.  Since Controller_Rest::before() would have already fired a 403
     // if a login was required, we have nothing left to do here - this will return a 200.
   }
 

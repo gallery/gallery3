@@ -24,8 +24,22 @@ class Rest_Rest {
     HTTP_Request::GET,
     HTTP_Request::POST,
     HTTP_Request::PUT,
-    HTTP_Request::DELETE
+    HTTP_Request::DELETE,
+    HTTP_Request::OPTIONS
   );
+
+  static $allowed_headers = array(
+    "X-Gallery-Request-Key",
+    "X-Gallery-Request-Method",
+    "X-Requested-With"
+  );
+
+  static $exposed_headers = array(
+    "X-Gallery-Api-Version",
+    "Allow"
+  );
+
+  static $preflight_max_age = 604800;  // one week
 
   static function init() {
     // Add the REST API version and allowed methods to the header.  Since we're adding it to
@@ -338,6 +352,42 @@ class Rest_Rest {
     }
 
     return array_unique($results);
+  }
+
+  /**
+   * Approve an "Origin" header value.  This checks the REST config and returns an
+   * "Access-Control-Allow-Origin" header value if it passes or false if it fails.
+   *
+   * @param   string  origin
+   * @return  mixed   false if failed, string if passed
+   * @see  http://www.w3.org/TR/cors
+   */
+  static function approve_origin($origin) {
+    $origin = strtolower($origin);
+    if (empty($origin)) {
+      return false;
+    }
+
+    switch (Module::get_var("rest", "cors_embedding", "none")) {
+    case "all":
+      return "*";
+
+    case "list":
+      foreach (unserialize(Module::get_var("rest", "approved_domains", array())) as $domain) {
+        // Check the end of the sent origin against our list.  So, if "example.com" is approved,
+        // then "foo.example.com", "http://example.com", and "https://foo.example.com" are also
+        // approved.
+        if (substr($origin, -strlen($domain)) == $domain) {
+          return $origin;
+        }
+      }
+
+    case "none":
+    default:
+      // No checks if "none" or invalid.
+    }
+
+    return false;
   }
 
   static protected function _call_rest_func($func, $type, $id, $params) {
