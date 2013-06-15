@@ -134,7 +134,7 @@ class Akismet_Akismet {
     }
 
     $request = Request::factory("http://$sub" . static::URL . $function)
-      ->headers("user-agent", "Gallery/3 | Akismet/" . Module::get_version("akismet"))
+      ->headers("User-Agent", "Gallery/3 | Akismet/" . Module::get_version("akismet"))
       ->method(Request::POST)
       ->post($post);
 

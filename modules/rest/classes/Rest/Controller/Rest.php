@@ -47,32 +47,16 @@ abstract class Rest_Controller_Rest extends Controller {
   );
 
   /**
-   * Get the REST access key (if provided), attempt to login the user, and check auth.
-   * The only two possible results are a successful login or a 403 Forbidden.  Because
-   * of this, the $auth variable is simply passed through without modification.
+   * Override Controller::check_auth() since REST doesn't have pages for login or reauth redirects.
+   * We check maintenance mode here, and handle REST authentication in Controller_Rest::before().
    *
    * NOTE: this doesn't extend Controller::check_auth(), but rather *replaces* it with
    * its restful counterpart (i.e. parent::check_auth() is never called).
    *
    * @see  Controller::check_auth(), which is replaced by this implementation
-   * @see  Controller::auth_for_private_gallery()
-   * @see  Controller::auth_for_maintenance_mode()
-   * @see  Rest::set_active_user()
    */
   public function check_auth($auth) {
-    // Get the access key (if provided)
-    $key = $this->request->headers("x-gallery-request-key");
-    if (empty($key)) {
-      $key = ($this->request->method() == HTTP_Request::GET) ?
-              $this->request->query("access_key") : $this->request->post("access_key");
-    }
-
-    // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
-    Rest::set_active_user($key);
-
-    // Check for maintenance mode or private gallery restrictions.  Since there is no
-    // redirection to login/reauthenticate screen in REST, fire a 403 Forbidden if found.
-    if ($this->auth_for_maintenance_mode() || $this->auth_for_private_gallery()) {
+    if (Module::get_var("gallery", "maintenance_mode", 0)) {
       throw Rest_Exception::factory(403);
     }
 
@@ -86,9 +70,7 @@ abstract class Rest_Controller_Rest extends Controller {
     parent::before();
 
     // Check if the X-Gallery-Request-Method header is defined.
-    // @todo: consider checking other common REST method overrides, such as
-    // X-HTTP-Method (Microsoft), X-HTTP-Method-Override (Google/GData), X-METHOD-OVERRIDE, etc.
-    if ($method = strtoupper($this->request->headers("x-gallery-request-method"))) {
+    if ($method = strtoupper($this->request->headers("X-Gallery-Request-Method"))) {
       // Set the X-Gallery-Request-Method header as the method.
       $this->request->method($method);
     } else {
@@ -96,13 +78,35 @@ abstract class Rest_Controller_Rest extends Controller {
       $method = $this->request->method();
     }
 
-    // If the method is not one of GET, POST, PUT, or DELETE, fire a 405 Method Not Allowed.
+    // If the method is not allowed, fire a 405 Method Not Allowed.
     if (!in_array($method, Rest::$allowed_methods)) {
       throw Rest_Exception::factory(405);
     }
 
     // Set the action as the method.
     $this->request->action(strtolower($method));
+
+    // If we have an OPTIONS request, we're done here.  This intentionally skips login.
+    if ($method == HTTP_Request::OPTIONS) {
+      return;
+    }
+
+    // Get the access key (if provided)
+    $key = $this->request->headers("X-Gallery-Request-Key");
+    if (empty($key)) {
+      $key = ($this->request->method() == HTTP_Request::GET) ?
+              $this->request->query("access_key") : $this->request->post("access_key");
+    }
+
+    // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
+    Rest::set_active_user($key);
+
+    // Process the "Origin" header if sent (not required).
+    if (($method != HTTP_Request::OPTIONS) &&
+        ($origin = $this->request->headers("Origin")) &&
+        Rest::approve_origin($origin)) {
+      $this->response->headers("Access-Control-Allow-Origin", $origin);
+    }
 
     // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
     $this->rest_type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
@@ -169,7 +173,7 @@ abstract class Rest_Controller_Rest extends Controller {
     // Format $this->rest_response into the Response body based on the output format
     switch ($output) {
     case "json":
-      $this->response->headers("content-type", "application/json; charset=" . Kohana::$charset);
+      $this->response->headers("Content-Type", "application/json; charset=" . Kohana::$charset);
       $this->response->body(json_encode($this->rest_response));
       break;
 
@@ -182,7 +186,7 @@ abstract class Rest_Controller_Rest extends Controller {
         throw Rest_Exception::factory(400, array("callback" => "invalid"));
       }
 
-      $this->response->headers("content-type", "application/javascript; charset=" . Kohana::$charset);
+      $this->response->headers("Content-Type", "application/javascript; charset=" . Kohana::$charset);
       $this->response->body("$callback(" . json_encode($this->rest_response) . ")");
       break;
 
@@ -191,7 +195,7 @@ abstract class Rest_Controller_Rest extends Controller {
         "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
         var_export($this->rest_response, true));
 
-      $this->response->headers("content-type", "text/html; charset=" . Kohana::$charset);
+      $this->response->headers("Content-Type", "text/html; charset=" . Kohana::$charset);
       $this->response->body("<pre>$html</pre>");
 
       // @todo: the profiler needs to be updated for K3.
@@ -330,7 +334,7 @@ abstract class Rest_Controller_Rest extends Controller {
     if (Arr::get($result, 3, true)) {
       // New resource - set the status and headers.
       $this->response->status(201);
-      $this->response->headers("location", $url);
+      $this->response->headers("Location", $url);
     }
   }
 
@@ -341,6 +345,41 @@ abstract class Rest_Controller_Rest extends Controller {
     $this->check_method();
 
     Rest::delete($this->rest_type, $this->rest_id, $this->request->post());
+  }
+
+  /**
+   * Send an OPTIONS response for a CORS preflight request.  This action should *not*
+   * ever be overriden in REST resource classes.
+   * @see  http://www.w3.org/TR/cors
+   */
+  public function action_options() {
+    $origin =  $this->request->headers("Origin");                          // required
+    $method =  $this->request->headers("Access-Control-Request-Method");   // required
+    $headers = $this->request->headers("Access-Control-Request-Headers");  // optional
+
+    $allow_origin = Rest::approve_origin($origin);
+    $allow_method = (!$method || in_array(strtoupper($method), Rest::$allowed_methods));
+    $allow_headers = true;
+    if (!empty($headers)) {
+      $allowed_headers = array_map("strtolower", Rest::$allowed_headers);
+      $headers = explode(",", $headers);
+      foreach ($headers as $header) {
+        if (!in_array(strtolower(trim($header)), $allowed_headers)) {
+          $allow_headers = false;
+        }
+      }
+    }
+
+    if (!$allow_origin || !$allow_method || !$allow_headers) {
+      throw Rest_Exception::factory(403);
+    }
+
+    // CORS preflight passed - send response (headers only, no body).
+    $this->response->headers("Access-Control-Allow-Origin",   $allow_origin);
+    $this->response->headers("Access-Control-Allow-Methods",  Rest::$allowed_methods);
+    $this->response->headers("Access-Control-Allow-Headers",  Rest::$allowed_headers);
+    $this->response->headers("Access-Control-Expose-Headers", Rest::$exposed_headers);
+    $this->response->headers("Access-Control-Max-Age",        Rest::$preflight_max_age);
   }
 
   /**
