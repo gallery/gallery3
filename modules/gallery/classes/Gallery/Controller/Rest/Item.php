@@ -33,7 +33,7 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
    *   type=<comma-separated list of photo, movie or album>
    *     Limit the type to types in this list (e.g. "type=photo,movie").
    *     Also limits the types returned in the member collections (i.e. sub-albums).
-   *   @see  Controller_Rest_Item::action_get()
+   *   @see  Controller_Rest_Item::before()
    *   @see  Controller_Rest_Item::get_members()
    *
    * PUT can accept the following post parameters:
@@ -361,13 +361,14 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::action_get() to use the "random" parameter, if specified.
+   * Override Controller_Rest::before() to use the "random" parameter, if specified.
    */
-  public function action_get() {
+  public function before() {
+    parent::before();
+
     // If the "random" parameter is set, get a random item id.
     if ($this->request->query("random")) {
       // This doesn't always work, so keep trying until it does...
-      $id = 0;
       do {
         $id = Item::random_query()->offset(0)->limit(1)->find()->id;
       } while (!$id);
@@ -379,7 +380,5 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
       unset($query["random"]);
       $this->request->query($query);
     }
-
-    return parent::action_get();
   }
 }

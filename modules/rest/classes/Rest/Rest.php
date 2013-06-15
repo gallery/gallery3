@@ -212,62 +212,6 @@ class Rest_Rest {
   }
 
   /**
-   * GET a resource's entity.
-   * @return  array  entity fields
-   */
-  static function get_entity($type, $id=null, $params=array()) {
-    return static::_call_rest_func("get_entity", $type, $id, $params);
-  }
-
-  /**
-   * GET a resource's members.
-   * @return  array  type/id/params triads
-   */
-  static function get_members($type, $id=null, $params=array()) {
-    return static::_call_rest_func("get_members", $type, $id, $params);
-  }
-
-  /**
-   * PUT a resource's entity.
-   * @return  null
-   */
-  static function put_entity($type, $id=null, $params=array()) {
-    return static::_call_rest_func("put_entity", $type, $id, $params);
-  }
-
-  /**
-   * PUT a resource's members.
-   * @return  null
-   */
-  static function put_members($type, $id=null, $params=array()) {
-    return static::_call_rest_func("put_members", $type, $id, $params);
-  }
-
-  /**
-   * POST a resource's entity.
-   * @return  array  type/id/params/new_flag array (default new_flag is true)
-   */
-  static function post_entity($type, $id=null, $params=array()) {
-    return static::_call_rest_func("post_entity", $type, $id, $params);
-  }
-
-  /**
-   * POST a resource's members.
-   * @return  null
-   */
-  static function post_members($type, $id=null, $params=array()) {
-    return static::_call_rest_func("post_members", $type, $id, $params);
-  }
-
-  /**
-   * DELETE a resource.
-   * @return  null
-   */
-  static function delete($type, $id=null, $params=array()) {
-    return static::_call_rest_func("delete", $type, $id, $params);
-  }
-
-  /**
    * Find a resource's relationships.
    * @return  array  type/id/params triads
    */
@@ -306,12 +250,12 @@ class Rest_Rest {
 
     $results["url"] = Rest::url($type, $id, $params);
 
-    $data = Rest::get_entity($type, $id, $params);
+    $data = Rest::resource_func("get_entity", $type, $id, $params);
     if (isset($data)) {
       $results["entity"] = $data;
     }
 
-    $data = Rest::get_members($type, $id, $params);
+    $data = Rest::resource_func("get_members", $type, $id, $params);
     if (isset($data)) {
       $results["members"] = array();
       foreach ($data as $key => $member) {
@@ -324,7 +268,7 @@ class Rest_Rest {
       foreach ($data as $r_key => $rel) {
         $results["relationships"][$r_key]["url"] = Rest::url($rel);
 
-        $rel_members = Rest::get_members($rel);
+        $rel_members = Rest::resource_func("get_members", $rel);
         if (isset($rel_members)) {
           $results["relationships"][$r_key]["members"] = array();
           foreach ($rel_members as $key => $member) {
@@ -392,7 +336,20 @@ class Rest_Rest {
     return false;
   }
 
-  static protected function _call_rest_func($func, $type, $id, $params) {
+  /**
+   * Call a function of a specific REST resource.  The expected response is
+   * either an array or null, depending on which function is called.
+   *   get_entity   - array of entity fields
+   *   get_members  - array of type/id/params triads
+   *   put_entity   - null
+   *   put_members  - null
+   *   post_entity  - array with type/id/params/new_flag of resource (default new_flag is true)
+   *   post_members - null
+   *   delete       - null
+   *
+   * @return  array or null
+   */
+  static function resource_func($func, $type, $id=null, $params=array()) {
     if (is_array($type)) {
       list ($type, $id, $params) = static::_split_triad($type);
     }

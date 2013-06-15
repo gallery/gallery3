@@ -135,7 +135,7 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
    * @see  Controller_Rest_Tag::delete()
    */
   static function delete($id, $params) {
-    return Rest::delete("tag", $id, $params);
+    return Rest::resource_func("delete", "tag", $id, $params);
   }
 
   /**
