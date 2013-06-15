@@ -24,12 +24,7 @@
  * so it's sufficient to look in $this->request->headers().
  */
 abstract class Rest_Controller_Rest extends Controller {
-  public $allow_private_gallery = true;
-
-  // REST response used by Controller_Rest::after() to generate the Response body.  Since
-  // the default action_get() sets this and since POST/PUT/DELETE typically have no output,
-  // most resources don't need to access this directly.
-  // @see  Controller_Rest::after()
+  // REST response used by Controller_Rest::after() to generate the Response body.
   public $rest_response = array();
 
   // REST resource type and id.  These are set in Controller_Rest::before().
@@ -40,10 +35,7 @@ abstract class Rest_Controller_Rest extends Controller {
   public static $default_params = array(
     "start" => 0,
     "num" => 100,
-    "expand_members" => false,
-    "type" => null,
-    "access_key" => null,
-    "output" => "json"
+    "expand_members" => false
   );
 
   /**
