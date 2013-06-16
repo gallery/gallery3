@@ -766,7 +766,6 @@ class Gallery_Model_Item extends ORM_MPTT {
       }
     } else {
       // Missing thumbnail, can happen on albums with no photos yet.
-      // @todo we should enforce a placeholder for those albums.
       $width = 0;
       $height = 0;
     }

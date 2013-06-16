@@ -18,23 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Watermark_Hook_WatermarkInstaller {
-  // @todo: upgrade to the next version and remove this table, as it's never used.
-  // rather, module vars are used to store everything.
   static function install() {
-    $db = Database::instance();
-    $db->query(Database::CREATE, "CREATE TABLE IF NOT EXISTS {watermarks} (
-                 `id` int(9) NOT NULL auto_increment,
-                 `name` varchar(32) NOT NULL,
-                 `width` int(9) NOT NULL,
-                 `height` int(9) NOT NULL,
-                 `active` boolean default 0,
-                 `position` boolean default 0,
-                 `mime_type` varchar(64) default NULL,
-                 PRIMARY KEY (`id`),
-                 UNIQUE KEY(`name`))
-               DEFAULT CHARSET=utf8;");
-
     @mkdir(VARPATH . "modules/watermark");
+  }
+
+  static function upgrade($version) {
+    if ($version <= 2) {
+      // This empty table hasn't been used in a long time...
+      Database::instance()->query(Database::DROP, "DROP TABLE {watermarks}");
+      Module::set_version("watermark", $version = 3);
+    }
   }
 
   static function uninstall() {
