@@ -150,10 +150,13 @@ abstract class Rest_Controller_Rest extends Controller {
         }
       }
       // Process the "entity", "members", and "relationships" parameters, if specified.
-      foreach (array("entity", "members", "relationships") as $key) {
+      // Since relationships have no entity, we can make them purely associative.
+      foreach (array("entity"        => false,
+                     "members"       => true,
+                     "relationships" => true) as $key => $assoc) {
         $value = $this->request->post($key);
         if (isset($value)) {
-          $this->request->post($key, json_decode($value));
+          $this->request->post($key, json_decode($value, $assoc));
         }
       }
       break;
@@ -252,12 +255,60 @@ abstract class Rest_Controller_Rest extends Controller {
       }
 
       foreach ($members as $key => $member) {
-        $this->rest_response[$key] = Rest::get_resource($member);
+        $this->rest_response[$key] = $this->format_resource($member);
       }
     } else {
       $this->rest_response =
-        Rest::get_resource($this->rest_type, $this->rest_id, $this->request->query());
+        $this->format_resource($this->rest_type, $this->rest_id, $this->request->query());
     }
+  }
+
+  /**
+   * Format a resource's output.  This returns an array of the url, entity, members, and
+   * relationships of the resource, and is used by Controller_Rest::action_get().
+   *
+   * When building the members and relationship members lists, we maintain the array keys
+   * (useful for showing item weights, etc) and the distinction between null and array()
+   * (e.g. "comment" members is null, but "comments" with no members is array()).
+   */
+  public function format_resource($type, $id=null, $params=array()) {
+    if (is_array($type)) {
+      list ($type, $id, $params) = Rest::split_triad($type);
+    }
+
+    $results = array();
+
+    $results["url"] = Rest::url($type, $id, $params);
+
+    $data = Rest::resource_func("get_entity", $type, $id, $params);
+    if (isset($data)) {
+      $results["entity"] = $data;
+    }
+
+    $data = Rest::resource_func("get_members", $type, $id, $params);
+    if (isset($data)) {
+      $results["members"] = array();
+      foreach ($data as $key => $member) {
+        $results["members"][$key] = Rest::url($member);
+      }
+    }
+
+    $data = Rest::relationships($type, $id, $params);
+    if (isset($data)) {
+      foreach ($data as $r_key => $rel) {
+        $results["relationships"][$r_key]["url"] = Rest::url($rel);
+
+        $rel_members = Rest::resource_func("get_members", $rel);
+        if (isset($rel_members)) {
+          $results["relationships"][$r_key]["members"] = array();
+          foreach ($rel_members as $key => $member) {
+            $results["relationships"][$r_key]["members"][$key] = Rest::url($member);
+          }
+        }
+      }
+    }
+
+    return $results;
   }
 
   /**
@@ -275,7 +326,7 @@ abstract class Rest_Controller_Rest extends Controller {
       Rest::resource_func("put_members", $this->rest_type, $this->rest_id, $this->request->post());
     }
 
-    $put_rels = (array)$this->request->post("relationships");
+    $put_rels = $this->request->post("relationships");
     if (isset($put_rels)) {
       $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
       foreach ($put_rels as $r_key => $r_params) {
@@ -284,7 +335,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+        Rest::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
       }
     }
   }
@@ -315,7 +366,7 @@ abstract class Rest_Controller_Rest extends Controller {
         Rest::resource_func("post_members", $result[0], $result[1], $this->request->post());
       }
 
-      $post_rels = (array)$this->request->post("relationships");
+      $post_rels = $this->request->post("relationships");
       if (isset($post_rels)) {
         $actual_rels = Rest::relationships($result[0], $result[1]);
         foreach ($post_rels as $r_key => $r_params) {
@@ -324,7 +375,7 @@ abstract class Rest_Controller_Rest extends Controller {
             throw Rest_Exception::factory(400, array("relationships" => "invalid"));
           }
 
-          Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+          Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
         }
       }
     } catch (Exception $e) {
