@@ -315,9 +315,9 @@ class Gallery_Controller_Rest_Item extends Controller_Rest {
     }
 
     // Resolve our members list into an array of weights => ids.
-    $members_array = Rest::resolve_members($param["members"],
-      function($type, $id, $param, $data) {
-        return (($type == "item") && (ORM::factory("Item", $id)->parent_id == $data));
+    $members_array = Rest::resolve_members($params["members"],
+      function($type, $id, $params, $data) {
+        return (($type == "item") && (ORM::factory("Item", $id)->parent_id == $data)) ? $id : null;
       }, $item->id);
 
     // Sort members by their weights (given by their keys).

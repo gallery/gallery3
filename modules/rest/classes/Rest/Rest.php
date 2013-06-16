@@ -189,7 +189,7 @@ class Rest_Rest {
    */
   static function url($type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     // Carry over the "sticky" params.
@@ -217,7 +217,7 @@ class Rest_Rest {
    */
   static function relationships($type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     $results = array();
@@ -226,54 +226,6 @@ class Rest_Rest {
       if (class_exists($class) && method_exists($class, "relationships")) {
         if ($tmp = call_user_func("$class::relationships", $type, $id, $params)) {
           $results = array_merge($results, $tmp);
-        }
-      }
-    }
-
-    return $results;
-  }
-
-  /**
-   * GET a resource's output.  This returns an array of the url, entity, members, and
-   * relationships of the resource.
-   *
-   * When building the members and relationship members lists, we maintain the array keys
-   * (useful for showing item weights, etc) and the distinction between null and array()
-   * (e.g. "comment" members is null, but "comments" with no members is array()).
-   */
-  static function get_resource($type, $id=null, $params=array()) {
-    if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
-    }
-
-    $results = array();
-
-    $results["url"] = Rest::url($type, $id, $params);
-
-    $data = Rest::resource_func("get_entity", $type, $id, $params);
-    if (isset($data)) {
-      $results["entity"] = $data;
-    }
-
-    $data = Rest::resource_func("get_members", $type, $id, $params);
-    if (isset($data)) {
-      $results["members"] = array();
-      foreach ($data as $key => $member) {
-        $results["members"][$key] = Rest::url($member);
-      }
-    }
-
-    $data = Rest::relationships($type, $id, $params);
-    if (isset($data)) {
-      foreach ($data as $r_key => $rel) {
-        $results["relationships"][$r_key]["url"] = Rest::url($rel);
-
-        $rel_members = Rest::resource_func("get_members", $rel);
-        if (isset($rel_members)) {
-          $results["relationships"][$r_key]["members"] = array();
-          foreach ($rel_members as $key => $member) {
-            $results["relationships"][$r_key]["members"][$key] = Rest::url($member);
-          }
         }
       }
     }
@@ -351,7 +303,7 @@ class Rest_Rest {
    */
   static function resource_func($func, $type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
@@ -362,7 +314,10 @@ class Rest_Rest {
     return call_user_func("$class::$func", $id, $params);
   }
 
-  static protected function _split_triad($triad) {
+  /**
+   * Split a REST resource triad, ensuring that each value has the correct defaults.
+   */
+  static function split_triad($triad) {
     return array(Arr::get($triad, 0), Arr::get($triad, 1), Arr::get($triad, 2, array()));
   }
 }
