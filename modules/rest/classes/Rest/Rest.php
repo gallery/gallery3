@@ -189,7 +189,7 @@ class Rest_Rest {
    */
   static function url($type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     // Carry over the "sticky" params.
@@ -217,7 +217,7 @@ class Rest_Rest {
    */
   static function relationships($type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     $results = array();
@@ -243,7 +243,7 @@ class Rest_Rest {
    */
   static function get_resource($type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     $results = array();
@@ -351,7 +351,7 @@ class Rest_Rest {
    */
   static function resource_func($func, $type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = static::_split_triad($type);
+      list ($type, $id, $params) = static::split_triad($type);
     }
 
     $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
@@ -362,7 +362,10 @@ class Rest_Rest {
     return call_user_func("$class::$func", $id, $params);
   }
 
-  static protected function _split_triad($triad) {
+  /**
+   * Split a REST resource triad, ensuring that each value has the correct defaults.
+   */
+  static function split_triad($triad) {
     return array(Arr::get($triad, 0), Arr::get($triad, 1), Arr::get($triad, 2, array()));
   }
 }
