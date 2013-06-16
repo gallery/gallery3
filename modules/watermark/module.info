@@ -1,6 +1,6 @@
 name = "Watermarks"
 description = "Allows users to watermark their photos"
-version = 2
+version = 3
 author_name = "Gallery Team"
 author_url = "http://codex.galleryproject.org/Gallery:Team"
 info_url = "http://codex.galleryproject.org/Gallery3:Modules:watermark"

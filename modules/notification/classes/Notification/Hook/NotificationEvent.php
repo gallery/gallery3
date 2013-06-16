@@ -33,7 +33,7 @@ class Notification_Hook_NotificationEvent {
     try {
       Notification::send_item_add($item);
     } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR, "@todo Hook_NotificationEvent::item_created() failed");
+      Log::instance()->add(Log::ERROR, "Hook_NotificationEvent::item_created() failed");
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
@@ -46,7 +46,7 @@ class Notification_Hook_NotificationEvent {
         Notification::remove_watch($item);
       }
     } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR, "@todo Hook_NotificationEvent::item_deleted() failed");
+      Log::instance()->add(Log::ERROR, "Hook_NotificationEvent::item_deleted() failed");
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
@@ -68,7 +68,7 @@ class Notification_Hook_NotificationEvent {
         Notification::send_comment_published($comment);
       }
     } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR, "@todo Hook_NotificationEvent::comment_created() failed");
+      Log::instance()->add(Log::ERROR, "Hook_NotificationEvent::comment_created() failed");
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
@@ -79,7 +79,7 @@ class Notification_Hook_NotificationEvent {
         Notification::send_comment_published($new);
       }
     } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR, "@todo Hook_NotificationEvent::comment_updated() failed");
+      Log::instance()->add(Log::ERROR, "Hook_NotificationEvent::comment_updated() failed");
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
@@ -90,7 +90,7 @@ class Notification_Hook_NotificationEvent {
         ->where("user_id", "=", $user->id)
         ->execute();
     } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR, "@todo Hook_NotificationEvent::user_before_delete() failed");
+      Log::instance()->add(Log::ERROR, "Hook_NotificationEvent::user_before_delete() failed");
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
@@ -99,7 +99,7 @@ class Notification_Hook_NotificationEvent {
     try {
       Notification::send_pending_notifications();
     } catch (Exception $e) {
-      Log::instance()->add(Log::ERROR, "@todo Hook_NotificationEvent::batch_complete() failed");
+      Log::instance()->add(Log::ERROR, "Hook_NotificationEvent::batch_complete() failed");
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
