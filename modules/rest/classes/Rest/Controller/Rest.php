@@ -291,8 +291,8 @@ abstract class Rest_Controller_Rest extends Controller {
 
   /**
    * POST a typical REST resource.  As needed, this runs post_entity() and post_members() for
-   * the resource, as well as post_members() for the resource's relationships, as well as setting
-   * the response body as array("url" => $url).
+   * the resource, as well as post_members() for the resource's relationships.  The response
+   * body will be array("url" => $url).
    *
    * By default, a successful POST returns a 201 response with a "Location" header.  However,
    * if a post_entity() function decides that the resource already exists, they can override this
@@ -304,36 +304,51 @@ abstract class Rest_Controller_Rest extends Controller {
 
     if (Arr::get($this->request->post(), "entity")) {
       $result = Rest::resource_func("post_entity", $this->rest_type, $this->rest_id, $this->request->post());
+      $url = Rest::url($result);
+      $new_flag = Arr::get($result, 3, true);
     } else {
       throw Rest_Exception::factory(400, array("entity" => "required"));
     }
 
-    if (Arr::get($this->request->post(), "members")) {
-      Rest::resource_func("post_members", $result[0], $result[1], $this->request->post());
-    }
-
-    $post_rels = (array)$this->request->post("relationships");
-    if (isset($post_rels)) {
-      $actual_rels = Rest::relationships($result[0], $result[1]);
-      foreach ($post_rels as $r_key => $r_params) {
-        if (empty($actual_rels[$r_key])) {
-          // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
-          throw Rest_Exception::factory(400, array("relationships" => "invalid"));
-        }
-
-        Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+    try {
+      if (Arr::get($this->request->post(), "members")) {
+        Rest::resource_func("post_members", $result[0], $result[1], $this->request->post());
       }
+
+      $post_rels = (array)$this->request->post("relationships");
+      if (isset($post_rels)) {
+        $actual_rels = Rest::relationships($result[0], $result[1]);
+        foreach ($post_rels as $r_key => $r_params) {
+          if (empty($actual_rels[$r_key])) {
+            // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
+            throw Rest_Exception::factory(400, array("relationships" => "invalid"));
+          }
+
+          Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+        }
+      }
+    } catch (Exception $e) {
+      if ($new_flag) {
+        // The entity created a new resource, but the members/relationships failed.  This
+        // means that the request is bad, so we need to delete the newly-created resource.
+        // Since direct deletes aren't always allowed (e.g. a user with add but not edit
+        // access), we force admin access for this sub-request.
+        Request::factory(substr($url, strlen(URL::abs_site("")))) // rel URL for internal request
+          ->method(HTTP_Request::DELETE)
+          ->headers("X-Gallery-Request-Key", Rest::access_key(Identity::admin_user()))
+          ->execute();
+      }
+
+      throw $e;
     }
 
-    // Set the response body.
-    $url = Rest::url($result);
-    $this->rest_response = array("url" => $url);
-
-    if (Arr::get($result, 3, true)) {
+    if ($new_flag) {
       // New resource - set the status and headers.
       $this->response->status(201);
       $this->response->headers("Location", $url);
     }
+
+    $this->rest_response = array("url" => $url);
   }
 
   /**
