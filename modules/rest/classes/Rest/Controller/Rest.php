@@ -150,10 +150,13 @@ abstract class Rest_Controller_Rest extends Controller {
         }
       }
       // Process the "entity", "members", and "relationships" parameters, if specified.
-      foreach (array("entity", "members", "relationships") as $key) {
+      // Since relationships have no entity, we can make them purely associative.
+      foreach (array("entity"        => false,
+                     "members"       => true,
+                     "relationships" => true) as $key => $assoc) {
         $value = $this->request->post($key);
         if (isset($value)) {
-          $this->request->post($key, json_decode($value));
+          $this->request->post($key, json_decode($value, $assoc));
         }
       }
       break;
@@ -323,7 +326,7 @@ abstract class Rest_Controller_Rest extends Controller {
       Rest::resource_func("put_members", $this->rest_type, $this->rest_id, $this->request->post());
     }
 
-    $put_rels = (array)$this->request->post("relationships");
+    $put_rels = $this->request->post("relationships");
     if (isset($put_rels)) {
       $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
       foreach ($put_rels as $r_key => $r_params) {
@@ -332,7 +335,7 @@ abstract class Rest_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+        Rest::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
       }
     }
   }
@@ -363,7 +366,7 @@ abstract class Rest_Controller_Rest extends Controller {
         Rest::resource_func("post_members", $result[0], $result[1], $this->request->post());
       }
 
-      $post_rels = (array)$this->request->post("relationships");
+      $post_rels = $this->request->post("relationships");
       if (isset($post_rels)) {
         $actual_rels = Rest::relationships($result[0], $result[1]);
         foreach ($post_rels as $r_key => $r_params) {
@@ -372,7 +375,7 @@ abstract class Rest_Controller_Rest extends Controller {
             throw Rest_Exception::factory(400, array("relationships" => "invalid"));
           }
 
-          Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), (array)$r_params);
+          Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
         }
       }
     } catch (Exception $e) {
