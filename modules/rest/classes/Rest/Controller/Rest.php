@@ -252,12 +252,60 @@ abstract class Rest_Controller_Rest extends Controller {
       }
 
       foreach ($members as $key => $member) {
-        $this->rest_response[$key] = Rest::get_resource($member);
+        $this->rest_response[$key] = $this->format_resource($member);
       }
     } else {
       $this->rest_response =
-        Rest::get_resource($this->rest_type, $this->rest_id, $this->request->query());
+        $this->format_resource($this->rest_type, $this->rest_id, $this->request->query());
     }
+  }
+
+  /**
+   * Format a resource's output.  This returns an array of the url, entity, members, and
+   * relationships of the resource, and is used by Controller_Rest::action_get().
+   *
+   * When building the members and relationship members lists, we maintain the array keys
+   * (useful for showing item weights, etc) and the distinction between null and array()
+   * (e.g. "comment" members is null, but "comments" with no members is array()).
+   */
+  public function format_resource($type, $id=null, $params=array()) {
+    if (is_array($type)) {
+      list ($type, $id, $params) = Rest::split_triad($type);
+    }
+
+    $results = array();
+
+    $results["url"] = Rest::url($type, $id, $params);
+
+    $data = Rest::resource_func("get_entity", $type, $id, $params);
+    if (isset($data)) {
+      $results["entity"] = $data;
+    }
+
+    $data = Rest::resource_func("get_members", $type, $id, $params);
+    if (isset($data)) {
+      $results["members"] = array();
+      foreach ($data as $key => $member) {
+        $results["members"][$key] = Rest::url($member);
+      }
+    }
+
+    $data = Rest::relationships($type, $id, $params);
+    if (isset($data)) {
+      foreach ($data as $r_key => $rel) {
+        $results["relationships"][$r_key]["url"] = Rest::url($rel);
+
+        $rel_members = Rest::resource_func("get_members", $rel);
+        if (isset($rel_members)) {
+          $results["relationships"][$r_key]["members"] = array();
+          foreach ($rel_members as $key => $member) {
+            $results["relationships"][$r_key]["members"][$key] = Rest::url($member);
+          }
+        }
+      }
+    }
+
+    return $results;
   }
 
   /**
