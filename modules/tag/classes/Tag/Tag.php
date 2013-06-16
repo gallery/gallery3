@@ -21,12 +21,10 @@ class Tag_Tag {
   /**
    * Associate a tag with an item.  Create the tag if it doesn't already exist.
    *
-   * @todo Write test.
-   *
    * @param Model_Item $item an item
    * @param string     $tag_name a tag name
    * @return Model_Tag
-   * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
+   * @throws Gallery_Exception("missing tag name")
    */
   static function add($item, $tag_name) {
     if (empty($tag_name)) {
