@@ -807,7 +807,7 @@ class Formo_Core_Formo extends Formo_Innards {
 				}
 				elseif ($field = $this->find($namespace) AND $field->driver('is_a_parent'))
 				{
-					$field->_load($values);
+					$field->load($values);
 				}
 			}
 		}
