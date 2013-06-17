@@ -61,7 +61,10 @@ class Tag_Controller_Rest_Tags extends Controller_Rest {
       throw Rest_Exception::factory(404);
     }
 
-    return $tag->as_array();
+    $data = $tag->as_array();
+    $data["web_url"] = $tag->abs_url();
+
+    return $data;
   }
 
   /**
