@@ -21,12 +21,11 @@ class Gallery_Controller_Rest_Users extends Controller_Rest {
   /**
    * This read-only resource represents a user profile.
    *
-   * GET can accept the following query parameters:
+   * GET displays a user (id or "show" parameter required)
    *   show=self
    *     Return the active user
    *   show=guest
    *     Return the guest user
-   *   @see  Controller_Rest_User::before()
    */
 
   /**

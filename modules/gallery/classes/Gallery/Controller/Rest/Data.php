@@ -19,17 +19,16 @@
  */
 class Gallery_Controller_Rest_Data extends Controller_Rest {
   /**
-   * This read-only resource returns the raw contents of Model_Item data files.  It's
-   * analogous to the FileProxy controller, but it uses the REST authentication model.
+   * This read-only resource returns Model_Item data files.  It's analogous
+   * to the FileProxy controller, but it uses the REST authentication model.
    *
-   * GET can accept the following query parameters:
-   *   size=<full, resize, or thumb> -- REQUIRED
+   * GET returns the raw contents of a data file (id and "size" parameter required)
+   *   size=<full, resize, or thumb>
    *     Return the raw contents of an item's full, resize, or thumb data files.
    *   m=<int>
    *     Query parameter added as a browser cache buster (ignored during processing).
    *   encoding=base64
    *     Output the data file using base64 encoding.
-   *   @see  Controller_Rest_Data::action_get()
    */
   public function action_get() {
     $item = ORM::factory("Item", $this->rest_id);

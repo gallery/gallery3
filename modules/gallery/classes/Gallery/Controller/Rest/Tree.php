@@ -24,7 +24,7 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
    * for items inside the given tree, up to the depth that you want.  The entity for this resource
    * is a series of items, and its members are trees rooted at the maximum depth (if specified).
    *
-   * GET can accept the following query parameters:
+   * GET displays a tree (id required)
    *   depth=<number>
    *     Only traverse this far down into the tree.  If there are more albums
    *     below this depth, provide RESTful urls to other tree resources in
@@ -34,16 +34,13 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
    *   fields=<comma separated list of field names>
    *     In the entity section only return these fields for each item.
    *     Default is all fields.
-   *   @see  Controller_Rest_Tree::get_entity()
-   *   @see  Controller_Rest_Tree::get_members()
    *
    * Notes:
    *   Unlike other collections, "start" and "num" parameters are ignored, and any
    *   "expand_members" parameter is removed (so it will not be "sticky").
-   *   @see  Controller_Rest_Tree::before()
    */
 
-   /**
+  /**
    * GET the tree's entity, which is an array of item urls and entities.
    */
   static function get_entity($id, $params) {
@@ -69,8 +66,8 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
     // Build the entity.
     $data = array();
     foreach (array_merge(array($item), iterator_to_array($members)) as $member) {
-      $url    = Rest::url("item", $member->id);
-      $entity = Rest::resource_func("get_entity", "item", $member->id);
+      $url    = Rest::url("items", $member->id);
+      $entity = Rest::resource_func("get_entity", "items", $member->id);
 
       if (isset($params["fields"])) {
         // Filter by the specified fields.

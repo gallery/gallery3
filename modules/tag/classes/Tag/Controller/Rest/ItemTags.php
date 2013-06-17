@@ -19,9 +19,9 @@
  */
 class Tag_Controller_Rest_ItemTags extends Controller_Rest {
   /**
-   * This resource represents a collection of tag resources on a specified item.
+   * This resource represents a collection of tags on a specified item.
    *
-   * GET can accept the following query parameters:
+   * GET displays the collection of tags (id required)
    *   name=<substring>
    *     Only return tags that start with this substring.
    *     This is typically used for tag autocomplete.
@@ -30,23 +30,19 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    *     clouds) or increasing order by name ("name", typically used for autocomplete
    *     or other alphabetic lists).  If the "name" parameter is also set, the default
    *     is "name"; otherwise, the default is "count".
-   *   @see  Controller_Rest_ItemTags::get_members()
    *
-   * PUT can accept the following post parameters:
+   * PUT
    *   members
    *     Replace the collection of tags on the item with this list
-   *   @see  Controller_Rest_ItemTags::put_members()
    *
-   * POST can accept the following post parameters:
+   * POST
    *   members
    *     Add the list of tags to the item.  Unlike PUT, this only *adds* tags.
    *     Since there is no entity function, this is only accessible using relationships.
-   *   @see  Controller_Rest_ItemTags::post_members()
    *
    * DELETE removes all tags from the item (no parameters accepted).
-   *   @see  Controller_Rest_ItemTags::delete()
    *
-   * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "item" resource.
+   * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "items" resource.
    */
 
   /**
@@ -54,6 +50,10 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    * @see  Controller_Rest_Tags::get_members().
    */
   static function get_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
 
@@ -83,7 +83,7 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("tag", $member->id);
+      $data[] = array("tags", $member->id);
     }
 
     return $data;
@@ -94,13 +94,17 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    * @see  TagEvent::item_edit_form_completed(), which does a similar task.
    */
   static function put_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
     // Resolve our members list into an array of tag names.
     $tag_names = Rest::resolve_members($params["members"],
       function($type, $id, $params) {
-        return ($type == "tag") ? ORM::factory("Tag", $id)->name : false;
+        return ($type == "tags") ? ORM::factory("Tag", $id)->name : false;
       });
 
     // Clear all tags from the item, then add the new set.
@@ -115,13 +119,17 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    * POST tag members of the item_tags resource.  Unlike PUT, this only *adds* tags to the item.
    */
   static function post_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
     // Resolve our members list into an array of tag names.
     $tag_names = Rest::resolve_members($params["members"],
       function($type, $id, $params) {
-        return ($type == "tag") ? ORM::factory("Tag", $id)->name : false;
+        return ($type == "tags") ? ORM::factory("Tag", $id)->name : false;
       });
 
     // Add the tags to the item.
@@ -135,6 +143,10 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
    * DELETE removes all tags from the item.
    */
   static function delete($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $item = ORM::factory("Item", $id);
     Access::required("edit", $item);
 
@@ -143,9 +155,10 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
 
   /**
    * Return the relationship established by item_tags.  This adds "tags"
-   * as a relationship of an "item" resource.
+   * as a relationship of an "items" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "item") ? array("tags" => array("item_tags", $id, $params)) : null;
+    return (($type == "items") && (!empty($id))) ?
+      array("tags" => array("item_tags", $id, $params)) : null;
   }
 }
