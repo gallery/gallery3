@@ -348,7 +348,7 @@ abstract class Rest_Controller_Rest extends Controller {
    * By default, a successful POST returns a 201 response with a "Location" header.  However,
    * if a post_entity() function decides that the resource already exists, they can override this
    * by adding a *fourth* element to the returned array that's false (e.g. posting a tag that
-   * already exists should return array("tag", 123, null, false)).
+   * already exists should return array("tags", 123, null, false)).
    */
   public function action_post() {
     $this->check_method();

@@ -19,20 +19,18 @@
  */
 class Comment_Controller_Rest_ItemComments extends Controller_Rest {
   /**
-   * This resource represents a collection of comment resources on a specified item.
+   * This resource represents a collection of comments on a specified item.
    *
-   * GET displays the collection of comments (no parameters accepted).
-   *   @see  Controller_Rest_ItemComments::get_members()
+   * GET displays the collection of comments (id required)
+   *   (no parameters)
    *
-   * PUT can accept the following post parameters:
+   * PUT
    *   members
    *     Replace the collection of comments on the item with this list (remove only, no add)
-   *   @see  Controller_Rest_ItemComments::put_members()
    *
    * DELETE removes all comments from the item (no parameters accepted).
-   *   @see  Controller_Rest_ItemComments::delete()
    *
-   * RELATIONSHIPS: "item_comments" is the "comments" relationship of an "item" resource.
+   * RELATIONSHIPS: "item_comments" is the "comments" relationship of an "items" resource.
    */
 
   /**
@@ -40,6 +38,10 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
    * @see  Controller_Rest_Comments::get_members().
    */
   static function get_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $item = ORM::factory("Item", $id);
     Access::required("view", $item);
 
@@ -50,7 +52,7 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("comment", $member->id);
+      $data[] = array("comments", $member->id);
     }
 
     return $data;
@@ -62,6 +64,10 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
    * @see  Controller_Rest_UserComments::put_members()
    */
   static function put_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     if (!Identity::active_user()->admin) {
       throw Rest_Exception::factory(403);
     }
@@ -75,7 +81,7 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
     $member_ids = Rest::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         $comment = ORM::factory("Comment", $id);
-        return (($type == "comment") && ($comment->item_id == $data)) ? $id : false;
+        return (($type == "comments") && ($comment->item_id == $data)) ? $id : false;
       }, $item->id);
 
     // Delete any comments that are not in the list.
@@ -90,6 +96,10 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
    * DELETE removes all comments from the item, and is only for admins.
    */
   static function delete($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     if (!Identity::active_user()->admin) {
       throw Rest_Exception::factory(403);
     }
@@ -107,9 +117,10 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
 
   /**
    * Return the relationship established by item_comments.  This adds "comments"
-   * as a relationship of an "item" resource.
+   * as a relationship of an "items" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "item") ? array("comments" => array("item_comments", $id, $params)) : null;
+    return (($type == "items") && (!empty($id))) ?
+      array("comments" => array("item_comments", $id, $params)) : null;
   }
 }

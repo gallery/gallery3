@@ -21,7 +21,7 @@
   </p>
   <p>
     <?= t("Want to see what it looks like? Click <a href=\"%url\">here</a> to navigate your Gallery using your admin login in (read-only) HTML mode. The link includes your access key, so keep it private!",
-      array("url" => Rest::url("item", Item::root()->id, array("output" => "html", "access_key" => Rest::access_key())))) ?>
+      array("url" => Rest::url("items", Item::root()->id, array("output" => "html", "access_key" => Rest::access_key())))) ?>
   </p>
   <p>
     <?= t("Confused or curious and want additional info? <a href=\"%url\">We have docs!</a>",

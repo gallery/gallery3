@@ -21,7 +21,7 @@ class Search_Controller_Rest_Search extends Controller_Rest {
   /**
    * This read-only resource is a collection of items resulting from a Gallery search.
    *
-   * GET can accept the following query parameters:
+   * GET displays a collection of items
    *   q=<string>
    *     Search string (required).  This is the same as the search box in the standard UI.
    *   album=<album rest url>
@@ -30,7 +30,6 @@ class Search_Controller_Rest_Search extends Controller_Rest {
    *     If not given, this will default to the root album (i.e. search all items).
    *   type=<comma-separated list of photo, movie or album>
    *     Limit the type to types in this list (e.g. "type=photo,movie").
-   *   @see  Controller_Rest_Search::get_members()
    */
 
   /**
@@ -45,7 +44,7 @@ class Search_Controller_Rest_Search extends Controller_Rest {
     $album_url = Arr::get($params, "album");
     if ($album_url) {
       list ($a_type, $a_id, $a_params) = Rest::resolve($album_url);
-      if ($a_type != "item") {
+      if ($a_type != "items") {
         throw Rest_Exception::factory(400, array("album" => "invalid"));
       }
 
@@ -69,7 +68,7 @@ class Search_Controller_Rest_Search extends Controller_Rest {
     $types = Arr::get($params, "type");
     foreach ($result[1] as $item) {
       if (!$types || in_array($item->type, $types)) {
-        $data[] = array("item", $item->id);
+        $data[] = array("items", $item->id);
       }
     }
 
