@@ -19,9 +19,12 @@
  */
 class Tag_Controller_Rest_Tags extends Controller_Rest {
   /**
-   * This resource represents a collection of tag resources.
+   * This resource represents a Model_Tag.
    *
-   * GET can accept the following query parameters:
+   * GET displays a tag (if id given)
+   *   (no parameters)
+   *
+   * GET displays a collection of tags (no id given)
    *   name=<substring>
    *     Only return tags that start with this substring.
    *     This is typically used for tag autocomplete.
@@ -30,19 +33,95 @@ class Tag_Controller_Rest_Tags extends Controller_Rest {
    *     clouds) or increasing order by name ("name", typically used for autocomplete
    *     or other alphabetic lists).  If the "name" parameter is also set, the default
    *     is "name"; otherwise, the default is "count".
-   *   @see  Controller_Rest_Tags::get_members()
    *
-   * POST *requires* the following post parameters:
+   * PUT
+   *   entity
+   *     Edit the tag
+   *
+   * POST
    *   entity
    *     Add a tag.  This is best used when also POSTing item relationships.  Otherwise, the
    *     tag will have 0 count, and Gallery may unexpectedly "clean it up" (i.e. delete it).
-   *   @see  Controller_Rest_Tags::post_entity()
+   *
+   * DELETE removes the tag entirely (no parameters accepted).
+   *
+   * Note: similar to the standard UI, only admins can PUT or DELETE a tag.
    */
 
   /**
-   * GET the members of the tags resource.
+   * GET the tag's entity.
+   */
+  static function get_entity($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    $data = $tag->as_array();
+    $data["web_url"] = $tag->abs_url();
+
+    return $data;
+  }
+
+  /**
+   * PUT the tag's entity.  This edits the tag model, and is only for admins.
+   */
+  static function put_entity($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    // Add fields from a whitelist.
+    foreach (array("name", "slug") as $field) {
+      if (property_exists($params["entity"], $field)) {
+        $tag->$field = $params["entity"]->$field;
+      }
+    }
+
+    $tag->save();
+  }
+
+  /**
+   * DELETE the tag.  This is only for admins.
+   */
+  static function delete($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
+    if (!Identity::active_user()->admin) {
+      throw Rest_Exception::factory(403);
+    }
+
+    $tag = ORM::factory("Tag", $id);
+    if (!$tag->loaded()) {
+      throw Rest_Exception::factory(404);
+    }
+
+    $tag->delete();
+  }
+
+  /**
+   * GET the members of the tags collection.
    */
   static function get_members($id, $params) {
+    if (!empty($id)) {
+      return null;
+    }
+
     $members = ORM::factory("Tag")
       ->limit(Arr::get($params, "num", static::$default_params["num"]))
       ->offset(Arr::get($params, "start", static::$default_params["start"]));
@@ -69,7 +148,7 @@ class Tag_Controller_Rest_Tags extends Controller_Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("tag", $member->id);
+      $data[] = array("tags", $member->id);
     }
 
     return $data;
@@ -79,6 +158,10 @@ class Tag_Controller_Rest_Tags extends Controller_Rest {
    * POST a tag's entity.  This generates a new tag model.
    */
   static function post_entity($id, $params) {
+    if (!empty($id)) {
+      return null;
+    }
+
     // The user must have some edit permission somewhere to create a tag.
     if (!Identity::active_user()->admin) {
       $query = DB::select()->from("access_caches")->and_where_open();
@@ -110,6 +193,6 @@ class Tag_Controller_Rest_Tags extends Controller_Rest {
     }
 
     // Success!  Return the resource triad with the new flag.
-    return array("tag", $tag->id, null, $new);
+    return array("tags", $tag->id, null, $new);
   }
 }

@@ -182,7 +182,7 @@ class Rest_Rest {
 
   /**
    * Return an absolute url used for REST resource location.
-   * @param  string  resource type (e.g. "item", "tag")
+   * @param  string  resource type (e.g. "items", "tags")
    * @param  mixed   resource id (typically an integer, but can be more complex (e.g. "3,5")
    * @param  array   resource query params (e.g. "data" requires a "size" param)
    * @return string  REST resource url with "sticky" query params carried over as needed

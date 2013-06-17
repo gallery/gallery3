@@ -19,25 +19,26 @@
  */
 class Gallery_Controller_Rest_UserItems extends Controller_Rest {
   /**
-   * This resource represents a collection of item resources owned by a specific user.
+   * This resource represents a collection of items owned by a specific user.
    *
-   * GET can accept the following query parameters:
+   * GET displays the collection of items (id required)
    *   name=<substring>
-   *     Only return items where the name contains this substring.
+   *     Only return member items where the name contains this substring.
    *   type=<comma-separated list of photo, movie or album>
-   *     Limit the type to types in this list (e.g. "type=photo,movie").
-   *     Also limits the types returned in the member collections (i.e. sub-albums).
-   *   @see  Controller_Rest_UserItems::get_members()
+   *     Limit member items to the types in this list (e.g. "type=photo,movie").
    *
-   * PUT can accept the following post parameters:
+   * PUT
    *   members
    *     Replace the collection of items by the user with this list (remove only, no add)
-   *   @see  Controller_Rest_UserItems::put_members()
+   *
+   * POST
+   *   members
+   *     Add the tag to the items in the list.  Unlike PUT, this only *adds* items.
+   *     Since there is no entity function, this is only accessible using relationships.
    *
    * DELETE removes all of the user's items (no parameters accepted).
-   *   @see  Controller_Rest_UserItems::delete()
    *
-   * RELATIONSHIPS: "user_items" is the "items" relationship of a "user" resource.
+   * RELATIONSHIPS: "user_items" is the "items" relationship of a "users" resource.
    *
    * Note: similar to the standard UI, only admins can PUT or DELETE user_items.
    */
@@ -47,6 +48,10 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
    * @see  Controller_Rest_Items::get_members().
    */
   static function get_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $user = Identity::lookup_user($id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
@@ -69,7 +74,7 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("item", $member->id);
+      $data[] = array("items", $member->id);
     }
 
     return $data;
@@ -80,6 +85,10 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
    * with this one, and removes (but doesn't add) items as needed.  This is only for admins.
    */
   static function put_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     if (!Identity::active_user()->admin) {
       throw Rest_Exception::factory(403);
     }
@@ -93,7 +102,7 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
     $member_ids = Rest::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         $item = ORM::factory("Item", $id);
-        return (($type == "item") && ($item->owner_id == $data)) ? $id : false;
+        return (($type == "items") && ($item->owner_id == $data)) ? $id : false;
       }, $user->id);
 
     // Delete any items that are not in the list.
@@ -112,6 +121,10 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
    * DELETE removes all of the user's items, and is only for admins.
    */
   static function delete($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     if (!Identity::active_user()->admin) {
       throw Rest_Exception::factory(403);
     }
@@ -133,9 +146,10 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
 
   /**
    * Return the relationship established by user_items.  This adds "items"
-   * as a relationship of a "user" resource.
+   * as a relationship of a "users" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "user") ? array("items" => array("user_items", $id, $params)) : null;
+    return (($type == "users") && (!empty($id))) ?
+      array("items" => array("user_items", $id, $params)) : null;
   }
 }

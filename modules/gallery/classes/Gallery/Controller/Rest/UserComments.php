@@ -19,20 +19,18 @@
  */
 class Gallery_Controller_Rest_UserComments extends Controller_Rest {
   /**
-   * This resource represents a collection of comment resources authored by a specific user.
+   * This resource represents a collection of comments authored by a specific user.
    *
-   * GET displays the collection of comments (no parameters accepted).
-   *   @see  Controller_Rest_UserComments::get_members()
+   * GET displays the collection of comments (id required)
+   *   (no parameters)
    *
-   * PUT can accept the following post parameters:
+   * PUT
    *   members
    *     Replace the collection of comments by the user with this list (remove only, no add)
-   *   @see  Controller_Rest_UserComments::put_members()
    *
    * DELETE removes all of the user's comments (no parameters accepted).
-   *   @see  Controller_Rest_UserComments::delete()
    *
-   * RELATIONSHIPS: "user_comments" is the "comments" relationship of an "user" resource.
+   * RELATIONSHIPS: "user_comments" is the "comments" relationship of an "users" resource.
    */
 
   /**
@@ -40,6 +38,10 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
    * @see  Controller_Rest_Comments::get_members().
    */
   static function get_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     $user = Identity::lookup_user($id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
@@ -55,7 +57,7 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("comment", $member->id);
+      $data[] = array("comments", $member->id);
     }
 
     return $data;
@@ -67,6 +69,10 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
    * @see  Controller_Rest_ItemComments::put_members()
    */
   static function put_members($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     if (!Identity::active_user()->admin) {
       throw Rest_Exception::factory(403);
     }
@@ -80,7 +86,7 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
     $member_ids = Rest::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         $comment = ORM::factory("Comment", $id);
-        return (($type == "comment") && ($comment->author_id == $data)) ? $id : false;
+        return (($type == "comments") && ($comment->author_id == $data)) ? $id : false;
       }, $user->id);
 
     // Delete any comments that are not in the list.
@@ -95,6 +101,10 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
    * DELETE removes all of the user's comments, and is only for admins.
    */
   static function delete($id, $params) {
+    if (empty($id)) {
+      return null;
+    }
+
     if (!Identity::active_user()->admin) {
       throw Rest_Exception::factory(403);
     }
@@ -112,9 +122,10 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
 
   /**
    * Return the relationship established by user_comments.  This adds "comments"
-   * as a relationship of an "user" resource.
+   * as a relationship of an "users" resource.
    */
   static function relationships($type, $id, $params) {
-    return ($type == "user") ? array("comments" => array("user_comments", $id, $params)) : null;
+    return (($type == "users") && (!empty($id))) ?
+      array("comments" => array("user_comments", $id, $params)) : null;
   }
 }
