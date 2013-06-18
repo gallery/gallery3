@@ -123,17 +123,20 @@ class RestAPI_RestAPI {
    *     returns Rest::factory("Data", 1, array("size" => "full"))
    *
    * @param string  the fully qualified REST url
-   * @return array  the REST resource object
+   * @return array  the REST resource object, or null on failure (no exceptions thrown)
    */
   static function resolve($url) {
-    $relative_url = substr($url, strlen(URL::abs_site("rest")));  // e.g. "/data/1?size=full"
+    if (strpos($url, URL::abs_site("rest")) !== 0) {
+      return null;
+    }
+    $url = substr($url, strlen(URL::abs_site("rest")));  // e.g. "/data/1?size=full"
 
-    $path =  parse_url($relative_url, PHP_URL_PATH);
-    $query = parse_url($relative_url, PHP_URL_QUERY);
+    $path =  parse_url($url, PHP_URL_PATH);
+    $query = parse_url($url, PHP_URL_QUERY);
     $components = explode("/", $path, 3);
 
     if (empty($components[1])) {
-      throw Rest_Exception::factory(404);
+      return null;
     }
     $type = Inflector::convert_module_to_class_name($components[1]);
 
@@ -150,40 +153,13 @@ class RestAPI_RestAPI {
       }
     }
 
-    return Rest::factory($type, $id, $params);
-  }
-
-  /**
-   * Convert a list of member REST urls into an array.  If no callback is given, then each
-   * array element is a type/id/params triad.  If a callback (and optionally callback_data)
-   * is given, then each array element is the return value of the callback.  If the callback
-   * returns false, then this fires a 400 Bad Request.
-   *
-   * This function maintains the original array keys of the members list.
-   *
-   * @param  array  REST urls
-   * @param  mixed  callback function (optional, can be anonymous or named)
-   * @param  mixed  callback data (optional)
-   * @return array
-   */
-  static function resolve_members($member_urls, $callback=null, $callback_data=null) {
-    $data = array();
-    foreach ($member_urls as $key => $member_url) {
-      $member = RestAPI::resolve($member_url);
-
-      if ($callback) {
-        $result =
-          call_user_func($callback, $member->type, $member->id, $member->params, $callback_data);
-        if (empty($result)) {
-          throw Rest_Exception::factory(400, array("members" => "invalid"));
-        }
-        $data[$key] = $result;
-      } else {
-        $data[$key] = Rest::factory($type, $id, $params);
-      }
+    try {
+      $rest_object = Rest::factory($type, $id, $params);
+    } catch (Exception $e) {
+      $rest_object = null;
     }
 
-    return $data;
+    return $rest_object;
   }
 
   /**
