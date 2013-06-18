@@ -52,6 +52,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
     Database::$instances["default"]->disconnect();
     $db_config = Kohana::$config->load("database");
     $db_config["default"]["connection"]["database"] .= "_test";
+    $db_config["default"]["table_prefix"] = "g3_";  // Database_Test tests how prefixes are handled.
     $db = Database::instance();
     ORM::reinitialize();
     Session::instance()->reconnect_db();
