@@ -1,3 +1,3 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
-class Controller_Rest_Data extends Gallery_Controller_Rest_Data {}
+class Rest_Data extends Gallery_Rest_Data {}

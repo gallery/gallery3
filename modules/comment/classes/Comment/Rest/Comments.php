@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Controller_Rest_Comments extends Controller_Rest {
+class Comment_Rest_Comments extends Rest {
   /**
    * This resource represents a Model_Comment.
    *

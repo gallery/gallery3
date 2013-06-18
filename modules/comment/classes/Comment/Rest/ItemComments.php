@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comment_Controller_Rest_ItemComments extends Controller_Rest {
+class Comment_Rest_ItemComments extends Rest {
   /**
    * This resource represents a collection of comments on a specified item.
    *
@@ -35,7 +35,7 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
 
   /**
    * GET the comment members of the item_comments resource.
-   * @see  Controller_Rest_Comments::get_members().
+   * @see  Rest_Comments::get_members().
    */
   static function get_members($id, $params) {
     if (empty($id)) {
@@ -61,7 +61,7 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
   /**
    * PUT the comment members of the item_comments resource.  This replaces the comments list
    * with this one, and removes (but doesn't add) comments as needed.  This is only for admins.
-   * @see  Controller_Rest_UserComments::put_members()
+   * @see  Rest_UserComments::put_members()
    */
   static function put_members($id, $params) {
     if (empty($id)) {

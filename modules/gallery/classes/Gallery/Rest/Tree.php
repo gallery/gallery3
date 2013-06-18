@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_Rest_Tree extends Controller_Rest {
+class Gallery_Rest_Tree extends Rest {
   /**
    * This read-only resource can be considered both an object and a collection of other trees.
    * The tree is rooted in a single item and can have modifiers which adjust what data is shown
@@ -130,7 +130,7 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::before() to remove the expand_members parameter, if set.
+   * Override Rest::before() to remove the expand_members parameter, if set.
    */
   public function before() {
     parent::before();

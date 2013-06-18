@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_Rest_Users extends Controller_Rest {
+class Gallery_Rest_Users extends Rest {
   /**
    * This read-only resource represents a user profile.
    *
@@ -47,7 +47,7 @@ class Gallery_Controller_Rest_Users extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::before() to use the "show" parameter, if specified.
+   * Override Rest::before() to use the "show" parameter, if specified.
    */
   public function before() {
     parent::before();

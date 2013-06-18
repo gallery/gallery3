@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Search_Controller_Rest_Search extends Controller_Rest {
+class Search_Rest_Search extends Rest {
   /**
    * This read-only resource is a collection of items resulting from a Gallery search.
    *

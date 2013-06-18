@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_Rest_Data extends Controller_Rest {
+class Gallery_Rest_Data extends Rest {
   /**
    * This read-only resource returns Model_Item data files.  It's analogous
    * to the FileProxy controller, but it uses the REST authentication model.

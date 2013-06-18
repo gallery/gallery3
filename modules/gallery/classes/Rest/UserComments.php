@@ -1,3 +1,3 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
-class Controller_Rest_UserComments extends Gallery_Controller_Rest_UserComments {}
+class Rest_UserComments extends Gallery_Rest_UserComments {}

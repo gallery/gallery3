@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Controller_Rest_ItemTags extends Controller_Rest {
+class Tag_Rest_ItemTags extends Rest {
   /**
    * This resource represents a collection of tags on a specified item.
    *
@@ -47,7 +47,7 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
 
   /**
    * GET the tag members of the item_tags resource.
-   * @see  Controller_Rest_Tags::get_members().
+   * @see  Rest_Tags::get_members().
    */
   static function get_members($id, $params) {
     if (empty($id)) {

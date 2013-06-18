@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_Rest_Items extends Controller_Rest {
+class Gallery_Rest_Items extends Rest {
   /**
    * This resource represents a Model_Item object.  If the item is an album, it's
    * considered both an object *and* a collection whose members are the album's items.
@@ -434,7 +434,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
   }
 
   /**
-   * Override Controller_Rest::before() to use the "random" parameter, expand members
+   * Override Rest::before() to use the "random" parameter, expand members
    * by default for "urls" and "ancestors_for", and GET the root item by default.
    */
   public function before() {

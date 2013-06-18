@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tag_Controller_Rest_TagItems extends Controller_Rest {
+class Tag_Rest_TagItems extends Rest {
   /**
    * This resource represents a collection of items that all have a specified tag.
    *
@@ -45,7 +45,7 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
 
   /**
    * GET the item members of the tag_items resource.
-   * @see  Controller_Rest_Items::get_members().
+   * @see  Rest_Items::get_members().
    */
   static function get_members($id, $params) {
     if (empty($id)) {
@@ -139,7 +139,7 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
 
   /**
    * DELETE the tag.  This is only for admins.
-   * @see  Controller_Rest_Tags::delete()
+   * @see  Rest_Tags::delete()
    */
   static function delete($id, $params) {
     return RestAPI::resource_func("delete", "tags", $id, $params);

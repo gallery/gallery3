@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Controller_Rest_UserItems extends Controller_Rest {
+class Gallery_Rest_UserItems extends Rest {
   /**
    * This resource represents a collection of items owned by a specific user.
    *
@@ -45,7 +45,7 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
 
   /**
    * GET the item members of the user_items resource.
-   * @see  Controller_Rest_Items::get_members().
+   * @see  Rest_Items::get_members().
    */
   static function get_members($id, $params) {
     if (empty($id)) {
