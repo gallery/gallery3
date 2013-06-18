@@ -31,28 +31,28 @@ class Items_Rest_Test extends Unittest_TestCase {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->urls = json_encode(array(
-      Rest::url("item", $photo1),
-      Rest::url("item", $album2)));
+      RestAPI::url("item", $photo1),
+      RestAPI::url("item", $album2)));
     $this->assertEquals(
       array(
-        array("url" => Rest::url("item", $photo1),
+        array("url" => RestAPI::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
               "relationships" => array(
                 "comments" => array(
-                  "url" => Rest::url("item_comments", $photo1)),
+                  "url" => RestAPI::url("item_comments", $photo1)),
                 "tags" => array(
-                  "url" => Rest::url("item_tags", $photo1),
+                  "url" => RestAPI::url("item_tags", $photo1),
                   "members" => array()))),
-         array("url" => Rest::url("item", $album2),
+         array("url" => RestAPI::url("item", $album2),
                "entity" => $album2->as_restful_array(),
                "relationships" => array(
                  "comments" => array(
-                   "url" => Rest::url("item_comments", $album2)),
+                   "url" => RestAPI::url("item_comments", $album2)),
                  "tags" => array(
-                   "url" => Rest::url("item_tags", $album2),
+                   "url" => RestAPI::url("item_tags", $album2),
                    "members" => array())),
                "members" => array(
-                 Rest::url("item", $photo2)))),
+                 RestAPI::url("item", $photo2)))),
       Hook_Rest_Items::get($request));
   }
 
@@ -69,21 +69,21 @@ class Items_Rest_Test extends Unittest_TestCase {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->urls = json_encode(array(
-      Rest::url("item", $photo2),
-      Rest::url("item", $album1)));
+      RestAPI::url("item", $photo2),
+      RestAPI::url("item", $album1)));
     $request->params->type = "album";
     $this->assertEquals(
       array(
-         array("url" => Rest::url("item", $album1),
+         array("url" => RestAPI::url("item", $album1),
                "entity" => $album1->as_restful_array(),
                "relationships" => array(
                  "comments" => array(
-                   "url" => Rest::url("item_comments", $album1)),
+                   "url" => RestAPI::url("item_comments", $album1)),
                  "tags" => array(
-                   "url" => Rest::url("item_tags", $album1),
+                   "url" => RestAPI::url("item_tags", $album1),
                    "members" => array())),
                "members" => array(
-                 Rest::url("item", $album2)))),
+                 RestAPI::url("item", $album2)))),
       Hook_Rest_Items::get($request));
   }
 
@@ -100,18 +100,18 @@ class Items_Rest_Test extends Unittest_TestCase {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->urls = json_encode(array(
-      Rest::url("item", $photo1),
-      Rest::url("item", $album2)));
+      RestAPI::url("item", $photo1),
+      RestAPI::url("item", $album2)));
     $request->params->type = "photo";
     $this->assertEquals(
       array(
-        array("url" => Rest::url("item", $photo1),
+        array("url" => RestAPI::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
               "relationships" => array(
                 "comments" => array(
-                  "url" => Rest::url("item_comments", $photo1)),
+                  "url" => RestAPI::url("item_comments", $photo1)),
                 "tags" => array(
-                  "url" => Rest::url("item_tags", $photo1),
+                  "url" => RestAPI::url("item_tags", $photo1),
                   "members" => array())))),
       Hook_Rest_Items::get($request));
   }
@@ -129,29 +129,29 @@ class Items_Rest_Test extends Unittest_TestCase {
     $request = new stdClass();
     $request->params = new stdClass();
     $request->params->urls = json_encode(array(
-      Rest::url("item", $photo1),
-      Rest::url("item", $album2)));
+      RestAPI::url("item", $photo1),
+      RestAPI::url("item", $album2)));
     $request->params->type = "photo,album";
     $this->assertEquals(
       array(
-        array("url" => Rest::url("item", $photo1),
+        array("url" => RestAPI::url("item", $photo1),
               "entity" => $photo1->as_restful_array(),
               "relationships" => array(
                 "comments" => array(
-                  "url" => Rest::url("item_comments", $photo1)),
+                  "url" => RestAPI::url("item_comments", $photo1)),
                 "tags" => array(
-                  "url" => Rest::url("item_tags", $photo1),
+                  "url" => RestAPI::url("item_tags", $photo1),
                   "members" => array()))),
-         array("url" => Rest::url("item", $album2),
+         array("url" => RestAPI::url("item", $album2),
                "entity" => $album2->as_restful_array(),
                "relationships" => array(
                  "comments" => array(
-                   "url" => Rest::url("item_comments", $album2)),
+                   "url" => RestAPI::url("item_comments", $album2)),
                  "tags" => array(
-                   "url" => Rest::url("item_tags", $album2),
+                   "url" => RestAPI::url("item_tags", $album2),
                    "members" => array())),
                "members" => array(
-                 Rest::url("item", $photo2)))),
+                 RestAPI::url("item", $photo2)))),
       Hook_Rest_Items::get($request));
   }
 
@@ -167,49 +167,49 @@ class Items_Rest_Test extends Unittest_TestCase {
 
     $root = Item::root();
     $restful_root = array(
-      "url" => Rest::url("item", $root),
+      "url" => RestAPI::url("item", $root),
       "entity" => $root->as_restful_array(),
-      "relationships" => Rest::relationships("item", $root));
+      "relationships" => RestAPI::relationships("item", $root));
     $restful_root["members"] = array();
     foreach ($root->children->find_all() as $child) {
-      $restful_root["members"][] = Rest::url("item", $child);
+      $restful_root["members"][] = RestAPI::url("item", $child);
     }
 
     $request = new stdClass();
     $request->params = new stdClass();
-    $request->params->ancestors_for = Rest::url("item", $photo2);
+    $request->params->ancestors_for = RestAPI::url("item", $photo2);
     $this->assertEquals(
       array(
         $restful_root,
-        array("url" => Rest::url("item", $album1),
+        array("url" => RestAPI::url("item", $album1),
               "entity" => $album1->as_restful_array(),
               "relationships" => array(
                 "comments" => array(
-                  "url" => Rest::url("item_comments", $album1)),
+                  "url" => RestAPI::url("item_comments", $album1)),
                 "tags" => array(
-                  "url" => Rest::url("item_tags", $album1),
+                  "url" => RestAPI::url("item_tags", $album1),
                   "members" => array())),
               "members" => array(
-                Rest::url("item", $photo1),
-                Rest::url("item", $album2)),
+                RestAPI::url("item", $photo1),
+                RestAPI::url("item", $album2)),
             ),
-        array("url" => Rest::url("item", $album2),
+        array("url" => RestAPI::url("item", $album2),
               "entity" => $album2->as_restful_array(),
               "relationships" => array(
                 "comments" => array(
-                  "url" => Rest::url("item_comments", $album2)),
+                  "url" => RestAPI::url("item_comments", $album2)),
                 "tags" => array(
-                  "url" => Rest::url("item_tags", $album2),
+                  "url" => RestAPI::url("item_tags", $album2),
                   "members" => array())),
               "members" => array(
-                Rest::url("item", $photo2))),
-        array("url" => Rest::url("item", $photo2),
+                RestAPI::url("item", $photo2))),
+        array("url" => RestAPI::url("item", $photo2),
               "entity" => $photo2->as_restful_array(),
               "relationships" => array(
                 "comments" => array(
-                  "url" => Rest::url("item_comments", $photo2)),
+                  "url" => RestAPI::url("item_comments", $photo2)),
                 "tags" => array(
-                  "url" => Rest::url("item_tags", $photo2),
+                  "url" => RestAPI::url("item_tags", $photo2),
                   "members" => array())))),
       Hook_Rest_Items::get($request));
   }

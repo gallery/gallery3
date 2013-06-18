@@ -32,12 +32,12 @@ class Tag_Item_Rest_Test extends Unittest_TestCase {
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
-    $request->url = Rest::url("tag_item", $tag, Item::root());
+    $request->url = RestAPI::url("tag_item", $tag, Item::root());
     $this->assertEquals(
-      array("url" => Rest::url("tag_item", $tag, Item::root()),
+      array("url" => RestAPI::url("tag_item", $tag, Item::root()),
             "entity" => array(
-              "tag" => Rest::url("tag", $tag),
-              "item" => Rest::url("item", Item::root()))),
+              "tag" => RestAPI::url("tag", $tag),
+              "item" => RestAPI::url("item", Item::root()))),
       Hook_Rest_TagItem::get($request));
   }
 
@@ -58,7 +58,7 @@ class Tag_Item_Rest_Test extends Unittest_TestCase {
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
-    $request->url = Rest::url("tag_item", $tag, Item::root());
+    $request->url = RestAPI::url("tag_item", $tag, Item::root());
     Hook_Rest_TagItem::delete($request);
 
     $this->assertFalse($tag->reload()->has("items", Item::root()));
@@ -70,7 +70,7 @@ class Tag_Item_Rest_Test extends Unittest_TestCase {
     $album = Test::random_album();
     $tag = Tag::add($album, "tag1")->reload();
 
-    $tuple = Rest::resolve(Rest::url("tag_item", $tag, $album));
+    $tuple = RestAPI::resolve(RestAPI::url("tag_item", $tag, $album));
     $this->assertEquals($tag->as_array(), $tuple[0]->as_array());
     $this->assertEquals($album->as_array(), $tuple[1]->as_array());
   }
