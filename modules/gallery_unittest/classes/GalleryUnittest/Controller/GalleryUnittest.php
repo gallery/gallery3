@@ -54,6 +54,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
     $db_config["default"]["connection"]["database"] .= "_test";
     $db = Database::instance();
     ORM::reinitialize();
+    Session::instance()->reconnect_db();
 
     try {
       // Clean out the database
