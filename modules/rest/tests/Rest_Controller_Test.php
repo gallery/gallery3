@@ -22,7 +22,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
     parent::setup();
     $this->_save = array($_GET, $_POST, $_SERVER);
 
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = Rest::access_key();
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = RestAPI::access_key();
   }
 
   public function teardown() {
@@ -89,7 +89,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "get",
-            "access_key" => Rest::access_key(),
+            "access_key" => RestAPI::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
       json_decode(
         Test::call_and_capture(array(new Controller_Rest(), "mock")),
@@ -105,7 +105,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "post",
-            "access_key" => Rest::access_key(),
+            "access_key" => RestAPI::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
       json_decode(
         Test::call_and_capture(array(new Controller_Rest(), "mock")),
@@ -122,7 +122,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "put",
-            "access_key" => Rest::access_key(),
+            "access_key" => RestAPI::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
       json_decode(
         Test::call_and_capture(array(new Controller_Rest(), "mock")),
@@ -139,7 +139,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $this->assertEquals(
       array("params" => array("key" => "value"),
             "method" => "delete",
-            "access_key" => Rest::access_key(),
+            "access_key" => RestAPI::access_key(),
             "url" => "http://./index.php/gallery_unittest"),
       json_decode(
         Test::call_and_capture(array(new Controller_Rest(), "mock")),

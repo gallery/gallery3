@@ -27,7 +27,7 @@ class Item_Rest_Test extends Unittest_TestCase {
     $this->markTestIncomplete("REST API is currently under re-construction...");
 
     $album = Test::random_album();
-    $resolved = Rest::resolve(Rest::url("item", $album));
+    $resolved = RestAPI::resolve(RestAPI::url("item", $album));
     $this->assertEquals($album->id, $resolved->id);
   }
 
@@ -42,55 +42,55 @@ class Item_Rest_Test extends Unittest_TestCase {
 
     // No scope is the same as "direct"
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $this->assertEquals(
-      array("url" => Rest::url("item", $album1),
+      array("url" => RestAPI::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => Rest::url("item_comments", $album1)),
+                "url" => RestAPI::url("item_comments", $album1)),
               "tags" => array(
-                "url" => Rest::url("item_tags", $album1),
+                "url" => RestAPI::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              Rest::url("item", $photo1),
-              Rest::url("item", $album2)),
+              RestAPI::url("item", $photo1),
+              RestAPI::url("item", $album2)),
             ),
       Hook_Rest_Item::get($request));
 
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params->scope = "direct";
     $this->assertEquals(
-      array("url" => Rest::url("item", $album1),
+      array("url" => RestAPI::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => Rest::url("item_comments", $album1)),
+                "url" => RestAPI::url("item_comments", $album1)),
               "tags" => array(
-                "url" => Rest::url("item_tags", $album1),
+                "url" => RestAPI::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              Rest::url("item", $photo1),
-              Rest::url("item", $album2)),
+              RestAPI::url("item", $photo1),
+              RestAPI::url("item", $album2)),
             ),
       Hook_Rest_Item::get($request));
 
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params->scope = "all";
     $this->assertEquals(
-      array("url" => Rest::url("item", $album1),
+      array("url" => RestAPI::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => Rest::url("item_comments", $album1)),
+                "url" => RestAPI::url("item_comments", $album1)),
               "tags" => array(
-                "url" => Rest::url("item_tags", $album1),
+                "url" => RestAPI::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              Rest::url("item", $photo1),
-              Rest::url("item", $album2),
-              Rest::url("item", $photo2)),
+              RestAPI::url("item", $photo1),
+              RestAPI::url("item", $album2),
+              RestAPI::url("item", $photo2)),
             ),
       Hook_Rest_Item::get($request));
   }
@@ -106,20 +106,20 @@ class Item_Rest_Test extends Unittest_TestCase {
     $album1->reload();
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->name = "foo";
     $this->assertEquals(
-      array("url" => Rest::url("item", $album1),
+      array("url" => RestAPI::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => Rest::url("item_comments", $album1)),
+                "url" => RestAPI::url("item_comments", $album1)),
               "tags" => array(
-                "url" => Rest::url("item_tags", $album1),
+                "url" => RestAPI::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              Rest::url("item", $photo2)),
+              RestAPI::url("item", $photo2)),
             ),
       Hook_Rest_Item::get($request));
   }
@@ -133,20 +133,20 @@ class Item_Rest_Test extends Unittest_TestCase {
     $album1->reload();
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->type = "album";
     $this->assertEquals(
-      array("url" => Rest::url("item", $album1),
+      array("url" => RestAPI::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "comments" => array(
-                "url" => Rest::url("item_comments", $album1)),
+                "url" => RestAPI::url("item_comments", $album1)),
               "tags" => array(
-                "url" => Rest::url("item_tags", $album1),
+                "url" => RestAPI::url("item_tags", $album1),
                 "members" => array())),
             "members" => array(
-              Rest::url("item", $album2)),
+              RestAPI::url("item", $album2)),
             ),
       Hook_Rest_Item::get($request));
   }
@@ -158,7 +158,7 @@ class Item_Rest_Test extends Unittest_TestCase {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->title = "my new title";
@@ -174,7 +174,7 @@ class Item_Rest_Test extends Unittest_TestCase {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->title = "my new title";
@@ -196,14 +196,14 @@ class Item_Rest_Test extends Unittest_TestCase {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->type = "album";
     $request->params->entity->name = "my album";
     $request->params->entity->title = "my album";
     $response = Hook_Rest_Item::post($request);
-    $new_album = Rest::resolve($response["url"]);
+    $new_album = RestAPI::resolve($response["url"]);
 
     $this->assertTrue($new_album->is_album());
     $this->assertEquals($album1->id, $new_album->parent_id);
@@ -216,7 +216,7 @@ class Item_Rest_Test extends Unittest_TestCase {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->type = "album";
@@ -241,14 +241,14 @@ class Item_Rest_Test extends Unittest_TestCase {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->type = "photo";
     $request->params->entity->name = "my photo.jpg";
     $request->file = MODPATH . "gallery_unittest/assets/test.jpg";
     $response = Hook_Rest_Item::post($request);
-    $new_photo = Rest::resolve($response["url"]);
+    $new_photo = RestAPI::resolve($response["url"]);
 
     $this->assertTrue($new_photo->is_photo());
     $this->assertEquals($album1->id, $new_photo->parent_id);
@@ -261,7 +261,7 @@ class Item_Rest_Test extends Unittest_TestCase {
     Access::allow(Identity::everybody(), "edit", $album1);
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     Hook_Rest_Item::delete($request);
 
     $album1->reload();
@@ -276,7 +276,7 @@ class Item_Rest_Test extends Unittest_TestCase {
     Identity::set_active_user(Identity::guest());
 
     $request = new stdClass();
-    $request->url = Rest::url("item", $album1);
+    $request->url = RestAPI::url("item", $album1);
     try {
       Hook_Rest_Item::delete($request);
       $this->assertTrue(false, "Shouldn't get here");

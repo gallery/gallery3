@@ -116,8 +116,12 @@ class Gallery_Controller_FileProxy extends Controller {
       $this->response->body($file);
     } else {
       // Send the file as the response.  The filename will be set automatically from the path.
+      // We allow base64 encoding *only* if called internally (typically by a REST Data resource).
       // Note: send_file() will automatically halt script execution after sending the file.
       $options = array("inline" => "true", "mime_type" => $mime_type);
+      if (($this->request->query("encoding") == "base64") && !$this->request->is_initial()) {
+        $options["encoding"] = "base64";
+      }
       $this->response->send_file($file, null, $options);
     }
   }
