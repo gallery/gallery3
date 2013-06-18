@@ -96,7 +96,7 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
     }
 
     // Resolve our members list into an array of item models.
-    $items = Rest::resolve_members($params["members"],
+    $items = RestAPI::resolve_members($params["members"],
       function($type, $id, $params) {
         $item = ORM::factory("Item", $id);
         return (($type == "items") && $item->loaded()) ? $item : false;
@@ -125,7 +125,7 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
     }
 
     // Resolve our members list into an array of item models.
-    $items = Rest::resolve_members($params["members"],
+    $items = RestAPI::resolve_members($params["members"],
       function($type, $id, $params) {
         $item = ORM::factory("Item", $id);
         return (($type == "items") && $item->loaded()) ? $item : false;
@@ -142,7 +142,7 @@ class Tag_Controller_Rest_TagItems extends Controller_Rest {
    * @see  Controller_Rest_Tags::delete()
    */
   static function delete($id, $params) {
-    return Rest::resource_func("delete", "tags", $id, $params);
+    return RestAPI::resource_func("delete", "tags", $id, $params);
   }
 
   /**

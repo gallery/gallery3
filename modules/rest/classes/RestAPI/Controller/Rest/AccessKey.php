@@ -28,7 +28,7 @@ class RestAPI_Controller_Rest_AccessKey extends Controller_Rest {
       }
 
       // Set the access key
-      $this->request->headers("X-Gallery-Request-Key", Rest::access_key());
+      $this->request->headers("X-Gallery-Request-Key", RestAPI::access_key());
     }
 
     return parent::before();
@@ -42,6 +42,6 @@ class RestAPI_Controller_Rest_AccessKey extends Controller_Rest {
 
   public function action_post() {
     // If we got here, login was already successful - simply return the key.
-    $this->rest_response = Rest::access_key();
+    $this->rest_response = RestAPI::access_key();
   }
 }

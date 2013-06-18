@@ -19,6 +19,6 @@
  */
 class RestAPI_Controller_Rest_Registry extends Controller_Rest {
   public function action_get() {
-    $this->rest_response = Rest::registry();
+    $this->rest_response = RestAPI::registry();
   }
 }

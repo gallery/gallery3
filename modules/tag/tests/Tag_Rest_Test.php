@@ -32,15 +32,15 @@ class Tag_Rest_Test extends Unittest_TestCase {
     $tag = Tag::add(Item::root(), "tag1")->reload();
 
     $request = new stdClass();
-    $request->url = Rest::url("tag", $tag);
+    $request->url = RestAPI::url("tag", $tag);
     $this->assertEquals(
-      array("url" => Rest::url("tag", $tag),
+      array("url" => RestAPI::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
-                "url" => Rest::url("tag_items", $tag),
+                "url" => RestAPI::url("tag_items", $tag),
                 "members" => array(
-                  Rest::url("tag_item", $tag, Item::root()))))),
+                  RestAPI::url("tag_item", $tag, Item::root()))))),
       Hook_Rest_Tag::get($request));
   }
 
@@ -61,13 +61,13 @@ class Tag_Rest_Test extends Unittest_TestCase {
     $tag = Test::random_tag();
 
     $request = new stdClass();
-    $request->url = Rest::url("tag", $tag);
+    $request->url = RestAPI::url("tag", $tag);
     $this->assertEquals(
-      array("url" => Rest::url("tag", $tag),
+      array("url" => RestAPI::url("tag", $tag),
             "entity" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
-                "url" => Rest::url("tag_items", $tag),
+                "url" => RestAPI::url("tag_items", $tag),
                 "members" => array()))),
       Hook_Rest_Tag::get($request));
   }
@@ -77,7 +77,7 @@ class Tag_Rest_Test extends Unittest_TestCase {
 
     $tag = Test::random_tag();
     $request = new stdClass();
-    $request->url = Rest::url("tag", $tag);
+    $request->url = RestAPI::url("tag", $tag);
     $request->params = new stdClass();
     $request->params->entity = new stdClass();
     $request->params->entity->name = "new name";
@@ -91,7 +91,7 @@ class Tag_Rest_Test extends Unittest_TestCase {
 
     $tag = Test::random_tag();
     $request = new stdClass();
-    $request->url = Rest::url("tag", $tag);
+    $request->url = RestAPI::url("tag", $tag);
     Hook_Rest_Tag::delete($request);
 
     $this->assertFalse($tag->reload()->loaded());
@@ -104,6 +104,6 @@ class Tag_Rest_Test extends Unittest_TestCase {
 
     $this->assertEquals(
       $tag->as_array(),
-      Rest::resolve(Rest::url("tag", $tag))->as_array());
+      RestAPI::resolve(RestAPI::url("tag", $tag))->as_array());
   }
 }

@@ -66,8 +66,8 @@ class Gallery_Controller_Rest_Tree extends Controller_Rest {
     // Build the entity.
     $data = array();
     foreach (array_merge(array($item), iterator_to_array($members)) as $member) {
-      $url    = Rest::url("items", $member->id);
-      $entity = Rest::resource_func("get_entity", "items", $member->id);
+      $url    = RestAPI::url("items", $member->id);
+      $entity = RestAPI::resource_func("get_entity", "items", $member->id);
 
       if (isset($params["fields"])) {
         // Filter by the specified fields.

@@ -71,7 +71,7 @@ abstract class RestAPI_Controller_Rest extends Controller {
     }
 
     // If the method is not allowed, fire a 405 Method Not Allowed.
-    if (!in_array($method, Rest::$allowed_methods)) {
+    if (!in_array($method, RestAPI::$allowed_methods)) {
       throw Rest_Exception::factory(405);
     }
 
@@ -97,12 +97,12 @@ abstract class RestAPI_Controller_Rest extends Controller {
     }
 
     // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
-    Rest::set_active_user($key);
+    RestAPI::set_active_user($key);
 
     // Process the "Origin" header if sent (not required).
     if (($method != HTTP_Request::OPTIONS) &&
         ($origin = $this->request->headers("Origin")) &&
-        Rest::approve_origin($origin)) {
+        RestAPI::approve_origin($origin)) {
       $this->response->headers("Access-Control-Allow-Origin", $origin);
     }
 
@@ -248,7 +248,7 @@ abstract class RestAPI_Controller_Rest extends Controller {
 
     if (Arr::get($this->request->query(), "expand_members",
         static::$default_params["expand_members"])) {
-      $members = Rest::resource_func("get_members", $this->rest_type, $this->rest_id, $this->request->query());
+      $members = RestAPI::resource_func("get_members", $this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
         // A null members array means the resource has no members function - fire a 400 Bad Request.
         throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
@@ -273,36 +273,36 @@ abstract class RestAPI_Controller_Rest extends Controller {
    */
   public function format_resource($type, $id=null, $params=array()) {
     if (is_array($type)) {
-      list ($type, $id, $params) = Rest::split_triad($type);
+      list ($type, $id, $params) = RestAPI::split_triad($type);
     }
 
     $results = array();
 
-    $results["url"] = Rest::url($type, $id, $params);
+    $results["url"] = RestAPI::url($type, $id, $params);
 
-    $data = Rest::resource_func("get_entity", $type, $id, $params);
+    $data = RestAPI::resource_func("get_entity", $type, $id, $params);
     if (isset($data)) {
       $results["entity"] = $data;
     }
 
-    $data = Rest::resource_func("get_members", $type, $id, $params);
+    $data = RestAPI::resource_func("get_members", $type, $id, $params);
     if (isset($data)) {
       $results["members"] = array();
       foreach ($data as $key => $member) {
-        $results["members"][$key] = Rest::url($member);
+        $results["members"][$key] = RestAPI::url($member);
       }
     }
 
-    $data = Rest::relationships($type, $id, $params);
+    $data = RestAPI::relationships($type, $id, $params);
     if (isset($data)) {
       foreach ($data as $r_key => $rel) {
-        $results["relationships"][$r_key]["url"] = Rest::url($rel);
+        $results["relationships"][$r_key]["url"] = RestAPI::url($rel);
 
-        $rel_members = Rest::resource_func("get_members", $rel);
+        $rel_members = RestAPI::resource_func("get_members", $rel);
         if (isset($rel_members)) {
           $results["relationships"][$r_key]["members"] = array();
           foreach ($rel_members as $key => $member) {
-            $results["relationships"][$r_key]["members"][$key] = Rest::url($member);
+            $results["relationships"][$r_key]["members"][$key] = RestAPI::url($member);
           }
         }
       }
@@ -319,23 +319,23 @@ abstract class RestAPI_Controller_Rest extends Controller {
     $this->check_method();
 
     if (Arr::get($this->request->post(), "entity")) {
-      Rest::resource_func("put_entity", $this->rest_type, $this->rest_id, $this->request->post());
+      RestAPI::resource_func("put_entity", $this->rest_type, $this->rest_id, $this->request->post());
     }
 
     if (Arr::get($this->request->post(), "members")) {
-      Rest::resource_func("put_members", $this->rest_type, $this->rest_id, $this->request->post());
+      RestAPI::resource_func("put_members", $this->rest_type, $this->rest_id, $this->request->post());
     }
 
     $put_rels = $this->request->post("relationships");
     if (isset($put_rels)) {
-      $actual_rels = Rest::relationships($this->rest_type, $this->rest_id);
+      $actual_rels = RestAPI::relationships($this->rest_type, $this->rest_id);
       foreach ($put_rels as $r_key => $r_params) {
         if (empty($actual_rels[$r_key])) {
           // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        Rest::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+        RestAPI::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
       }
     }
   }
@@ -354,8 +354,8 @@ abstract class RestAPI_Controller_Rest extends Controller {
     $this->check_method();
 
     if (Arr::get($this->request->post(), "entity")) {
-      $result = Rest::resource_func("post_entity", $this->rest_type, $this->rest_id, $this->request->post());
-      $url = Rest::url($result);
+      $result = RestAPI::resource_func("post_entity", $this->rest_type, $this->rest_id, $this->request->post());
+      $url = RestAPI::url($result);
       $new_flag = Arr::get($result, 3, true);
     } else {
       throw Rest_Exception::factory(400, array("entity" => "required"));
@@ -363,19 +363,19 @@ abstract class RestAPI_Controller_Rest extends Controller {
 
     try {
       if (Arr::get($this->request->post(), "members")) {
-        Rest::resource_func("post_members", $result[0], $result[1], $this->request->post());
+        RestAPI::resource_func("post_members", $result[0], $result[1], $this->request->post());
       }
 
       $post_rels = $this->request->post("relationships");
       if (isset($post_rels)) {
-        $actual_rels = Rest::relationships($result[0], $result[1]);
+        $actual_rels = RestAPI::relationships($result[0], $result[1]);
         foreach ($post_rels as $r_key => $r_params) {
           if (empty($actual_rels[$r_key])) {
             // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
             throw Rest_Exception::factory(400, array("relationships" => "invalid"));
           }
 
-          Rest::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+          RestAPI::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
         }
       }
     } catch (Exception $e) {
@@ -386,7 +386,7 @@ abstract class RestAPI_Controller_Rest extends Controller {
         // access), we force admin access for this sub-request.
         Request::factory(substr($url, strlen(URL::abs_site("")))) // rel URL for internal request
           ->method(HTTP_Request::DELETE)
-          ->headers("X-Gallery-Request-Key", Rest::access_key(Identity::admin_user()))
+          ->headers("X-Gallery-Request-Key", RestAPI::access_key(Identity::admin_user()))
           ->execute();
       }
 
@@ -408,7 +408,7 @@ abstract class RestAPI_Controller_Rest extends Controller {
   public function action_delete() {
     $this->check_method();
 
-    Rest::resource_func("delete", $this->rest_type, $this->rest_id, $this->request->post());
+    RestAPI::resource_func("delete", $this->rest_type, $this->rest_id, $this->request->post());
   }
 
   /**
@@ -421,11 +421,11 @@ abstract class RestAPI_Controller_Rest extends Controller {
     $method =  $this->request->headers("Access-Control-Request-Method");   // required
     $headers = $this->request->headers("Access-Control-Request-Headers");  // optional
 
-    $allow_origin = Rest::approve_origin($origin);
-    $allow_method = ($method && in_array(strtoupper($method), Rest::$allowed_methods));
+    $allow_origin = RestAPI::approve_origin($origin);
+    $allow_method = ($method && in_array(strtoupper($method), RestAPI::$allowed_methods));
     $allow_headers = true;
     if (!empty($headers)) {
-      $allowed_headers = array_map("strtolower", Rest::$allowed_headers);
+      $allowed_headers = array_map("strtolower", RestAPI::$allowed_headers);
       $headers = explode(",", $headers);
       foreach ($headers as $header) {
         if (!in_array(strtolower(trim($header)), $allowed_headers)) {
@@ -440,10 +440,10 @@ abstract class RestAPI_Controller_Rest extends Controller {
 
     // CORS preflight passed - send response (headers only, no body).
     $this->response->headers("Access-Control-Allow-Origin",   $allow_origin);
-    $this->response->headers("Access-Control-Allow-Methods",  Rest::$allowed_methods);
-    $this->response->headers("Access-Control-Allow-Headers",  Rest::$allowed_headers);
-    $this->response->headers("Access-Control-Expose-Headers", Rest::$exposed_headers);
-    $this->response->headers("Access-Control-Max-Age",        Rest::$preflight_max_age);
+    $this->response->headers("Access-Control-Allow-Methods",  RestAPI::$allowed_methods);
+    $this->response->headers("Access-Control-Allow-Headers",  RestAPI::$allowed_headers);
+    $this->response->headers("Access-Control-Expose-Headers", RestAPI::$exposed_headers);
+    $this->response->headers("Access-Control-Max-Age",        RestAPI::$preflight_max_age);
   }
 
   /**

@@ -43,7 +43,7 @@ class Search_Controller_Rest_Search extends Controller_Rest {
     // Get the search album
     $album_url = Arr::get($params, "album");
     if ($album_url) {
-      list ($a_type, $a_id, $a_params) = Rest::resolve($album_url);
+      list ($a_type, $a_id, $a_params) = RestAPI::resolve($album_url);
       if ($a_type != "items") {
         throw Rest_Exception::factory(400, array("album" => "invalid"));
       }

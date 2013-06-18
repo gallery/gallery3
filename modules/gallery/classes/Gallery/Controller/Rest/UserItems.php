@@ -99,7 +99,7 @@ class Gallery_Controller_Rest_UserItems extends Controller_Rest {
     }
 
     // Resolve our members list into an array of item ids.
-    $member_ids = Rest::resolve_members($params["members"],
+    $member_ids = RestAPI::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         $item = ORM::factory("Item", $id);
         return (($type == "items") && ($item->owner_id == $data)) ? $id : false;

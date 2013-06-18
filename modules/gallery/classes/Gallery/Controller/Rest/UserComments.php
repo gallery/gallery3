@@ -83,7 +83,7 @@ class Gallery_Controller_Rest_UserComments extends Controller_Rest {
     }
 
     // Resolve our members list into an array of comment ids.
-    $member_ids = Rest::resolve_members($params["members"],
+    $member_ids = RestAPI::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         $comment = ORM::factory("Comment", $id);
         return (($type == "comments") && ($comment->author_id == $data)) ? $id : false;

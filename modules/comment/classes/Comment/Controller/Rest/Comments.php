@@ -63,14 +63,14 @@ class Comment_Controller_Rest_Comments extends Controller_Rest {
 
     // Convert "item_id" to "items" REST URL.
     if ($comment->item->loaded()) {
-      $data["items"] = Rest::url("items", $comment->item->id);
+      $data["items"] = RestAPI::url("items", $comment->item->id);
     }
     unset($data["item_id"]);
 
     // Convert "author_id" to "author" REST URL.
     $author = Identity::lookup_user($comment->author_id);
     if (Identity::can_view_profile($author)) {
-      $data["author"] = Rest::url("users", $author->id);
+      $data["author"] = RestAPI::url("users", $author->id);
     }
     unset($data["author_id"]);
 
@@ -157,7 +157,7 @@ class Comment_Controller_Rest_Comments extends Controller_Rest {
       throw Rest_Exception::factory(400, array("item" => "required"));
     }
 
-    list ($i_type, $i_id, $i_params) = Rest::resolve($params["entity"]->item);
+    list ($i_type, $i_id, $i_params) = RestAPI::resolve($params["entity"]->item);
     if ($i_type != "items") {
       throw Rest_Exception::factory(400, array("item" => "invalid"));
     }

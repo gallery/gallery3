@@ -46,7 +46,7 @@ class RestAPI_RestAPI {
     // Response::$default_config, even error responses (e.g. 404) will have these headers.
     Response::$default_config = array_merge_recursive(Response::$default_config,
       array("_header" => array(
-        "X-Gallery-Api-Version" => Rest::API_VERSION,
+        "X-Gallery-Api-Version" => RestAPI::API_VERSION,
         "Allow" => static::$allowed_methods
       )));
 
@@ -91,7 +91,7 @@ class RestAPI_RestAPI {
     if ($key->loaded()) {
       $key->delete();
     }
-    return Rest::access_key();
+    return RestAPI::access_key();
   }
 
   static function access_key($user=null) {
@@ -164,7 +164,7 @@ class RestAPI_RestAPI {
   static function resolve_members($members, $callback=null, $callback_data=null) {
     $data = array();
     foreach ($members as $key => $member) {
-      list ($type, $id, $params) = Rest::resolve($member);
+      list ($type, $id, $params) = RestAPI::resolve($member);
 
       if ($callback) {
         $result = call_user_func($callback, $type, $id, $params, $callback_data);

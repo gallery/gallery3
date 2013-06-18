@@ -32,7 +32,7 @@ class RestAPI_Controller_RestUser extends Controller {
       ->add("submit", "input|submit", t("Reset"));
 
     if ($form->load()->validate()) {
-      Rest::reset_access_key();
+      RestAPI::reset_access_key();
       Message::success(t("Your REST API key has been reset."));
     }
 

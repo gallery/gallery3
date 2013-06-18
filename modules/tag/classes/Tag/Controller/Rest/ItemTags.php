@@ -102,7 +102,7 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     Access::required("edit", $item);
 
     // Resolve our members list into an array of tag names.
-    $tag_names = Rest::resolve_members($params["members"],
+    $tag_names = RestAPI::resolve_members($params["members"],
       function($type, $id, $params) {
         return ($type == "tags") ? ORM::factory("Tag", $id)->name : false;
       });
@@ -127,7 +127,7 @@ class Tag_Controller_Rest_ItemTags extends Controller_Rest {
     Access::required("edit", $item);
 
     // Resolve our members list into an array of tag names.
-    $tag_names = Rest::resolve_members($params["members"],
+    $tag_names = RestAPI::resolve_members($params["members"],
       function($type, $id, $params) {
         return ($type == "tags") ? ORM::factory("Tag", $id)->name : false;
       });

@@ -27,7 +27,7 @@ class Data_Rest_Test extends Unittest_TestCase {
     $this->markTestIncomplete("REST API is currently under re-construction...");
 
     $photo = Test::random_photo();
-    $resolved = Rest::resolve(Rest::url("data", $photo, 640));
+    $resolved = RestAPI::resolve(RestAPI::url("data", $photo, 640));
     $this->assertEquals($photo->id, $resolved->id);
   }
 
@@ -53,7 +53,7 @@ class Data_Rest_Test extends Unittest_TestCase {
     $photo = Test::random_photo();
 
     $request = new stdClass();
-    $request->url = Rest::url("data", $photo, "thumb");
+    $request->url = RestAPI::url("data", $photo, "thumb");
     $request->params = new stdClass();
 
     $request->params->size = "thumb";
@@ -80,7 +80,7 @@ class Data_Rest_Test extends Unittest_TestCase {
     Identity::set_active_user(Identity::guest());
 
     $request = new stdClass();
-    $request->url = Rest::url("data", $photo, "thumb");
+    $request->url = RestAPI::url("data", $photo, "thumb");
     $request->params = new stdClass();
     $request->params->size = "thumb";
 
@@ -96,7 +96,7 @@ class Data_Rest_Test extends Unittest_TestCase {
     $photo = Test::random_photo();
 
     $request = new stdClass();
-    $request->url = Rest::url("data", $photo, "thumb");
+    $request->url = RestAPI::url("data", $photo, "thumb");
     $request->params = new stdClass();
     $request->params->size = "thumb";
 

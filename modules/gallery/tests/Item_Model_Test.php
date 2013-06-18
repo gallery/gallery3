@@ -462,8 +462,8 @@ class Item_Model_Test extends Unittest_TestCase {
     $album->reload();
 
     $result = $album->as_restful_array();
-    $this->assertEquals(Rest::url("item", Item::root()), $result["parent"]);
-    $this->assertEquals(Rest::url("item", $photo), $result["album_cover"]);
+    $this->assertEquals(RestAPI::url("item", Item::root()), $result["parent"]);
+    $this->assertEquals(RestAPI::url("item", $photo), $result["album_cover"]);
     $this->assertTrue(!array_key_exists("parent_id", $result));
     $this->assertTrue(!array_key_exists("album_cover_item_id", $result));
   }

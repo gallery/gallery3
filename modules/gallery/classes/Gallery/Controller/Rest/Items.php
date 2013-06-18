@@ -82,27 +82,27 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
 
     // Convert "parent_id" to "parent" REST URL.
     if ($item->parent->loaded()) {
-      $data["parent"] = Rest::url("items", $item->parent_id);
+      $data["parent"] = RestAPI::url("items", $item->parent_id);
     }
     unset($data["parent_id"]);
 
     // Convert "album_cover_item_id" to "album_cover" REST URL.
     if ($item->album_cover()) {
-      $data["album_cover"] = Rest::url("items", $item->album_cover_item_id);
+      $data["album_cover"] = RestAPI::url("items", $item->album_cover_item_id);
     }
     unset($data["album_cover_item_id"]);
 
     // Convert "owner_id" to "owner" REST URL.
     $owner = Identity::lookup_user($item->owner_id);
     if (Identity::can_view_profile($owner)) {
-      $data["owner"] = Rest::url("users", $owner->id);
+      $data["owner"] = RestAPI::url("users", $owner->id);
     }
     unset($data["owner_id"]);
 
     // Generate/remove the full-size fields.
     if (Access::can("view_full", $item) && !$item->is_album()) {
       $data["file_url"] =
-        Rest::url("data", $id, array("size" => "full", "m" => filemtime($item->file_path())));
+        RestAPI::url("data", $id, array("size" => "full", "m" => filemtime($item->file_path())));
       $data["file_size"] = filesize($item->file_path());
       if (Access::user_can(Identity::guest(), "view_full", $item)) {
         $data["file_url_public"] = $item->file_url(true);
@@ -114,7 +114,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     // Generate/remove the resize fields.
     if (Access::can("view", $item) && $item->is_photo()) {
       $data["resize_url"] =
-        Rest::url("data", $id, array("size" => "resize", "m" => filemtime($item->resize_path())));
+        RestAPI::url("data", $id, array("size" => "resize", "m" => filemtime($item->resize_path())));
       $data["resize_size"] = filesize($item->resize_path());
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["resize_url_public"] = $item->resize_url(true);
@@ -126,7 +126,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     // Generate/remove the thumb fields.
     if (Access::can("view", $item) && $item->has_thumb()) {
       $data["thumb_url"] =
-        Rest::url("data", $id, array("size" => "thumb", "m" => filemtime($item->thumb_path())));
+        RestAPI::url("data", $id, array("size" => "thumb", "m" => filemtime($item->thumb_path())));
       $data["thumb_size"] = filesize($item->thumb_path());
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["thumb_url_public"] = $item->thumb_url(true);
@@ -171,7 +171,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
 
     // If parent set, re-parent the item.
     if (property_exists($entity, "parent")) {
-      list ($tmp_type, $tmp_id) = Rest::resolve($entity->parent);
+      list ($tmp_type, $tmp_id) = RestAPI::resolve($entity->parent);
       if ($tmp_type != "items") {
         throw Rest_Exception::factory(400, array("parent" => "invalid"));
       }
@@ -197,7 +197,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     case "album":
       // Change the album cover, if specified.
       if (property_exists($entity, "album_cover")) {
-        list ($tmp_type, $tmp_id) = Rest::resolve($entity->album_cover);
+        list ($tmp_type, $tmp_id) = RestAPI::resolve($entity->album_cover);
         if ($tmp_type != "items") {
           throw Rest_Exception::factory(400, array("album_cover" => "invalid"));
         }
@@ -231,7 +231,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
    */
   public static function post_entity($id, $params) {
     if (!isset($id) && property_exists($params["entity"], "parent")) {
-      list ($p_type, $p_id, $p_params) = Rest::resolve($params["entity"]->parent);
+      list ($p_type, $p_id, $p_params) = RestAPI::resolve($params["entity"]->parent);
       if ($p_type != "items") {
         throw Rest_Exception::factory(400, array("parent" => "invalid"));
       }
@@ -313,7 +313,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     $data = array();
     if ($ancestors_for = Arr::get($params, "ancestors_for")) {
       // Members are the ancestors of the url given.
-      list ($i_type, $i_id, $i_params) = Rest::resolve($ancestors_for);
+      list ($i_type, $i_id, $i_params) = RestAPI::resolve($ancestors_for);
       if ($i_type != "items") {
         throw Rest_Exception::factory(400, array("ancestors_for" => "invalid"));
       }
@@ -329,7 +329,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
       // Members are taken from a list of urls, filtered by name and type.
       // @todo: json_decode is what was used in 3.0, but should we allow comma-separated lists, too?
       foreach (json_decode($urls, true) as $url) {
-        list ($m_type, $m_id, $m_params) = Rest::resolve($url);
+        list ($m_type, $m_id, $m_params) = RestAPI::resolve($url);
         if ($m_type != "items") {
           throw Rest_Exception::factory(400, array("urls" => "invalid"));
         }
@@ -398,7 +398,7 @@ class Gallery_Controller_Rest_Items extends Controller_Rest {
     }
 
     // Resolve our members list into an array of weights => ids.
-    $members_array = Rest::resolve_members($params["members"],
+    $members_array = RestAPI::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         return (($type == "items") && (ORM::factory("Item", $id)->parent_id == $data)) ? $id : null;
       }, $item->id);

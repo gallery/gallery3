@@ -39,14 +39,14 @@ class RestAPI_Hook_RestEvent {
    * on every add.
    */
   static function user_add_form_admin_completed($user, $form) {
-    Rest::access_key($user);
+    RestAPI::access_key($user);
   }
 
   /**
    * Called when admin is editing a user
    */
   static function user_edit_form_admin($user, $form) {
-    $form->add_before_submit("user_access_key", "input", Rest::access_key($user));
+    $form->add_before_submit("user_access_key", "input", RestAPI::access_key($user));
     $form->find("user_access_key")
       ->set("label", t("Remote access key"))
       ->attr("disabled", "disabled");
@@ -64,7 +64,7 @@ class RestAPI_Hook_RestEvent {
     }
 
     $view = new View("rest/user_profile.html");
-    $view->rest_key = Rest::access_key();
+    $view->rest_key = RestAPI::access_key();
 
     $data->content[] = (object)array("title" => t("REST API"), "view" => $view);
   }

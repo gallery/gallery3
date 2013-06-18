@@ -21,7 +21,7 @@ Route::set("rest", "<directory>(/<controller>(/<args>))", array("directory" => "
   ->filter(function($route, $params, $request) {
       // If we're here, we know that we're in REST mode, even if we have an unmatched
       // route (e.g. "gallery3/rest/nonexistent_resource") - initialize the REST API.
-      Rest::init();
+      RestAPI::init();
 
       // Re-route singular item/tag/comment URLs from 3.0
       if (in_array(Arr::get($params, "controller"), array("Item", "Tag", "Comment"))) {

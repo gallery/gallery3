@@ -78,7 +78,7 @@ class Comment_Controller_Rest_ItemComments extends Controller_Rest {
     }
 
     // Resolve our members list into an array of comment ids.
-    $member_ids = Rest::resolve_members($params["members"],
+    $member_ids = RestAPI::resolve_members($params["members"],
       function($type, $id, $params, $data) {
         $comment = ORM::factory("Comment", $id);
         return (($type == "comments") && ($comment->item_id == $data)) ? $id : false;

@@ -41,10 +41,10 @@ class Tags_Rest_Test extends Unittest_TestCase {
     $request = new stdClass();
     $this->assertEquals(
       array(
-        "url" => Rest::url("tags"),
+        "url" => RestAPI::url("tags"),
         "members" => array(
-          Rest::url("tag", $t1),
-          Rest::url("tag", $t2))),
+          RestAPI::url("tag", $t1),
+          RestAPI::url("tag", $t2))),
       Hook_Rest_Tags::get($request));
   }
 
