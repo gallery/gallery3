@@ -172,6 +172,7 @@ class Gallery_Response extends Kohana_Response {
     if ($encoding = Arr::get($options, "encoding")) {
       switch ($encoding) {
         case "base64":
+          $this->headers("Content-Transfer-Encoding", "base64");
           if ($filename === true) {
             // Use the response body.
             $this->body(base64_encode($this->body()));
