@@ -149,16 +149,46 @@ class RestAPI_Controller_Rest extends Controller {
           System::delete_later($path);
         }
       }
-      // Process the "entity", "members", and "relationships" parameters, if specified.
-      // Since relationships have no entity, we can make them purely associative.
-      foreach (array("entity"        => false,
-                     "members"       => true,
-                     "relationships" => true) as $key => $assoc) {
-        $value = $this->request->post($key);
-        if (isset($value)) {
-          $this->request->post($key, json_decode($value, $assoc));
-        }
+
+      // Process the "entity" parameter, if specified.
+      $entity = $this->request->post("entity");
+      if (isset($entity)) {
+        $entity = json_decode($entity);  // as object
+        $this->request->post("entity", $entity);
       }
+
+      // Process the "members" parameter, if specified.
+      $members = $this->request->post("members");
+      if (isset($members)) {
+        $members = json_decode($members, true);  // as assoc array
+        foreach ($members as $key => $member) {
+          $members[$key] = Rest::resolve($member);
+          if (!$members[$key]) {
+            throw Rest_Exception::factory(400, array("members" => "invalid"));
+          }
+        }
+        $this->request->post("members", $members);
+      }
+
+      // Process the "relationships" parameter, if specified.
+      $relationships = $this->request->post("relationships");
+      if (isset($relationships)) {
+        $relationships = json_decode($relationships, true);  // as assoc array (since no entity)
+        foreach ($relationships as $type => $relationship) {
+          $members = Arr::get($relationship, "members");
+          if (isset($members)) {
+            foreach ($members as $key => $member) {
+              $members[$key] = Rest::resolve($member);
+              if (!$members[$key]) {
+                throw Rest_Exception::factory(400, array("relationships" => "invalid_members"));
+              }
+            }
+            $relationships[$type]["members"] = $members;
+          }
+        }
+        $this->request->post("relationships", $relationships);
+      }
+
       break;
     }
 
