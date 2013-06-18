@@ -52,10 +52,8 @@ class RestAPI_Controller_Rest extends Controller {
         throw Rest_Exception::factory(403);
       }
 
-      // Success - set the access key and response.
-      $key = RestAPI::access_key();
-      $this->request->headers("X-Gallery-Request-Key", $key);
-      $this->rest_response = $key;
+      // Success - set the access key.
+      $this->request->headers("X-Gallery-Request-Key", RestAPI::access_key());
     }
 
     return $auth;
@@ -241,7 +239,7 @@ class RestAPI_Controller_Rest extends Controller {
 
   /**
    * Overload Controller::execute() to translate any Exception that isn't already an HTTP_Exception
-   * to a Rest_Exception (which, itself, returns an HTTP_Exception).
+   * to a Rest_Exception (which, itself, returns an HTTP_Exception) and run RestAPI::init().
    *
    * @see  Controller::execute()
    * @see  Gallery_Controller::execute()
@@ -337,13 +335,11 @@ class RestAPI_Controller_Rest extends Controller {
 
   /**
    * POST a typical REST resource.  As needed, this runs post_entity() and post_members() for
-   * the resource, as well as post_members() for the resource's relationships.  The response
-   * body will be array("url" => $url).
+   * the resource, as well as post_members() for the resource's relationships.
    *
    * By default, a successful POST returns a 201 response with a "Location" header.  However,
    * if a post_entity() function decides that the resource already exists, they can override this
-   * by adding a *fourth* element to the returned array that's false (e.g. posting a tag that
-   * already exists should return array("tags", 123, null, false)).
+   * by changing the resource's "created" property back to false.
    */
   public function action_post() {
     $entity        = $this->request->post("entity");
@@ -386,7 +382,12 @@ class RestAPI_Controller_Rest extends Controller {
       if ($this->rest_object->created) {
         // The entity created a new resource, but the members/relationships failed.  This
         // means that the request is bad, so we need to delete the newly-created resource.
-        $this->rest_object->delete(true);
+        // We temporarily change to an admin to ensure that we have delete access.
+        // @todo: find a more elegant way to handle not having delete access.
+        $user = Identity::active_user();
+        Identity::set_active_user(Identity::admin_user());
+        $this->rest_object->delete();
+        Identity::set_active_user($user);
       }
 
       throw $e;
