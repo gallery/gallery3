@@ -84,8 +84,8 @@ class Purifier {
 
     // Recurse if needed.
     if (is_array($html) || is_object($html)) {
-      foreach ($html as $key => $value) {
-        $html[$key] = static::clean_html($value, $config_group);
+      foreach ($html as $key => &$value) {
+        $value = static::clean_html($value, $config_group);
       }
       return $html;
     }
