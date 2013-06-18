@@ -111,14 +111,17 @@ class RestAPI_RestAPI {
   }
 
   /**
-   * Convert a REST url into a type/id/params triad.
+   * Convert a REST url into a REST resource object.
    * Eg:
-   *   http://example.com/gallery3/index.php/rest/item/35          -> "item", 35, array()
-   *   http://example.com/gallery3/index.php/rest/item_comments    -> "item_comments", null, array()
-   *   http://example.com/gallery3/index.php/rest/data/1?size=full -> "data", 1, array("size" => "full")
+   *   http://example.com/gallery3/index.php/rest/item/35
+   *     returns Rest::factory("Item", 35, array())
+   *   http://example.com/gallery3/index.php/rest/item_comments
+   *     returns Rest::factory("ItemComments", null, array())
+   *   http://example.com/gallery3/index.php/rest/data/1?size=full
+   *     returns Rest::factory("Data", 1, array("size" => "full"))
    *
    * @param string  the fully qualified REST url
-   * @return array  the type/id/params triad
+   * @return array  the REST resource object
    */
   static function resolve($url) {
     $relative_url = substr($url, strlen(URL::abs_site("rest")));  // e.g. "/data/1?size=full"
@@ -130,7 +133,7 @@ class RestAPI_RestAPI {
     if (empty($components[1])) {
       throw Rest_Exception::factory(404);
     }
-    $type = $components[1];
+    $type = Inflector::convert_module_to_class_name($components[1]);
 
     $id = empty($components[2]) ? null : $components[2];
 
@@ -145,7 +148,7 @@ class RestAPI_RestAPI {
       }
     }
 
-    return array($type, $id, $params);
+    return Rest::factory($type, $id, $params);
   }
 
   /**
@@ -161,76 +164,24 @@ class RestAPI_RestAPI {
    * @param  mixed  callback data (optional)
    * @return array
    */
-  static function resolve_members($members, $callback=null, $callback_data=null) {
+  static function resolve_members($member_urls, $callback=null, $callback_data=null) {
     $data = array();
-    foreach ($members as $key => $member) {
-      list ($type, $id, $params) = RestAPI::resolve($member);
+    foreach ($member_urls as $key => $member_url) {
+      $member = RestAPI::resolve($member_url);
 
       if ($callback) {
-        $result = call_user_func($callback, $type, $id, $params, $callback_data);
+        $result =
+          call_user_func($callback, $member->type, $member->id, $member->params, $callback_data);
         if (empty($result)) {
           throw Rest_Exception::factory(400, array("members" => "invalid"));
         }
         $data[$key] = $result;
       } else {
-        $data[$key] = array($type, $id, $params);
+        $data[$key] = Rest::factory($type, $id, $params);
       }
     }
 
     return $data;
-  }
-
-  /**
-   * Return an absolute url used for REST resource location.
-   * @param  string  resource type (e.g. "items", "tags")
-   * @param  mixed   resource id (typically an integer, but can be more complex (e.g. "3,5")
-   * @param  array   resource query params (e.g. "data" requires a "size" param)
-   * @return string  REST resource url with "sticky" query params carried over as needed
-   */
-  static function url($type, $id=null, $params=array()) {
-    if (is_array($type)) {
-      list ($type, $id, $params) = static::split_triad($type);
-    }
-
-    // Carry over the "sticky" params.
-    foreach (array("access_key", "num", "type") as $key) {
-      $value = Request::current()->query($key);
-      if (isset($value)) {
-        $params[$key] = $value;
-      }
-    }
-
-    // Output is only "sticky" if set to html.
-    if (Request::current()->query("output") == "html") {
-      $params["output"] = "html";
-    }
-
-    $url = URL::abs_site("rest/$type");
-    $url .= empty($id)     ? "" : "/$id";
-    $url .= empty($params) ? "" : URL::query($params, false);
-    return $url;
-  }
-
-  /**
-   * Find a resource's relationships.
-   * @return  array  type/id/params triads
-   */
-  static function relationships($type, $id=null, $params=array()) {
-    if (is_array($type)) {
-      list ($type, $id, $params) = static::split_triad($type);
-    }
-
-    $results = array();
-    foreach (static::registry(true) as $resource) {
-      $class = "Controller_Rest_$resource";
-      if (class_exists($class) && method_exists($class, "relationships")) {
-        if ($tmp = call_user_func("$class::relationships", $type, $id, $params)) {
-          $results = array_merge($results, $tmp);
-        }
-      }
-    }
-
-    return $results;
   }
 
   /**
@@ -240,8 +191,11 @@ class RestAPI_RestAPI {
   static function registry($return_class_names=false) {
     $results = array();
     foreach (Module::active() as $module) {
-      foreach (glob(MODPATH . "{$module->name}/classes/Controller/Rest/*.php") as $filename) {
+      foreach (glob(MODPATH . "{$module->name}/classes/Rest/*.php") as $filename) {
         $class_name = str_replace(".php", "", basename($filename));
+        if ($class_name == "Exception") {
+          continue;  // Not a REST resource.
+        }
         $results[] = $return_class_names ? $class_name :
           Inflector::convert_class_to_module_name($class_name);
       }
@@ -286,38 +240,5 @@ class RestAPI_RestAPI {
     }
 
     return false;
-  }
-
-  /**
-   * Call a function of a specific REST resource.  The expected response is
-   * either an array or null, depending on which function is called.
-   *   get_entity   - array of entity fields
-   *   get_members  - array of type/id/params triads
-   *   put_entity   - null
-   *   put_members  - null
-   *   post_entity  - array with type/id/params/new_flag of resource (default new_flag is true)
-   *   post_members - null
-   *   delete       - null
-   *
-   * @return  array or null
-   */
-  static function resource_func($func, $type, $id=null, $params=array()) {
-    if (is_array($type)) {
-      list ($type, $id, $params) = static::split_triad($type);
-    }
-
-    $class = "Controller_Rest_" . Inflector::convert_module_to_class_name($type);
-    if (!class_exists($class) || !method_exists($class, $func)) {
-      return null;
-    }
-
-    return call_user_func("$class::$func", $id, $params);
-  }
-
-  /**
-   * Split a REST resource triad, ensuring that each value has the correct defaults.
-   */
-  static function split_triad($triad) {
-    return array(Arr::get($triad, 0), Arr::get($triad, 1), Arr::get($triad, 2, array()));
   }
 }

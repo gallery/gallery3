@@ -17,19 +17,4 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Route::set("rest", "<directory>(/<controller>(/<args>))", array("directory" => "rest"))
-  ->filter(function($route, $params, $request) {
-      // If we're here, we know that we're in REST mode, even if we have an unmatched
-      // route (e.g. "gallery3/rest/nonexistent_resource") - initialize the REST API.
-      RestAPI::init();
-
-      // Re-route singular item/tag/comment URLs from 3.0
-      if (in_array(Arr::get($params, "controller"), array("Item", "Tag", "Comment"))) {
-        $params["controller"] .= "s";
-      }
-
-      return $params;
-    })
-  ->defaults(array(
-      "controller" => "access_key"
-    ));
+Route::set("rest", "<controller>(/<args>)", array("controller" => "rest"));  // Note: no action set.

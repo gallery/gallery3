@@ -23,20 +23,12 @@
  * Note: Kohana includes custom headers from the $_SERVER array in HTTP::request_headers(),
  * so it's sufficient to look in $this->request->headers().
  */
-abstract class RestAPI_Controller_Rest extends Controller {
+class RestAPI_Controller_Rest extends Controller {
   // REST response used by Controller_Rest::after() to generate the Response body.
   public $rest_response = array();
 
-  // REST resource type and id.  These are set in Controller_Rest::before().
-  public $rest_type;
-  public $rest_id;
-
-  // Default REST query parameters.  These can be altered as needed in each resource class.
-  public static $default_params = array(
-    "start" => 0,
-    "num" => 100,
-    "expand_members" => false
-  );
+  // REST resource object.  This is set in Controller_Rest::before().
+  public $rest_object;
 
   /**
    * Override Controller::check_auth() since REST doesn't have pages for login or reauth redirects.
@@ -50,6 +42,20 @@ abstract class RestAPI_Controller_Rest extends Controller {
   public function check_auth($auth) {
     if (Module::get_var("gallery", "maintenance_mode", 0)) {
       throw Rest_Exception::factory(403);
+    }
+
+    if (!$this->request->arg_optional(0) && ($this->request->method() == HTTP_Request::POST)) {
+      // Request is POST and has no args - check login using "user" and "password" fields in POST.
+      if (!Validation::factory($this->request->post())
+        ->rule("user", "Auth::validate_login", array(":validation", ":data", "user", "password"))
+        ->check()) {
+        throw Rest_Exception::factory(403);
+      }
+
+      // Success - set the access key and response.
+      $key = RestAPI::access_key();
+      $this->request->headers("X-Gallery-Request-Key", $key);
+      $this->rest_response = $key;
     }
 
     return $auth;
@@ -106,10 +112,6 @@ abstract class RestAPI_Controller_Rest extends Controller {
       $this->response->headers("Access-Control-Allow-Origin", $origin);
     }
 
-    // Get the REST type and id (note: strlen("Controller_Rest_") --> 16).
-    $this->rest_type = Inflector::convert_class_to_module_name(substr(get_class($this), 16));
-    $this->rest_id = $this->request->arg_optional(0);
-
     // Process some additional fields, depending on the method.
     switch ($method) {
     case HTTP_Request::GET:
@@ -161,6 +163,29 @@ abstract class RestAPI_Controller_Rest extends Controller {
       }
       break;
     }
+
+    // Build the main REST object
+    $type   = $this->request->arg_optional(0);
+    $id     = $this->request->arg_optional(1);
+    $params = ($method == HTTP_Request::GET) ? $this->request->query() : $this->request->post();
+
+    // If the resource type is empty (i.e. login), change the action.
+    if (empty($type)) {
+      $this->request->action("show_access_key");
+      return;
+    }
+
+    $type = Inflector::convert_module_to_class_name($type);
+    if (in_array($type, array("Item", "Tag", "Comment"))) {
+      // Re-route singular item/tag/comment URLs from 3.0
+      $type .= "s";
+    }
+
+    if (!class_exists("Rest_$type")) {
+      throw Rest_Exception::factory(400, array("resource_type" => "invalid"));
+    }
+
+    $this->rest_object = Rest::factory($type, $id, $params);
   }
 
   /**
@@ -222,6 +247,8 @@ abstract class RestAPI_Controller_Rest extends Controller {
    * @see  Gallery_Controller::execute()
    */
   public function execute() {
+    RestAPI::init();
+
     try {
       return parent::execute();
     } catch (Exception $e) {
@@ -244,71 +271,26 @@ abstract class RestAPI_Controller_Rest extends Controller {
    * (e.g. data, tree, registry), most resources can use this default implementation.
    */
   public function action_get() {
-    $this->check_method();
+    if (Arr::get($this->rest_object->params, "expand_members",
+        $this->rest_object->default_params["expand_members"])) {
+      $members = method_exists($this->rest_object, "get_members") ?
+        $this->rest_object->get_members() : null;
 
-    if (Arr::get($this->request->query(), "expand_members",
-        static::$default_params["expand_members"])) {
-      $members = RestAPI::resource_func("get_members", $this->rest_type, $this->rest_id, $this->request->query());
       if (!isset($members)) {
-        // A null members array means the resource has no members function - fire a 400 Bad Request.
+        // A null members array means the resource is not a collection - fire a 400 Bad Request.
         throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
       }
 
       foreach ($members as $key => $member) {
-        $this->rest_response[$key] = $this->format_resource($member);
+        $this->rest_response[$key] = $member->get_response();
       }
     } else {
-      $this->rest_response =
-        $this->format_resource($this->rest_type, $this->rest_id, $this->request->query());
-    }
-  }
-
-  /**
-   * Format a resource's output.  This returns an array of the url, entity, members, and
-   * relationships of the resource, and is used by Controller_Rest::action_get().
-   *
-   * When building the members and relationship members lists, we maintain the array keys
-   * (useful for showing item weights, etc) and the distinction between null and array()
-   * (e.g. "comment" members is null, but "comments" with no members is array()).
-   */
-  public function format_resource($type, $id=null, $params=array()) {
-    if (is_array($type)) {
-      list ($type, $id, $params) = RestAPI::split_triad($type);
+      $this->rest_response = $this->rest_object->get_response();
     }
 
-    $results = array();
-
-    $results["url"] = RestAPI::url($type, $id, $params);
-
-    $data = RestAPI::resource_func("get_entity", $type, $id, $params);
-    if (isset($data)) {
-      $results["entity"] = $data;
+    if (!isset($this->rest_response)) {
+      throw Rest_Exception::factory(400, array("method" => "invalid"));
     }
-
-    $data = RestAPI::resource_func("get_members", $type, $id, $params);
-    if (isset($data)) {
-      $results["members"] = array();
-      foreach ($data as $key => $member) {
-        $results["members"][$key] = RestAPI::url($member);
-      }
-    }
-
-    $data = RestAPI::relationships($type, $id, $params);
-    if (isset($data)) {
-      foreach ($data as $r_key => $rel) {
-        $results["relationships"][$r_key]["url"] = RestAPI::url($rel);
-
-        $rel_members = RestAPI::resource_func("get_members", $rel);
-        if (isset($rel_members)) {
-          $results["relationships"][$r_key]["members"] = array();
-          foreach ($rel_members as $key => $member) {
-            $results["relationships"][$r_key]["members"][$key] = RestAPI::url($member);
-          }
-        }
-      }
-    }
-
-    return $results;
   }
 
   /**
@@ -316,28 +298,41 @@ abstract class RestAPI_Controller_Rest extends Controller {
    * the resource, as well as put_members() for the resource's relationships.
    */
   public function action_put() {
-    $this->check_method();
+    $entity        = $this->request->post("entity");
+    $members       = $this->request->post("members");
+    $relationships = $this->request->post("relationships");
 
-    if (Arr::get($this->request->post(), "entity")) {
-      RestAPI::resource_func("put_entity", $this->rest_type, $this->rest_id, $this->request->post());
+    if (isset($entity)) {
+      if (!method_exists($this->rest_object, "put_entity")) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      $this->rest_object->put_entity();
     }
 
-    if (Arr::get($this->request->post(), "members")) {
-      RestAPI::resource_func("put_members", $this->rest_type, $this->rest_id, $this->request->post());
+    if (isset($members)) {
+      if (!method_exists($this->rest_object, "put_members")) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
+      }
+      $this->rest_object->put_members();
     }
 
-    $put_rels = $this->request->post("relationships");
-    if (isset($put_rels)) {
-      $actual_rels = RestAPI::relationships($this->rest_type, $this->rest_id);
-      foreach ($put_rels as $r_key => $r_params) {
-        if (empty($actual_rels[$r_key])) {
+    if (isset($relationships)) {
+      $actual_relationships = $this->rest_object->relationships();
+      foreach ($relationships as $key => $params) {
+        if (empty($actual_relationships[$key])) {
           // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
-        RestAPI::resource_func("put_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+        $relationship->params = $params;
+        if (!method_exists($relationship, "put_members")) {
+          throw Rest_Exception::factory(400, array("method" => "invalid"));
+        }
+        $relationship->put_members();
       }
     }
+
+    $this->rest_response = $this->rest_object->put_response();
   }
 
   /**
@@ -351,64 +346,71 @@ abstract class RestAPI_Controller_Rest extends Controller {
    * already exists should return array("tags", 123, null, false)).
    */
   public function action_post() {
-    $this->check_method();
-
-    if (Arr::get($this->request->post(), "entity")) {
-      $result = RestAPI::resource_func("post_entity", $this->rest_type, $this->rest_id, $this->request->post());
-      $url = RestAPI::url($result);
-      $new_flag = Arr::get($result, 3, true);
-    } else {
-      throw Rest_Exception::factory(400, array("entity" => "required"));
-    }
+    $entity        = $this->request->post("entity");
+    $members       = $this->request->post("members");
+    $relationships = $this->request->post("relationships");
 
     try {
-      if (Arr::get($this->request->post(), "members")) {
-        RestAPI::resource_func("post_members", $result[0], $result[1], $this->request->post());
+      if (isset($entity)) {
+        if (!method_exists($this->rest_object, "post_entity")) {
+          throw Rest_Exception::factory(400, array("method" => "invalid"));
+        }
+
+        $this->rest_object->created = true;
+        $this->rest_object->post_entity();
       }
 
-      $post_rels = $this->request->post("relationships");
-      if (isset($post_rels)) {
-        $actual_rels = RestAPI::relationships($result[0], $result[1]);
-        foreach ($post_rels as $r_key => $r_params) {
-          if (empty($actual_rels[$r_key])) {
+      if (isset($members)) {
+        if (!method_exists($this->rest_object, "post_members")) {
+          throw Rest_Exception::factory(400, array("method" => "invalid"));
+        }
+        $this->rest_object->post_members();
+      }
+
+      if (isset($relationships)) {
+        $actual_relationships = $this->rest_object->relationships();
+        foreach ($relationships as $key => $params) {
+          if (empty($actual_relationships[$key])) {
             // The resource doesn't have the relationship type specified - fire a 400 Bad Request.
             throw Rest_Exception::factory(400, array("relationships" => "invalid"));
           }
 
-          RestAPI::resource_func("post_members", $actual_rels[$r_key][0], Arr::get($actual_rels[$r_key], 1), $r_params);
+          $relationship->params = $params;
+          if (!method_exists($relationship, "post_members")) {
+            throw Rest_Exception::factory(400, array("method" => "invalid"));
+          }
+          $relationship->post_members();
         }
       }
     } catch (Exception $e) {
-      if ($new_flag) {
+      if ($this->rest_object->created) {
         // The entity created a new resource, but the members/relationships failed.  This
         // means that the request is bad, so we need to delete the newly-created resource.
-        // Since direct deletes aren't always allowed (e.g. a user with add but not edit
-        // access), we force admin access for this sub-request.
-        Request::factory(substr($url, strlen(URL::abs_site("")))) // rel URL for internal request
-          ->method(HTTP_Request::DELETE)
-          ->headers("X-Gallery-Request-Key", RestAPI::access_key(Identity::admin_user()))
-          ->execute();
+        $this->rest_object->delete(true);
       }
 
       throw $e;
     }
 
-    if ($new_flag) {
+    if ($this->rest_object->created) {
       // New resource - set the status and headers.
       $this->response->status(201);
-      $this->response->headers("Location", $url);
+      $this->response->headers("Location", $this->rest_object->url());
     }
 
-    $this->rest_response = array("url" => $url);
+    $this->rest_response = $this->rest_object->post_response();
   }
 
   /**
    * DELETE a typical REST resource.
    */
   public function action_delete() {
-    $this->check_method();
+    if (!method_exists($this->rest_object, "delete")) {
+      throw Rest_Exception::factory(400, array("method" => "invalid"));
+    }
 
-    RestAPI::resource_func("delete", $this->rest_type, $this->rest_id, $this->request->post());
+    $this->rest_object->delete();
+    $this->rest_response = $this->rest_object->delete_response();
   }
 
   /**
@@ -447,37 +449,11 @@ abstract class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * Check if a method is defined for this resource.  This is called by the standard
-   * implementations of action_get(), action_post(), etc., and fires a 400 Bad Request
-   * if they shouldn't be used.  If a resource implements their own actions, this
-   * function is (intentionally) not called.
+   * Show the access key.  If we get here with GET, then guest access was allowed and
+   * this shows an empty key with status 200.  If we get here with another method, then
+   * the user successfully logged in and this shows their key.
    */
-  public function check_method() {
-    $method = $this->request->method();
-
-    switch ($method) {
-    case HTTP_Request::GET:
-    case HTTP_Request::PUT:
-      // Must have entity *or* members functions.
-      if (!method_exists($this, strtolower($method) . "_entity") &&
-          !method_exists($this, strtolower($method) . "_members")) {
-        throw Rest_Exception::factory(400, array("method" => "invalid"));
-      }
-      break;
-
-    case HTTP_Request::POST:
-      // Must have entity function.
-      if (!method_exists($this, strtolower($method) . "_entity")) {
-        throw Rest_Exception::factory(400, array("method" => "invalid"));
-      }
-      break;
-
-    case HTTP_Request::DELETE:
-      // Must have delete function.
-      if (!method_exists($this, strtolower($method))) {
-        throw Rest_Exception::factory(400, array("method" => "invalid"));
-      }
-      break;
-    }
+  public function action_show_access_key() {
+    $this->rest_response = (string)RestAPI::access_key();
   }
 }

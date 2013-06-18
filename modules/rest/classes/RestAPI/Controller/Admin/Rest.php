@@ -63,6 +63,8 @@ class RestAPI_Controller_Admin_Rest extends Controller_Admin {
     $view = new View_Admin("required/admin.html");
     $view->page_title = t("REST API settings");
     $view->content = new View("admin/rest.html");
+    $view->content->rest_url = Rest::factory("Items", Item::root()->id,
+      array("output" => "html", "access_key" => RestAPI::access_key()))->url();
     $view->content->form = $form;
 
     $this->response->body($view);
