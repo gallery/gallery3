@@ -79,8 +79,9 @@ class RestAPI_Rest {
       }
     }
 
-    foreach ($this->relationships() as $key => $relationship) {
-      $results["relationships"][$key] = $relationship->get_response();
+    foreach ($this->relationships() as $type => $relationship) {
+      $type = Inflector::convert_class_to_module_name($type);
+      $results["relationships"][$type] = $relationship->get_response();
     }
 
     return $results;
@@ -130,16 +131,19 @@ class RestAPI_Rest {
   }
 
   /**
-   * Find a resource's relationships.
+   * Find a resource's relationships.  These only exist if we have an id defined.
    * @return  array  related REST objects
    */
   public function relationships() {
     $results = array();
-    foreach (RestAPI::registry(true) as $resource) {
-      $class = "Rest_$resource";
-      $data = $class::$relationships;
-      if (!empty($data[$this->type])) {
-        $results[$data[$this->type]] = Rest::factory($resource, $this->id);
+
+    if ($this->id) {
+      foreach (RestAPI::registry(true) as $resource) {
+        $class = "Rest_$resource";
+        $data = $class::$relationships;
+        if (!empty($data[$this->type])) {
+          $results[$data[$this->type]] = Rest::factory($resource, $this->id);
+        }
       }
     }
 

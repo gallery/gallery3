@@ -175,6 +175,7 @@ class RestAPI_Controller_Rest extends Controller {
       if (isset($relationships)) {
         $relationships = json_decode($relationships, true);  // as assoc array (since no entity)
         foreach ($relationships as $type => $relationship) {
+          $type = Inflector::convert_module_to_class_name($type);
           $members = Arr::get($relationship, "members");
           if (isset($members)) {
             foreach ($members as $key => $member) {
