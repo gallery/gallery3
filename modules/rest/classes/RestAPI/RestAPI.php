@@ -60,24 +60,23 @@ class RestAPI_RestAPI {
 
   static function set_active_user($access_key) {
     if (empty($access_key)) {
-      if (Module::get_var("rest", "allow_guest_access")) {
-        Identity::set_active_user(Identity::guest());
-        return;
-      } else {
+      $user = Identity::guest();
+    } else {
+      $key = ORM::factory("UserAccessKey")
+        ->where("access_key", "=", $access_key)
+        ->find();
+
+      if (!$key->loaded()) {
+        throw Rest_Exception::factory(403);
+      }
+
+      $user = Identity::lookup_user($key->user_id);
+      if (empty($user)) {
         throw Rest_Exception::factory(403);
       }
     }
 
-    $key = ORM::factory("UserAccessKey")
-      ->where("access_key", "=", $access_key)
-      ->find();
-
-    if (!$key->loaded()) {
-      throw Rest_Exception::factory(403);
-    }
-
-    $user = Identity::lookup_user($key->user_id);
-    if (empty($user)) {
+    if (!Module::get_var("rest", "allow_guest_access") && $user->guest) {
       throw Rest_Exception::factory(403);
     }
 
@@ -95,14 +94,17 @@ class RestAPI_RestAPI {
   }
 
   static function access_key($user=null) {
-    $user_id = empty($user) ? Identity::active_user()->id : $user->id;
+    $user = empty($user) ? Identity::active_user() : $user;
+    if ($user->guest) {
+      return null;
+    }
 
     $key = ORM::factory("UserAccessKey")
-      ->where("user_id", "=", $user_id)
+      ->where("user_id", "=", $user->id)
       ->find();
 
     if (!$key->loaded()) {
-      $key->user_id = $user_id;
+      $key->user_id = $user->id;
       $key->access_key = md5(Random::hash() . Access::private_key());
       $key->save();
     }
