@@ -162,7 +162,7 @@ class RestAPI_Controller_Rest extends Controller {
       if (isset($members)) {
         $members = json_decode($members, true);  // as assoc array
         foreach ($members as $key => $member) {
-          $members[$key] = Rest::resolve($member);
+          $members[$key] = RestAPI::resolve($member);
           if (!$members[$key]) {
             throw Rest_Exception::factory(400, array("members" => "invalid"));
           }
@@ -179,7 +179,7 @@ class RestAPI_Controller_Rest extends Controller {
           $members = Arr::get($relationship, "members");
           if (isset($members)) {
             foreach ($members as $key => $member) {
-              $members[$key] = Rest::resolve($member);
+              $members[$key] = RestAPI::resolve($member);
               if (!$members[$key]) {
                 throw Rest_Exception::factory(400, array("relationships" => "invalid_members"));
               }
