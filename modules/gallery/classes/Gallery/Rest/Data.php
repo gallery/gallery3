@@ -35,28 +35,19 @@ class Gallery_Rest_Data extends Rest {
     $size = Arr::get($this->params, "size");
     $encoding = Arr::get($this->params, "encoding");
 
-    switch ($size) {
-    case "full":
-      $file = $item->file_path();
-      break;
-
-    case "resize":
-      $file = $item->resize_path();
-      break;
-
-    case "thumb":
-      $file = $item->thumb_path();
-      break;
-
-    default:
+    $type = Arr::get(array("thumb" => "thumbs", "resize" => "resizes", "full" => "albums"), $size);
+    if (!$type) {
       throw Rest_Exception::factory(400, array("size" => "invalid"));
     }
 
-    $params = $encoding ? array("encoding" => $encoding) : array();
-    $file = substr($file, strlen(DOCROOT));
-
     // If successful, FileProxy will dump the file to the browser and halt script execution.
-    $response = Request::factory($file)->query($params)->execute();
+    $response = Request::factory("file_proxy/show")
+      ->query(array(
+          "item"     => $item,
+          "type"     => $type,
+          "encoding" => $encoding
+        ))
+      ->execute();
 
     // If not, we likely have an HTTP error code to throw (typically a 404).
     if ($response->status() >= 400) {
