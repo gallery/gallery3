@@ -23,7 +23,7 @@
  * Note: Kohana includes custom headers from the $_SERVER array in HTTP::request_headers(),
  * so it's sufficient to look in $this->request->headers().
  */
-abstract class Rest_Controller_Rest extends Controller {
+abstract class RestAPI_Controller_Rest extends Controller {
   // REST response used by Controller_Rest::after() to generate the Response body.
   public $rest_response = array();
 

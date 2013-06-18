@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Rest_Exception extends HTTP_Exception {
+class RestAPI_Rest_Exception extends HTTP_Exception {
   /**
    * Similar to HTTP_Exception::factory() except that the message can be an array.
    *

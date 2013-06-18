@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rest_Controller_RestUser extends Controller {
+class RestAPI_Controller_RestUser extends Controller {
   /**
    * Reset the REST API key.  This generates the form, validates it, resets the key,
    * and returns a response.  This is an ajax dialog from the user_profile view.
