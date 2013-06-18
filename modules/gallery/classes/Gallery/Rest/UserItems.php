@@ -43,16 +43,18 @@ class Gallery_Rest_UserItems extends Rest {
    * Note: similar to the standard UI, only admins can PUT or DELETE user_items.
    */
 
+  public static $relationships = array("Users" => "Items");
+
   /**
    * GET the item members of the user_items resource.
    * @see  Rest_Items::get_members().
    */
-  static function get_members($id, $params) {
-    if (empty($id)) {
+  public function get_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $user = Identity::lookup_user($id);
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
@@ -61,20 +63,20 @@ class Gallery_Rest_UserItems extends Rest {
     // that the user is an ORM model with an established relationship.
     $members = ORM::factory("Item")->viewable()
       ->where("owner_id", "=", $user->id)
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
 
-    if (isset($params["type"])) {
-      $members->where("type", "IN", $params["type"]);
+    if (isset($this->params["type"])) {
+      $members->where("type", "IN", $this->params["type"]);
     }
 
-    if (isset($params["name"])) {
-      $members->where("name", "LIKE", "%" . Database::escape_for_like($params["name"]) . "%");
+    if (isset($this->params["name"])) {
+      $members->where("name", "LIKE", "%" . Database::escape_for_like($this->params["name"]) . "%");
     }
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("items", $member->id);
+      $data[] = Rest::factory("Items", $member->id);
     }
 
     return $data;
@@ -84,8 +86,8 @@ class Gallery_Rest_UserItems extends Rest {
    * PUT the item members of the user_items resource.  This replaces the items list
    * with this one, and removes (but doesn't add) items as needed.  This is only for admins.
    */
-  static function put_members($id, $params) {
-    if (empty($id)) {
+  public function put_members() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -93,17 +95,20 @@ class Gallery_Rest_UserItems extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $user = Identity::lookup_user($id);
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
 
-    // Resolve our members list into an array of item ids.
-    $member_ids = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params, $data) {
-        $item = ORM::factory("Item", $id);
-        return (($type == "items") && ($item->owner_id == $data)) ? $id : false;
-      }, $user->id);
+    // Convert our members list into an array of item ids.
+    $member_ids = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Item", $member_rest->id);
+      if (($member_rest->type != "Items") || ($member->owner_id != $user->id)) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $member_ids[$key] = $member->id;
+    }
 
     // Delete any items that are not in the list.
     foreach (ORM::factory("Item")
@@ -120,8 +125,8 @@ class Gallery_Rest_UserItems extends Rest {
   /**
    * DELETE removes all of the user's items, and is only for admins.
    */
-  static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -129,7 +134,7 @@ class Gallery_Rest_UserItems extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $user = Identity::lookup_user($id);
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
@@ -142,14 +147,5 @@ class Gallery_Rest_UserItems extends Rest {
              ->find_all() as $item) {
       $item->delete();
     }
-  }
-
-  /**
-   * Return the relationship established by user_items.  This adds "items"
-   * as a relationship of a "users" resource.
-   */
-  static function relationships($type, $id, $params) {
-    return (($type == "users") && (!empty($id))) ?
-      array("items" => array("user_items", $id, $params)) : null;
   }
 }

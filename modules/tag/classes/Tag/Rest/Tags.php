@@ -51,12 +51,12 @@ class Tag_Rest_Tags extends Rest {
   /**
    * GET the tag's entity.
    */
-  static function get_entity($id, $params) {
-    if (empty($id)) {
+  public function get_entity() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $tag = ORM::factory("Tag", $id);
+    $tag = ORM::factory("Tag", $this->id);
     if (!$tag->loaded()) {
       throw Rest_Exception::factory(404);
     }
@@ -70,8 +70,8 @@ class Tag_Rest_Tags extends Rest {
   /**
    * PUT the tag's entity.  This edits the tag model, and is only for admins.
    */
-  static function put_entity($id, $params) {
-    if (empty($id)) {
+  public function put_entity() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -79,15 +79,15 @@ class Tag_Rest_Tags extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $tag = ORM::factory("Tag", $id);
+    $tag = ORM::factory("Tag", $this->id);
     if (!$tag->loaded()) {
       throw Rest_Exception::factory(404);
     }
 
     // Add fields from a whitelist.
     foreach (array("name", "slug") as $field) {
-      if (property_exists($params["entity"], $field)) {
-        $tag->$field = $params["entity"]->$field;
+      if (property_exists($this->params["entity"], $field)) {
+        $tag->$field = $this->params["entity"]->$field;
       }
     }
 
@@ -97,8 +97,8 @@ class Tag_Rest_Tags extends Rest {
   /**
    * DELETE the tag.  This is only for admins.
    */
-  static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -106,7 +106,7 @@ class Tag_Rest_Tags extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $tag = ORM::factory("Tag", $id);
+    $tag = ORM::factory("Tag", $this->id);
     if (!$tag->loaded()) {
       throw Rest_Exception::factory(404);
     }
@@ -117,23 +117,23 @@ class Tag_Rest_Tags extends Rest {
   /**
    * GET the members of the tags collection.
    */
-  static function get_members($id, $params) {
-    if (!empty($id)) {
+  public function get_members() {
+    if (!empty($this->id)) {
       return null;
     }
 
     $members = ORM::factory("Tag")
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
 
-    if (isset($params["name"])) {
-      $members->where("name", "LIKE", Database::escape_for_like($params["name"]) . "%");
+    if (isset($this->params["name"])) {
+      $members->where("name", "LIKE", Database::escape_for_like($this->params["name"]) . "%");
       $default_order = "name";  // Useful for autocomplete
     } else {
       $default_order = "count"; // Useful for cloud
     }
 
-    switch (Arr::get($params, "order", $default_order)) {
+    switch (Arr::get($this->params, "order", $default_order)) {
     case "count":
       $members->order_by("count", "DESC");
       break;
@@ -148,7 +148,7 @@ class Tag_Rest_Tags extends Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("tags", $member->id);
+      $data[] = Rest::factory("tags", $member->id);
     }
 
     return $data;
@@ -157,8 +157,8 @@ class Tag_Rest_Tags extends Rest {
   /**
    * POST a tag's entity.  This generates a new tag model.
    */
-  static function post_entity($id, $params) {
-    if (!empty($id)) {
+  public function post_entity() {
+    if (!empty($this->id)) {
       return null;
     }
 
@@ -175,24 +175,26 @@ class Tag_Rest_Tags extends Rest {
     }
 
     // The name field is required.
-    if (!property_exists($params["entity"], "name")) {
+    if (!property_exists($this->params["entity"], "name")) {
       throw Rest_Exception::factory(400, array("name" => "required"));
     }
 
     // See if we already have a tag with the same name.
-    $tag = ORM::factory("Tag")->where("name", "=", $params["entity"]->name)->find();
+    $tag = ORM::factory("Tag")->where("name", "=", $this->params["entity"]->name)->find();
     if ($new = !$tag->loaded()) {
       // New tag - add fields from a whitelist.
       foreach (array("name", "slug") as $field) {
-        if (property_exists($params["entity"], $field)) {
-          $tag->$field = $params["entity"]->$field;
+        if (property_exists($this->params["entity"], $field)) {
+          $tag->$field = $this->params["entity"]->$field;
         }
       }
 
       $tag->save();
+    } else {
+      $this->created = false;
     }
 
-    // Success!  Return the resource triad with the new flag.
-    return array("tags", $tag->id, null, $new);
+    // Success!
+    $this->id = $tag->id;
   }
 }

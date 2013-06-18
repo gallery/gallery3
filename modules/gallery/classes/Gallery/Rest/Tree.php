@@ -43,8 +43,8 @@ class Gallery_Rest_Tree extends Rest {
   /**
    * GET the tree's entity, which is an array of item urls and entities.
    */
-  static function get_entity($id, $params) {
-    $item = ORM::factory("Item", $id);
+  public function get_entity() {
+    $item = ORM::factory("Item", $this->id);
     Access::required("view", $item);
     if (!$item->is_album()) {
       throw Rest_Exception::factory(400, array("tree" => "not_an_album"));
@@ -52,13 +52,13 @@ class Gallery_Rest_Tree extends Rest {
 
     $members = $item->descendants;
 
-    if (isset($params["depth"])) {
+    if (isset($this->params["depth"])) {
       // Only include items up to the maximum depth.
-      $members->where("level", "<=", $item->level + $params["depth"]);
+      $members->where("level", "<=", $item->level + $this->params["depth"]);
     }
 
-    if (isset($params["type"])) {
-      $members->where("type", "IN", $params["type"]);
+    if (isset($this->params["type"])) {
+      $members->where("type", "IN", $this->params["type"]);
     }
 
     $members = $members->viewable()->find_all();
@@ -66,12 +66,14 @@ class Gallery_Rest_Tree extends Rest {
     // Build the entity.
     $data = array();
     foreach (array_merge(array($item), iterator_to_array($members)) as $member) {
-      $url    = RestAPI::url("items", $member->id);
-      $entity = RestAPI::resource_func("get_entity", "items", $member->id);
+      $member_rest = Rest::factory("Items", $member->id);
 
-      if (isset($params["fields"])) {
+      $url    = $member_rest->url();
+      $entity = $member_rest->get_entity();
+
+      if (isset($this->params["fields"])) {
         // Filter by the specified fields.
-        $fields = explode(",", trim($params["fields"], ","));
+        $fields = explode(",", trim($this->params["fields"], ","));
         foreach ($entity as $field => $value) {
           if (!in_array($field, $fields)) {
             unset($entity[$field]);
@@ -88,8 +90,8 @@ class Gallery_Rest_Tree extends Rest {
   /**
    * GET the tree's members, which are trees that extend beyond the maximum depth.
    */
-  static function get_members($id, $params) {
-    $item = ORM::factory("Item", $id);
+  public function get_members() {
+    $item = ORM::factory("Item", $this->id);
     Access::required("view", $item);
     if (!$item->is_album()) {
       throw Rest_Exception::factory(400, array("tree" => "not_an_album"));
@@ -97,17 +99,17 @@ class Gallery_Rest_Tree extends Rest {
 
     $members = $item->descendants;
 
-    if (isset($params["depth"])) {
+    if (isset($this->params["depth"])) {
       // Only include items *at* the maximum depth that are albums.
-      $members->where("level", "=", $item->level + $params["depth"])
+      $members->where("level", "=", $item->level + $this->params["depth"])
               ->where("type", "=", "album");
     } else {
       // Depth not defined - members list is empty.
       return array();
     }
 
-    if (isset($params["type"])) {
-      $members->where("type", "IN", $params["type"]);
+    if (isset($this->params["type"])) {
+      $members->where("type", "IN", $this->params["type"]);
     }
 
     $members = $members->viewable()->find_all();
@@ -115,28 +117,25 @@ class Gallery_Rest_Tree extends Rest {
     // Set the member params - "depth" and "fields" are sticky for trees.
     $m_params = array();
     foreach (array("depth", "fields") as $key) {
-      if (isset($params[$key])) {
-        $m_params[$key] = $params[$key];
+      if (isset($this->params[$key])) {
+        $m_params[$key] = $this->params[$key];
       }
     }
 
     // Build the members array.
     $data = array();
     foreach ($members as $member) {
-      $data[] = array("tree", $member->id, $m_params);
+      $data[] = Rest::factory("Tree", $member->id, $m_params);
     }
 
     return $data;
   }
 
   /**
-   * Override Rest::before() to remove the expand_members parameter, if set.
+   * Override Rest::__construct() to remove the expand_members parameter, if set.
    */
-  public function before() {
-    parent::before();
-
-    $query = $this->request->query();
-    unset($query["expand_members"]);
-    $this->request->query($query);
+  public function __construct($id, $params) {
+    unset($params["expand_members"]);
+    parent::__construct($id, $params);
   }
 }

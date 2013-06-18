@@ -43,12 +43,12 @@ class Comment_Rest_Comments extends Rest {
   /**
    * GET the comment's entity.
    */
-  static function get_entity($id, $params) {
-    if (empty($id)) {
+  public function get_entity() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $comment = ORM::factory("Comment", $id);
+    $comment = ORM::factory("Comment", $this->id);
     Access::required("view", $comment->item);
 
     $data = $comment->as_array();
@@ -63,14 +63,14 @@ class Comment_Rest_Comments extends Rest {
 
     // Convert "item_id" to "items" REST URL.
     if ($comment->item->loaded()) {
-      $data["items"] = RestAPI::url("items", $comment->item->id);
+      $data["items"] = Rest::factory("Items", $comment->item->id)->url();
     }
     unset($data["item_id"]);
 
     // Convert "author_id" to "author" REST URL.
     $author = Identity::lookup_user($comment->author_id);
     if (Identity::can_view_profile($author)) {
-      $data["author"] = RestAPI::url("users", $author->id);
+      $data["author"] = Rest::factory("Users", $author->id)->url();
     }
     unset($data["author_id"]);
 
@@ -80,8 +80,8 @@ class Comment_Rest_Comments extends Rest {
   /**
    * PUT the comment's entity.  This edits the comment model, and is only for admins.
    */
-  static function put_entity($id, $params) {
-    if (empty($id)) {
+  public function put_entity() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -89,15 +89,15 @@ class Comment_Rest_Comments extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $comment = ORM::factory("Comment", $id);
+    $comment = ORM::factory("Comment", $this->id);
     if (!$comment->loaded()) {
       throw Rest_Exception::factory(404);
     }
 
     // Add fields from a whitelist.
     foreach (array("text", "state", "guest_name", "guest_email", "guest_url") as $field) {
-      if (property_exists($params["entity"], $field)) {
-        $comment->$field = $params["entity"]->$field;
+      if (property_exists($this->params["entity"], $field)) {
+        $comment->$field = $this->params["entity"]->$field;
       }
     }
 
@@ -107,8 +107,8 @@ class Comment_Rest_Comments extends Rest {
   /**
    * DELETE the comment.  This is only for admins.
    */
-  static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -116,7 +116,7 @@ class Comment_Rest_Comments extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $comment = ORM::factory("Comment", $id);
+    $comment = ORM::factory("Comment", $this->id);
     if (!$comment->loaded()) {
       throw Rest_Exception::factory(404);
     }
@@ -127,19 +127,19 @@ class Comment_Rest_Comments extends Rest {
   /**
    * GET the members of the comments collection.
    */
-  static function get_members($id, $params) {
-    if (!empty($id)) {
+  public function get_members() {
+    if (!empty($this->id)) {
       return null;
     }
 
     $members = ORM::factory("Comment")
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]))
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]))
       ->order_by("created", "DESC");
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("comments", $member->id);
+      $data[] = Rest::factory("Comments", $member->id);
     }
 
     return $data;
@@ -148,21 +148,21 @@ class Comment_Rest_Comments extends Rest {
   /**
    * POST a comment's entity.  This generates a new comment model.
    */
-  static function post_entity($id, $params) {
-    if (!empty($id)) {
+  public function post_entity() {
+    if (!empty($this->id)) {
       return null;
     }
 
-    if (!property_exists($params["entity"], "item")) {
+    if (!property_exists($this->params["entity"], "item")) {
       throw Rest_Exception::factory(400, array("item" => "required"));
     }
 
-    list ($i_type, $i_id, $i_params) = RestAPI::resolve($params["entity"]->item);
-    if ($i_type != "items") {
+    $item_rest = RestAPI::resolve($this->params["entity"]->item);
+    if (!$item_rest || ($item_rest->type != "Items")) {
       throw Rest_Exception::factory(400, array("item" => "invalid"));
     }
 
-    $item = ORM::factory("Item", $i_id);
+    $item = ORM::factory("Item", $item_rest->id);
     if (!Comment::can_comment($item)) {
       throw Rest_Exception::factory(403);
     }
@@ -174,14 +174,14 @@ class Comment_Rest_Comments extends Rest {
 
     // Add fields from a whitelist.
     foreach (array("text", "state", "guest_name", "guest_email", "guest_url") as $field) {
-      if (property_exists($params["entity"], $field)) {
-        $comment->$field = $params["entity"]->$field;
+      if (property_exists($this->params["entity"], $field)) {
+        $comment->$field = $this->params["entity"]->$field;
       }
     }
 
     $comment->save();
 
-    // Success!  Return the resource triad.
-    return array("comments", $comment->id);
+    // Success!
+    $this->id = $comment->id;
   }
 }

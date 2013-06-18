@@ -33,16 +33,18 @@ class Gallery_Rest_UserComments extends Rest {
    * RELATIONSHIPS: "user_comments" is the "comments" relationship of an "users" resource.
    */
 
+  public static $relationships = array("Users" => "Comments");
+
   /**
    * GET the comment members of the user_comments resource.
    * @see  Rest_Comments::get_members().
    */
-  static function get_members($id, $params) {
-    if (empty($id)) {
+  public function get_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $user = Identity::lookup_user($id);
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
@@ -52,12 +54,12 @@ class Gallery_Rest_UserComments extends Rest {
     $members = ORM::factory("Comment")
       ->where("author_id", "=", $user->id)
       ->order_by("created", "DESC")
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("comments", $member->id);
+      $data[] = Rest::factory("Comments", $member->id);
     }
 
     return $data;
@@ -68,8 +70,8 @@ class Gallery_Rest_UserComments extends Rest {
    * with this one, and removes (but doesn't add) comments as needed.  This is only for admins.
    * @see  Rest_ItemComments::put_members()
    */
-  static function put_members($id, $params) {
-    if (empty($id)) {
+  public function put_members() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -77,17 +79,20 @@ class Gallery_Rest_UserComments extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $user = Identity::lookup_user($id);
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
 
-    // Resolve our members list into an array of comment ids.
-    $member_ids = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params, $data) {
-        $comment = ORM::factory("Comment", $id);
-        return (($type == "comments") && ($comment->author_id == $data)) ? $id : false;
-      }, $user->id);
+    // Convert our members list into an array of comment ids.
+    $member_ids = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Comment", $member_rest->id);
+      if (($member_rest->type != "Comments") || ($member->author_id != $user->id)) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $member_ids[$key] = $member->id;
+    }
 
     // Delete any comments that are not in the list.
     foreach (ORM::factory("Comment")->where("author_id", "=", $user->id)->find_all() as $comment) {
@@ -100,8 +105,8 @@ class Gallery_Rest_UserComments extends Rest {
   /**
    * DELETE removes all of the user's comments, and is only for admins.
    */
-  static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -109,7 +114,7 @@ class Gallery_Rest_UserComments extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $user = Identity::lookup_user($id);
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
@@ -118,14 +123,5 @@ class Gallery_Rest_UserComments extends Rest {
     foreach (ORM::factory("Comment")->where("author_id", "=", $user->id)->find_all() as $comment) {
       $comment->delete();
     }
-  }
-
-  /**
-   * Return the relationship established by user_comments.  This adds "comments"
-   * as a relationship of an "users" resource.
-   */
-  static function relationships($type, $id, $params) {
-    return (($type == "users") && (!empty($id))) ?
-      array("comments" => array("user_comments", $id, $params)) : null;
   }
 }

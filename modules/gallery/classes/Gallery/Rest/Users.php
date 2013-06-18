@@ -31,8 +31,8 @@ class Gallery_Rest_Users extends Rest {
   /**
    * GET the user's entity.
    */
-  static function get_entity($id, $params) {
-    $user = Identity::lookup_user($id);
+  public function get_entity() {
+    $user = Identity::lookup_user($this->id);
     if (!Identity::can_view_profile($user)) {
       throw Rest_Exception::factory(404);
     }
@@ -47,19 +47,17 @@ class Gallery_Rest_Users extends Rest {
   }
 
   /**
-   * Override Rest::before() to use the "show" parameter, if specified.
+   * Override Rest::__construct() to use the "show" parameter, if specified.
    */
-  public function before() {
-    parent::before();
-
-    if ($show = $this->request->query("show")) {
+  public function __construct($id, $params) {
+    if ($show = Arr::get($params, "show")) {
       switch ($show) {
       case "self":
-        $this->rest_id = Identity::active_user()->id;
+        $id = Identity::active_user()->id;
         break;
 
       case "guest":
-        $this->rest_id = Identity::guest()->id;
+        $id = Identity::guest()->id;
         break;
 
       default:
@@ -67,9 +65,9 @@ class Gallery_Rest_Users extends Rest {
       }
 
       // Remove the "show" query parameter so it doesn't appear in URLs downstream.
-      $query = $this->request->query();
-      unset($query["show"]);
-      $this->request->query($query);
+      unset($params["show"]);
     }
+
+    parent::__construct($id, $params);
   }
 }

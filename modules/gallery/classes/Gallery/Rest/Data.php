@@ -19,8 +19,8 @@
  */
 class Gallery_Rest_Data extends Rest {
   /**
-   * This read-only resource returns Model_Item data files.  It's analogous
-   * to the FileProxy controller, but it uses the REST authentication model.
+   * This read-only resource returns Model_Item data files.  Once verified, it calls a
+   * sub-request to the FileProxy controller (and therefore uses the same access control).
    *
    * GET returns the raw contents of a data file (id and "size" parameter required)
    *   size=<full, resize, or thumb>
@@ -30,58 +30,40 @@ class Gallery_Rest_Data extends Rest {
    *   encoding=base64
    *     Output the data file using base64 encoding.
    */
-  public function action_get() {
-    $item = ORM::factory("Item", $this->rest_id);
+  public function get_response() {
+    $item = ORM::factory("Item", $this->id);
+    $size = Arr::get($this->params, "size");
+    $encoding = Arr::get($this->params, "encoding");
 
-    $size = $this->request->query("size");
-    if (!in_array($size, array("thumb", "resize", "full"))) {
+    switch ($size) {
+    case "full":
+      $file = $item->file_path();
+      break;
+
+    case "resize":
+      $file = $item->resize_path();
+      break;
+
+    case "thumb":
+      $file = $item->thumb_path();
+      break;
+
+    default:
       throw Rest_Exception::factory(400, array("size" => "invalid"));
     }
 
-    // Note: this code is roughly duplicated in FileProxy, so if you modify this, please look to
-    // see if you should make the same change there as well.
+    $params = $encoding ? array("encoding" => $encoding) : array();
+    $file = substr($file, strlen(DOCROOT));
 
-    if ($size == "full") {
-      if ($item->is_album()) {
-        throw Rest_Exception::factory(404);
-      }
-      Access::required("view_full", $item);
-      $file = $item->file_path();
-    } else if ($size == "resize") {
-      Access::required("view", $item);
-      $file = $item->resize_path();
-    } else {
-      Access::required("view", $item);
-      $file = $item->thumb_path();
+    // If successful, FileProxy will dump the file to the browser and halt script execution.
+    $response = Request::factory($file)->query($params)->execute();
+
+    // If not, we likely have an HTTP error code to throw (typically a 404).
+    if ($response->status() >= 400) {
+      throw Rest_Exception::factory($response->status());
     }
 
-    if (!file_exists($file)) {
-      throw Rest_Exception::factory(404);
-    }
-
-    // Set the filemtime as the etag (same as cache buster), use to check if cache needs refreshing.
-    $this->check_cache(filemtime($file));
-
-    // We don't need to save the session for this request
-    Session::instance()->abort_save();
-
-    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
-    if (($item->is_movie() || $item->is_album()) && $size == "thumb") {
-      $mime_type = "image/jpeg";
-    } else {
-      $mime_type = $item->mime_type;
-    }
-
-    if (TEST_MODE) {
-      return $file;
-    } else {
-      // Send the file as the response.  The filename will be set automatically from the path.
-      // Note: send_file() will automatically halt script execution after sending the file.
-      $options = array("inline" => "true", "mime_type" => $mime_type);
-      if ($this->request->query("encoding") == "base64") {
-        $options["encoding"] = "base64";
-      }
-      $this->response->send_file($file, null, $options);
-    }
+    // Otherwise, simply return the body.  We only get here if in TEST_MODE.
+    return $response->body();
   }
 }

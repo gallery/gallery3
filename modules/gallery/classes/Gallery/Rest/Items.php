@@ -70,39 +70,39 @@ class Gallery_Rest_Items extends Rest {
   /**
    * GET the item's entity.
    */
-  public static function get_entity($id, $params) {
-    if (empty($id)) {
+  public function get_entity() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("view", $item);
 
     $data = $item->as_array();
 
     // Convert "parent_id" to "parent" REST URL.
     if ($item->parent->loaded()) {
-      $data["parent"] = RestAPI::url("items", $item->parent_id);
+      $data["parent"] = Rest::factory("Items", $item->parent_id)->url();
     }
     unset($data["parent_id"]);
 
     // Convert "album_cover_item_id" to "album_cover" REST URL.
     if ($item->album_cover()) {
-      $data["album_cover"] = RestAPI::url("items", $item->album_cover_item_id);
+      $data["album_cover"] = Rest::factory("Items", $item->album_cover_item_id)->url();
     }
     unset($data["album_cover_item_id"]);
 
     // Convert "owner_id" to "owner" REST URL.
     $owner = Identity::lookup_user($item->owner_id);
     if (Identity::can_view_profile($owner)) {
-      $data["owner"] = RestAPI::url("users", $owner->id);
+      $data["owner"] = Rest::factory("Users", $owner->id)->url();
     }
     unset($data["owner_id"]);
 
     // Generate/remove the full-size fields.
     if (Access::can("view_full", $item) && !$item->is_album()) {
-      $data["file_url"] =
-        RestAPI::url("data", $id, array("size" => "full", "m" => filemtime($item->file_path())));
+      $data["file_url"] = Rest::factory("Data", $this->id,
+        array("size" => "full", "m" => filemtime($item->file_path())))->url();
       $data["file_size"] = filesize($item->file_path());
       if (Access::user_can(Identity::guest(), "view_full", $item)) {
         $data["file_url_public"] = $item->file_url(true);
@@ -113,8 +113,8 @@ class Gallery_Rest_Items extends Rest {
 
     // Generate/remove the resize fields.
     if (Access::can("view", $item) && $item->is_photo()) {
-      $data["resize_url"] =
-        RestAPI::url("data", $id, array("size" => "resize", "m" => filemtime($item->resize_path())));
+      $data["resize_url"] = Rest::factory("Data", $this->id,
+        array("size" => "resize", "m" => filemtime($item->resize_path())))->url();
       $data["resize_size"] = filesize($item->resize_path());
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["resize_url_public"] = $item->resize_url(true);
@@ -125,8 +125,8 @@ class Gallery_Rest_Items extends Rest {
 
     // Generate/remove the thumb fields.
     if (Access::can("view", $item) && $item->has_thumb()) {
-      $data["thumb_url"] =
-        RestAPI::url("data", $id, array("size" => "thumb", "m" => filemtime($item->thumb_path())));
+      $data["thumb_url"] = Rest::factory("Data", $this->id,
+        array("size" => "thumb", "m" => filemtime($item->thumb_path())))->url();
       $data["thumb_size"] = filesize($item->thumb_path());
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["thumb_url_public"] = $item->thumb_url(true);
@@ -155,39 +155,39 @@ class Gallery_Rest_Items extends Rest {
   /**
    * PUT the item's entity (and possibly file).  This edits the item model.
    */
-  public static function put_entity($id, $params) {
-    if (empty($id)) {
+  public function put_entity() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("edit", $item);
 
     // Get the entity, check the type.
-    $entity = $params["entity"];
+    $entity = $this->params["entity"];
     if (property_exists($entity, "type")) {
       throw Rest_Exception::factory(400, array("type" => "read_only"));
     }
 
     // If parent set, re-parent the item.
     if (property_exists($entity, "parent")) {
-      list ($tmp_type, $tmp_id) = RestAPI::resolve($entity->parent);
-      if ($tmp_type != "items") {
+      $parent_rest = RestAPI::resolve($entity->parent);
+      if (!$parent_rest || ($parent_rest->type != "Items")) {
         throw Rest_Exception::factory(400, array("parent" => "invalid"));
       }
 
-      $tmp = ORM::factory("Item", $tmp_id);
-      Access::required("add", $tmp);
+      $parent = ORM::factory("Item", $parent_rest->id);
+      Access::required("add", $parent);
 
-      $item->parent_id = $tmp_id;
+      $item->parent_id = $parent->id;
     }
 
     switch ($item->type) {
     case "photo":
     case "movie":
       // Replace the data file, if specified.
-      if (!empty($params["file"])) {
-        $item->set_data_file($params["file"]["tmp_name"]);
+      if (!empty($this->params["file"])) {
+        $item->set_data_file($this->params["file"]["tmp_name"]);
       }
 
       $fields = array("name", "title", "description", "slug", "captured",
@@ -197,15 +197,15 @@ class Gallery_Rest_Items extends Rest {
     case "album":
       // Change the album cover, if specified.
       if (property_exists($entity, "album_cover")) {
-        list ($tmp_type, $tmp_id) = RestAPI::resolve($entity->album_cover);
-        if ($tmp_type != "items") {
+        $album_cover_rest = RestAPI::resolve($entity->album_cover);
+        if (!$album_cover_rest || ($album_cover_rest->type != "Items")) {
           throw Rest_Exception::factory(400, array("album_cover" => "invalid"));
         }
 
-        $tmp = ORM::factory("Item", $tmp_id);
-        Access::required("view", $tmp);
+        $album_cover = ORM::factory("Item", $album_cover_rest->id);
+        Access::required("view", $album_cover);
 
-        $item->album_cover_item_id = $tmp_id;
+        $item->album_cover_item_id = $album_cover->id;
       }
 
       $fields = array("name", "title", "description", "slug", "sort_column", "sort_order",
@@ -229,29 +229,29 @@ class Gallery_Rest_Items extends Rest {
   /**
    * POST an item's entity (and possibly file).  This generates a new item model.
    */
-  public static function post_entity($id, $params) {
-    if (!isset($id) && property_exists($params["entity"], "parent")) {
-      list ($p_type, $p_id, $p_params) = RestAPI::resolve($params["entity"]->parent);
-      if ($p_type != "items") {
+  public function post_entity() {
+    if (!isset($this->id) && property_exists($this->params["entity"], "parent")) {
+      $parent_rest = RestAPI::resolve($this->params["entity"]->parent);
+      if (!$parent_rest || ($parent_rest->type != "Items")) {
         throw Rest_Exception::factory(400, array("parent" => "invalid"));
       }
-      $id = $p_id;
+      $this->id = $parent_rest->id;
     } else {
       throw Rest_Exception::factory(400, array("parent" => "required"));
     }
 
-    $parent = ORM::factory("Item", $id);
+    $parent = ORM::factory("Item", $this->id);
     Access::required("add", $parent);
 
     // Get the entity, check the type (catch it here before we look for it and fire a 500).
-    $entity = $params["entity"];
+    $entity = $this->params["entity"];
     if (!property_exists($entity, "type")) {
       throw Rest_Exception::factory(400, array("type" => "required"));
     }
 
     // Build the item model.
     $item = ORM::factory("Item");
-    $item->parent_id = $id;
+    $item->parent_id = $this->id;
     $item->type = $entity->type;
 
     switch ($item->type) {
@@ -259,11 +259,11 @@ class Gallery_Rest_Items extends Rest {
     case "movie":
       // Process the data file, and (pre-)set the item name from the filename.
       // If specified in the entity, this will be overwritten.
-      if (empty($params["file"])) {
+      if (empty($this->params["file"])) {
         throw Rest_Exception::factory(400, array("file" => "required"));
       }
-      $item->set_data_file($params["file"]["tmp_name"]);
-      $item->name = $params["file"]["name"];
+      $item->set_data_file($this->params["file"]["tmp_name"]);
+      $item->name = $this->params["file"]["name"];
 
       $fields = array("name", "title", "description", "slug", "captured");
       break;
@@ -285,19 +285,19 @@ class Gallery_Rest_Items extends Rest {
 
     $item->save();
 
-    // Success!  Return the new resource triad.
-    return array("items", $item->id);
+    // Success!
+    $this->id = $item->id;
   }
 
   /**
    * DELETE the item.
    */
-  public static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("edit", $item);
 
     $item->delete();
@@ -306,44 +306,44 @@ class Gallery_Rest_Items extends Rest {
   /**
    * GET the members of the items collection.
    */
-  public static function get_members($id, $params) {
-    $types = Arr::get($params, "type");
-    $name = Arr::get($params, "name");
+  public function get_members() {
+    $types = Arr::get($this->params, "type");
+    $name = Arr::get($this->params, "name");
 
     $data = array();
-    if ($ancestors_for = Arr::get($params, "ancestors_for")) {
+    if ($ancestors_for = Arr::get($this->params, "ancestors_for")) {
       // Members are the ancestors of the url given.
-      list ($i_type, $i_id, $i_params) = RestAPI::resolve($ancestors_for);
-      if ($i_type != "items") {
+      $item_rest = RestAPI::resolve($ancestors_for);
+      if (!$item_rest || ($item_rest->type != "Items")) {
         throw Rest_Exception::factory(400, array("ancestors_for" => "invalid"));
       }
 
-      $item = ORM::factory("Item", $i_id);
+      $item = ORM::factory("Item", $item_rest->id);
       Access::required("view", $item);
 
       $members = $item->parents->viewable()->find_all();
       foreach ($members as $member) {
-        $data[] = array("items", $member->id);
+        $data[] = Rest::factory("Items", $member->id);
       }
-    } else if ($urls = Arr::get($params, "urls")) {
+    } else if ($urls = Arr::get($this->params, "urls")) {
       // Members are taken from a list of urls, filtered by name and type.
       // @todo: json_decode is what was used in 3.0, but should we allow comma-separated lists, too?
       foreach (json_decode($urls, true) as $url) {
-        list ($m_type, $m_id, $m_params) = RestAPI::resolve($url);
-        if ($m_type != "items") {
+        $item_rest = RestAPI::resolve($url);
+        if (!$item_rest || ($item_rest->type != "Items")) {
           throw Rest_Exception::factory(400, array("urls" => "invalid"));
         }
 
-        $member = ORM::factory("Item", $m_id);
+        $member = ORM::factory("Item", $item_rest->id);
         Access::required("view", $member);
 
         if ((empty($types) || in_array($member->type, $types)) &&
             (empty($name) || (strpos($member->name, $name) !== false))) {
-          $data[] = array("items", $member->id);
+          $data[] = Rest::factory("Items", $member->id);
         }
       }
     } else {
-      $item = ORM::factory("Item", $id);
+      $item = ORM::factory("Item", $this->id);
       Access::required("view", $item);
 
       // Only albums can have member lists.
@@ -351,15 +351,15 @@ class Gallery_Rest_Items extends Rest {
         return null;
       }
 
-      $scope = Arr::get($params, "scope", "direct");
+      $scope = Arr::get($this->params, "scope", "direct");
       if (!in_array($scope, array("direct", "all"))) {
         throw Rest_Exception::factory(400, array("scope" => "invalid"));
       }
 
       $members = ($scope == "direct") ? $item->children : $item->descendants;
       $members->viewable()
-        ->limit(Arr::get($params, "num", static::$default_params["num"]))
-        ->offset(Arr::get($params, "start", static::$default_params["start"]));
+        ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+        ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
 
       if (isset($types)) {
         $members->where("type", "IN", $types);
@@ -374,8 +374,7 @@ class Gallery_Rest_Items extends Rest {
       $use_weights = (($item->sort_column == "weight") && ($scope == "direct"));
       foreach ($members->find_all() as $member) {
         // If the album's sort is "weight", use the weights as the array keys.
-        $data[$use_weights ? $member->weight : $key++] =
-          array("items", $member->id);
+        $data[$use_weights ? $member->weight : $key++] = Rest::factory("Items", $member->id);
       }
     }
 
@@ -385,82 +384,81 @@ class Gallery_Rest_Items extends Rest {
   /**
    * PUT the item's members.  This reorders the items by their weights.
    */
-  public static function put_members($id, $params) {
-    if (empty($id)) {
+  public function put_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("edit", $item);
 
     if (!$item->is_album() || ($item->sort_column != "weight")) {
       throw Rest_Exception::factory(400, array("members" => "cannot_reorder"));
     }
 
-    // Resolve our members list into an array of weights => ids.
-    $members_array = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params, $data) {
-        return (($type == "items") && (ORM::factory("Item", $id)->parent_id == $data)) ? $id : null;
-      }, $item->id);
+    // Convert our members list into item models.
+    $members = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Item", $member_rest->id);
+      if (($member_rest->type != "Items") || ($member->parent_id != $item->id)) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $members[$key] = $member;
+    }
 
     // Sort members by their weights (given by their keys).
-    ksort($members_array);
+    ksort($members);
 
     // We're clear to go - this might be a race condition, so use DB over ORM to be a bit faster.
     // Even if we lose the race, it's relatively harmless and the action is idempotent (i.e. just
     // sending the same request again should fix it).
-    foreach ($members_array as $m_weight => $m_id) {
+    foreach ($members as $key => $member) {
       if (DB::select()
           ->from("items")
           ->where("parent_id", "=", $item->id)
-          ->where("id", "<>", $m_id)
-          ->where("weight", "=", $m_weight)
+          ->where("id", "<>", $member->id)
+          ->where("weight", "=", $key)
           ->execute()->count()) {
         // One of its siblings already has this weight - make a hole.
         DB::update("items")
           ->set(array("weight" => DB::expr("`weight` + 1")))
           ->where("parent_id", "=", $item->id)
-          ->where("weight", ">=", $m_weight)
+          ->where("weight", ">=", $key)
           ->execute();
       }
       // Update the member weight.  We check parent_id again to make sure the item hasn't been
       // reparented (i.e. protect against "losing the race").
       DB::update("items")
-        ->set(array("weight" => $m_weight))
-        ->where("id", "=", $m_id)
+        ->set(array("weight" => $key))
+        ->where("id", "=", $member->id)
         ->where("parent_id", "=", $item->id)
         ->execute();
     }
   }
 
   /**
-   * Override Rest::before() to use the "random" parameter, expand members
+   * Override Rest::__construct() to use the "random" parameter, expand members
    * by default for "urls" and "ancestors_for", and GET the root item by default.
    */
-  public function before() {
-    parent::before();
-
-    // If the "random" parameter is set, get a random item id.
-    if ($this->request->query("random")) {
+  public function __construct($id, $params) {
+    if (Arr::get($params, "random")) {
+      // If the "random" parameter is set, get a random item id.
       // This doesn't always work, so keep trying until it does...
       do {
         $id = Item::random_query()->offset(0)->limit(1)->find()->id;
       } while (!$id);
 
-      $this->rest_id = $id;
-
       // Remove the "random" query parameter so it doesn't appear in URLs downstream.
-      $query = $this->request->query();
-      unset($query["random"]);
-      $this->request->query($query);
+      unset($params["random"]);
+    } else if (Arr::get($params, "urls") || Arr::get($params, "ancestors_for")) {
+      // If "urls" or "ancestors_for" parameters are set, expand members by default.
+      $this->default_params["expand_members"] = true;
+    } else if ((Request::current()->method() == HTTP_Request::GET) && empty($id)) {
+      // For GET, default to the root item if no id is given and expand members by default.
+      $this->default_params["expand_members"] = true;
+      $id = Item::root()->id;
     }
 
-    if ($this->request->query("urls") || $this->request->query("ancestors_for")) {
-      // If "urls" or "ancestors_for" parameters are set, expand members by default.
-      static::$default_params["expand_members"] = true;
-    } else if (($this->request->method() == HTTP_Request::GET) && empty($this->rest_id)) {
-      // For GET, default to the root item if no id is given.
-      $this->rest_id = Item::root()->id;
-    }
+    parent::__construct($id, $params);
   }
 }

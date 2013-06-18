@@ -33,26 +33,28 @@ class Comment_Rest_ItemComments extends Rest {
    * RELATIONSHIPS: "item_comments" is the "comments" relationship of an "items" resource.
    */
 
+  public static $relationships = array("Items" => "Comments");
+
   /**
    * GET the comment members of the item_comments resource.
    * @see  Rest_Comments::get_members().
    */
-  static function get_members($id, $params) {
-    if (empty($id)) {
+  public function get_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("view", $item);
 
     $members = $item->comments
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]))
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]))
       ->order_by("created", "DESC");
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("comments", $member->id);
+      $data[] = Rest::factory("Comments", $member->id);
     }
 
     return $data;
@@ -63,8 +65,8 @@ class Comment_Rest_ItemComments extends Rest {
    * with this one, and removes (but doesn't add) comments as needed.  This is only for admins.
    * @see  Rest_UserComments::put_members()
    */
-  static function put_members($id, $params) {
-    if (empty($id)) {
+  public function put_members() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -72,17 +74,20 @@ class Comment_Rest_ItemComments extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     if (!$item->loaded()) {
       throw Rest_Exception::factory(404);
     }
 
-    // Resolve our members list into an array of comment ids.
-    $member_ids = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params, $data) {
-        $comment = ORM::factory("Comment", $id);
-        return (($type == "comments") && ($comment->item_id == $data)) ? $id : false;
-      }, $item->id);
+    // Convert our members list into an array of comment ids.
+    $member_ids = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Comment", $member_rest->id);
+      if (($member_rest->type != "Comments") || ($member->item_id != $item->id)) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $member_ids[$key] = $member->id;
+    }
 
     // Delete any comments that are not in the list.
     foreach ($item->comments->find_all() as $comment) {
@@ -95,8 +100,8 @@ class Comment_Rest_ItemComments extends Rest {
   /**
    * DELETE removes all comments from the item, and is only for admins.
    */
-  static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -104,7 +109,7 @@ class Comment_Rest_ItemComments extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     if (!$item->loaded()) {
       throw Rest_Exception::factory(404);
     }
@@ -113,14 +118,5 @@ class Comment_Rest_ItemComments extends Rest {
     foreach ($item->comments->find_all() as $comment) {
       $comment->delete();
     }
-  }
-
-  /**
-   * Return the relationship established by item_comments.  This adds "comments"
-   * as a relationship of an "items" resource.
-   */
-  static function relationships($type, $id, $params) {
-    return (($type == "items") && (!empty($id))) ?
-      array("comments" => array("item_comments", $id, $params)) : null;
   }
 }

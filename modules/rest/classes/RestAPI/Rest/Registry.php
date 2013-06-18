@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class RestAPI_Rest_Registry extends Rest {
-  public function action_get() {
-    $this->rest_response = RestAPI::registry();
+  public function get_response() {
+    return RestAPI::registry();
   }
 }

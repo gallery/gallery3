@@ -45,30 +45,32 @@ class Tag_Rest_ItemTags extends Rest {
    * RELATIONSHIPS: "item_tags" is the "tags" relationship of an "items" resource.
    */
 
+  public static $relationships = array("Items" => "Tags");
+
   /**
    * GET the tag members of the item_tags resource.
    * @see  Rest_Tags::get_members().
    */
-  static function get_members($id, $params) {
-    if (empty($id)) {
+  public function get_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("view", $item);
 
     $members = $item->tags
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
 
-    if (isset($params["name"])) {
-      $members->where("name", "LIKE", Database::escape_for_like($params["name"]) . "%");
+    if (isset($this->params["name"])) {
+      $members->where("name", "LIKE", Database::escape_for_like($this->params["name"]) . "%");
       $default_order = "name";  // Useful for autocomplete
     } else {
       $default_order = "count"; // Useful for cloud
     }
 
-    switch (Arr::get($params, "order", $default_order)) {
+    switch (Arr::get($this->params, "order", $default_order)) {
     case "count":
       $members->order_by("count", "DESC");
       break;
@@ -83,7 +85,7 @@ class Tag_Rest_ItemTags extends Rest {
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("tags", $member->id);
+      $data[] = Rest::factory("Tags", $member->id);
     }
 
     return $data;
@@ -93,19 +95,23 @@ class Tag_Rest_ItemTags extends Rest {
    * PUT the tag members of the item_tags resource.  This replaces the tag list with the one given.
    * @see  TagEvent::item_edit_form_completed(), which does a similar task.
    */
-  static function put_members($id, $params) {
-    if (empty($id)) {
+  public function put_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("edit", $item);
 
-    // Resolve our members list into an array of tag names.
-    $tag_names = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params) {
-        return ($type == "tags") ? ORM::factory("Tag", $id)->name : false;
-      });
+    // Convert our members list into an array of item ids.
+    $tag_names = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Tag", $member_rest->id);
+      if (($member_rest->type != "Tags") || !$member->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $tag_names[$key] = $member->name;
+    }
 
     // Clear all tags from the item, then add the new set.
     Tag::clear_all($item);
@@ -118,19 +124,23 @@ class Tag_Rest_ItemTags extends Rest {
   /**
    * POST tag members of the item_tags resource.  Unlike PUT, this only *adds* tags to the item.
    */
-  static function post_members($id, $params) {
-    if (empty($id)) {
+  public function post_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("edit", $item);
 
-    // Resolve our members list into an array of tag names.
-    $tag_names = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params) {
-        return ($type == "tags") ? ORM::factory("Tag", $id)->name : false;
-      });
+    // Convert our members list into an array of item ids.
+    $tag_names = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Tag", $member_rest->id);
+      if (($member_rest->type != "Tags") || !$member->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $tag_names[$key] = $member->name;
+    }
 
     // Add the tags to the item.
     foreach ($tag_names as $tag_name) {
@@ -142,23 +152,14 @@ class Tag_Rest_ItemTags extends Rest {
   /**
    * DELETE removes all tags from the item.
    */
-  static function delete($id, $params) {
-    if (empty($id)) {
+  public function delete() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $item = ORM::factory("Item", $id);
+    $item = ORM::factory("Item", $this->id);
     Access::required("edit", $item);
 
     Tag::clear_all($item);
-  }
-
-  /**
-   * Return the relationship established by item_tags.  This adds "tags"
-   * as a relationship of an "items" resource.
-   */
-  static function relationships($type, $id, $params) {
-    return (($type == "items") && (!empty($id))) ?
-      array("tags" => array("item_tags", $id, $params)) : null;
   }
 }

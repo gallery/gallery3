@@ -43,35 +43,37 @@ class Tag_Rest_TagItems extends Rest {
    * Note: similar to the standard UI, only admins can PUT or DELETE tag_items.
    */
 
+  public static $relationships = array("Tags" => "Items");
+
   /**
    * GET the item members of the tag_items resource.
    * @see  Rest_Items::get_members().
    */
-  static function get_members($id, $params) {
-    if (empty($id)) {
+  public function get_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $tag = ORM::factory("Tag", $id);
+    $tag = ORM::factory("Tag", $this->id);
     if (!$tag->loaded()) {
       throw Rest_Exception::factory(404);
     }
 
     $members = $tag->items->viewable()
-      ->limit(Arr::get($params, "num", static::$default_params["num"]))
-      ->offset(Arr::get($params, "start", static::$default_params["start"]));
+      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
+      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
 
-    if (isset($params["type"])) {
-      $members->where("type", "IN", $params["type"]);
+    if (isset($this->params["type"])) {
+      $members->where("type", "IN", $this->params["type"]);
     }
 
-    if (isset($params["name"])) {
-      $members->where("name", "LIKE", "%" . Database::escape_for_like($params["name"]) . "%");
+    if (isset($this->params["name"])) {
+      $members->where("name", "LIKE", "%" . Database::escape_for_like($this->params["name"]) . "%");
     }
 
     $data = array();
     foreach ($members->find_all() as $member) {
-      $data[] = array("items", $member->id);
+      $data[] = Rest::factory("Items", $member->id);
     }
 
     return $data;
@@ -81,8 +83,8 @@ class Tag_Rest_TagItems extends Rest {
    * PUT the item members of the tag_items resource.  This replaces the list of items with
    * the specified tag, and is only for admins.
    */
-  static function put_members($id, $params) {
-    if (empty($id)) {
+  public function put_members() {
+    if (empty($this->id)) {
       return null;
     }
 
@@ -90,21 +92,24 @@ class Tag_Rest_TagItems extends Rest {
       throw Rest_Exception::factory(403);
     }
 
-    $tag = ORM::factory("Tag", $id);
+    $tag = ORM::factory("Tag", $this->id);
     if (!$tag->loaded()) {
       throw Rest_Exception::factory(404);
     }
 
-    // Resolve our members list into an array of item models.
-    $items = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params) {
-        $item = ORM::factory("Item", $id);
-        return (($type == "items") && $item->loaded()) ? $item : false;
-      });
+    // Convert our members list into item models.
+    $members = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Item", $member_rest->id);
+      if (($member_rest->type != "Items") || !$member->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $members[$key] = $member;
+    }
 
     // Clear all items from the tag, then add the new set.
     Tag::remove_items($tag);
-    foreach ($items as $item) {
+    foreach ($members as $item) {
       Tag::add($item, $tag->name);
     }
     Tag::compact();
@@ -114,25 +119,28 @@ class Tag_Rest_TagItems extends Rest {
    * POST item members of the tag_items resource.  Unlike PUT, this only *adds* the tag
    * to the items, and is not admin-only.
    */
-  static function post_members($id, $params) {
-    if (empty($id)) {
+  public function post_members() {
+    if (empty($this->id)) {
       return null;
     }
 
-    $tag = ORM::factory("Tag", $id);
+    $tag = ORM::factory("Tag", $this->id);
     if (!$tag->loaded()) {
       throw Rest_Exception::factory(404);
     }
 
-    // Resolve our members list into an array of item models.
-    $items = RestAPI::resolve_members($params["members"],
-      function($type, $id, $params) {
-        $item = ORM::factory("Item", $id);
-        return (($type == "items") && $item->loaded()) ? $item : false;
-      });
+    // Convert our members list into item models.
+    $members = array();
+    foreach ($this->params->members as $key => $member_rest) {
+      $member = ORM::factory("Item", $member_rest->id);
+      if (($member_rest->type != "Items") || !$member->loaded()) {
+        throw Rest_Exception::factory(400, array("members" => "invalid"));
+      }
+      $members[$key] = $member;
+    }
 
     // Add the tag to the items.
-    foreach ($items as $item) {
+    foreach ($members as $item) {
       Tag::add($item, $tag->name);
     }
   }
@@ -141,16 +149,7 @@ class Tag_Rest_TagItems extends Rest {
    * DELETE the tag.  This is only for admins.
    * @see  Rest_Tags::delete()
    */
-  static function delete($id, $params) {
-    return RestAPI::resource_func("delete", "tags", $id, $params);
-  }
-
-  /**
-   * Return the relationship established by tag_items.  This adds "items"
-   * as a relationship of a "tags" resource.
-   */
-  static function relationships($type, $id, $params) {
-    return (($type == "tags") && (!empty($id))) ?
-      array("items" => array("tag_items", $id, $params)) : null;
+  public function delete() {
+    return Rest::factory("Tags", $this->id)->delete();
   }
 }
