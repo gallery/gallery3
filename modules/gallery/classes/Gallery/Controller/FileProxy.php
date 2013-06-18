@@ -56,6 +56,23 @@ class Gallery_Controller_FileProxy extends Controller {
     // Get the item model using the path and type (which corresponds to a var subdir)
     $item = Item::find_by_path($path, $type);
 
+    $this->action_show($item, $type);
+  }
+
+  public function action_show($item=null, $type=null, $encoding=null) {
+    // If we got here from FileProxy::action_find(), $item and $type would already be set.
+    if (!isset($item) || !isset($type)) {
+      if ($this->request->is_initial()) {
+        // No external access allowed.
+        throw HTTP_Exception::factory(404);
+      } else {
+        // Got here internally (e.g. from REST Data resource) - use passed query parameters
+        $item      = $this->request->query("item");
+        $type      = $this->request->query("type");
+        $encoding  = $this->request->query("encoding");
+      }
+    }
+
     if (!$item->loaded()) {
       throw HTTP_Exception::factory(404, TEST_MODE ? 3 : null);
     }
@@ -119,7 +136,7 @@ class Gallery_Controller_FileProxy extends Controller {
       // We allow base64 encoding *only* if called internally (typically by a REST Data resource).
       // Note: send_file() will automatically halt script execution after sending the file.
       $options = array("inline" => "true", "mime_type" => $mime_type);
-      if (($this->request->query("encoding") == "base64") && !$this->request->is_initial()) {
+      if ($encoding == "base64") {
         $options["encoding"] = "base64";
       }
       $this->response->send_file($file, null, $options);
