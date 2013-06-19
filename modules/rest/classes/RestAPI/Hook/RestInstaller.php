@@ -49,6 +49,17 @@ class RestAPI_Hook_RestInstaller {
       Module::set_var("rest", "allow_jsonp_output", true);
       Module::set_var("rest", "cors_embedding", "none");
       Module::set_var("rest", "approved_domains", "");
+
+      // In Gallery 3.0.x, we didn't prevent the generation of guest access keys at a low level.
+      // While it wasn't possible to get Gallery to make one with the core modules, we check
+      // here and delete any we see as a defense-in-depth measure.  In Gallery 3.1, we prevent
+      // them from ever being created (see RestAPI::access_key()).
+      foreach (ORM::factory("UserAccessKey")
+               ->where("user_id", "=", Identity::guest()->id)
+               ->find_all() as $key) {
+        $key->delete();
+      }
+
       Module::set_version("rest", $version = 4);
     }
   }

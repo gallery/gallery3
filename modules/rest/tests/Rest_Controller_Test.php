@@ -17,151 +17,375 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+include_once(MODPATH . "rest/tests/Rest_Mock.php");
+
 class Rest_Controller_Test extends Unittest_TestCase {
+  public $save_headers;
+  public $save_view;
+  public $save_view_type;
+
   public function setup() {
     parent::setup();
-    $this->_save = array($_GET, $_POST, $_SERVER);
 
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = RestAPI::access_key();
+    // Start with permissive settings, then tests restrict as needed.
+    Module::set_var("rest", "allow_guest_access", true);
+    Module::set_var("rest", "allow_jsonp_output", true);
+    Module::set_var("rest", "cors_embedding", "all");
+    Module::set_var("rest", "approved_domains", "");
+
+    // This stuff is changed by RestAPI::init(), which is called in Controller_Rest::execute().
+    $this->save_headers   = Response::$default_config["_headers"];
+    $this->save_view      = Kohana_Exception::$error_view;
+    $this->save_view_type = Kohana_Exception::$error_view_content_type;
   }
 
   public function teardown() {
-    list($_GET, $_POST, $_SERVER) = $this->_save;
-    Identity::set_active_user(Identity::admin_user());
+    // De-init REST...
+    Response::$default_config["_headers"]      = $this->save_headers;
+    Kohana_Exception::$error_view              = $this->save_view;
+    Kohana_Exception::$error_view_content_type = $this->save_view_type;
+
     parent::teardown();
   }
 
   public function test_login() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+    $user = Test::random_user("foobar");
 
-    $user = Test::random_user("password");
+    $response = Request::factory("rest")
+      ->method(HTTP_Request::POST)
+      ->post(array("user" => $user->name, "password" => "foobar"))
+      ->execute();
 
-    // There's no access key at first
-    $this->assertFalse(
-      ORM::factory("UserAccessKey")->where("user_id", "=", $user->id)->find()->loaded());
-
-    $_POST["user"] = $user->name;
-    $_POST["password"] = "password";
-
-    $response = Test::call_and_capture(array(new Controller_Rest(), "index"));
-    $expected =
-      ORM::factory("UserAccessKey")->where("user_id", "=", $user->id)->find()->access_key;
-
-    // Now there is an access key, and it was returned
-    $this->assertEquals(json_encode($expected), $response);
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals('"' . RestAPI::access_key($user) . '"', $response->body());
+    $this->assertEquals($user->id, Identity::active_user()->id);
   }
 
-  /**
-   * @expectedException     Rest_Exception
-   * @expectedExceptionCode 403
-   */
   public function test_login_failed() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+    $user = Test::random_user("foobar");
 
-    $user = Test::random_user("password");
+    $response = Request::factory("rest")
+      ->method(HTTP_Request::POST)
+      ->post(array("user" => $user->name, "password" => "NOT_foobar"))
+      ->execute();
 
-    $_POST["user"] = $user->name;
-    $_POST["password"] = "WRONG PASSWORD";
-    Test::call_and_capture(array(new Controller_Rest(), "index"));
+    $this->assertEquals(403, $response->status());
   }
 
-  /**
-   * @expectedException     Rest_Exception
-   * @expectedExceptionCode 403
-   */
-  public function test_get() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_login_failed_with_bad_field_names() {
+    $user = Test::random_user("foobar");
 
-    unset($_SERVER["HTTP_X_GALLERY_REQUEST_KEY"]);
+    $response = Request::factory("rest")
+      ->method(HTTP_Request::POST)
+      ->post(array("NOT_user" => $user->name, "password" => "foobar"))
+      ->execute();
 
-    $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
-    $_GET["key"] = "value";
+    $this->assertEquals(403, $response->status());
 
-    Test::call_and_capture(array(new Controller_Rest(), "mock"));
+    $response = Request::factory("rest")
+      ->method(HTTP_Request::POST)
+      ->post(array("user" => $user->name, "NOT_password" => "foobar"))
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
   }
 
-  public function test_get_with_access_key() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_no_login_with_guests() {
+    $user = Identity::guest();
 
-    $_SERVER["REQUEST_METHOD"] = HTTP_Request::GET;
-    $_GET["key"] = "value";
+    $response = Request::factory("rest")
+      ->execute();
 
-    $this->assertEquals(
-      array("params" => array("key" => "value"),
-            "method" => "get",
-            "access_key" => RestAPI::access_key(),
-            "url" => "http://./index.php/gallery_unittest"),
-      json_decode(
-        Test::call_and_capture(array(new Controller_Rest(), "mock")),
-        true));
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals('""', $response->body());
+    $this->assertEquals($user->id, Identity::active_user()->id);
+
+    Module::set_var("rest", "allow_guest_access", false);
+    $response = Request::factory("rest")
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
   }
 
-  public function test_post() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
-    $_POST["key"] = "value";
-
-    $this->assertEquals(
-      array("params" => array("key" => "value"),
-            "method" => "post",
-            "access_key" => RestAPI::access_key(),
-            "url" => "http://./index.php/gallery_unittest"),
-      json_decode(
-        Test::call_and_capture(array(new Controller_Rest(), "mock")),
-        true));
-  }
-
-  public function test_put() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
-    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "put";
-    $_POST["key"] = "value";
-
-    $this->assertEquals(
-      array("params" => array("key" => "value"),
-            "method" => "put",
-            "access_key" => RestAPI::access_key(),
-            "url" => "http://./index.php/gallery_unittest"),
-      json_decode(
-        Test::call_and_capture(array(new Controller_Rest(), "mock")),
-        true));
-  }
-
-  public function test_delete() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
-    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "delete";
-    $_POST["key"] = "value";
-
-    $this->assertEquals(
-      array("params" => array("key" => "value"),
-            "method" => "delete",
-            "access_key" => RestAPI::access_key(),
-            "url" => "http://./index.php/gallery_unittest"),
-      json_decode(
-        Test::call_and_capture(array(new Controller_Rest(), "mock")),
-        true));
-  }
-
-  /**
-   * @expectedException     Rest_Exception
-   * @expectedExceptionCode 400
-   */
   public function test_bogus_method() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::TRACE)
+      ->execute();
 
-    $_SERVER["REQUEST_METHOD"] = HTTP_Request::POST;
-    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
-    Test::call_and_capture(array(new Controller_Rest(), "mock"));
+    $this->assertEquals(405, $response->status());
+
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::POST)
+      ->headers("X-Gallery-Request-Method", HTTP_Request::TRACE)
+      ->execute();
+
+    $this->assertEquals(405, $response->status());
   }
-}
 
-class mock_rest {
-  static function get($request)    { return (array)$request; }
-  static function post($request)   { return (array)$request; }
-  static function put($request)    { return (array)$request; }
-  static function delete($request) { return (array)$request; }
+  public function test_common_headers() {
+    // Should appear if we have a normal response...
+    $response = Request::factory("rest/mock")
+      ->execute();
+
+    $this->assertEquals(array("GET", "POST", "PUT", "DELETE", "OPTIONS"), $response->headers("Allow"));
+    $this->assertEquals("3.1", $response->headers("X-Gallery-Api-Version"));
+    $this->assertEquals("SAMEORIGIN", $response->headers("X-Frame-Options"));  // not REST-specific
+
+    // ... or an error response.
+    Module::set_var("rest", "allow_guest_access", false);
+    $response = Request::factory("rest/mock")
+      ->execute();
+
+    $this->assertEquals(array("GET", "POST", "PUT", "DELETE", "OPTIONS"), $response->headers("Allow"));
+    $this->assertEquals("3.1", $response->headers("X-Gallery-Api-Version"));
+    $this->assertEquals("SAMEORIGIN", $response->headers("X-Frame-Options"));  // not REST-specific
+  }
+
+  public function test_cors_preflight_options() {
+    Module::set_var("rest", "cors_embedding", "list");
+    Module::set_var("rest", "approved_domains", "foobar.com");
+
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::OPTIONS)
+      ->headers("Origin", "foobar.com")
+      ->headers("Access-Control-Request-Method", HTTP_Request::GET)
+      ->headers("Access-Control-Request-Headers", "X-Requested-With")
+      ->execute();
+
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals("foobar.com",
+      $response->headers("Access-Control-Allow-Origin"));
+    $this->assertEquals(array("GET", "POST", "PUT", "DELETE", "OPTIONS"),
+      $response->headers("Access-Control-Allow-Methods"));
+    $this->assertEquals(array("X-Gallery-Request-Key", "X-Gallery-Request-Method", "X-Requested-With"),
+      $response->headers("Access-Control-Allow-Headers"));
+    $this->assertEquals(array("X-Gallery-Api-Version", "Allow"),
+      $response->headers("Access-Control-Expose-Headers"));
+    $this->assertEquals(604800,
+      $response->headers("Access-Control-Max-Age"));
+  }
+
+  public function test_cors_preflight_options_fail_without_origin() {
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::OPTIONS)
+      ->headers("Access-Control-Request-Method", HTTP_Request::GET)
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
+  }
+
+  public function test_cors_preflight_options_fail_without_method() {
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::OPTIONS)
+      ->headers("Origin", "foobar.com")
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
+  }
+
+  public function test_cors_preflight_options_pass_without_headers() {
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::OPTIONS)
+      ->headers("Origin", "foobar.com")
+      ->headers("Access-Control-Request-Method", HTTP_Request::GET)
+      ->execute();
+
+    $this->assertEquals(200, $response->status());
+  }
+
+  public function test_cors_preflight_options_fail_with_bad_headers() {
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::OPTIONS)
+      ->headers("Origin", "foobar.com")
+      ->headers("Access-Control-Request-Method", HTTP_Request::GET)
+      ->headers("Access-Control-Request-Headers", "X-Bad-Header")
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
+  }
+
+  public function test_cors_preflight_options_fail_with_bad_method() {
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::OPTIONS)
+      ->headers("Origin", "foobar.com")
+      ->headers("Access-Control-Request-Method", HTTP_Request::TRACE)
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
+  }
+
+  public function test_cors_origin_check() {
+    Module::set_var("rest", "cors_embedding", "list");
+    Module::set_var("rest", "approved_domains", "foobar.com");
+
+    // No request origin --> no response header
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::GET)
+      ->execute();
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals(null, $response->headers("Access-Control-Allow-Origin"));
+
+
+    // Allowed request origin --> origin as response header
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::GET)
+      ->headers("Origin", "foobar.com")
+      ->execute();
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals("foobar.com", $response->headers("Access-Control-Allow-Origin"));
+
+    // Disallowed request origin --> no response header
+    $response = Request::factory("rest/mock")
+      ->method(HTTP_Request::GET)
+      ->headers("Origin", "NOTfoobar.com")
+      ->execute();
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals(null, $response->headers("Access-Control-Allow-Origin"));
+  }
+
+  public function test_output_html() {
+    $response = Request::factory("rest/mock")
+      ->query("output", "html")
+      ->execute();
+
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals("<pre>", substr($response->body(), 0, 5));
+    $this->assertEquals("</pre>", substr($response->body(), -6));
+  }
+
+  public function test_output_jsonp() {
+    $response = Request::factory("rest/mock")
+      ->query("output", "jsonp")
+      ->query("callback", "foo")
+      ->execute();
+
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals("foo(", substr($response->body(), 0, 4));
+    $this->assertEquals(")", substr($response->body(), -1));
+  }
+
+  public function test_output_jsonp_requires_callback() {
+    $response = Request::factory("rest/mock")
+      ->query("output", "jsonp")
+      ->execute();
+
+    $this->assertEquals(400, $response->status());
+  }
+
+  public function test_output_jsonp_blocked_with_keys() {
+    $response = Request::factory("rest/mock")
+      ->query("output", "jsonp")
+      ->query("callback", "foo")
+      ->headers("X-Gallery-Request-Key", RestAPI::access_key(Identity::admin_user()))
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
+  }
+
+  public function test_output_jsonp_blocked_by_config() {
+    Module::set_var("rest", "allow_jsonp_output", false);
+
+    $response = Request::factory("rest/mock")
+      ->query("output", "jsonp")
+      ->query("callback", "foo")
+      ->execute();
+
+    $this->assertEquals(403, $response->status());
+  }
+
+  public function test_get_object() {
+    $response = Request::factory("rest/mock/1")
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array(
+      "url" => URL::abs_site("rest") . "/mock/1",
+      "entity" => array(
+        "id" => 1,
+        "foo" => "bar"
+      ));
+
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_get_collection() {
+    $response = Request::factory("rest/mock")
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array(
+      "url" => URL::abs_site("rest") . "/mock",
+      "members" => array(
+        0 => URL::abs_site("rest") . "/mock/1",
+        1 => URL::abs_site("rest") . "/mock/2",
+        2 => URL::abs_site("rest") . "/mock/3"
+      ));
+
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_post_new_object() {
+    $url = URL::abs_site("rest") . "/mock/123";
+    $entity = array("id" => 123, "foo" => "baz");
+
+    $response = Request::factory("rest/mock") // URL has no id
+      ->method(HTTP_Request::POST)
+      ->post("entity", json_encode($entity))
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array("url" => $url);
+
+    $this->assertEquals(201, $response->status());
+    $this->assertEquals($url, $response->headers("Location"));
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_post_existing_object() {
+    $url = URL::abs_site("rest") . "/mock/123";
+    $entity = array("id" => 123, "foo" => "baz");
+
+    $response = Request::factory("rest/mock/123") // URL has same id
+      ->method(HTTP_Request::POST)
+      ->post("entity", json_encode($entity))
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array("url" => $url);
+
+    $this->assertEquals(200, $response->status());
+    $this->assertEquals(null, $response->headers("Location"));
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_post_with_bad_members() {
+    $url = URL::abs_site("rest") . "/mock/123";
+    $entity = array("id" => 123, "foo" => "baz");
+    $members = array(0 => URL::abs_site("rest") . "/nonexistent_resource/123");
+
+    $response = Request::factory("rest/mock") // URL has no id
+      ->method(HTTP_Request::POST)
+      ->post("entity", json_encode($entity))
+      ->post("members", json_encode($members))
+      ->execute();
+
+    $this->assertEquals(400, $response->status());
+  }
+
+  public function test_post_with_bad_relationships() {
+    $url = URL::abs_site("rest") . "/mock/123";
+    $entity = array("id" => 123, "foo" => "baz");
+    $relationships = array("foo" => array("members" =>
+      array(0 => URL::abs_site("rest") . "/nonexistent_resource/123")));
+
+    $response = Request::factory("rest/mock") // URL has no id
+      ->method(HTTP_Request::POST)
+      ->post("entity", json_encode($entity))
+      ->post("relationships", json_encode($relationships))
+      ->execute();
+
+    $this->assertEquals(400, $response->status());
+  }
 }

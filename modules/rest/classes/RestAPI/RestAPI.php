@@ -44,11 +44,11 @@ class RestAPI_RestAPI {
   static function init() {
     // Add the REST API version and allowed methods to the header.  Since we're adding it to
     // Response::$default_config, even error responses (e.g. 404) will have these headers.
-    Response::$default_config = array_merge_recursive(Response::$default_config,
-      array("_header" => array(
+    Response::$default_config["_header"] = array_merge(Response::$default_config["_header"],
+      array(
         "X-Gallery-Api-Version" => RestAPI::API_VERSION,
         "Allow" => static::$allowed_methods
-      )));
+      ));
 
     // Set the error view to be the restful view.
     Kohana_Exception::$error_view = "rest/error.json";
