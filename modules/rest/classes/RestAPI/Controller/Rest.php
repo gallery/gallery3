@@ -26,6 +26,8 @@
 class RestAPI_Controller_Rest extends Controller {
   // REST response used by Controller_Rest::after() to generate the Response body.
   public $rest_response = array();
+  public $rest_output = "json";
+  public $rest_callback = "";
 
   // REST resource object.  This is set in Controller_Rest::before().
   public $rest_object;
@@ -94,10 +96,31 @@ class RestAPI_Controller_Rest extends Controller {
               $this->request->query("access_key") : $this->request->post("access_key");
     }
 
-    // Disallow JSONP output with access keys (public access only) or if blocked by configuration.
-    if ((strtolower($this->request->query("output")) == "jsonp") &&
-        ($key || !Module::get_var("rest", "allow_jsonp_output", true))) {
-      throw Rest_Exception::factory(403);
+    // Get the output format, which will default to json unless we've used
+    // the GET method and specified the "output" query parameter.
+    if ($method == HTTP_Request::GET) {
+      $this->rest_output = strtolower(Arr::get($this->request->query(), "output", "json"));
+      if (!in_array($this->rest_output, array("json", "jsonp", "html"))) {
+        throw Rest_Exception::factory(400, array("output" => "invalid"));
+      }
+    }
+
+    // If output is JSONP, we have some extra checks to do...
+    if ($this->rest_output == "jsonp") {
+      // Disallow with access keys (public access only) or if blocked by configuration.
+      if ($key || !Module::get_var("rest", "allow_jsonp_output", true)) {
+        throw Rest_Exception::factory(403);
+      }
+
+      // Get and validate the callback.
+      $this->rest_callback = $this->request->query("callback");
+      if (empty($this->rest_callback)) {
+        throw Rest_Exception::factory(400, array("callback" => "missing"));
+      }
+
+      if (!preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $this->rest_callback)) {
+        throw Rest_Exception::factory(400, array("callback" => "invalid"));
+      }
     }
 
     // Attempt to login the user.  This will fire a 403 Forbidden if unsuccessful.
@@ -221,28 +244,16 @@ class RestAPI_Controller_Rest extends Controller {
    * Overload Controller::after() to process the Response object for REST.
    */
   public function after() {
-    // Get the output format, which will default to json unless we've used
-    // the GET method and specified the "output" query parameter.
-    $output = strtolower(Arr::get($this->request->query(), "output", "json"));
-
     // Format $this->rest_response into the Response body based on the output format
-    switch ($output) {
+    switch ($this->rest_output) {
     case "json":
       $this->response->headers("Content-Type", "application/json; charset=" . Kohana::$charset);
       $this->response->body(json_encode($this->rest_response));
       break;
 
     case "jsonp":
-      if (!$callback = $this->request->query("callback")) {
-        throw Rest_Exception::factory(400, array("callback" => "missing"));
-      }
-
-      if (!preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback)) {
-        throw Rest_Exception::factory(400, array("callback" => "invalid"));
-      }
-
       $this->response->headers("Content-Type", "application/javascript; charset=" . Kohana::$charset);
-      $this->response->body("$callback(" . json_encode($this->rest_response) . ")");
+      $this->response->body("{$this->rest_callback}(" . json_encode($this->rest_response) . ")");
       break;
 
     case "html":
@@ -260,9 +271,6 @@ class RestAPI_Controller_Rest extends Controller {
         $profiler->render();
       }
       break;
-
-    default:
-      throw Rest_Exception::factory(400, array("output" => "invalid"));
     }
 
     parent::after();
@@ -427,7 +435,7 @@ class RestAPI_Controller_Rest extends Controller {
     if ($this->rest_object->created) {
       // New resource - set the status and headers.
       $this->response->status(201);
-      $this->response->headers("Location", $this->rest_object->url());
+      $this->response->headers("Location", $this->rest_object->url(false));
     }
 
     $this->rest_response = $this->rest_object->post_response();
