@@ -435,7 +435,7 @@ class RestAPI_Controller_Rest extends Controller {
     if ($this->rest_object->created) {
       // New resource - set the status and headers.
       $this->response->status(201);
-      $this->response->headers("Location", $this->rest_object->url());
+      $this->response->headers("Location", $this->rest_object->url(false));
     }
 
     $this->rest_response = $this->rest_object->post_response();
