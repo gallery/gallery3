@@ -105,7 +105,7 @@ class Tag_Rest_ItemTags extends Rest {
 
     // Convert our members list into an array of item ids.
     $tag_names = array();
-    foreach ($this->params->members as $key => $member_rest) {
+    foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Tag", $member_rest->id);
       if (($member_rest->type != "Tags") || !$member->loaded()) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
@@ -134,7 +134,7 @@ class Tag_Rest_ItemTags extends Rest {
 
     // Convert our members list into an array of item ids.
     $tag_names = array();
-    foreach ($this->params->members as $key => $member_rest) {
+    foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Tag", $member_rest->id);
       if (($member_rest->type != "Tags") || !$member->loaded()) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
