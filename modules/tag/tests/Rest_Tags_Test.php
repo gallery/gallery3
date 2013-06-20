@@ -18,145 +18,196 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Tags_Test extends Unittest_TestCase {
-  public function setup() {
-    parent::setup();
-    try {
-      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
-      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {items_tags}");
-    } catch (Exception $e) {
-    }
+  public function test_get_response() {
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add($item, $name);
+
+    $rest = Rest::factory("Tags", $tag->id);
+
+    $expected = array(
+      "url" => URL::abs_site("rest/tags/{$tag->id}"),
+      "entity" => array(
+        "id"      => $tag->id,
+        "count"   => $tag->count,
+        "name"    => $tag->name,
+        "slug"    => $tag->slug,
+        "web_url" => $tag->abs_url()),
+      "relationships" => array(
+        "items" => array(
+          "url" => URL::abs_site("rest/tag_items/{$tag->id}"),
+          "members" => array(
+            0 => URL::abs_site("rest/items/{$item->id}")))));
+
+    $this->assertEquals($expected, $rest->get_response());
   }
 
-  public function teardown() {
-    Identity::set_active_user(Identity::admin_user());
-    parent::teardown();
-  }
+  public function test_get_response_with_no_items() {
+    $tag = Test::random_tag();
+    $rest = Rest::factory("Tags", $tag->id);
 
-  public function test_get() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $t1 = Tag::add(Item::root(), "t1");
-    $t2 = Tag::add(Item::root(), "t2");
-
-    $request = new stdClass();
-    $this->assertEquals(
-      array(
-        "url" => RestAPI::url("tags"),
-        "members" => array(
-          RestAPI::url("tag", $t1),
-          RestAPI::url("tag", $t2))),
-      Hook_Rest_Tags::get($request));
-  }
-
-  public function test_post() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    Identity::set_active_user(Identity::admin_user());
-
-    $request = new stdClass();
-    $request->params = new stdClass();
-    $request->params->entity = new stdClass();
-    $request->params->entity->name = "test tag";
-    $this->assertEquals(
-      array("url" => URL::abs_site("rest/tag/1")),
-      Hook_Rest_Tags::post($request));
-  }
-
-  /**
-   * @expectedException HTTP_Exception_403
-   */
-  public function test_post_fails_without_permissions() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    // We have to remove edit permissions from everywhere
-    Database::instance()->query(Database::UPDATE, "UPDATE {access_caches} SET edit_1=0");
-    Identity::set_active_user(Identity::guest());
-
-    $request = new stdClass();
-    $request->params = new stdClass();
-    $request->params->entity = new stdClass();
-    $request->params->entity->name = "test tag";
-    Hook_Rest_Tags::post($request);
-  }
-
-  public function test_tag_get() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $tag = Tag::add(Item::root(), "tag1")->reload();
-
-    $request = new stdClass();
-    $request->url = RestAPI::url("tag", $tag);
-    $this->assertEquals(
-      array("url" => RestAPI::url("tag", $tag),
-            "entity" => $tag->as_array(),
-            "relationships" => array(
-              "items" => array(
-                "url" => RestAPI::url("tag_items", $tag),
-                "members" => array(
-                  RestAPI::url("tag_item", $tag, Item::root()))))),
-      Hook_Rest_Tag::get($request));
+    $actual = $rest->get_response();
+    $this->assertSame(array(), $actual["relationships"]["items"]["members"]);
   }
 
   /**
    * @expectedException HTTP_Exception_404
    */
-  public function test_tag_get_with_invalid_url() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_get_entity_with_invalid_tag() {
+    $name = Test::random_name();
+    $tag = Tag::add(Item::root(), $name);
 
-    $request = new stdClass();
-    $request->url = "bogus";
-    Hook_Rest_Tag::get($request);
+    $id = $tag->id;
+    $tag->delete();
+
+    Rest::factory("Tags", $id)->get_entity();
   }
 
-  public function test_tag_get_with_no_relationships() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_put_entity() {
+    Identity::set_active_user(Identity::admin_user());
 
-    $tag = Test::random_tag();
+    $name = Test::random_name();
+    $tag = Tag::add(Item::root(), $name);
 
-    $request = new stdClass();
-    $request->url = RestAPI::url("tag", $tag);
-    $this->assertEquals(
-      array("url" => RestAPI::url("tag", $tag),
-            "entity" => $tag->as_array(),
-            "relationships" => array(
-              "items" => array(
-                "url" => RestAPI::url("tag_items", $tag),
-                "members" => array()))),
-      Hook_Rest_Tag::get($request));
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->name = "new$name";
+
+    $rest = Rest::factory("Tags", $tag->id, $params);
+    $rest->put_entity();
+
+    $this->assertEquals("new$name", $tag->reload()->name);
   }
 
-  public function test_tag_put() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  /**
+   * @expectedException HTTP_Exception_403
+   */
+  public function test_put_entity_admin_only() {
+    Identity::set_active_user(Test::random_user());
 
-    $tag = Test::random_tag();
-    $request = new stdClass();
-    $request->url = RestAPI::url("tag", $tag);
-    $request->params = new stdClass();
-    $request->params->entity = new stdClass();
-    $request->params->entity->name = "new name";
+    $name = Test::random_name();
+    $tag = Tag::add(Item::root(), $name);
 
-    Hook_Rest_Tag::put($request);
-    $this->assertEquals("new name", $tag->reload()->name);
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->name = "new$name";
+
+    $rest = Rest::factory("Tags", $tag->id, $params);
+    $rest->put_entity();
   }
 
-  public function test_tag_delete_tag() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_delete() {
+    Identity::set_active_user(Identity::admin_user());
 
-    $tag = Test::random_tag();
-    $request = new stdClass();
-    $request->url = RestAPI::url("tag", $tag);
-    Hook_Rest_Tag::delete($request);
+    $name = Test::random_name();
+    $tag = Tag::add(Item::root(), $name);
+
+    $rest = Rest::factory("Tags", $tag->id);
+    $rest->delete();
 
     $this->assertFalse($tag->reload()->loaded());
   }
 
-  public function test_tag_resolve() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  /**
+   * @expectedException HTTP_Exception_403
+   */
+  public function test_delete_admin_only() {
+    Identity::set_active_user(Test::random_user());
 
-    $tag = Test::random_tag();
+    $name = Test::random_name();
+    $tag = Tag::add(Item::root(), $name);
 
-    $this->assertEquals(
-      $tag->as_array(),
-      RestAPI::resolve(RestAPI::url("tag", $tag))->as_array());
+    $rest = Rest::factory("Tags", $tag->id);
+    $rest->delete();
+  }
+
+  public function test_get_members() {
+    $item1 = Test::random_album();
+    $item2 = Test::random_album();
+
+    // tag2 has two items, tag1 has one.
+    $name = Test::random_name();
+    $tag1 = Tag::add($item1, "{$name}1");
+    $tag2 = Tag::add($item1, "{$name}2");
+    Tag::add($item2, "{$name}2");
+
+    $rest1 = Rest::factory("Tags", $tag1->id);
+    $rest2 = Rest::factory("Tags", $tag2->id);
+
+    // Get with no query params - sorted by count, so tag2 first.
+    $members = Rest::factory("Tags")->get_members();
+    $this->assertTrue(array_search($rest2, $members) < array_search($rest1, $members));
+
+    // Get with "order=name" query param - sorted by name, so tag1 first.
+    $members = Rest::factory("Tags", null, array("order" => "name"))->get_members();
+    $this->assertTrue(array_search($rest1, $members) < array_search($rest2, $members));
+
+    // Get with "name" query param - sorted by name, so tag1 first, and only two members.
+    $members = Rest::factory("Tags", null, array("name" => $name))->get_members();
+    $this->assertSame(0, array_search($rest1, $members));
+    $this->assertSame(1, array_search($rest2, $members));
+  }
+
+  public function test_post_entity() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->name = $name;
+
+    $rest = Rest::factory("Tags", null, $params);
+    $rest->created = true;  // this is typically done in Controller_Rest::action_post()
+    $rest->post_entity();
+
+    $tag = ORM::factory("Tag")
+      ->where("name", "=", $name)
+      ->find();
+
+    $this->assertTrue($rest->created);
+    $this->assertTrue($tag->loaded());
+  }
+
+  public function test_post_entity_that_already_exists() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    Tag::add($item, $name);  // this creates the tag
+
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->name = $name;
+
+    $rest = Rest::factory("Tags", null, $params);
+    $rest->created = true;  // this is typically done in Controller_Rest::action_post()
+    $rest->post_entity();
+
+    $tag = ORM::factory("Tag")
+      ->where("name", "=", $name)
+      ->find();
+
+    $this->assertFalse($rest->created);
+    $this->assertTrue($tag->loaded());
+  }
+
+  /**
+   * @expectedException HTTP_Exception_403
+   */
+  public function test_post_entity_fails_without_permissions() {
+    // We have to remove edit permissions from everywhere
+    Database::instance()->query(Database::UPDATE, "UPDATE {access_caches} SET edit_1=0");
+    Identity::set_active_user(Identity::guest());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->name = $name;
+
+    $rest = Rest::factory("Tags", null, $params);
+    $rest->post_entity();
   }
 }

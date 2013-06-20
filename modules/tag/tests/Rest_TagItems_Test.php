@@ -18,60 +18,134 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_TagItems_Test extends Unittest_TestCase {
-  public function setup() {
-    parent::setup();
-    try {
-      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {tags}");
-      Database::instance()->query(Database::TRUNCATE, "TRUNCATE {items_tags}");
-    } catch (Exception $e) { }
+  // Note: this does not explicitly test Rest_TagItems::delete(), because all it does is call
+  // Rest_Tags::delete() which is already tested in Rest_Tags_Test.
+
+  public function test_get_response() {
+    $name = Test::random_name();
+    $item1 = Test::random_album();
+    $item2 = Test::random_album();
+    $tag = Tag::add($item1, $name);
+    Tag::add($item2, $name);
+
+    $rest = Rest::factory("TagItems", $tag->id);
+
+    $expected = array(
+      "url" => URL::abs_site("rest/tag_items/{$tag->id}"),
+      "members" => array(
+        0 => URL::abs_site("rest/items/{$item1->id}"),
+        1 => URL::abs_site("rest/items/{$item2->id}")));
+
+    $this->assertEquals($expected, $rest->get_response());
   }
 
-  public function test_get() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_get_members() {
+    $name = Test::random_name();
+    $item1 = Test::random_album();
+    $item2 = Test::random_photo();
+    $tag = Tag::add($item1, $name);
+    Tag::add($item2, $name);
 
-    $tag = Tag::add(Item::root(), "tag1")->reload();
+    $rest1 = Rest::factory("Items", $item1->id);
+    $rest2 = Rest::factory("Items", $item2->id);
 
-    $request = new stdClass();
-    $request->url = RestAPI::url("tag_item", $tag, Item::root());
-    $this->assertEquals(
-      array("url" => RestAPI::url("tag_item", $tag, Item::root()),
-            "entity" => array(
-              "tag" => RestAPI::url("tag", $tag),
-              "item" => RestAPI::url("item", Item::root()))),
-      Hook_Rest_TagItem::get($request));
+    // Get with no query params
+    $members = Rest::factory("TagItems", $tag->id)->get_members();
+    $this->assertSame(0, array_search($rest1, $members));
+    $this->assertSame(1, array_search($rest2, $members));
+
+    // Get with "type=album" query param - only item1
+    $members = Rest::factory("TagItems", $tag->id, array("type" => array("album")))->get_members();
+    $this->assertSame(0, array_search($rest1, $members));
+    $this->assertSame(false, array_search($rest2, $members));
+
+    // Get with "name" query param - only item2 (use its name)
+    $members = Rest::factory("TagItems", $tag->id, array("name" => $item2->name))->get_members();
+    $this->assertSame(false, array_search($rest1, $members));
+    $this->assertSame(0, array_search($rest2, $members));
   }
 
   /**
    * @expectedException HTTP_Exception_404
    */
-  public function test_get_with_invalid_url() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_get_members_with_invalid_tag() {
+    $name = Test::random_name();
+    $tag = Tag::add(Item::root(), $name);
 
-    $request = new stdClass();
-    $request->url = "bogus";
-    Hook_Rest_TagItem::get($request);
+    $id = $tag->id;
+    $tag->delete();
+
+    Rest::factory("TagItems", $id)->get_members();
   }
 
-  public function test_delete() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_put_members() {
+    Identity::set_active_user(Identity::admin_user());
 
-    $tag = Tag::add(Item::root(), "tag1")->reload();
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add(Item::root(), $name);
 
-    $request = new stdClass();
-    $request->url = RestAPI::url("tag_item", $tag, Item::root());
-    Hook_Rest_TagItem::delete($request);
+    $params = array();
+    $params["members"] = array(0 => Rest::factory("Items", $item->id));
 
-    $this->assertFalse($tag->reload()->has("items", Item::root()));
+    $rest = Rest::factory("TagItems", $tag->id, $params);
+    $rest->put_members();
+
+    // PUT replaces member list - tag has $item, but no longer has root.
+    $this->assertFalse($tag->has("items", Item::root()));
+    $this->assertTrue($tag->has("items", $item));
   }
 
-  public function test_resolve() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  /**
+   * @expectedException HTTP_Exception_403
+   */
+  public function test_put_members_admin_only() {
+    Identity::set_active_user(Test::random_user());
 
-    $album = Test::random_album();
-    $tag = Tag::add($album, "tag1")->reload();
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add(Item::root(), $name);
 
-    $tuple = RestAPI::resolve(RestAPI::url("tag_item", $tag, $album));
-    $this->assertEquals($tag->as_array(), $tuple[0]->as_array());
-    $this->assertEquals($album->as_array(), $tuple[1]->as_array());
+    $params = array();
+    $params["members"] = array(0 => Rest::factory("Items", $item->id));
+
+    $rest = Rest::factory("TagItems", $tag->id, $params);
+    $rest->put_members();
+  }
+
+  /**
+   * @expectedException HTTP_Exception_400
+   */
+  public function test_put_members_with_wrong_member_types() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add(Item::root(), "1$name");
+    $tag2 = Tag::add(Item::root(), "2$name");
+
+    $params = array();
+    $params["members"] = array(0 => Rest::factory("Tags", $tag2->id)); // should be "Items"
+
+    $rest = Rest::factory("TagItems", $tag->id, $params);
+    $rest->put_members();
+  }
+
+  public function test_post_members() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add(Item::root(), $name);
+
+    $params = array();
+    $params["members"] = array(0 => Rest::factory("Items", $item->id));
+
+    $rest = Rest::factory("TagItems", $tag->id, $params);
+    $rest->post_members();
+
+    // POST adds to member list - tag has both $item and root.
+    $this->assertTrue($tag->has("items", Item::root()));
+    $this->assertTrue($tag->has("items", $item));
   }
 }
