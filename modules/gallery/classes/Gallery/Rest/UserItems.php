@@ -102,7 +102,7 @@ class Gallery_Rest_UserItems extends Rest {
 
     // Convert our members list into an array of item ids.
     $member_ids = array();
-    foreach ($this->params->members as $key => $member_rest) {
+    foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Item", $member_rest->id);
       if (($member_rest->type != "Items") || ($member->owner_id != $user->id)) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));

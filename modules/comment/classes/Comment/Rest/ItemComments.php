@@ -81,7 +81,7 @@ class Comment_Rest_ItemComments extends Rest {
 
     // Convert our members list into an array of comment ids.
     $member_ids = array();
-    foreach ($this->params->members as $key => $member_rest) {
+    foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Comment", $member_rest->id);
       if (($member_rest->type != "Comments") || ($member->item_id != $item->id)) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
