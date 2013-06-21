@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Data_Rest_Test extends Unittest_TestCase {
+class Rest_Data_Test extends Unittest_TestCase {
   public function teardown() {
     Identity::set_active_user(Identity::admin_user());
     parent::teardown();

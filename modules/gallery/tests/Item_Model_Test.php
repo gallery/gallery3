@@ -454,44 +454,6 @@ class Item_Model_Test extends Unittest_TestCase {
     }
   }
 
-  public function test_as_restful_array() {
-    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
-
-    $album = Test::random_album();
-    $photo = Test::random_photo($album);
-    $album->reload();
-
-    $result = $album->as_restful_array();
-    $this->assertEquals(RestAPI::url("item", Item::root()), $result["parent"]);
-    $this->assertEquals(RestAPI::url("item", $photo), $result["album_cover"]);
-    $this->assertTrue(!array_key_exists("parent_id", $result));
-    $this->assertTrue(!array_key_exists("album_cover_item_id", $result));
-  }
-
-  public function test_as_restful_array_with_edit_bit() {
-    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
-
-    $response = Item::root()->as_restful_array();
-    $this->assertTrue($response["can_edit"]);
-
-    Access::deny(Identity::everybody(), "edit", Item::root());
-    Identity::set_active_user(Identity::guest());
-    $response = Item::root()->as_restful_array();
-    $this->assertFalse($response["can_edit"]);
-  }
-
-  public function test_as_restful_array_with_add_bit() {
-    $this->markTestIncomplete("REST API is currently under re-construction - as_restful_array() no longer in item model");
-
-    $response = Item::root()->as_restful_array();
-    $this->assertTrue($response["can_add"]);
-
-    Access::deny(Identity::everybody(), "add", Item::root());
-    Identity::set_active_user(Identity::guest());
-    $response = Item::root()->as_restful_array();
-    $this->assertFalse($response["can_add"]);
-  }
-
   public function test_first_photo_becomes_album_cover() {
     $album = Test::random_album();
     $photo = Test::random_photo($album);
