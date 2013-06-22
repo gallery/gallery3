@@ -230,17 +230,22 @@ class Gallery_Rest_Items extends Rest {
    * POST an item's entity (and possibly file).  This generates a new item model.
    */
   public function post_entity() {
-    if (!isset($this->id) && property_exists($this->params["entity"], "parent")) {
-      $parent_rest = RestAPI::resolve($this->params["entity"]->parent);
-      if (!$parent_rest || ($parent_rest->type != "Items")) {
-        throw Rest_Exception::factory(400, array("parent" => "invalid"));
+    if (empty($this->id)) {
+      if (property_exists($this->params["entity"], "parent")) {
+        $parent_rest = RestAPI::resolve($this->params["entity"]->parent);
+        if (!$parent_rest || ($parent_rest->type != "Items")) {
+          throw Rest_Exception::factory(400, array("parent" => "invalid"));
+        }
+        $parent_id = $parent_rest->id;
+      } else {
+        throw Rest_Exception::factory(400, array("parent" => "required"));
       }
-      $this->id = $parent_rest->id;
     } else {
-      throw Rest_Exception::factory(400, array("parent" => "required"));
+      $parent_id = $this->id;
+      $this->id = null;
     }
 
-    $parent = ORM::factory("Item", $this->id);
+    $parent = ORM::factory("Item", $parent_id);
     Access::required("add", $parent);
 
     // Get the entity, check the type (catch it here before we look for it and fire a 500).
@@ -251,7 +256,7 @@ class Gallery_Rest_Items extends Rest {
 
     // Build the item model.
     $item = ORM::factory("Item");
-    $item->parent_id = $this->id;
+    $item->parent_id = $parent->id;
     $item->type = $entity->type;
 
     switch ($item->type) {
