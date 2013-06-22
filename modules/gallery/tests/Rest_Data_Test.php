@@ -18,59 +18,48 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Data_Test extends Unittest_TestCase {
-  public function teardown() {
-    Identity::set_active_user(Identity::admin_user());
-    parent::teardown();
-  }
+  // Note: Rest_Data uses Controller_FileProxy directly, so there's no need to re-test
+  // access control as Controller_FileProxy's tests already do that nicely.
 
-  public function test_resolve() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
+  public function test_basic_get() {
     $photo = Test::random_photo();
-    $resolved = RestAPI::resolve(RestAPI::url("data", $photo, 640));
-    $this->assertEquals($photo->id, $resolved->id);
+
+    $rest = Rest::factory("Data", $photo->id, array("size" => "thumb"));
+    $this->assertSame($photo->thumb_path(), $rest->get_response());
+
+    $rest = Rest::factory("Data", $photo->id, array("size" => "resize"));
+    $this->assertSame($photo->resize_path(), $rest->get_response());
+
+    $rest = Rest::factory("Data", $photo->id, array("size" => "full"));
+    $this->assertSame($photo->file_path(), $rest->get_response());
   }
 
   /**
-   * @expectedException HTTP_Exception_404
+   * @expectedException HTTP_Exception_400
    */
-  public function test_resolve_needs_permission() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  public function test_missing_size() {
+    $photo = Test::random_album();
 
-    $album = Test::random_album();
-    $photo = Test::random_photo($album);
-    $album->reload();  // new photo changed the album in the db
-
-    Access::deny(Identity::everybody(), "view", $album);
-    Identity::set_active_user(Identity::guest());
-
-    Hook_Rest_Data::resolve($photo->id);
+    $rest = Rest::factory("Data", $photo->id);
+    $this->assertSame($photo->thumb_path(), $rest->get_response());
   }
 
-  public function test_basic_get() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+  /**
+   * @expectedException HTTP_Exception_400
+   */
+  public function test_invalid_size() {
+    $photo = Test::random_album();
 
-    $photo = Test::random_photo();
-
-    $request = new stdClass();
-    $request->url = RestAPI::url("data", $photo, "thumb");
-    $request->params = new stdClass();
-
-    $request->params->size = "thumb";
-    $this->assertSame($photo->thumb_path(), Hook_Rest_Data::get($request));
-
-    $request->params->size = "resize";
-    $this->assertSame($photo->resize_path(), Hook_Rest_Data::get($request));
-
-    $request->params->size = "full";
-    $this->assertSame($photo->file_path(), Hook_Rest_Data::get($request));
+    $rest = Rest::factory("Data", $photo->id, array("size" => "albums")); // should be full
+    $this->assertSame($photo->file_path(), $rest->get_response());
   }
 
   /**
    * @expectedException HTTP_Exception_404
    */
   public function test_illegal_access() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
+    // Rest_Data calls Controller_FileProxy in a sub-request, which by itself
+    // isolates exceptions... let's ensure we're rethrowing them correctly.
 
     $album = Test::random_album();
     $photo = Test::random_photo($album);
@@ -79,40 +68,7 @@ class Rest_Data_Test extends Unittest_TestCase {
     Access::deny(Identity::everybody(), "view", $album);
     Identity::set_active_user(Identity::guest());
 
-    $request = new stdClass();
-    $request->url = RestAPI::url("data", $photo, "thumb");
-    $request->params = new stdClass();
-    $request->params->size = "thumb";
-
-    Hook_Rest_Data::get($request);
-  }
-
-  /**
-   * @expectedException HTTP_Exception_404
-   */
-  public function test_missing_file() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $photo = Test::random_photo();
-
-    $request = new stdClass();
-    $request->url = RestAPI::url("data", $photo, "thumb");
-    $request->params = new stdClass();
-    $request->params->size = "thumb";
-
-    unlink($photo->thumb_path());  // oops!
-
-    Hook_Rest_Data::get($request);
-  }
-
-  public function test_cache_buster() {
-    $this->markTestIncomplete("REST API is currently under re-construction...");
-
-    $photo = Test::random_photo();
-
-    $this->assertSame(
-      URL::abs_site("rest/data/{$photo->id}?size=thumb&m=" . filemtime($photo->thumb_path())),
-      Hook_Rest_Data::url($photo, "thumb"));
+    $rest = Rest::factory("Data", $photo->id, array("size" => "thumb"));
+    $this->assertSame($photo->thumb_path(), $rest->get_response());
   }
 }
-
