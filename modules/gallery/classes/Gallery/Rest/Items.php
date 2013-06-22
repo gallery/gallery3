@@ -442,8 +442,19 @@ class Gallery_Rest_Items extends Rest {
   }
 
   /**
-   * Override Rest::__construct() to use the "random" parameter, expand members
-   * by default for "urls" and "ancestors_for", and GET the root item by default.
+   * Override Rest::get_response() to default to the root item.
+   */
+  public function get_response() {
+    if (!isset($this->id)) {
+      $this->id = Item::root()->id;
+    }
+
+    return parent::get_response();
+  }
+
+  /**
+   * Override Rest::__construct() to use the "random" parameter and
+   * expand members by default for "urls" and "ancestors_for".
    */
   public function __construct($id, $params) {
     if (Arr::get($params, "random")) {
@@ -458,10 +469,6 @@ class Gallery_Rest_Items extends Rest {
     } else if (Arr::get($params, "urls") || Arr::get($params, "ancestors_for")) {
       // If "urls" or "ancestors_for" parameters are set, expand members by default.
       $this->default_params["expand_members"] = true;
-    } else if ((Request::current()->method() == HTTP_Request::GET) && empty($id)) {
-      // For GET, default to the root item if no id is given and expand members by default.
-      $this->default_params["expand_members"] = true;
-      $id = Item::root()->id;
     }
 
     parent::__construct($id, $params);
