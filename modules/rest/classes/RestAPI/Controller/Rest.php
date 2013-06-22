@@ -385,16 +385,20 @@ class RestAPI_Controller_Rest extends Controller {
     $members       = $this->request->post("members");
     $relationships = $this->request->post("relationships");
 
-    try {
-      if (isset($entity)) {
-        if (!method_exists($this->rest_object, "post_entity")) {
-          throw Rest_Exception::factory(400, array("method" => "invalid"));
-        }
-
-        $this->rest_object->created = true;
-        $this->rest_object->post_entity();
+    if (isset($entity)) {
+      if (!method_exists($this->rest_object, "post_entity")) {
+        throw Rest_Exception::factory(400, array("method" => "invalid"));
       }
 
+      $this->rest_object->created = true;
+      $this->rest_object->post_entity();
+    } else {
+      // POST events *must* have an entity to try and create.  Otherwise,
+      // they should use the idempotent PUT instead (e.g. to add members).
+      throw Rest_Exception::factory(400, array("entity" => "required"));
+    }
+
+    try {
       if (isset($members)) {
         if (!method_exists($this->rest_object, "post_members")) {
           throw Rest_Exception::factory(400, array("method" => "invalid"));

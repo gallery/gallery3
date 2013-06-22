@@ -230,17 +230,22 @@ class Gallery_Rest_Items extends Rest {
    * POST an item's entity (and possibly file).  This generates a new item model.
    */
   public function post_entity() {
-    if (!isset($this->id) && property_exists($this->params["entity"], "parent")) {
-      $parent_rest = RestAPI::resolve($this->params["entity"]->parent);
-      if (!$parent_rest || ($parent_rest->type != "Items")) {
-        throw Rest_Exception::factory(400, array("parent" => "invalid"));
+    if (empty($this->id)) {
+      if (property_exists($this->params["entity"], "parent")) {
+        $parent_rest = RestAPI::resolve($this->params["entity"]->parent);
+        if (!$parent_rest || ($parent_rest->type != "Items")) {
+          throw Rest_Exception::factory(400, array("parent" => "invalid"));
+        }
+        $parent_id = $parent_rest->id;
+      } else {
+        throw Rest_Exception::factory(400, array("parent" => "required"));
       }
-      $this->id = $parent_rest->id;
     } else {
-      throw Rest_Exception::factory(400, array("parent" => "required"));
+      $parent_id = $this->id;
+      $this->id = null;
     }
 
-    $parent = ORM::factory("Item", $this->id);
+    $parent = ORM::factory("Item", $parent_id);
     Access::required("add", $parent);
 
     // Get the entity, check the type (catch it here before we look for it and fire a 500).
@@ -251,7 +256,7 @@ class Gallery_Rest_Items extends Rest {
 
     // Build the item model.
     $item = ORM::factory("Item");
-    $item->parent_id = $this->id;
+    $item->parent_id = $parent->id;
     $item->type = $entity->type;
 
     switch ($item->type) {
@@ -437,8 +442,19 @@ class Gallery_Rest_Items extends Rest {
   }
 
   /**
-   * Override Rest::__construct() to use the "random" parameter, expand members
-   * by default for "urls" and "ancestors_for", and GET the root item by default.
+   * Override Rest::get_response() to default to the root item.
+   */
+  public function get_response() {
+    if (!isset($this->id)) {
+      $this->id = Item::root()->id;
+    }
+
+    return parent::get_response();
+  }
+
+  /**
+   * Override Rest::__construct() to use the "random" parameter and
+   * expand members by default for "urls" and "ancestors_for".
    */
   public function __construct($id, $params) {
     if (Arr::get($params, "random")) {
@@ -453,10 +469,6 @@ class Gallery_Rest_Items extends Rest {
     } else if (Arr::get($params, "urls") || Arr::get($params, "ancestors_for")) {
       // If "urls" or "ancestors_for" parameters are set, expand members by default.
       $this->default_params["expand_members"] = true;
-    } else if ((Request::current()->method() == HTTP_Request::GET) && empty($id)) {
-      // For GET, default to the root item if no id is given and expand members by default.
-      $this->default_params["expand_members"] = true;
-      $id = Item::root()->id;
     }
 
     parent::__construct($id, $params);
