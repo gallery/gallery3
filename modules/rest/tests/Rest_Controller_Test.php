@@ -400,7 +400,6 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_post_with_bad_members() {
-    $url = URL::abs_site("rest") . "/mock/123";
     $entity = array("id" => 123, "foo" => "baz");
     $members = array(0 => URL::abs_site("rest") . "/nonexistent_resource/123");
 
@@ -414,7 +413,6 @@ class Rest_Controller_Test extends Unittest_TestCase {
   }
 
   public function test_post_with_bad_relationships() {
-    $url = URL::abs_site("rest") . "/mock/123";
     $entity = array("id" => 123, "foo" => "baz");
     $relationships = array("foo" => array("members" =>
       array(0 => URL::abs_site("rest") . "/nonexistent_resource/123")));
@@ -426,5 +424,65 @@ class Rest_Controller_Test extends Unittest_TestCase {
       ->execute();
 
     $this->assertEquals(400, $response->status());
+  }
+
+  public function test_put_with_orm_exception() {
+    $entity = array("exception" => "orm");
+
+    $response = Request::factory("rest/mock/123")
+      ->method(HTTP_Request::PUT)
+      ->post("entity", json_encode($entity))
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array("errors" => array("type" => array(0 => "read_only", 1 => null)));
+
+    $this->assertEquals(400, $response->status());
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_put_with_gallery_exception() {
+    $entity = array("exception" => "gallery");
+
+    $response = Request::factory("rest/mock/123")
+      ->method(HTTP_Request::PUT)
+      ->post("entity", json_encode($entity))
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array("errors" => array("other" => "mock exception"));
+
+    $this->assertEquals(500, $response->status());
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_put_with_rest_exception() {
+    $entity = array("exception" => "rest");
+
+    $response = Request::factory("rest/mock/123")
+      ->method(HTTP_Request::PUT)
+      ->post("entity", json_encode($entity))
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array("errors" => array("mock" => "exception"));
+
+    $this->assertEquals(400, $response->status());
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function test_put_with_http_exception() {
+    $entity = array("exception" => "http");
+
+    $response = Request::factory("rest/mock/123")
+      ->method(HTTP_Request::PUT)
+      ->post("entity", json_encode($entity))
+      ->execute();
+
+    $actual = json_decode($response->body(), true);  // assoc array
+    $expected = array("errors" => array("other" => "mock exception"));
+
+    $this->assertEquals(400, $response->status());
+    $this->assertEquals($expected, $actual);
   }
 }

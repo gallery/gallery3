@@ -628,7 +628,7 @@ class Rest_Items_Test extends Unittest_TestCase {
     $this->assertEquals($parent->id, $album2->parent->id);
   }
 
-  public function test_item_delete_album() {
+  public function test_delete_album() {
     Identity::set_active_user(Identity::guest());
     Access::allow(Identity::everybody(), "view", Item::root());
     Access::allow(Identity::everybody(), "edit", Item::root());
@@ -642,7 +642,7 @@ class Rest_Items_Test extends Unittest_TestCase {
   /**
    * @expectedException HTTP_Exception_403
    */
-  public function test_item_delete_album_fails_without_permission() {
+  public function test_delete_album_fails_without_permission() {
     Identity::set_active_user(Identity::guest());
     Access::allow(Identity::everybody(), "view", Item::root());
     Access::deny(Identity::everybody(), "edit", Item::root());

@@ -43,6 +43,32 @@ class Rest_Mock extends Rest {
   }
 
   public function put_entity() {
+    if (property_exists($this->params["entity"], "exception")) {
+      switch ($this->params["entity"]->exception) {
+      case "orm":
+        // Throw an ORM_Validation_Exception (will be "type" => array(0 => "read_only", 1 => null))
+        $item = Test::random_album();
+        $item->type = "cannot_change";
+        $item->save();
+        break;
+
+      case "gallery":
+        // Throw a Gallery_Exception
+        throw new Gallery_Exception("mock exception");
+        break;
+
+      case "rest":
+        // Throw a Rest_Exception
+        throw Rest_Exception::factory(400, array("mock" => "exception"));
+        break;
+
+      case "http":
+        // Throw an HTTP_Exception
+        throw HTTP_Exception::factory(400, "mock exception");
+        break;
+      }
+    }
+
     $this->entity = $this->params["entity"];
   }
 

@@ -97,22 +97,17 @@ class Gallery_Rest_Tree extends Rest {
       throw Rest_Exception::factory(400, array("tree" => "not_an_album"));
     }
 
-    $members = $item->descendants;
-
-    if (isset($this->params["depth"])) {
-      // Only include items *at* the maximum depth that are albums.
-      $members->where("level", "=", $item->level + $this->params["depth"])
-              ->where("type", "=", "album");
-    } else {
+    if (!isset($this->params["depth"])) {
       // Depth not defined - members list is empty.
       return array();
     }
 
-    if (isset($this->params["type"])) {
-      $members->where("type", "IN", $this->params["type"]);
-    }
-
-    $members = $members->viewable()->find_all();
+    // Only include items *at* the maximum depth that are albums.
+    $members = $item->descendants
+      ->where("level", "=", $item->level + $this->params["depth"])
+      ->where("type", "=", "album")
+      ->viewable()
+      ->find_all();
 
     // Set the member params - "depth" and "fields" are sticky for trees.
     $m_params = array();
