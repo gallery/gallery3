@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Gallery_Rest_UserComments extends Rest {
+class Comment_Rest_UserComments extends Rest {
   /**
    * This resource represents a collection of comments authored by a specific user.
    *
