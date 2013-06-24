@@ -19,21 +19,12 @@
  */
 class Url_Security_Test extends Unittest_TestCase {
   public function test_xss_in_current_url() {
-    $this->markTestIncomplete("URL override class changed for K3 - test needs revision.");
-
-    Route::$current_uri = "foo/<xss>/bar";
-    Route::$complete_uri = "foo/<xss>/bar?foo=bar";
-    $this->assertSame("foo/&lt;xss&gt;/bar", Request::current()->uri());
-    $this->assertSame("foo/&lt;xss&gt;/bar?foo=bar", Request::current()->uri() . URL::query());
+    // @see  Gallery_Request::__construct() override
+    $this->assertSame("foo/bar", Request::factory("foo/<xss>bar")->uri());
   }
 
-  public function test_xss_in_merged_url() {
-    $this->markTestIncomplete("URL override class changed for K3 - test needs revision.");
-
-    Route::$current_uri = "foo/<xss>/bar";
-    Route::$complete_uri = "foo/<xss>/bar?foo=bar";
-    $_GET = array("foo" => "bar");
-    $this->assertSame("foo/&lt;xss&gt;/bar?foo=bar", URL::query(array()));
-    $this->assertSame("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", URL::query(array("a" => "b")));
+  public function test_xss_in_url_query() {
+    // @see  Gallery_URL::query() override
+    $this->assertSame("?foo=bar", URL::query(array("foo" => "<xss>bar")));
   }
 }
