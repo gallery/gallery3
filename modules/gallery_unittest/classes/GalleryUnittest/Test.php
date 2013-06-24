@@ -126,6 +126,23 @@ class GalleryUnittest_Test {
     return $tag->save()->reload();
   }
 
+  static function random_comment_unsaved($item=null, $user=null) {
+    $comment = ORM::factory("Comment");
+    $comment->author_id = $user ? $user->id : Identity::active_user()->id;
+    $comment->item_id = $item ? $item->id : Item::root()->id;
+    $comment->text = Test::lorem_ipsum(rand(3, 10));
+    if ($comment->author_id == Identity::guest()->id) {
+      $comment->guest_name = Test::random_string(6);
+      $comment->guest_email = "{$comment->guest_name}@example.com";
+      $comment->guest_url = "http://www.example.com";
+    }
+    return $comment;
+  }
+
+  static function random_comment($item=null, $user=null) {
+    return Test::random_comment_unsaved($item, $user)->save()->reload();
+  }
+
   static function diff($a, $b) {
     fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), is_array($a) ? implode("\n", $a) : $a);
     fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), is_array($b) ? implode("\n", $b) : $b);
