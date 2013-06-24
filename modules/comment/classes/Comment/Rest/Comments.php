@@ -135,7 +135,8 @@ class Comment_Rest_Comments extends Rest {
     $members = ORM::factory("Comment")
       ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
       ->offset(Arr::get($this->params, "start", $this->default_params["start"]))
-      ->order_by("created", "DESC");
+      ->order_by("created", "DESC")
+      ->order_by("id", "DESC");
 
     $data = array();
     foreach ($members->find_all() as $member) {

@@ -23,10 +23,7 @@ class Rest_UserComments_Test extends Unittest_TestCase {
     $item = Test::random_photo();
     $user = Test::random_user();
 
-    // We sleep to make sure the comment "created" times are different.
-    sleep(1);
     $comment1 = Test::random_comment($item, $user);
-    sleep(1);
     $comment2 = Test::random_comment($item, $user);
     $comment3 = Test::random_comment($item, Identity::admin_user()); // will not appear in list
 
@@ -46,10 +43,7 @@ class Rest_UserComments_Test extends Unittest_TestCase {
     $item = Test::random_photo();
     $user = Test::random_user();
 
-    // We sleep to make sure the comment "created" times are different.
-    sleep(1);
     $comment1 = Test::random_comment($item, $user);
-    sleep(1);
     $comment2 = Test::random_comment($item, $user);
     $comment3 = Test::random_comment($item, Identity::admin_user()); // will not appear in list
 
