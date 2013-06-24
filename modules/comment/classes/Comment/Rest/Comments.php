@@ -61,9 +61,9 @@ class Comment_Rest_Comments extends Rest {
       }
     }
 
-    // Convert "item_id" to "items" REST URL.
+    // Convert "item_id" to "item" REST URL.
     if ($comment->item->loaded()) {
-      $data["items"] = Rest::factory("Items", $comment->item->id)->url();
+      $data["item"] = Rest::factory("Items", $comment->item->id)->url();
     }
     unset($data["item_id"]);
 
