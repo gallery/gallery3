@@ -21,11 +21,7 @@ class Rest_ItemComments_Test extends Unittest_TestCase {
   public function test_get_response() {
     Identity::set_active_user(Identity::admin_user());
     $item = Test::random_photo();
-
-    // We sleep to make sure the comment "created" times are different.
-    sleep(1);
     $comment1 = Test::random_comment($item);
-    sleep(1);
     $comment2 = Test::random_comment($item);
 
     $rest = Rest::factory("ItemComments", $item->id);
@@ -43,11 +39,7 @@ class Rest_ItemComments_Test extends Unittest_TestCase {
     $user = Identity::admin_user();
     Identity::set_active_user($user);
     $item = Test::random_photo();
-
-    // We sleep to make sure the comment "created" times are different.
-    sleep(1);
     $comment1 = Test::random_comment($item);
-    sleep(1);
     $comment2 = Test::random_comment($item);
 
     $rest1 = Rest::factory("Comments", $comment1->id);
