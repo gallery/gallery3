@@ -34,9 +34,8 @@ class Gallery_BlockManager {
   }
 
   static function activate_blocks($module_name) {
-    $block_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Block";
-    if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
-      $blocks = call_user_func(array($block_class, "get_site_list"));
+    $blocks = Gallery::module_hook($module_name, "Block", "get_site_list");
+    if (!empty($blocks)) {
       foreach (array_keys($blocks) as $block_id) {
         BlockManager::add("site_sidebar", $module_name, $block_id);
       }
@@ -60,19 +59,8 @@ class Gallery_BlockManager {
   }
 
   static function deactivate_blocks($module_name) {
-    $block_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Block";
-    if (class_exists($block_class) && method_exists($block_class, "get_site_list")) {
-      $blocks = call_user_func(array($block_class, "get_site_list"));
-      foreach  (array_keys($blocks) as $block_id) {
-        BlockManager::remove_blocks_for_module("site_sidebar", $module_name);
-      }
-    }
-
-    if (class_exists($block_class) && method_exists($block_class, "get_admin_list")) {
-      $blocks = call_user_func(array($block_class, "get_admin_list"));
-      foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
-        BlockManager::remove_blocks_for_module($location, $module_name);
-      }
+    foreach (array("site_sidebar", "dashboard_sidebar", "dashboard_center") as $location) {
+      BlockManager::remove_blocks_for_module($location, $module_name);
     }
   }
 
@@ -87,14 +75,12 @@ class Gallery_BlockManager {
   protected static function _get_blocks($function) {
     $blocks = array();
 
-    foreach (Module::active() as $module) {
-      $class_name = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Block";
-      if (class_exists($class_name) && method_exists($class_name, $function)) {
-        foreach (call_user_func(array($class_name, $function)) as $id => $title) {
-          $blocks["{$module->name}:$id"] = $title;
-        }
+    foreach (Gallery::hook("Block", $function) as $module_name => $data) {
+      foreach ($data as $id => $title) {
+        $blocks["$module_name:$id"] = $title;
       }
     }
+
     return $blocks;
   }
 
@@ -102,13 +88,10 @@ class Gallery_BlockManager {
     $active = BlockManager::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
-      $class_name = "Hook_" . Inflector::convert_module_to_class_name($desc[0]) . "Block";
-      if (class_exists($class_name) && method_exists($class_name, "get")) {
-        $block = call_user_func(array($class_name, "get"), $desc[1], $theme);
-        if (!empty($block)) {
-          $block->id = $id;
-          $result .= $block;
-        }
+      $block = Gallery::module_hook($desc[0], "Block", "get", array($desc[1], $theme));
+      if (!empty($block)) {
+        $block->id = $id;
+        $result .= $block;
       }
     }
     return $result;

@@ -156,12 +156,7 @@ class Gallery_Module {
    */
   static function can_activate($module_name) {
     Module::_add_to_path($module_name);
-    $messages = array();
-
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
-    if (class_exists($installer_class) && method_exists($installer_class, "can_activate")) {
-      $messages = call_user_func(array($installer_class, "can_activate"));
-    }
+    $messages = Gallery::module_hook($module_name, "Installer", "can_activate") ?: array();
 
     // Remove it from the active path
     Module::_remove_from_path($module_name);
@@ -189,11 +184,8 @@ class Gallery_Module {
    */
   static function install($module_name) {
     Module::_add_to_path($module_name);
+    Gallery::module_hook($module_name, "Installer", "install");
 
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
-    if (class_exists($installer_class) && method_exists($installer_class, "install")) {
-      call_user_func_array(array($installer_class, "install"), array());
-    }
     // Module::set_version() will add the module to the DB if it doesn't already exist.
     Module::set_version($module_name, Module::available()->$module_name->code_version);
 
@@ -248,17 +240,19 @@ class Gallery_Module {
     }
 
     $version_before = Module::get_version($module_name);
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
     $available = Module::available();
-    if (class_exists($installer_class) && method_exists($installer_class, "upgrade")) {
-      call_user_func_array(array($installer_class, "upgrade"), array($version_before));
-    } else {
+
+    // Try and upgrade the module.
+    $result = Gallery::module_hook($module_name, "Installer", "upgrade", array($version_before));
+    if ($result === false) {
+      // No upgrader found - just update the version number directly.
       if (isset($available->$module_name->code_version)) {
         Module::set_version($module_name, $available->$module_name->code_version);
       } else {
         throw new Gallery_Exception("Unknown module");
       }
     }
+
     // Similar to activate(), deactivate(), and install(), calling load_modules() here
     // refreshes Module::$modules, Module::$active, and the Kohana paths as needed.
     Module::load_modules();
@@ -285,11 +279,7 @@ class Gallery_Module {
    */
   static function activate($module_name) {
     Module::_add_to_path($module_name);
-
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
-    if (class_exists($installer_class) && method_exists($installer_class, "activate")) {
-      call_user_func_array(array($installer_class, "activate"), array());
-    }
+    Gallery::module_hook($module_name, "Installer", "activate");
 
     $module = Module::get($module_name);
     if ($module->loaded()) {
@@ -313,10 +303,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function deactivate($module_name) {
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
-    if (class_exists($installer_class) && method_exists($installer_class, "deactivate")) {
-      call_user_func_array(array($installer_class, "deactivate"), array());
-    }
+    Gallery::module_hook($module_name, "Installer", "deactivate");
 
     $module = Module::get($module_name);
     if ($module->loaded()) {
@@ -356,10 +343,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function uninstall($module_name) {
-    $installer_class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Installer";
-    if (class_exists($installer_class) && method_exists($installer_class, "uninstall")) {
-      call_user_func(array($installer_class, "uninstall"));
-    }
+    Gallery::module_hook($module_name, "Installer", "uninstall");
 
     Graphics::remove_rules($module_name);
     $module = Module::get($module_name);
@@ -438,57 +422,10 @@ class Gallery_Module {
    * @param string $name the event name
    * @param mixed  $data data to pass to each event handler
    */
-  static function event($name, &$data=null) {
+  static function event() {
     $args = func_get_args();
-    array_shift($args);
-    $function = str_replace(".", "_", $name);
-
-    if (method_exists("Hook_GalleryEvent", $function)) {
-      switch (count($args)) {
-      case 0:
-        Hook_GalleryEvent::$function();
-        break;
-      case 1:
-        Hook_GalleryEvent::$function($args[0]);
-        break;
-      case 2:
-        Hook_GalleryEvent::$function($args[0], $args[1]);
-        break;
-      case 3:
-        Hook_GalleryEvent::$function($args[0], $args[1], $args[2]);
-        break;
-      case 4:      // Context menu events have 4 arguments so lets optimize them
-        Hook_GalleryEvent::$function($args[0], $args[1], $args[2], $args[3]);
-        break;
-      default:
-        call_user_func_array(array("Hook_GalleryEvent", $function), $args);
-      }
-    }
-
-    foreach (Module::$active as $module) {
-      if ($module->name == "gallery") {
-        continue;
-      }
-      $class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Event";
-      if (class_exists($class) && method_exists($class, $function)) {
-        call_user_func_array(array($class, $function), $args);
-      }
-    }
-
-    // Give the admin theme a chance to respond, if we're in admin mode.
-    if (Theme::$is_admin) {
-      $class = "Hook_" . Inflector::convert_module_to_class_name(Theme::$admin_theme_name) . "Event";
-      if (class_exists($class) && method_exists($class, $function)) {
-        call_user_func_array(array($class, $function), $args);
-      }
-    }
-
-    // Give the site theme a chance to respond as well.  It gets a chance even in admin mode, as
-    // long as the theme has an admin subdir.
-    $class = "Hook_" . Inflector::convert_module_to_class_name(Theme::$site_theme_name) . "Event";
-    if (class_exists($class) && method_exists($class, $function)) {
-      call_user_func_array(array($class, $function), $args);
-    }
+    $function = str_replace(".", "_", array_shift($args));
+    Gallery::hook("Event", $function, $args);
   }
 
   /**
