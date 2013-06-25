@@ -378,7 +378,6 @@ class Gallery_Rest_Items extends Rest {
         $members->where("name", "LIKE", "%" . Database::escape_for_like($name) . "%");
       }
 
-      $data = array();
       $key = 0;
       $use_weights = (($item->sort_column == "weight") && ($scope == "direct"));
       foreach ($members->find_all() as $member) {
