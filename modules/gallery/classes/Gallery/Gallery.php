@@ -202,7 +202,7 @@ class Gallery_Gallery {
    * @param   string  hook type (i.e. Block, Event, Installer, Rss, Task, or Theme)
    * @param   string  hook function
    * @param   array   function arguments
-   * @return  array   function return value, or false if no function found
+   * @return  array   array of function return values, with the module names as the keys
    */
   static function hook($type, $function, $args=array()) {
     $module_names = array_reverse(array_merge(
