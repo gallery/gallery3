@@ -347,7 +347,7 @@ class Gallery_Rest_Items extends Rest {
         Access::required("view", $member);
 
         if ((empty($types) || in_array($member->type, $types)) &&
-            (empty($name) || (strpos($member->name, $name) !== false))) {
+            (empty($name) || (stripos($member->name, $name) !== false))) {
           $data[] = Rest::factory("Items", $member->id);
         }
       }
