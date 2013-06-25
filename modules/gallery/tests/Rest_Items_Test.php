@@ -218,6 +218,13 @@ class Rest_Items_Test extends Unittest_TestCase {
     $this->assertSame(0, array_search($rest2, $members));
     $this->assertSame(1, array_search($rest1, $members));
 
+    // Get with no other query params, using a comma-separated list.
+    $members = Rest::factory("Items", null,
+        array("urls" => implode(",", array($rest2->url(), $rest1->url())))
+      )->get_members();
+    $this->assertSame(0, array_search($rest2, $members));
+    $this->assertSame(1, array_search($rest1, $members));
+
     // Get with "type=album" query param - only item1
     $members = Rest::factory("Items", null,
         array("urls" => json_encode(array($rest2->url(), $rest1->url())), "type" => array("album"))

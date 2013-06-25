@@ -301,11 +301,8 @@ class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * GET a typical REST response.  This generates the REST response following Gallery's
-   * standard format, and expands members if specified.
-   *
-   * While some resources are different enough to warrant their own action_get() function,
-   * (e.g. data, tree, registry), most resources can use this default implementation.
+   * GET a REST resource.  This uses the resource's get_response() function, and
+   * expands members if specified.
    */
   public function action_get() {
     if (Arr::get($this->rest_object->params, "expand_members",
@@ -331,7 +328,7 @@ class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * PUT a typical REST resource.  As needed, this runs put_entity() and put_members() for
+   * PUT a REST resource.  As needed, this runs put_entity() and put_members() for
    * the resource, as well as put_members() for the resource's relationships.
    */
   public function action_put() {
@@ -373,7 +370,7 @@ class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * POST a typical REST resource.  As needed, this runs post_entity() and post_members() for
+   * POST a REST resource.  As needed, this runs post_entity() and post_members() for
    * the resource, as well as post_members() for the resource's relationships.
    *
    * By default, a successful POST returns a 201 response with a "Location" header.  However,
@@ -446,7 +443,7 @@ class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * DELETE a typical REST resource.
+   * DELETE a REST resource.
    */
   public function action_delete() {
     if (!method_exists($this->rest_object, "delete")) {
@@ -458,8 +455,7 @@ class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * Send an OPTIONS response for a CORS preflight request.  This action should *not*
-   * ever be overriden in REST resource classes.
+   * Send an OPTIONS response for a CORS preflight request.
    * @see  http://www.w3.org/TR/cors
    */
   public function action_options() {

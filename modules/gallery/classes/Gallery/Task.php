@@ -23,12 +23,9 @@ class Gallery_Task {
    */
   static function get_definitions() {
     $tasks = array();
-    foreach (Module::active() as $module) {
-      $class_name = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Task";
-      if (class_exists($class_name) && method_exists($class_name, "available_tasks")) {
-        foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
-          $tasks[$task->callback] = $task;
-        }
+    foreach (Gallery::hook("Task", "available_tasks") as $module_tasks) {
+      foreach ($module_tasks as $task) {
+        $tasks[$task->callback] = $task;
       }
     }
 

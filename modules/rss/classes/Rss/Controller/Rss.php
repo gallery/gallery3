@@ -35,12 +35,8 @@ class Rss_Controller_Rss extends Controller {
 
     // Run the appropriate feed callback
     if (Module::is_active($module_id)) {
-      $class_name = "Hook_" . Inflector::convert_module_to_class_name($module_id) . "Rss";
-      if (class_exists($class_name) && method_exists($class_name, "feed")) {
-        $feed = call_user_func(
-          array($class_name, "feed"), $feed_id,
-          ($page - 1) * $page_size, $page_size, $id);
-      }
+      $feed = Gallery::module_hook($module_id, "Rss", "feed",
+        array($feed_id, ($page - 1) * $page_size, $page_size, $id));
     }
     if (empty($feed)) {
       throw HTTP_Exception::factory(404);
@@ -64,7 +60,7 @@ class Rss_Controller_Rss extends Controller {
       $feed->next_page_uri = URL::abs_site(URL::query(array("page" => $page + 1)));
     }
 
-    $this->headers("Content-Type", "application/rss+xml");
+    $this->response->headers("Content-Type", "application/rss+xml");
     $this->response->body($view);
   }
 }

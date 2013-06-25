@@ -139,10 +139,7 @@ class Gallery_ORM extends Kohana_ORM {
     // Run the "model_relationships" event and populate the relationship cache.
     $relationships = new ArrayObject();
     if ($module_name) {
-      $class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . "Event";
-      if (class_exists($class) && method_exists($class, "model_relationships")) {
-        call_user_func_array(array($class, "model_relationships"), array($relationships));
-      }
+      Gallery::module_hook($module_name, "Event", "model_relationships", array($relationships));
     } else {
       Module::event("model_relationships", $relationships);
     }
