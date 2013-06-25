@@ -92,43 +92,8 @@ class Gallery_View_Admin extends View_Gallery {
     case "admin_head":
     case "body_attributes":
     case "html_attributes":
-      $blocks = array();
-      if (method_exists("Hook_GalleryTheme", $function)) {
-        switch (count($args)) {
-        case 0:
-          $blocks[] = Hook_GalleryTheme::$function($this);
-          break;
-        case 1:
-          $blocks[] = Hook_GalleryTheme::$function($this, $args[0]);
-          break;
-        case 2:
-          $blocks[] = Hook_GalleryTheme::$function($this, $args[0], $args[1]);
-          break;
-        default:
-          $blocks[] = call_user_func_array(
-            array("Hook_GalleryTheme", $function),
-            array_merge(array($this), $args));
-        }
-      }
-
-      foreach (Module::active() as $module) {
-        if ($module->name == "gallery") {
-          continue;
-        }
-        $helper_class = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Theme";
-        if (class_exists($helper_class) && method_exists($helper_class, $function)) {
-          $blocks[] = call_user_func_array(
-            array($helper_class, $function),
-            array_merge(array($this), $args));
-        }
-      }
-
-      $helper_class = "Hook_" . Inflector::convert_module_to_class_name(Theme::$admin_theme_name) . "Theme";
-      if (class_exists($helper_class) && method_exists($helper_class, $function)) {
-        $blocks[] = call_user_func_array(
-          array($helper_class, $function),
-          array_merge(array($this), $args));
-      }
+      array_unshift($args, $this);  // put $this as the first argument
+      $blocks = Gallery::hook("Theme", $function, $args);
 
       if (Session::instance()->get("debug")) {
         if ($function != "admin_head" && $function != "body_attributes") {

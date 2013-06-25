@@ -27,12 +27,9 @@ class Rss_Hook_RssBlock {
     switch ($block_id) {
     case "rss_feeds":
       $feeds = array();
-      foreach (Module::active() as $module) {
-        $class_name = "Hook_" . Inflector::convert_module_to_class_name($module->name) . "Rss";
-        if (class_exists($class_name) && method_exists($class_name, "available_feeds")) {
-          $feeds = array_merge($feeds,
-            call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));
-        }
+      foreach (Gallery::hook("Rss", "available_feeds",
+               array($theme->item(), $theme->tag())) as $module_feeds) {
+        $feeds = array_merge($feeds, $module_feeds);
       }
       if (!empty($feeds)) {
         $block = new Block();

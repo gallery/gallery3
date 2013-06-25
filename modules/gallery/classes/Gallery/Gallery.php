@@ -171,4 +171,51 @@ class Gallery_Gallery {
   static function allow_css_and_js_combining() {
     return !file_exists(VARPATH . "DONT_COMBINE");
   }
+
+  /**
+   * Run a hook function for a single module, and return its output.  Examples:
+   *   Gallery::module_hook("gallery", "Event", "foo_bar");
+   *     runs GalleryEvent::foo_bar()
+   *   Gallery::module_hook("gallery", "Block", "foo_bar", array($foo, $bar));
+   *     runs GalleryBlock::foo_bar($foo, $bar)
+   *
+   * @param   string  module name
+   * @param   string  hook type (i.e. Block, Event, Installer, Rss, Task, or Theme)
+   * @param   string  hook function
+   * @param   array   function arguments
+   * @return  mixed   function return value, or false if no function found
+   */
+  static function module_hook($module_name, $type, $function, $args=array()) {
+    $class = "Hook_" . Inflector::convert_module_to_class_name($module_name) . $type;
+    return (class_exists($class) && method_exists($class, $function)) ?
+      call_user_func_array("$class::$function", $args) : false;
+  }
+
+  /**
+   * Run a hook function for all active modules and themes, and return an array
+   * of their outputs whose keys are the module names.  Examples:
+   *   Gallery::hook("gallery", "Event", "foo_bar");
+   *     runs [Module]Event::foo_bar() for all active modules and themes.
+   *   Gallery::hook("gallery", "Block", "foo_bar", array($foo, $bar));
+   *     runs [Module]Block::foo_bar($foo, $bar) for all active modules and themes.
+   *
+   * @param   string  hook type (i.e. Block, Event, Installer, Rss, Task, or Theme)
+   * @param   string  hook function
+   * @param   array   function arguments
+   * @return  array   function return value, or false if no function found
+   */
+  static function hook($type, $function, $args=array()) {
+    $module_names = array_reverse(array_merge(
+      array_keys(Theme::$kohana_themes), array_keys(Module::$active)));
+
+    $data = array();
+    foreach ($module_names as $module_name) {
+      $result = Gallery::module_hook($module_name, $type, $function, $args);
+      if ($result) {
+        $data[$module_name] = $result;
+      }
+    }
+
+    return $data;
+  }
 }

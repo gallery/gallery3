@@ -57,6 +57,10 @@ class RestAPI_Rest {
    * When building the members and relationship members lists, we maintain the array keys
    * (useful for showing item weights, etc) and the distinction between null and array()
    * (e.g. "comments/1" members is null, but "comments" with no members is array()).
+   *
+   * While most resources can use this function without modification, it may be useful to
+   * override it for atypical resources (e.g. Rest_Data, which returns a file's contents), or
+   * simply overload it to pre-process query params (e.g. random param for Rest_Items).
    */
   public function get_response() {
     $entity  = method_exists($this, "get_entity")  ? $this->get_entity()  : null;

@@ -332,8 +332,12 @@ class Gallery_Rest_Items extends Rest {
       }
     } else if ($urls = Arr::get($this->params, "urls")) {
       // Members are taken from a list of urls, filtered by name and type.
-      // @todo: json_decode is what was used in 3.0, but should we allow comma-separated lists, too?
-      foreach (json_decode($urls, true) as $url) {
+      // In 3.0, these were json-encoded.  In 3.1, we also allow comma-separated lists,
+      // similar to other query params, and use a leading [ or { as a semaphore for json.
+      $urls = ((substr($urls, 0, 1) == "[") || (substr($urls, 0, 1) == "{")) ?
+        json_decode($urls, true) : explode(",", trim($urls, ","));
+
+      foreach ($urls as $url) {
         $item_rest = RestAPI::resolve($url);
         if (!$item_rest || ($item_rest->type != "Items")) {
           throw Rest_Exception::factory(400, array("urls" => "invalid"));
@@ -343,7 +347,7 @@ class Gallery_Rest_Items extends Rest {
         Access::required("view", $member);
 
         if ((empty($types) || in_array($member->type, $types)) &&
-            (empty($name) || (strpos($member->name, $name) !== false))) {
+            (empty($name) || (stripos($member->name, $name) !== false))) {
           $data[] = Rest::factory("Items", $member->id);
         }
       }
@@ -374,7 +378,6 @@ class Gallery_Rest_Items extends Rest {
         $members->where("name", "LIKE", "%" . Database::escape_for_like($name) . "%");
       }
 
-      $data = array();
       $key = 0;
       $use_weights = (($item->sort_column == "weight") && ($scope == "direct"));
       foreach ($members->find_all() as $member) {

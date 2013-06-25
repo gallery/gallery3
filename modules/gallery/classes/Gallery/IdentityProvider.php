@@ -79,11 +79,7 @@ class Gallery_IdentityProvider {
       $provider = new IdentityProvider($new_provider);
 
       Module::set_var("gallery", "identity_provider", $new_provider);
-
-      if (class_exists("Hook_" . Inflector::convert_module_to_class_name($new_provider) . "Installer") &&
-          method_exists("Hook_" . Inflector::convert_module_to_class_name($new_provider) . "Installer", "initialize")) {
-        call_user_func("Hook_" . Inflector::convert_module_to_class_name($new_provider) . "Installer::initialize");
-      }
+      Gallery::module_hook($new_provider, "Installer", "initialize");
 
       if (!$provider->admin_user()) {
         throw new Gallery_Exception("IdentityProvider $new_provider: Couldn't find the admin user!");

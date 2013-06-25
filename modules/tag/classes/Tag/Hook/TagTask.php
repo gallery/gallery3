@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Hook_TagTask {
-
   static function available_tasks() {
     $tasks[] = TaskDefinition::factory()
       ->callback("Hook_TagTask::clean_up_tags")
@@ -52,7 +51,6 @@ class Tag_Hook_TagTask {
         $total = $task->get_data("total");
         $last_tag_id = $task->get_data("last_tag_id");
         $tags = ORM::factory("Tag")->where("id", ">", $last_tag_id)->limit(25)->find_all();
-        Log::instance()->add(Log::ERROR,print_r(Database::instance()->last_query(),1));
         while ($current < $total && microtime(true) - $start < 1 && $tag = $tags->current()) {
           $last_tag_id = $tag->id;
           $real_count = $tag->items->count_all();
