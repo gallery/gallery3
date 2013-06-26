@@ -121,7 +121,15 @@ if (file_exists("local.php")) {
 // Initialize the framework.
 require APPPATH . "bootstrap" . EXT;
 
-// Go!
-echo Request::factory(true, array(), false)
-  ->execute()
-  ->send_headers(true)->body();
+// Initialize the Gallery modules.
+register_shutdown_function("Module::event", "shutdown");
+Module::event("gallery_ready");
+
+// Build the initial request.
+$request = Request::factory(true, array(), false);
+Module::event("initial_request_ready");
+
+// Generate and send the response.
+echo $request->execute()
+  ->send_headers(true)
+  ->body();

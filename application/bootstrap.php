@@ -205,41 +205,6 @@ Module::load_modules();
 Upload::$remove_spaces = false;
 Upload::$default_directory = VARPATH . "uploads";
 
-// Set our routes.  This will match all valid Gallery URLs (including the empty root URL).
-$rel_varpath = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
-Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))", array("path" => ".*"))
-  ->defaults(array(
-      "controller" => "file_proxy",
-      "action" => "index"
-    ));
-
-Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))", array("directory" => "admin"))
-  ->defaults(array(
-      "controller" => "dashboard",
-      "action" => "index"
-    ));
-
-Route::set("site", "<controller>(/<action>(/<args>))")
-  ->filter(function($route, $params, $request) {
-      if (!class_exists("Controller_" . $params["controller"])) {
-        // No controller found - abort match so we can try to find an item URL.
-        return false;
-      }
-      return $params;
-    })
-  ->defaults(array(
-      "action" => "index"
-    ));
-
-// @see  Model_Item::valid_slug()
-Route::set("item", "(<item_url>)", array("item_url" => "[A-Za-z0-9-_/]++"))
-  ->defaults(array(
-      "controller" => "items",
-      "action" => "show"
-    ));
-
 // Initialize our session support
 Session::$default = "database";
 Session::instance();
-
-register_shutdown_function(array("Gallery", "shutdown"));

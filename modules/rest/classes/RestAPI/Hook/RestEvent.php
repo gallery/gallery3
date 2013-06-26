@@ -19,6 +19,14 @@
  */
 class RestAPI_Hook_RestEvent {
   /**
+   * Initialization.  This sets the REST route.
+   */
+  static function gallery_ready() {
+    // Note: the action is set in Controller_Rest::before(), not here.
+    Route::set("rest", "<controller>(/<args>)", array("controller" => "rest"));
+  }
+
+  /**
    * Called just before a user is deleted. This will remove the user from
    * the user_homes directory.
    */

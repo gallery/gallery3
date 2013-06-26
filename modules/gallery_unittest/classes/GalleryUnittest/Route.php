@@ -17,4 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Route::set("rest", "<controller>(/<args>)", array("controller" => "rest"));  // Note: no action set.
+class GalleryUnittest_Route extends Gallery_Route {
+  public static function clear_all() {
+    Route::$_routes = array();
+  }
+}
