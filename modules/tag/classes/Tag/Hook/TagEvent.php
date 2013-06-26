@@ -19,6 +19,24 @@
  */
 class Tag_Hook_TagEvent {
   /**
+   * Initialization.  This sets the tag routes.
+   */
+  static function gallery_ready() {
+    Route::set("tag", "tag(/<tag_url>)", array("tag_url" => "[A-Za-z0-9-_/]++"))
+      ->defaults(array(
+          "controller" => "tags",
+          "action" => "show"
+        ));
+
+    // This route is for Gallery 3.0.x tag_name URLs, and fires a 301 redirect to the canonical URL.
+    Route::set("tag_name", "tag_name/<args>")
+      ->defaults(array(
+          "controller" => "tags",
+          "action" => "find_by_name"
+        ));
+  }
+
+  /**
    * Setup the relationship between Model_Item and Model_Tag.
    */
   static function model_relationships($relationships) {

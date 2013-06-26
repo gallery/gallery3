@@ -80,11 +80,6 @@ abstract class Gallery_Controller extends Kohana_Controller {
    * to overload this implementation.
    */
   public function execute() {
-    // Initialize the modules (will run "gallery_ready" event).
-    if ($this->request->is_initial()) {
-      Gallery::ready();
-    }
-
     // If is_ajax_request was previously set, make this request ajax.  We leave the parameter
     // set here for login and reauthenticate to use.
     if (Session::instance()->get("is_ajax_request")) {

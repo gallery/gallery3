@@ -22,20 +22,23 @@ class Gallery_Route extends Kohana_Route {
   public static $default_regex = array("args" => "[^.;?\\n]++");
 
   /**
-   * Overload Route::set() to add our default regex and automatically remove underscores
-   * from <controller>.  We remove underscores so that "file_proxy" will be routed to "FileProxy"
-   * (at Controllers/FileProxy.php) instead of "File_Proxy" (at Controllers/File/Proxy.php).  If a
-   * directory is desired, use the <directory> tag (i.e. how "admin" and "rest" routes work).
+   * Override Route::set() to:
+   * - Add our default regex.  This adds the regex for <args>.
+   * - Reverse the route order.  Kohana *appends* new ones to the list, and we *prepend* them.
+   * - Remove underscores from <controller>.  For example, "file_proxy" routes to "FileProxy"
+   *   (at Controllers/FileProxy.php) instead of "File_Proxy" (at Controllers/File/Proxy.php).
+   *   If a directory is desired, use the <directory> tag (e.g. see "admin" and "rest" routes).
    *
-   * @see  Route::set()
+   * @see  Route::set() - this is *replaced* by the implementation below.
    * @see  Route::matches() - processes <controller> with route, defaults, ucwords, and filters.
    */
   public static function set($name, $uri=null, $regex=null) {
     // Add default regex, which a route can override if desired.
     $regex = isset($regex) ? array_merge(static::$default_regex, $regex) : static::$default_regex;
 
-    // Build route.
-    $route = parent::set($name, $uri, $regex);
+    // Build the route, and add it to the list.  This part *replaces* the parent::set() function.
+    $route = new Route($uri, $regex);
+    Route::$_routes = array($name => $route) + Route::$_routes;
 
     // Add filter to remove underscores in <controller>.  This runs *before* any other filter
     // that a route may define.
