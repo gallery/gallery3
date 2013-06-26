@@ -72,34 +72,33 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       @mkdir("test/var/logs", 0777, true);
       @mkdir("test/var/cache", 0777, true);
 
-      $active_modules = Module::$active;
-
       // Reset our caches
       Module::$modules = array();
       Module::$active = array();
       Module::$var_cache = array();
-
-      // @todo: do we need this in K3?
-      // Rest the cascading class path
-      // $config->set("core", $config->load("core"));
 
       // Install the active modules
       Module::install("gallery");
       Module::activate("gallery");
       Module::install("user");
       Module::activate("user");
-      $modules = $paths = array();
+      $paths = array();
       foreach (Module::available() as $module_name => $unused) {
+        $path = MODPATH . "{$module_name}/tests";
         if (in_array($module_name, array("gallery", "user"))) {
-          $paths[] = MODPATH . "{$module_name}/tests";
+          $paths[] = $path;
           continue;
         }
-        if (file_exists($path = MODPATH . "{$module_name}/tests")) {
+        if (file_exists($path)) {
           $paths[] = $path;
           Module::install($module_name);
           Module::activate($module_name);
         }
       }
+
+      // Re-initialize the active modules.  This clears the routes, then re-runs gallery_ready.
+      Route::clear_all();
+      Module::event("gallery_ready");
 
       // Trigger late-binding install actions (defined in Hook_GalleryEvent::user_login)
       Graphics::choose_default_toolkit();

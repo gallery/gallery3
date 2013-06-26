@@ -19,9 +19,11 @@
  */
 class Gallery_Hook_GalleryEvent {
   /**
-   * Initialization.
+   * Initialization.  This is called after the bootstrap, but before the initial request is
+   * generated.  This is used to check the timezone, load the user, and set the standard routes.
    */
   static function gallery_ready() {
+    // Check for missing timezone setting.
     if (!get_cfg_var("date.timezone")) {
       if (!(rand() % 4)) {
         Log::instance()->add(Log::ERROR, "date.timezone setting not detected in " .
@@ -30,11 +32,60 @@ class Gallery_Hook_GalleryEvent {
       }
     }
 
+    // Load the active user.
     Identity::load_user();
+
+    // Set our routes.  This will match all valid Gallery URLs (including the empty root URL).
+    // These are ordered from lowest to highest priority (opposite of standard Kohana)
+    // @see  Gallery_Route::set(), which overrides Kohana_Route::set()
+    Route::set("item", "(<item_url>)", array("item_url" => "[A-Za-z0-9-_/]++"))
+      ->defaults(array(
+          "controller" => "items",
+          "action" => "show"
+        ));
+
+    Route::set("site", "<controller>(/<action>(/<args>))")
+      ->filter(function($route, $params, $request) {
+          if (!class_exists("Controller_" . $params["controller"])) {
+            // No controller found - abort match so we can try to find an item URL.
+            return false;
+          }
+          return $params;
+        })
+      ->defaults(array(
+          "action" => "index"
+        ));
+
+    Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))", array("directory" => "admin"))
+      ->defaults(array(
+          "controller" => "dashboard",
+          "action" => "index"
+        ));
+
+    $rel_varpath = substr(VARPATH, strlen(DOCROOT), -1);  // i.e. "var" or "var/test"
+    Route::set("file_proxy", "$rel_varpath(/<type>(/<path>))", array("path" => ".*"))
+      ->defaults(array(
+          "controller" => "file_proxy",
+          "action" => "index"
+        ));
+  }
+
+  /**
+   * Initialization after the initial request is generated.
+   */
+  static function initial_request_ready() {
+    // Don't keep a session for robots; it's a waste of database space.
+    if (Request::user_agent("robot")) {
+      Session::instance()->destroy();
+    }
+
     Theme::load_themes();
     Locales::set_request_locale();
   }
 
+  /**
+   * Shutdown.  This is run after PHP finishes running our script, whether it ends in error or not.
+   */
   static function gallery_shutdown() {
     // Every 500th request, do a pass over var/logs and var/tmp and delete old files.
     // Limit ourselves to deleting a single file so that we don't spend too much CPU

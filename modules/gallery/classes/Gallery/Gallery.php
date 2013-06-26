@@ -24,29 +24,6 @@ class Gallery_Gallery {
   const RELEASE_BRANCH = "master";
 
   /**
-   * This function is called when the Gallery is fully initialized.  We relay it to modules as the
-   * "gallery_ready" event.  Any module that wants to perform an action at the start of every
-   * request should implement the <module>Event::gallery_ready() handler.
-   */
-  static function ready() {
-    // Don't keep a session for robots; it's a waste of database space.
-    if (Request::user_agent("robot")) {
-      Session::instance()->destroy();
-    }
-
-    Module::event("gallery_ready");
-  }
-
-  /**
-   * This function is called right before the Kohana framework shuts down.  We relay it to modules
-   * as the "gallery_shutdown" event.  Any module that wants to perform an action at the start of
-   * every request should implement the <module>Event::gallery_shutdown() handler.
-   */
-  static function shutdown() {
-    Module::event("gallery_shutdown");
-  }
-
-  /**
    * Return a unix timestamp in a user specified format including date and time.
    * @param $timestamp unix timestamp
    * @return string
