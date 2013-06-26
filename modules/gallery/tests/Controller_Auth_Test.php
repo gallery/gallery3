@@ -47,6 +47,10 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
       $function = null;
       for ($token_number = 0; $token_number < count($tokens); $token_number++) {
         $token = $tokens[$token_number];
+        if (self::_token_matches(array(T_CURLY_OPEN), $tokens, $token_number)) {
+          // Treat this just like a normal open curly brace
+          $token = "{";
+        }
 
         // Count braces.
         // 1 open brace  = in class context.
