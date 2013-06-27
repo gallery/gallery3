@@ -485,4 +485,52 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $this->assertEquals(400, $response->status());
     $this->assertEquals($expected, $actual);
   }
+
+  public function test_post_with_relationship_entity() {
+    // Note: this test doesn't use our Rest_Mock class, as it's hard to test
+    // relationships when there's no DB storage of the mock objects.
+
+    $parent = Test::random_album();
+    $name = Test::random_name();
+    $tag = Test::random_tag();
+
+    $entity = array("type" => "album", "name" => $name);
+    $relationships = array("tags" => array("entity" => array("tag_names" => $tag->name)));
+
+    $response = Request::factory("rest/items/{$parent->id}")
+      ->method(HTTP_Request::POST)
+      ->headers("X-Gallery-Request-Key", RestAPI::access_key(Identity::admin_user()))
+      ->post("entity", json_encode($entity))
+      ->post("relationships", json_encode($relationships))
+      ->execute();
+
+    $item = ORM::factory("Item")
+      ->where("parent_id", "=", $parent->id)
+      ->where("type", "=", "album")
+      ->where("name", "=", $name)
+      ->find();
+
+    $this->assertEquals(201, $response->status());
+    $this->assertTrue($item->loaded());
+    $this->assertTrue($tag->has("items", $item));
+  }
+
+  public function test_put_with_relationship_members() {
+    // Note: this test doesn't use our Rest_Mock class, as it's hard to test
+    // relationships when there's no DB storage of the mock objects.
+
+    $item = Test::random_album();
+    $tag = Test::random_tag();
+
+    $relationships = array("tags" => array("members" => Rest::factory("Tags", $tag->id)->url()));
+
+    $response = Request::factory("rest/items/{$item->id}")
+      ->method(HTTP_Request::PUT)
+      ->headers("X-Gallery-Request-Key", RestAPI::access_key(Identity::admin_user()))
+      ->post("relationships", json_encode($relationships))
+      ->execute();
+
+    $this->assertEquals(200, $response->status());
+    $this->assertTrue($tag->has("items", $item));
+  }
 }

@@ -196,10 +196,20 @@ class RestAPI_Controller_Rest extends Controller {
       // Process the "relationships" parameter, if specified.
       $relationships = $this->request->post("relationships");
       if (isset($relationships)) {
-        $relationships = json_decode($relationships, true);  // as assoc array (since no entity)
-        foreach ($relationships as $type => $relationship) {
+        $relationships = (array)json_decode($relationships);  // as assoc array of (maybe) objects
+        foreach ($relationships as $type => $params) {
+          $params = (array)$params; // as assoc array of (maybe) objects
+
+          // Convert the type to a class name, and unset the old values
+          unset($relationships[$type]);
           $type = Inflector::convert_module_to_class_name($type);
-          $members = Arr::get($relationship, "members");
+
+          $entity = Arr::get($params, "entity"); // as object
+          if (isset($entity)) {
+            $relationships[$type]["entity"] = $entity;
+          }
+
+          $members = (array)Arr::get($params, "members"); // as assoc array
           if (isset($members)) {
             foreach ($members as $key => $member) {
               $members[$key] = RestAPI::resolve($member);
@@ -358,11 +368,22 @@ class RestAPI_Controller_Rest extends Controller {
           throw Rest_Exception::factory(400, array("relationships" => "invalid"));
         }
 
+        $relationship = $actual_relationships[$key];
         $relationship->params = $params;
-        if (!method_exists($relationship, "put_members")) {
-          throw Rest_Exception::factory(400, array("method" => "invalid"));
+
+        if (isset($params["entity"])) {
+          if (!method_exists($relationship, "put_entity")) {
+            throw Rest_Exception::factory(400, array("method" => "invalid"));
+          }
+          $relationship->put_entity();
         }
-        $relationship->put_members();
+
+        if (isset($params["members"])) {
+          if (!method_exists($relationship, "put_members")) {
+            throw Rest_Exception::factory(400, array("method" => "invalid"));
+          }
+          $relationship->put_members();
+        }
       }
     }
 
@@ -411,11 +432,22 @@ class RestAPI_Controller_Rest extends Controller {
             throw Rest_Exception::factory(400, array("relationships" => "invalid"));
           }
 
+          $relationship = $actual_relationships[$key];
           $relationship->params = $params;
-          if (!method_exists($relationship, "post_members")) {
-            throw Rest_Exception::factory(400, array("method" => "invalid"));
+
+          if (isset($params["entity"])) {
+            if (!method_exists($relationship, "post_entity")) {
+              throw Rest_Exception::factory(400, array("method" => "invalid"));
+            }
+            $relationship->post_entity();
           }
-          $relationship->post_members();
+
+          if (isset($params["members"])) {
+            if (!method_exists($relationship, "post_members")) {
+              throw Rest_Exception::factory(400, array("method" => "invalid"));
+            }
+            $relationship->post_members();
+          }
         }
       }
     } catch (Exception $e) {
