@@ -1,43 +1,82 @@
-modules/comment/controllers/admin_manage_comments.php        queue                DIRTY_CSRF
-modules/comment/helpers/comment_rss.php                      feed                 DIRTY_AUTH
-modules/g2_import/controllers/admin_g2_import.php            autocomplete         DIRTY_CSRF
-modules/g2_import/controllers/g2.php                         map                  DIRTY_CSRF
-modules/gallery/controllers/admin.php                        __call               DIRTY_AUTH
-modules/gallery/controllers/albums.php                       index                DIRTY_AUTH
-modules/gallery/controllers/albums.php                       show                 DIRTY_CSRF
-modules/gallery/controllers/combined.php                     javascript           DIRTY_AUTH
-modules/gallery/controllers/combined.php                     css                  DIRTY_AUTH
-modules/gallery/controllers/file_proxy.php                   __call               DIRTY_CSRF|DIRTY_AUTH
-modules/gallery/controllers/login.php                        ajax                 DIRTY_AUTH
-modules/gallery/controllers/login.php                        auth_ajax            DIRTY_AUTH
-modules/gallery/controllers/login.php                        html                 DIRTY_AUTH
-modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
-modules/gallery/controllers/logout.php                       index                DIRTY_AUTH
-modules/gallery/controllers/quick.php                        form_edit            DIRTY_CSRF
-modules/gallery/controllers/upgrader.php                     index                DIRTY_CSRF|DIRTY_AUTH
-modules/gallery/controllers/uploader.php                     start                DIRTY_AUTH
-modules/gallery/controllers/uploader.php                     status               DIRTY_AUTH
-modules/gallery/controllers/uploader.php                     finish               DIRTY_AUTH
-modules/gallery/controllers/user_profile.php                 show                 DIRTY_AUTH
-modules/gallery/controllers/user_profile.php                 contact              DIRTY_AUTH
-modules/gallery/controllers/user_profile.php                 send                 DIRTY_AUTH
-modules/gallery/controllers/welcome_message.php              index                DIRTY_AUTH
-modules/organize/controllers/organize.php                    tree                 DIRTY_CSRF
-modules/organize/controllers/organize.php                    delete               DIRTY_AUTH
-modules/organize/controllers/organize.php                    tag                  DIRTY_AUTH
-modules/rest/controllers/rest.php                            index                DIRTY_CSRF|DIRTY_AUTH
-modules/rest/controllers/rest.php                            reset_api_key_confirm DIRTY_AUTH
-modules/rest/controllers/rest.php                            reset_api_key        DIRTY_AUTH
-modules/rest/controllers/rest.php                            __call               DIRTY_CSRF|DIRTY_AUTH
-modules/rss/controllers/rss.php                              feed                 DIRTY_CSRF|DIRTY_AUTH
-modules/search/controllers/search.php                        index                DIRTY_CSRF|DIRTY_AUTH
-modules/server_add/controllers/admin_server_add.php          autocomplete         DIRTY_CSRF
-modules/server_add/controllers/server_add.php                children             DIRTY_CSRF
-modules/tag/controllers/admin_tags.php                       index                DIRTY_CSRF
-modules/tag/controllers/tag.php                              __call               DIRTY_CSRF|DIRTY_AUTH
-modules/tag/controllers/tag_name.php                         __call               DIRTY_AUTH
-modules/tag/controllers/tags.php                             autocomplete         DIRTY_CSRF|DIRTY_AUTH
-modules/tag/helpers/tag_rss.php                              feed                 DIRTY_AUTH
-modules/user/controllers/admin_users.php                     index                DIRTY_CSRF
-modules/user/controllers/password.php                        reset                DIRTY_AUTH
-modules/user/controllers/password.php                        do_reset             DIRTY_CSRF|DIRTY_AUTH
+# Golden file for Controller_Auth_Test.  These are the cases where the scanner didn't see typical
+# auth or CSRF use.  For each case, we document *why* this is okay.  All comment lines are ignored.
+#
+# 1x NULLIPOTENT - input for display filters and pagination
+modules/comment/classes/Comment/Controller/Admin/ManageComments.php         action_queue                   DIRTY_CSRF
+# 3x OTHER AUTH - visibility restricted using Model_Comment::viewable()
+modules/comment/classes/Comment/Hook/CommentRss.php                         feed                           DIRTY_AUTH
+modules/comment/classes/Comment/Rest/Comments.php                           get_members                    DIRTY_AUTH
+modules/comment/classes/Comment/Rest/UserComments.php                       get_members                    DIRTY_AUTH
+# 1x NULLIPOTENT - input for autocomplete
+modules/g2_import/classes/G2Import/Controller/Admin/G2Import.php            action_autocomplete            DIRTY_CSRF
+# 1x NULLIPOTENT - input for G2->G3 mapping
+modules/g2_import/classes/G2Import/Controller/G2.php                        action_map                     DIRTY_CSRF
+# 2x NO AUTH - combined JS/CSS
+modules/gallery/classes/Gallery/Controller/Combined.php                     action_javascript              DIRTY_AUTH
+modules/gallery/classes/Gallery/Controller/Combined.php                     action_css                     DIRTY_AUTH
+# 2x OTHER AUTH - 404s instead of 403s
+modules/gallery/classes/Gallery/Controller/FileProxy.php                    action_index                   DIRTY_AUTH
+modules/gallery/classes/Gallery/Controller/FileProxy.php                    action_show                    DIRTY_CSRF|DIRTY_AUTH
+# 1x NULLIPOTENT - input for display item
+modules/gallery/classes/Gallery/Controller/Items.php                        action_show                    DIRTY_CSRF
+# 2x NO AUTH - login/logout
+modules/gallery/classes/Gallery/Controller/Login.php                        action_index                   DIRTY_AUTH
+modules/gallery/classes/Gallery/Controller/Logout.php                       action_index                   DIRTY_AUTH
+# 1x OTHER AUTH - upgrade_token; NULLIPOTENT - input for display (failed modules)
+modules/gallery/classes/Gallery/Controller/Upgrader.php                     action_index                   DIRTY_CSRF|DIRTY_AUTH
+# 2x OTHER AUTH - 404s instead of 403s
+modules/gallery/classes/Gallery/Controller/UserProfile.php                  action_show                    DIRTY_AUTH
+modules/gallery/classes/Gallery/Controller/UserProfile.php                  action_contact                 DIRTY_AUTH
+# 1x AUTH ELSEWHERE - non-admins redirected to root
+modules/gallery/classes/Gallery/Controller/WelcomeMessage.php               action_index                   DIRTY_AUTH
+# 1x AUTH ELSEWHERE - uses sub-request to FileProxy
+modules/gallery/classes/Gallery/Rest/Data.php                               get_response                   DIRTY_AUTH
+# 1x NULLIPOTENT - only sets params, and auth in get_entity and get_members
+modules/gallery/classes/Gallery/Rest/Items.php                              get_response                   DIRTY_AUTH
+# 2x OTHER AUTH - 404s instead of 403s
+modules/gallery/classes/Gallery/Rest/UserItems.php                          get_members                    DIRTY_AUTH
+modules/gallery/classes/Gallery/Rest/Users.php                              get_entity                     DIRTY_AUTH
+# 1x NULLIPOTENT - input for display item
+modules/organize/classes/Organize/Controller/Organize.php                   action_tree                    DIRTY_CSRF
+# 2x OTHER AUTH - auth fails silently using Access::can() instead of Access:required()
+modules/organize/classes/Organize/Controller/Organize.php                   action_delete                  DIRTY_AUTH
+modules/organize/classes/Organize/Controller/Organize.php                   action_tag                     DIRTY_AUTH
+# 4x AUTH ELSEWHERE - handled by resource classes; NO CSRF - sessions are never saved
+modules/rest/classes/RestAPI/Controller/Rest.php                            action_get                     DIRTY_AUTH
+modules/rest/classes/RestAPI/Controller/Rest.php                            action_put                     DIRTY_CSRF|DIRTY_AUTH
+modules/rest/classes/RestAPI/Controller/Rest.php                            action_post                    DIRTY_CSRF|DIRTY_AUTH
+modules/rest/classes/RestAPI/Controller/Rest.php                            action_delete                  DIRTY_AUTH
+# 1x AUTH ELSEWHERE - handled by Rest::check_auth()
+modules/rest/classes/RestAPI/Controller/Rest.php                            action_show_access_key         DIRTY_AUTH
+# 1x NO AUTH - resource registry
+modules/rest/classes/RestAPI/Rest/Registry.php                              get_response                   DIRTY_AUTH
+# 1x AUTH ELSEWHERE - handled by *Rss classes; NULLIPOTENT - input for pagination
+modules/rss/classes/Rss/Controller/Rss.php                                  action_feed                    DIRTY_CSRF|DIRTY_AUTH
+# 1x NO AUTH - search query, NULLIPOTENT - input for search query
+modules/search/classes/Search/Controller/Search.php                         action_index                   DIRTY_CSRF|DIRTY_AUTH
+# 1x NULLIPOTENT - input for autocomplete
+modules/server_add/classes/ServerAdd/Controller/Admin/ServerAdd.php         action_autocomplete            DIRTY_CSRF
+# 1x NULLIPOTENT - input for display path
+modules/server_add/classes/ServerAdd/Controller/ServerAdd.php               action_children                DIRTY_CSRF
+# 1x NULLIPOTENT - input for display filter
+modules/tag/classes/Tag/Controller/Admin/Tags.php                           action_index                   DIRTY_CSRF
+# 1x NULLIPOTENT - input for pagination; OTHER AUTH - 404s instead of 403s
+modules/tag/classes/Tag/Controller/Tags.php                                 action_show                    DIRTY_CSRF|DIRTY_AUTH
+# 1x NULLIPOTENT - input for autocomplete; NO AUTH - autocomplete
+modules/tag/classes/Tag/Controller/Tags.php                                 action_autocomplete            DIRTY_CSRF|DIRTY_AUTH
+# 1x AUTH ELSEWHERE - redirects to canonical URL
+modules/tag/classes/Tag/Controller/Tags.php                                 action_find_by_name            DIRTY_AUTH
+# 2x OTHER AUTH - 404s instead of 403s
+modules/tag/classes/Tag/Hook/TagRss.php                                     feed                           DIRTY_AUTH
+modules/tag/classes/Tag/Rest/TagItems.php                                   get_members                    DIRTY_AUTH
+# 1x AUTH ELSEWHERE - handled by Rest_Tags::post_entity() since only accessible using relationships
+modules/tag/classes/Tag/Rest/TagItems.php                                   post_members                   DIRTY_AUTH
+# 1x AUTH ELSEWHERE - effectively redirects to Rest_Tags::delete()
+modules/tag/classes/Tag/Rest/TagItems.php                                   delete                         DIRTY_AUTH
+# 2x OTHER AUTH - 404s instead of 403s
+modules/tag/classes/Tag/Rest/Tags.php                                       get_entity                     DIRTY_AUTH
+modules/tag/classes/Tag/Rest/Tags.php                                       get_members                    DIRTY_AUTH
+# 1x NULLIPOTENT - input for pagination
+modules/user/classes/User/Controller/Admin/Users.php                        action_index                   DIRTY_CSRF
+# 1x NO AUTH - password reset
+modules/user/classes/User/Controller/Password.php                           action_reset                   DIRTY_AUTH
