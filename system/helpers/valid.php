@@ -126,7 +126,20 @@ class valid_Core {
 	 */
 	public static function url($url)
 	{
-		return (bool) filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED);
+		// Adapted from https://github.com/henrik/validates_url_format_of/blob/master/init.rb
+		$ipv4_subregex = '(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])';
+		$url_regex = <<<ENDREGEX
+		~^
+		https?://
+		([^\s:@]+:[^\s:@]*@)?
+		( (([[:alnum:]]+\.)*xn--)?[[:alnum:]]+([-.][[:alnum:]]+)*\.[a-z]{2,6}\.? |
+				${ipv4_subregex}(\.${ipv4_subregex}){3} )
+		(:\d{1,5})?
+		([/?]\S*)?
+		\$~iux
+ENDREGEX;
+
+		return (bool) preg_match($url_regex, $url);
 	}
 
 	/**
