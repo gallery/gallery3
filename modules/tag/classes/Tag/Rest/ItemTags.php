@@ -91,6 +91,36 @@ class Tag_Rest_ItemTags extends Rest {
   }
 
   /**
+   * PUT the entity of the item_tags resource.  This replaces the tag list with the one given,
+   * which is a comma-separated list in the "tag_names" field of the entity.
+   * @see  TagEvent::item_edit_form_completed(), which does a similar task.
+   */
+  public function put_entity() {
+    if (empty($this->id)) {
+      return null;
+    }
+
+    $item = ORM::factory("Item", $this->id);
+    Access::required("edit", $item);
+
+    if (!empty($this->params["members"])) {
+      throw Rest_Exception::factory(400, array("entity" => "entity_and_members_sent"));
+    }
+
+    if (!property_exists($this->params["entity"], "tag_names") ||
+        !($tag_names = array_filter(explode(",", $this->params["entity"]->tag_names)))) {
+      throw Rest_Exception::factory(400, array("entity" => "invalid"));
+    }
+
+    // Clear all tags from the item, then add the new set.
+    Tag::clear_all($item);
+    foreach ($tag_names as $tag_name) {
+      Tag::add($item, $tag_name);
+    }
+    Tag::compact();
+  }
+
+  /**
    * PUT the tag members of the item_tags resource.  This replaces the tag list with the one given.
    * @see  TagEvent::item_edit_form_completed(), which does a similar task.
    */
@@ -114,6 +144,33 @@ class Tag_Rest_ItemTags extends Rest {
 
     // Clear all tags from the item, then add the new set.
     Tag::clear_all($item);
+    foreach ($tag_names as $tag_name) {
+      Tag::add($item, $tag_name);
+    }
+    Tag::compact();
+  }
+
+  /**
+   * POST the entity of the item_tags resource.  Unlike PUT, this only *adds* tags to the item.
+   */
+  public function post_entity() {
+    if (empty($this->id)) {
+      return null;
+    }
+
+    $item = ORM::factory("Item", $this->id);
+    Access::required("edit", $item);
+
+    if (!empty($this->params["members"])) {
+      throw Rest_Exception::factory(400, array("entity" => "entity_and_members_sent"));
+    }
+
+    if (!property_exists($this->params["entity"], "tag_names") ||
+        !($tag_names = array_filter(explode(",", $this->params["entity"]->tag_names)))) {
+      throw Rest_Exception::factory(400, array("entity" => "invalid"));
+    }
+
+    // Add the tags to the item.
     foreach ($tag_names as $tag_name) {
       Tag::add($item, $tag_name);
     }
@@ -160,5 +217,31 @@ class Tag_Rest_ItemTags extends Rest {
     Access::required("edit", $item);
 
     Tag::clear_all($item);
+  }
+
+  /**
+   * Overload Rest::get_response() to add an entity of member names if this is a collection.
+   */
+  public function get_response() {
+    $result = parent::get_response();
+
+    // If this is a collection of tags, generate the entity with the comma-separated names.
+    if (isset($result["members"])) {
+      // Get the tag member names.
+      $tag_names = array();
+      foreach ($result["members"] as $member_url) {
+        $tag_rest = RestAPI::resolve($member_url)->get_entity();
+        $tag_names[] = $tag_rest["name"];
+      }
+
+      // Add the entity, then resort $result so it goes in the right place.
+      $result["entity"]["tag_names"] = implode(",", $tag_names);
+      uksort($result, function($a, $b) {
+        $order = array("url" => 1, "entity" => 2, "members" => 3, "relationships" => 4);
+        return $order[$a] - $order[$b];
+      });
+    }
+
+    return $result;
   }
 }
