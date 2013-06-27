@@ -28,6 +28,8 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
 
     $expected = array(
       "url" => URL::abs_site("rest/item_tags/{$item->id}"),
+      "entity" => array(
+        "tag_names" => "{$tag1->name},{$tag2->name}"),
       "members" => array(
         0 => URL::abs_site("rest/tags/{$tag1->id}"),
         1 => URL::abs_site("rest/tags/{$tag2->id}")));
@@ -132,6 +134,45 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
     $rest->put_members();
   }
 
+  public function test_put_entity() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag1 = Tag::add($item, "{$name}1");
+    $tag2 = Tag::add(Item::root()->id, "{$name}2");
+
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->tag_names = $tag2->name;
+
+    $rest = Rest::factory("ItemTags", $item->id, $params);
+    $rest->put_entity();
+
+    // PUT replaces member list - item has tag2, but no longer tag1.
+    $this->assertFalse($item->has("tags", $tag1));
+    $this->assertTrue($item->has("tags", $tag2));
+  }
+
+  /**
+   * @expectedException HTTP_Exception_400
+   */
+  public function test_put_entity_with_members() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag1 = Tag::add($item, "{$name}1");
+    $tag2 = Tag::add(Item::root()->id, "{$name}2");
+
+    $params = array();
+    $params["entity"] = array("tag_names" => $tag2->name);
+    $params["members"] = array(0 => Rest::factory("Tags", $tag2->id));
+
+    $rest = Rest::factory("ItemTags", $item->id, $params);
+    $rest->put_entity();
+  }
+
   public function test_post_members() {
     Identity::set_active_user(Identity::admin_user());
 
@@ -145,6 +186,26 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
 
     $rest = Rest::factory("ItemTags", $item->id, $params);
     $rest->post_members();
+
+    // POST adds to member list - item has tag2 and tag1.
+    $this->assertTrue($item->has("tags", $tag1));
+    $this->assertTrue($item->has("tags", $tag2));
+  }
+
+  public function test_post_entity() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag1 = Tag::add($item, "{$name}1");
+    $tag2 = Tag::add(Item::root()->id, "{$name}2");
+
+    $params = array();
+    $params["entity"] = new stdClass();
+    $params["entity"]->tag_names = $tag2->name;
+
+    $rest = Rest::factory("ItemTags", $item->id, $params);
+    $rest->post_entity();
 
     // POST adds to member list - item has tag2 and tag1.
     $this->assertTrue($item->has("tags", $tag1));

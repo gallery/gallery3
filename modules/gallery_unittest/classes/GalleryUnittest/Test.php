@@ -120,7 +120,7 @@ class GalleryUnittest_Test {
 
   static function random_tag() {
     $tag = ORM::factory("Tag");
-    $tag->name = Test::lorem_ipsum(rand(2, 4));
+    $tag->name = trim(str_replace(",", ".", Test::lorem_ipsum(rand(2, 4))));
 
     // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();

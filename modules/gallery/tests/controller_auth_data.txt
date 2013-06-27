@@ -66,11 +66,12 @@ modules/tag/classes/Tag/Controller/Tags.php                                 acti
 modules/tag/classes/Tag/Controller/Tags.php                                 action_autocomplete            DIRTY_CSRF|DIRTY_AUTH
 # 1x AUTH ELSEWHERE - redirects to canonical URL
 modules/tag/classes/Tag/Controller/Tags.php                                 action_find_by_name            DIRTY_AUTH
-# 2x OTHER AUTH - 404s instead of 403s
+# 1x OTHER AUTH - 404s instead of 403s
 modules/tag/classes/Tag/Hook/TagRss.php                                     feed                           DIRTY_AUTH
+# 1x AUTH ELSEWHERE - handled by Rest_ItemTags::get_members()
+modules/tag/classes/Tag/Rest/ItemTags.php                                   get_response                   DIRTY_AUTH
+# 1x OTHER AUTH - 404s instead of 403s
 modules/tag/classes/Tag/Rest/TagItems.php                                   get_members                    DIRTY_AUTH
-# 1x AUTH ELSEWHERE - handled by Rest_Tags::post_entity() since only accessible using relationships
-modules/tag/classes/Tag/Rest/TagItems.php                                   post_members                   DIRTY_AUTH
 # 1x AUTH ELSEWHERE - effectively redirects to Rest_Tags::delete()
 modules/tag/classes/Tag/Rest/TagItems.php                                   delete                         DIRTY_AUTH
 # 2x OTHER AUTH - 404s instead of 403s

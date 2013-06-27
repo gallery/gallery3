@@ -148,4 +148,54 @@ class Rest_TagItems_Test extends Unittest_TestCase {
     $this->assertTrue($tag->has("items", Item::root()));
     $this->assertTrue($tag->has("items", $item));
   }
+
+  /**
+   * @expectedException HTTP_Exception_400
+   */
+  public function test_post_members_without_view_access() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add(Item::root(), $name);
+
+    Access::allow(Identity::registered_users(), "view", Item::root());
+    Access::deny(Identity::registered_users(), "view", $item);
+    Access::allow(Identity::everybody(), "view", Item::root());
+    Access::deny(Identity::everybody(), "view", $item);
+    Identity::set_active_user(Test::random_user());
+
+    $params = array();
+    $params["members"] = array(0 => Rest::factory("Items", $item->id));
+
+    $rest = Rest::factory("TagItems", $tag->id, $params);
+    $rest->post_members();
+  }
+
+  /**
+   * @expectedException HTTP_Exception_403
+   */
+  public function test_post_members_without_edit_access() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $name = Test::random_name();
+    $item = Test::random_album();
+    $tag = Tag::add(Item::root(), $name);
+
+    Access::allow(Identity::registered_users(), "view", Item::root());
+    Access::allow(Identity::registered_users(), "edit", Item::root());
+    Access::allow(Identity::registered_users(), "view", $item);
+    Access::deny(Identity::registered_users(), "edit", $item);
+    Access::allow(Identity::everybody(), "view", Item::root());
+    Access::allow(Identity::everybody(), "edit", Item::root());
+    Access::allow(Identity::everybody(), "view", $item);
+    Access::deny(Identity::everybody(), "edit", $item);
+    Identity::set_active_user(Test::random_user());
+
+    $params = array();
+    $params["members"] = array(0 => Rest::factory("Items", $item->id));
+
+    $rest = Rest::factory("TagItems", $tag->id, $params);
+    $rest->post_members();
+  }
 }
