@@ -69,8 +69,6 @@ modules/tag/classes/Tag/Controller/Tags.php                                 acti
 # 2x OTHER AUTH - 404s instead of 403s
 modules/tag/classes/Tag/Hook/TagRss.php                                     feed                           DIRTY_AUTH
 modules/tag/classes/Tag/Rest/TagItems.php                                   get_members                    DIRTY_AUTH
-# 1x AUTH ELSEWHERE - handled by Rest_Tags::post_entity() since only accessible using relationships
-modules/tag/classes/Tag/Rest/TagItems.php                                   post_members                   DIRTY_AUTH
 # 1x AUTH ELSEWHERE - effectively redirects to Rest_Tags::delete()
 modules/tag/classes/Tag/Rest/TagItems.php                                   delete                         DIRTY_AUTH
 # 2x OTHER AUTH - 404s instead of 403s

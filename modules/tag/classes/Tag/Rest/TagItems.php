@@ -130,12 +130,15 @@ class Tag_Rest_TagItems extends Rest {
     }
 
     // Convert our members list into item models.
+    // No view access - fire a 400 and say the members are invalid
+    // View but no edit access - fire a 403
     $members = array();
     foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Item", $member_rest->id);
-      if (($member_rest->type != "Items") || !$member->loaded() || !Access::can("edit", $member)) {
+      if (($member_rest->type != "Items") || !Access::can("view", $member)) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
       }
+      Access::required("edit", $member);
       $members[$key] = $member;
     }
 
