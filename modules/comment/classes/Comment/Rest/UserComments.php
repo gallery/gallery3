@@ -53,6 +53,7 @@ class Comment_Rest_UserComments extends Rest {
     // that the user is an ORM model with an established relationship.
     $members = ORM::factory("Comment")
       ->where("author_id", "=", $user->id)
+      ->viewable()
       ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
       ->offset(Arr::get($this->params, "start", $this->default_params["start"]))
       ->order_by("created", "DESC")
