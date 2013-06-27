@@ -27,7 +27,7 @@ class Gallery_Model_Item extends ORM_MPTT {
     if (!$this->loaded()) {
       // Set reasonable defaults
       $this->created = time();
-      $this->rand_key = sprintf("%f", Random::percent());  // sprintf to prevent things like 2.1E-6
+      $this->rand_key = Random::percent();
       $this->thumb_dirty = 1;
       $this->resize_dirty = 1;
       $this->sort_column = "created";
