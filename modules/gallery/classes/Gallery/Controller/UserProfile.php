@@ -61,7 +61,7 @@ class Gallery_Controller_UserProfile extends Controller {
   public function action_contact() {
     $id = $this->request->arg(0, "digit");
     $user = Identity::lookup_user($id);
-    if (!Identity::can_view_profile($user)) {
+    if (!Identity::can_view_profile($user) || $user->guest) {
       throw HTTP_Exception::factory(404);
     }
 
