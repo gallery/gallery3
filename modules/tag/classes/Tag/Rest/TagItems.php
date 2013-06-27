@@ -133,7 +133,7 @@ class Tag_Rest_TagItems extends Rest {
     $members = array();
     foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Item", $member_rest->id);
-      if (($member_rest->type != "Items") || !$member->loaded()) {
+      if (($member_rest->type != "Items") || !$member->loaded() || !Access::can("edit", $member)) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
       }
       $members[$key] = $member;

@@ -23,6 +23,10 @@ class RestAPI_Controller_RestUser extends Controller {
    * and returns a response.  This is an ajax dialog from the user_profile view.
    */
   public function action_reset_access_key() {
+    if (Identity::active_user()->guest) {
+      throw HTTP_Exception::factory(403);
+    }
+
     $form = Formo::form()
       ->attr("id", "g-reset-access-key")
       ->add("confirm", "group");

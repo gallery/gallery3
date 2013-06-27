@@ -19,124 +19,131 @@
  */
 class Controller_Auth_Test extends Unittest_TestCase {
   public function test_find_missing_auth() {
-    $found = array();
     $git_ignores = explode("\n", `git ls-files -o -i --exclude-standard`);
-    $controllers = array_diff(glob("*/*/classes/*/Controller/*.php"), $git_ignores);
-    $feeds = array_diff(glob("*/*/classes/*/*Rss.php"), $git_ignores);
-    foreach (array_merge($controllers, $feeds) as $controller) {
-      if (preg_match("{modules/(gallery_)?unittest/}", $controller)) {
+
+    $file_types = array(
+      "controller_admin" => array(
+        "glob_filter"   => "*/*/classes/*/Controller/Admin/*.php",
+        "class_extends" => array("Controller_Admin")),
+      "controller" => array(
+        "glob_filter"   => "*/*/classes/*/Controller/*.php",
+        "class_extends" => array("Controller_Admin", "Controller")),
+      "rest" => array(
+        "glob_filter"   => "*/*/classes/*/Rest/*.php",
+        "class_extends" => array("Rest")),
+      "rss" => array(
+        "glob_filter"   => "*/*/classes/*/Hook/*Rss.php",
+        "class_extends" => array()));
+
+    $needle_types = array(
+      "uses_input" => array(
+        "Request::current()->query(",
+        "Request::current()->post(",
+        "Request::current()->cookie(",
+        "Request::initial()->query(",
+        "Request::initial()->post(",
+        "Request::initial()->cookie(",
+        '$this->request->query(',
+        '$this->request->post(',
+        '$this->request->cookie(',
+        "RAW::",
+        "Formo::"),
+      "checks_authorization" => array(
+        "Access::required(",
+        "HTTP_Exception::factory(403",
+        "Rest_Exception::factory(403"),
+      "checks_csrf" => array(
+        "Access::verify_csrf(",
+        "->load()->validate()"));
+
+    // Process the filters and build the list of files to check.
+    $files = array();
+    foreach ($file_types as $type => $data) {
+      foreach (array_diff(glob($data["glob_filter"]), $git_ignores) as $file) {
+        $files[$file] = $type;
+      }
+    }
+
+    // Loop through each file and build the list of found functions.
+    $found = array();
+    foreach ($files as $file => $type) {
+      // Skip unittest or empty files (last line in each list from git ls-files is empty)
+      if (preg_match("{modules/(gallery_)?unittest/}", $file) || !$file) {
         continue;
       }
 
-      if (!$controller) {
-        // The last entry in each list from git ls-files appears to be an empty line
-        continue;
-      }
-
-      // List of all tokens without whitespace, simplifying parsing.
+      // Get list of all tokens without whitespace, simplifying parsing.
       $tokens = array();
-      foreach (token_get_all(file_get_contents($controller)) as $token) {
+      foreach (token_get_all(file_get_contents($file)) as $token) {
         if (!is_array($token) || $token[0] != T_WHITESPACE) {
           $tokens[] = $token;
         }
       }
 
-      $is_admin_controller = false;
-
+      // Check each token.
       $open_braces = 0;
       $function = null;
-      for ($token_number = 0; $token_number < count($tokens); $token_number++) {
-        $token = $tokens[$token_number];
-
-        // Count braces.
-        // 1 open brace  = in class context.
-        // 2 open braces = in function.
-        if (!is_array($token)) {
-          if ($token == "}") {
-            $open_braces--;
-            if ($open_braces == 1 && $function) {
-              $found[$controller][] = $function;
-              $function = null;
-            } else if ($open_braces == 0) {
-              $is_admin_controller = false;
-            }
-          } else if ($token == "{") {
-            $open_braces++;
+      $class_extends = null;
+      for ($token_i = 0; $token_i < count($tokens); $token_i++) {
+        // 0 open braces = outside class context - search for "extends"
+        // 1 open brace  = in class context - search for "function"
+        // 2 open braces = in function context - search for needles (defined above)
+        if (static::token_matches("}", $tokens, $token_i)) {
+          // Found "}"
+          $open_braces--;
+          if ($open_braces == 1 && $function) {
+            // Leaving function context - store then reset our function.
+            $found[$file][] = $function;
+            $function = null;
+          } else if ($open_braces == 0) {
+            // Leaving class context - reset class_extends.
+            $class_extends = null;
           }
-        } else {
-          // An array token
-
-          if ($open_braces == 0 && $token[0] == T_EXTENDS) {
-            if (static::_token_matches(array(T_STRING, "Controller_Admin"), $tokens, $token_number + 1)) {
-              $is_admin_controller = true;
-            }
-          } else if ($open_braces == 1 && $token[0] == T_FUNCTION) {
-            $line = $token[2];
-            $name = "";
-            // Search backwards to check visibility: "private function", "protected function",
-            // "private static function", or "protected static function".
-            $previous = $tokens[$token_number - 1][0];
-            $previous_2 = $tokens[$token_number - 2][0];
-            $is_private = in_array($previous, array(T_PRIVATE, T_PROTECTED)) ||
-              in_array($previous_2, array(T_PRIVATE, T_PROTECTED));
-            $is_static = $previous == T_STATIC || $previous_2 == T_STATIC;
-
-            // Search forward to get function name
-            do {
-              $token_number++;
-              if (static::_token_matches(array(T_STRING), $tokens, $token_number)) {
-                $token = $tokens[$token_number];
-                $name = $token[1];
-                break;
-              }
-            } while ($token_number < count($tokens));
-
-            $is_rss_feed = $name == "feed" && strpos(basename($controller), "Rss.php");
-
-            if ((!$is_static || $is_rss_feed) && !$is_private) {
-              $function = static::_function($name, $line, $is_admin_controller);
-            }
+        } else if (static::token_matches("{", $tokens, $token_i) ||
+                   static::token_matches(array(T_CURLY_OPEN), $tokens, $token_i)) {
+          // Found "{"
+          $open_braces++;
+        } else if (($open_braces == 0) && static::token_matches(array(T_EXTENDS), $tokens, $token_i)) {
+          // Found "extends" - if a string follows, set class_extends.
+          if (static::token_matches(array(T_STRING), $tokens, $token_i + 1)) {
+            $class_extends = $tokens[$token_i + 1][1];
           }
+        } else if (($open_braces == 1) && static::token_matches(array(T_FUNCTION), $tokens, $token_i)) {
+          // Found "function" - see if it's one we should check and, if so, build $function object.
+          $line = $tokens[$token_i][2];
 
-          // Check body of all public functions
-          //
-          // Authorization
-          //   Require: Access::required\(
-          // Authentication (CSRF token)
-          //   [When using Input, $this->input, Forge]
-          //   Require: ->validate() or Access::verify_csrf\(
-          if ($function && $open_braces >= 2) {
-            if ($token[0] == T_STRING) {
-              if ($token[1] == "access" &&
-                  static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                  static::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-                  in_array($tokens[$token_number + 2][1], array("forbidden", "required")) &&
-                  static::_token_matches("(", $tokens, $token_number + 3)) {
-                $token_number += 3;
-                $function->checks_authorization(true);
-              } else if ($token[1] == "access" &&
-                  static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                  static::_token_matches(array(T_STRING, "verify_csrf"), $tokens, $token_number + 2) &&
-                  static::_token_matches("(", $tokens, $token_number + 3)) {
-                $token_number += 3;
-                $function->checks_csrf(true);
-              } else if (in_array($token[1], array("Input", "Forge")) &&
-                         static::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1)) {
-                $token_number++;
-                $function->uses_input(true);
-              }
-            } else if ($token[0] == T_VARIABLE) {
-              if ($token[1] == '$this' &&
-                  static::_token_matches(array(T_OBJECT_OPERATOR), $tokens, $token_number + 1) &&
-                  static::_token_matches(array(T_STRING, "input"), $tokens, $token_number + 2)) {
-                $token_number += 2;
-                $function->uses_input(true);
-              }
-            } else if ($token[0] == T_OBJECT_OPERATOR) {
-              if (static::_token_matches(array(T_STRING, "validate"), $tokens, $token_number + 1) &&
-                  static::_token_matches("(", $tokens, $token_number + 2)) {
-                $token_number += 2;
-                $function->checks_csrf(true);
+          // Search backwards to check visibility: "private function", "protected function",
+          // "private static function", or "protected static function".
+          $previous = array($tokens[$token_i - 1][0], $tokens[$token_i - 2][0]);
+          $is_private = in_array(T_PRIVATE, $previous) || in_array(T_PROTECTED, $previous);
+          $is_static = in_array(T_STATIC, $previous);
+
+          // Search forward to get function name
+          do {
+            $token_i++;
+            $name = static::token_matches(array(T_STRING), $tokens, $token_i) ?
+              $tokens[$token_i][1] : "";
+          } while (!$name && ($token_i < count($tokens)));
+
+          $is_rss_feed = (($name == "feed") && ($type = "rss"));
+          $is_action = (substr($name, 0, 7) == "action_");
+
+          if (!$is_private && ($name != "__construct") &&
+              (!$is_static || $is_rss_feed) &&
+              ($is_action || (substr($type, 0, 10) != "controller"))) {
+            $function = new stdClass();
+            $function->name = $name;
+            $function->line = $line;
+            $function->type = $type;
+            $function->class_extends = $class_extends;
+          }
+        } else if (($open_braces >= 2) && $function) {
+          // We're inside the body of a function - see if we can find a needle.
+          foreach ($needle_types as $needle_type => $data) {
+            foreach ($data as $needle) {
+              if ($count = static::needle_matches($needle, $tokens, $token_i)) {
+                $token_i += $count - 1;  // gets incremented by 1 more after end of loop
+                $function->$needle_type = true;
               }
             }
           }
@@ -148,97 +155,73 @@ class Controller_Auth_Test extends Unittest_TestCase {
     $new = TMPPATH . "controller_auth_data.txt";
     $fd = fopen($new, "wb");
     ksort($found);
-    foreach ($found as $controller => $functions) {
-      $is_admin_controller = true;
+    foreach ($found as $file => $functions) {
       foreach ($functions as $function) {
-        $is_admin_controller &= $function->is_admin_controller;
         $flags = array();
-        if ($function->uses_input() && !$function->checks_csrf()) {
+        if (($function->class_extends != "Rest") &&
+            $function->uses_input &&
+            !$function->checks_csrf) {
           $flags[] = "DIRTY_CSRF";
         }
-        if (!$function->is_admin_controller && !$function->checks_authorization()) {
+        if (($function->class_extends != "Controller_Admin") &&
+          !$function->checks_authorization) {
           $flags[] = "DIRTY_AUTH";
         }
 
-        if (!$flags) {
-          // Don't print CLEAN instances
-          continue;
+        if ($flags) {
+          // Only print if flags are found
+          fprintf($fd, "%-75s %-30s %s\n", $file, $function->name, implode("|", $flags));
         }
-
-        fprintf($fd, "%-60s %-20s %s\n",
-                $controller, $function->name, implode("|", $flags));
       }
 
-      if (strpos(basename($controller), "admin_") === 0 && !$is_admin_controller) {
-        fprintf($fd, "%-60s %-20s %s\n",
-                $controller, basename($controller), "NO_ADMIN_CONTROLLER");
+      // If we specified a class to extend, make sure it does.  This uses the last function
+      // of the file as a proxy for the whole class (e.g. uses $function).
+      if (($classes = $file_types[$function->type]["class_extends"]) &&
+          !in_array($function->class_extends, $classes)) {
+        fprintf($fd, "%-75s %-30s %s\n", $file, basename($file), "INVALID_CLASS_EXTENDS");
       }
     }
     fclose($fd);
 
     // Compare with the expected report from our golden file.
     $canonical = MODPATH . "gallery/tests/controller_auth_data.txt";
-    exec("diff $canonical $new", $output, $return_value);
-    $this->assertFalse(
-                        $return_value, "Controller auth golden file mismatch.  Output:\n" . implode("\n", $output) );
+    exec("diff $canonical $new -I '#.*'", $output, $return_value);
+    $this->assertFalse((bool)$return_value,
+      "Controller auth golden file mismatch.  Output:\n" . implode("\n", $output));
   }
 
-  protected static function _token_matches($expected_token, &$tokens, $token_number) {
-    if (!isset($tokens[$token_number])) {
+  static function token_matches($expected_token, &$tokens, $token_i) {
+    if (!isset($tokens[$token_i])) {
       return false;
     }
 
-    $token = $tokens[$token_number];
-
     if (is_array($expected_token)) {
       for ($i = 0; $i < count($expected_token); $i++) {
-        if ($expected_token[$i] != $token[$i]) {
+        if ($expected_token[$i] != $tokens[$token_i][$i]) {
           return false;
         }
       }
       return true;
     } else {
-      return $expected_token == $token;
+      return $expected_token == $tokens[$token_i];
     }
   }
 
-  static function _function($name, $line, $is_admin_controller) {
-    return new Controller_Auth_Test_Function($name, $line, $is_admin_controller);
-  }
-}
+  static function needle_matches($expected_needle, &$tokens, $token_i) {
+    $needle_tokens = token_get_all("<?$expected_needle?>");
+    array_shift($needle_tokens);
+    array_pop($needle_tokens);
 
-class Controller_Auth_Test_Function {
-  public $name;
-  public $line;
-  public $is_admin_controller = false;
-  protected $_uses_input = false;
-  protected $_checks_authorization = false;
-  protected $_checks_csrf = false;
+    foreach ($needle_tokens as $i => $needle_token) {
+      if (is_array($needle_token)) {
+        // We don't need to match the line number
+        unset($needle_token[2]);
+      }
 
-  function __construct($name, $line, $is_admin_controller) {
-    $this->name = $name;
-    $this->line = $line;
-    $this->is_admin_controller = $is_admin_controller;
-  }
-
-  function uses_input($val=null) {
-    if ($val !== null) {
-      $this->_uses_input = (bool) $val;
+      if (!static::token_matches($needle_token, $tokens, $token_i + $i)) {
+        return false;
+      }
     }
-    return $this->_uses_input;
-  }
-
-  function checks_authorization($val=null) {
-    if ($val !== null) {
-      $this->_checks_authorization = (bool) $val;
-    }
-    return $this->_checks_authorization;
-  }
-
-  function checks_csrf($val=null) {
-    if ($val !== null) {
-      $this->_checks_csrf = $val;
-    }
-    return $this->_checks_csrf;
+    return count($needle_tokens);
   }
 }
