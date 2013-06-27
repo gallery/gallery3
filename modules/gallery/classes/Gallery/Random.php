@@ -28,10 +28,14 @@ class Gallery_Random {
   }
 
   /**
-   * Return a random floating point number between 0 and 1
+   * Return a random decimal number between 0 and 1, formatted as a string.
+   * This formatting guards against numbers like "2.1E-6", so they are safe
+   * for insertion into decimal-type MySQL columns.
+   * @param  int  number of decimal places (default: 10)
    */
-  static function percent() {
-    return ((float)mt_rand()) / (float)mt_getrandmax();
+  static function percent($digits=10) {
+    $max = pow(10, $digits);
+    return sprintf("%f", mt_rand(0, $max) / $max);
   }
 
   /**
