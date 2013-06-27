@@ -19,6 +19,8 @@
  */
 class Xss_Security_Test extends Unittest_TestCase {
   public function test_find_unescaped_variables_in_views() {
+    $this->markTestIncomplete("XSS Security test needs to be rewritten for Gallery 3.1...");
+
     $found = array();
     foreach (glob("*/*/views/*/*.php") as $view) {
       // List of all tokens without whitespace, simplifying parsing.
