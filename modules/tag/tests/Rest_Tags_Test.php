@@ -37,7 +37,11 @@ class Rest_Tags_Test extends Unittest_TestCase {
         "items" => array(
           "url" => URL::abs_site("rest/tag_items/{$tag->id}"),
           "members" => array(
-            0 => URL::abs_site("rest/items/{$item->id}")))));
+            0 => URL::abs_site("rest/items/{$item->id}")),
+          "members_info" => array(
+            "count" => 1,
+            "num" => 100,
+            "start" => 0))));
 
     $this->assertEquals($expected, $rest->get_response());
   }

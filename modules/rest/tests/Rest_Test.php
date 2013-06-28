@@ -43,29 +43,69 @@ class Rest_Test extends Unittest_TestCase {
   }
 
   public function test_url_with_sticky_params() {
-    $rest = Rest::factory("Mock", 1, array("hello" => "world"));
+    $rest = Rest::factory("Mock", 1, array(
+      "num"   => 50,
+      "hello" => "world"));
 
     // Test with no query params
-    $expected = array("hello" => "world");
+    $expected = array(
+      "num"   => 50,
+      "hello" => "world");
+
     $this->assertEquals(URL::abs_site("rest/mock/1") . URL::query($expected, false), $rest->url());
 
     // Add query params
     $params = array(
       "not_sticky" => "foo",
-      "hello"      => "goodbye",
       "access_key" => "abc",
       "num"        => 100,
-      "output"     => "html");
+      "output"     => "html",
+      "hello"      => "goodbye");
 
     Request::current()->query($params);
 
     // Test with query params
     $expected = array(
-      "hello"      => "world",
       "access_key" => "abc",
-      "num"        => 100,
-      "output"     => "html");
+      "num"        => 50,
+      "output"     => "html",
+      "hello"      => "world");
 
     $this->assertEquals(URL::abs_site("rest/mock/1") . URL::query($expected, false), $rest->url());
+  }
+
+  public function test_get_response_for_collection_with_expand_members() {
+    $rest = Rest::factory("Mock", null, array("expand_members" => true));
+
+    $expected = array(
+      0 => array(
+        "url" => URL::abs_site("rest") . "/mock/1",
+        "entity" => array(
+          "id" => 1,
+          "foo" => "bar"
+        )),
+      1 => array(
+        "url" => URL::abs_site("rest") . "/mock/2",
+        "entity" => array(
+          "id" => 2,
+          "foo" => "bar"
+        )),
+      2 => array(
+        "url" => URL::abs_site("rest") . "/mock/3",
+        "entity" => array(
+          "id" => 3,
+          "foo" => "bar"
+        ))
+      );
+
+    $this->assertEquals($expected, $rest->get_response());
+  }
+
+  /**
+   * @expectedException HTTP_Exception_400
+   */
+  public function test_get_response_for_object_cant_expand_members() {
+    $rest = Rest::factory("Mock", 1, array("expand_members" => true));
+    $rest->get_response();
   }
 }

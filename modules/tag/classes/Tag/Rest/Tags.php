@@ -122,9 +122,7 @@ class Tag_Rest_Tags extends Rest {
       return null;
     }
 
-    $members = ORM::factory("Tag")
-      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
-      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
+    $members = ORM::factory("Tag");
 
     if (isset($this->params["name"])) {
       $members->where("name", "LIKE", Database::escape_for_like($this->params["name"]) . "%");
@@ -145,8 +143,14 @@ class Tag_Rest_Tags extends Rest {
       throw Rest_Exception::factory(400, array("order" => "invalid"));
     }
 
+    $this->members_info["count"] = $members->reset(false)->count_all();
+    $members = $members
+      ->limit($this->members_info["num"])
+      ->offset($this->members_info["start"])
+      ->find_all();
+
     $data = array();
-    foreach ($members->find_all() as $member) {
+    foreach ($members as $member) {
       $data[] = Rest::factory("tags", $member->id);
     }
 

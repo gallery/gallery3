@@ -81,7 +81,12 @@ class Rest_Mock extends Rest {
   }
 
   public function get_members() {
-    return empty($this->members) ? null : $this->members;
+    if (empty($this->members)) {
+      return null;
+    }
+
+    $this->members_info["count"] = count($this->members);
+    return $this->members;
   }
 
   public function put_members() {

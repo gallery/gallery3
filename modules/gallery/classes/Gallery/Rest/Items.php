@@ -39,7 +39,7 @@ class Gallery_Rest_Items extends Rest {
    *     Return the ancestors of the specified item.  If specified,
    *     all other query parameters described below will be ignored.
    *     This is typically used to create breadcrumbs for an item.
-   *   urls=["url1","url2","url3"]
+   *   urls=["url1","url2","url3"]   or   urls=url1,url2,url3
    *     Return items that match the specified urls.  If specified,
    *     the "start" and "num" parameters will be ignored.
    *     This is typically used to return the member detail.
@@ -330,6 +330,11 @@ class Gallery_Rest_Items extends Rest {
       foreach ($members as $member) {
         $data[] = Rest::factory("Items", $member->id);
       }
+
+      // Special case: "num" and "start" are ignored.
+      $this->members_info["count"] = count($data);
+      $this->members_info["num"] = null;
+      $this->members_info["start"] = null;
     } else if ($urls = Arr::get($this->params, "urls")) {
       // Members are taken from a list of urls, filtered by name and type.
       // In 3.0, these were json-encoded.  In 3.1, we also allow comma-separated lists,
@@ -351,6 +356,11 @@ class Gallery_Rest_Items extends Rest {
           $data[] = Rest::factory("Items", $member->id);
         }
       }
+
+      // Special case: "num" and "start" are ignored.
+      $this->members_info["count"] = count($data);
+      $this->members_info["num"] = null;
+      $this->members_info["start"] = null;
     } else {
       $item = ORM::factory("Item", $this->id);
       Access::required("view", $item);
@@ -366,9 +376,7 @@ class Gallery_Rest_Items extends Rest {
       }
 
       $members = ($scope == "direct") ? $item->children : $item->descendants;
-      $members->viewable()
-        ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
-        ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
+      $members->viewable();
 
       if (isset($types)) {
         $members->where("type", "IN", $types);
@@ -378,9 +386,15 @@ class Gallery_Rest_Items extends Rest {
         $members->where("name", "LIKE", "%" . Database::escape_for_like($name) . "%");
       }
 
+      $this->members_info["count"] = $members->reset(false)->count_all();
+      $members = $members
+        ->limit($this->members_info["num"])
+        ->offset($this->members_info["start"])
+        ->find_all();
+
       $key = 0;
       $use_weights = (($item->sort_column == "weight") && ($scope == "direct"));
-      foreach ($members->find_all() as $member) {
+      foreach ($members as $member) {
         // If the album's sort is "weight", use the weights as the array keys.
         $data[$use_weights ? $member->weight : $key++] = Rest::factory("Items", $member->id);
       }
@@ -445,35 +459,27 @@ class Gallery_Rest_Items extends Rest {
   }
 
   /**
-   * Override Rest::get_response() to default to the root item.
+   * Override Rest::get_response() to use the "random" parameter, expand members
+   * by default for "urls" and "ancestors_for", and default to the root item.
    */
   public function get_response() {
-    if (!isset($this->id)) {
+    if (Arr::get($this->params, "random")) {
+      // If the "random" parameter is set, get a random item id.
+      // This doesn't always work, so keep trying until it does...
+      do {
+        $this->id = Item::random_query()->offset(0)->limit(1)->find()->id;
+      } while (!$this->id);
+
+      // Remove the "random" query parameter so it doesn't appear in URLs downstream.
+      unset($this->params["random"]);
+    } else if (Arr::get($this->params, "urls") || Arr::get($this->params, "ancestors_for")) {
+      // If "urls" or "ancestors_for" parameters are set, expand members by default.
+      $this->default_params["expand_members"] = true;
+    } else if (!isset($this->id)) {
+      // Default to the root item (only if not using "urls" or "ancestors_for").
       $this->id = Item::root()->id;
     }
 
     return parent::get_response();
-  }
-
-  /**
-   * Override Rest::__construct() to use the "random" parameter and
-   * expand members by default for "urls" and "ancestors_for".
-   */
-  public function __construct($id, $params) {
-    if (Arr::get($params, "random")) {
-      // If the "random" parameter is set, get a random item id.
-      // This doesn't always work, so keep trying until it does...
-      do {
-        $id = Item::random_query()->offset(0)->limit(1)->find()->id;
-      } while (!$id);
-
-      // Remove the "random" query parameter so it doesn't appear in URLs downstream.
-      unset($params["random"]);
-    } else if (Arr::get($params, "urls") || Arr::get($params, "ancestors_for")) {
-      // If "urls" or "ancestors_for" parameters are set, expand members by default.
-      $this->default_params["expand_members"] = true;
-    }
-
-    parent::__construct($id, $params);
   }
 }
