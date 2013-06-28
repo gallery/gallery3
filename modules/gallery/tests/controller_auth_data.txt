@@ -36,6 +36,8 @@ modules/gallery/classes/Gallery/Rest/Items.php                              get_
 # 2x OTHER AUTH - 404s instead of 403s
 modules/gallery/classes/Gallery/Rest/UserItems.php                          get_members                    DIRTY_AUTH
 modules/gallery/classes/Gallery/Rest/Users.php                              get_entity                     DIRTY_AUTH
+# 1x NULLIPOTENT - only sets params, and auth in get_entity and get_members
+modules/gallery/classes/Gallery/Rest/Users.php                              get_response                   DIRTY_AUTH
 # 1x NULLIPOTENT - input for display item
 modules/organize/classes/Organize/Controller/Organize.php                   action_tree                    DIRTY_CSRF
 # 2x OTHER AUTH - auth fails silently using Access::can() instead of Access:required()

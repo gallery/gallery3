@@ -76,9 +76,11 @@ class Rest_Users_Test extends Unittest_TestCase {
     Identity::set_active_user(Identity::admin_user());
 
     $rest = Rest::factory("Users", null, array("show" => "self"));
+    $rest->get_response();  // since "show" parsed in get_response()
     $this->assertEquals(Identity::admin_user()->id, $rest->id);
 
     $rest = Rest::factory("Users", null, array("show" => "guest"));
+    $rest->get_response();  // since "show" parsed in get_response()
     $this->assertEquals(Identity::guest()->id, $rest->id);
   }
 }

@@ -271,23 +271,32 @@ class Rest_Items_Test extends Unittest_TestCase {
 
     // The "urls" param makes it true.
     $rest2 = Rest::factory("Items", null, array("urls" => json_encode(array($rest1->url()))));
+    $rest2->get_response();  // since "urls" parsed in get_response()
     $this->assertTrue($rest2->default_params["expand_members"]);
 
     // The "ancestors_for" param makes it true, too.
     $rest3 = Rest::factory("Items", null, array("ancestors_for" => $rest1->url()));
+    $rest3->get_response();  // since "ancestors_for" parsed in get_response()
     $this->assertTrue($rest3->default_params["expand_members"]);
   }
 
-  public function test_get_members_with_random_param() {
+  public function test_get_members_with_id_set_by_default_or_random_param() {
     Identity::set_active_user(Identity::admin_user());
 
-    // Normally an unset id is left as unset (only defaults to root if Rest::get_response() called).
+    // Make it (very nearly) impossible for the root item to be randomly selected.
+    $root = Item::root();
+    $root->rand_key = "0.9999999999"; // highest legal value
+    $root->save();
+
+    // Normally an unset id defaults to root if Rest::get_response() called.
     $rest = Rest::factory("Items", null);
-    $this->assertSame(null, $rest->id);
+    $rest->get_response();
+    $this->assertSame(Item::root()->id, $rest->id);
 
     // However, random sets the id randomly.
     $rest = Rest::factory("Items", null, array("random" => true));
-    $this->assertNotSame(null, $rest->id);
+    $rest->get_response();
+    $this->assertNotSame(Item::root()->id, $rest->id);
   }
 
   public function test_get_members_with_weights() {

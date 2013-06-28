@@ -445,35 +445,27 @@ class Gallery_Rest_Items extends Rest {
   }
 
   /**
-   * Override Rest::get_response() to default to the root item.
+   * Override Rest::get_response() to use the "random" parameter, expand members
+   * by default for "urls" and "ancestors_for", and default to the root item.
    */
   public function get_response() {
-    if (!isset($this->id)) {
+    if (Arr::get($this->params, "random")) {
+      // If the "random" parameter is set, get a random item id.
+      // This doesn't always work, so keep trying until it does...
+      do {
+        $this->id = Item::random_query()->offset(0)->limit(1)->find()->id;
+      } while (!$this->id);
+
+      // Remove the "random" query parameter so it doesn't appear in URLs downstream.
+      unset($this->params["random"]);
+    } else if (Arr::get($this->params, "urls") || Arr::get($this->params, "ancestors_for")) {
+      // If "urls" or "ancestors_for" parameters are set, expand members by default.
+      $this->default_params["expand_members"] = true;
+    } else if (!isset($this->id)) {
+      // Default to the root item (only if not using "urls" or "ancestors_for").
       $this->id = Item::root()->id;
     }
 
     return parent::get_response();
-  }
-
-  /**
-   * Override Rest::__construct() to use the "random" parameter and
-   * expand members by default for "urls" and "ancestors_for".
-   */
-  public function __construct($id, $params) {
-    if (Arr::get($params, "random")) {
-      // If the "random" parameter is set, get a random item id.
-      // This doesn't always work, so keep trying until it does...
-      do {
-        $id = Item::random_query()->offset(0)->limit(1)->find()->id;
-      } while (!$id);
-
-      // Remove the "random" query parameter so it doesn't appear in URLs downstream.
-      unset($params["random"]);
-    } else if (Arr::get($params, "urls") || Arr::get($params, "ancestors_for")) {
-      // If "urls" or "ancestors_for" parameters are set, expand members by default.
-      $this->default_params["expand_members"] = true;
-    }
-
-    parent::__construct($id, $params);
   }
 }
