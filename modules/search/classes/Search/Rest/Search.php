@@ -59,7 +59,7 @@ class Search_Rest_Search extends Rest {
 
     // Convert the "types" param into a search "where" param.
     $types = Arr::get($this->params, "type");
-    $where = $types ? array("{items}.`type` IN ('" . implode("','", $types) . "')") : array();
+    $where = $types ? array(array("item.type", "IN", $types)) : array();
 
     // Do the search.
     $q_with_more_terms = Search::add_query_terms($q);
