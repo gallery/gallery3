@@ -40,11 +40,19 @@ class Rest_Users_Test extends Unittest_TestCase {
       "relationships" => array(
         "comments" => array(
           "url" => URL::abs_site("rest/user_comments/{$user->id}"),
-          "members" => array()),
+          "members" => array(),
+          "members_info" => array(
+            "count" => 0,
+            "num" => 100,
+            "start" => 0)),
         "items" => array(
           "url" => URL::abs_site("rest/user_items/{$user->id}"),
           "members" => array(
-            0 => URL::abs_site("rest/items/{$item->id}")))));
+            0 => URL::abs_site("rest/items/{$item->id}")),
+          "members_info" => array(
+            "count" => 1,
+            "num" => 100,
+            "start" => 0))));
 
     $this->assertEquals($expected, $rest->get_response());
   }

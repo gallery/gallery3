@@ -61,16 +61,28 @@ class Rest_Items_Test extends Unittest_TestCase {
         "web_url"          => $album->abs_url()),
       "members" => array(
         0 => URL::abs_site("rest/items/{$photo->id}")),
+      "members_info" => array(
+        "count" => 1,
+        "num" => 100,
+        "start" => 0),
       "relationships" => array(
         "comments" => array(
           "url" => URL::abs_site("rest/item_comments/{$album->id}"),
-          "members" => array()),
+          "members" => array(),
+          "members_info" => array(
+            "count" => 0,
+            "num" => 100,
+            "start" => 0)),
         "tags" => array(
           "url" => URL::abs_site("rest/item_tags/{$album->id}"),
           "entity" => array(
             "tag_names" => $tag->name),
           "members" => array(
-            0 => URL::abs_site("rest/tags/{$tag->id}")))));
+            0 => URL::abs_site("rest/tags/{$tag->id}")),
+          "members_info" => array(
+            "count" => 1,
+            "num" => 100,
+            "start" => 0))));
 
     $this->assertEquals($expected, $rest->get_response());
   }

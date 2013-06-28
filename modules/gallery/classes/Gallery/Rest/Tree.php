@@ -106,7 +106,12 @@ class Gallery_Rest_Tree extends Rest {
     $members = $item->descendants
       ->where("level", "=", $item->level + $this->params["depth"])
       ->where("type", "=", "album")
-      ->viewable()
+      ->viewable();
+
+    $this->members_info["count"] = $members->reset(false)->count_all();
+    $members = $members
+      ->limit($this->members_info["num"])
+      ->offset($this->members_info["start"])
       ->find_all();
 
     // Set the member params - "depth" and "fields" are sticky for trees.

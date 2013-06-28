@@ -42,30 +42,30 @@ class Rest_Search_Test extends Unittest_TestCase {
     $rest2 = Rest::factory("Items", $item2->id);
 
     // Get with "q=$name" only - all three items.
-    $members = Rest::factory("Search", null,
-      array("q" => $name))->get_members();
+    $rest = Rest::factory("Search", null, array("q" => $name));
+    $members = $rest->get_members();
     $this->assertSame(0, array_search($rest0, $members));
     $this->assertSame(1, array_search($rest1, $members));
     $this->assertSame(2, array_search($rest2, $members));
-    $this->assertSame(3, count($members));
+    $this->assertSame(3, $rest->members_info["count"]);
 
     // Get with "q=$name" and "type=photo" query params - only item2
-    $members = Rest::factory("Search", null,
-      array("q" => $name, "type" => array("photo")))->get_members();
+    $rest = Rest::factory("Search", null, array("q" => $name, "type" => array("photo")));
+    $members = $rest->get_members();
     $this->assertSame(0, array_search($rest2, $members));
-    $this->assertSame(1, count($members));
+    $this->assertSame(1, $rest->members_info["count"]);
 
     // Get with "q=$name" and "album=[parent]" query params - only item1 and item2.
-    $members = Rest::factory("Search", null,
-      array("q" => $name, "album" => $parent_url))->get_members();
+    $rest = Rest::factory("Search", null, array("q" => $name, "album" => $parent_url));
+    $members = $rest->get_members();
     $this->assertSame(0, array_search($rest1, $members));
     $this->assertSame(1, array_search($rest2, $members));
-    $this->assertSame(2, count($members));
+    $this->assertSame(2, $rest->members_info["count"]);
 
     // Get with "q=$name" and "album=[not_parent]" query params - no items.
-    $members = Rest::factory("Search", null,
-      array("q" => $name, "album" => $not_parent_url))->get_members();
-    $this->assertSame(0, count($members));
+    $rest = Rest::factory("Search", null, array("q" => $name, "album" => $not_parent_url));
+    $members = $rest->get_members();
+    $this->assertSame(0, $rest->members_info["count"]);
   }
 
   /**

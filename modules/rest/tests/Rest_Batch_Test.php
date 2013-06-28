@@ -58,6 +58,11 @@ class Rest_Batch_Test extends Unittest_TestCase {
           0 => URL::abs_site("rest") . "/mock/1",
           1 => URL::abs_site("rest") . "/mock/2",
           2 => URL::abs_site("rest") . "/mock/3"
+        ),
+        "members_info" => array(
+          "count" => 3,
+          "num" => 100,
+          "start" => 0
         )),
       2 => array(
         "error" => 400),

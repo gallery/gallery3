@@ -32,7 +32,11 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
         "tag_names" => "{$tag1->name},{$tag2->name}"),
       "members" => array(
         0 => URL::abs_site("rest/tags/{$tag1->id}"),
-        1 => URL::abs_site("rest/tags/{$tag2->id}")));
+        1 => URL::abs_site("rest/tags/{$tag2->id}")),
+      "members_info" => array(
+        "count" => 2,
+        "num" => 100,
+        "start" => 0));
 
     $this->assertEquals($expected, $rest->get_response());
   }

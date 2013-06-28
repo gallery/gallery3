@@ -330,6 +330,11 @@ class Gallery_Rest_Items extends Rest {
       foreach ($members as $member) {
         $data[] = Rest::factory("Items", $member->id);
       }
+
+      // Special case: "num" and "start" are ignored.
+      $this->members_info["count"] = count($data);
+      $this->members_info["num"] = null;
+      $this->members_info["start"] = null;
     } else if ($urls = Arr::get($this->params, "urls")) {
       // Members are taken from a list of urls, filtered by name and type.
       // In 3.0, these were json-encoded.  In 3.1, we also allow comma-separated lists,
@@ -351,6 +356,11 @@ class Gallery_Rest_Items extends Rest {
           $data[] = Rest::factory("Items", $member->id);
         }
       }
+
+      // Special case: "num" and "start" are ignored.
+      $this->members_info["count"] = count($data);
+      $this->members_info["num"] = null;
+      $this->members_info["start"] = null;
     } else {
       $item = ORM::factory("Item", $this->id);
       Access::required("view", $item);
@@ -366,9 +376,7 @@ class Gallery_Rest_Items extends Rest {
       }
 
       $members = ($scope == "direct") ? $item->children : $item->descendants;
-      $members->viewable()
-        ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
-        ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
+      $members->viewable();
 
       if (isset($types)) {
         $members->where("type", "IN", $types);
@@ -378,9 +386,15 @@ class Gallery_Rest_Items extends Rest {
         $members->where("name", "LIKE", "%" . Database::escape_for_like($name) . "%");
       }
 
+      $this->members_info["count"] = $members->reset(false)->count_all();
+      $members = $members
+        ->limit($this->members_info["num"])
+        ->offset($this->members_info["start"])
+        ->find_all();
+
       $key = 0;
       $use_weights = (($item->sort_column == "weight") && ($scope == "direct"));
-      foreach ($members->find_all() as $member) {
+      foreach ($members as $member) {
         // If the album's sort is "weight", use the weights as the array keys.
         $data[$use_weights ? $member->weight : $key++] = Rest::factory("Items", $member->id);
       }
