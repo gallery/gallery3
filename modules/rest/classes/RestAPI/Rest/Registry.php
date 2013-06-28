@@ -19,6 +19,8 @@
  */
 class RestAPI_Rest_Registry extends Rest {
   public function get_response() {
-    return RestAPI::registry();
+    $registry = RestAPI::registry();
+    sort($registry);
+    return $registry;
   }
 }
