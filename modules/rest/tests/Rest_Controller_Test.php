@@ -320,46 +320,12 @@ class Rest_Controller_Test extends Unittest_TestCase {
         0 => URL::abs_site("rest") . "/mock/1",
         1 => URL::abs_site("rest") . "/mock/2",
         2 => URL::abs_site("rest") . "/mock/3"
+      ),
+      "members_info" => array(
+        "count" => 3,
+        "num" => 100,
+        "start" => 0
       ));
-
-    $this->assertEquals(200, $response->status());
-    $this->assertEquals($expected, $actual);
-  }
-
-  public function test_get_object_cant_expand_members() {
-    $response = Request::factory("rest/mock/1")
-      ->query("expand_members", true)
-      ->execute();
-
-    $this->assertEquals(400, $response->status());
-  }
-
-  public function test_get_collection_with_expand_members() {
-    $response = Request::factory("rest/mock")
-      ->query("expand_members", true)
-      ->execute();
-
-    $actual = json_decode($response->body(), true);  // assoc array
-    $expected = array(
-      0 => array(
-        "url" => URL::abs_site("rest") . "/mock/1",
-        "entity" => array(
-          "id" => 1,
-          "foo" => "bar"
-        )),
-      1 => array(
-        "url" => URL::abs_site("rest") . "/mock/2",
-        "entity" => array(
-          "id" => 2,
-          "foo" => "bar"
-        )),
-      2 => array(
-        "url" => URL::abs_site("rest") . "/mock/3",
-        "entity" => array(
-          "id" => 3,
-          "foo" => "bar"
-        ))
-      );
 
     $this->assertEquals(200, $response->status());
     $this->assertEquals($expected, $actual);

@@ -311,26 +311,10 @@ class RestAPI_Controller_Rest extends Controller {
   }
 
   /**
-   * GET a REST resource.  This uses the resource's get_response() function, and
-   * expands members if specified.
+   * GET a REST resource.  This uses the resource's get_response() function.
    */
   public function action_get() {
-    if (Arr::get($this->rest_object->params, "expand_members",
-        $this->rest_object->default_params["expand_members"])) {
-      $members = method_exists($this->rest_object, "get_members") ?
-        $this->rest_object->get_members() : null;
-
-      if (!isset($members)) {
-        // A null members array means the resource is not a collection - fire a 400 Bad Request.
-        throw Rest_Exception::factory(400, array("expand_members" => "not_a_collection"));
-      }
-
-      foreach ($members as $key => $member) {
-        $this->rest_response[$key] = $member->get_response();
-      }
-    } else {
-      $this->rest_response = $this->rest_object->get_response();
-    }
+    $this->rest_response = $this->rest_object->get_response();
 
     if (!isset($this->rest_response)) {
       throw Rest_Exception::factory(400, array("method" => "invalid"));

@@ -163,6 +163,26 @@ class RestAPI_RestAPI {
   }
 
   /**
+   * Return the params that are considered "sticky" from a given list.
+   * This is used by Rest::url() and Rest::relationships().
+   */
+  static function sticky_params($params) {
+    $result = array();
+    foreach (array("access_key", "num", "type") as $key) {
+      if (isset($params[$key])) {
+        $result[$key] = $params[$key];
+      }
+    }
+
+    // Output is only "sticky" if set to html.
+    if (Arr::get($params, "output") == "html") {
+      $result["output"] = "html";
+    }
+
+    return $result;
+  }
+
+  /**
    * Return an array of all available REST resource types.
    * @param  boolean  flag to return class instead of resource names (e.g. "TagItems" vs. "tag_items")
    */

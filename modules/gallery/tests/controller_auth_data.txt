@@ -36,6 +36,8 @@ modules/gallery/classes/Gallery/Rest/Items.php                              get_
 # 2x OTHER AUTH - 404s instead of 403s
 modules/gallery/classes/Gallery/Rest/UserItems.php                          get_members                    DIRTY_AUTH
 modules/gallery/classes/Gallery/Rest/Users.php                              get_entity                     DIRTY_AUTH
+# 1x NULLIPOTENT - only sets params, and auth in get_entity and get_members
+modules/gallery/classes/Gallery/Rest/Users.php                              get_response                   DIRTY_AUTH
 # 1x NULLIPOTENT - input for display item
 modules/organize/classes/Organize/Controller/Organize.php                   action_tree                    DIRTY_CSRF
 # 2x OTHER AUTH - auth fails silently using Access::can() instead of Access:required()
@@ -48,6 +50,8 @@ modules/rest/classes/RestAPI/Controller/Rest.php                            acti
 modules/rest/classes/RestAPI/Controller/Rest.php                            action_delete                  DIRTY_AUTH
 # 1x AUTH ELSEWHERE - handled by Rest::check_auth()
 modules/rest/classes/RestAPI/Controller/Rest.php                            action_show_access_key         DIRTY_AUTH
+# 1x AUTH ELSEWHERE - calls get_response() of the resources in the urls param
+modules/rest/classes/RestAPI/Rest/Batch.php                                 get_response                   DIRTY_AUTH
 # 1x NO AUTH - resource registry
 modules/rest/classes/RestAPI/Rest/Registry.php                              get_response                   DIRTY_AUTH
 # 1x AUTH ELSEWHERE - handled by *Rss classes; NULLIPOTENT - input for pagination

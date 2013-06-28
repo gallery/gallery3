@@ -34,14 +34,14 @@ class Search_Search {
     return implode(" ", $terms);
   }
 
-  static function search($q, $limit, $offset) {
-    return Search::search_within_album($q, Item::root(), $limit, $offset);
+  static function search($q, $limit, $offset, $where=array()) {
+    return Search::search_within_album($q, Item::root(), $limit, $offset, $where);
   }
 
-  static function search_within_album($q, $album, $limit, $offset) {
+  static function search_within_album($q, $album, $limit, $offset, $where=array()) {
     $db = Database::instance();
 
-    $query = static::_build_query_base($q, $album) .
+    $query = static::_build_query_base($q, $album, $where) .
       " ORDER BY `score` DESC " .
       " LIMIT $limit OFFSET " . (int)$offset;
 

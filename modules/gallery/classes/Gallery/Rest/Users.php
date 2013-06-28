@@ -47,17 +47,17 @@ class Gallery_Rest_Users extends Rest {
   }
 
   /**
-   * Override Rest::__construct() to use the "show" parameter, if specified.
+   * Override Rest::get_response() to use the "show" parameter, if specified.
    */
-  public function __construct($id, $params) {
-    if ($show = Arr::get($params, "show")) {
+  public function get_response() {
+    if ($show = Arr::get($this->params, "show")) {
       switch ($show) {
       case "self":
-        $id = Identity::active_user()->id;
+        $this->id = Identity::active_user()->id;
         break;
 
       case "guest":
-        $id = Identity::guest()->id;
+        $this->id = Identity::guest()->id;
         break;
 
       default:
@@ -65,9 +65,9 @@ class Gallery_Rest_Users extends Rest {
       }
 
       // Remove the "show" query parameter so it doesn't appear in URLs downstream.
-      unset($params["show"]);
+      unset($this->params["show"]);
     }
 
-    parent::__construct($id, $params);
+    return parent::get_response();
   }
 }

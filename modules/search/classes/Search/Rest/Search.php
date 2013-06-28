@@ -57,20 +57,22 @@ class Search_Rest_Search extends Rest {
     }
     Access::required("view", $album);
 
+    // Convert the "types" param into a search "where" param.
+    $types = Arr::get($this->params, "type");
+    $where = $types ? array("{items}.`type` IN ('" . implode("','", $types) . "')") : array();
+
     // Do the search.
     $q_with_more_terms = Search::add_query_terms($q);
     $result = Search::search_within_album($q_with_more_terms, $album,
-      Arr::get($this->params, "num",   $this->default_params["num"]),
-      Arr::get($this->params, "start", $this->default_params["start"]));
+      $this->members_info["num"], $this->members_info["start"], $where);
 
     // Build the members array.
     $data = array();
-    $types = Arr::get($this->params, "type");
-    foreach ($result[1] as $item) {
-      if (!$types || in_array($item->type, $types)) {
-        $data[] = Rest::factory("Items", $item->id);
-      }
+    foreach ($result[1] as $member) {
+      $data[] = Rest::factory("Items", $member->id);
     }
+
+    $this->members_info["count"] = (int)$result[0];
 
     return $data;
   }

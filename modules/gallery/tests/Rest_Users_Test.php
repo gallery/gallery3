@@ -40,11 +40,19 @@ class Rest_Users_Test extends Unittest_TestCase {
       "relationships" => array(
         "comments" => array(
           "url" => URL::abs_site("rest/user_comments/{$user->id}"),
-          "members" => array()),
+          "members" => array(),
+          "members_info" => array(
+            "count" => 0,
+            "num" => 100,
+            "start" => 0)),
         "items" => array(
           "url" => URL::abs_site("rest/user_items/{$user->id}"),
           "members" => array(
-            0 => URL::abs_site("rest/items/{$item->id}")))));
+            0 => URL::abs_site("rest/items/{$item->id}")),
+          "members_info" => array(
+            "count" => 1,
+            "num" => 100,
+            "start" => 0))));
 
     $this->assertEquals($expected, $rest->get_response());
   }
@@ -76,9 +84,11 @@ class Rest_Users_Test extends Unittest_TestCase {
     Identity::set_active_user(Identity::admin_user());
 
     $rest = Rest::factory("Users", null, array("show" => "self"));
+    $rest->get_response();  // since "show" parsed in get_response()
     $this->assertEquals(Identity::admin_user()->id, $rest->id);
 
     $rest = Rest::factory("Users", null, array("show" => "guest"));
+    $rest->get_response();  // since "show" parsed in get_response()
     $this->assertEquals(Identity::guest()->id, $rest->id);
   }
 }

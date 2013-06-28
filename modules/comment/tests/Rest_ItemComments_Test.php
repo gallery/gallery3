@@ -30,7 +30,11 @@ class Rest_ItemComments_Test extends Unittest_TestCase {
       "url" => URL::abs_site("rest/item_comments/{$item->id}"),
       "members" => array(
         0 => URL::abs_site("rest/comments/{$comment2->id}"),    // comment2 is newer than comment1
-        1 => URL::abs_site("rest/comments/{$comment1->id}")));
+        1 => URL::abs_site("rest/comments/{$comment1->id}")),
+      "members_info" => array(
+        "count" => 2,
+        "num" => 100,
+        "start" => 0));
 
     $this->assertEquals($expected, $rest->get_response());
   }

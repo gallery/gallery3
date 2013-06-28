@@ -48,13 +48,17 @@ class Comment_Rest_ItemComments extends Rest {
     Access::required("view", $item);
 
     $members = $item->comments
-      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
-      ->offset(Arr::get($this->params, "start", $this->default_params["start"]))
-      ->order_by("created", "DESC")
-      ->order_by("id", "DESC");
+      ->order_by("comment.created", "DESC")
+      ->order_by("comment.id", "DESC");
+
+    $this->members_info["count"] = $members->reset(false)->count_all();
+    $members = $members
+      ->limit($this->members_info["num"])
+      ->offset($this->members_info["start"])
+      ->find_all();
 
     $data = array();
-    foreach ($members->find_all() as $member) {
+    foreach ($members as $member) {
       $data[] = Rest::factory("Comments", $member->id);
     }
 

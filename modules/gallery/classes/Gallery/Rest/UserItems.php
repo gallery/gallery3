@@ -61,10 +61,9 @@ class Gallery_Rest_UserItems extends Rest {
 
     // Note: we can't simply do "$user->items" since we have no guarantee
     // that the user is an ORM model with an established relationship.
-    $members = ORM::factory("Item")->viewable()
-      ->where("owner_id", "=", $user->id)
-      ->limit(Arr::get($this->params, "num", $this->default_params["num"]))
-      ->offset(Arr::get($this->params, "start", $this->default_params["start"]));
+    $members = ORM::factory("Item")
+      ->viewable()
+      ->where("owner_id", "=", $user->id);
 
     if (isset($this->params["type"])) {
       $members->where("type", "IN", $this->params["type"]);
@@ -74,8 +73,14 @@ class Gallery_Rest_UserItems extends Rest {
       $members->where("name", "LIKE", "%" . Database::escape_for_like($this->params["name"]) . "%");
     }
 
+    $this->members_info["count"] = $members->reset(false)->count_all();
+    $members = $members
+      ->limit($this->members_info["num"])
+      ->offset($this->members_info["start"])
+      ->find_all();
+
     $data = array();
-    foreach ($members->find_all() as $member) {
+    foreach ($members as $member) {
       $data[] = Rest::factory("Items", $member->id);
     }
 
