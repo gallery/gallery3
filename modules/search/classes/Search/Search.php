@@ -39,47 +39,32 @@ class Search_Search {
   }
 
   static function search_within_album($q, $album, $limit, $offset, $where=array()) {
-    $db = Database::instance();
+    $query = static::_build_query_base($q, $album, $where);
 
-    $query = static::_build_query_base($q, $album, $where) .
-      " ORDER BY `score` DESC " .
-      " LIMIT $limit OFFSET " . (int)$offset;
+    $count = $query
+      ->reset(false)
+      ->count_all();
 
-    $data = $db->query(Database::SELECT, $query, "Model_Item");
-    $count = $db->query(Database::SELECT, "SELECT FOUND_ROWS() as c", true)->current()->c;
+    $items = $query
+      ->order_by("score", "DESC")
+      ->limit($limit)
+      ->offset($offset)
+      ->find_all();
 
-    return array($count, $data);
+    return array($count, $items);
   }
 
   protected static function _build_query_base($q, $album, $where=array()) {
-    $db = Database::instance();
-    $q = $db->escape($q);
+    $q = Database::instance()->escape($q);
 
-    if (!Identity::active_user()->admin) {
-      foreach (Identity::group_ids_for_active_user() as $id) {
-        $fields[] = "`view_$id` = TRUE"; // Access::ALLOW
-      }
-      $access_sql = " AND (" . join(" OR ", $fields) . ")";
-    } else {
-      $access_sql = "";
-    }
-
-    if ($album->is_root()) {
-      $album_sql = "";
-    } else {
-      $album_sql =
-        " AND {items}.left_ptr > " . $db->escape($album->left_ptr) .
-        " AND {items}.right_ptr <= " . $db->escape($album->right_ptr);
-    }
-
-    return
-      "SELECT SQL_CALC_FOUND_ROWS {items}.*, " .
-      "  MATCH({search_records}.`data`) AGAINST ($q) AS `score` " .
-      "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
-      "WHERE MATCH({search_records}.`data`) AGAINST ($q IN BOOLEAN MODE) " .
-      $album_sql .
-      (empty($where) ? "" : " AND " . join(" AND ", $where)) .
-      $access_sql;
+    // @todo: consider using the same mode (NATURAL LANGUAGE vs BOOLEAN) for both
+    // parts of the search.
+    return $album->descendants
+      ->viewable()
+      ->with("search_record")
+      ->select(array(DB::expr("MATCH(`data`) AGAINST ($q)"), "score"))
+      ->where(DB::expr("MATCH(`data`)"), "AGAINST", DB::expr("($q IN BOOLEAN MODE)"))
+      ->merge_where($where);
   }
 
   /**
@@ -121,39 +106,24 @@ class Search_Search {
     return array($remaining, $total, $percent);
   }
 
-  static function get_position($item, $q) {
-    return Search::get_position_within_album($item, $q, Item::root());
+  static function get_position($item, $q, $where=array()) {
+    return Search::get_position_within_album($item, $q, Item::root(), $where);
   }
 
-  static function get_position_within_album($item, $q, $album) {
-    $page_size = Module::get_var("gallery", "page_size", 9);
-    $query = static::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
-      " ORDER BY `score` DESC ";
-    $db = Database::instance();
+  static function get_position_within_album($item, $q, $album, $where=array()) {
+    $items = static::_build_query_base($q, $album, $where)
+      ->order_by("score", "DESC")
+      ->find_all();
 
-    // Truncate the score by two decimal places as this resolves the issues
-    // that arise due to inexact numeric conversions.
-    $current = $db->query(Database::SELECT, $query)->current();
-    if (!$current) {
-      // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
-      // the context and try again.
-      Item::clear_display_context_callback();
-      HTTP::redirect(Request::current()->uri());
-    }
-    $score = $current->score;
-    if (strlen($score) > 7) {
-      $score = substr($score, 0, strlen($score) - 2);
+    foreach ($items as $key => $current_item) {
+      if ($item->id == $current_item->id) {
+        return $key + 1;  // 1-indexed position
+      }
     }
 
-    // Redo the query but only look for results greater than or equal to our current location
-    // then seek backwards until we find our item.
-    $data = $db->query(Database::SELECT, static::_build_query_base($q, $album) .
-                       " HAVING `score` >= " . $score . " ORDER BY `score` DESC ");
-    $data->seek($data->count() - 1);
-
-    while ($data->get("id") != $item->id && $data->prev()->valid()) {
-    }
-
-    return $data->key() + 1;
+    // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
+    // the context and try again.
+    Item::clear_display_context_callback();
+    HTTP::redirect(Request::current()->uri());
   }
 }
