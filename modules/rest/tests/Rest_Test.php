@@ -68,4 +68,39 @@ class Rest_Test extends Unittest_TestCase {
 
     $this->assertEquals(URL::abs_site("rest/mock/1") . URL::query($expected, false), $rest->url());
   }
+
+  public function test_get_response_for_collection_with_expand_members() {
+    $rest = Rest::factory("Mock", null, array("expand_members" => true));
+
+    $expected = array(
+      0 => array(
+        "url" => URL::abs_site("rest") . "/mock/1",
+        "entity" => array(
+          "id" => 1,
+          "foo" => "bar"
+        )),
+      1 => array(
+        "url" => URL::abs_site("rest") . "/mock/2",
+        "entity" => array(
+          "id" => 2,
+          "foo" => "bar"
+        )),
+      2 => array(
+        "url" => URL::abs_site("rest") . "/mock/3",
+        "entity" => array(
+          "id" => 3,
+          "foo" => "bar"
+        ))
+      );
+
+    $this->assertEquals($expected, $rest->get_response());
+  }
+
+  /**
+   * @expectedException HTTP_Exception_400
+   */
+  public function test_get_response_for_object_cant_expand_members() {
+    $rest = Rest::factory("Mock", 1, array("expand_members" => true));
+    $rest->get_response();
+  }
 }
