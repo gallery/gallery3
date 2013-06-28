@@ -21,6 +21,7 @@ class RestAPI_Rest {
   public $type;
   public $id;
   public $params;
+  public $members_info;
   public $created = false;
 
   // Relationships that are defined by this resource.
@@ -48,6 +49,10 @@ class RestAPI_Rest {
     $this->type = substr(get_class($this), 5);  // strlen("Rest_") --> 5
     $this->id = $id;
     $this->params = $params;
+    $this->members_info = array(
+      "count" => null,
+      "num"   => Arr::get($params, "num",   $this->default_params["num"]),
+      "start" => Arr::get($params, "start", $this->default_params["start"]));
   }
 
   /**
@@ -95,6 +100,9 @@ class RestAPI_Rest {
         $results["members"] = array();
         foreach ($members as $key => $member) {
           $results["members"][$key] = $member->url();
+        }
+        if (isset($this->members_info["count"])) {
+          $results["members_info"] = $this->members_info;
         }
       }
 

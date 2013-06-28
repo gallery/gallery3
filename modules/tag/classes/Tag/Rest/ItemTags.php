@@ -237,7 +237,8 @@ class Tag_Rest_ItemTags extends Rest {
       // Add the entity, then resort $result so it goes in the right place.
       $result["entity"]["tag_names"] = implode(",", $tag_names);
       uksort($result, function($a, $b) {
-        $order = array("url" => 1, "entity" => 2, "members" => 3, "relationships" => 4);
+        $order = array("url" => 1, "entity" => 2, "members" => 3,
+                       "members_info" => 4, "relationships" => 5);
         return $order[$a] - $order[$b];
       });
     }
