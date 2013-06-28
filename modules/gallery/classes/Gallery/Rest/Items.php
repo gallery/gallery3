@@ -39,7 +39,7 @@ class Gallery_Rest_Items extends Rest {
    *     Return the ancestors of the specified item.  If specified,
    *     all other query parameters described below will be ignored.
    *     This is typically used to create breadcrumbs for an item.
-   *   urls=["url1","url2","url3"]
+   *   urls=["url1","url2","url3"]   or   urls=url1,url2,url3
    *     Return items that match the specified urls.  If specified,
    *     the "start" and "num" parameters will be ignored.
    *     This is typically used to return the member detail.
