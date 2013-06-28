@@ -137,20 +137,8 @@ class RestAPI_Rest {
    * @return  string  REST URL
    */
   public function url($keep_params=true) {
-    $params = $keep_params ? $this->params : array();
-
-    // Carry over the "sticky" params.
-    foreach (array("access_key", "num", "type") as $key) {
-      $value = Request::current()->query($key);
-      if (isset($value)) {
-        $params[$key] = $value;
-      }
-    }
-
-    // Output is only "sticky" if set to html.
-    if (Request::current()->query("output") == "html") {
-      $params["output"] = "html";
-    }
+    $params = !$keep_params ? array() :
+      array_merge(RestAPI::sticky_params(Request::current()->query()), $this->params);
 
     $url = URL::abs_site("rest/" . Inflector::convert_class_to_module_name($this->type));
     $url .= empty($this->id) ? "" : "/{$this->id}";
@@ -166,11 +154,12 @@ class RestAPI_Rest {
     $results = array();
 
     if ($this->id) {
+      $params = RestAPI::sticky_params($this->params);
       foreach (RestAPI::registry(true) as $resource) {
         $class = "Rest_$resource";
         $data = $class::$relationships;
         if (!empty($data[$this->type])) {
-          $results[$data[$this->type]] = Rest::factory($resource, $this->id);
+          $results[$data[$this->type]] = Rest::factory($resource, $this->id, $params);
         }
       }
     }

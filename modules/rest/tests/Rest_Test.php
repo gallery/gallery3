@@ -43,28 +43,33 @@ class Rest_Test extends Unittest_TestCase {
   }
 
   public function test_url_with_sticky_params() {
-    $rest = Rest::factory("Mock", 1, array("hello" => "world"));
+    $rest = Rest::factory("Mock", 1, array(
+      "num"   => 50,
+      "hello" => "world"));
 
     // Test with no query params
-    $expected = array("hello" => "world");
+    $expected = array(
+      "num"   => 50,
+      "hello" => "world");
+
     $this->assertEquals(URL::abs_site("rest/mock/1") . URL::query($expected, false), $rest->url());
 
     // Add query params
     $params = array(
       "not_sticky" => "foo",
-      "hello"      => "goodbye",
       "access_key" => "abc",
       "num"        => 100,
-      "output"     => "html");
+      "output"     => "html",
+      "hello"      => "goodbye");
 
     Request::current()->query($params);
 
     // Test with query params
     $expected = array(
-      "hello"      => "world",
       "access_key" => "abc",
-      "num"        => 100,
-      "output"     => "html");
+      "num"        => 50,
+      "output"     => "html",
+      "hello"      => "world");
 
     $this->assertEquals(URL::abs_site("rest/mock/1") . URL::query($expected, false), $rest->url());
   }
