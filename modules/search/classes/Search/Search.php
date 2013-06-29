@@ -47,6 +47,7 @@ class Search_Search {
 
     $items = $query
       ->order_by("score", "DESC")
+      ->order_by("id", "ASC")  // use id as tie-breaker
       ->limit($limit)
       ->offset($offset)
       ->find_all();
@@ -113,6 +114,7 @@ class Search_Search {
   static function get_position_within_album($item, $q, $album, $where=array()) {
     $items = static::_build_query_base($q, $album, $where)
       ->order_by("score", "DESC")
+      ->order_by("id", "ASC")  // use id as tie-breaker
       ->find_all();
 
     foreach ($items as $key => $current_item) {
