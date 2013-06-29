@@ -52,7 +52,7 @@ class Gallery_Controller_Packager extends Controller {
     System::unlink_dir(VARPATH . "modules");
     System::unlink_dir(VARPATH . "tmp");
 
-    Module::$modules = array();
+    Module::$installed = array();
     Module::$active = array();
 
     // Use a known random seed so that subsequent packaging runs will reuse the same random

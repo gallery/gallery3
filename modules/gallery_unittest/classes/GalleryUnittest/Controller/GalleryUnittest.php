@@ -73,7 +73,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       @mkdir("test/var/cache", 0777, true);
 
       // Reset our caches
-      Module::$modules = array();
+      Module::$installed = array();
       Module::$active = array();
       Module::$var_cache = array();
 
