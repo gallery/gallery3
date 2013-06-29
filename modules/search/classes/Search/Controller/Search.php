@@ -21,7 +21,6 @@ class Search_Controller_Search extends Controller {
   public function action_index() {
     $page_size = Module::get_var("gallery", "page_size", 9);
     $q = $this->request->query("q");
-    $q_with_more_terms = Search::add_query_terms($q);
     $show = $this->request->query("show");
 
     $album_id = Arr::get($this->request->query(), "album", Item::root()->id);
@@ -32,7 +31,7 @@ class Search_Controller_Search extends Controller {
 
     if ($show) {
       $child = ORM::factory("Item", $show);
-      $index = Search::get_position_within_album($child, $q_with_more_terms, $album);
+      $index = Search::get_position_within_album($child, $q, $album);
       if ($index) {
         $page = ceil($index / $page_size);
         $this->redirect(URL::abs_site("search" .
@@ -51,8 +50,7 @@ class Search_Controller_Search extends Controller {
 
     $offset = ($page - 1) * $page_size;
 
-    list ($count, $result) =
-      Search::search_within_album($q_with_more_terms, $album, $page_size, $offset);
+    list ($count, $result) = Search::search_within_album($q, $album, $page_size, $offset);
 
     $max_pages = max(ceil($count / $page_size), 1);
 
@@ -79,17 +77,14 @@ class Search_Controller_Search extends Controller {
   }
 
   public static function get_display_context($item, $album, $q) {
-    $q_with_more_terms = Search::add_query_terms($q);
-    $position = Search::get_position_within_album($item, $q_with_more_terms, $album);
+    $position = Search::get_position_within_album($item, $q, $album);
 
     if ($position > 1) {
-      list ($count, $result_data) =
-        Search::search_within_album($q_with_more_terms, $album, 3, $position - 2);
+      list ($count, $result_data) = Search::search_within_album($q, $album, 3, $position - 2);
       list ($previous_item, $ignore, $next_item) = $result_data;
     } else {
       $previous_item = null;
-      list ($count, $result_data) =
-        Search::search_within_album($q_with_more_terms, $album, 1, $position);
+      list ($count, $result_data) = Search::search_within_album($q, $album, 1, $position);
       list ($next_item) = $result_data;
     }
 
@@ -117,7 +112,7 @@ class Search_Controller_Search extends Controller {
     if (!isset($offset)) {
       $offset = 1;
     }
-    $result = Search::search_within_album(Search::add_query_terms($q), $album, $limit, $offset);
+    $result = Search::search_within_album($q, $album, $limit, $offset);
     return $result[1];
   }
 }

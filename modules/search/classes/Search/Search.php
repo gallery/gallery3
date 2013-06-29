@@ -18,14 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Search_Search {
+  static $max_add_query_terms = 5;
+
   /**
    * Add more terms to the query by wildcarding the stem value of the first
    * few terms in the query.
    */
   static function add_query_terms($q) {
-    $MAX_TERMS = 5;
-    $terms = explode(" ", $q, $MAX_TERMS);
-    for ($i = 0; $i < min(count($terms), $MAX_TERMS - 1); $i++) {
+    $terms = explode(" ", $q, static::$max_add_query_terms);
+    for ($i = 0; $i < min(count($terms), static::$max_add_query_terms - 1); $i++) {
       // Don't wildcard quoted or already wildcarded terms
       if ((substr($terms[$i], 0, 1) != '"') && (substr($terms[$i], -1, 1) != "*")) {
         $terms[] = rtrim($terms[$i], "s") . "*";
@@ -47,6 +48,7 @@ class Search_Search {
 
     $items = $query
       ->order_by("score", "DESC")
+      ->order_by("id", "ASC")  // use id as tie-breaker
       ->limit($limit)
       ->offset($offset)
       ->find_all();
@@ -55,15 +57,17 @@ class Search_Search {
   }
 
   protected static function _build_query_base($q, $album, $where=array()) {
-    $q = Database::instance()->escape($q);
+    // For *choosing* the found items, we use BOOLEAN MODE to allow special operators (+, -, *,...)
+    // For *ordering* the found items, we use NATURAL LANGUAGE MODE to give us a score
 
-    // @todo: consider using the same mode (NATURAL LANGUAGE vs BOOLEAN) for both
-    // parts of the search.
+    $q_boolean = Database::instance()->escape(Search::add_query_terms($q));
+    $q_natural = Database::instance()->escape($q);
+
     return $album->descendants
       ->viewable()
       ->with("search_record")
-      ->select(array(DB::expr("MATCH(`data`) AGAINST ($q)"), "score"))
-      ->where(DB::expr("MATCH(`data`)"), "AGAINST", DB::expr("($q IN BOOLEAN MODE)"))
+      ->select(array(DB::expr("MATCH(`data`) AGAINST ($q_natural)"), "score"))
+      ->where(DB::expr("MATCH(`data`)"), "AGAINST", DB::expr("($q_boolean IN BOOLEAN MODE)"))
       ->merge_where($where);
   }
 
@@ -113,6 +117,7 @@ class Search_Search {
   static function get_position_within_album($item, $q, $album, $where=array()) {
     $items = static::_build_query_base($q, $album, $where)
       ->order_by("score", "DESC")
+      ->order_by("id", "ASC")  // use id as tie-breaker
       ->find_all();
 
     foreach ($items as $key => $current_item) {

@@ -62,8 +62,7 @@ class Search_Rest_Search extends Rest {
     $where = $types ? array(array("item.type", "IN", $types)) : array();
 
     // Do the search.
-    $q_with_more_terms = Search::add_query_terms($q);
-    $result = Search::search_within_album($q_with_more_terms, $album,
+    $result = Search::search_within_album($q, $album,
       $this->members_info["num"], $this->members_info["start"], $where);
 
     // Build the members array.

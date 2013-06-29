@@ -45,9 +45,6 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
     $_SERVER["SCRIPT_NAME"] = "./index.php";
     $_SERVER["SERVER_NAME"] = "localhost";
 
-    $config = Kohana::$config;
-    $original_config = DOCROOT . "var/database.php";
-
     // Switch over to our test database instance
     Database::$instances["default"]->disconnect();
     $db_config = Kohana::$config->load("database");
@@ -73,7 +70,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       @mkdir("test/var/cache", 0777, true);
 
       // Reset our caches
-      Module::$modules = array();
+      Module::$installed = array();
       Module::$active = array();
       Module::$var_cache = array();
 
@@ -82,15 +79,9 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       Module::activate("gallery");
       Module::install("user");
       Module::activate("user");
-      $paths = array();
       foreach (Module::available() as $module_name => $unused) {
-        $path = MODPATH . "{$module_name}/tests";
-        if (in_array($module_name, array("gallery", "user"))) {
-          $paths[] = $path;
-          continue;
-        }
-        if (file_exists($path)) {
-          $paths[] = $path;
+        if (file_exists(MODPATH . "{$module_name}/tests") &&
+            !in_array($module_name, array("gallery", "user"))) {
           Module::install($module_name);
           Module::activate($module_name);
         }
@@ -104,6 +95,7 @@ class GalleryUnittest_Controller_GalleryUnittest extends Controller {
       Graphics::choose_default_toolkit();
 
       // Rework the cli arguments to look like a traditional phpunit execution
+      // i.e. "index.php test [switches]" --> "phpunit [switches] [Unittest_Tests path]"
       array_splice($_SERVER["argv"], 0, 2, "phpunit");
       $_SERVER["argv"][] = MODPATH . "unittest/classes/Unittest/Tests.php";
 
