@@ -24,10 +24,10 @@
  * Note: by design, this class does not do any permission checking.
  */
 class Gallery_Module {
-  public static $active = array();
-  public static $modules = array();
-  public static $var_cache = null;
   public static $available = array();
+  public static $installed = array();
+  public static $active = array();
+  public static $var_cache = null;
 
   /**
    * Setup some module constants.  Modules are loaded in the following order:
@@ -67,10 +67,10 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function get($module_name) {
-    if (empty(Module::$modules[$module_name])) {
+    if (empty(Module::$installed[$module_name])) {
       return ORM::factory("Module")->where("name", "=", $module_name)->find();
     }
-    return Module::$modules[$module_name];
+    return Module::$installed[$module_name];
   }
 
   /**
@@ -88,7 +88,7 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function is_installed($module_name) {
-    return array_key_exists($module_name, Module::$modules);
+    return array_key_exists($module_name, Module::$installed);
   }
 
   /**
@@ -96,8 +96,8 @@ class Gallery_Module {
    * @param string $module_name
    */
   static function is_active($module_name) {
-    return array_key_exists($module_name, Module::$modules) &&
-      Module::$modules[$module_name]->active;
+    return array_key_exists($module_name, Module::$installed) &&
+      Module::$installed[$module_name]->active;
   }
 
   /**
@@ -199,7 +199,7 @@ class Gallery_Module {
       $module->save();
     }
     // Similar to activate(), deactivate(), and upgrade(), calling load_modules() here
-    // refreshes Module::$modules, Module::$active, and the Kohana paths as needed.
+    // refreshes Module::$installed, Module::$active, and the Kohana paths as needed.
     Module::load_modules();
 
     GalleryLog::success(
@@ -254,7 +254,7 @@ class Gallery_Module {
     }
 
     // Similar to activate(), deactivate(), and install(), calling load_modules() here
-    // refreshes Module::$modules, Module::$active, and the Kohana paths as needed.
+    // refreshes Module::$installed, Module::$active, and the Kohana paths as needed.
     Module::load_modules();
 
     $version_after = Module::get_version($module_name);
@@ -330,7 +330,7 @@ class Gallery_Module {
    * This happens when a user deletes a module without deactivating it.
    */
   static function deactivate_missing_modules() {
-    foreach (Module::$modules as $module_name => $module) {
+    foreach (Module::$installed as $module_name => $module) {
       if (Module::is_active($module_name) && !Module::info($module_name)) {
         Module::deactivate($module_name);
       }
@@ -361,7 +361,7 @@ class Gallery_Module {
 
   /**
    * Load (or refresh) all installed modules.  This:
-   *   - rebuilds Module::$modules with all installed modules
+   *   - rebuilds Module::$installed with all installed modules
    *   - rebuilds Module::$active with all active modules
    *   - reinitializes Kohana's module list (including unit test and third-party modules)
    *   - causes Kohana to run any init.php files it may find
@@ -370,7 +370,7 @@ class Gallery_Module {
    * deactivate, or upgrade events.
    */
   static function load_modules() {
-    Module::$modules = array();
+    Module::$installed = array();
     Module::$active = array();
 
     // In version 32 we introduced a weight column so we can specify the module order
@@ -378,13 +378,13 @@ class Gallery_Module {
     // run the upgrader.
     $modules = Module::get_version("gallery") < 32 ?
       ORM::factory("Module")->find_all() :
-      ORM::factory("Module")->order_by("weight")->find_all();
+      ORM::factory("Module")->order_by("weight", "DESC")->find_all();
 
     // Rebuild installed and active module lists
     $first_module = array();
     $last_module = array();
     foreach ($modules as $module) {
-      Module::$modules[$module->name] = $module;
+      Module::$installed[$module->name] = $module;
       // Skip inactive or missing modules.  Kohana 3 will not let us load a module that's missing.
       // Kohana 2 would, so it was possible to have an active, deleted module in Gallery 3.0.x.
       if (!$module->active || !is_dir(MODPATH . $module->name)) {

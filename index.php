@@ -97,8 +97,8 @@ if (PHP_SAPI == "cli") {
     print "  php index.php upgrade\n\n";
     print "Developer-only features:\n";
     print "  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
-    print "  php index.php package  # create new installer files\n";
-    print "  php index.php test     # run unit tests\n";
+    print "  php index.php package            # create new installer files\n";
+    print "  php index.php test [switches]    # run unit tests with PHPUnit switches\n";
     exit(1);
   }
 } else {
