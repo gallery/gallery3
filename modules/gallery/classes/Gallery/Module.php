@@ -378,7 +378,7 @@ class Gallery_Module {
     // run the upgrader.
     $modules = Module::get_version("gallery") < 32 ?
       ORM::factory("Module")->find_all() :
-      ORM::factory("Module")->order_by("weight")->find_all();
+      ORM::factory("Module")->order_by("weight", "DESC")->find_all();
 
     // Rebuild installed and active module lists
     $first_module = array();
