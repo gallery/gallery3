@@ -96,7 +96,7 @@ class Tag_Rest_ItemTags extends Rest {
 
   /**
    * PUT the entity of the item_tags resource.  This replaces the tag list with the one given,
-   * which is a comma-separated list in the "tag_names" field of the entity.
+   * which is a comma-separated list in the "names" field of the entity.
    * @see  TagEvent::item_edit_form_completed(), which does a similar task.
    */
   public function put_entity() {
@@ -111,15 +111,15 @@ class Tag_Rest_ItemTags extends Rest {
       throw Rest_Exception::factory(400, array("entity" => "entity_and_members_sent"));
     }
 
-    if (!property_exists($this->params["entity"], "tag_names") ||
-        !($tag_names = array_filter(explode(",", $this->params["entity"]->tag_names)))) {
+    if (!property_exists($this->params["entity"], "names") ||
+        !($names = array_filter(array_map("trim", explode(",", $this->params["entity"]->names))))) {
       throw Rest_Exception::factory(400, array("entity" => "invalid"));
     }
 
     // Clear all tags from the item, then add the new set.
     Tag::clear_all($item);
-    foreach ($tag_names as $tag_name) {
-      Tag::add($item, $tag_name);
+    foreach ($names as $name) {
+      Tag::add($item, $name);
     }
     Tag::compact();
   }
@@ -137,19 +137,19 @@ class Tag_Rest_ItemTags extends Rest {
     Access::required("edit", $item);
 
     // Convert our members list into an array of item ids.
-    $tag_names = array();
+    $names = array();
     foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Tag", $member_rest->id);
       if (($member_rest->type != "Tags") || !$member->loaded()) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
       }
-      $tag_names[$key] = $member->name;
+      $names[$key] = $member->name;
     }
 
     // Clear all tags from the item, then add the new set.
     Tag::clear_all($item);
-    foreach ($tag_names as $tag_name) {
-      Tag::add($item, $tag_name);
+    foreach ($names as $name) {
+      Tag::add($item, $name);
     }
     Tag::compact();
   }
@@ -169,14 +169,14 @@ class Tag_Rest_ItemTags extends Rest {
       throw Rest_Exception::factory(400, array("entity" => "entity_and_members_sent"));
     }
 
-    if (!property_exists($this->params["entity"], "tag_names") ||
-        !($tag_names = array_filter(explode(",", $this->params["entity"]->tag_names)))) {
+    if (!property_exists($this->params["entity"], "names") ||
+        !($names = array_filter(array_map("trim", explode(",", $this->params["entity"]->names))))) {
       throw Rest_Exception::factory(400, array("entity" => "invalid"));
     }
 
     // Add the tags to the item.
-    foreach ($tag_names as $tag_name) {
-      Tag::add($item, $tag_name);
+    foreach ($names as $name) {
+      Tag::add($item, $name);
     }
     Tag::compact();
   }
@@ -193,18 +193,18 @@ class Tag_Rest_ItemTags extends Rest {
     Access::required("edit", $item);
 
     // Convert our members list into an array of item ids.
-    $tag_names = array();
+    $names = array();
     foreach ($this->params["members"] as $key => $member_rest) {
       $member = ORM::factory("Tag", $member_rest->id);
       if (($member_rest->type != "Tags") || !$member->loaded()) {
         throw Rest_Exception::factory(400, array("members" => "invalid"));
       }
-      $tag_names[$key] = $member->name;
+      $names[$key] = $member->name;
     }
 
     // Add the tags to the item.
-    foreach ($tag_names as $tag_name) {
-      Tag::add($item, $tag_name);
+    foreach ($names as $name) {
+      Tag::add($item, $name);
     }
     Tag::compact();
   }
@@ -232,19 +232,18 @@ class Tag_Rest_ItemTags extends Rest {
     // If this is a collection of tags, generate the entity with the comma-separated names.
     if (isset($result["members"])) {
       // Get the tag member names.
-      $tag_names = array();
+      $names = array();
       foreach ($result["members"] as $member_url) {
         $tag_rest = RestAPI::resolve($member_url)->get_entity();
-        $tag_names[] = $tag_rest["name"];
+        $names[] = $tag_rest["name"];
       }
 
-      // Add the entity, then resort $result so it goes in the right place.
-      $result["entity"]["tag_names"] = implode(",", $tag_names);
-      uksort($result, function($a, $b) {
-        $order = array("url" => 1, "entity" => 2, "members" => 3,
-                       "members_info" => 4, "relationships" => 5);
-        return $order[$a] - $order[$b];
-      });
+      // Add the entity to $result.  Since we want it to go right after url, and since
+      // array_splice() doesn't preserve keys, we resort to using array_merge().
+      $result = array_merge(array(
+          "url"    => $result["url"],
+          "entity" => array("names" => implode(",", $names))),
+        $result);
     }
 
     return $result;
