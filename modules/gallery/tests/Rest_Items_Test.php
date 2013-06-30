@@ -76,7 +76,7 @@ class Rest_Items_Test extends Unittest_TestCase {
         "tags" => array(
           "url" => URL::abs_site("rest/item_tags/{$album->id}"),
           "entity" => array(
-            "tag_names" => $tag->name),
+            "names" => $tag->name),
           "members" => array(
             0 => URL::abs_site("rest/tags/{$tag->id}")),
           "members_info" => array(

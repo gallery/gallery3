@@ -461,7 +461,7 @@ class Rest_Controller_Test extends Unittest_TestCase {
     $tag = Test::random_tag();
 
     $entity = array("type" => "album", "name" => $name);
-    $relationships = array("tags" => array("entity" => array("tag_names" => $tag->name)));
+    $relationships = array("tags" => array("entity" => array("names" => $tag->name)));
 
     $response = Request::factory("rest/items/{$parent->id}")
       ->method(HTTP_Request::POST)

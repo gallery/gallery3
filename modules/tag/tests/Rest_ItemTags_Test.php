@@ -29,7 +29,7 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
     $expected = array(
       "url" => URL::abs_site("rest/item_tags/{$item->id}"),
       "entity" => array(
-        "tag_names" => "{$tag1->name},{$tag2->name}"),
+        "names" => "{$tag1->name},{$tag2->name}"),
       "members" => array(
         0 => URL::abs_site("rest/tags/{$tag1->id}"),
         1 => URL::abs_site("rest/tags/{$tag2->id}")),
@@ -148,7 +148,7 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
 
     $params = array();
     $params["entity"] = new stdClass();
-    $params["entity"]->tag_names = $tag2->name;
+    $params["entity"]->names = $tag2->name;
 
     $rest = Rest::factory("ItemTags", $item->id, $params);
     $rest->put_entity();
@@ -170,7 +170,8 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
     $tag2 = Tag::add(Item::root()->id, "{$name}2");
 
     $params = array();
-    $params["entity"] = array("tag_names" => $tag2->name);
+    $params["entity"] = new stdClass();
+    $params["entity"]->names = $tag2->name;
     $params["members"] = array(0 => Rest::factory("Tags", $tag2->id));
 
     $rest = Rest::factory("ItemTags", $item->id, $params);
@@ -206,7 +207,7 @@ class Rest_ItemTags_Test extends Unittest_TestCase {
 
     $params = array();
     $params["entity"] = new stdClass();
-    $params["entity"]->tag_names = $tag2->name;
+    $params["entity"]->names = $tag2->name;
 
     $rest = Rest::factory("ItemTags", $item->id, $params);
     $rest->post_entity();
