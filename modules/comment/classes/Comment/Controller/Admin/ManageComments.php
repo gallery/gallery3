@@ -57,11 +57,6 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->offset(($page - 1) * static::$items_per_page)
       ->find_all();
 
-    // This view is not themed so we can't use $theme->url() in the view and have to
-    // reproduce View_Gallery::url() logic here.
-    $atn = Theme::$admin_theme_name;
-    $view->fallback_avatar_url = URL::abs_file("themes/$atn/assets/required/avatar.jpg");
-
     $view->page = $page;
     $view->page_type = "collection";
     $view->page_subtype = "admin_comments";
