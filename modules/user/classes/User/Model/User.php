@@ -52,6 +52,10 @@ class User_Model_User extends ORM implements IdentityProvider_UserDefinition {
    * @return string a url
    */
   public function avatar_url($size=80, $default=null) {
+    // If default is not set, use "assets/required/avatar.jpg"
+    $default = $default ?: URL::abs_file(str_replace(DOCROOT, "",
+      Kohana::find_file("assets/required", "avatar", "jpg")));
+
     return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
                    md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
   }

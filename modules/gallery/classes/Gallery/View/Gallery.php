@@ -35,9 +35,93 @@ class Gallery_View_Gallery extends View {
   }
 
   /**
-   * Set up the data and render a pager.
+   * Initialize a collection's paginator.  This processes the "page" and "show" query parameters,
+   * builds the collection, and gets/sets several view variables in the process.
    *
-   * See themes/wind/views/pager.html for documentation on the variables generated here.
+   * As inputs, this uses four view variables (one required, three optional):
+   *  - "children_query" (reqd) - ORM query for the child objects without limit or offset applied.
+   *  - "children_order_by" - array of order_by's to apply to the children after they're counted.
+   *    If not given, this is omitted.  This is used in Controller_Search::action_index().
+   *  - "page" - the current page.  If not given, this is set from query parameters.
+   *  - "page_size" - the page size.  If not given, this is set from the "page_size" module var.
+   *
+   * From these, this:
+   *  - sets "children_count" view variable
+   *  - sets "max_pages" view variable
+   *  - sets "children" view variable
+   *  - processes "show" query parameter and redirects as needed
+   *  - processes "page" query parameter and redirects as needed
+   */
+  public function init_paginator() {
+    if (($this->page_type != "collection") || empty($this->children_query)) {
+      throw new Gallery_Exception("Paginator cannot be initialized");
+    }
+
+    // Set "page_size" by the module var, if empty.
+    if (empty($this->page_size)) {
+      $this->set_global("page_size", Module::get_var("gallery", "page_size", 9));
+    }
+
+    // Set "page" using the query params, if empty.  No page defaults to 1.
+    if (empty($this->page)) {
+      $this->set_global("page", (int)Arr::get(Request::current()->query(), "page", 1));
+    }
+
+    // Get "children_count" before applying any order_by calls.
+    $this->set_global("children_count", $this->children_query
+      ->reset(false)
+      ->count_all());
+
+    // Apply "children_order_by", if set (required for search module).
+    if (!empty($this->children_order_by)) {
+      foreach ($this->children_order_by as $column => $direction) {
+        $this->children_query->order_by($column, $direction);
+      }
+    }
+
+    // Redirect if "show" query parameter is set.
+    if ($show = Request::current()->query("show")) {
+      $position = null;
+      foreach ($this->children_query->find_all() as $key => $child) {
+        if ($child->id == $show) {
+          $position = $key + 1; // 1-indexed position
+          break;
+        }
+      }
+
+      if (!$position) {
+        // We can't find this result in our result set - perhaps we've fallen out of context?
+        // Clear the context and try again.
+        Item::clear_display_context_callback();
+        HTTP::redirect(Request::current()->url(true));
+      }
+
+      HTTP::redirect($this->_paginator_url(ceil($position / $this->page_size), true));
+    }
+
+    // Set "max_pages" using other params.
+    $this->set_global("max_pages", ceil(max($this->children_count, 1) / max($this->page_size, 1)));
+
+    // Redirect if "page" is not valid.
+    if ($this->page < 1) {
+      HTTP::redirect($this->_paginator_url(1, true));
+    } else if ($this->page > $this->max_pages) {
+      HTTP::redirect($this->_paginator_url($this->max_pages, true));
+    }
+
+    // Get "children" for the page.
+    $this->set_global("children", $this->children_query
+      ->limit($this->page_size)
+      ->offset($this->page_size * ($this->page - 1))
+      ->find_all());
+
+    return $this;
+  }
+
+  /**
+   * Build and render the paginator view.
+   *
+   * @see  themes/wind/views/pager.html for documentation on the variables generated here.
    */
   public function paginator() {
     $v = new View("required/paginator.html");
@@ -54,13 +138,13 @@ class Gallery_View_Gallery extends View {
       $v->total = $this->children_count;
 
       if ($this->page != 1) {
-        $v->first_page_url = Request::current()->url() . URL::query(array("page" => 1));
-        $v->previous_page_url = Request::current()->url() . URL::query(array("page" => $this->page - 1));
+        $v->first_page_url = $this->_paginator_url(1);
+        $v->previous_page_url = $this->_paginator_url($this->page - 1);
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = Request::current()->url() . URL::query(array("page" => $this->page + 1));
-        $v->last_page_url = Request::current()->url() . URL::query(array("page" => $this->max_pages));
+        $v->next_page_url = $this->_paginator_url($this->page + 1);
+        $v->last_page_url = $this->_paginator_url($this->max_pages);
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
@@ -78,6 +162,13 @@ class Gallery_View_Gallery extends View {
     }
 
     return $v;
+  }
+
+  /**
+   * Return a paginator URL.  This adds "page" and removes "show" from the query params.
+   */
+  protected function _paginator_url($page=1, $absolute=false) {
+    return Request::current()->url($absolute) . URL::query(array("page" => $page, "show" => null));
   }
 
   /**

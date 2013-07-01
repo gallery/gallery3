@@ -32,13 +32,13 @@
   <? else: ?>
     <div>
       <?= t("Searched within album <b>%album</b>.", array("album" => HTML::purify($album->title))) ?>
-      <a href="<?= URL::site(URL::query(array("album" => Item::root()->id))) ?>"><?= t("Search whole gallery") ?></a>
+      <a href="<?= URL::site("search") . URL::query(array("album" => null)) ?>"><?= t("Search whole gallery") ?></a>
     </div>
   <? endif; ?>
 
-  <? if (count($items)): ?>
+  <? if (count($children)): ?>
   <ul id="g-album-grid" class="ui-helper-clearfix">
-    <? foreach ($items as $item): ?>
+    <? foreach ($children as $item): ?>
     <? $item_class = $item->is_album() ? "g-album" : "g-photo" ?>
     <li class="g-item <?= $item_class ?>">
       <a href="<?= $item->url() ?>">
