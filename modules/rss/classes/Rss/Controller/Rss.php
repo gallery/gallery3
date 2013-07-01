@@ -27,7 +27,7 @@ class Rss_Controller_Rss extends Controller {
 
     $page = (int) Arr::get($this->request->query(), "page", 1);
     if ($page < 1) {
-      $this->redirect(URL::query(array("page" => 1)));
+      $this->redirect($this->_paginator_url(1, true));
     }
 
     // Configurable page size between 1 and 100, default 20
@@ -43,7 +43,7 @@ class Rss_Controller_Rss extends Controller {
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {
-      $this->redirect(URL::query(array("page" => $feed->max_pages)));
+      $this->redirect($this->_paginator_url($feed->max_pages, true));
     }
 
     $view = new View(empty($feed->view) ? "rss/feed.mrss" : $feed->view);
@@ -52,15 +52,19 @@ class Rss_Controller_Rss extends Controller {
     $view->feed = $feed;
     $view->pub_date = date("D, d M Y H:i:s O");
 
-    $feed->uri = URL::abs_site(URL::query($_GET));
+    $feed->uri = $this->_paginator_url($page);
     if ($page > 1) {
-      $feed->previous_page_uri = URL::abs_site(URL::query(array("page" => $page - 1)));
+      $feed->previous_page_uri = $this->_paginator_url($page - 1);
     }
     if ($page < $feed->max_pages) {
-      $feed->next_page_uri = URL::abs_site(URL::query(array("page" => $page + 1)));
+      $feed->next_page_uri = $this->_paginator_url($page + 1);
     }
 
     $this->response->headers("Content-Type", "application/rss+xml");
     $this->response->body($view);
+  }
+
+  protected function _paginator_url($page=1, $absolute=false) {
+    return Request::current()->url($absolute) . URL::query(array("page" => $page));
   }
 }
