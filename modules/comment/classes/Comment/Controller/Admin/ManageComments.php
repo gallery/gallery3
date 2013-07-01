@@ -50,8 +50,6 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $view->menu = $this->_menu($view->counts);
     $view->state = $state;
     $view->comments = ORM::factory("Comment")
-      ->order_by("created", "DESC")
-      ->order_by("id", "DESC")
       ->where("state", "=", $state)
       ->limit(static::$items_per_page)
       ->offset(($page - 1) * static::$items_per_page)

@@ -46,10 +46,8 @@ class Comment_Hook_CommentRss {
       return;
     }
 
-    $comments = ORM::factory("Comment")
-      ->viewable()
-      ->where("comment.state", "=", "published")
-      ->order_by("comment.created", "DESC");
+    $comments = ORM::factory("Comment")->viewable()
+      ->where("comment.state", "=", "published");
 
     if ($feed_id == "item") {
       $item = ORM::factory("Item", $id);

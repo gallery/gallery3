@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Model_Comment extends ORM {
+  // Set the default sorting.
+  protected $_sorting = array("created" => "DESC", "id" => "DESC");
+
   function author() {
     return Identity::lookup_user($this->author_id);
   }

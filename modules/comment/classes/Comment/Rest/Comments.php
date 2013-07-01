@@ -132,10 +132,7 @@ class Comment_Rest_Comments extends Rest {
       return null;
     }
 
-    $members = ORM::factory("Comment")
-      ->viewable()
-      ->order_by("comment.created", "DESC")
-      ->order_by("comment.id", "DESC");
+    $members = ORM::factory("Comment")->viewable();
 
     $this->members_info["count"] = $members->reset(false)->count_all();
     $members = $members

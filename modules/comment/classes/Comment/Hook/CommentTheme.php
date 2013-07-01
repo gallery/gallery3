@@ -37,6 +37,7 @@ class Comment_Hook_CommentTheme {
     $view->comments = $theme->item()->comments
       ->where("state", "=", "published")
       ->order_by("created", "ASC")
+      ->order_by("id", "ASC")
       ->find_all();
 
     $block->content = $view;
