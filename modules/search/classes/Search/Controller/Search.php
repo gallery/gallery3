@@ -27,14 +27,11 @@ class Search_Controller_Search extends Controller {
       $album = Item::root();
     }
 
-    $root = Item::root();
     $template = new View_Theme("required/page.html", "collection", "search");
     $template->set_global(array(
       "children_query" => Search::search_query_base($q, $album),
       "children_order_by" => array("score" => "DESC", "id" => "ASC"),
-      "breadcrumbs" => array(
-        Breadcrumb::instance($root->title, $root->url())->set_first(),
-        Breadcrumb::instance($q, URL::abs_site("search?q=" . urlencode($q)))->set_last())
+      "breadcrumbs" => Search::get_breadcrumbs(null, $q, $album)
     ));
 
     $template->content = new View("search/results.html");
@@ -58,21 +55,12 @@ class Search_Controller_Search extends Controller {
       list ($next_item) = $result_data;
     }
 
-    $search_url = URL::abs_site("search" .
-      "?q=" . urlencode($q) .
-      "&album=" . urlencode($album->id) .
-      "&show={$item->id}");
-    $root = Item::root();
-
     return array("position" => $position,
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
                  "sibling_count" => $count,
                  "siblings_callback" => array("Controller_Search::get_siblings", array($q, $album)),
-                 "breadcrumbs" => array(
-                   Breadcrumb::instance($root->title, $root->url())->set_first(),
-                   Breadcrumb::instance(t("Search: %q", array("q" => $q)), $search_url),
-                   Breadcrumb::instance($item->title, $item->url())->set_last()));
+                 "breadcrumbs" => Search::get_breadcrumbs($item, $q, $album));
   }
 
   public static function get_siblings($q, $album, $limit, $offset) {
