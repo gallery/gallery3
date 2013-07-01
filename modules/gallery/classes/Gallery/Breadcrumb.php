@@ -23,7 +23,7 @@ class Gallery_Breadcrumb {
   public $first;
   public $last;
 
-  static function instance($title, $url) {
+  static function factory($title, $url) {
     return new Breadcrumb($title, $url);
   }
 
@@ -49,9 +49,9 @@ class Gallery_Breadcrumb {
 
     $bc = array_merge($item->parents->find_all()->as_array(), array($item));
     for ($i = 0; $i < count($bc) - 1; $i++) {
-      $bc[$i] = Breadcrumb::instance($bc[$i]->title, $bc[$i]->url("show={$bc[$i+1]->id}"));
+      $bc[$i] = Breadcrumb::factory($bc[$i]->title, $bc[$i]->url("show={$bc[$i+1]->id}"));
     }
-    $bc[$i] = Breadcrumb::instance($item->title, $item->url());
+    $bc[$i] = Breadcrumb::factory($item->title, $item->url());
     $bc = array_merge($bc, $last_breadcrumbs);
 
     $bc[0]->set_first();

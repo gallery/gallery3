@@ -136,9 +136,9 @@ class Search_Search {
     $params = ($album->is_root() ? array("q" => $q) : array("q" => $q, "album" => $album->id));
 
     $last_breadcrumbs = array();
-    $last_breadcrumbs[] = Breadcrumb::instance($q, URL::site("search") . URL::query($params, false));
+    $last_breadcrumbs[] = Breadcrumb::factory($q, URL::site("search") . URL::query($params, false));
     if ($item) {
-      $last_breadcrumbs[] = Breadcrumb::instance($item->title, $item->url());
+      $last_breadcrumbs[] = Breadcrumb::factory($item->title, $item->url());
     }
 
     return Breadcrumb::array_from_item_parents($album, $last_breadcrumbs);

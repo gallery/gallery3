@@ -80,8 +80,8 @@ class Tag_Controller_Tags extends Controller {
       "tag" => $tag,
       "children_query" => $tag->items->viewable(),
       "breadcrumbs" => array(
-        Breadcrumb::instance($root->title, $root->url())->set_first(),
-        Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),
+        Breadcrumb::factory($root->title, $root->url())->set_first(),
+        Breadcrumb::factory(t("Tag: %tag_name", array("tag_name" => $tag->name)),
                              $tag->url())->set_last())
     ));
 
@@ -212,9 +212,9 @@ class Tag_Controller_Tags extends Controller {
                    $tag->items->viewable()->where("type", "!=", "album")->count_all(),
                  "siblings_callback" => array(array($tag, "items"), array()),
                  "breadcrumbs" => array(
-                   Breadcrumb::instance($root->title, $root->url())->set_first(),
-                   Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),
+                   Breadcrumb::factory($root->title, $root->url())->set_first(),
+                   Breadcrumb::factory(t("Tag: %tag_name", array("tag_name" => $tag->name)),
                                         $tag->url("show={$item->id}")),
-                   Breadcrumb::instance($item->title, $item->url())->set_last()));
+                   Breadcrumb::factory($item->title, $item->url())->set_last()));
   }
 }

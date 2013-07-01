@@ -26,11 +26,11 @@ class Breadcrumb_Test extends Unittest_TestCase {
     $item = Test::random_photo($album);
 
     $expected = array();
-    $expected[] = Breadcrumb::instance(
+    $expected[] = Breadcrumb::factory(
       Item::root()->title, Item::root()->url("show={$album->id}"))->set_first();
     $expected[] =
-      Breadcrumb::instance($album->title, $album->url("show={$item->id}"));
-    $expected[] = Breadcrumb::instance($item->title, $item->url())->set_last();
+      Breadcrumb::factory($album->title, $album->url("show={$item->id}"));
+    $expected[] = Breadcrumb::factory($item->title, $item->url())->set_last();
     $this->assertEquals($expected, Breadcrumb::array_from_item_parents($item));
   }
 }
