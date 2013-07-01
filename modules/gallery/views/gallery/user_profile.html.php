@@ -31,7 +31,7 @@
     <? endif ?>
   </div>
   <h1>
-    <img src="<?= $user->avatar_url(40, $theme->url("assets/required/avatar.jpg", true)) ?>"
+    <img src="<?= $user->avatar_url(40) ?>"
        alt="<?= HTML::clean_attribute($user->display_name()) ?>"
        class="g-avatar g-left" width="40" height="40" />
     <?= t("User profile: %name", array("name" => $user->display_name())) ?>

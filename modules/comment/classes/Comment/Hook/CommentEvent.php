@@ -86,8 +86,7 @@ class Comment_Hook_CommentEvent {
 
   static function show_user_profile($data) {
     $view = new View("comment/user_profile.html");
-    $view->comments = ORM::factory("Comment")
-      ->order_by("created", "DESC")
+    $view->comments = ORM::factory("Comment")->viewable()
       ->where("state", "=", "published")
       ->where("author_id", "=", $data->user->id)
       ->find_all();

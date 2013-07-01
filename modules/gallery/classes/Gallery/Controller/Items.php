@@ -48,55 +48,21 @@ class Gallery_Controller_Items extends Controller {
 
     // Build the view.  Photos and movies are nearly identical, but albums are different.
     if ($item->is_album()) {
-      $page_size = Module::get_var("gallery", "page_size", 9);
-      $show = $this->request->query("show");
-
-      if ($show) {
-        $child = ORM::factory("Item", $show);
-        $index = Item::get_position($child);
-        if ($index) {
-          $page = ceil($index / $page_size);
-          if ($page == 1) {
-            $this->redirect($item->abs_url());
-          } else {
-            $this->redirect($item->abs_url("page=$page"));
-          }
-        }
-      }
-
-      $page = Arr::get($this->request->query(), "page", "1");
-      $children_count = $item->children->viewable()->count_all();
-      $offset = ($page - 1) * $page_size;
-      $max_pages = max(ceil($children_count / $page_size), 1);
-
-      // Make sure that the page references a valid offset
-      if ($page < 1) {
-        $this->redirect($item->abs_url());
-      } else if ($page > $max_pages) {
-        $this->redirect($item->abs_url("page=$max_pages"));
-      }
-
       $template = new View_Theme("required/page.html", "collection", "album");
       $template->content = new View("required/album.html");
       $template->set_global(array(
-        "page" => $page,
         "page_title" => null,
-        "max_pages" => $max_pages,
-        "page_size" => $page_size,
         "item" => $item,
-        "children" => $item->children->viewable()->limit($page_size)->offset($offset)->find_all(),
-        "parents" => $item->parents->find_all()->as_array(), // view calls empty() on this
+        "children_query" => $item->children->viewable(),
         "breadcrumbs" => Breadcrumb::array_from_item_parents($item),
-        "children_count" => $children_count
       ));
+      $template->init_paginator();
       Item::set_display_context_callback("Controller_Items::get_display_context");
     } else {
       $template = new View_Theme("required/page.html", "item", $item->type);
       $template->content = new View("required/{$item->type}.html");
       $template->set_global(array(
         "item" => $item,
-        "children" => array(),
-        "children_count" => 0
       ));
       $template->set_global(Item::get_display_context($item));
     }

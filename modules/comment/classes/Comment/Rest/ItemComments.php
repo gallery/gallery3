@@ -47,9 +47,7 @@ class Comment_Rest_ItemComments extends Rest {
     $item = ORM::factory("Item", $this->id);
     Access::required("view", $item);
 
-    $members = $item->comments
-      ->order_by("comment.created", "DESC")
-      ->order_by("comment.id", "DESC");
+    $members = $item->comments;
 
     $this->members_info["count"] = $members->reset(false)->count_all();
     $members = $members

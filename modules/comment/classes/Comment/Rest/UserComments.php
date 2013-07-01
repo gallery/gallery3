@@ -51,11 +51,8 @@ class Comment_Rest_UserComments extends Rest {
 
     // Note: we can't simply do "$user->comments" since we have no guarantee
     // that the user is an ORM model with an established relationship.
-    $members = ORM::factory("Comment")
-      ->where("author_id", "=", $user->id)
-      ->viewable()
-      ->order_by("comment.created", "DESC")
-      ->order_by("comment.id", "DESC");
+    $members = ORM::factory("Comment")->viewable()
+      ->where("author_id", "=", $user->id);
 
     $this->members_info["count"] = $members->reset(false)->count_all();
     $members = $members

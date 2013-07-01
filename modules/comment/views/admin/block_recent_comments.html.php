@@ -2,7 +2,7 @@
 <ul>
   <? foreach ($comments as $comment): ?>
   <li class="<?= Text::alternate("g-even", "g-odd") ?>">
-    <img src="<?= $comment->author()->avatar_url(32, $theme->url("assets/required/avatar.jpg", true)) ?>"
+    <img src="<?= $comment->author()->avatar_url(32) ?>"
          class="g-avatar"
          alt="<?= HTML::clean_attribute($comment->author_name()) ?>"
          width="32"

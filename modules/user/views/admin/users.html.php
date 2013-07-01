@@ -68,10 +68,10 @@
             <th><?= t("Actions") ?></th>
           </tr>
 
-          <? foreach ($users as $i => $user): ?>
+          <? foreach ($children as $i => $user): ?>
           <tr id="g-user-<?= $user->id ?>" class="<?= Text::alternate("g-odd", "g-even") ?> g-user <?= $user->admin ? "g-admin" : "" ?>">
             <td id="g-user-<?= $user->id ?>" class="g-core-info g-draggable">
-              <img src="<?= $user->avatar_url(20, $theme->url("assets/required/avatar.jpg", true)) ?>"
+              <img src="<?= $user->avatar_url(20) ?>"
                    title="<?= t("Drag user onto a group to add as a new member")->for_html_attr() ?>"
                    alt="<?= HTML::clean_attribute($user->name) ?>"
                    width="20"

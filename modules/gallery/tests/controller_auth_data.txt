@@ -1,8 +1,6 @@
 # Golden file for Controller_Auth_Test.  These are the cases where the scanner didn't see typical
 # auth or CSRF use.  For each case, we document *why* this is okay.  All comment lines are ignored.
 #
-# 1x NULLIPOTENT - input for display filters and pagination
-modules/comment/classes/Comment/Controller/Admin/ManageComments.php         action_queue                   DIRTY_CSRF
 # 3x OTHER AUTH - visibility restricted using Model_Comment::viewable()
 modules/comment/classes/Comment/Hook/CommentRss.php                         feed                           DIRTY_AUTH
 modules/comment/classes/Comment/Rest/Comments.php                           get_members                    DIRTY_AUTH
@@ -17,8 +15,6 @@ modules/gallery/classes/Gallery/Controller/Combined.php                     acti
 # 2x OTHER AUTH - 404s instead of 403s
 modules/gallery/classes/Gallery/Controller/FileProxy.php                    action_index                   DIRTY_AUTH
 modules/gallery/classes/Gallery/Controller/FileProxy.php                    action_show                    DIRTY_CSRF|DIRTY_AUTH
-# 1x NULLIPOTENT - input for display item
-modules/gallery/classes/Gallery/Controller/Items.php                        action_show                    DIRTY_CSRF
 # 2x NO AUTH - login/logout
 modules/gallery/classes/Gallery/Controller/Login.php                        action_index                   DIRTY_AUTH
 modules/gallery/classes/Gallery/Controller/Logout.php                       action_index                   DIRTY_AUTH
@@ -64,8 +60,8 @@ modules/server_add/classes/ServerAdd/Controller/Admin/ServerAdd.php         acti
 modules/server_add/classes/ServerAdd/Controller/ServerAdd.php               action_children                DIRTY_CSRF
 # 1x NULLIPOTENT - input for display filter
 modules/tag/classes/Tag/Controller/Admin/Tags.php                           action_index                   DIRTY_CSRF
-# 1x NULLIPOTENT - input for pagination; OTHER AUTH - 404s instead of 403s
-modules/tag/classes/Tag/Controller/Tags.php                                 action_show                    DIRTY_CSRF|DIRTY_AUTH
+# 1x OTHER AUTH - 404s instead of 403s
+modules/tag/classes/Tag/Controller/Tags.php                                 action_show                    DIRTY_AUTH
 # 1x NULLIPOTENT - input for autocomplete; NO AUTH - autocomplete
 modules/tag/classes/Tag/Controller/Tags.php                                 action_autocomplete            DIRTY_CSRF|DIRTY_AUTH
 # 1x AUTH ELSEWHERE - redirects to canonical URL
@@ -81,7 +77,5 @@ modules/tag/classes/Tag/Rest/TagItems.php                                   dele
 # 2x OTHER AUTH - 404s instead of 403s
 modules/tag/classes/Tag/Rest/Tags.php                                       get_entity                     DIRTY_AUTH
 modules/tag/classes/Tag/Rest/Tags.php                                       get_members                    DIRTY_AUTH
-# 1x NULLIPOTENT - input for pagination
-modules/user/classes/User/Controller/Admin/Users.php                        action_index                   DIRTY_CSRF
 # 1x NO AUTH - password reset
 modules/user/classes/User/Controller/Password.php                           action_reset                   DIRTY_AUTH
