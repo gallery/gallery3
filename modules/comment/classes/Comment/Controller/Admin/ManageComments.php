@@ -51,7 +51,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
 
     $view->page_size = static::$items_per_page;
     $view->children_query = ORM::factory("Comment")->where("state", "=", $state);
-    $view->init_paginator();
+    $view->init_collection();
 
     $view->counts = $this->_counts();
     $view->menu = $this->_menu($view->counts);

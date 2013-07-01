@@ -87,7 +87,7 @@ class Tag_Controller_Tags extends Controller {
 
     $template->content = new View("required/dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
-    $template->init_paginator();
+    $template->init_collection();
 
     $this->response->body($template);
     Item::set_display_context_callback("Controller_Tags::get_display_context", $tag->id);
