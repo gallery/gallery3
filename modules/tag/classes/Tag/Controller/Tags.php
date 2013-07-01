@@ -74,48 +74,22 @@ class Tag_Controller_Tags extends Controller {
       throw HTTP_Exception::factory(404);
     }
 
-    $page_size = Module::get_var("gallery", "page_size", 9);
-    $show = $this->request->query("show");
-
-    if ($show) {
-      $child = ORM::factory("Item", $show);
-      $index = Tag::get_position($tag, $child);
-      if ($index) {
-        $page = ceil($index / $page_size);
-        $this->redirect($tag->abs_url($page == 1 ? "" : "page=$page"));
-      }
-    } else {
-      $page = (int) Arr::get($this->request->query(), "page", "1");
-    }
-
-    $children_count = $tag->items->viewable()->count_all();
-    $offset = ($page-1) * $page_size;
-    $max_pages = max(ceil($children_count / $page_size), 1);
-
-    // Make sure that the page references a valid offset
-    if ($page < 1) {
-      $this->redirect(URL::query(array("page" => 1)));
-    } else if ($page > $max_pages) {
-      $this->redirect(URL::query(array("page" => $max_pages)));
-    }
-
     $root = Item::root();
     $template = new View_Theme("required/page.html", "collection", "tag");
-    $template->set_global(
-      array("page" => $page,
-            "max_pages" => $max_pages,
-            "page_size" => $page_size,
-            "tag" => $tag,
-            "children" => $tag->items->viewable()->limit($page_size)->offset($offset)->find_all(),
-            "breadcrumbs" => array(
-              Breadcrumb::instance($root->title, $root->url())->set_first(),
-              Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),
-                                   $tag->url())->set_last()),
-            "children_count" => $children_count));
+    $template->set_global(array(
+      "tag" => $tag,
+      "children_query" => $tag->items->viewable(),
+      "breadcrumbs" => array(
+        Breadcrumb::instance($root->title, $root->url())->set_first(),
+        Breadcrumb::instance(t("Tag: %tag_name", array("tag_name" => $tag->name)),
+                             $tag->url())->set_last())
+    ));
+
     $template->content = new View("required/dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
-    $this->response->body($template);
+    $template->init_paginator();
 
+    $this->response->body($template);
     Item::set_display_context_callback("Controller_Tags::get_display_context", $tag->id);
   }
 

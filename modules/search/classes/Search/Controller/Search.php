@@ -19,9 +19,7 @@
  */
 class Search_Controller_Search extends Controller {
   public function action_index() {
-    $page_size = Module::get_var("gallery", "page_size", 9);
     $q = $this->request->query("q");
-    $show = $this->request->query("show");
 
     $album_id = Arr::get($this->request->query(), "album", Item::root()->id);
     $album = ORM::factory("Item", $album_id);
@@ -29,50 +27,22 @@ class Search_Controller_Search extends Controller {
       $album = Item::root();
     }
 
-    if ($show) {
-      $child = ORM::factory("Item", $show);
-      $index = Search::get_position_within_album($child, $q, $album);
-      if ($index) {
-        $page = ceil($index / $page_size);
-        $this->redirect(URL::abs_site("search" .
-          "?q=" . urlencode($q) .
-          "&album=" . urlencode($album->id) .
-          ($page == 1 ? "" : "&page=$page")));
-      }
-    }
-
-    $page = Arr::get($this->request->query(), "page", 1);
-
-    // Make sure that the page references a valid offset
-    if ($page < 1) {
-      $page = 1;
-    }
-
-    $offset = ($page - 1) * $page_size;
-
-    list ($count, $result) = Search::search_within_album($q, $album, $page_size, $offset);
-
-    $max_pages = max(ceil($count / $page_size), 1);
-
-    $template = new View_Theme("required/page.html", "collection", "search");
     $root = Item::root();
-    $template->set_global(
-      array("page" => $page,
-            "max_pages" => $max_pages,
-            "page_size" => $page_size,
-            "breadcrumbs" => array(
-              Breadcrumb::instance($root->title, $root->url())->set_first(),
-              Breadcrumb::instance($q, URL::abs_site("search?q=" . urlencode($q)))->set_last(),
-            ),
-            "children_count" => $count));
+    $template = new View_Theme("required/page.html", "collection", "search");
+    $template->set_global(array(
+      "children_query" => Search::search_query_base($q, $album),
+      "children_order_by" => array("score" => "DESC", "id" => "ASC"),
+      "breadcrumbs" => array(
+        Breadcrumb::instance($root->title, $root->url())->set_first(),
+        Breadcrumb::instance($q, URL::abs_site("search?q=" . urlencode($q)))->set_last())
+    ));
 
     $template->content = new View("search/results.html");
     $template->content->album = $album;
-    $template->content->items = $result;
     $template->content->q = $q;
+    $template->init_paginator();
 
     $this->response->body($template);
-
     Item::set_display_context_callback("Controller_Search::get_display_context", $album, $q);
   }
 

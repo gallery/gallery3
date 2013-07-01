@@ -51,7 +51,7 @@
         <?= t("Actions") ?>
       </th>
     </tr>
-    <? foreach ($comments as $comment): ?>
+    <? foreach ($children as $comment): ?>
     <tr id="g-comment-<?= $comment->id ?>" class="<?= Text::alternate("g-odd", "g-even") ?>">
       <td>
         <a href="#">

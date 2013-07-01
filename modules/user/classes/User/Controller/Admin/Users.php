@@ -26,36 +26,14 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $view->page_title = t("Users and groups");
     $view->page_type = "collection";
     $view->page_subtype = "admin_users";
-    $view->content = new View("admin/users.html");
 
-    // @todo: add this as a config option
-    $page_size = Module::get_var("user", "page_size", 10);
-    $page = Arr::get($this->request->query(), "page", "1");
-    $user_count = DB::select()->from("users")->as_object()->execute()->count();
-
-    // Pagination info
-    $view->page = $page;
-    $view->page_size = $page_size;
-    $view->children_count = $user_count;
-    $view->max_pages = ceil($view->children_count / $view->page_size);
-
-    $view->content->pager = Pagination::factory(array(
-      "total_items"    => $user_count,
-      "items_per_page" => $page_size
+    $view->set_global(array(
+      "page_size" => Module::get_var("user", "page_size", 10),  // @todo: add this as a config option
+      "children_query" => ORM::factory("User")->order_by("name", "ASC")
     ));
+    $view->init_paginator();
 
-    // Make sure that the page references a valid offset
-    if ($page < 1) {
-      $this->redirect($this->request->uri() . URL::query(array("page" => 1)));
-    } else if ($page > $view->content->pager->total_pages) {
-      $this->redirect($this->request->uri() . URL::query(array("page" => $view->content->pager->total_pages)));
-    }
-
-    $view->content->users = ORM::factory("User")
-      ->order_by("name", "ASC")
-      ->limit($page_size)
-      ->offset($view->content->pager->offset)
-      ->find_all();
+    $view->content = new View("admin/users.html");
     $view->content->groups = ORM::factory("Group")
       ->order_by("name", "ASC")
       ->find_all();

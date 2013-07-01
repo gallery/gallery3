@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Controller_Admin_ManageComments extends Controller_Admin {
-  protected static $items_per_page = 20;
+  static $items_per_page = 20;
 
   public function action_index() {
     // Get rid of old deleted/spam comments once in a while
@@ -43,27 +43,19 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
 
   public function action_queue() {
     $state = $this->request->arg(0, "alpha");
-    $page = max($this->request->query("page"), 1);
 
     $view = new View_Gallery("admin/manage_comments_queue.html");
+    $view->theme = $view;  // needed so we can use $theme->paginator() in the view
+    $view->page_type = "collection";
+    $view->page_subtype = "admin_comments";
+
+    $view->page_size = static::$items_per_page;
+    $view->children_query = ORM::factory("Comment")->where("state", "=", $state);
+    $view->init_paginator();
+
     $view->counts = $this->_counts();
     $view->menu = $this->_menu($view->counts);
     $view->state = $state;
-    $view->comments = ORM::factory("Comment")
-      ->where("state", "=", $state)
-      ->limit(static::$items_per_page)
-      ->offset(($page - 1) * static::$items_per_page)
-      ->find_all();
-
-    $view->page = $page;
-    $view->page_type = "collection";
-    $view->page_subtype = "admin_comments";
-    $view->page_size = static::$items_per_page;
-    $view->children_count = $this->_counts()->$state;
-    $view->max_pages = ceil($view->children_count / $view->page_size);
-
-    // Also we want to use $theme->paginator() so we need a dummy theme
-    $view->theme = $view;
 
     $this->response->body($view);
   }
