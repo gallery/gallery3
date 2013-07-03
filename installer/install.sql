@@ -252,7 +252,7 @@ INSERT INTO {modules} VALUES (4,1,'comment',8,4);
 INSERT INTO {modules} VALUES (5,1,'organize',4,5);
 INSERT INTO {modules} VALUES (6,1,'info',3,6);
 INSERT INTO {modules} VALUES (7,1,'rss',1,7);
-INSERT INTO {modules} VALUES (8,1,'search',1,8);
+INSERT INTO {modules} VALUES (8,1,'search',2,8);
 INSERT INTO {modules} VALUES (9,1,'slideshow',2,9);
 INSERT INTO {modules} VALUES (10,1,'tag',4,10);
 DROP TABLE IF EXISTS {outgoing_translations};
@@ -385,7 +385,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -432,5 +432,8 @@ INSERT INTO {vars} VALUES (NULL,'info','show_owner','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_name','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_captured','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_dimensions','1');
+INSERT INTO {vars} VALUES (NULL,'search','wildcard_mode','append_stem');
+INSERT INTO {vars} VALUES (NULL,'search','short_search_fix','0');
+INSERT INTO {vars} VALUES (NULL,'search','short_search_prefix','1Z');
 INSERT INTO {vars} VALUES (NULL,'slideshow','max_scale','0');
 INSERT INTO {vars} VALUES (NULL,'tag','tag_cloud_size','30');

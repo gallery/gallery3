@@ -53,7 +53,6 @@ class Tag_Tag {
   static function popular_tags($count) {
     $count = max($count, 1);
     return ORM::factory("Tag")
-      ->order_by("count", "DESC")
       ->limit($count)
       ->find_all();
   }

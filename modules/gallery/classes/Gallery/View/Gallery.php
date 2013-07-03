@@ -35,8 +35,8 @@ class Gallery_View_Gallery extends View {
   }
 
   /**
-   * Initialize a collection's paginator.  This processes the "page" and "show" query parameters,
-   * builds the collection, and gets/sets several view variables in the process.
+   * Initialize a collection's children and paginator.  This processes the "page" and "show" query
+   * parameters, builds the collection, and gets/sets several view variables in the process.
    *
    * As inputs, this uses four view variables (one required, three optional):
    *  - "children_query" (reqd) - ORM query for the child objects without limit or offset applied.
@@ -52,9 +52,9 @@ class Gallery_View_Gallery extends View {
    *  - processes "show" query parameter and redirects as needed
    *  - processes "page" query parameter and redirects as needed
    */
-  public function init_paginator() {
+  public function init_collection() {
     if (($this->page_type != "collection") || empty($this->children_query)) {
-      throw new Gallery_Exception("Paginator cannot be initialized");
+      throw new Gallery_Exception("Collection view cannot be initialized");
     }
 
     // Set "page_size" by the module var, if empty.

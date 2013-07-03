@@ -31,7 +31,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
       "page_size" => Module::get_var("user", "page_size", 10),  // @todo: add this as a config option
       "children_query" => ORM::factory("User")->order_by("name", "ASC")
     ));
-    $view->init_paginator();
+    $view->init_collection();
 
     $view->content = new View("admin/users.html");
     $view->content->groups = ORM::factory("Group")

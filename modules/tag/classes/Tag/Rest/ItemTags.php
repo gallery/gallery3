@@ -69,11 +69,10 @@ class Tag_Rest_ItemTags extends Rest {
     }
 
     switch (Arr::get($this->params, "order", $default_order)) {
-    case "count":
-      $members->order_by("count", "DESC");
-
     case "name":
-      $members->order_by("name", "ASC");  // also used as tie-breaker for "count" order
+      $members->order_by("name", "ASC");
+
+    case "count":  // default as set by Model_Tag::$_sorting - do nothing.
       break;
 
     default:

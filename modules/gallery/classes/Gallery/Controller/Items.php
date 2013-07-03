@@ -56,7 +56,7 @@ class Gallery_Controller_Items extends Controller {
         "children_query" => $item->children->viewable(),
         "breadcrumbs" => Breadcrumb::array_from_item_parents($item),
       ));
-      $template->init_paginator();
+      $template->init_collection();
       Item::set_display_context_callback("Controller_Items::get_display_context");
     } else {
       $template = new View_Theme("required/page.html", "item", $item->type);

@@ -37,7 +37,7 @@ class Search_Controller_Search extends Controller {
     $template->content = new View("search/results.html");
     $template->content->album = $album;
     $template->content->q = $q;
-    $template->init_paginator();
+    $template->init_collection();
 
     $this->response->body($template);
     Item::set_display_context_callback("Controller_Search::get_display_context", $album, $q);
