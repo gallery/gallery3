@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Model_Tag extends ORM {
+  // Set the default sorting.  Use "name" fields as tie-breakers since they're unique.
+  protected $_sorting = array("count" => "DESC", "name" => "ASC");
+
   public function __construct($id=null) {
     parent::__construct($id);
 
