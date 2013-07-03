@@ -41,4 +41,55 @@ class Search_Hook_SearchEvent {
   static function item_related_update($item) {
     Search::update($item);
   }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("search")
+               ->label(t("Search"))
+               ->url(url::site("admin/search")));
+  }
+
+  /**
+   * Modify the search terms based on the "wildcard_mode" and "short_search_fix" module vars.
+   */
+  static function search_terms($terms, $type) {
+    $wildcard_mode = Module::get_var("search", "wildcard_mode", "append_stem");
+    $prefix = Module::get_var("search", "short_search_fix", false) ?
+              Module::get_var("search", "short_search_prefix", "1Z") : "";
+
+    $quoted = false;
+    for($i = 1; $i < count($terms); $i += 2) {
+      $quoted = (strpos($terms[$i - 1], '"') === false) ? $quoted : !$quoted;
+
+      // Skip empty terms (exact match since "0" isn't empty).
+      if ((string)$terms[$i] === "") {
+        continue;
+      }
+
+      switch ($type) {
+      case "boolean":
+        // Add wildcards to terms that are neither quoted nor already wildcarded.
+        if (!$quoted && (substr($terms[$i + 1], 0, 1) != "*")) {
+          switch ($wildcard_mode) {
+          case "append_stem":
+            $singular = str_split(Inflector::singular($terms[$i]));
+            $plural   = str_split(Inflector::plural($terms[$i]));
+            $terms[$i] = implode("", array_intersect_assoc($singular, $plural));
+          case "append":
+            $terms[$i + 1] = "*" . $terms[$i + 1];
+          case "none":
+            break;
+          default:
+            throw new Gallery_Exception("Invalid search wildcard_mode setting: $wildcard_mode");
+          }
+        }
+
+      case "natural_language":
+      case "index":
+        // Add the prefix to the delimiter of all terms.
+        $terms[$i - 1] .= $prefix;
+      }
+    }
+  }
 }

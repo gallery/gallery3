@@ -19,6 +19,7 @@
  */
 class Search_Hook_SearchInstaller {
   static function install() {
+    // For MySQL <5.6, full-text searches require the MyISAM engine (as opposed to InnoDB).
     $db = Database::instance();
     $db->query(Database::CREATE, "CREATE TABLE {search_records} (
                  `id` int(9) NOT NULL auto_increment,
@@ -30,6 +31,10 @@ class Search_Hook_SearchInstaller {
                  FULLTEXT INDEX (`data`))
                ENGINE=MyISAM
                DEFAULT CHARSET=utf8;");
+
+    Module::set_var("search", "wildcard_mode", "append_stem");
+    Module::set_var("search", "short_search_fix", false);
+    Module::set_var("search", "short_search_prefix", "1Z");
   }
 
   static function activate() {
@@ -40,11 +45,22 @@ class Search_Hook_SearchInstaller {
     Search::check_index();
   }
 
+  static function upgrade($version) {
+    if ($version == 1) {
+      // In v2, we added some additional module variables for wildcards and short search fixes.
+      Module::set_var("search", "wildcard_mode", "append_stem");
+      Module::set_var("search", "short_search_fix", false);
+      Module::set_var("search", "short_search_prefix", "1Z");
+      Module::set_version("search", $version = 2);
+    }
+  }
+
   static function deactivate() {
     SiteStatus::clear("search_index_out_of_date");
   }
 
   static function uninstall() {
     Database::instance()->query(Database::DROP, "DROP TABLE {search_records}");
+    Module::clear_vars("search");
   }
 }

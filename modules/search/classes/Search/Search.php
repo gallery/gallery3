@@ -18,22 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Search_Search {
-  static $max_add_query_terms = 5;
-
-  /**
-   * Add more terms to the query by wildcarding the stem value of the first
-   * few terms in the query.
-   */
-  static function add_query_terms($q) {
-    $terms = explode(" ", $q, static::$max_add_query_terms);
-    for ($i = 0; $i < min(count($terms), static::$max_add_query_terms - 1); $i++) {
-      // Don't wildcard quoted or already wildcarded terms
-      if ((substr($terms[$i], 0, 1) != '"') && (substr($terms[$i], -1, 1) != "*")) {
-        $terms[] = rtrim($terms[$i], "s") . "*";
-      }
-    }
-    return implode(" ", $terms);
-  }
+  // List of MySQL full-text search delimiters.  This is a superset of the BOOLEAN MODE operators,
+  // given by "ft_boolean_syntax", and some additional word separators.
+  // @see  http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_ft_boolean_syntax
+  // @see  http://dev.mysql.com/doc/refman/5.0/en/fulltext-natural-language.html
+  static $delimiters = '+ -><()~*:"&|,.;';
 
   static function search($q, $limit, $offset, $where=array()) {
     return Search::search_within_album($q, Item::root(), $limit, $offset, $where);
@@ -56,13 +45,24 @@ class Search_Search {
     return array($count, $items);
   }
 
+  /**
+   * Build a search query.  This takes a search string and album, runs the "search_terms" events
+   * to modify the terms as needed, and returns an ORM query.
+   * @see  http://dev.mysql.com/doc/refman/5.0/en/fulltext-search.html
+   */
   static function search_query_base($q, $album, $where=array()) {
     // For *choosing* the found items, we use BOOLEAN MODE to allow special operators (+, -, *,...)
     // For *ordering* the found items, we use NATURAL LANGUAGE MODE to give us a score
 
-    $q_boolean = Database::instance()->escape(Search::add_query_terms($q));
-    $q_natural = Database::instance()->escape($q);
+    // Run the "search_terms" events to modify the search terms as needed.
+    $q_boolean = new ArrayObject(Search::explode_fulltext_query($q));
+    $q_natural = clone $q_boolean;
+    Module::event("search_terms", $q_boolean, "boolean");
+    Module::event("search_terms", $q_natural, "natural_language");
+    $q_boolean = Database::instance()->escape(implode("", (array)$q_boolean));
+    $q_natural = Database::instance()->escape(implode("", (array)$q_natural));
 
+    // Build the query.
     return $album->descendants
       ->viewable()
       ->with("search_record")
@@ -84,17 +84,41 @@ class Search_Search {
     }
   }
 
+  /**
+   * Update an item's search record.  This runs the "item_index_data" event to gather the search
+   * data, the "search_terms" event to modify the data as needed, and then builds the record.
+   */
   static function update($item) {
+    // Get data using "item_index_data" event.
     $data = new ArrayObject();
+    Module::event("item_index_data", $item, $data);
+    $data = implode(" ", (array)$data);
+
+    // Modify/reformat data using "search_terms" event.
+    $data = new ArrayObject(Search::explode_fulltext_query($data));
+    Module::event("search_terms", $data, "index");
+    $data = implode("", (array)$data);
+
+    // Create/update search record.
     $record = $item->search_record;
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
 
-    Module::event("item_index_data", $item, $data);
-    $record->data = join(" ", (array)$data);
+    $record->data = $data;
     $record->dirty = 0;
     $record->save();
+  }
+
+  /**
+   * Mark all search records as dirty.
+   */
+  static function mark_dirty() {
+    DB::update("search_records")
+      ->set(array("dirty" => 1))
+      ->execute();
+
+    Search::check_index();
   }
 
   static function stats() {
@@ -132,6 +156,9 @@ class Search_Search {
     HTTP::redirect(Request::current()->uri(true));
   }
 
+  /**
+   * Build the breadcrumbs for a search query.
+   */
   static function get_breadcrumbs($item=null, $q, $album) {
     $params = ($album->is_root() ? array("q" => $q) : array("q" => $q, "album" => $album->id));
 
@@ -142,5 +169,39 @@ class Search_Search {
     }
 
     return Breadcrumb::array_from_item_parents($album, $last_breadcrumbs);
+  }
+
+  /**
+   * Explode a fulltext query string into its delimiters and terms.  This returns an array like:
+   *   array([delims], [term], [delims], .... [term], [delims])
+   * which always begins and ends with delimiters (which may be an empty string).  Example:
+   *   "foo bar* +baz,bah " --> array("", "foo", " ", "bar", "* +", "baz", ",", "bah", " ")
+   * The inverse of this function is simply implode("", $parts).
+   */
+  static function explode_fulltext_query($q) {
+    $delims = str_split(static::$delimiters);
+
+    // Pad the search query.  This padding never appears in the results.
+    $q = " " . $q . " X";
+
+    // Loop through each character in $q and explode into $parts.
+    $start = 0;
+    $delim = true;
+    $parts = array();
+    for ($i = 0; $i <= strlen($q); $i++) {
+      if ($delim != in_array(substr($q, $i, 1), $delims)) {
+        // Boundary between delims and term found - add to $parts, reset $start, and toggle $delim.
+        $parts[] = substr($q, $start, $i - $start);
+        $start = $i;
+        $delim = !$delim;
+      }
+    }
+
+    // Remove the padding (one space at start and end - "X" never appears).
+    $end = count($parts) - 1;
+    $parts[0]    = (string)substr($parts[0], 1);
+    $parts[$end] = (string)substr($parts[$end], 0, -1);
+
+    return $parts;
   }
 }
