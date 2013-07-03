@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="g-movies-admin" class="g-block ui-helper-clearfix">
+<div id="g-rest-admin" class="g-block ui-helper-clearfix">
   <h1> <?= t("REST API settings") ?> </h1>
   <p>
     <?= t("Gallery's REST API allows it to interface with desktop clients, mobile apps, photo software plug-ins, CMS embedding, and more.") ?>
