@@ -40,8 +40,7 @@ class Gallery_Module {
   protected static $_unittest_modules = array("gallery_unittest", "unittest");
   protected static $_first_module = "purifier";
   protected static $_last_module = "gallery";
-  protected static $_third_party_modules = array(
-    "cache", "database", "formo", "image", "orm", "pagination");
+  protected static $_third_party_modules = array("cache", "database", "formo", "image", "orm");
 
   /**
    * Set the version of the corresponding Model_Module.

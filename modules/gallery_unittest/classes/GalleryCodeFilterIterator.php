@@ -43,7 +43,6 @@ class GalleryCodeFilterIterator extends FilterIterator {
       strpos($path_name, MODPATH . "image") !== false ||
       strpos($path_name, MODPATH . "organize/vendor") !== false ||
       strpos($path_name, MODPATH . "orm") !== false ||
-      strpos($path_name, MODPATH . "pagination") !== false ||
       strpos($path_name, MODPATH . "purifier/vendor") !== false ||
       strpos($path_name, MODPATH . "unittest") !== false ||
       strpos($path_name, MODPATH . "user/vendor") !== false ||
