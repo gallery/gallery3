@@ -60,7 +60,7 @@ class Rss_Controller_Rss extends Controller {
       $feed->next_page_uri = $this->_paginator_url($page + 1);
     }
 
-    $this->response->headers("Content-Type", "application/rss+xml");
+    $this->response->headers("Content-Type", "application/rss+xml; charset=UTF-8");
     $this->response->body($view);
   }
 

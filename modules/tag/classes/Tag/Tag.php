@@ -114,6 +114,24 @@ class Tag_Tag {
   }
 
   /**
+   * Add tags from an image file's IPTC ("Keywords" field).
+   * @todo  consider adding XMP data in here, too.
+   */
+  static function add_from_metadata($item) {
+    if ($item->is_photo()) {
+      $iptc = Photo::get_file_iptc($item->file_path());
+      if (!empty($iptc["Keywords"])) {
+        // Implode array of CSV to one CSV string, explode into individual values, trim
+        // each, then filter out empty ones (which would otherwise throw exceptions).
+        $tags = array_filter(array_map("trim", explode(",", implode(",", $iptc["Keywords"]))));
+        foreach($tags as $tag) {
+          Tag::add($item, $tag);
+        }
+      }
+    }
+  }
+
+  /**
    * Find the position of the given item in the tag collection.  The resulting
    * value is 1-indexed, so the first child in the album is at position 1.
    *

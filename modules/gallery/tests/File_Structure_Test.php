@@ -80,7 +80,6 @@ class File_Structure_Test extends Unittest_TestCase {
       strpos($path, MODPATH . "formo") === 0 ||
       strpos($path, MODPATH . "image") === 0 ||
       strpos($path, MODPATH . "orm") === 0 ||
-      strpos($path, MODPATH . "pagination") === 0 ||
       strpos($path, MODPATH . "unittest") === 0;
   }
 
