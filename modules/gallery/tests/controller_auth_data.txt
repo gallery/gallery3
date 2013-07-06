@@ -9,9 +9,8 @@ modules/comment/classes/Comment/Rest/UserComments.php                       get_
 modules/g2_import/classes/G2Import/Controller/Admin/G2Import.php            action_autocomplete            DIRTY_CSRF
 # 1x NULLIPOTENT - input for G2->G3 mapping
 modules/g2_import/classes/G2Import/Controller/G2.php                        action_map                     DIRTY_CSRF
-# 2x NO AUTH - combined JS/CSS
-modules/gallery/classes/Gallery/Controller/Combined.php                     action_javascript              DIRTY_AUTH
-modules/gallery/classes/Gallery/Controller/Combined.php                     action_css                     DIRTY_AUTH
+# 1x NO AUTH - combined JS/CSS
+modules/gallery/classes/Gallery/Controller/Combined.php                     action_index                   DIRTY_AUTH
 # 2x OTHER AUTH - 404s instead of 403s
 modules/gallery/classes/Gallery/Controller/FileProxy.php                    action_index                   DIRTY_AUTH
 modules/gallery/classes/Gallery/Controller/FileProxy.php                    action_show                    DIRTY_CSRF|DIRTY_AUTH
