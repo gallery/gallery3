@@ -56,6 +56,11 @@ class Gallery_Hook_GalleryEvent {
           "action" => "index"
         ));
 
+    Route::set("combined", "<controller>/<key>", array("controller" => "combined", "key" => ".*"))
+      ->defaults(array(
+          "action" => "index"
+        ));
+
     Route::set("admin", "<directory>(/<controller>(/<action>(/<args>)))", array("directory" => "admin"))
       ->defaults(array(
           "controller" => "dashboard",

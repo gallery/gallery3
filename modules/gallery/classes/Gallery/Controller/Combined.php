@@ -22,37 +22,25 @@ class Gallery_Controller_Combined extends Controller {
   public $allow_private_gallery = true;
 
   /**
-   * Return the combined Javascript bundle associated with the given key.
+   * Return the combined CSS or JS bundle associated with the given key.
    */
-  public function action_javascript() {
-    $key = $this->request->arg(0, "alpha_dash");
-    return $this->_emit("javascript", $key);
-  }
-
-  /**
-   * Return the combined CSS bundle associated with the given key.
-   */
-  public function action_css() {
-    $key = $this->request->arg(0, "alpha_dash");
-    return $this->_emit("css", $key);
-  }
-
-  /**
-   * Print out a cached entry.
-   * @param string   the combined entry type (either "javascript" or "css")
-   * @param string   the key (typically an md5 sum)
-   */
-  protected function _emit($type, $key) {
+  public function action_index() {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
+
+    $key = $this->request->param("key");
+    if (substr($key, -3) == ".js") {
+      $mime_type = "application/javascript; charset=UTF-8";
+    } else if (substr($key, -4) == ".css") {
+      $mime_type = "text/css; charset=UTF-8";
+    } else {
+      // Invalid (or empty) key/filename - fire 404.
+      throw HTTP_Exception::factory(404);
+    }
 
     // Since our data is immutable, we set the etag to be the key (i.e. it never changes).
     // That way, if anything is found in the cache with this URL, it won't be refreshed.
     $this->check_cache($key);
-
-    if (empty($key)) {
-      throw HTTP_Exception::factory(404);
-    }
 
     $cache = Cache::instance();
     $use_gzip = function_exists("gzencode") &&
@@ -67,13 +55,6 @@ class Gallery_Controller_Combined extends Controller {
     }
     if (empty($content)) {
       throw HTTP_Exception::factory(404);
-    }
-
-    // $type is either 'javascript' or 'css'
-    if ($type == "javascript") {
-      $mime_type = "application/javascript; charset=UTF-8";
-    } else {
-      $mime_type = "text/css; charset=UTF-8";
     }
 
     // Send the content as the response.  This sets the filename as $key, which matches the URL.

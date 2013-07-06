@@ -297,9 +297,9 @@ class Gallery_View_Gallery extends View {
         }
 
         if ($type == "css") {
-          $buf .= HTML::style("combined/css/$key", $this->css_attrs, null, true) . "\n";
+          $buf .= HTML::style("combined/$key", $this->css_attrs, null, true) . "\n";
         } else {
-          $buf .= HTML::script("combined/javascript/$key", $this->script_attrs, null, true) . "\n";
+          $buf .= HTML::script("combined/$key", $this->script_attrs, null, true) . "\n";
         }
       } else {
         // Don't combine - just return the CSS and JS links (with the key as a cache buster).
