@@ -53,6 +53,13 @@ class Tag_Hook_TagEvent {
     Tag::add_from_metadata($item);
   }
 
+  /**
+   * Add tags from an image file's IPTC ("Keywords" field).
+   */
+  static function item_updated_data_file($item) {
+    Tag::add_from_metadata($item);
+  }
+
   static function item_deleted($item) {
     Tag::clear_all($item);
     if (!Batch::in_progress()) {
