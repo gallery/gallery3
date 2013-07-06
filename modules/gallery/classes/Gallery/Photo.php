@@ -24,6 +24,34 @@
  * Note: by design, this class does not do any permission checking.
  */
 class Gallery_Photo {
+  // IPTC tag names.
+  // @see  Photo::get_file_iptc()
+  static $iptc_tags = array(
+    "2#005" => "ObjectName",
+    "2#015" => "Category",
+    "2#020" => "Supplementals",
+    "2#025" => "Keywords",
+    "2#040" => "SpecialsInstructions",
+    "2#055" => "DateCreated",
+    "2#060" => "TimeCreated",
+    "2#062" => "DigitalCreationDate",
+    "2#063" => "DigitalCreationTime",
+    "2#080" => "ByLine",
+    "2#085" => "ByLineTitle",
+    "2#090" => "City",
+    "2#092" => "Sublocation",
+    "2#095" => "ProvinceState",
+    "2#100" => "CountryCode",
+    "2#101" => "CountryName",
+    "2#105" => "Headline",
+    "2#110" => "Credits",
+    "2#115" => "Source",
+    "2#116" => "Copyright",
+    "2#118" => "Contact",
+    "2#120" => "Caption",
+    "2#122" => "CaptionWriter"
+  );
+
   /**
    * Return scaled width and height.
    *
@@ -110,5 +138,41 @@ class Gallery_Photo {
     }
 
     return array($metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension);
+  }
+
+  /**
+   * Return the IPTC data of the given image file.  This parses the IPTC using the definitions
+   * in Photo::$iptc_tags, and returns an array like:
+   *   array("Keywords" => array("foo,bar", "baz"), "Caption" => array("Hello World!"))
+   * @todo  Build function like Photo::get_file_xmp(), too.
+   *
+   * @param   string  file path
+   * @return  array   array of IPTC data
+   */
+  static function get_file_iptc($file_path) {
+    if (!is_readable($file_path)) {
+      throw new Gallery_Exception("Unreadable file");
+    }
+
+    $metadata_image_info = getimagesize($file_path, $image_info);
+    if (!$metadata_image_info || !$image_info ||
+        !is_array($image_info) || empty($image_info["APP13"])) {
+      // Not necessarily an error - it's possible that we have a legal file that
+      // cannot be read by getimagesize() and/or has no IPTC data.  Return an empty array.
+      return array();
+    }
+
+    $data = iptcparse($image_info["APP13"]);
+
+    $values = array();
+    foreach (static::$iptc_tags as $code => $name) {
+      $value = Arr::get($data, $code);
+      if (isset($value)) {
+        $value = str_replace("\0",  "", $value);
+        $values[$name] = Encoding::convert_to_utf8($value);
+      }
+    }
+
+    return $values;
   }
 }

@@ -49,20 +49,21 @@ class Exif_Exif {
           }
         }
       }
+    }
 
-      $size = getimagesize($item->file_path(), $info);
-      if (is_array($info) && !empty($info["APP13"])) {
-        $iptc = iptcparse($info["APP13"]);
-        foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
-          if (!empty($iptc[$iptc_key])) {
-            $value = implode(" ", $iptc[$iptc_key]);
-            $keys[$keyword] = Encoding::convert_to_utf8($value);
+    // Also try to extract IPTC from photos (not just JPEG)
+    if ($item->is_photo()) {
+      $iptc = Photo::get_file_iptc($item->file_path());
 
-            if ($keyword == "Caption" && !$item->description) {
-              $item->description = $value;
-            }
-          }
+      if (!empty($iptc["Caption"])) {
+        $keys["Caption"] = implode(" ", $iptc["Caption"]); // implode with space
+        if (!$item->description) {
+          $item->description = $keys["Caption"];
         }
+      }
+
+      if (!empty($iptc["Keywords"])) {
+        $keys["Keywords"] = implode(",", $iptc["Keywords"]); // implode with comma
       }
     }
     $item->save();

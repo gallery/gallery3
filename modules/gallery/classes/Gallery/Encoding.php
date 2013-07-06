@@ -19,6 +19,15 @@
  */
 class Gallery_Encoding {
   static function convert_to_utf8($value) {
+    // Recursion for arrays
+    if (is_array($value)) {
+      $result = array();
+      foreach ($value as $key => $element) {
+        $result[$key] = static::convert_to_utf8($element);
+      }
+      return $result;
+    }
+
     if (function_exists("mb_detect_encoding")) {
       // Rely on mb_detect_encoding()'s strict mode
       $src_encoding = mb_detect_encoding($value, mb_detect_order(), true);
