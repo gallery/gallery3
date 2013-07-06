@@ -254,7 +254,7 @@ class Gallery_View_Gallery extends View {
         // 7 == size, 9 == mtime, see http://php.net/stat
         $key[] = "$path $stats[7] $stats[9]";
       }
-      $key = md5(join(" ", $key));
+      $key = md5(join(" ", $key)) . (($type=="css") ? ".css" : ".js");
 
       if (Gallery::allow_css_and_js_combining()) {
         // Combine enabled - if we're at the start of the buffer, add a comment.
