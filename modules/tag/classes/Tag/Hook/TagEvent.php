@@ -47,42 +47,10 @@ class Tag_Hook_TagEvent {
   }
 
   /**
-   * Handle the creation of a new photo.
-   * @todo Get tags from the XMP and/or IPTC data in the image
-   *
-   * @param Model_Item $photo
+   * Add tags from an image file's IPTC ("Keywords" field).
    */
-  static function item_created($photo) {
-    $tags = array();
-    if ($photo->is_photo()) {
-      $path = $photo->file_path();
-      $size = getimagesize($photo->file_path(), $info);
-      if (is_array($info) && !empty($info["APP13"])) {
-        $iptc = iptcparse($info["APP13"]);
-        if (!empty($iptc["2#025"])) {
-          foreach($iptc["2#025"] as $tag) {
-            $tag = str_replace("\0",  "", $tag);
-            foreach (explode(",", $tag) as $word) {
-              $word = trim($word);
-              $word = Encoding::convert_to_utf8($word);
-              $tags[$word] = 1;
-            }
-          }
-        }
-      }
-    }
-
-    // @todo figure out how to read the keywords from xmp
-    foreach(array_keys($tags) as $tag) {
-      try {
-        Tag::add($photo, $tag);
-      } catch (Exception $e) {
-        Log::instance()->add(Log::ERROR, "Error adding tag: $tag\n" .
-                    $e->getMessage() . "\n" . $e->getTraceAsString());
-      }
-    }
-
-    return;
+  static function item_created($item) {
+    Tag::add_from_metadata($item);
   }
 
   static function item_deleted($item) {
