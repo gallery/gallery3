@@ -67,4 +67,51 @@ class Photo_Test extends Unittest_TestCase {
     }
     unlink(TMPPATH . "test_php_with_jpg_extension.jpg");
   }
+
+  public function test_get_file_iptc_data() {
+    // This is what we'll embed in the file...
+    $iptc = array(
+      "025" => array("foo, bar ", "baz\0"),
+      "120" => array("Hello", "World!", "wîth àçcéñts")
+    );
+
+    // ... and this is what we expect out.  Note: this test file is not UTF-8 encoded.
+    $expected = array(
+      "Keywords" => array("foo, bar ", "baz"),
+      "Caption"  => array("Hello", "World!", utf8_encode("wîth àçcéñts"))
+    );
+
+    // Build the test file.
+    $path = TMPPATH . "test_jpg_with_iptc.jpg";
+    copy(MODPATH . "gallery_unittest/assets/test.jpg", $path);
+    $data = "";
+    foreach($iptc as $code => $values) {
+      foreach ($values as $value) {
+        $data .= $this->_iptc_make_tag(2, $code, $value);
+      }
+    }
+    file_put_contents($path, iptcembed($data, $path));
+
+    $this->assertEquals($expected, Photo::get_file_iptc($path));
+  }
+
+  // iptc_make_tag() function by Thies C. Arntzen
+  // @see  http://php.net/manual/en/function.iptcembed.php
+  protected function _iptc_make_tag($rec, $data, $value) {
+    $length = strlen($value);
+    $retval = chr(0x1C) . chr($rec) . chr($data);
+
+    if($length < 0x8000) {
+      $retval .= chr($length >> 8) .  chr($length & 0xFF);
+    } else {
+      $retval .= chr(0x80) .
+                 chr(0x04) .
+                 chr(($length >> 24) & 0xFF) .
+                 chr(($length >> 16) & 0xFF) .
+                 chr(($length >> 8) & 0xFF) .
+                 chr($length & 0xFF);
+    }
+
+    return $retval . $value;
+  }
 }
