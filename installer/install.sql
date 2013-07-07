@@ -254,7 +254,7 @@ INSERT INTO {modules} VALUES (6,1,'info',3,6);
 INSERT INTO {modules} VALUES (7,1,'rss',1,7);
 INSERT INTO {modules} VALUES (8,1,'search',2,8);
 INSERT INTO {modules} VALUES (9,1,'slideshow',2,9);
-INSERT INTO {modules} VALUES (10,1,'tag',4,10);
+INSERT INTO {modules} VALUES (10,1,'tag',5,10);
 DROP TABLE IF EXISTS {outgoing_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;

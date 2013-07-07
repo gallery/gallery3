@@ -1,6 +1,6 @@
 name = "Tags"
 description = "Allows users to tag photos and albums"
-version = 4
+version = 5
 author_name = "Gallery Team"
 author_url = "http://codex.galleryproject.org/Gallery:Team"
 info_url = "http://codex.galleryproject.org/Gallery3:Modules:tag"
