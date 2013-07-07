@@ -175,14 +175,16 @@ class Tag_Controller_Admin_Tags extends Controller_Admin {
   public static function get_form_error_messages() {
     return array(
       "name" => array(
-        "not_empty" => t("You must provide a name"),
-        "max_length" => t("Your tag is too long")
+        "no_commas"           => t("The tag can't contain a \",\""),
+        "no_untrimmed_spaces" => t("The tag can't begin or end with a space"),
+        "not_empty"           => t("You must provide a name"),
+        "max_length"          => t("Your tag is too long")
       ),
       "slug" => array(
-        "conflict" => t("There is already a tag with this internet address"),
+        "conflict"     => t("There is already a tag with this internet address"),
         "not_url_safe" => t("The internet address should contain only letters, numbers, hyphens and underscores"),
-        "not_empty" => t("You must provide an internet address"),
-        "max_length" => t("Your internet address is too long")
+        "not_empty"    => t("You must provide an internet address"),
+        "max_length"   => t("Your internet address is too long")
       )
     );
   }
