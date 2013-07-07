@@ -17,18 +17,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class GalleryUnittest_ORM_Validation_Exception extends Kohana_ORM_Validation_Exception {
-  public function __construct($alias, Validation $object, $message='Failed to validate array',
-                              array $values=null, $code=0, Exception $previous=null) {
-    $msg = "";
-    foreach ($object->errors() as $key => $val) {
-      $msg .= "  $key failed $val[0]";
-      if (!empty($val[1])) {
-        $msg .= " (" . implode(", ", $val[1]) . ")";
+class Gallery_ORM_Validation_Exception extends Kohana_ORM_Validation_Exception {
+  /**
+   * Overload ORM_Validation_Exception::__construct() to change the default message
+   * from "Failed to validate array" to something more instructive.
+   * @see  ORM::__construct().
+   */
+  public function __construct($alias, Validation $object, $message=null, array $values=null, $code=0, Exception $previous=null) {
+    if (empty($message)) {
+      $message = "ORM errors for $alias #{$object['id']}:";
+      foreach ($object->errors() as $key => $val) {
+        $message .= " $key failed $val[0]";
+        if (!empty($val[1])) {
+          $message .= " (" . implode(", ", $val[1]) . ")";
+        }
+        $message .= ",";
       }
-      $msg .= "\n";
+      $message = substr($message, 0, -1) . ".";
     }
-    parent::__construct($alias, $object, "ORM_Validation_Exception validation errors\n$msg",
-                        $values, $code, $previous);
+
+    parent::__construct($alias, $object, $message, $values, $code, $previous);
   }
 }
