@@ -37,13 +37,30 @@ class Tag_Model_Tag extends ORM {
 
       "name" => array(
         array("max_length", array(":value", 128)),
-        array("not_empty")),
+        array("not_empty"),
+        array(array($this, "valid_name"), array(":validation"))),
 
       "slug" => array(
         array("max_length", array(":value", 128)),
         array("not_empty"),
         array(array($this, "valid_slug"), array(":validation"))),
     );
+  }
+
+  /**
+   * Validate the name.  It can return the following error messages:
+   * - no_untrimmed_spaces: has leading or trailing whitespace
+   * - no_commas: contains commas
+   */
+  public function valid_name(Validation $v) {
+    if (trim($this->name) !== $this->name) {
+      $v->error("name", "no_untrimmed_spaces");
+      return;
+    }
+
+    if (strpos($this->name, ",") !== false) {
+      $v->error("name", "no_commas");
+    }
   }
 
   /**

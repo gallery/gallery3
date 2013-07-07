@@ -70,6 +70,42 @@ class Tag_Model_Test extends Unittest_TestCase {
     $this->assertFalse($tag2->loaded());
   }
 
+  public function test_name_with_untrimmed_spaces() {
+    $name = Test::random_name();
+    $album = Test::random_album();
+    Tag::add($album, $name);
+    $tag = ORM::factory("Tag")->where("name", "=", $name)->find();
+
+    try {
+      $tag->name = "foo bar ";
+      $tag->save();
+      $this->assertTrue(false, "Shouldn't be able to save");
+    } catch (ORM_Validation_Exception $e) {
+      $errors = $e->errors();
+      $this->assertEquals("no_untrimmed_spaces", $errors["name"][0]);
+    }
+
+    // This should work (has space, but not leading/trailing)
+    $tag->name = "foo bar";
+    $tag->save();
+  }
+
+  public function test_name_with_comma() {
+    $name = Test::random_name();
+    $album = Test::random_album();
+    Tag::add($album, $name);
+    $tag = ORM::factory("Tag")->where("name", "=", $name)->find();
+
+    try {
+      $tag->name = "foo, bar";
+      $tag->save();
+      $this->assertTrue(false, "Shouldn't be able to save");
+    } catch (ORM_Validation_Exception $e) {
+      $errors = $e->errors();
+      $this->assertEquals("no_commas", $errors["name"][0]);
+    }
+  }
+
   public function test_slug_is_url_safe() {
     $name = Test::random_name();
     $album = Test::random_album();
