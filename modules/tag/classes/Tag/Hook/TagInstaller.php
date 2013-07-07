@@ -53,13 +53,49 @@ class Tag_Hook_TagInstaller {
       Module::set_version("tag", $version = 3);
     }
 
-    // In v4, we added slugs to the tags, similar to item slugs.  This code is based on
-    // the gallery module updates for version 11->12, 22->23, and 53->54.
+    // In v4, we explicitly prohibit empty names, names with commas, or names with untrimmed spaces.
+    // Although not previously prevented explicitly, the standard UI did not allow this, so the
+    // likelihood that we have something to fix is *very* small.  We need to do this *before*
+    // the slug upgrade or else we run the risk of tripping ORM validation errors.
     if ($version == 3) {
+      // Replace commas with underscores, trim leading/trailing spaces.
+      foreach (DB::select("id", "name")
+               ->from("tags")
+               ->where(DB::expr("`name` REGEXP ','"), "=", 1)
+               ->or_where(DB::expr("`name` REGEXP '^\\\\s'"), "=", 1)
+               ->or_where(DB::expr("`name` REGEXP '\\\\s$'"), "=", 1)
+               ->as_object()
+               ->execute() as $row) {
+        $new_name = trim(str_replace(",", "_", $row->name));
+        DB::update("tags")
+          ->set(array("name" => $new_name))
+          ->where("id", "=", $row->id)
+          ->execute();
+      }
+
+      // Give empty tag names a random (non-empty) name.
+      foreach (DB::select("id", "name")
+               ->from("tags")
+               ->where("name", "=", "")
+               ->as_object()
+               ->execute() as $row) {
+        $new_name = "tag_" . Random::int(0, 999999);
+        DB::update("tags")
+          ->set(array("name" => $new_name))
+          ->where("id", "=", $row->id)
+          ->execute();
+      }
+
+      Module::set_version("tag", $version = 4);
+    }
+
+    // In v5, we added slugs to the tags, similar to item slugs.  This code is based on
+    // the gallery module updates for version 11->12, 22->23, and 53->54.
+    if ($version == 4) {
       // First, let's add the new column and lazily copy the tag name to the tag slug.  This is
       // quick, but the steps following may not be.  In case the slower steps stall, we need to
       // be sure that we don't run this part twice as that could cause badness.
-      if (!in_array("slug", $db->list_columns("tags"))) {
+      if (!array_key_exists("slug", $db->list_columns("tags"))) {
         $db->query(Database::ALTER, "ALTER TABLE {tags} ADD COLUMN `slug` varchar(128) NOT NULL");
         $db->query(Database::UPDATE, "UPDATE {tags} SET `slug` = `name`");
       }
@@ -104,7 +140,7 @@ class Tag_Hook_TagInstaller {
           $tag->save();  // Model_Tag will check for conflicts on save
         }
       }
-      Module::set_version("tag", $version = 4);
+      Module::set_version("tag", $version = 5);
     }
   }
 
