@@ -81,6 +81,7 @@ class Organize_Controller_Organize extends Controller {
     Access::verify_csrf();
 
     $new_parent = ORM::factory("Item", $this->request->post("target_id"));
+    Access::required("view", $new_parent);
     Access::required("edit", $new_parent);
 
     foreach (explode(",", $this->request->post("source_ids")) as $source_id) {
@@ -88,6 +89,7 @@ class Organize_Controller_Organize extends Controller {
       if (!$source->loaded()) {
         continue;
       }
+      Access::required("view", $source->parent);
       Access::required("edit", $source->parent);
 
       if ($source->contains($new_parent) || $source->id == $new_parent->id) {
