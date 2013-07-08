@@ -63,11 +63,6 @@ class item_Core {
         break;
       }
     }
-
-    // If the target has no cover item, make this it.
-    if ($target->album_cover_item_id == null)  {
-      item::make_album_cover($source);
-    }
   }
 
   static function make_album_cover($item) {
