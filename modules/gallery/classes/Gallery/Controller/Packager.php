@@ -156,12 +156,12 @@ class Gallery_Controller_Packager extends Controller {
     }
 
     $paths = array();
-    foreach($objects as $name => $file){
+    foreach ($objects as $name => $file) {
       $path = $file->getPath();
       $basename = $file->getBasename();
       if ($basename == "database.php" || $basename == "." || $basename == "..") {
         continue;
-      } else if (basename($path) == "logs" && $basename != ".htaccess") {
+      } else if (in_array(basename($path), array("logs", "tmp")) && ($basename != ".htaccess")) {
         continue;
       } else if (strpos($name, Kohana::$cache_dir . "/HTML") === 0) {  // HTMLPurifier cache
         continue;

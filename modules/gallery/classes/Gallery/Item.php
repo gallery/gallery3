@@ -24,21 +24,6 @@ class Gallery_Item {
     Access::required("edit", $source);
     Access::required("edit", $target);
 
-    $parent = $source->parent;
-    if ($parent->album_cover_item_id == $source->id) {
-      if ($parent->children->count_all() > 1) {
-        foreach ($parent->children->limit(2)->find_all() as $child) {
-          if ($child->id != $source->id) {
-            $new_cover_item = $child;
-            break;
-          }
-        }
-        Item::make_album_cover($new_cover_item);
-      } else {
-        Item::remove_album_cover($parent);
-      }
-    }
-
     $orig_name = $source->name;
     $source->parent_id = $target->id;
     $source->save();
@@ -62,11 +47,6 @@ class Gallery_Item {
             array("old_name" => $orig_name, "new_name" => $source->name)));
         break;
       }
-    }
-
-    // If the target has no cover item, make this it.
-    if ($target->album_cover_item_id == null)  {
-      Item::make_album_cover($source);
     }
   }
 
