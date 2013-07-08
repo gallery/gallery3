@@ -64,10 +64,10 @@ class Search_Search {
 
     // Build the query.
     return $album->descendants
-      ->viewable()
       ->with("search_record")
       ->select(array(DB::expr("MATCH(`data`) AGAINST ($q_natural)"), "score"))
       ->where(DB::expr("MATCH(`data`)"), "AGAINST", DB::expr("($q_boolean IN BOOLEAN MODE)"))
+      ->viewable()
       ->merge_where($where);
   }
 
