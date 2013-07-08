@@ -267,6 +267,18 @@ class Gallery_Hook_GalleryEvent {
       Access::recalculate_photo_permissions($item);
     }
 
+    // If the item's old ancestors used the item as its cover, change it.
+    foreach (array_merge($old_parent->parents, array($old_parent)) as $old_ancestor) {
+      if ($old_ancestor->album_cover_item_id == $item->id) {
+        $new_cover_item = $old_ancestor->children->limit(1)->find();
+        if ($new_cover_item->loaded()) {
+          Item::make_album_cover($new_cover_item);
+        } else {
+          Item::remove_album_cover($old_ancestor);
+        }
+      }
+    }
+
     // If the new parent doesn't have an album cover, make this it.
     if (!$item->parent->album_cover_item_id) {
       Item::make_album_cover($item);

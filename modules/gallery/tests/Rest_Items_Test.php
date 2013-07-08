@@ -151,6 +151,24 @@ class Rest_Items_Test extends Unittest_TestCase {
     $this->assertEmpty(Arr::get($rest->get_entity(), "thumb_url_public"));
   }
 
+  public function test_get_entity_with_missing_data_files() {
+    Identity::set_active_user(Identity::admin_user());
+
+    $photo = Test::random_photo();
+    unlink($photo->file_path());
+    unlink($photo->resize_path());
+    unlink($photo->thumb_path());
+
+    $entity = Rest::factory("Items", $photo->id)->get_entity();
+
+    $this->assertSame("&m=0", substr(Arr::get($entity, "file_url"), -4));
+    $this->assertSame("&m=0", substr(Arr::get($entity, "resize_url"), -4));
+    $this->assertSame("&m=0", substr(Arr::get($entity, "thumb_url"), -4));
+    $this->assertSame(0, Arr::get($entity, "file_size"));
+    $this->assertSame(0, Arr::get($entity, "resize_size"));
+    $this->assertSame(0, Arr::get($entity, "thumb_size"));
+  }
+
   public function test_get_entity_different_sizes_for_different_types() {
     Identity::set_active_user(Identity::admin_user());
 

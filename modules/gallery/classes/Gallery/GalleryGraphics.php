@@ -162,7 +162,7 @@ class Gallery_GalleryGraphics {
         }
 
         Image::factory($input_file)
-          ->composite($options["file"], $x, $y, $options["transparency"])
+          ->watermark(Image::factory($options["file"]), $x, $y, $options["transparency"])
           ->save($output_file, Module::get_var("gallery", "image_quality"));
       }
 
