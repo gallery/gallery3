@@ -134,8 +134,10 @@ class Gallery_Controller_FileProxy extends Controller {
     } else {
       // Send the file as the response.  The filename will be set automatically from the path.
       // We allow base64 encoding *only* if called internally (typically by a REST Data resource).
+      // The "resumable" option enables byte-range requests, which are especially useful for
+      // streaming HTML5 videos.
       // Note: send_file() will automatically halt script execution after sending the file.
-      $options = array("inline" => "true", "mime_type" => $mime_type);
+      $options = array("inline" => "true", "mime_type" => $mime_type, "resumable" => true);
       if ($encoding == "base64") {
         $options["encoding"] = "base64";
       }
