@@ -101,9 +101,10 @@ class Gallery_Rest_Items extends Rest {
 
     // Generate/remove the full-size fields.
     if (Access::can("view_full", $item) && !$item->is_album()) {
+      $m = file_exists($item->file_path()) ? filemtime($item->file_path()) : 0;
       $data["file_url"] = Rest::factory("Data", $this->id,
-        array("size" => "full", "m" => filemtime($item->file_path())))->url();
-      $data["file_size"] = filesize($item->file_path());
+        array("size" => "full", "m" => $m))->url();
+      $data["file_size"] = file_exists($item->file_path()) ? filesize($item->file_path()) : 0;
       if (Access::user_can(Identity::guest(), "view_full", $item)) {
         $data["file_url_public"] = $item->file_url(true);
       }
@@ -113,9 +114,10 @@ class Gallery_Rest_Items extends Rest {
 
     // Generate/remove the resize fields.
     if (Access::can("view", $item) && $item->is_photo()) {
+      $m = file_exists($item->resize_path()) ? filemtime($item->resize_path()) : 0;
       $data["resize_url"] = Rest::factory("Data", $this->id,
-        array("size" => "resize", "m" => filemtime($item->resize_path())))->url();
-      $data["resize_size"] = filesize($item->resize_path());
+        array("size" => "resize", "m" => $m))->url();
+      $data["resize_size"] = file_exists($item->resize_path()) ? filesize($item->resize_path()) : 0;
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["resize_url_public"] = $item->resize_url(true);
       }
@@ -124,10 +126,11 @@ class Gallery_Rest_Items extends Rest {
     }
 
     // Generate/remove the thumb fields.
-    if (Access::can("view", $item) && $item->has_thumb()) {
+    if (Access::can("view", $item)) {
+      $m = file_exists($item->thumb_path()) ? filemtime($item->thumb_path()) : 0;
       $data["thumb_url"] = Rest::factory("Data", $this->id,
-        array("size" => "thumb", "m" => filemtime($item->thumb_path())))->url();
-      $data["thumb_size"] = filesize($item->thumb_path());
+        array("size" => "thumb", "m" => $m))->url();
+      $data["thumb_size"] = file_exists($item->thumb_path()) ? filesize($item->thumb_path()) : 0;
       if (Access::user_can(Identity::guest(), "view", $item)) {
         $data["thumb_url_public"] = $item->thumb_url(true);
       }
