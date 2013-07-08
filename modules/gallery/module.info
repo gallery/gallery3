@@ -1,6 +1,6 @@
 name = "Gallery 3"
 description = "Gallery core application"
-version = 60
+version = 61
 author_name = "Gallery Team"
 author_url = "http://codex.galleryproject.org/Gallery:Team"
 info_url = "http://codex.galleryproject.org/Gallery3:Modules:gallery"

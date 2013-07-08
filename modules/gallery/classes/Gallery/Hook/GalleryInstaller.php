@@ -239,6 +239,7 @@ class Gallery_Hook_GalleryInstaller {
       ->values(array($now, "", 1, 1, 0, 1, 2, "weight", "ASC", 1, "Gallery", "album", $now, 1))
       ->execute();
     Access::add_item(Item::root());
+    Graphics::generate(Item::root());
 
     Module::set_var("gallery", "active_site_theme", "wind");
     Module::set_var("gallery", "active_admin_theme", "admin_wind");
@@ -867,6 +868,15 @@ class Gallery_Hook_GalleryInstaller {
         $rule->save();
       }
       Module::set_version("gallery", $version = 60);
+    }
+
+    if ($version = 60) {
+      // In v61, we ensure that the root item has a valid thumbnail.  Several versions ago we added
+      // a default placeholder for empty albums, but never initialized the root album's thumbnail.
+      // This is unlikely to do much to established Gallery installations, where the root's
+      // thumb_dirty flag is likely already 0.
+      Graphics::generate(Item::root());
+      Module::set_version("gallery", $version = 61);
     }
 
     // @todo: still need special upgrade to fix "database.php" config file and activate "purifier"
