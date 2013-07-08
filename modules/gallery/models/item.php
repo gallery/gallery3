@@ -498,11 +498,6 @@ class Item_Model_Core extends ORM_MPTT {
             @rename($original->resize_path(), $this->resize_path());
             @rename($original->thumb_path(), $this->thumb_path());
           }
-
-          if ($original->parent_id != $this->parent_id) {
-            // This will result in 2 events since we'll still fire the item_updated event below
-            module::event("item_moved", $this, $original->parent());
-          }
         }
 
         // Changing the name, slug or parent ripples downwards
@@ -524,6 +519,11 @@ class Item_Model_Core extends ORM_MPTT {
           copy($this->data_file, $this->file_path());
           $this->thumb_dirty = 1;
           $this->resize_dirty = 1;
+        }
+
+        if ($original->parent_id != $this->parent_id) {
+          // This will result in 2 events since we'll still fire the item_updated event below
+          module::event("item_moved", $this, $original->parent());
         }
 
         module::event("item_updated", $original, $this);
