@@ -206,11 +206,12 @@ class Gallery_View_Core extends View {
         }
       } else {
         // Don't combine - just return the CSS and JS links (with the key as a cache buster).
+        $key_base = substr($key, 0, (($type == "css") ? -4 : -3));  // key without extension
         foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
           if ($type == "css") {
-            $buf .= html::stylesheet("$path?m=$key", "screen,print,projection", false);
+            $buf .= html::stylesheet("$path?m=$key_base", "screen,print,projection", false);
           } else {
-            $buf .= html::script("$path?m=$key", false);
+            $buf .= html::script("$path?m=$key_base", false);
           }
         }
       }
