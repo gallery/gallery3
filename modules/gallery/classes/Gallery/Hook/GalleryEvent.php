@@ -187,7 +187,7 @@ class Gallery_Hook_GalleryEvent {
     } catch (Exception $e) {
       GalleryLog::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
                                array("item_title" => $item->title)),
-                 HTML::anchor($item->abs_url(), t("details")));
+                 HTML::anchor($item->relative_url(), t("details")));
       Log::instance()->add(Log::ERROR, $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 
