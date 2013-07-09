@@ -111,7 +111,7 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     // Set the filemtime as the etag (same as cache buster), use to check if cache needs refreshing.
-    $this->check_cache(filemtime($file));
+    $this->check_cache('"' . filemtime($file) . '"');
 
     // Force zlib compression off.  Image and movie files are already compressed and
     // recompressing them is CPU intensive.
