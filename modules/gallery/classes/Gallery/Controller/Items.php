@@ -147,7 +147,7 @@ class Gallery_Controller_Items extends Controller {
           "album" => t("Updated album"),
           "photo" => t("Updated photo"),
           "movie" => t("Updated movie")
-        ), $item->type), HTML::anchor($item->url(), t("view")));
+        ), $item->type), HTML::anchor($item->relative_url(), t("view")));
       Message::success(Arr::get(array(
         "album" => t("Saved album %album_title", array("album_title" => HTML::purify($item->title))),
         "photo" => t("Saved photo %photo_title", array("photo_title" => HTML::purify($item->title))),
@@ -212,7 +212,7 @@ class Gallery_Controller_Items extends Controller {
       $item->save();
       Module::event("album_add_form_completed", $item, $form);
       GalleryLog::success("content", t("Created an album"),
-                          HTML::anchor($item->url(), t("view")));
+                          HTML::anchor($item->relative_url(), t("view")));
       Message::success(t("Created album %album_title",
                          array("album_title" => HTML::purify($item->title))));
 
@@ -270,7 +270,7 @@ class Gallery_Controller_Items extends Controller {
       GalleryLog::success("content", Arr::get(array(
         "photo" => t("Added a photo"),
         "movie" => t("Added a movie")
-      ), $item->type), HTML::anchor($item->url(), t("view")));
+      ), $item->type), HTML::anchor($item->relative_url(), t("view")));
     }
 
     // Merge the groups together for presentation purposes
