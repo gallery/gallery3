@@ -30,11 +30,8 @@ class Gallery_Controller_FileProxy extends Controller {
   public $allow_private_gallery = true;
 
   public function action_index() {
-    // Force zlib compression off.  Image and movie files are already compressed and
-    // recompressing them is CPU intensive.
-    if (ini_get("zlib.output_compression")) {
-      ini_set("zlib.output_compression", "Off");
-    }
+    // We don't need to save the session for this request
+    Session::instance()->abort_save();
 
     // type: subdir in var (e.g. "albums")
     // path: relative path in subdir (e.g. "Bobs Wedding/Eating-Cake.jpg")
@@ -92,9 +89,6 @@ class Gallery_Controller_FileProxy extends Controller {
       throw HTTP_Exception::factory(404, TEST_MODE ? 6 : null);
     }
 
-    // Note: this code is roughly duplicated in Controller_Rest_Data, so if you modify this,
-    // please look to see if you should make the same change there as well.
-
     if ($type == "albums") {
       $file = $item->file_path();
     } else if ($type == "resizes") {
@@ -117,10 +111,13 @@ class Gallery_Controller_FileProxy extends Controller {
     }
 
     // Set the filemtime as the etag (same as cache buster), use to check if cache needs refreshing.
-    $this->check_cache(filemtime($file));
+    $this->check_cache('"' . filemtime($file) . '"');
 
-    // We don't need to save the session for this request
-    Session::instance()->abort_save();
+    // Force zlib compression off.  Image and movie files are already compressed and
+    // recompressing them is CPU intensive.
+    if (ini_get("zlib.output_compression")) {
+      ini_set("zlib.output_compression", "Off");
+    }
 
     // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
     if (($item->is_movie() || $item->is_album()) && $type == "thumbs") {
@@ -134,8 +131,10 @@ class Gallery_Controller_FileProxy extends Controller {
     } else {
       // Send the file as the response.  The filename will be set automatically from the path.
       // We allow base64 encoding *only* if called internally (typically by a REST Data resource).
+      // The "resumable" option enables byte-range requests, which are especially useful for
+      // streaming HTML5 videos.
       // Note: send_file() will automatically halt script execution after sending the file.
-      $options = array("inline" => "true", "mime_type" => $mime_type);
+      $options = array("inline" => "true", "mime_type" => $mime_type, "resumable" => true);
       if ($encoding == "base64") {
         $options["encoding"] = "base64";
       }
