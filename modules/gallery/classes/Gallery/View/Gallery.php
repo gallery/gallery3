@@ -301,11 +301,12 @@ class Gallery_View_Gallery extends View {
         }
       } else {
         // Don't combine - just return the CSS and JS links (with the key as a cache buster).
+        $key_base = substr($key, 0, (($type == "css") ? -4 : -3));  // key without extension
         foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
           if ($type == "css") {
-            $buf .= HTML::style("$path?m=$key", $this->css_attrs, null, false) . "\n";
+            $buf .= HTML::style("$path?m=$key_base", $this->css_attrs, null, false) . "\n";
           } else {
-            $buf .= HTML::script("$path?m=$key", $this->script_attrs, null, false) . "\n";
+            $buf .= HTML::script("$path?m=$key_base", $this->script_attrs, null, false) . "\n";
           }
         }
       }
