@@ -34,26 +34,32 @@ class Gallery_Controller_Combined extends Controller {
     } else if (substr($key, -4) == ".css") {
       $mime_type = "text/css; charset=UTF-8";
     } else {
-      // Invalid (or empty) key/filename - fire 404.
+      // Invalid (or empty) key/filename - fire a 404.
       throw HTTP_Exception::factory(404);
     }
 
-    // Since our data is immutable, we set the etag to be the key (i.e. it never changes).
-    // That way, if anything is found in the cache with this URL, it won't be refreshed.
-    $this->check_cache($key);
+    switch (function_exists("gzencode") && ((int)ini_get("zlib.output_compression") == 0) &&
+            $this->request->headers()->accepts_encoding_at_quality("gzip")) {
 
-    $cache = Cache::instance();
-    $use_gzip = function_exists("gzencode") &&
-      $this->request->headers()->accepts_encoding_at_quality("gzip") &&
-      (int) ini_get("zlib.output_compression") === 0;
+    case true:
+      // Send the gzipped bundle (if found).
+      $content = Cache::instance()->get("{$key}_gz");
+      if ($content) {
+        $this->response->headers("Content-Encoding", "gzip");
+        $this->check_cache('"' . $key . '_gz"');  // same key + encoding --> data never changes.
+        break;
+      }
 
-    if ($use_gzip && $content = $cache->get("{$key}_gz")) {
-      $this->response->headers(array("Content-Encoding" => "gzip", "Vary" => "Accept-Encoding"));
-    } else {
-      // Fall back to non-gzipped if we have to
-      $content = $cache->get($key);
-    }
-    if (empty($content)) {
+    case false:
+      // Send the non-gzipped bundle (if found).
+      $content = Cache::instance()->get($key);
+      if ($content) {
+        $this->check_cache('"' . $key . '"');  // same key + encoding --> data never changes.
+        break;
+      }
+
+    default:
+      // Nothing found - fire a 404.
       throw HTTP_Exception::factory(404);
     }
 
