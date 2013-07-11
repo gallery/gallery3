@@ -29,7 +29,7 @@ class User_Controller_Admin_Users extends Controller_Admin {
 
     $view->set_global(array(
       "page_size" => Module::get_var("user", "page_size", 10),  // @todo: add this as a config option
-      "children_query" => ORM::factory("User")->order_by("name", "ASC")
+      "collection_query_callback" => array("Controller_Admin_Users::get_users_query", array())
     ));
     $view->init_collection();
 
@@ -344,6 +344,14 @@ class User_Controller_Admin_Users extends Controller_Admin {
     $form->merge_groups("other", "group");
 
     $this->response->ajax_form($form);
+  }
+
+  /**
+   * Get the query for the user collection view.
+   * @see  Controller_Admin_Users::action_index()
+   */
+  static function get_users_query() {
+    return ORM::factory("User")->order_by("name", "ASC");
   }
 
   /**

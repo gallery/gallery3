@@ -106,10 +106,8 @@ class Gallery_View_Theme extends View_Gallery {
     return $this->item;
   }
 
-  public function siblings($limit=null, $offset=null) {
-    return call_user_func_array(
-      $this->siblings_callback[0],
-      array_merge($this->siblings_callback[1], array($limit, $offset)));
+  public function siblings() {
+    return $this->siblings;
   }
 
   public function tag() {

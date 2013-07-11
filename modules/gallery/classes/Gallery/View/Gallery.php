@@ -36,24 +36,32 @@ class Gallery_View_Gallery extends View {
 
   /**
    * Initialize a collection's children and paginator.  This processes the "page" and "show" query
-   * parameters, builds the collection, and gets/sets several view variables in the process.
+   * parameters, builds the collection, sets the item display context if needed, and gets/sets
+   * several view variables in the process.
    *
-   * As inputs, this uses four view variables (one required, three optional):
-   *  - "children_query" (reqd) - ORM query for the child objects without limit or offset applied.
-   *  - "children_order_by" - array of order_by's to apply to the children after they're counted.
-   *    If not given, this is omitted.  This is used in Controller_Search::action_index().
+   * As inputs, this uses four view variables (one required, four optional):
+   *  - "collection_query_callback" (reqd) - callback which returns an ORM query for the
+   *    collection's objects without limit or offset applied.
+   *  - "breadcrumbs_callback" - callback which returns an array of Breadcrumb objects without
+   *    set_first or set_last applied.  We use this as a semaphore that we have an *item*
+   *    collection, and set the item display context accordingly.
+   *  - "collection_order_by" - array of order_by's to apply to the collection after its objects are
+   *    counted. If not given, this is omitted.  This is used in Controller_Search::action_index().
    *  - "page" - the current page.  If not given, this is set from query parameters.
    *  - "page_size" - the page size.  If not given, this is set from the "page_size" module var.
    *
    * From these, this:
+   *  - sets "children_query" view variable
    *  - sets "children_count" view variable
    *  - sets "max_pages" view variable
    *  - sets "children" view variable
+   *  - sets "breadcrumbs" view variable (for item collections only)
+   *  - sets the item display context (for item collections only)
    *  - processes "show" query parameter and redirects as needed
    *  - processes "page" query parameter and redirects as needed
    */
   public function init_collection() {
-    if (($this->page_type != "collection") || empty($this->children_query)) {
+    if (($this->page_type != "collection") || empty($this->collection_query_callback)) {
       throw new Gallery_Exception("Collection view cannot be initialized");
     }
 
@@ -67,22 +75,26 @@ class Gallery_View_Gallery extends View {
       $this->set_global("page", (int)Arr::get(Request::current()->query(), "page", 1));
     }
 
+    // Get "collection_query" from its callback.
+    $this->set_global("collection_query", call_user_func_array(
+      $this->collection_query_callback[0], $this->collection_query_callback[1]));
+
     // Get "children_count" before applying any order_by calls.
-    $this->set_global("children_count", $this->children_query
+    $this->set_global("children_count", $this->collection_query
       ->reset(false)
       ->count_all());
 
-    // Apply "children_order_by", if set (required for search module).
-    if (!empty($this->children_order_by)) {
-      foreach ($this->children_order_by as $column => $direction) {
-        $this->children_query->order_by($column, $direction);
+    // Apply "collection_order_by" if set (required for search module), set as empty array if not.
+    if (isset($this->collection_order_by)) {
+      foreach ($this->collection_order_by as $column => $direction) {
+        $this->collection_query->order_by($column, $direction);
       }
     }
 
     // Redirect if "show" query parameter is set.
     if ($show = Request::current()->query("show")) {
       $position = null;
-      foreach ($this->children_query->find_all() as $key => $child) {
+      foreach ($this->collection_query->find_all() as $key => $child) {
         if ($child->id == $show) {
           $position = $key + 1; // 1-indexed position
           break;
@@ -110,10 +122,106 @@ class Gallery_View_Gallery extends View {
     }
 
     // Get "children" for the page.
-    $this->set_global("children", $this->children_query
+    $this->set_global("children", $this->collection_query
       ->limit($this->page_size)
       ->offset($this->page_size * ($this->page - 1))
+      ->reset(false)
       ->find_all());
+
+    // See if we have "breadcrumb_callback" set.  If so, we assume this is a type of
+    // item display - get "breadcrumbs" and set the item display context.
+    if (!empty($this->breadcrumbs_callback)) {
+      $this->set_global("breadcrumbs", Breadcrumb::set_first_and_last(call_user_func_array(
+        $this->breadcrumbs_callback[0],
+        array_merge(array(null), $this->breadcrumbs_callback[1]))));
+
+      Item::set_display_context(
+        $this->collection_query_callback,
+        $this->breadcrumbs_callback,
+        (empty($this->collection_order_by) ? array() : $this->collection_order_by));
+    }
+
+    return $this;
+  }
+
+  /**
+   * Initialize an item's display.
+   *
+   * As inputs, this uses one view variable:
+   *  - "item" (reqd) - item to be displayed.
+   * and the item display context:
+   *  - "sibling_query_callback" - same as the collection's "collection_query_callback"
+   *  - "breadcrumbs_callback"   - same as the collection's "breadcrumbs_callback"
+   *  - "collection_order_by"    - same as the collection's "collection_order_by"
+   * If the context isn't found or is invalid, it will be reset to that of the item's parent album.
+   *
+   * From these, this:
+   *  - sets "sibling_query" view variable
+   *  - sets "sibling_count" view variable
+   *  - sets "sibling" view variable
+   *  - sets "position" view variable
+   *  - sets "previous_item" view variable
+   *  - sets "next_item" view variable
+   *  - sets "breadcrumbs" view variable
+   */
+  public function init_item() {
+    if (($this->page_type != "item") || empty($this->item) || !$this->item->loaded()) {
+      throw new Gallery_Exception("Item view cannot be initialized");
+    }
+
+    // Get the current display context.  We default to the item's album if not found.
+    $context = Item::get_display_context();
+    $album = $this->item->parent;
+    $sibling_query_callback = Arr::get($context, 0, array("Item::get_album_query", array($album)));
+    $breadcrumbs_callback   = Arr::get($context, 1, array("Item::get_breadcrumbs", array($album)));
+    $collection_order_by    = Arr::get($context, 2, array());
+
+    // Get "sibling_query" from its callback.
+    $this->set_global("sibling_query", call_user_func_array(
+      $sibling_query_callback[0],
+      $sibling_query_callback[1]));
+
+    // Get "breadcrumbs" from its callback.
+    $this->set_global("breadcrumbs", Breadcrumb::set_first_and_last(call_user_func_array(
+      $breadcrumbs_callback[0],
+      array_merge(array($this->item), $breadcrumbs_callback[1]))));
+
+    // Restrict sibling query to non-albums.
+    $this->sibling_query->where("type", "<>", "album");
+
+    // Get "sibling_count" before applying any order_by calls.
+    $this->set_global("sibling_count", $this->sibling_query
+      ->reset(false)
+      ->count_all());
+
+    // Apply "collection_order_by" (required for search module).
+    foreach ($collection_order_by as $column => $direction) {
+      $this->sibling_query->order_by($column, $direction);
+    }
+
+    // Get "siblings" for the item.
+    $this->set_global("siblings", $this->sibling_query
+      ->reset(false)
+      ->find_all());
+
+    // Get "position" of the item within its siblings (1-indexed).
+    foreach ($this->siblings as $key => $sibling) {
+      if ($sibling->id == $this->item->id) {
+        $this->set_global("position", $key + 1); // 1-indexed position
+        break;
+      }
+    }
+
+    // Check that we found a position - if not, perhaps we've fallen out of context?
+    // Clear the context and try again.
+    if (empty($this->position)) {
+      Item::clear_display_context();
+      return $this->init_item();
+    }
+
+    // Get "previous_item" and "next_item", which may be null if at start/end of list.
+    $this->set_global("previous_item", Arr::get($this->siblings, $this->position - 2));
+    $this->set_global("next_item",     Arr::get($this->siblings, $this->position));
 
     return $this;
   }

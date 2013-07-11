@@ -29,48 +29,16 @@ class Search_Controller_Search extends Controller {
 
     $template = new View_Theme("required/page.html", "collection", "search");
     $template->set_global(array(
-      "children_query" => Search::get_search_query($q, $album),
-      "collection_order_by" => array("score" => "DESC", "id" => "ASC"),
-      "breadcrumbs" => Search::get_breadcrumbs(null, $q, $album)
+      "collection_query_callback" => array("Search::get_search_query", array($q, $album)),
+      "breadcrumbs_callback"      => array("Search::get_breadcrumbs",  array($q, $album)),
+      "collection_order_by"       => array("score" => "DESC", "id" => "ASC")
     ));
+    $template->init_collection();
 
     $template->content = new View("search/results.html");
     $template->content->album = $album;
     $template->content->q = $q;
-    $template->init_collection();
 
     $this->response->body($template);
-    Item::set_display_context("Controller_Search::get_display_context", $album, $q);
-  }
-
-  public static function get_display_context($item, $album, $q) {
-    $position = Search::get_position_within_album($item, $q, $album);
-
-    if ($position > 1) {
-      list ($count, $result_data) = Search::search_within_album($q, $album, 3, $position - 2);
-      list ($previous_item, $ignore, $next_item) = $result_data;
-    } else {
-      $previous_item = null;
-      list ($count, $result_data) = Search::search_within_album($q, $album, 1, $position);
-      list ($next_item) = $result_data;
-    }
-
-    return array("position" => $position,
-                 "previous_item" => $previous_item,
-                 "next_item" => $next_item,
-                 "sibling_count" => $count,
-                 "siblings_callback" => array("Controller_Search::get_siblings", array($q, $album)),
-                 "breadcrumbs" => Search::get_breadcrumbs($item, $q, $album));
-  }
-
-  public static function get_siblings($q, $album, $limit, $offset) {
-    if (!isset($limit)) {
-      $limit = 100;
-    }
-    if (!isset($offset)) {
-      $offset = 1;
-    }
-    $result = Search::search_within_album($q, $album, $limit, $offset);
-    return $result[1];
   }
 }

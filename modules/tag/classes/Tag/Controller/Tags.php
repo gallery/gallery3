@@ -78,19 +78,15 @@ class Tag_Controller_Tags extends Controller {
     $template = new View_Theme("required/page.html", "collection", "tag");
     $template->set_global(array(
       "tag" => $tag,
-      "children_query" => $tag->items->viewable(),
-      "breadcrumbs" => array(
-        Breadcrumb::factory($root->title, $root->url())->set_first(),
-        Breadcrumb::factory(t("Tag: %tag_name", array("tag_name" => $tag->name)),
-                             $tag->url())->set_last())
+      "collection_query_callback" => array("Controller_Tags::get_tag_query",   array($tag)),
+      "breadcrumbs_callback"      => array("Controller_Tags::get_breadcrumbs", array($tag)),
     ));
+    $template->init_collection();
 
     $template->content = new View("required/dynamic.html");
     $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
-    $template->init_collection();
 
     $this->response->body($template);
-    Item::set_display_context("Controller_Tags::get_display_context", $tag->id);
   }
 
   /**
@@ -174,47 +170,27 @@ class Tag_Controller_Tags extends Controller {
   }
 
   /**
-   * Display context callback for a tag.
-   *
-   * @see  Item::set_display_context()
-   * @see  Item::get_display_context_callback()
-   * @see  Item::clear_display_context()
-   * @see  Controller_Search::get_display_context()
-   * @see  Controller_Items::get_display_context()
+   * Get the tag query for its collection view.
+   * @see  Controller_Tags::action_show()
    */
-  public static function get_display_context($item, $tag_id) {
-    $tag = ORM::factory("Tag", $tag_id);
+  static function get_tag_query($tag) {
+    return $tag->items->viewable();
+  }
 
-    $where = array(array("type", "!=", "album"));
-    $position = Tag::get_position($tag, $item, $where);
-    if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) = $tag->items
-        ->viewable()
-        ->where("type", "!=", "album")
-        ->limit(3)
-        ->offset($position - 2)
-        ->find_all();
-    } else {
-      $previous_item = null;
-      list ($next_item) = $tag->items
-        ->viewable()
-        ->where("type", "!=", "album")
-        ->limit(1)
-        ->offset($position)
-        ->find_all();
+  /**
+   * Get the breadcrumbs for a tag.
+   * @see  Controller_Tags::action_show()
+   */
+  static function get_breadcrumbs($item=null, $tag) {
+    $params = $item ? "show={$item->id}" : null;
+
+    $breadcrumbs = Breadcrumb::array_from_item_parents(Item::root());
+    $breadcrumbs[] = Breadcrumb::factory(t("Tag: %tag_name", array("tag_name" => $tag->name)),
+                                         $tag->url($params));
+    if ($item) {
+      $breadcrumbs[] = Breadcrumb::factory($item->title, $item->url());
     }
 
-    $root = Item::root();
-    return array("position" => $position,
-                 "previous_item" => $previous_item,
-                 "next_item" => $next_item,
-                 "sibling_count" =>
-                   $tag->items->viewable()->where("type", "!=", "album")->count_all(),
-                 "siblings_callback" => array(array($tag, "items"), array()),
-                 "breadcrumbs" => array(
-                   Breadcrumb::factory($root->title, $root->url())->set_first(),
-                   Breadcrumb::factory(t("Tag: %tag_name", array("tag_name" => $tag->name)),
-                                        $tag->url("show={$item->id}")),
-                   Breadcrumb::factory($item->title, $item->url())->set_last()));
+    return $breadcrumbs;
   }
 }
