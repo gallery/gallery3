@@ -22,7 +22,7 @@ class ImageBlock_Controller_ImageBlock extends Controller {
     $item_id = $this->request->arg(0, "digit");
     $item = ORM::factory("Item", $item_id);
     Access::required("view", $item);
-    Item::set_display_context("Controller_Items::get_display_context");
+    Item::clear_display_context();  // defaults to album context, which is what we want.
     $this->redirect($item->abs_url());
   }
 }
