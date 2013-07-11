@@ -70,29 +70,17 @@ class Gallery_View_Gallery extends View {
       $this->set_global("page_size", Module::get_var("gallery", "page_size", 9));
     }
 
-    // Set "page" using the query params, if empty.  No page defaults to 1.
-    if (empty($this->page)) {
-      $this->set_global("page", (int)Arr::get(Request::current()->query(), "page", 1));
-    }
-
     // Get "collection_query" from its callback.
     $this->set_global("collection_query", call_user_func_array(
       $this->collection_query_callback[0], $this->collection_query_callback[1]));
 
-    // Get "children_count" before applying any order_by calls.
-    $this->set_global("children_count", $this->collection_query
-      ->reset(false)
-      ->count_all());
-
-    // Apply "collection_order_by" if set (required for search module), set as empty array if not.
-    if (isset($this->collection_order_by)) {
-      foreach ($this->collection_order_by as $column => $direction) {
-        $this->collection_query->order_by($column, $direction);
-      }
-    }
-
     // Redirect if "show" query parameter is set.
     if ($show = Request::current()->query("show")) {
+      // Apply "collection_order_by" if set (required for search module).
+      if (isset($this->collection_order_by)) {
+        $this->collection_query->merge_order_by($this->collection_order_by);
+      }
+
       $position = null;
       foreach ($this->collection_query->find_all() as $key => $child) {
         if ($child->id == $show) {
@@ -109,6 +97,21 @@ class Gallery_View_Gallery extends View {
       }
 
       HTTP::redirect($this->_paginator_url(ceil($position / $this->page_size), true));
+    }
+
+    // Set "page" using the query params, if empty.  No page defaults to 1.
+    if (empty($this->page)) {
+      $this->set_global("page", (int)Arr::get(Request::current()->query(), "page", 1));
+    }
+
+    // Get "children_count" before applying any order_by calls.
+    $this->set_global("children_count", $this->collection_query
+      ->reset(false)
+      ->count_all());
+
+    // Apply "collection_order_by" if set (required for search module).
+    if (isset($this->collection_order_by)) {
+      $this->collection_query->merge_order_by($this->collection_order_by);
     }
 
     // Set "max_pages" using other params.
@@ -189,11 +192,6 @@ class Gallery_View_Gallery extends View {
     // Restrict sibling query to non-albums.
     $this->sibling_query->where("type", "<>", "album");
 
-    // Get "sibling_count" before applying any order_by calls.
-    $this->set_global("sibling_count", $this->sibling_query
-      ->reset(false)
-      ->count_all());
-
     // Apply "collection_order_by" (required for search module).
     foreach ($collection_order_by as $column => $direction) {
       $this->sibling_query->order_by($column, $direction);
@@ -203,6 +201,9 @@ class Gallery_View_Gallery extends View {
     $this->set_global("siblings", $this->sibling_query
       ->reset(false)
       ->find_all());
+
+    // Get "sibling_count" (since siblings are found without limit or offset, just count them).
+    $this->set_global("sibling_count", count($this->siblings));
 
     // Get "position" of the item within its siblings (1-indexed).
     foreach ($this->siblings as $key => $sibling) {
