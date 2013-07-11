@@ -92,7 +92,7 @@ class Gallery_View_Gallery extends View {
       if (!$position) {
         // We can't find this result in our result set - perhaps we've fallen out of context?
         // Clear the context and try again.
-        Item::clear_display_context_callback();
+        Item::clear_display_context();
         HTTP::redirect(Request::current()->url(true));
       }
 

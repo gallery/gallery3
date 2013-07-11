@@ -30,7 +30,7 @@ class Search_Controller_Search extends Controller {
     $template = new View_Theme("required/page.html", "collection", "search");
     $template->set_global(array(
       "children_query" => Search::get_search_query($q, $album),
-      "children_order_by" => array("score" => "DESC", "id" => "ASC"),
+      "collection_order_by" => array("score" => "DESC", "id" => "ASC"),
       "breadcrumbs" => Search::get_breadcrumbs(null, $q, $album)
     ));
 
@@ -40,7 +40,7 @@ class Search_Controller_Search extends Controller {
     $template->init_collection();
 
     $this->response->body($template);
-    Item::set_display_context_callback("Controller_Search::get_display_context", $album, $q);
+    Item::set_display_context("Controller_Search::get_display_context", $album, $q);
   }
 
   public static function get_display_context($item, $album, $q) {

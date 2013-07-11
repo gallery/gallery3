@@ -57,7 +57,7 @@ class Gallery_Controller_Items extends Controller {
         "breadcrumbs" => Breadcrumb::array_from_item_parents($item),
       ));
       $template->init_collection();
-      Item::set_display_context_callback("Controller_Items::get_display_context");
+      Item::set_display_context("Controller_Items::get_display_context");
     } else {
       $template = new View_Theme("required/page.html", "item", $item->type);
       $template->content = new View("required/{$item->type}.html");
@@ -417,9 +417,9 @@ class Gallery_Controller_Items extends Controller {
   /**
    * Display context callback for albums.
    *
-   * @see  Item::set_display_context_callback()
+   * @see  Item::set_display_context()
    * @see  Item::get_display_context_callback()
-   * @see  Item::clear_display_context_callback()
+   * @see  Item::clear_display_context()
    * @see  Controller_Search::get_display_context()
    * @see  Controller_Tags::get_display_context()
    */

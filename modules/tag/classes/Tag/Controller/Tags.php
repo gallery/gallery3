@@ -90,7 +90,7 @@ class Tag_Controller_Tags extends Controller {
     $template->init_collection();
 
     $this->response->body($template);
-    Item::set_display_context_callback("Controller_Tags::get_display_context", $tag->id);
+    Item::set_display_context("Controller_Tags::get_display_context", $tag->id);
   }
 
   /**
@@ -176,9 +176,9 @@ class Tag_Controller_Tags extends Controller {
   /**
    * Display context callback for a tag.
    *
-   * @see  Item::set_display_context_callback()
+   * @see  Item::set_display_context()
    * @see  Item::get_display_context_callback()
-   * @see  Item::clear_display_context_callback()
+   * @see  Item::clear_display_context()
    * @see  Controller_Search::get_display_context()
    * @see  Controller_Items::get_display_context()
    */

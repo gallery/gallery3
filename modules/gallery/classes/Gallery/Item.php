@@ -361,7 +361,7 @@ class Gallery_Item {
   /**
    * Set the display context callback for any future item renders.
    */
-  static function set_display_context_callback() {
+  static function set_display_context() {
     if (!Request::user_agent("robot")) {
       $args = func_get_args();
       Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
@@ -372,7 +372,7 @@ class Gallery_Item {
   /**
    * Get rid of the display context callback
    */
-  static function clear_display_context_callback() {
+  static function clear_display_context() {
     Cache::instance()->delete("display_context_" . $sid = Session::instance()->id());
   }
 
