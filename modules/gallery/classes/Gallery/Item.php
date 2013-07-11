@@ -18,38 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Item {
-  static function move($source, $target) {
-    Access::required("view", $source);
-    Access::required("view", $target);
-    Access::required("edit", $source);
-    Access::required("edit", $target);
-
-    $orig_name = $source->name;
-    $source->parent_id = $target->id;
-    $source->save();
-    if ($orig_name != $source->name) {
-      switch ($source->type) {
-      case "album":
-        Message::info(
-          t("Album <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
-        break;
-
-      case "photo":
-        Message::info(
-          t("Photo <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
-        break;
-
-      case "movie":
-        Message::info(
-          t("Movie <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
-        break;
-      }
-    }
-  }
-
   static function make_album_cover($item) {
     $parent = $item->parent;
     Access::required("view", $item);
