@@ -130,21 +130,4 @@ class Tag_Tag {
       }
     }
   }
-
-  /**
-   * Find the position of the given item in the tag collection.  The resulting
-   * value is 1-indexed, so the first child in the album is at position 1.
-   *
-   * @param Model_Tag  $tag
-   * @param Model_Item $item
-   * @param array      $where an array of arrays, each compatible with ORM::where()
-   */
-  static function get_position($tag, $item, $where=array()) {
-    return $tag->items
-      ->viewable()
-      ->where("item.id", "<=", $item->id)
-      ->merge_where($where)
-      ->order_by("item.id")
-      ->count_all();
-  }
 }

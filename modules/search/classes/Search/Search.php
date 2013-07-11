@@ -29,7 +29,7 @@ class Search_Search {
   }
 
   static function search_within_album($q, $album, $limit, $offset, $where=array()) {
-    $query = static::search_query_base($q, $album, $where);
+    $query = static::get_search_query($q, $album, $where);
 
     $count = $query
       ->reset(false)
@@ -50,7 +50,7 @@ class Search_Search {
    * to modify the terms as needed, and returns an ORM query.
    * @see  http://dev.mysql.com/doc/refman/5.0/en/fulltext-search.html
    */
-  static function search_query_base($q, $album, $where=array()) {
+  static function get_search_query($q, $album, $where=array()) {
     // For *choosing* the found items, we use BOOLEAN MODE to allow special operators (+, -, *,...)
     // For *ordering* the found items, we use NATURAL LANGUAGE MODE to give us a score
 
@@ -134,41 +134,26 @@ class Search_Search {
     return array($remaining, $total, $percent);
   }
 
-  static function get_position($item, $q, $where=array()) {
-    return Search::get_position_within_album($item, $q, Item::root(), $where);
-  }
-
-  static function get_position_within_album($item, $q, $album, $where=array()) {
-    $items = static::search_query_base($q, $album, $where)
-      ->order_by("score", "DESC")
-      ->order_by("id", "ASC")  // use id as tie-breaker
-      ->find_all();
-
-    foreach ($items as $key => $current_item) {
-      if ($item->id == $current_item->id) {
-        return $key + 1;  // 1-indexed position
-      }
-    }
-
-    // We can't find this result in our result set - perhaps we've fallen out of context?  Clear
-    // the context and try again.
-    Item::clear_display_context_callback();
-    HTTP::redirect(Request::current()->uri(true));
-  }
-
   /**
    * Build the breadcrumbs for a search query.
    */
   static function get_breadcrumbs($item=null, $q, $album) {
-    $params = ($album->is_root() ? array("q" => $q) : array("q" => $q, "album" => $album->id));
-
-    $last_breadcrumbs = array();
-    $last_breadcrumbs[] = Breadcrumb::factory($q, URL::site("search") . URL::query($params, false));
+    $params = array("q" => $q);
+    if (!$album->is_root()) {
+      $params["album"] = $album->id;
+    }
     if ($item) {
-      $last_breadcrumbs[] = Breadcrumb::factory($item->title, $item->url());
+      $params["show"] = $item->id;
     }
 
-    return Breadcrumb::array_from_item_parents($album, $last_breadcrumbs);
+    $breadcrumbs = Breadcrumb::array_from_item_parents($album);
+    $breadcrumbs[] = Breadcrumb::factory(t("Search: %q", array("q" => $q)),
+                                         URL::site("search") . URL::query($params, false));
+    if ($item) {
+      $breadcrumbs[] = Breadcrumb::factory($item->title, $item->url());
+    }
+
+    return $breadcrumbs;
   }
 
   /**

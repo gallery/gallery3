@@ -50,7 +50,7 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
     $view->page_subtype = "admin_comments";
 
     $view->page_size = static::$items_per_page;
-    $view->children_query = ORM::factory("Comment")->where("state", "=", $state);
+    $view->collection_query_callback = array("Controller_ManageComments::get_comments_query", array($state));
     $view->init_collection();
 
     $view->counts = $this->_counts();
@@ -125,5 +125,9 @@ class Comment_Controller_Admin_ManageComments extends Controller_Admin {
       ->where("state", "=", "spam")
       ->execute();
     $this->redirect("admin/manage_comments/queue/spam");
+  }
+
+  static function get_comments_query($state) {
+    return ORM::factory("Comment")->where("state", "=", $state);
   }
 }

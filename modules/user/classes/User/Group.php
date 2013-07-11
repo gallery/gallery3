@@ -73,7 +73,7 @@ class User_Group {
         return $group;
       }
     } catch (Exception $e) {
-      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {  // @todo: check this...
         throw $e;
       }
     }

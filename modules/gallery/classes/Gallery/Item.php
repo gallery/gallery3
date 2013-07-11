@@ -18,38 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Item {
-  static function move($source, $target) {
-    Access::required("view", $source);
-    Access::required("view", $target);
-    Access::required("edit", $source);
-    Access::required("edit", $target);
-
-    $orig_name = $source->name;
-    $source->parent_id = $target->id;
-    $source->save();
-    if ($orig_name != $source->name) {
-      switch ($source->type) {
-      case "album":
-        Message::info(
-          t("Album <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
-        break;
-
-      case "photo":
-        Message::info(
-          t("Photo <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
-        break;
-
-      case "movie":
-        Message::info(
-          t("Movie <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
-        break;
-      }
-    }
-  }
-
   static function make_album_cover($item) {
     $parent = $item->parent;
     Access::required("view", $item);
@@ -303,97 +271,9 @@ class Gallery_Item {
   }
 
   /**
-   * Find the position of the given item in its parent album.  The resulting
-   * value is 1-indexed, so the first child in the album is at position 1.
-   *
-   * @param Model_Item $item
-   * @param array      $where an array of arrays, each compatible with ORM::where()
+   * Set the display context for any future item renders.
    */
-  static function get_position($item, $where=array()) {
-    $album = $item->parent;
-
-    if (!strcasecmp($album->sort_order, "DESC")) {
-      $comp = ">";
-    } else {
-      $comp = "<";
-    }
-    $query_model = ORM::factory("Item");
-
-    // If the comparison column has NULLs in it, we can't use comparators on it
-    // and will have to deal with it the hard way.
-    $count = $query_model->viewable()
-      ->where("parent_id", "=", $album->id)
-      ->where($album->sort_column, "IS", null)
-      ->merge_where($where)
-      ->count_all();
-
-    if (empty($count)) {
-      // There are no NULLs in the sort column, so we can just use it directly.
-      $sort_column = $album->sort_column;
-
-      $position = $query_model->viewable()
-        ->where("parent_id", "=", $album->id)
-        ->where($sort_column, $comp, $item->$sort_column)
-        ->merge_where($where)
-        ->count_all();
-
-      // We stopped short of our target value in the sort (notice that we're
-      // using a inequality comparator above) because it's possible that we have
-      // duplicate values in the sort column.  An equality check would just
-      // arbitrarily pick one of those multiple possible equivalent columns,
-      // which would mean that if you choose a sort order that has duplicates,
-      // it'd pick any one of them as the child's "position".
-      //
-      // Fix this by doing a 2nd query where we iterate over the equivalent
-      // columns and add them to our position count.
-      foreach ($query_model->viewable()
-               ->select("id")
-               ->where("parent_id", "=", $album->id)
-               ->where($sort_column, "=", $item->$sort_column)
-               ->merge_where($where)
-               ->order_by("id", "ASC")
-               ->find_all() as $row) {
-        $position++;
-        if ($row->id == $item->id) {
-          break;
-        }
-      }
-    } else {
-      // There are NULLs in the sort column, so we can't use MySQL comparators.
-      // Fall back to iterating over every child row to get to the current one.
-      // This can be wildly inefficient for really large albums, but it should
-      // be a rare case that the user is sorting an album with null values in
-      // the sort column.
-      //
-      // Reproduce the children() functionality here using Database directly to
-      // avoid loading the whole ORM for each row.
-      $order_by = array($album->sort_column => $album->sort_order);
-      // Use id as a tie breaker
-      if ($album->sort_column != "id") {
-        $order_by["id"] = "ASC";
-      }
-
-      $position = 0;
-      foreach ($query_model->viewable()
-               ->select("id")
-               ->where("parent_id", "=", $album->id)
-               ->merge_where($where)
-               ->merge_order_by($order_by)
-               ->find_all() as $row) {
-        $position++;
-        if ($row->id == $item->id) {
-          break;
-        }
-      }
-    }
-
-    return $position;
-  }
-
-  /**
-   * Set the display context callback for any future item renders.
-   */
-  static function set_display_context_callback() {
+  static function set_display_context() {
     if (!Request::user_agent("robot")) {
       $args = func_get_args();
       Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
@@ -402,27 +282,18 @@ class Gallery_Item {
   }
 
   /**
-   * Get rid of the display context callback
+   * Get rid of the display context.
    */
-  static function clear_display_context_callback() {
+  static function clear_display_context() {
     Cache::instance()->delete("display_context_" . $sid = Session::instance()->id());
   }
 
   /**
-   * Call the display context callback for the given item
+   * Get the display context.
    */
-  static function get_display_context($item) {
-    if (!Request::user_agent("robot")) {
-      $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
-      $callback = $args[0];
-      $args[0] = $item;
-    }
-
-    if (empty($callback)) {
-      $callback = "Controller_Items::get_display_context";
-      $args = array($item);
-    }
-    return call_user_func_array($callback, $args);
+  static function get_display_context() {
+    return Request::user_agent("robot") ? array() :
+      Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
   }
 
   /**
