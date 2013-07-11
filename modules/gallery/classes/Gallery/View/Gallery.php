@@ -174,36 +174,29 @@ class Gallery_View_Gallery extends View {
 
     // Get the current display context.  We default to the item's album if not found.
     $context = Item::get_display_context();
-    $album = $this->item->parent;
-    $sibling_query_callback = Arr::get($context, 0, array("Item::get_album_query", array($album)));
-    $breadcrumbs_callback   = Arr::get($context, 1, array("Item::get_breadcrumbs", array($album)));
+    $sibling_query_callback = Arr::get($context, 0);
+    $breadcrumbs_callback   = Arr::get($context, 1);
     $collection_order_by    = Arr::get($context, 2, array());
+    if (!$sibling_query_callback || !$breadcrumbs_callback) {
+      $album = $this->item->parent;
+      $sibling_query_callback = array("Item::get_album_query", array($album));
+      $breadcrumbs_callback   = array("Item::get_breadcrumbs", array($album));
+    }
 
     // Get "sibling_query" from its callback.
     $this->set_global("sibling_query", call_user_func_array(
       $sibling_query_callback[0],
       $sibling_query_callback[1]));
 
-    // Get "breadcrumbs" from its callback.
-    $this->set_global("breadcrumbs", Breadcrumb::set_first_and_last(call_user_func_array(
-      $breadcrumbs_callback[0],
-      array_merge(array($this->item), $breadcrumbs_callback[1]))));
-
-    // Restrict sibling query to non-albums.
-    $this->sibling_query->where("type", "<>", "album");
-
-    // Apply "collection_order_by" (required for search module).
-    foreach ($collection_order_by as $column => $direction) {
-      $this->sibling_query->order_by($column, $direction);
-    }
+    // Apply "collection_order_by" (required for search module), restrict query to non-albums.
+    $this->sibling_query
+      ->where("type", "<>", "album")
+      ->merge_order_by($collection_order_by);
 
     // Get "siblings" for the item.
     $this->set_global("siblings", $this->sibling_query
       ->reset(false)
       ->find_all());
-
-    // Get "sibling_count" (since siblings are found without limit or offset, just count them).
-    $this->set_global("sibling_count", count($this->siblings));
 
     // Get "position" of the item within its siblings (1-indexed).
     foreach ($this->siblings as $key => $sibling) {
@@ -220,9 +213,17 @@ class Gallery_View_Gallery extends View {
       return $this->init_item();
     }
 
+    // Get "sibling_count" (since siblings are found without limit or offset, just count them).
+    $this->set_global("sibling_count", count($this->siblings));
+
     // Get "previous_item" and "next_item", which may be null if at start/end of list.
     $this->set_global("previous_item", Arr::get($this->siblings, $this->position - 2));
     $this->set_global("next_item",     Arr::get($this->siblings, $this->position));
+
+    // Get "breadcrumbs" from its callback.
+    $this->set_global("breadcrumbs", Breadcrumb::set_first_and_last(call_user_func_array(
+      $breadcrumbs_callback[0],
+      array_merge(array($this->item), $breadcrumbs_callback[1]))));
 
     return $this;
   }
