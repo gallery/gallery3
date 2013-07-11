@@ -36,27 +36,32 @@ class Gallery_Breadcrumb {
 
   /**
    * Return an array of Breadcrumb instances build from the parents of a given item.
-   * The first and last Breadcrumb instances will be marked first/last as appropriate.
    * Each breadcrumb will have a ?show= query parameter that refers to the id of the next
    * item in line.
    *
    * @return array Breadcrumb instances
    */
-  static function array_from_item_parents($item, $last_breadcrumbs=array()) {
-    if ($item->is_root() && !$last_breadcrumbs) {
-      return array();
-    }
-
+  static function array_from_item_parents($item) {
     $bc = array_merge($item->parents->find_all()->as_array(), array($item));
     for ($i = 0; $i < count($bc) - 1; $i++) {
       $bc[$i] = Breadcrumb::factory($bc[$i]->title, $bc[$i]->url("show={$bc[$i+1]->id}"));
     }
     $bc[$i] = Breadcrumb::factory($item->title, $item->url());
-    $bc = array_merge($bc, $last_breadcrumbs);
 
-    $bc[0]->set_first();
-    end($bc)->set_last();
     return $bc;
+  }
+
+  /**
+   * Set the first and last breadcrumbs of an array of breadcrumbs.
+   */
+  static function set_first_and_last($breadcrumbs=array()) {
+    if (empty($breadcrumbs)) {
+      return array();
+    }
+
+    reset($breadcrumbs)->set_first();
+    end($breadcrumbs)->set_last();
+    return $breadcrumbs;
   }
 
   public function set_first() {

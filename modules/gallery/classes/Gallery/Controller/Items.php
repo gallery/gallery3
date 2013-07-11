@@ -51,20 +51,18 @@ class Gallery_Controller_Items extends Controller {
       $template = new View_Theme("required/page.html", "collection", "album");
       $template->content = new View("required/album.html");
       $template->set_global(array(
-        "page_title" => null,
         "item" => $item,
-        "children_query" => $item->children->viewable(),
-        "breadcrumbs" => Breadcrumb::array_from_item_parents($item),
+        "collection_query_callback" => array("Controller_Items::get_album_query", array($item)),
+        "breadcrumbs_callback"      => array("Controller_Items::get_breadcrumbs", array($item)),
       ));
       $template->init_collection();
-      Item::set_display_context_callback("Controller_Items::get_display_context");
     } else {
       $template = new View_Theme("required/page.html", "item", $item->type);
       $template->content = new View("required/{$item->type}.html");
       $template->set_global(array(
         "item" => $item,
       ));
-      $template->set_global(Item::get_display_context($item));
+      $template->init_item();
     }
 
     $this->response->body($template);
@@ -415,56 +413,6 @@ class Gallery_Controller_Items extends Controller {
   }
 
   /**
-   * Display context callback for albums.
-   *
-   * @see  Item::set_display_context_callback()
-   * @see  Item::get_display_context_callback()
-   * @see  Item::clear_display_context_callback()
-   * @see  Controller_Search::get_display_context()
-   * @see  Controller_Tags::get_display_context()
-   */
-  public static function get_display_context($item) {
-    $where = array(array("type", "!=", "album"));
-    $position = Item::get_position($item, $where);
-    if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) = $item->parent->children
-        ->viewable()
-        ->where("type", "!=", "album")
-        ->limit(3)
-        ->offset($position - 2)
-        ->find_all();
-    } else {
-      $previous_item = null;
-      list ($next_item) = $item->parent->children
-        ->viewable()
-        ->where("type", "!=", "album")
-        ->limit(1)
-        ->offset($position)
-        ->find_all();
-    }
-
-    return array("position" => $position,
-                 "previous_item" => $previous_item,
-                 "next_item" => $next_item,
-                 "sibling_count" =>
-                   $item->parent->children->viewable()->where("type", "!=", "album")->count_all(),
-                 "siblings_callback" => array("Controller_Items::get_siblings", array($item)),
-                 "parents" => $item->parents->find_all()->as_array(),
-                 "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
-  }
-
-  /**
-   * Siblings callback for albums.
-   *
-   * @see  View_Theme::siblings()
-   * @see  Controller_Search::get_siblings()
-   */
-  public static function get_siblings($item, $limit=null, $offset=null) {
-    // @todo consider creating Model_Item::siblings() if we use this more broadly.
-    return $item->parent->children->viewable()->limit($limit)->offset($offset)->find_all();
-  }
-
-  /**
    * Item add callback to process file uploads.  This is used in the item add form.
    */
   public static function item_add_callback($item_group) {
@@ -488,6 +436,23 @@ class Gallery_Controller_Items extends Controller {
       Log::instance()->add(Log::ERROR, "Validation errors: " . print_r($e->errors(), 1));
       $item_group->data_file->error(t("Invalid upload"));
     }
+  }
+
+  /**
+   * Get the album query for its collection view.
+   * @see  Controller_Items::action_show()
+   */
+  public static function get_album_query($album) {
+    return $album->children->viewable();
+  }
+
+  /**
+   * Get the breadcrumbs for an item.
+   * @see  Controller_Items::action_show()
+   */
+  public static function get_breadcrumbs($item=null, $album) {
+    $item = $item ?: $album;
+    return $item->is_root() ? array() : Breadcrumb::array_from_item_parents($item);
   }
 
   /**
