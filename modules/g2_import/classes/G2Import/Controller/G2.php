@@ -50,9 +50,14 @@ class G2Import_Controller_G2 extends Controller {
           $this->redirect($tag->abs_url(), 301);
         }
 
-        Item::set_display_context("Controller_Tags::get_display_context", $tag->id);
         // We want to show the item as part of the tag virtual album. Most of this code is below; we'll
         // change $path and $view to let it fall through
+        // @see  Controller_Tags::action_show()
+        Item::set_display_context(
+          array("Controller_Tags::get_tag_query",   array($tag)),
+          array("Controller_Tags::get_breadcrumbs", array($tag)),
+          array());
+
         $view = "";
         $path = "";
       }
