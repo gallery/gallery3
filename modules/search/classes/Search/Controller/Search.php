@@ -29,7 +29,7 @@ class Search_Controller_Search extends Controller {
 
     $template = new View_Theme("required/page.html", "collection", "search");
     $template->set_global(array(
-      "children_query" => Search::search_query_base($q, $album),
+      "children_query" => Search::get_search_query($q, $album),
       "children_order_by" => array("score" => "DESC", "id" => "ASC"),
       "breadcrumbs" => Search::get_breadcrumbs(null, $q, $album)
     ));

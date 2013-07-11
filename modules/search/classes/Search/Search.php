@@ -29,7 +29,7 @@ class Search_Search {
   }
 
   static function search_within_album($q, $album, $limit, $offset, $where=array()) {
-    $query = static::search_query_base($q, $album, $where);
+    $query = static::get_search_query($q, $album, $where);
 
     $count = $query
       ->reset(false)
@@ -50,7 +50,7 @@ class Search_Search {
    * to modify the terms as needed, and returns an ORM query.
    * @see  http://dev.mysql.com/doc/refman/5.0/en/fulltext-search.html
    */
-  static function search_query_base($q, $album, $where=array()) {
+  static function get_search_query($q, $album, $where=array()) {
     // For *choosing* the found items, we use BOOLEAN MODE to allow special operators (+, -, *,...)
     // For *ordering* the found items, we use NATURAL LANGUAGE MODE to give us a score
 
@@ -139,7 +139,7 @@ class Search_Search {
   }
 
   static function get_position_within_album($item, $q, $album, $where=array()) {
-    $items = static::search_query_base($q, $album, $where)
+    $items = static::get_search_query($q, $album, $where)
       ->order_by("score", "DESC")
       ->order_by("id", "ASC")  // use id as tie-breaker
       ->find_all();
