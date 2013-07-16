@@ -43,8 +43,7 @@ class Gallery_View_Gallery extends View {
    *  - "collection_query_callback" (reqd) - callback which returns an ORM query for the
    *    collection's objects without limit or offset applied.
    *  - "breadcrumbs_callback" - callback which returns an array of Breadcrumb objects without
-   *    set_first or set_last applied.  We use this as a semaphore that we have an *item*
-   *    collection, and set the item display context accordingly.
+   *    set_first or set_last applied.
    *  - "collection_order_by" - array of order_by's to apply to the collection after its objects are
    *    counted. If not given, this is omitted.  This is used in Controller_Search::action_index().
    *  - "page" - the current page.  If not given, this is set from query parameters.
@@ -70,19 +69,19 @@ class Gallery_View_Gallery extends View {
       $this->set_global("page_size", Module::get_var("gallery", "page_size", 9));
     }
 
-    // Get "collection_query" from its callback.
-    $this->set_global("collection_query", call_user_func_array(
+    // Get "children_query" from its callback.
+    $this->set_global("children_query", call_user_func_array(
       $this->collection_query_callback[0], $this->collection_query_callback[1]));
 
     // Redirect if "show" query parameter is set.
     if ($show = Request::current()->query("show")) {
       // Apply "collection_order_by" if set (required for search module).
       if (isset($this->collection_order_by)) {
-        $this->collection_query->merge_order_by($this->collection_order_by);
+        $this->children_query->merge_order_by($this->collection_order_by);
       }
 
       $position = null;
-      foreach ($this->collection_query->find_all() as $key => $child) {
+      foreach ($this->children_query->find_all() as $key => $child) {
         if ($child->id == $show) {
           $position = $key + 1; // 1-indexed position
           break;
@@ -105,13 +104,13 @@ class Gallery_View_Gallery extends View {
     }
 
     // Get "children_count" before applying any order_by calls.
-    $this->set_global("children_count", $this->collection_query
+    $this->set_global("children_count", $this->children_query
       ->reset(false)
       ->count_all());
 
     // Apply "collection_order_by" if set (required for search module).
     if (isset($this->collection_order_by)) {
-      $this->collection_query->merge_order_by($this->collection_order_by);
+      $this->children_query->merge_order_by($this->collection_order_by);
     }
 
     // Set "max_pages" using other params.
@@ -125,23 +124,26 @@ class Gallery_View_Gallery extends View {
     }
 
     // Get "children" for the page.
-    $this->set_global("children", $this->collection_query
+    $this->set_global("children", $this->children_query
       ->limit($this->page_size)
       ->offset($this->page_size * ($this->page - 1))
       ->reset(false)
       ->find_all());
 
-    // See if we have "breadcrumb_callback" set.  If so, we assume this is a type of
-    // item display - get "breadcrumbs" and set the item display context.
+    // Get "breadcrumbs" if "breadcrumb_callback" is set.
     if (!empty($this->breadcrumbs_callback)) {
       $this->set_global("breadcrumbs", Breadcrumb::set_first_and_last(call_user_func_array(
         $this->breadcrumbs_callback[0],
         array_merge(array(null), $this->breadcrumbs_callback[1]))));
+    }
 
+    // See if we have an item collection.  If so, set the item display context.  We default to
+    // empty arrays here, and reset them as needed in View_Gallery::init_item().
+    if ($this->collection_type() == "item") {
       Item::set_display_context(
         $this->collection_query_callback,
-        $this->breadcrumbs_callback,
-        (empty($this->collection_order_by) ? array() : $this->collection_order_by));
+        (!empty($this->breadcrumbs_callback) ? $this->breadcrumbs_callback : array()),
+        (!empty($this->collection_order_by)  ? $this->collection_order_by  : array()));
     }
 
     return $this;
@@ -153,9 +155,9 @@ class Gallery_View_Gallery extends View {
    * As inputs, this uses one view variable:
    *  - "item" (reqd) - item to be displayed.
    * and the item display context:
-   *  - "sibling_query_callback" - same as the collection's "collection_query_callback"
-   *  - "breadcrumbs_callback"   - same as the collection's "breadcrumbs_callback"
-   *  - "collection_order_by"    - same as the collection's "collection_order_by"
+   *  - "collection_query_callback"
+   *  - "breadcrumbs_callback"
+   *  - "collection_order_by"
    * If the context isn't found or is invalid, it will be reset to that of the item's parent album.
    *
    * From these, this:
@@ -174,19 +176,19 @@ class Gallery_View_Gallery extends View {
 
     // Get the current display context.  We default to the item's album if not found.
     $context = Item::get_display_context();
-    $sibling_query_callback = Arr::get($context, 0);
-    $breadcrumbs_callback   = Arr::get($context, 1);
-    $collection_order_by    = Arr::get($context, 2, array());
-    if (!$sibling_query_callback || !$breadcrumbs_callback) {
+    $collection_query_callback = Arr::get($context, 0);
+    $breadcrumbs_callback      = Arr::get($context, 1);
+    $collection_order_by       = Arr::get($context, 2, array());
+    if (!$collection_query_callback || !$breadcrumbs_callback) {
       $album = $this->item->parent;
-      $sibling_query_callback = array("Item::get_album_query", array($album));
-      $breadcrumbs_callback   = array("Item::get_breadcrumbs", array($album));
+      $collection_query_callback = array("Controller_Items::get_album_query", array($album));
+      $breadcrumbs_callback   = array("Controller_Items::get_breadcrumbs", array($album));
     }
 
     // Get "sibling_query" from its callback.
     $this->set_global("sibling_query", call_user_func_array(
-      $sibling_query_callback[0],
-      $sibling_query_callback[1]));
+      $collection_query_callback[0],
+      $collection_query_callback[1]));
 
     // Apply "collection_order_by" (required for search module), restrict query to non-albums.
     $this->sibling_query
@@ -279,6 +281,16 @@ class Gallery_View_Gallery extends View {
    */
   protected function _paginator_url($page=1, $absolute=false) {
     return Request::current()->url($absolute) . URL::query(array("page" => $page, "show" => null));
+  }
+
+  /**
+   * Return the collection type (e.g. "item", "user", "comment"), or null if not a collection view.
+   */
+  public function collection_type() {
+    return (($this->page_type == "collection") &&
+            !empty($this->children_query) &&
+            ($this->children_query instanceof ORM)) ?
+           $this->children_query->object_name() : null;
   }
 
   /**

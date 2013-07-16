@@ -130,4 +130,45 @@ class Tag_Tag {
       }
     }
   }
+
+  /**
+   * Return the absolute url for an array of tags.
+   * @param  array   array of Model_Tag objects
+   * @param  string  (optional) query string (e.g. "page=3")
+   */
+  static function abs_url($tags, $query=null) {
+    $url = array_shift($tags)->abs_url();
+    foreach ($tags as $tag) {
+      $url .= ",{$tag->slug}";
+    }
+
+    return $url . ($query ? "?$query" : "");
+  }
+
+  /**
+   * Return the url for an array of tags.
+   * @param  array   array of Model_Tag objects
+   * @param  string  (optional) query string (e.g. "page=3")
+   */
+  static function url($tags, $query=null) {
+    $url = array_shift($tags)->url();
+    foreach ($tags as $tag) {
+      $url .= ",{$tag->slug}";
+    }
+
+    return $url . ($query ? "?$query" : "");
+  }
+
+  /**
+   * Return the title for an array of tags.
+   * @param  array   array of Model_Tag objects
+   */
+  static function title($tags) {
+    $name = array_shift($tags)->name;
+    foreach ($tags as $tag) {
+      $name .= ", {$tag->name}";
+    }
+
+    return t2("Tag: %tag_name", "Tags: %tag_name", count($tags) + 1, array("tag_name" => $name));
+  }
 }
