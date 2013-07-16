@@ -38,4 +38,28 @@ class Tags_Controller_Test extends Unittest_TestCase {
       $this->assertEquals($canonical_url, $redirected_url);
     }
   }
+
+  public function test_redirect_malformed_multitag_url() {
+    $name = Test::random_name();
+    $album = Test::random_album();
+    Tag::add($album, "{$name}1");
+    Tag::add($album, "{$name}2");
+    $tag1 = ORM::factory("Tag")->where("name", "=", "{$name}1")->find();
+    $tag2 = ORM::factory("Tag")->where("name", "=", "{$name}2")->find();
+
+    $urls = array(
+      "tag/,{$tag1->slug},{$tag2->slug}",               // Leading comma
+      "tag/{$tag1->slug},{$tag2->slug},",               // Trailing comma
+      "tag/{$tag1->slug},,{$tag2->slug},,",             // Duplicate commas
+      "tag/{$tag1->slug},{$tag2->slug},{$tag1->slug}",  // Duplicate tag
+    );
+
+    $canonical_url = Tag::abs_url(array($tag1, $tag2)); // Correct URL
+
+    foreach ($urls as $url) {
+      // Check that URL is redirected to canonical URL.
+      $redirected_url = Request::factory($url)->execute()->headers("Location");
+      $this->assertEquals($canonical_url, $redirected_url);
+    }
+  }
 }
