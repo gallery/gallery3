@@ -186,10 +186,12 @@ class Tag_Controller_Tags extends Controller {
    * @see  Controller_Tags::action_show()
    */
   static function get_tag_query($tags) {
-    // For a single tag this would just be $tag->items->viewable(), but ORM doesn't handle
-    // multi-relationships as easily.  So, we query the pivot table manually.  We do a "where in..."
-    // which finds the items which have *any* of the tags, then require that the count be the total
-    // number of tags to ensure the items have *all* of the tags.
+    if (count($tags) == 1) {
+      return $tags[0]->items->viewable();
+    }
+
+    // ORM doesn't handle multiple "has many through" relationships very easily,
+    // so we query the pivot table manually.
     // @todo: try to do this in 1 query instead of 2 without tripping up count_all() and find_all().
 
     $tag_ids = array();
