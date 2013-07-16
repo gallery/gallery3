@@ -22,7 +22,7 @@ class Tag_Hook_TagEvent {
    * Initialization.  This sets the tag routes.
    */
   static function gallery_ready() {
-    Route::set("tag", "tag(/<tag_url>)", array("tag_url" => "[A-Za-z0-9-_/]++"))
+    Route::set("tag", "tag(/<tag_url>)", array("tag_url" => "[A-Za-z0-9-_/,]++"))
       ->defaults(array(
           "controller" => "tags",
           "action" => "show"

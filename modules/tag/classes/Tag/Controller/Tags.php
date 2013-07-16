@@ -29,7 +29,7 @@ class Tag_Controller_Tags extends Controller {
   }
 
   /**
-   * Show a tag's items.  This finds the tag by its URL and generates a view.
+   * Show a tag's items.  This finds the tag(s) by its URL and generates a view.
    */
   public function action_show() {
     // See if we got here via "tags/show/<id>" - if so, fire a 301.
@@ -41,50 +41,62 @@ class Tag_Controller_Tags extends Controller {
       $this->redirect($tag->abs_url(), 301);
     }
 
+    // Get the route and look for slashes commas and/or slashes.
     $tag_url = $this->request->param("tag_url");
-    if (empty($tag_url)) {
-      // @todo: this is the future home of the album of all tags.  For now, we 404.
-      throw HTTP_Exception::factory(404);
-    }
-
-    // See if we have a slash in the URL, which might be a Gallery 3.0.x canonical URL with
-    // the form "tag/<id>/<name>" - if so, fire a 301.
     if (($slash_pos = strpos($tag_url, "/")) !== false) {
+      // We have a slash in the URL, which might be a Gallery 3.0.x canonical URL with
+      // the form "tag/<id>/<name>" - if so, fire a 301; if not, fire a 404.
       $tag_id = substr($tag_url, 0, $slash_pos);
       $tag = ORM::factory("Tag", $tag_id);
       if (!$tag->loaded()) {
         throw HTTP_Exception::factory(404);
       }
       $this->redirect($tag->abs_url(), 301);
-    }
+    } else if (empty($tag_url)) {
+      // @todo: this is the future home of the album of all tags.  For now, we 404.
+      throw HTTP_Exception::factory(404);
+    } else {
+      // Find the tags by their canonical URLs, which have the form "tag/<slug_1>(,<slug_2>(,...))".
+      $slugs = array_unique(array_filter(explode(",", $tag_url)));
 
-    // Find the tag by its canonical URL, which has the form "tag(/<slug>)".
-    $tag = ORM::factory("Tag")
-      ->where("slug", "=", $tag_url)
-      ->find();
-    if (!$tag->loaded()) {
-      // See if we have a numeric URL, which might be a malformed Gallery 3.0.x URL
-      // with the form "tag/<id>" - if so, fire a 301.
-      if (!preg_match("/[^0-9]/", $tag_url)) {
-        $tag = ORM::factory("Tag", $tag_url);
-        if ($tag->loaded()) {
-          $this->redirect($tag->abs_url(), 301);
+      // Check for extra commas and duplicate tags and redirect as needed.
+      // (e.g. "tag/,foo,,bar,bar," --> "tag/foo,bar")
+      $filtered_url = implode(",", $slugs);
+      if ($tag_url !== $filtered_url) {
+        $this->redirect("tag/$filtered_url", 301);
+      }
+
+      $tags = array();
+      for ($i = 0; $i < count($slugs); $i++) {
+        $tags[$i] = ORM::factory("Tag", array("slug" => $slugs[$i]));
+        if (!$tags[$i]->loaded()) {
+          if ($i == 0) {
+            // See if we have a numeric URL, which might be a malformed Gallery 3.0.x URL
+            // with the form "tag/<id>" - if so, fire a 301; if not, fire a 404.
+            if (!preg_match("/[^0-9]/", $slugs[$i])) {
+              $tag = ORM::factory("Tag", $slugs[$i]);
+              if ($tag->loaded()) {
+                $this->redirect($tag->abs_url(), 301);
+              }
+            }
+          }
+
+          throw HTTP_Exception::factory(404);
         }
       }
-      throw HTTP_Exception::factory(404);
+
+      $template = new View_Theme("required/page.html", "collection", "tag");
+      $template->set_global(array(
+        "tag" => $tags[0],  // backward compatibility - @todo: remove the need for this.
+        "tags" => $tags,
+        "collection_query_callback" => array("Controller_Tags::get_tag_query",   array($tags)),
+        "breadcrumbs_callback"      => array("Controller_Tags::get_breadcrumbs", array($tags)),
+      ));
+      $template->init_collection();
+
+      $template->content = new View("required/dynamic.html");
+      $template->content->title = Tag::title($tags);
     }
-
-    $root = Item::root();
-    $template = new View_Theme("required/page.html", "collection", "tag");
-    $template->set_global(array(
-      "tag" => $tag,
-      "collection_query_callback" => array("Controller_Tags::get_tag_query",   array($tag)),
-      "breadcrumbs_callback"      => array("Controller_Tags::get_breadcrumbs", array($tag)),
-    ));
-    $template->init_collection();
-
-    $template->content = new View("required/dynamic.html");
-    $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
 
     $this->response->body($template);
   }
@@ -162,7 +174,7 @@ class Tag_Controller_Tags extends Controller {
    */
   public function action_find_by_name() {
     $tag_name = $this->request->arg(0);
-    $tag = ORM::factory("Tag")->where("name", "=", $tag_name)->find();
+    $tag = ORM::factory("Tag", array("name" => $tag_name));
     if (!$tag->loaded()) {
       throw HTTP_Exception::factory(404);
     }
@@ -173,20 +185,51 @@ class Tag_Controller_Tags extends Controller {
    * Get the tag query for its collection view.
    * @see  Controller_Tags::action_show()
    */
-  static function get_tag_query($tag) {
-    return $tag->items->viewable();
+  static function get_tag_query($tags) {
+    if (count($tags) == 1) {
+      return $tags[0]->items->viewable();
+    }
+
+    // ORM doesn't handle multiple "has many through" relationships very easily,
+    // so we query the pivot table manually.
+    // @todo: try to do this in 1 query instead of 2 without tripping up count_all() and find_all().
+
+    $tag_ids = array();
+    foreach ($tags as $tag) {
+      $tag_ids[] = $tag->id;
+    }
+
+    // Find the item ids that are found in the pivot table with *every* tag id.  We do a
+    // "where in...", which finds the "OR" set, then require that the count is the total number
+    // of tags, effectively making it an "AND" set.
+    $rows = DB::select("item_id")
+      ->distinct(true)
+      ->select(array(DB::expr("COUNT(\"*\")"), "C"))
+      ->from("items_tags")
+      ->where("tag_id", "IN", $tag_ids)
+      ->having("C", "=", count($tags))
+      ->group_by("item_id")
+      ->as_object()
+      ->execute();
+
+    $item_ids = array();
+    foreach ($rows as $row) {
+      $item_ids[] = $row->item_id;
+    }
+
+    // Return the ORM query.
+    return ORM::factory("Item")->where("item.id", "IN", $item_ids)->viewable();
   }
 
   /**
    * Get the breadcrumbs for a tag.
    * @see  Controller_Tags::action_show()
    */
-  static function get_breadcrumbs($item=null, $tag) {
+  static function get_breadcrumbs($item=null, $tags) {
     $params = $item ? "show={$item->id}" : null;
 
     $breadcrumbs = Breadcrumb::array_from_item_parents(Item::root());
-    $breadcrumbs[] = Breadcrumb::factory(t("Tag: %tag_name", array("tag_name" => $tag->name)),
-                                         $tag->url($params));
+    $breadcrumbs[] = Breadcrumb::factory(Tag::title($tags), Tag::url($tags, $params));
     if ($item) {
       $breadcrumbs[] = Breadcrumb::factory($item->title, $item->url());
     }
