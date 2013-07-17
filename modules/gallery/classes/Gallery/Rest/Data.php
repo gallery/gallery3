@@ -35,23 +35,45 @@ class Gallery_Rest_Data extends Rest {
     $size = Arr::get($this->params, "size");
     $encoding = Arr::get($this->params, "encoding");
 
+    // Translate REST's "size" into FileProxy's "type".
     $type = Arr::get(array("thumb" => "thumbs", "resize" => "resizes", "full" => "albums"), $size);
     if (!$type) {
       throw Rest_Exception::factory(400, array("size" => "invalid"));
     }
 
-    // If successful, FileProxy will dump the file to the browser and halt script execution.
-    $response = Request::factory("file_proxy/show")
+    // Build up our FileProxy subrequest.
+    $request = Request::factory("file_proxy/show")
       ->query(array(
           "item"     => $item,
           "type"     => $type,
           "encoding" => $encoding
-        ))
-      ->execute();
+        ));
 
-    // If not, we likely have an HTTP error code to throw (typically a 404).
-    if ($response->status() >= 400) {
-      throw Rest_Exception::factory($response->status());
+    // Collect some headers we want to pass through.
+    $headers = Request::current()->headers();
+    foreach (array("If-None-Match", "If-Range", "Range", "Cache-Control") as $key) {
+      if (isset($headers[$key])) {
+        $request->headers($key, $headers[$key]);
+      }
+    }
+
+    // Execute the request.  If sending content, FileProxy will dump the file to the browser and
+    // halt script execution with a status of either 200 (full file) or 206 (partial file).
+    $response = $request->execute();
+
+    // If not, we likely have an HTTP_Exception (typically a 304 or 404).
+    if ($response->status() >= 300) {
+      $e = Rest_Exception::factory($response->status());
+
+      // Collect some headers we want to pass through.
+      $headers = $response->headers();
+      foreach (array("Etag", "Cache-Control") as $key) {
+        if (isset($headers[$key])) {
+          $e->headers($key, $headers[$key]);
+        }
+      }
+
+      throw $e;
     }
 
     // Otherwise, simply return the body.  We only get here if in TEST_MODE.
