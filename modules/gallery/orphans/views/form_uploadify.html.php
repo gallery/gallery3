@@ -120,7 +120,7 @@
 
 <div class="requires-flash">
   <? if ($suhosin_session_encrypt || (Identity::active_user()->admin && !$movies_allowed)): ?>
-  <div class="g-message-block g-info">
+  <div class="g-message-block">
     <? if ($suhosin_session_encrypt): ?>
     <p class="g-error">
       <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
