@@ -79,7 +79,7 @@ class Kohana_Kohana_Exception extends Exception {
 	 *
 	 * @uses    Kohana_Exception::response
 	 * @param   Exception  $e
-	 * @return  boolean
+	 * @return  void
 	 */
 	public static function handler(Exception $e)
 	{
@@ -97,7 +97,7 @@ class Kohana_Kohana_Exception extends Exception {
 	 *
 	 * @uses    Kohana_Exception::response
 	 * @param   Exception  $e
-	 * @return  boolean
+	 * @return  Response
 	 */
 	public static function _handler(Exception $e)
 	{
@@ -184,12 +184,6 @@ class Kohana_Kohana_Exception extends Exception {
 			$file    = $e->getFile();
 			$line    = $e->getLine();
 			$trace   = $e->getTrace();
-
-			if ( ! headers_sent())
-			{
-				// Make sure the proper http header is sent
-				$http_header_status = ($e instanceof HTTP_Exception) ? $code : 500;
-			}
 
 			/**
 			 * HTTP_Exceptions are constructed in the HTTP_Exception::factory()
