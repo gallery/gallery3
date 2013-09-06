@@ -26,9 +26,17 @@ class Search_Controller_Admin_Search extends Controller_Admin {
       ->add("submit", "input|submit", t("Save"));
     $form->settings
       ->set("label", t("Settings"))
+      ->add("item_types",         "select", Module::get_var("search", "item_types", "all"))
       ->add("wildcard_mode",      "select", Module::get_var("search", "wildcard_mode", "append_stem"))
       ->add("short_search_fix", "checkbox", Module::get_var("search", "short_search_fix", false))
       ->add("short_search_prefix", "input", Module::get_var("search", "short_search_prefix", "1Z"));
+    $form->settings->item_types
+      ->set("label", t("Item types shown in search results"))
+      ->set("opts", array(
+          "all"         => t("all (default)"),
+          "no_albums"   => t("no albums; photos and movies only"),
+          "photos_only" => t("photos only; no albums or movies")
+        ));
     $form->settings->wildcard_mode
       ->set("label", t("Wildcard mode"))
       ->set("opts", array(
@@ -52,6 +60,7 @@ class Search_Controller_Admin_Search extends Controller_Admin {
         Search::mark_dirty();
       }
 
+      Module::set_var("search", "item_types",          $form->settings->item_types->val());
       Module::set_var("search", "wildcard_mode",       $form->settings->wildcard_mode->val());
       Module::set_var("search", "short_search_fix",    $form->settings->short_search_fix->val());
       Module::set_var("search", "short_search_prefix", $form->settings->short_search_prefix->val());
