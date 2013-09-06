@@ -109,6 +109,10 @@ class Gallery_Module {
         $module_name = basename(dirname($file));
         $modules->$module_name =
           new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        foreach ($modules->$module_name as &$value) {
+          $value = Purifier::clean_html($value);
+        }
+
         $m =& $modules->$module_name;
         $m->installed = Module::is_installed($module_name);
         $m->active = Module::is_active($module_name);

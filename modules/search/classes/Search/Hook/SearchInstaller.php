@@ -32,6 +32,7 @@ class Search_Hook_SearchInstaller {
                ENGINE=MyISAM
                DEFAULT CHARSET=utf8;");
 
+    Module::set_var("search", "item_types", "all");
     Module::set_var("search", "wildcard_mode", "append_stem");
     Module::set_var("search", "short_search_fix", false);
     Module::set_var("search", "short_search_prefix", "1Z");
@@ -48,6 +49,7 @@ class Search_Hook_SearchInstaller {
   static function upgrade($version) {
     if ($version == 1) {
       // In v2, we added some additional module variables for wildcards and short search fixes.
+      Module::set_var("search", "item_types", "all");
       Module::set_var("search", "wildcard_mode", "append_stem");
       Module::set_var("search", "short_search_fix", false);
       Module::set_var("search", "short_search_prefix", "1Z");

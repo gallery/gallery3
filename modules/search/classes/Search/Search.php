@@ -62,6 +62,19 @@ class Search_Search {
     $q_boolean = Database::instance()->escape(implode("", (array)$q_boolean));
     $q_natural = Database::instance()->escape(implode("", (array)$q_natural));
 
+    switch ($item_types = Module::get_var("search", "item_types", "all")) {
+    case "no_albums":
+      $where[] = array("type", "<>", "album");
+      break;
+    case "photos_only":
+      $where[] = array("type", "=", "photo");
+      break;
+    case "all":
+      break;
+    default:
+      throw new Gallery_Exception("Invalid search item_types setting: $item_types");
+    }
+
     // Build the query.
     return $album->descendants
       ->with("search_record")
