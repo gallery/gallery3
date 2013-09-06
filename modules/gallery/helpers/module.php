@@ -93,6 +93,10 @@ class module_Core {
         $module_name = basename(dirname($file));
         $modules->$module_name =
           new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        foreach ($modules->$module_name as &$value) {
+          $value = html::purify($value);
+        }
+
         $m =& $modules->$module_name;
         $m->installed = module::is_installed($module_name);
         $m->active = module::is_active($module_name);

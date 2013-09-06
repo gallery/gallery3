@@ -53,11 +53,17 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         module::set_var("gallery", "resize_size", $resize_size);
       }
 
-      module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
-      module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
       module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
-      module::set_var("gallery", "favicon_url", $form->edit_theme->favicon_url->value);
-      module::set_var("gallery", "apple_touch_icon_url", $form->edit_theme->apple_touch_icon_url->value);
+
+      // Sanitize values that get placed directly in HTML output by theme.
+      module::set_var("gallery", "header_text",
+        html::purify($form->edit_theme->header_text->value));
+      module::set_var("gallery", "footer_text",
+        html::purify($form->edit_theme->footer_text->value));
+      module::set_var("gallery", "favicon_url",
+        html::purify($form->edit_theme->favicon_url->value));
+      module::set_var("gallery", "apple_touch_icon_url",
+        html::purify($form->edit_theme->apple_touch_icon_url->value));
 
       module::event("theme_edit_form_completed", $form);
 
