@@ -62,12 +62,18 @@ class Gallery_Controller_Admin_ThemeOptions extends Controller_Admin {
     Module::event("theme_edit_form", $form);
 
     if ($form->load()->validate()) {
-      Module::set_var("gallery", "page_size",            $form->theme->page_size->val());
-      Module::set_var("gallery", "favicon_url",          $form->theme->favicon_url->val());
-      Module::set_var("gallery", "apple_touch_icon_url", $form->theme->apple_touch_icon_url->val());
-      Module::set_var("gallery", "header_text",          $form->theme->header_text->val());
-      Module::set_var("gallery", "footer_text",          $form->theme->footer_text->val());
-      Module::set_var("gallery", "show_credits",         $form->theme->show_credits->val());
+      Module::set_var("gallery", "page_size",    $form->theme->page_size->val());
+      Module::set_var("gallery", "show_credits", $form->theme->show_credits->val());
+
+      // Sanitize values that get placed directly in HTML output by theme.
+      Module::set_var("gallery", "favicon_url",
+        Purifier::clean_html($form->theme->favicon_url->val()));
+      Module::set_var("gallery", "apple_touch_icon_url",
+        Purifier::clean_html($form->theme->apple_touch_icon_url->val()));
+      Module::set_var("gallery", "header_text",
+        Purifier::clean_html($form->theme->header_text->val()));
+      Module::set_var("gallery", "footer_text",
+        Purifier::clean_html($form->theme->footer_text->val()));
 
       foreach (array("thumb", "resize") as $type) {
         $size = $form->theme->{"{$type}_size"}->val();

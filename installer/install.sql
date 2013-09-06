@@ -385,7 +385,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -432,6 +432,7 @@ INSERT INTO {vars} VALUES (NULL,'info','show_owner','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_name','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_captured','1');
 INSERT INTO {vars} VALUES (NULL,'info','show_dimensions','1');
+INSERT INTO {vars} VALUES (NULL,'search','item_types','all');
 INSERT INTO {vars} VALUES (NULL,'search','wildcard_mode','append_stem');
 INSERT INTO {vars} VALUES (NULL,'search','short_search_fix','0');
 INSERT INTO {vars} VALUES (NULL,'search','short_search_prefix','1Z');
