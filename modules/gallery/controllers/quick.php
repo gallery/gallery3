@@ -109,15 +109,15 @@ class Quick_Controller extends Controller {
       if ($position > 1) {
         list ($previous_item, $ignore, $next_item) =
         $item->parent()->viewable()->children(3, $position - 2, $where);
-      } else {                      
-        $previous_item = null;                
+      } else {
+        $previous_item = null;
         list ($next_item) = $item->parent()->viewable()->children(1, $position, $where);
-      }                                                 
+      }
       if ($next_item) {
          $redirect = $next_item;
       } else if ($previous_item) {
           $redirect = $previous_item;
-      }      
+      }
       $item->delete();
     }
     message::success($msg);
