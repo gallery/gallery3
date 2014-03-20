@@ -95,7 +95,7 @@ class Quick_Controller extends Controller {
       $msg = t("Deleted photo <b>%title</b>", array("title" => html::purify($item->title)));
     }
 
-    $parent = $item->parent();
+    $redirect = $item->parent(); // redirect to this item, if current item was deleted
 
     if ($item->is_album()) {
       // Album delete will trigger deletes for all children.  Do this in a batch so that we can be
@@ -104,6 +104,20 @@ class Quick_Controller extends Controller {
       $item->delete();
       batch::stop();
     } else {
+      $where = array(array("type", "!=", "album")); // evaluate redirect item before delete of current item
+      $position = item::get_position($item, $where);
+      if ($position > 1) {
+        list ($previous_item, $ignore, $next_item) =
+          $item->parent()->viewable()->children(3, $position - 2, $where);
+      } else {
+        $previous_item = null;
+        list ($next_item) = $item->parent()->viewable()->children(1, $position, $where);
+      }
+      if ($next_item) {
+        $redirect = $next_item;
+      } else if ($previous_item) {
+        $redirect = $previous_item;
+      }
       $item->delete();
     }
     message::success($msg);
@@ -113,7 +127,7 @@ class Quick_Controller extends Controller {
         $from_id != $id /* deleted the item we were viewing */) {
       json::reply(array("result" => "success", "reload" => 1));
     } else {
-      json::reply(array("result" => "success", "location" => $parent->url()));
+      json::reply(array("result" => "success", "location" => $redirect->url()));
     }
   }
 
