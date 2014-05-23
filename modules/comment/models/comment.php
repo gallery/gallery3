@@ -81,7 +81,7 @@ class Comment_Model_Core extends ORM {
       // New comment
       $this->created = $this->updated;
       if (empty($this->state)) {
-        $this->state = "published";
+        $this->state = "unpublished";
       }
 
       // These values are useful for spam fighting, so save them with the comment.  It's painful to
