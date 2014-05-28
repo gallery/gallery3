@@ -22,6 +22,7 @@ modules/comment/views/admin_manage_comments_queue.html.php   132 DIRTY_JS $comme
 modules/comment/views/admin_manage_comments_queue.html.php   141 DIRTY_JS $comment->id
 modules/comment/views/admin_manage_comments_queue.html.php   155 DIRTY    $theme->paginator()
 modules/comment/views/comment.html.php                       2   DIRTY_ATTR $comment->id;
+modules/comment/views/comment.html.php                       2   DIRTY_ATTR $comment->state
 modules/comment/views/comment.html.php                       5   DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
 modules/comment/views/comment.mrss.php                       10  DIRTY    $feed->uri
 modules/comment/views/comment.mrss.php                       13  DIRTY_JS $feed->uri
@@ -35,6 +36,7 @@ modules/comment/views/comment.mrss.php                       34  DIRTY_ATTR $com
 modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $comment->thumb_height
 modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $comment->thumb_width
 modules/comment/views/comments.html.php                      28  DIRTY_ATTR $comment->id
+modules/comment/views/comments.html.php                      28  DIRTY_ATTR $comment->state
 modules/comment/views/comments.html.php                      31  DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
 modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $comment->id
 modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comment->item()->url()
