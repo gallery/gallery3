@@ -49,6 +49,7 @@ class comment_installer {
     module::set_var("comment", "spam_caught", 0);
     module::set_var("comment", "access_permissions", "everybody");
     module::set_var("comment", "rss_visible", "all");
+    module::set_var("comment", "initial_state", "published");
   }
 
   static function upgrade($version) {
@@ -98,6 +99,11 @@ class comment_installer {
         module::set_var("comment", "rss_visible", "all");
       }
       module::set_version("comment", $version = 7);
+    }
+
+    if ($version == 7) {
+      module::set_var("comment", "initial_state", "published");
+      module::set_version("comment", $version = 8);
     }
   }
 

@@ -1,6 +1,6 @@
 name = "Comments"
 description = "Allows users and guests to leave comments on photos and albums."
-version = 7
+version = 8
 author_name = "Gallery Team"
 author_url = "http://codex.galleryproject.org/Gallery:Team"
 info_url = "http://codex.galleryproject.org/Gallery3:Modules:comment"

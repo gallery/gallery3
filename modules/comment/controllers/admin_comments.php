@@ -34,6 +34,8 @@ class Admin_Comments_Controller extends Admin_Controller {
                     $form->comment_settings->access_permissions->value);
     module::set_var("comment", "rss_visible",
                     $form->comment_settings->rss_visible->value);
+    module::set_var("comment", "initial_state",
+                    $form->comment_settings->initial_state->value);
     message::success(t("Comment settings updated"));
     url::redirect("admin/comments");
   }
@@ -47,6 +49,11 @@ class Admin_Comments_Controller extends Admin_Controller {
       ->options(array("everybody" => t("Everybody"),
                       "registered_users" => t("Only registered users")))
       ->selected(module::get_var("comment", "access_permissions"));
+    $comment_settings->dropdown("initial_state")
+      ->label(t("Are new comments published or unpublished by default?"))
+      ->options(array("published" => t("Published"),
+                      "unpublished" => t("Unpublished")))
+      ->selected(module::get_var("comment", "initial_state"));
     $comment_settings->dropdown("rss_visible")
       ->label(t("Which RSS feeds can users see?"))
       ->options(array("all" => t("All comment feeds"),

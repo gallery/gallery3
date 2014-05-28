@@ -25,7 +25,7 @@
   <? if ($comments->count()): ?>
   <ul>
     <? foreach ($comments as $comment): ?>
-    <li id="g-comment-<?= $comment->id ?>">
+    <li id="g-comment-<?= $comment->id ?>" class="g-comment-state-<?= $comment->state ?>">
       <p class="g-author">
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
@@ -48,6 +48,9 @@
       <div>
         <?= nl2br(html::purify($comment->text)) ?>
       </div>
+      <? if ($comment->state == "unpublished"): ?>
+      <b> <?= t("Your comment is held for moderation. The site moderator will review and publish it.") ?> </b>
+      <? endif ?>
     </li>
     <? endforeach ?>
   </ul>
