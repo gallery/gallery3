@@ -1,15 +1,15 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
-  <? foreach ($entries as $entry): ?>
-  <li class="<?= log::severity_class($entry->severity) ?>" style="direction: ltr">
-    <? if ($entry->user->guest): ?>
-    </span><?= html::clean($entry->user->name) ?></span>
-    <? else: ?>
-    <a href="<?= user_profile::url($entry->user->id) ?>"><?= html::clean($entry->user->name) ?></a>
-    <? endif ?>
-    <?= gallery::date_time($entry->timestamp) ?>
-    <?= $entry->message ?>
-    <?= $entry->html ?>
+  <?php foreach ($entries as $entry): ?>
+  <li class="<?php echo  log::severity_class($entry->severity) ?>" style="direction: ltr">
+    <?php if ($entry->user->guest): ?>
+    </span><?php echo  html::clean($entry->user->name) ?></span>
+    <?php else: ?>
+    <a href="<?php echo  user_profile::url($entry->user->id) ?>"><?php echo  html::clean($entry->user->name) ?></a>
+    <?php endif ?>
+    <?php echo  gallery::date_time($entry->timestamp) ?>
+    <?php echo  $entry->message ?>
+    <?php echo  $entry->html ?>
   </li>
-  <? endforeach ?>
+  <?php endforeach ?>
 </ul>

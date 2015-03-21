@@ -24,12 +24,12 @@
   #kohana-profiler td {
     padding-right: 1em;
   }
-  <? echo $styles ?>
+  <?php echo $styles ?>
 </style>
 
 <div id="kohana-profiler">
-  <? foreach ($profiles as $profile): ?>
-  <?= $profile->render(); ?>
-  <? endforeach; ?>
-  <p class="kp-meta"><?= t("Profiler executed in ") . number_format($execution_time, 3) ?>s</p>
+  <?php foreach ($profiles as $profile): ?>
+  <?php echo  $profile->render(); ?>
+  <?php endforeach; ?>
+  <p class="kp-meta"><?php echo  t("Profiler executed in ") . number_format($execution_time, 3) ?>s</p>
 </div>

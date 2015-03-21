@@ -1,8 +1,8 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   update_blocks = function() {
-    $.get(<?= html::js_string(url::site("admin/dashboard/reorder")) ?>,
-          {"csrf": "<?= $csrf ?>",
+    $.get(<?php echo  html::js_string(url::site("admin/dashboard/reorder")) ?>,
+          {"csrf": "<?php echo  $csrf ?>",
            "dashboard_center[]": $("#g-admin-dashboard").sortable(
              "toArray", {attribute: "block_id"}),
            "dashboard_sidebar[]": $("#g-admin-dashboard-sidebar").sortable(
@@ -32,12 +32,12 @@
   });
 </script>
 <div>
-  <? if ($obsolete_modules_message): ?>
+  <?php if ($obsolete_modules_message): ?>
   <p class="g-warning">
-    <?= $obsolete_modules_message ?>
+    <?php echo  $obsolete_modules_message ?>
   </p>
-  <? endif ?>
+  <?php endif ?>
 </div>
 <div id="g-admin-dashboard">
-  <?= $blocks ?>
+  <?php echo  $blocks ?>
 </div>

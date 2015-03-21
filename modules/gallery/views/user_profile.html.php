@@ -10,38 +10,38 @@
 <div id="g-user-profile">
   <div class="ui-helper-clearfix">
     <a id="g-profile-return" class="g-button g-right ui-state-default ui-corner-all" href="#">
-      <?= t("Return") ?>
+      <?php echo  t("Return") ?>
     </a>
-    <? if ($editable): ?>
-    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_email/{$user->id}") ?>">
-      <?= t("Change email") ?>
+    <?php if ($editable): ?>
+    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?php echo  url::site("users/form_change_email/{$user->id}") ?>">
+      <?php echo  t("Change email") ?>
     </a>
-    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_password/{$user->id}") ?>">
-      <?= t("Change password") ?>
+    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?php echo  url::site("users/form_change_password/{$user->id}") ?>">
+      <?php echo  t("Change password") ?>
     </a>
-    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("form/edit/users/{$user->id}") ?>">
-      <?= t("Edit") ?>
+    <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?php echo  url::site("form/edit/users/{$user->id}") ?>">
+      <?php echo  t("Edit") ?>
     </a>
-    <? endif ?>
-    <? if ($contactable): ?>
+    <?php endif ?>
+    <?php if ($contactable): ?>
     <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link"
-       href="<?= url::site("user_profile/contact/{$user->id}") ?>">
-      <?= t("Contact") ?>
+       href="<?php echo  url::site("user_profile/contact/{$user->id}") ?>">
+      <?php echo  t("Contact") ?>
     </a>
-    <? endif ?>
+    <?php endif ?>
   </div>
   <h1>
-    <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
-       alt="<?= html::clean_attribute($user->display_name()) ?>"
+    <img src="<?php echo  $user->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
+       alt="<?php echo  html::clean_attribute($user->display_name()) ?>"
        class="g-avatar g-left" width="40" height="40" />
-    <?= t("User profile: %name", array("name" => $user->display_name())) ?>
+    <?php echo  t("User profile: %name", array("name" => $user->display_name())) ?>
   </h1>
-  <? foreach ($info_parts as $info): ?>
+  <?php foreach ($info_parts as $info): ?>
   <div class="g-block">
-    <h2><?= html::purify($info->title) ?></h2>
+    <h2><?php echo  html::purify($info->title) ?></h2>
     <div class="g-block-content">
-    <?= $info->view ?>
+    <?php echo  $info->view ?>
     </div>
   </div>
-  <? endforeach ?>
+  <?php endforeach ?>
 </div>

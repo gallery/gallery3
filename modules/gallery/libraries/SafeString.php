@@ -82,7 +82,7 @@ class SafeString_Core {
    * Safe for use in HTML.
    *
    * Example:<pre>
-   *   <div><?= $php_var ?>
+   *   <div><?php echo  $php_var ?>
    * </pre>
    * @return the string escaped for use in HTML.
    */
@@ -95,7 +95,7 @@ class SafeString_Core {
    *
    * Example:<pre>
    *   <script type="text/javascript>"
-   *     var some_js_var = <?= $php_var->for_js() ?>;
+   *     var some_js_var = <?php echo  $php_var->for_js() ?>;
    *   </script>
    * </pre>
    * @return the string escaped for use in JavaScript.
@@ -111,7 +111,7 @@ class SafeString_Core {
    * delimited by single or double quotes
    *
    * Example:<pre>
-   *     <a title="<?= $php_var->for_html_attr() ?>">;
+   *     <a title="<?php echo  $php_var->for_html_attr() ?>">;
    *   </script>
    * </pre>
    * @return the string escaped for use in HTML attributes.
@@ -127,7 +127,7 @@ class SafeString_Core {
    * Safe for use HTML (purified HTML)
    *
    * Example:<pre>
-   *   <div><?= $php_var->purified_html() ?>
+   *   <div><?php echo  $php_var->purified_html() ?>
    * </pre>
    * @return the string escaped for use in HTML.
    */

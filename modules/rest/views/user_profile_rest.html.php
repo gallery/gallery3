@@ -3,9 +3,9 @@
   <ul>
     <li id="g-rest-key">
       <p>
-        <?= t("<b>Key</b>: %key", array("key" => $rest_key)) ?>
-        <a class="g-button ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("rest/reset_api_key_confirm") ?>">
-          <?= t("reset") ?>
+        <?php echo  t("<b>Key</b>: %key", array("key" => $rest_key)) ?>
+        <a class="g-button ui-state-default ui-corner-all g-dialog-link" href="<?php echo  url::site("rest/reset_api_key_confirm") ?>">
+          <?php echo  t("reset") ?>
         </a>
       </p>
     </li>

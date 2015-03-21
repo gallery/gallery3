@@ -26,7 +26,7 @@ class html extends html_Core {
    * unescaped HTML which is assumed to be safe.
    *
    * Example:<pre>
-   *   <div><?= html::clean($php_var) ?>
+   *   <div><?php echo  html::clean($php_var) ?>
    * </pre>
    */
   static function clean($html) {
@@ -39,7 +39,7 @@ class html extends html_Core {
    * only non-malicious HTML.
    *
    * Example:<pre>
-   *   <div><?= html::purify($item->title) ?>
+   *   <div><?php echo  html::purify($item->title) ?>
    * </pre>
    */
   static function purify($html) {
@@ -65,7 +65,7 @@ class html extends html_Core {
    *
    * Example:<pre>
    *   <script type="text/javascript>"
-   *     var some_js_string = <?= html::js_string($php_string) ?>;
+   *     var some_js_string = <?php echo  html::js_string($php_string) ?>;
    *   </script>
    * </pre>
    */
@@ -80,7 +80,7 @@ class html extends html_Core {
    * delimited by single or double quotes
    *
    * Example:<pre>
-   *     <a title="<?= html::clean_for_attribute($php_var) ?>">;
+   *     <a title="<?php echo  html::clean_for_attribute($php_var) ?>">;
    *   </script>
    * </pre>
    * @return the string escaped for use in HTML attributes.

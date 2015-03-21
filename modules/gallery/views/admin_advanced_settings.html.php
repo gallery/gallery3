@@ -1,39 +1,39 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="g-admin-advanced-settings" class="g-block">
-  <h1> <?= t("Advanced settings") ?> </h1>
+  <h1> <?php echo  t("Advanced settings") ?> </h1>
   <p>
-    <?= t("Here are internal Gallery configuration settings.  Most of these settings are accessible elsewhere in the administrative console.") ?>
+    <?php echo  t("Here are internal Gallery configuration settings.  Most of these settings are accessible elsewhere in the administrative console.") ?>
   </p>
 
   <ul id="g-action-status" class="g-message-block">
-    <li class="g-warning"><?= t("Change these values at your own risk!") ?></li>
+    <li class="g-warning"><?php echo  t("Change these values at your own risk!") ?></li>
   </ul>
 
-  <?= t("Filter:") ?> <input id="g-admin-advanced-settings-filter" type="text"></input>
+  <?php echo  t("Filter:") ?> <input id="g-admin-advanced-settings-filter" type="text"></input>
   <div class="g-block-content">
     <table>
       <tr>
-        <th> <?= t("Module") ?> </th>
-        <th> <?= t("Name") ?> </th>
-        <th> <?= t("Value") ?></th>
+        <th> <?php echo  t("Module") ?> </th>
+        <th> <?php echo  t("Name") ?> </th>
+        <th> <?php echo  t("Value") ?></th>
       </tr>
-      <? foreach ($vars as $var): ?>
-      <tr class="setting-row <?= text::alternate("g-odd", "g-even") ?>">
-        <td> <?= html::clean($var->module_name) ?> </td>
-        <td> <?= html::clean($var->name) ?> </td>
+      <?php foreach ($vars as $var): ?>
+      <tr class="setting-row <?php echo  text::alternate("g-odd", "g-even") ?>">
+        <td> <?php echo  html::clean($var->module_name) ?> </td>
+        <td> <?php echo  html::clean($var->name) ?> </td>
         <td>
-          <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . html::clean($var->name)) ?>"
+          <a href="<?php echo  url::site("admin/advanced_settings/edit/$var->module_name/" . html::clean($var->name)) ?>"
             class="g-dialog-link"
-            title="<?= t("Edit %var (%module_name)", array("var" => $var->name, "module_name" => $var->module_name))->for_html_attr() ?>">
-            <? if (!isset($var->value) || $var->value === ""): ?>
-            <i> <?= t("empty") ?> </i>
-            <? else: ?>
-            <?= html::clean($var->value) ?>
-            <? endif ?>
+            title="<?php echo  t("Edit %var (%module_name)", array("var" => $var->name, "module_name" => $var->module_name))->for_html_attr() ?>">
+            <?php if (!isset($var->value) || $var->value === ""): ?>
+            <i> <?php echo  t("empty") ?> </i>
+            <?php else: ?>
+            <?php echo  html::clean($var->value) ?>
+            <?php endif ?>
         </a>
         </td>
       </tr>
-      <? endforeach ?>
+      <?php endforeach ?>
     </table>
   </div>
 

@@ -27,11 +27,11 @@
     $.fn.gallery_hover_init();
   }
 
-  var FAILED_MSG = <?= t("Something went wrong...sorry!  <a>Retry</a> or check the task log for details")->for_js() ?>;
-  var ERROR_MSG = <?= t("Something went wrong!  Trying again in a moment... (__COUNT__)")->for_js() ?>;
+  var FAILED_MSG = <?php echo  t("Something went wrong...sorry!  <a>Retry</a> or check the task log for details")->for_js() ?>;
+  var ERROR_MSG = <?php echo  t("Something went wrong!  Trying again in a moment... (__COUNT__)")->for_js() ?>;
   update = function() {
     $.ajax({
-      url: <?= html::js_string(url::site("admin/maintenance/run/$task->id?csrf=$csrf")) ?>,
+      url: <?php echo  html::js_string(url::site("admin/maintenance/run/$task->id?csrf=$csrf")) ?>,
       dataType: "json",
       success: function(data) {
         target_value = data.task.percent_complete;
@@ -72,13 +72,13 @@
   }
 </script>
 <div id="g-progress">
-  <h1> <?= $task->name ?> </h1>
+  <h1> <?php echo  $task->name ?> </h1>
   <div class="g-progress-bar"></div>
   <div id="g-status">
-    <?= t("Starting up...") ?>
+    <?php echo  t("Starting up...") ?>
   </div>
   <div class="g-text-right">
-    <button id="g-pause-button" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Pause") ?></button>
-    <button id="g-done-button" class="ui-state-default ui-corner-all" style="display: none" onclick="dismiss()"><?= t("Close") ?></button>
+    <button id="g-pause-button" class="ui-state-default ui-corner-all" onclick="dismiss()"><?php echo  t("Pause") ?></button>
+    <button id="g-done-button" class="ui-state-default ui-corner-all" style="display: none" onclick="dismiss()"><?php echo  t("Close") ?></button>
   </div>
 </div>
