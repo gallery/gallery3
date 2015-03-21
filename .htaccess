@@ -4,7 +4,7 @@
 # mirrored in php.ini
 #
 <IfModule mod_php5.c>
-  php_flag short_open_tag            On
+  php_flag short_open_tag            Off
   php_flag magic_quotes_gpc          Off
   php_flag magic_quotes_sybase       Off
   php_flag magic_quotes_runtime      Off
