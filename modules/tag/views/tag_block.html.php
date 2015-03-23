@@ -22,7 +22,7 @@
 </script>
 <div id="g-tag-cloud">
    <a id="g-tag-cloud-autocomplete-url" style="display: none"
-      href="<?php echo  url::site("tags/autocomplete") ?>"></a>
-  <?php echo  $cloud ?>
+      href="<?php echo url::site("tags/autocomplete") ?>"></a>
+  <?php echo $cloud ?>
 </div>
-<?php echo  $form ?>
+<?php echo $form ?>

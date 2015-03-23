@@ -32,27 +32,27 @@
   <li class="g-first">
   <?php if ($page_type == "collection"): ?>
     <?php if (isset($first_page_url)): ?>
-      <a href="<?php echo  $first_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
-        <span class="ui-icon ui-icon-seek-first"></span><?php echo  t("First") ?></a>
+      <a href="<?php echo $first_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
+        <span class="ui-icon ui-icon-seek-first"></span><?php echo t("First") ?></a>
     <?php else: ?>
       <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
-        <span class="ui-icon ui-icon-seek-first"></span><?php echo  t("First") ?></a>
+        <span class="ui-icon ui-icon-seek-first"></span><?php echo t("First") ?></a>
     <?php endif ?>
   <?php endif ?>
 
   <?php if (isset($previous_page_url)): ?>
-    <a href="<?php echo  $previous_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-seek-prev"></span><?php echo  t("Previous") ?></a>
+    <a href="<?php echo $previous_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
+      <span class="ui-icon ui-icon-seek-prev"></span><?php echo t("Previous") ?></a>
   <?php else: ?>
     <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
-      <span class="ui-icon ui-icon-seek-prev"></span><?php echo  t("Previous") ?></a>
+      <span class="ui-icon ui-icon-seek-prev"></span><?php echo t("Previous") ?></a>
   <?php endif ?>
   </li>
 
   <li class="g-info">
     <?php if ($total): ?>
       <?php if ($page_type == "collection"): ?>
-        <?php echo  /* @todo This message isn't easily localizable */
+        <?php echo /* @todo This message isn't easily localizable */
             t2("Viewing %from_number of %count",
                "Viewing %from_number - %to_number of %count",
                $total,
@@ -60,27 +60,27 @@
                      "to_number" => $last_visible_position,
                      "count" => $total)) ?>
       <?php else: ?>
-        <?php echo  t("%position of %total", array("position" => $position, "total" => $total)) ?>
+        <?php echo t("%position of %total", array("position" => $position, "total" => $total)) ?>
       <?php endif ?>
     <?php endif ?>
   </li>
 
   <li class="g-text-right">
   <?php if (isset($next_page_url)): ?>
-    <a href="<?php echo  $next_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-seek-next"></span><?php echo  t("Next") ?></a>
+    <a href="<?php echo $next_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
+      <span class="ui-icon ui-icon-seek-next"></span><?php echo t("Next") ?></a>
   <?php else: ?>
     <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
-      <span class="ui-icon ui-icon-seek-next"></span><?php echo  t("Next") ?></a>
+      <span class="ui-icon ui-icon-seek-next"></span><?php echo t("Next") ?></a>
   <?php endif ?>
 
   <?php if ($page_type == "collection"): ?>
     <?php if (isset($last_page_url)): ?>
-      <a href="<?php echo  $last_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
-        <span class="ui-icon ui-icon-seek-end"></span><?php echo  t("Last") ?></a>
+      <a href="<?php echo $last_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
+        <span class="ui-icon ui-icon-seek-end"></span><?php echo t("Last") ?></a>
     <?php else: ?>
       <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
-        <span class="ui-icon ui-icon-seek-end"></span><?php echo  t("Last") ?></a>
+        <span class="ui-icon ui-icon-seek-end"></span><?php echo t("Last") ?></a>
     <?php endif ?>
   <?php endif ?>
   </li>

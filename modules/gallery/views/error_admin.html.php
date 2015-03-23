@@ -122,7 +122,7 @@
       }
     </style>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title><?php echo  t("Something went wrong!") ?></title>
+    <title><?php echo t("Something went wrong!") ?></title>
 
     <script type="text/javascript">
       function koggle(elem) {
@@ -156,16 +156,16 @@
       </div>
       <div class="title">
         <h1>
-          <?php echo  t("Dang...  Something went wrong!") ?>
+          <?php echo t("Dang...  Something went wrong!") ?>
         </h1>
         <h2>
-          <?php echo  t("We tried really hard, but it's broken.") ?>
+          <?php echo t("We tried really hard, but it's broken.") ?>
         </h2>
       </div>
     </div>
     <div class="big_box" id="error_details">
       <h2>
-        <?php echo  t("Hey wait, you're an admin!  We can tell you stuff.") ?>
+        <?php echo t("Hey wait, you're an admin!  We can tell you stuff.") ?>
       </h2>
       <p>
         There's an error message below and you can find more details
@@ -176,29 +176,29 @@
         tickets</a> to see if the problem you're seeing has been
         reported.  If you post a request, here's some useful
         information to include:
-        <?php echo   @gallery_block::get("platform_info") ?>
-        <?php echo   @gallery_block::get("stats") ?>
+        <?php echo  @gallery_block::get("platform_info") ?>
+        <?php echo  @gallery_block::get("stats") ?>
       </p>
       <div id="kohana_error">
         <h3>
           <span class="type">
-            <?php echo  $type?> [ <?php echo  $code ?> ]:
+            <?php echo $type?> [ <?php echo $code ?> ]:
           </span>
           <span class="message">
-            <?php echo  html::purify($message) ?>
+            <?php echo html::purify($message) ?>
           </span>
         </h3>
-        <div id="<?php echo  $error_id ?>" class="content">
+        <div id="<?php echo $error_id ?>" class="content">
           <ol class="trace">
             <li class="snippet">
               <p>
                 <span class="file">
-                  <?php echo  Kohana_Exception::debug_path($file)?>[ <?php echo  $line?> ]
+                  <?php echo Kohana_Exception::debug_path($file)?>[ <?php echo $line?> ]
                 </span>
               </p>
 
               <div class="source">
-                <?php if (Kohana_Exception::$source_output and $source_code = Kohana_Exception::debug_source($file, $line)): ?><code><?php foreach ($source_code as $num => $row): ?><span class="line <?php echo  ($num == $line) ? "highlight" : ""?>"><span class="number"><?php echo  $num ?></span><?php echo  htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><?php endforeach ?></code>
+                <?php if (Kohana_Exception::$source_output and $source_code = Kohana_Exception::debug_source($file, $line)): ?><code><?php foreach ($source_code as $num => $row): ?><span class="line <?php echo ($num == $line) ? "highlight" : ""?>"><span class="number"><?php echo $num ?></span><?php echo htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><?php endforeach ?></code>
                 <?php endif ?>
               </div>
             </li>
@@ -210,29 +210,29 @@
                 <span class="file">
                   <?php if ($step["file"]): $source_id = "$error_id.source.$i" ?>
                   <?php if (Kohana_Exception::$source_output and $step["source"]): ?>
-                  <a href="#<?php echo  $source_id ?>" onclick="return koggle('<?php echo  $source_id ?>')"><?php echo  Kohana_Exception::debug_path($step["file"])?>[ <?php echo  $step["line"]?> ]</a>
+                  <a href="#<?php echo $source_id ?>" onclick="return koggle('<?php echo $source_id ?>')"><?php echo Kohana_Exception::debug_path($step["file"])?>[ <?php echo $step["line"]?> ]</a>
                   <?php else: ?>
-                  <span class="file"><?php echo  Kohana_Exception::debug_path($step["file"])?>[ <?php echo  $step["line"]?> ]</span>
+                  <span class="file"><?php echo Kohana_Exception::debug_path($step["file"])?>[ <?php echo $step["line"]?> ]</span>
                   <?php endif ?>
                   <?php else: ?>
-                  {<?php echo  t("PHP internal call")?>}
+                  {<?php echo t("PHP internal call")?>}
                   <?php endif?>
                 </span>
                 &raquo;
-                <?php echo  $step["function"]?>(<?php if ($step["args"]): $args_id = "$error_id.args.$i" ?>
-                <a href="#<?php echo  $args_id ?>" onclick="return koggle('<?php echo  $args_id ?>')"><?php echo  t("arguments")?></a>
+                <?php echo $step["function"]?>(<?php if ($step["args"]): $args_id = "$error_id.args.$i" ?>
+                <a href="#<?php echo $args_id ?>" onclick="return koggle('<?php echo $args_id ?>')"><?php echo t("arguments")?></a>
                 <?php endif?>)
               </p>
               <?php if (isset($args_id)): ?>
-              <div id="<?php echo  $args_id ?>" class="args collapsed">
+              <div id="<?php echo $args_id ?>" class="args collapsed">
                 <table cellspacing="0">
                   <?php foreach ($step["args"] as $name => $arg): ?>
                   <tr>
                     <td class="key">
-                      <pre><?php echo  $name?></pre>
+                      <pre><?php echo $name?></pre>
                     </td>
                     <td class="value">
-                      <pre><?php echo  Kohana_Exception::safe_dump($arg, $name) ?></pre>
+                      <pre><?php echo Kohana_Exception::safe_dump($arg, $name) ?></pre>
                     </td>
                   </tr>
                   <?php endforeach?>
@@ -240,7 +240,7 @@
               </div>
               <?php endif?>
               <?php if (Kohana_Exception::$source_output and $step["source"] and isset($source_id)): ?>
-              <pre id="<?php echo  $source_id ?>" class="source collapsed"><code><?php foreach ($step["source"] as $num => $row): ?><span class="line <?php echo  ($num == $step["line"]) ? "highlight" : "" ?>"><span class="number"><?php echo  $num ?></span><?php echo  htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><?php endforeach ?></code></pre>
+              <pre id="<?php echo $source_id ?>" class="source collapsed"><code><?php foreach ($step["source"] as $num => $row): ?><span class="line <?php echo ($num == $step["line"]) ? "highlight" : "" ?>"><span class="number"><?php echo $num ?></span><?php echo htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><?php endforeach ?></code></pre>
               <?php endif?>
             </li>
             <?php unset($args_id, $source_id) ?>
@@ -250,30 +250,30 @@
 
         </div>
         <h2>
-          <a href="#<?php echo  $env_id = $error_id."environment" ?>" onclick="return koggle('<?php echo  $env_id ?>')"><?php echo  t("Environment")?></a>
+          <a href="#<?php echo $env_id = $error_id."environment" ?>" onclick="return koggle('<?php echo $env_id ?>')"><?php echo t("Environment")?></a>
         </h2>
-        <div id="<?php echo  $env_id ?>" class="content collapsed">
+        <div id="<?php echo $env_id ?>" class="content collapsed">
           <?php $included = get_included_files()?>
-          <h3><a href="#<?php echo  $env_id = $error_id."environment_included" ?>" onclick="return koggle('<?php echo  $env_id ?>')"><?php echo  t("Included files")?></a>(<?php echo  count($included)?>)</h3>
-          <div id="<?php echo  $env_id ?>" class="collapsed">
+          <h3><a href="#<?php echo $env_id = $error_id."environment_included" ?>" onclick="return koggle('<?php echo $env_id ?>')"><?php echo t("Included files")?></a>(<?php echo count($included)?>)</h3>
+          <div id="<?php echo $env_id ?>" class="collapsed">
             <table cellspacing="0">
               <?php foreach ($included as $file): ?>
               <tr>
                 <td>
-                  <pre><?php echo  Kohana_Exception::debug_path($file)?></pre>
+                  <pre><?php echo Kohana_Exception::debug_path($file)?></pre>
                 </td>
               </tr>
               <?php endforeach?>
             </table>
           </div>
           <?php $included = get_loaded_extensions()?>
-          <h3><a href="#<?php echo  $env_id = $error_id."environment_loaded" ?>" onclick="return koggle('<?php echo  $env_id ?>')"><?php echo  t("Loaded extensions")?></a>(<?php echo  count($included)?>)</h3>
-          <div id="<?php echo  $env_id ?>" class="collapsed">
+          <h3><a href="#<?php echo $env_id = $error_id."environment_loaded" ?>" onclick="return koggle('<?php echo $env_id ?>')"><?php echo t("Loaded extensions")?></a>(<?php echo count($included)?>)</h3>
+          <div id="<?php echo $env_id ?>" class="collapsed">
             <table cellspacing="0">
               <?php foreach ($included as $file): ?>
               <tr>
                 <td>
-                  <pre><?php echo  Kohana_Exception::debug_path($file)?></pre>
+                  <pre><?php echo Kohana_Exception::debug_path($file)?></pre>
                 </td>
               </tr>
               <?php endforeach?>
@@ -281,19 +281,19 @@
           </div>
           <?php foreach (array("_SESSION", "_GET", "_POST", "_FILES", "_COOKIE", "_SERVER") as $var): ?>
           <?php if ( empty($GLOBALS[$var]) OR ! is_array($GLOBALS[$var])) continue ?>
-          <h3><a href="#<?php echo  $env_id = "$error_id.environment" . strtolower($var) ?>"
-                 onclick="return koggle('<?php echo  $env_id ?>')">$<?php echo  $var?></a></h3>
-          <div id="<?php echo  $env_id ?>" class="collapsed">
+          <h3><a href="#<?php echo $env_id = "$error_id.environment" . strtolower($var) ?>"
+                 onclick="return koggle('<?php echo $env_id ?>')">$<?php echo $var?></a></h3>
+          <div id="<?php echo $env_id ?>" class="collapsed">
             <table cellspacing="0">
               <?php foreach ($GLOBALS[$var] as $key => $value): ?>
               <tr>
                 <td class="key">
                   <code>
-                    <?php echo  html::purify($key) ?>
+                    <?php echo html::purify($key) ?>
                   </code>
                 </td>
                 <td class="value">
-                  <pre><?php echo  Kohana_Exception::safe_dump($value, $key) ?></pre>
+                  <pre><?php echo Kohana_Exception::safe_dump($value, $key) ?></pre>
                 </td>
               </tr>
               <?php endforeach?>

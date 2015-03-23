@@ -29,7 +29,7 @@
 
 <div id="kohana-profiler">
   <?php foreach ($profiles as $profile): ?>
-  <?php echo  $profile->render(); ?>
+  <?php echo $profile->render(); ?>
   <?php endforeach; ?>
-  <p class="kp-meta"><?php echo  t("Profiler executed in ") . number_format($execution_time, 3) ?>s</p>
+  <p class="kp-meta"><?php echo t("Profiler executed in ") . number_format($execution_time, 3) ?>s</p>
 </div>

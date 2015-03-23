@@ -3,4 +3,4 @@
 // Log error response to ease debugging
 Kohana_Log::add("error", "Rest error details: " . print_r($e->response, 1));
 ?>
-<?php echo  json_encode($e->response);
+<?php echo json_encode($e->response);

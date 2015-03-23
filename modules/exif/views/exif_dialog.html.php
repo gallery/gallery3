@@ -4,24 +4,24 @@
   .g-odd { background: #bdd2ff; }
   .g-even { background: #dfeffc; }
 </style>
-<h1 style="display: none;"><?php echo  t("Photo detail") ?></h1>
+<h1 style="display: none;"><?php echo t("Photo detail") ?></h1>
 <div id="g-exif-data">
   <table class="g-metadata" >
     <tbody>
       <?php for ($i = 0; $i < count($details); $i++): ?>
       <tr>
          <td class="g-even">
-         <?php echo  $details[$i]["caption"] ?>
+         <?php echo $details[$i]["caption"] ?>
          </td>
          <td class="g-odd">
-         <?php echo  html::clean($details[$i]["value"]) ?>
+         <?php echo html::clean($details[$i]["value"]) ?>
          </td>
          <?php if (!empty($details[++$i])): ?>
            <td class="g-even">
-           <?php echo  $details[$i]["caption"] ?>
+           <?php echo $details[$i]["caption"] ?>
            </td>
            <td class="g-odd">
-           <?php echo  html::clean($details[$i]["value"]) ?>
+           <?php echo html::clean($details[$i]["value"]) ?>
            </td>
          <?php else: ?>
            <td class="g-even"></td><td class="g-odd"></td>

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   var set_state_url =
-    <?php echo  html::js_string(url::site("admin/manage_comments/set_state/__ID__/__STATE__?csrf=$csrf")) ?>;
+    <?php echo html::js_string(url::site("admin/manage_comments/set_state/__ID__/__STATE__?csrf=$csrf")) ?>;
   var set_state = function(state, id) {
     $("#g-comment-" + id).fadeOut("fast", function() {
       $.get(set_state_url.replace("__STATE__", state).replace("__ID__", id),
@@ -11,7 +11,7 @@
   }
 
   var update_menu = function() {
-    $.get(<?php echo  html::js_string(url::site("admin/manage_comments/menu_labels")) ?>, {},
+    $.get(<?php echo html::js_string(url::site("admin/manage_comments/menu_labels")) ?>, {},
           function(data) {
             for (var i = 0; i < data.length; i++) {
               $("#g-admin-comments ul li:eq(" + i + ") a").html(data[i]);
@@ -42,5 +42,5 @@
 </script>
 
 <div id="g-admin-comments" class="g-block">
-  <?php echo  $menu->render() ?>
+  <?php echo $menu->render() ?>
 </div>

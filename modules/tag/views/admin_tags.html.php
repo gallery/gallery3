@@ -2,12 +2,12 @@
 <script type="text/javascript">
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
-    $("#g-tag-admin .g-tag-name").attr("title", <?php echo  t("Click to edit this tag")->for_js() ?>);
+    $("#g-tag-admin .g-tag-name").attr("title", <?php echo t("Click to edit this tag")->for_js() ?>);
     $("#g-tag-admin .g-delete-link").attr("title", $(".g-delete-link:first span").html());
 
     // In-place editing for tag admin
     $(".g-editable").gallery_in_place_edit({
-      form_url: <?php echo  html::js_string(url::site("admin/tags/form_rename/__ID__")) ?>
+      form_url: <?php echo html::js_string(url::site("admin/tags/form_rename/__ID__")) ?>
     });
   });
 </script>
@@ -16,12 +16,12 @@
 <?php $column_tag_count = 0 ?>
 
 <div class="g-block">
-  <h1> <?php echo  t("Manage tags") ?> </h1>
+  <h1> <?php echo t("Manage tags") ?> </h1>
 
   <div class="g-block-content">
     <table id="g-tag-admin">
       <caption>
-        <?php echo  t2("There is one tag", "There are %count tags", $tags->count()) ?>
+        <?php echo t2("There is one tag", "There are %count tags", $tags->count()) ?>
       </caption>
       <tr>
         <td>
@@ -29,7 +29,7 @@
           <?php $current_letter = strtoupper(mb_substr($tag->name, 0, 1)) ?>
 
           <?php if ($i == 0): /* first letter */ ?>
-          <strong><?php echo  html::clean($current_letter) ?></strong>
+          <strong><?php echo html::clean($current_letter) ?></strong>
           <ul>
           <?php elseif ($last_letter != $current_letter): /* new letter */ ?>
           </ul>
@@ -38,15 +38,15 @@
         </td>
         <td>
             <?php endif ?>
-          <strong><?php echo  html::clean($current_letter) ?></strong>
+          <strong><?php echo html::clean($current_letter) ?></strong>
           <ul>
           <?php endif ?>
               <li>
-                <span class="g-editable g-tag-name" rel="<?php echo  $tag->id ?>"><?php echo  html::clean($tag->name) ?></span>
-                <span class="g-understate">(<?php echo  $tag->count ?>)</span>
-                <a href="<?php echo  url::site("admin/tags/form_delete/$tag->id") ?>"
+                <span class="g-editable g-tag-name" rel="<?php echo $tag->id ?>"><?php echo html::clean($tag->name) ?></span>
+                <span class="g-understate">(<?php echo $tag->count ?>)</span>
+                <a href="<?php echo url::site("admin/tags/form_delete/$tag->id") ?>"
                     class="g-dialog-link g-delete-link g-button">
-                  <span class="ui-icon ui-icon-trash"><?php echo  t("Delete this tag") ?></span></a>
+                  <span class="ui-icon ui-icon-trash"><?php echo t("Delete this tag") ?></span></a>
               </li>
           <?php $column_tag_count++ ?>
           <?php $last_letter = $current_letter ?>

@@ -2,15 +2,15 @@
 <script type="text/javascript">
 $("document").ready(function() {
   $("form input[name=embed_path]").gallery_autocomplete(
-    "<?php echo  url::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
+    "<?php echo url::site("__ARGS__") ?>".replace("__ARGS__", "admin/g2_import/autocomplete"),
     {});
 });
 </script>
 
 <div id="g-admin-g2-import" class="g-block">
-  <h1> <?php echo  t("Gallery 2 import") ?> </h1>
+  <h1> <?php echo t("Gallery 2 import") ?> </h1>
   <p>
-    <?php echo  t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
+    <?php echo t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
   </p>
 
   <script type="text/javascript">
@@ -34,27 +34,27 @@ $("document").ready(function() {
   <div id="g-admin-g2-import-tabs" class="g-block-content" style="display: none">
     <ul>
       <li>
-        <a href="#g-admin-g2-import-configure"><?php echo  t("1. Configure Gallery2 path") ?></a>
+        <a href="#g-admin-g2-import-configure"><?php echo t("1. Configure Gallery2 path") ?></a>
       </li>
       <li>
-        <a href="#g-admin-g2-import-import"><?php echo  t("2. Import!") ?></a>
+        <a href="#g-admin-g2-import-import"><?php echo t("2. Import!") ?></a>
       </li>
       <li>
-        <a href="#g-admin-g2-import-notes"><?php echo  t("3. After your import") ?></a>
+        <a href="#g-admin-g2-import-notes"><?php echo t("3. After your import") ?></a>
       </li>
     </ul>
     <div id="g-admin-g2-import-configure" class="g-block-content">
-      <?php echo  $form ?>
+      <?php echo $form ?>
     </div>
     <div id="g-admin-g2-import-import">
       <?php if (isset($g2_version)): ?>
       <ul>
         <li>
-          <?php echo  t("Gallery version %version detected", array("version" => $g2_version)) ?>
+          <?php echo t("Gallery version %version detected", array("version" => $g2_version)) ?>
         </li>
         <?php if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
         <li>
-          <?php echo  t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+          <?php echo t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
                 array("g2_pixels" => $g2_sizes["thumb"]["size"],
                       "g3_pixels" => $thumb_size,
                       "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
@@ -63,7 +63,7 @@ $("document").ready(function() {
 
         <?php if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
         <li>
-          <?php echo  t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 intermediate size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+          <?php echo t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 intermediate size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
                 array("g2_pixels" => $g2_sizes["resize"]["size"],
                       "g3_pixels" => $resize_size,
                       "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
@@ -81,7 +81,7 @@ $("document").ready(function() {
           $t[] = t2("1 tagged photo/movie/album", "%count tagged photos/movies/albums",
                     $g2_stats["tags"]);
           ?>
-          <?php echo  t("Your Gallery 2 has the following importable data in it: %t0, %t1, %t2, %t3, %t4, %t5",
+          <?php echo t("Your Gallery 2 has the following importable data in it: %t0, %t1, %t2, %t3, %t4, %t5",
                 array("t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
                       "t3" => $t[3], "t4" => $t[4], "t5" => $t[5])) ?>
         </li>
@@ -97,7 +97,7 @@ $("document").ready(function() {
           $t[] = t2("1 comment", "%count comments", $g3_stats["comment"]);
           $t[] = t2("1 tagged photo/movie/album", "%count tagged photos/movies/albums", $g3_stats["tag"]);
           ?>
-          <?php echo  t("It looks like you've imported the following Gallery 2 data already: %t0, %t1, %t2, %t3, %t4, %t5",
+          <?php echo t("It looks like you've imported the following Gallery 2 data already: %t0, %t1, %t2, %t3, %t4, %t5",
                 array("t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
                       "t3" => $t[3], "t4" => $t[4], "t5" => $t[5])) ?>
         </li>
@@ -105,8 +105,8 @@ $("document").ready(function() {
       </ul>
       <p>
         <a class="g-button g-dialog-link ui-state-default ui-corner-all"
-           href="<?php echo  url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
-          <?php echo  t("Begin import!") ?>
+           href="<?php echo url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
+          <?php echo t("Begin import!") ?>
         </a>
       </p>
       <?php endif ?>
@@ -114,22 +114,22 @@ $("document").ready(function() {
     <div id="g-admin-g2-import-notes" class="g-text">
       <ul>
         <li>
-          <?php echo  t("Gallery 3 does not support per-user / per-item permissions.  <b>Review permissions!</b>") ?>
+          <?php echo t("Gallery 3 does not support per-user / per-item permissions.  <b>Review permissions!</b>") ?>
         </li>
         <li>
-          <?php echo  t("The only supported file formats are JPG, PNG and GIF, FLV and MP4.  Other formats will be skipped.") ?>
+          <?php echo t("The only supported file formats are JPG, PNG and GIF, FLV and MP4.  Other formats will be skipped.") ?>
         </li>
         <li>
           <p>
-            <?php echo  t("Redirecting Gallery 2 URLs once your migration is complete.  Put this block at the top of your gallery2/.htaccess file and all Gallery 2 urls will be redirected to Gallery 3") ?>
+            <?php echo t("Redirecting Gallery 2 URLs once your migration is complete.  Put this block at the top of your gallery2/.htaccess file and all Gallery 2 urls will be redirected to Gallery 3") ?>
           </p>
 
           <textarea id="g-g2-redirect-rules" rows="4" cols="60">&lt;IfModule mod_rewrite.c&gt;
       Options +FollowSymLinks
       RewriteEngine On
-      RewriteBase <?php echo  html::clean(g2_import::$g2_base_url) ?>
+      RewriteBase <?php echo html::clean(g2_import::$g2_base_url) ?>
 
-      RewriteRule ^(.*)$ <?php echo  url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
+      RewriteRule ^(.*)$ <?php echo url::site("g2/map?path=\$1") ?>   [QSA,L,R=301]
     &lt;/IfModule&gt;</textarea>
           <script type="text/javascript">
             $(document).ready(function() {

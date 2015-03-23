@@ -37,7 +37,7 @@
       }
     </style>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title><?php echo  t("Something went wrong!") ?></title>
+    <title><?php echo t("Something went wrong!") ?></title>
   </head>
   <body>
     <div class="big_box" id="framework_error">
@@ -46,13 +46,13 @@
       </div>
       <div class="title">
         <h1>
-          <?php echo  t("Dang...  Something went wrong!") ?>
+          <?php echo t("Dang...  Something went wrong!") ?>
         </h1>
         <h2>
-          <?php echo  t("We tried really hard, but it's broken.") ?>
+          <?php echo t("We tried really hard, but it's broken.") ?>
         </h2>
         <p>
-          <?php echo  t("Talk to your Gallery administrator for help fixing this!") ?>
+          <?php echo t("Talk to your Gallery administrator for help fixing this!") ?>
         </p>
       </div>
     </div>
