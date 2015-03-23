@@ -2,6 +2,8 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
+  - 5.6
 
 branches:
   only:
@@ -18,7 +20,6 @@ before_install:
 
 before_script:
   - mysql -e 'create database gallery3; create database gallery3_test;'
-  - cat `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"` | sed -e "s/short_open_tag = Off/short_open_tag = On/ig" > `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
   - php ./installer/index.php
 
 script:
