@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?
+<?php
 // This is a generic paginator for album, photo and movie pages.  Depending on the page type,
 // there are different sets of variables available.  With this data, you can make a paginator
 // that lets you say "You're viewing photo 5 of 35", or "You're viewing photos 10 - 18 of 37"

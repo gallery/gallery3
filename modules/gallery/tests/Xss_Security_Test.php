@@ -122,7 +122,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
           if ($frame) {
             $frame->expr_append($token);
           }
-        } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
+        } else if ($token[0] == T_OPEN_TAG_WITH_ECHO || $token[0] == T_OPEN_TAG) {
           // No need for a stack here - assume < ? = cannot be nested.
           $frame = self::_create_frame($token, $in_script_block,
                                        $href_attribute_start, $in_attribute_js_context,

@@ -71,7 +71,7 @@ $("document").ready(function() {
         <?php endif ?>
 
         <li>
-          <?
+          <?php
           $t = array();
           $t[] = t2("1 user", "%count users", $g2_stats["users"]);
           $t[] = t2("1 group", "%count groups", $g2_stats["groups"]);
@@ -88,7 +88,7 @@ $("document").ready(function() {
 
         <?php if ($g3_resource_count): ?>
         <li>
-          <?
+          <?php
           $t = array();
           $t[] = t2("1 user", "%count users", $g3_stats["user"]);
           $t[] = t2("1 group", "%count groups", $g3_stats["group"]);
