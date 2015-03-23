@@ -6,7 +6,7 @@
 </p>
 
 
-<fieldset class="<?= installer::var_writable() ? 'success' : 'error' ?>">
+<fieldset class="<?php echo installer::var_writable() ? 'success' : 'error' ?>">
   <legend>Photo Storage</legend>
   <?php if (!installer::var_writable()): ?>
   <p>
@@ -23,7 +23,7 @@
   <?php else: ?>
   <p>
     We've found a place to store your photos:
-    <code class="location"> <?= htmlspecialchars(VARPATH, ENT_QUOTES, 'UTF-8', true) ?> </code>
+    <code class="location"> <?php echo htmlspecialchars(VARPATH, ENT_QUOTES, 'UTF-8', true) ?> </code>
   </p>
   <?php endif ?>
 </fieldset>

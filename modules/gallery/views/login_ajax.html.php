@@ -3,10 +3,10 @@
   $("#g-login-form").ready(function() {
     $("#g-password-reset").click(function() {
       $.ajax({
-        url: "<?= url::site("password/reset") ?>",
+        url: "<?php echo url::site("password/reset") ?>",
         success: function(data) {
           $("#g-login").html(data);
-          $("#ui-dialog-title-g-dialog").html(<?= t("Reset password")->for_js() ?>);
+          $("#ui-dialog-title-g-dialog").html(<?php echo t("Reset password")->for_js() ?>);
           $(".submit").addClass("g-button ui-state-default ui-corner-all");
           $(".submit").gallery_hover_init();
           ajaxify_login_reset_form();
@@ -41,12 +41,12 @@
 <div id="g-login">
   <ul>
     <li id="g-login-form">
-      <?= $form ?>
+      <?php echo $form ?>
     </li>
-    <? if (identity::is_writable() && !module::get_var("gallery", "maintenance_mode")): ?>
+    <?php if (identity::is_writable() && !module::get_var("gallery", "maintenance_mode")): ?>
     <li>
-      <a href="#" id="g-password-reset" class="g-right g-text-small"><?= t("Forgot your password?") ?></a>
+      <a href="#" id="g-password-reset" class="g-right g-text-small"><?php echo t("Forgot your password?") ?></a>
     </li>
-    <? endif ?>
+    <?php endif ?>
   </ul>
 </div>

@@ -124,11 +124,26 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
           }
         } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
           // No need for a stack here - assume < ? = cannot be nested.
+            //var_dump($tokens[$token_number+1]);var_dump(ini_get('short_open_tag'));die('zboub');
           $frame = self::_create_frame($token, $in_script_block,
                                        $href_attribute_start, $in_attribute_js_context,
                                        $in_attribute, $preceded_by_quote);
           $href_attribute_start = false;
-        } else if ($frame && $token[0] == T_CLOSE_TAG) {
+        }
+
+        // uncomment if we ensure retro-compatibility with old "short_open_tag"
+        /*elseif ($token[0] == T_OPEN_TAG) {
+            if (isset($tokens[$token_number+1]) && $tokens[$token_number+1][0] == T_ECHO) {
+                $token_number++;
+                $token = $tokens[$token_number];
+                $frame = self::_create_frame($token, $in_script_block,
+                                       $href_attribute_start, $in_attribute_js_context,
+                                       $in_attribute, $preceded_by_quote);
+                $href_attribute_start = false;
+            }
+        }*/
+
+        else if ($frame && $token[0] == T_CLOSE_TAG) {
           // Store the < ? = ... ? > block that just ended here.
           $found[$view][] = $frame;
           $frame = null;

@@ -1,10 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <li>
-  <a <?= $menu->css_id ? "id='{$menu->css_id}'" : "" ?>
-     class="g-ajax-link <?= $menu->css_class ?>"
-     href="<?= $menu->url ?>"
-     title="<?= $menu->label->for_html_attr() ?>"
-     data-ajax-handler="<?= $menu->ajax_handler ?>">
-    <?= $menu->label->for_html() ?>
+  <a <?php echo $menu->css_id ? "id='{$menu->css_id}'" : "" ?>
+     class="g-ajax-link <?php echo $menu->css_class ?>"
+     href="<?php echo $menu->url ?>"
+     title="<?php echo $menu->label->for_html_attr() ?>"
+     data-ajax-handler="<?php echo $menu->ajax_handler ?>">
+    <?php echo $menu->label->for_html() ?>
   </a>
 </li>

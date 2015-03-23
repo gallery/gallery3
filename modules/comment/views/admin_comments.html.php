@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="g-block">
-  <h1> <?= t("Comment settings") ?> </h1>
+  <h1> <?php echo t("Comment settings") ?> </h1>
   <div class="g-block-content">
-    <?= $form ?>
+    <?php echo $form ?>
   </div>
 </div>

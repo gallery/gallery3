@@ -2,36 +2,36 @@
 <li class="ui-icon-left">
   <span class="ui-icon ui-icon-folder-open"></span>
   <span class="g-directory" ref="">
-    <?= t("All") ?>
+    <?php echo t("All") ?>
   </span>
   <ul>
 
-    <? foreach ($parents as $dir): ?>
+    <?php foreach ($parents as $dir): ?>
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
-      <span class="g-directory" ref="<?= html::clean_attribute($dir) ?>">
-        <?= html::clean(basename($dir)) ?>
+      <span class="g-directory" ref="<?php echo html::clean_attribute($dir) ?>">
+        <?php echo html::clean(basename($dir)) ?>
       </span>
       <ul>
-        <? endforeach ?>
+        <?php endforeach ?>
 
-        <? foreach ($files as $file): ?>
+        <?php foreach ($files as $file): ?>
         <li class="ui-icon-left">
-          <span class="ui-icon <?= is_dir($file) ? "ui-icon-folder-collapsed" : "ui-icon-document" ?>"></span>
-          <span class="<?= is_dir($file) ? "g-directory" : "g-file" ?>"
-                ref="<?= html::clean_attribute($file) ?>" >
-            <?= html::clean(basename($file)) ?>
+          <span class="ui-icon <?php echo is_dir($file) ? "ui-icon-folder-collapsed" : "ui-icon-document" ?>"></span>
+          <span class="<?php echo is_dir($file) ? "g-directory" : "g-file" ?>"
+                ref="<?php echo html::clean_attribute($file) ?>" >
+            <?php echo html::clean(basename($file)) ?>
           </span>
         </li>
-        <? endforeach ?>
-        <? if (!$files): ?>
-        <li> <i> <?= t("empty") ?> </i> </li>
-        <? endif ?>
+        <?php endforeach ?>
+        <?php if (!$files): ?>
+        <li> <i> <?php echo t("empty") ?> </i> </li>
+        <?php endif ?>
 
-        <? foreach ($parents as $dir): ?>
+        <?php foreach ($parents as $dir): ?>
       </ul>
     </li>
-    <? endforeach ?>
+    <?php endforeach ?>
 
   </ul>
 </li>

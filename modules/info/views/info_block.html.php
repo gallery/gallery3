@@ -1,8 +1,8 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul class="g-metadata">
-  <? foreach($metadata as $info): ?>
+  <?php foreach($metadata as $info): ?>
   <li>
-    <strong class="caption"><?= $info["label"] ?></strong> <?= $info["value"] ?>
+    <strong class="caption"><?php echo $info["label"] ?></strong> <?php echo $info["value"] ?>
   </li>
-  <?  endforeach; ?>
+  <?php  endforeach; ?>
 </ul>
