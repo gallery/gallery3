@@ -177,10 +177,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
 
       case DOCROOT . "lib/uploadify/uploadify.allglyphs.swf.php":
       case DOCROOT . "lib/uploadify/uploadify.swf.php":
-      case DOCROOT . "lib/flowplayer.swf.php":
-      case DOCROOT . "lib/flowplayer.controls.swf.php":
-      case DOCROOT . "lib/flowplayer.pseudostreaming-byterange.swf.php":
-      case DOCROOT . "lib/flowplayer.pseudostreaming.swf.php":
+      case DOCROOT . "lib/mediaelementjs/flashmediaelement.swf.php":
         // SWF wrappers - directly accessible
         break;
 
