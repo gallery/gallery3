@@ -526,7 +526,7 @@ td {
 }
 
 #g-item img.g-resize,
-#g-item a.g-movie {
+#g-item .g-movie {
   display: block;
   margin: 0 auto;
 }

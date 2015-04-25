@@ -1,4 +1,4 @@
-Gallery 3.0.9 (Chartres)
+Gallery 3.0.10 (Alamo)
 ===========================
 
 [![Build Status](https://travis-ci.org/gallery/gallery3.png?branch=master)](https://travis-ci.org/gallery/gallery3)

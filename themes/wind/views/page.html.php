@@ -50,14 +50,8 @@
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>
     <?= $theme->script("jquery.localscroll.js") ?>
-
-    <? /* These are page specific but they get combined */ ?>
-    <? if ($theme->page_subtype == "photo"): ?>
     <?= $theme->script("jquery.scrollTo.js") ?>
     <?= $theme->script("gallery.show_full_size.js") ?>
-    <? elseif ($theme->page_subtype == "movie"): ?>
-    <?= $theme->script("flowplayer.js") ?>
-    <? endif ?>
 
     <?= $theme->head() ?>
 
