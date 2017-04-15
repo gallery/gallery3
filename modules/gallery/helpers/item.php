@@ -198,6 +198,7 @@ class item_Core {
   /**
    * Find an item by its path.  If there's no match, return an empty Item_Model.
    * NOTE: the caller is responsible for performing security checks on the resulting item.
+   * NOTE: this alias is deprecated in v3.1 and will be removed in v3.2, as it moved to Item_Model.
    *
    * In addition to $path, $var_subdir can be specified ("albums", "resizes", or "thumbs").  This
    * corresponds to the file's directory in var, which is what's used in file_proxy.  By specifying
@@ -210,85 +211,7 @@ class item_Core {
    * @return object Item_Model
    */
   static function find_by_path($path, $var_subdir="albums") {
-    $path = trim($path, "/");
-
-    // The root path name is NULL not "", hence this workaround.
-    if ($path == "") {
-      return item::root();
-    }
-
-    $search_full_name = true;
-    $album_thumb = false;
-    if (($var_subdir == "thumbs") && preg_match("|^(.*)/\.album\.jpg$|", $path, $matches)) {
-      // It's an album thumb - remove "/.album.jpg" from the path.
-      $path = $matches[1];
-      $album_thumb = true;
-    } else if (($var_subdir != "albums") && preg_match("/^(.*)\.jpg$/", $path, $matches)) {
-      // Item itself could be non-jpg (e.g. movies) - remove .jpg from path, don't search full name.
-      $path = $matches[1];
-      $search_full_name = false;
-    }
-
-    // Check to see if there's an item in the database with a matching relative_path_cache value.
-    // Since that field is urlencoded, we must urlencode the components of the path.
-    foreach (explode("/", $path) as $part) {
-      $encoded_array[] = rawurlencode($part);
-    }
-    $encoded_path = join("/", $encoded_array);
-    if ($search_full_name) {
-      $item = ORM::factory("item")
-        ->where("relative_path_cache", "=", $encoded_path)
-        ->find();
-      // See if the item was found and if it should have been found.
-      if ($item->loaded() &&
-          (($var_subdir == "albums") || $item->is_photo() || $album_thumb)) {
-        return $item;
-      }
-    } else {
-      // Note that the below query uses LIKE with wildcard % at end, which is still sargable and
-      // therefore still takes advantage of the indexed relative_path_cache (i.e. still quick).
-      $item = ORM::factory("item")
-        ->where("relative_path_cache", "LIKE", Database::escape_for_like($encoded_path) . ".%")
-        ->find();
-      // See if the item was found and should be a jpg.
-      if ($item->loaded() &&
-          (($item->is_movie() && ($var_subdir == "thumbs")) ||
-           ($item->is_photo() && (preg_match("/^(.*)\.jpg$/", $item->name))))) {
-        return $item;
-      }
-    }
-
-    // Since the relative_path_cache field is a cache, it can be unavailable.  If we don't find
-    // anything, fall back to checking the path the hard way.
-    $paths = explode("/", $path);
-    if ($search_full_name) {
-      foreach (ORM::factory("item")
-               ->where("name", "=", end($paths))
-               ->where("level", "=", count($paths) + 1)
-               ->find_all() as $item) {
-        // See if the item was found and if it should have been found.
-        if ((urldecode($item->relative_path()) == $path) &&
-            (($var_subdir == "albums") || $item->is_photo() || $album_thumb)) {
-          return $item;
-        }
-      }
-    } else {
-      foreach (ORM::factory("item")
-               ->where("name", "LIKE", Database::escape_for_like(end($paths)) . ".%")
-               ->where("level", "=", count($paths) + 1)
-               ->find_all() as $item) {
-        // Compare relative_path without extension (regexp same as legal_file::change_extension),
-        // see if it should be a jpg.
-        if ((preg_replace("/\.[^\.\/]*?$/", "", urldecode($item->relative_path())) == $path) &&
-            (($item->is_movie() && ($var_subdir == "thumbs")) ||
-             ($item->is_photo() && (preg_match("/^(.*)\.jpg$/", $item->name))))) {
-          return $item;
-        }
-      }
-    }
-
-    // Nothing found - return an empty item model.
-    return new Item_Model();
+    return new Item_Model("path", $path, $var_subdir);
   }
 
   /**

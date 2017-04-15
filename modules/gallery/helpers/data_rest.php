@@ -40,12 +40,15 @@ class data_rest_Core {
       }
       access::required("view_full", $item);
       $file = $item->file_path();
+      $mime_type = $item->mime_type;
     } else if ($p->size == "resize") {
       access::required("view", $item);
       $file = $item->resize_path();
+      $mime_type = $item->resize_mime_type();
     } else {
       access::required("view", $item);
       $file = $item->thumb_path();
+      $mime_type = $item->thumb_mime_type();
     }
 
     if (!file_exists($file)) {
@@ -65,12 +68,8 @@ class data_rest_Core {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
-    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
-    if (($item->is_movie() || $item->is_album()) && $p->size == "thumb") {
-      header("Content-Type: image/jpeg");
-    } else {
-      header("Content-Type: $item->mime_type");
-    }
+    // Dump out the image.  First, set the header.
+    header("Content-Type: $mime_type");
 
     if (TEST_MODE) {
       return $file;

@@ -23,7 +23,16 @@ class Item_Model_Core extends ORM_MPTT {
   public $data_file = null;
   private $data_file_error = null;
 
-  public function __construct($id=null) {
+  private $album_image_name = ".album.jpg";
+  private $extension_changes = array("photo" => array("thumbs" => "", "resizes" => ""),
+                                     "movie" => array("thumbs" => "jpg", "resizes" => ""));
+
+  public function __construct($arg1=null, $arg2=null, $arg3=null) {
+    if ($arg1 == "path") {
+      $id = $this->_find_by_path($arg2, $arg3);
+    } else {
+      $id = $arg1;
+    }
     parent::__construct($id);
 
     if (!$this->loaded()) {
@@ -182,9 +191,9 @@ class Item_Model_Core extends ORM_MPTT {
    */
   public function file_url($full_uri=false) {
     $relative_path = "var/albums/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
     $cache_buster = $this->_cache_buster($this->file_path());
-    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path))
-      . $cache_buster;
+    return $base . $cache_buster;
   }
 
   /**
@@ -195,14 +204,7 @@ class Item_Model_Core extends ORM_MPTT {
    */
   public function thumb_path() {
     $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
-    if ($this->is_photo()) {
-      return $base;
-    } else if ($this->is_album()) {
-      return $base . "/.album.jpg";
-    } else if ($this->is_movie()) {
-      // Replace the extension with jpg
-      return legal_file::change_extension($base, "jpg");
-    }
+    return $this->_convert_name_by_size($base, "thumbs");
   }
 
   /**
@@ -223,18 +225,10 @@ class Item_Model_Core extends ORM_MPTT {
    *   movie: http://example.com/gallery3/var/thumbs/Bobs%20Wedding/First-Dance.mp4?m=1234567890
    */
   public function thumb_url($full_uri=false) {
-    $cache_buster = $this->_cache_buster($this->thumb_path());
     $relative_path = "var/thumbs/" . $this->relative_path();
     $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
-    if ($this->is_photo()) {
-      return $base . $cache_buster;
-    } else if ($this->is_album()) {
-      return $base . "/.album.jpg" . $cache_buster;
-    } else if ($this->is_movie()) {
-      // Replace the extension with jpg
-      $base = legal_file::change_extension($base, "jpg");
-      return $base . $cache_buster;
-    }
+    $cache_buster = $this->_cache_buster($this->thumb_path());
+    return $this->_convert_name_by_size($base, "thumbs") . $cache_buster;
   }
 
   /**
@@ -245,8 +239,8 @@ class Item_Model_Core extends ORM_MPTT {
    * (*) Since only photos have resizes, album and movie paths are fictitious.
    */
   public function resize_path() {
-    return VARPATH . "resizes/" . urldecode($this->relative_path()) .
-      ($this->is_album() ? "/.album.jpg" : "");
+    $base = VARPATH . "resizes/" . urldecode($this->relative_path());
+    return $this->_convert_name_by_size($base, "resizes");
   }
 
   /**
@@ -262,9 +256,23 @@ class Item_Model_Core extends ORM_MPTT {
    */
   public function resize_url($full_uri=false) {
     $relative_path = "var/resizes/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
     $cache_buster = $this->_cache_buster($this->resize_path());
-    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
-      ($this->is_album() ? "/.album.jpg" : "") . $cache_buster;
+    return $this->_convert_name_by_size($base, "resizes") . $cache_buster;
+  }
+
+  /**
+   * Return the mime type of this item's thumb.
+   */
+  public function thumb_mime_type() {
+    return $this->_get_mime_type_by_size("thumbs");
+  }
+
+  /**
+   * Return the mime type of this item's resize.
+   */
+  public function resize_mime_type() {
+    return $this->_get_mime_type_by_size("resizes");
   }
 
   /**
@@ -1211,7 +1219,144 @@ class Item_Model_Core extends ORM_MPTT {
       ->execute();
   }
 
+  /**
+   * Return a query string for cache busting, based on the file's mtime.
+   */
   private function _cache_buster($path) {
     return "?m=" . (string)(file_exists($path) ? filemtime($path) : 0);
+  }
+
+  /**
+   * Return an item name/URL/path converted for use as a thumb or resize.  This
+   * processes the rules defined in album_image_name and extension_changes.
+   */
+  private function _convert_name_by_size($name, $size) {
+    if ($this->is_album()) {
+      return "$name/" . $this->album_image_name;
+    } else {
+      if ($extension = $this->extension_changes[$this->type][$size]) {
+        return legal_file::change_extension($name, $extension);
+      } else {
+        return $name;
+      }
+    }
+  }
+
+  /**
+   * Return the mime type of an item's thumb or resize.  This is a reflection
+   * of the rules defined in album_image_name and extension_changes.
+   */
+  private function _get_mime_type_by_size($size) {
+    if ($this->is_album()) {
+      $extension = substr(strrchr($this->album_image_name, "."), 1);
+      return legal_file::get_types_by_extension($extension);
+    } else {
+      if ($extension = $this->extension_changes[$this->type][$size]) {
+        return legal_file::get_types_by_extension($extension);
+      } else {
+        return $this->mime_type;
+      }
+    }
+  }
+
+  /**
+   * Find an item by its path.  If found, return its id; if not, return null.
+   *
+   * In addition to $path, $var_subdir must be specified ("albums", "resizes", or "thumbs").  This
+   * corresponds to the file's directory in var, which is what's used in file_proxy.
+   *
+   * @param  string $path
+   * @param  string $var_subdir
+   * @return int    item id (or null if nothing found)
+   */
+  private function _find_by_path($path, $var_subdir) {
+    $path = trim($path, "/");
+
+    // See if we have an album thumb/resize, a photo or movie thumb/resize, or an item's main file.
+    if ($var_subdir == "albums") {
+      // It's an item's main file - search its full name.
+      $search_full_name = true;
+    } else {
+      $last_component = (string) substr($path, (int) strrpos("/$path", "/"));
+      if ($last_component == $this->album_image_name) {
+        // It's an album thumb/resize - remove the suffix, search for its full name.
+        $path = rtrim((string) substr($path, 0, -strlen($last_component)), "/");
+        $search_full_name = true;
+      } else {
+        // It's a photo or movie thumb/resize - remove its extension, don't search its full name.
+        if (preg_match("/^(.*)\.([^\.\/]+)$/", $path, $matches)) {
+          $path = $matches[1];
+          $extension = $matches[2];
+        } else {
+          // There's null or no extension ("foo" or "foo.") - the path is invalid.
+          return null;
+        }
+        $search_full_name = false;
+      }
+    }
+
+    // See if we have the root item.  The root path name is NULL not "", hence this workaround.
+    if (!$path) {
+      return 1;
+    }
+
+    // Split the path into its components and urlencode them.
+    $paths = explode("/", $path);
+    foreach ($paths as $part) {
+      $encoded_array[] = rawurlencode($part);
+    }
+    $encoded_path = join("/", $encoded_array);
+
+    // Check to see if there's an item in the database with a matching relative_path_cache value.
+    // Since the relative_path_cache field is a cache, it can be unavailable.  If we don't find
+    // anything, fall back to checking the path the hard way.
+    if ($search_full_name) {
+      foreach (db::build()
+               ->from("items")
+               ->select("id")
+               ->where("relative_path_cache", "=", $encoded_path)
+               ->execute() as $item) {
+        // See if the item was found.
+        if ($item) {
+          return $item->id;
+        }
+      }
+      foreach (ORM::factory("item")
+               ->where("name", "=", end($paths))
+               ->where("level", "=", count($paths) + 1)
+               ->find_all() as $item) {
+        // See if the item's relative path matches.
+        if (urldecode($item->relative_path()) == $path) {
+          return $item->id;
+        }
+      }
+    } else {
+      // Note that the below queries use LIKE with wildcard % at end, which is still sargable and
+      // therefore still take advantage of the indexed relative_path_cache (i.e. still quick).
+      foreach (db::build()
+               ->from("items")
+               ->select("id", "name", "type")
+               ->where("relative_path_cache", "LIKE", Database::escape_for_like($encoded_path) . ".%")
+               ->execute() as $item) {
+        // See if the item was found and its extension, converted for thumb/resize, is correct.
+        if ($item && (($extension_change = $this->extension_changes[$item->type][$var_subdir]) ?
+                      ($extension_change == $extension) : ($item->name == $last_component))) {
+          return $item->id;
+        }
+      }
+      foreach (ORM::factory("item")
+               ->where("name", "LIKE", Database::escape_for_like(end($paths)) . ".%")
+               ->where("level", "=", count($paths) + 1)
+               ->find_all() as $item) {
+        // See if the item's relative path, converted for thumb/resize, matches.
+        if ($item->_convert_name_by_size(urldecode($item->relative_path()),
+                                         $var_subdir) == "$path.$extension") {
+          return $item->id;
+        }
+      }
+    }
+
+    // Nothing found.
+    return null;
   }
 }

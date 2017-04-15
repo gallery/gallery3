@@ -67,7 +67,7 @@ class File_Proxy_Controller extends Controller {
     }
 
     // Get the item model using the path and type (which corresponds to a var subdir)
-    $item = item::find_by_path($path, $type);
+    $item = new Item_Model("path", $path, $type);
 
     if (!$item->loaded()) {
       $e = new Kohana_404_Exception();
@@ -101,10 +101,13 @@ class File_Proxy_Controller extends Controller {
 
     if ($type == "albums") {
       $file = $item->file_path();
+      $mime_type = $item->mime_type;
     } else if ($type == "resizes") {
       $file = $item->resize_path();
+      $mime_type = $item->resize_mime_type();
     } else {
       $file = $item->thumb_path();
+      $mime_type = $item->thumb_mime_type();
     }
 
     if (!file_exists($file)) {
@@ -131,12 +134,8 @@ class File_Proxy_Controller extends Controller {
 
     expires::set(2592000, $item->updated);  // 30 days
 
-    // Dump out the image.  If the item is a movie or album, then its thumbnail will be a JPG.
-    if (($item->is_movie() || $item->is_album()) && $type == "thumbs") {
-      header("Content-Type: image/jpeg");
-    } else {
-      header("Content-Type: $item->mime_type");
-    }
+    // Dump out the image.  First, set the header.
+    header("Content-Type: $mime_type");
 
     if (TEST_MODE) {
       return $file;
