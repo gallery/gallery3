@@ -117,7 +117,7 @@ class installer {
 
   static function mysql_version($config) {
     $result = mysql_query("SHOW VARIABLES WHERE variable_name = \"version\"");
-    $row = mysql_fetch_object($result);
+    $row = $config['type'] == 'mysqli' ? mysqli_fetch_object($result) : mysql_fetch_object($result);
     return $row->Value;
   }
 
@@ -138,7 +138,8 @@ class installer {
       $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
       $salt .= chr($char);
     }
-    if (!$password = $config["g3_password"]) {
+    $password = isset($config["g3_password"]) && strlen($config["g3_password"]) ? $config["g3_password"] : '';
+    if (!$password) {
       $password = substr(md5(time() . mt_rand()), 0, 6);
     }
     // Escape backslash in preparation for our UPDATE statement.
