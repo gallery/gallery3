@@ -405,11 +405,12 @@
 	fill: #eeeeee;
 }
 */
-.dz-default {
+.dropzone .dz-default {
 	border: 2px dashed #5c9ccc;
 	min-height: 150px;
+	margin: 0;
 }
-.dz-default > span {
+.dropzone .dz-default > span {
 	display: block;
 	padding-top: 2em;
 }
