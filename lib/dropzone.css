@@ -405,3 +405,11 @@
 	fill: #eeeeee;
 }
 */
+.dz-default {
+	border: 2px dashed #5c9ccc;
+	min-height: 150px;
+}
+.dz-default > span {
+	display: block;
+	padding-top: 2em;
+}

@@ -12,6 +12,7 @@
 			}, 5000);
 		});
 	},
+	dictDefaultMessage: 'Drop files here or click to upload',
 	previewTemplate: document.querySelector('#imageStatusTemplate').innerHTML,
 	paramName: "Filedata", // The name that will be used to transfer the file
 	parallelUploads: <?= $simultaneous_upload_limit ?>,
