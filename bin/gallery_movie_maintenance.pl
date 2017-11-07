@@ -20,12 +20,12 @@ my $VIDEO_BITRATE = '3000k'; # ffmpeg video bit rate argument
 # wants -strict -2 added because aac is apparently experimental
 my $ACODEC = 'aac -strict -2';
 
-my $CHOWN_USER = 'apache'; # set this if you want chown the change the ownership of the generated files
+my $CHOWN_USER = ''; # set this if you want chown to change the ownership of the generated files
 
 my $CLI_SUDO = 'sudo'; # set this if you want to run the conversion as root to write out the files
 my $CLI_FIND = 'find'; # path to find, maybe I should use a perl module for this?
-my $CLI_CHOWN = 'chown';
-my $CLI_FFMPEG = 'ffmpeg';
+my $CLI_CHOWN = 'chown'; # path to chown
+my $CLI_FFMPEG = 'ffmpeg'; # path to ffmpeg
 
 # video extensions you want to process
 my @SUFFIXES = (
@@ -41,6 +41,10 @@ my @SUFFIXES = (
     'flv',
     'mts',
 );
+
+#
+# need more error checking for above settings
+#
 
 # should be the var folder of the gallery installation
 my $dir1 = $ARGV[0] || $VAR_DIR;
@@ -116,8 +120,11 @@ foreach my $path (keys %{$results->{albums}}) {
 
 			my @cmds = (
 				qq{$CLI_SUDO $CLI_FFMPEG -i 'albums/$path$fname$ext' -y -c:v libx264 -profile:v main $pixfmt -level 4.0 -preset slow -b:v $VIDEO_BITRATE -acodec $ACODEC -ac 2 -ar 44100 -b:a 64k 'resizes/$path$fname$ext.mp4'},
-				"$CLI_SUDO $CLI_CHOWN $CHOWN_USER 'resizes/$path$fname$ext.mp4'",
 			);
+
+			if ($CHOWN_USER) {
+				push(@cmds, "$CLI_SUDO $CLI_CHOWN $CHOWN_USER 'resizes/$path$fname$ext.mp4'");
+			}
 
 			foreach (@cmds) {
 				print if ($DEBUG);
