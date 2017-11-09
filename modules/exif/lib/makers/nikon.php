@@ -119,7 +119,7 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 		case "ASCII":
 			break;	// do nothing!
 		case "URATIONAL":
-		case"SRATIONAL":
+		case "SRATIONAL":
 			switch ($tag) {
 				case '0084':	// LensInfo
 					$minFL = unRational(substr($data,0,8),$type,$intel);
