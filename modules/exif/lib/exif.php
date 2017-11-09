@@ -1098,6 +1098,8 @@ function ConvertToFraction($v, &$n, &$d)
 function get35mmEquivFocalLength(&$result) {
 	if (isset($result['SubIFD']['ExifImageWidth'])) {
 		$width = $result['SubIFD']['ExifImageWidth'];
+		// some cameras have "XXXX pixels"
+		$width = str_replace(' pixels', '', $width);
 	} else {
 		$width = 0;
 	}
@@ -1120,6 +1122,8 @@ function get35mmEquivFocalLength(&$result) {
 	}
 	if (isset($result['SubIFD']['FocalLength'])) {
 		$fl = $result['SubIFD']['FocalLength'];
+		// some values have " mm" appended
+		$fl = str_replace(' mm', '', $fl);
 	} else {
 		$fl = 0;
 	}
