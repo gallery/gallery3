@@ -4,29 +4,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml" <?= $theme->html_attributes() ?> xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <? $theme->start_combining("script,css") ?>
+    <?php $theme->start_combining("script,css") ?>
     <title>
-      <? if ($page_title): ?>
+      <?php if ($page_title): ?>
         <?= $page_title ?>
-      <? else: ?>
-        <? if ($theme->item()): ?>
+      <?php else: ?>
+        <?php if ($theme->item()): ?>
           <?= html::purify($theme->item()->title) ?>
-        <? elseif ($theme->tag()): ?>
+        <?php elseif ($theme->tag()): ?>
           <?= t("Photos tagged with %tag_title", array("tag_title" => $theme->tag()->name)) ?>
-        <? else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
+        <?php else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
           <?= html::purify(item::root()->title) ?>
-        <? endif ?>
-      <? endif ?>
+        <?php endif ?>
+      <?php endif ?>
     </title>
     <link rel="shortcut icon"
           href="<?= url::file(module::get_var("gallery", "favicon_url")) ?>"
           type="image/x-icon" />
     <link rel="apple-touch-icon-precomposed"
           href="<?= url::file(module::get_var("gallery", "apple_touch_icon_url")) ?>" />
-    <? if ($theme->page_type == "collection"): ?>
-      <? if (($thumb_proportion = $theme->thumb_proportion($theme->item(), 100, "width")) != 1): ?>
-        <? $new_width = round($thumb_proportion * 213) ?>
-        <? $new_height = round($thumb_proportion * 240) ?>
+    <?php if ($theme->page_type == "collection"): ?>
+      <?php if (($thumb_proportion = $theme->thumb_proportion($theme->item(), 100, "width")) != 1): ?>
+        <?php $new_width = round($thumb_proportion * 213) ?>
+        <?php $new_height = round($thumb_proportion * 240) ?>
         <style type="text/css">
         .g-view #g-content #g-album-grid .g-item {
           width: <?= $new_width ?>px;
@@ -34,15 +34,15 @@
           /* <?= $thumb_proportion ?> */
         }
         </style>
-      <? endif ?>
-    <? endif ?>
+      <?php endif ?>
+    <?php endif ?>
 
     <?= $theme->script("json2-min.js") ?>
     <?= $theme->script("jquery.js") ?>
     <?= $theme->script("jquery.form.js") ?>
     <?= $theme->script("jquery-ui.js") ?>
     <?= $theme->script("gallery.common.js") ?>
-    <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
+    <?php /* MSG_CANCEL is required by gallery.dialog.js */ ?>
     <script type="text/javascript">
     var MSG_CANCEL = <?= t('Cancel')->for_js() ?>;
     </script>
@@ -55,15 +55,15 @@
 
     <?= $theme->head() ?>
 
-    <? /* Theme specific CSS/JS goes last so that it can override module CSS/JS */ ?>
+    <?php /* Theme specific CSS/JS goes last so that it can override module CSS/JS */ ?>
     <?= $theme->script("ui.init.js") ?>
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("screen.css") ?>
-    <? if (locales::is_rtl()): ?>
+    <?php if (locales::is_rtl()): ?>
     <?= $theme->css("screen-rtl.css") ?>
-    <? endif; ?>
+    <?php endif; ?>
     <!--[if lte IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
@@ -79,13 +79,13 @@
       <?= $theme->site_status() ?>
       <div id="g-header" class="ui-helper-clearfix">
         <div id="g-banner">
-          <? if ($header_text = module::get_var("gallery", "header_text")): ?>
+          <?php if ($header_text = module::get_var("gallery", "header_text")): ?>
           <?= $header_text ?>
-          <? else: ?>
+          <?php else: ?>
           <a id="g-logo" class="g-left" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
             <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= url::file("lib/images/logo.png") ?>" />
           </a>
-          <? endif ?>
+          <?php endif ?>
           <?= $theme->user_menu() ?>
           <?= $theme->header_top() ?>
 
@@ -98,18 +98,18 @@
           <?= $theme->header_bottom() ?>
         </div>
 
-        <? if (!empty($breadcrumbs)): ?>
+        <?php if (!empty($breadcrumbs)): ?>
         <ul class="g-breadcrumbs">
-          <? foreach ($breadcrumbs as $breadcrumb): ?>
+          <?php foreach ($breadcrumbs as $breadcrumb): ?>
            <li class="<?= $breadcrumb->last ? "g-active" : "" ?>
                       <?= $breadcrumb->first ? "g-first" : "" ?>">
-            <? if (!$breadcrumb->last): ?> <a href="<?= $breadcrumb->url ?>"><? endif ?>
+            <?php if (!$breadcrumb->last): ?> <a href="<?= $breadcrumb->url ?>"><?php endif ?>
             <?= html::clean(text::limit_chars($breadcrumb->title, module::get_var("gallery", "visible_title_length"))) ?>
-            <? if (!$breadcrumb->last): ?></a><? endif ?>
+            <?php if (!$breadcrumb->last): ?></a><?php endif ?>
            </li>
-          <? endforeach ?>
+          <?php endforeach ?>
         </ul>
-        <? endif ?>
+        <?php endif ?>
       </div>
       <div id="bd">
         <div id="yui-main">
@@ -121,22 +121,22 @@
           </div>
         </div>
         <div id="g-sidebar" class="yui-b">
-          <? if (!in_array($theme->page_subtype, array("login", "error"))): ?>
+          <?php if (!in_array($theme->page_subtype, array("login", "error"))): ?>
           <?= new View("sidebar.html") ?>
-          <? endif ?>
+          <?php endif ?>
         </div>
       </div>
       <div id="g-footer" class="ui-helper-clearfix">
         <?= $theme->footer() ?>
-        <? if ($footer_text = module::get_var("gallery", "footer_text")): ?>
+        <?php if ($footer_text = module::get_var("gallery", "footer_text")): ?>
         <?= $footer_text ?>
-        <? endif ?>
+        <?php endif ?>
 
-        <? if (module::get_var("gallery", "show_credits")): ?>
+        <?php if (module::get_var("gallery", "show_credits")): ?>
         <ul id="g-credits" class="g-inline">
           <?= $theme->credits() ?>
         </ul>
-        <? endif ?>
+        <?php endif ?>
       </div>
     </div>
     <?= $theme->page_bottom() ?>

@@ -68,7 +68,7 @@
             <th><?= t("Actions") ?></th>
           </tr>
 
-          <? foreach ($users as $i => $user): ?>
+          <?php foreach ($users as $i => $user): ?>
           <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> g-user <?= $user->admin ? "g-admin" : "" ?>">
             <td id="g-user-<?= $user->id ?>" class="g-core-info g-draggable">
               <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
@@ -95,18 +95,18 @@
                   data-open-text="<?= t("Close")->for_html_attr() ?>"
                   class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("Edit") ?></span></a>
-              <? if (identity::active_user()->id != $user->id && !$user->guest): ?>
+              <?php if (identity::active_user()->id != $user->id && !$user->guest): ?>
               <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
                   class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-trash"></span><?= t("Delete") ?></a>
-              <? else: ?>
+              <?php else: ?>
               <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
                   class="g-button ui-state-disabled ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-trash"></span><?= t("Delete") ?></span>
-              <? endif ?>
+              <?php endif ?>
             </td>
           </tr>
-          <? endforeach ?>
+          <?php endforeach ?>
         </table>
 
         <div class="g-paginator">
@@ -128,12 +128,12 @@
 
       <div class="g-block-content">
         <ul>
-          <? foreach ($groups as $i => $group): ?>
+          <?php foreach ($groups as $i => $group): ?>
           <li id="g-group-<?= $group->id ?>" class="g-group g-left <?= ($group->special ? "g-default-group" : "") ?>">
-            <? $v = new View("admin_users_group.html"); $v->group = $group; ?>
+            <?php $v = new View("admin_users_group.html"); $v->group = $group; ?>
             <?= $v ?>
           </li>
-          <? endforeach ?>
+          <?php endforeach ?>
         </ul>
       </div>
     </div>

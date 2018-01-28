@@ -21,19 +21,19 @@
 
   <div class="g-block-content">
     <h2> <?= t("Active toolkit") ?> </h2>
-    <? if ($active == "none"): ?>
+    <?php if ($active == "none"): ?>
     <?= new View("admin_graphics_none.html") ?>
-    <? else: ?>
+    <?php else: ?>
     <?= new View("admin_graphics_$active.html", array("tk" => $tk->$active, "is_active" => true)) ?>
-    <? endif ?>
+    <?php endif ?>
 
     <div class="g-available">
       <h2> <?= t("Available toolkits") ?> </h2>
-      <? foreach (array_keys((array)$tk) as $id): ?>
-      <? if ($id != $active): ?>
+      <?php foreach (array_keys((array)$tk) as $id): ?>
+      <?php if ($id != $active): ?>
       <?= new View("admin_graphics_$id.html", array("tk" => $tk->$id, "is_active" => false)) ?>
-      <? endif ?>
-      <? endforeach ?>
+      <?php endif ?>
+      <?php endforeach ?>
     </div>
   </div>
 </div>

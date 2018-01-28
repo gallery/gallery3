@@ -10,7 +10,7 @@
   <div class="g-block-content">
     <?= $form ?>
 
-    <? if ($public_key && $private_key): ?>
+    <?php if ($public_key && $private_key): ?>
     <div id="g-admin-recaptcha-test">
       <h2> <?= t("reCAPTCHA test") ?> </h2>
       <p>
@@ -29,7 +29,7 @@
       </script>
       </div>
     </div>
-    <? endif ?>
+    <?php endif ?>
 
   </div>
 </div>

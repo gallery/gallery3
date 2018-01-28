@@ -7,11 +7,11 @@
               "akismet_url" => "http://akismet.com")) ?>
   </p>
   <div class="g-block-content">
-    <? if ($valid_key): ?>
+    <?php if ($valid_key): ?>
     <div class="g-module-status g-success">
       <?= t("Your API key is valid.  Your comments will be filtered!") ?>
     </div>
-    <? endif ?>
+    <?php endif ?>
 
     <?= $form ?>
   </div>

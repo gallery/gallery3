@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?
+<?php
 
 function green_start() {
   return "\x1B[32m";
