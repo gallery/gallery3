@@ -76,16 +76,8 @@ php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
  -x     Table prefix           (default: )
 ```
 
-Bugs?
------
-
-Go to http://apps.sourceforge.net/trac/gallery/ click the "login" link
-and log in with your SourceForge username and password, then click the
-"new ticket" button.
-
-Questions, Problems
--------------------
+Bugs, Questions, Problems?
+--------------------------
 
  - Check out the Gallery 3 FAQ: http://codex.galleryproject.org/Gallery3:FAQ
- - Post to the Gallery 3 forums: http://galleryproject.org/forum/96
- - Email gallery-devel@lists.sourceforge.net
+ - Try the Yahoo community support group: https://groups.yahoo.com/neo/groups/gallery3/info
