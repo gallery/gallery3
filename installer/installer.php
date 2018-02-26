@@ -96,6 +96,9 @@ class installer {
       function mysql_select_db($db) {
         return installer::$mysqli->select_db($db);
       }
+      function mysql_fetch_object($result) {
+        return installer::$mysqli->fetch_object($result);
+      }
     }
 
     $host = empty($config["port"]) ? $config['host'] : "{$config['host']}:{$config['port']}";
@@ -117,7 +120,7 @@ class installer {
 
   static function mysql_version($config) {
     $result = mysql_query("SHOW VARIABLES WHERE variable_name = \"version\"");
-    $row = $config['type'] == 'mysqli' ? mysqli_fetch_object($result) : mysql_fetch_object($result);
+    $row = mysql_fetch_object($result);
     return $row->Value;
   }
 
