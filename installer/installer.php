@@ -97,7 +97,7 @@ class installer {
         return installer::$mysqli->select_db($db);
       }
       function mysql_fetch_object($result) {
-        return installer::$mysqli->fetch_object($result);
+        return $result->fetch_object();
       }
     }
 
