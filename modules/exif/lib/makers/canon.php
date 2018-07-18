@@ -404,7 +404,7 @@ function parseCanon($block,&$result,$seek, $globalOffset) {
 				$data = '';
 			}
 		}
-		$result['SubIFD']['MakerNote'][$tag_name] = []; // insure the index exists
+		$result['SubIFD']['MakerNote'][$tag_name] = array(); // insure the index exists
 		$formated_data = formatCanonData($type,$tag,$intel,$data,$result,$result['SubIFD']['MakerNote'][$tag_name]);
 		
 		if($result['VerboseOutput']==1) {
