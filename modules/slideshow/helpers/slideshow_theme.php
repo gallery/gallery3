@@ -20,7 +20,7 @@
 class slideshow_theme_Core {
   static function page_bottom($theme) {
     $proto = request::protocol();
-    return "<script src=\"$proto://e.cooliris.com/slideshow/v/37732/go.js\" " .
+    return "<script src=\"lib/cooliris/go.js\" " .
       "type=\"text/javascript\"></script>";
   }
 }
