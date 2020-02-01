@@ -27,7 +27,7 @@ use lsolesen\pel\PelTiff;
 class autorotate {
 	static function rotate_item($item) {
 		
-		// Only try to rotate photos based on EXIF 
+		// Only try to rotate photos based on EXIF
 		if ($item->is_photo() && $item->mime_type == "image/jpeg") {
 			$exif_data = exif_read_data($item->file_path());
 
