@@ -1,12 +1,14 @@
+dist: bionic
 language: php
 php:
-  - 7.0
+  - 7.2
 
 branches:
   only:
     - 3.0.x
     - 3.1.x
     - master
+    - /^travis\/.*$/
 
 notifications:
   email: false
