@@ -2,7 +2,6 @@ language: php
 php:
   - 5.6
   - 7.2
-  - 7.3
 
 branches:
   only:
@@ -15,7 +14,7 @@ services:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq graphicsmagick imagemagick php5-gd ffmpeg git-core
+  - sudo apt-get install -qq graphicsmagick imagemagick php-gd ffmpeg git-core
 
 before_script:
   - mysql -e 'create database gallery3; create database gallery3_test;'
