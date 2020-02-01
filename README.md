@@ -1,7 +1,7 @@
 Gallery 3.1+ (development version)
 ==================================
 
-[![Build Status](https://travis-ci.org/gallery/gallery3.png?branch=master)](https://travis-ci.org/gallery/gallery3)
+[![Build Status](https://travis-ci.org/bwdutton/gallery3.png?branch=master)](https://travis-ci.org/bwdutton/gallery3)
 
 About
 -----
@@ -21,7 +21,7 @@ welcome theme and module developers to play with this release and
 start turning out slick new designs for our happy users.  If you have
 questions or problems, you can get help in the Gallery forums:
 
-  http://galleryproject.org/forum/96
+  https://groups.google.com/forum/#!forum/gallery-3-users
 
 Security
 --------
@@ -80,4 +80,4 @@ Bugs, Questions, Problems?
 --------------------------
 
  - Check out the Gallery 3 FAQ: http://codex.galleryproject.org/Gallery3:FAQ
- - Try the Yahoo community support group: https://groups.yahoo.com/neo/groups/gallery3/info
+ - Try the support group: https://groups.google.com/forum/#!forum/gallery-3-users
