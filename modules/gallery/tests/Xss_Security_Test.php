@@ -29,6 +29,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
         }
       }
 
+print "checking view $view\n";
       $frame  = null;
       $script_block = 0;
       $in_script_block = false;
