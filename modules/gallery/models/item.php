@@ -285,8 +285,8 @@ class Item_Model_Core extends ORM_MPTT {
       $names[] = rawurlencode($row->name);
       $slugs[] = rawurlencode($row->slug);
     }
-    $this->relative_path_cache = implode($names, "/");
-    $this->relative_url_cache = implode($slugs, "/");
+    $this->relative_path_cache = implode("/", $names);
+    $this->relative_url_cache = implode("/", $slugs);
     return $this;
   }
 
