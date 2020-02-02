@@ -1,7 +1,13 @@
-dist: bionic
 language: php
-php:
-  - 7.2
+
+jobs:
+  include:
+    - os: linux
+      dist: bionic
+      php: 7.3
+    - os: linux
+      dist: xenial
+      php: 5.6
 
 branches:
   only:
