@@ -25,7 +25,8 @@ class Gallery_Unit_Test_Controller extends Controller {
 
     // Force strict behavior to flush out bugs early
     ini_set("display_errors", true);
-    error_reporting(E_ALL & ~E_DEPRECATED);
+    //error_reporting(E_ALL & ~E_DEPRECATED);
+    error_reporting(-1);
 
     // Jump through some hoops to satisfy the way that we check for the site_domain in
     // config.php.  We structure this such that the code in config will leave us with a
