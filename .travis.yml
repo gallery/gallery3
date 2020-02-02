@@ -1,6 +1,6 @@
+dist: bionic
 language: php
 php:
-  - 5.6
   - 7.2
 
 branches:
@@ -8,6 +8,10 @@ branches:
     - 3.0.x
     - 3.1.x
     - master
+    - /^travis\/.*$/
+
+notifications:
+  email: false
 
 services:
   - mysql

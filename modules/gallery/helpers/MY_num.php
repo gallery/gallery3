@@ -24,8 +24,11 @@ class num extends num_Core {
    * ref: http://us2.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
    */
   static function convert_to_bytes($val) {
-    $val = trim($val);
-    $last = strtolower($val[strlen($val)-1]);
+    $val = strtolower(trim($val));
+    $len = strlen($val);
+    $last = $val[$len-1];
+    $val = $val[$len-2];
+
     switch($last) {
     case 'g':
       $val *= 1024;
