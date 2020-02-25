@@ -85,13 +85,15 @@ function oops($message) {
 }
 
 function parse_cli_params() {
-  $config = array("host" => "localhost",
-                  "user" => "root",
-                  "password" => "",
-                  "dbname" => "gallery3",
-                  "prefix" => "",
-                  "g3_password" => "",
-                  "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
+  $config = array(
+    "host" => getenv('MYSQL_HOST') ? getenv('MYSQL_HOST') : "localhost",
+    "user" => getenv('MYSQL_USER') ? getenv('MYSQL_USER') : "root",
+    "password" => getenv('MYSQL_PASSWORD') ? getenv('MYSQL_PASSWORD') : "",
+    "dbname" => getenv('MYSQL_DATABASE') ? getenv('MYSQL_DATABASE') : "gallery3",
+    "prefix" => getenv('DB_PREFIX') ? getenv('DB_PREFIX') : "",
+    "g3_password" => getenv('G3_PASSWORD') ? getenv('G3_PASSWORD') : "",
+    "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql",
+  );
 
   $argv = $_SERVER["argv"];
   for ($i = 1; $i < count($argv); $i++) {
