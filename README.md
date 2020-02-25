@@ -37,8 +37,9 @@ Supported Configuration
 
  - Platform: Linux / Unix.
  - Web server: Apache 2.2 and newer.
- - PHP 5.2.3 and newer (PHP's safe_mode must be disabled and simplexml,
+ - PHP 5.6 and newer (PHP's safe_mode must be disabled and simplexml,
    filter, and json must be installed).
+ - short_open_tag must be enabled
  - Database: MySQL 5 and newer.
 
 For complete system requirements, please refer to:
@@ -47,6 +48,10 @@ For complete system requirements, please refer to:
 
 Installing and Upgrading Instructions
 -------------------------------------
+
+For docker installations:
+
+  https://hub.docker.com/r/bwdutton/gallery3
 
 For comprehensive instructions, The online User Guide is your best resource:
 
