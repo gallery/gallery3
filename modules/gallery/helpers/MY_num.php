@@ -26,8 +26,8 @@ class num extends num_Core {
   static function convert_to_bytes($val) {
     $val = strtolower(trim($val));
     $len = strlen($val);
-    $last = $val[$len-1];
-    $val = $val[$len-2];
+    $last = substr($val, $len-1);
+    $val = substr($val, 0, -1);
 
     switch($last) {
     case 'g':
