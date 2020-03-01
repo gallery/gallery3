@@ -48,7 +48,15 @@ For complete system requirements, please refer to:
 
 Installing and Upgrading Instructions
 -------------------------------------
-
+**NOTE:** When upgrading from PHP 5 to PHP 7 you will need to change the database type from mysql to mysqli in var/database.php:
+```php
+$config['default'] = array(
+  'benchmark'     => false,
+  'persistent'    => false,
+  'connection'    => array(
+    'type'     => 'mysqli',
+```
+    
 For docker installations:
 
   https://hub.docker.com/r/bwdutton/gallery3
