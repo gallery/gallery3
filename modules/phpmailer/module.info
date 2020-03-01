@@ -1,0 +1,5 @@
+name = "phpmailer"
+description = "Replaces the built in mail() so you can use SMTP servers, etc"
+version = 1
+author_name = "Gallery Team"
+author_url = "https://galleryrevival.com/"
