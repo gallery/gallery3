@@ -19,17 +19,17 @@
  */
 class Database_Mysql extends Database_Mysql_Core {
 
-	public function connect()
-	{
-		if ($this->connection)
-			return;
+  public function connect()
+  {
+    if ($this->connection)
+      return;
 
-		if (!function_exists('mysql_connect')) {
-			$msg = 'You configured your DB to use the "mysql" module but the PHP mysql module doesn\'t appear to be installed. If you are upgrading to PHP 7 you should update var/database.php to use the mysqli module instead of mysql.';
-			print $msg;
-			throw new Kohana_Exception($msg);
-		}
+    if (!function_exists('mysql_connect')) {
+      $msg = 'You configured your DB to use the "mysql" module but the PHP mysql module doesn\'t appear to be installed. If you are upgrading to PHP 7 you should update var/database.php to use the mysqli module instead of mysql.';
+      print $msg;
+      throw new Kohana_Exception($msg);
+    }
 
-		return parent::connect();
-	}
+    return parent::connect();
+  }
 }
