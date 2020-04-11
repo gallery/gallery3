@@ -18,6 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ * to use this module:
+ * 1) configure your below mail settings
+ * 2) cd to your main gallery3 folder
+ * 3) be sure 'composer' for PHP is installed
+ * 4) run 'composer install'
+ * 5) enable the phpmailer module in the gallery -> admin -> module area
+ */
+
 $config['options'] = array(
   #'use_smtp' => true,
   #'use_smtp_auth' => true,
