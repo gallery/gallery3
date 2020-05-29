@@ -69,7 +69,7 @@ $config['gc_probability'] = 2;
  * Session server parameter, used by Redis driver.
  */
 $config['server'] = [
-	'host' => 'redis',
-	'port' => 6379,
-	'persistent' => false,
+  'host' => 'redis',
+  'port' => 6379,
+  'persistent' => false,
 ];
