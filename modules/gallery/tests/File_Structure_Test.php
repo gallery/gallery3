@@ -186,7 +186,9 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
         break;
 
       default:
-        if (preg_match("/modules\/(autorotate|movie_resized)/", $path)) {
+        if (preg_match("/vendor/", $path)) {
+          # including unmodified 3rd party code
+        } elseif (preg_match("/modules\/(autorotate|movie_resized)/", $path)) {
           # including unmodified 3rd party code
         } elseif (preg_match("/views/", $path)) {
           $this->_check_view_preamble($path, $errors);
