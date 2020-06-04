@@ -73,6 +73,13 @@ if (PHP_SAPI == "cli") {
   case "install":
     include("installer/index.php");
     exit(0);
+  case "passwordreset":
+    $username = empty($_SERVER['argv'][2]) ? 'admin' : $_SERVER['argv'][2];
+    # need to quote/escape this?
+    $_SERVER["argv"] = array("index.php", "{$arg_1}/index/$username");
+    define("TEST_MODE", 0);
+    define("VARPATH", realpath("var") . "/");
+    break;
   case "upgrade":
   case "package":
     $_SERVER["argv"] = array("index.php", "{$arg_1}r/$arg_1");
