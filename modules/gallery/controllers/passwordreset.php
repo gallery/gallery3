@@ -25,14 +25,14 @@ class Passwordreset_Controller extends Controller {
 
     if (empty($username)) {
         print "No username entered\n";
-	exit;
+        exit;
     }
 
     $user = identity::lookup_user_by_name($username);
 
     if (empty($user)) {
         print "Unable to find user ($username)\n";
-	exit;
+        exit;
     }
 
     $password = substr(md5(time() . mt_rand()), 0, 10);
