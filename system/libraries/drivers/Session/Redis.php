@@ -14,10 +14,6 @@ class Session_Redis_Driver implements Session_Driver {
 	// Encryption
 	protected $encrypt;
 
-	// Session settings
-	protected $session_id;
-	protected $written = FALSE;
-
 	public function __construct()
 	{
 		// Load configuration
@@ -74,14 +70,8 @@ class Session_Redis_Driver implements Session_Driver {
 
 		if (!strlen($data))
 		{
-			// No current session
-			$this->session_id = NULL;
-
 			return '';
 		}
-
-		// Set the current session id
-		$this->session_id = $id;
 
 		return ($this->encrypt === NULL) ? base64_decode($data) : $this->encrypt->decode($data);
 	}
@@ -91,10 +81,10 @@ class Session_Redis_Driver implements Session_Driver {
 		if ( ! Session::$should_save)
 			return TRUE;
 
-		$data = $this->backend->set(
+		$this->backend->setEx(
 			$id,
-			($this->encrypt === NULL) ? base64_encode($data) : $this->encrypt->encode($data),
-			ini_get('session.gc_maxlifetime')
+			ini_get('session.gc_maxlifetime'),
+			($this->encrypt === NULL) ? base64_encode($data) : $this->encrypt->encode($data)
 		);
 
 		return TRUE;
@@ -103,9 +93,6 @@ class Session_Redis_Driver implements Session_Driver {
 	public function destroy($id)
 	{
 		$this->backend->del($id);
-
-		// Session id is no longer valid
-		$this->session_id = NULL;
 
 		return TRUE;
 	}
