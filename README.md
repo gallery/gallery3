@@ -56,7 +56,7 @@ $config['default'] = array(
   'connection'    => array(
     'type'     => 'mysqli',
 ```
-    
+
 For docker installations:
 
   https://hub.docker.com/r/bwdutton/gallery3
