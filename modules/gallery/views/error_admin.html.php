@@ -170,9 +170,9 @@
       <p>
         There's an error message below and you can find more details
         in gallery3/var/logs (look for the file with the most recent
-        date on it).  Stuck?  Stop by the <a href="http://galleryproject.org/forum/96">Gallery 3
+        date on it).  Stuck?  Stop by the <a href="https://groups.google.com/forum/#!forum/gallery-3-users">Gallery 3
         Forums</a> and ask for help.  You can also look at our list
-        of <a href="http://sourceforge.net/apps/trac/gallery/roadmap">open
+        of <a href="https://github.com/bwdutton/gallery3/issues">open
         tickets</a> to see if the problem you're seeing has been
         reported.  If you post a request, here's some useful
         information to include:
