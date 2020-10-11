@@ -15,7 +15,6 @@
 </IfModule>
 
 <IfModule mod_php7.c>
-  php_flag short_open_tag            On
   php_flag magic_quotes_gpc          Off
   php_flag magic_quotes_sybase       Off
   php_flag magic_quotes_runtime      Off
