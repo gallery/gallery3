@@ -25,7 +25,7 @@
   }
 </script>
 <div id="g-permissions">
-  <? if (!$htaccess_works): ?>
+  <?php if (!$htaccess_works): ?>
   <ul id="g-action-status" class="g-message-block">
     <li class="g-error">
       <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
@@ -33,22 +33,22 @@
                   "apache_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride" target="_blank"'))) ?>
     </li>
   </ul>
-  <? endif ?>
+  <?php endif ?>
 
   <p><?= t("Edit permissions for album:") ?></p>
 
   <ul class="g-breadcrumbs">
-    <? $i = 0 ?>
-    <? foreach ($parents as $parent): ?>
-    <li id="item-<?= $parent->id ?>"<? if ($i == 0) print " class=\"g-first\"" ?>>
-      <? if (access::can("edit", $parent)): ?>
+    <?php $i = 0 ?>
+    <?php foreach ($parents as $parent): ?>
+    <li id="item-<?= $parent->id ?>"<?php if ($i == 0) print " class=\"g-first\"" ?>>
+      <?php if (access::can("edit", $parent)): ?>
       <a href="javascript:show(<?= $parent->id ?>)"> <?= html::purify($parent->title) ?> </a>
-      <? else: ?>
+      <?php else: ?>
       <?= html::purify($parent->title) ?>
-      <? endif ?>
+      <?php endif ?>
     </li>
-    <? $i++ ?>
-    <? endforeach ?>
+    <?php $i++ ?>
+    <?php endforeach ?>
     <li class="g-active" id="item-<?= $item->id ?>">
       <a href="javascript:show(<?= $item->id ?>)">
         <?= html::purify($item->title) ?>

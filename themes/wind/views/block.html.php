@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? if ($anchor): ?>
+<?php if ($anchor): ?>
 <a name="<?= $anchor ?>"></a>
-<? endif ?>
+<?php endif ?>
 <div id="<?= $css_id ?>" class="g-block">
   <h2><?= $title ?></h2>
   <div class="g-block-content">

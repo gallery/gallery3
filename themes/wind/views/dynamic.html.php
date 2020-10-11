@@ -7,7 +7,7 @@
 </div>
 
 <ul id="g-album-grid" class="ui-helper-clearfix">
-  <? foreach ($children as $i => $child): ?>
+  <?php foreach ($children as $i => $child): ?>
   <li class="g-item <?= $child->is_album() ? "g-album" : "" ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
@@ -22,7 +22,7 @@
       <?= $theme->thumb_info($child) ?>
     </ul>
   </li>
-  <? endforeach ?>
+  <?php endforeach ?>
 </ul>
 <?= $theme->dynamic_bottom() ?>
 

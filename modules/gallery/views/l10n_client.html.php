@@ -7,9 +7,9 @@
          href="<?= html::clean_attribute(url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token())) ?>">X</a>
     </span>
     <div class="label strings"><h2><?= t("Page text") ?>
-    <? if (!Input::instance()->get('show_all_l10n_messages')): ?>
+    <?php if (!Input::instance()->get('show_all_l10n_messages')): ?>
       <a style="background-color:#fff" href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show all)") ?></a>
-    <? endif; ?>
+    <?php endif; ?>
     </h2></div>
     <div class="label source"><h2><?= t("Source") ?></div>
     <div class="label translation"><h2><?= t("Translation to %language",
@@ -17,16 +17,16 @@
   </div>
   <div id="l10n-client-string-select">
     <ul class="string-list">
-      <? foreach ($string_list as $string): ?>
+      <?php foreach ($string_list as $string): ?>
       <li class="<?= $string["translation"] === ""  ? "untranslated" : "translated" ?>">
-        <? if (is_array($string["source"])): ?>
+        <?php if (is_array($string["source"])): ?>
        [one] - <?= $string["source"]["one"] ?><br/>
        [other] - <?= $string["source"]["other"] ?>
-        <? else: ?>
+        <?php else: ?>
         <?= $string["source"] ?>
-        <? endif; ?>
+        <?php endif; ?>
       </li>
-      <? endforeach; ?>
+      <?php endforeach; ?>
     </ul>
 
     <?= $l10n_search_form ?>
