@@ -92,3 +92,9 @@ Bugs, Questions, Problems?
 
  - Check out the Gallery 3 FAQ: http://codex.galleryproject.org/Gallery3:FAQ
  - Try the support group: https://groups.google.com/forum/#!forum/gallery-3-users
+
+### Forgot your password? Use the command line:
+
+```sh
+php index.php passwordreset <username>
+```

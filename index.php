@@ -100,6 +100,8 @@ if (PHP_SAPI == "cli") {
     print "  php index.php install -d database -h host -u user -p password -x table_prefix -g3p gallery3_admin_password \n\n";
     print "To upgrade:\n";
     print "  php index.php upgrade\n\n";
+    print "To reset a password\n";
+    print "  php index.php passwordreset <username>\n\n";
     print "Developer-only features:\n";
     print "  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
     print "  php index.php package  # create new installer files\n";
