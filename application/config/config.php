@@ -40,7 +40,7 @@
  *
  * Rawurlencode each of the elements to avoid breaking the page layout.
  */
-$config["site_domain"] =
+$config["site_domain"] = getEnv('SITE_DOMAIN') ? getEnv('SITE_DOMAIN') :
   implode("/", array_map("rawurlencode", explode("/",
       substr($_SERVER["SCRIPT_NAME"], 0,
              strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"]))))));
@@ -50,7 +50,7 @@ $config["site_domain"] =
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.
  */
-$config["site_protocol"] = "";
+$config["site_protocol"] = getEnv('SITE_PROTOCOL') ? getEnv('SITE_PROTOCOL') : "";
 
 /**
  * Name of the front controller for this application. Default: index.php
