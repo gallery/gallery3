@@ -181,6 +181,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
         // SWF wrappers - directly accessible
         break;
 
+      case DOCROOT . "lib/preload_opcache.php":
       case DOCROOT . "local.php":
         // Special case optional file, not part of the codebase
         break;
