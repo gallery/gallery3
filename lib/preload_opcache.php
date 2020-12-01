@@ -20,7 +20,9 @@
 
 function getfiles( $path , &$files = array() ) {
 	if ( !is_dir( $path ) ) return null;
+
 	$handle = opendir( $path );
+
 	while ( false !== ( $file = readdir( $handle ) ) ) {
 		if ( $file != '.' && $file != '..' ) {
 			$path2 = $path . '/' . $file;
@@ -33,10 +35,15 @@ function getfiles( $path , &$files = array() ) {
 			}
 		}
 	}
+
+	closedir($handle);
+
 	return $files;
 }
 
 $preload_dirs = [
+	'vendor/lsolesen/pel/src',
+	'vendor/phpmailer/phpmailer/src',
 	'application',
 	'system',
 	'modules/gallery',
@@ -50,12 +57,25 @@ $br = "\n";
 foreach ($preload_dirs as $dir) {
 	$files = [];
 	$full_dir = "/var/www/$dir";
+
 	getfiles($full_dir, $files);
 
-	echo "opcache preload ".count($files)."files from $full_dir\n";
+	sort($files);
+
+	echo "opcache preload ".count($files)." files from $full_dir\n";
 
 	foreach ($files as $file) {
+		if ($dir == 'modules') {
+			# don't load the second time through the list
+			if (preg_match('#^/var/www/modules/gallery/#', $file)) continue;
+		}
+
+		if (preg_match('#^/var/www/modules/gallery/tests#', $file)) continue;
+		if (preg_match('#^/var/www/modules/gallery_unit_test#', $file)) continue;
+
 		echo $file.$br;
 		opcache_compile_file($file);
 	}
+
+	echo "\n";
 }
