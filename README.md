@@ -87,6 +87,14 @@ php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
  -x     Table prefix           (default: )
 ```
 
+### Optional dependencies
+
+Install composer dependencies to make all of the modules work (currently autorotate, phpmailer).
+
+```sh
+composer install
+```
+
 Bugs, Questions, Problems?
 --------------------------
 

@@ -1,5 +1,5 @@
 name = "phpmailer"
-description = "Replaces the built in mail() so you can use SMTP servers, etc. Look in application/config/phpmailer.php for installation and settings."
+description = "Replaces the built in mail() so you can use SMTP servers, etc. Look in application/config/phpmailer.php for installation and settings. You must do 'composer install' to make this module work."
 version = 1
 author_name = "Gallery Team"
 author_url = "https://galleryrevival.com/"

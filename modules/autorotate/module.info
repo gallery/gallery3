@@ -1,5 +1,5 @@
 name = "Autorotate"
-description = "Rotate an image automatically on upload based on EXIF data."
+description = "Rotate an image automatically on upload based on EXIF data. You must do 'composer install' to make this module work."
 version = 3
 author_name = ""
 author_url = ""
