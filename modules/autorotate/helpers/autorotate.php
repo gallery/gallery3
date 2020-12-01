@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-require_once(MODPATH . 'autorotate/lib/pel-master/autoload.php');
+require_once 'vendor/autoload.php';
 
 use lsolesen\pel\PelDataWindow;
 use lsolesen\pel\PelJpeg;
@@ -25,7 +25,7 @@ use lsolesen\pel\PelTag;
 use lsolesen\pel\PelTiff;
 
 class autorotate {
-  static function rotate_item($item) {
+  static function rotate_item($item='') {
 
     // Only try to rotate photos based on EXIF
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {

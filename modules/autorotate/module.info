@@ -1,5 +1,5 @@
 name = "Autorotate"
-description = "Rotate an image automatically on upload based on EXIF data. Requires PHP 5.3 or later."
+description = "Rotate an image automatically on upload based on EXIF data."
 version = 3
 author_name = ""
 author_url = ""
