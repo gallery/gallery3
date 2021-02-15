@@ -65,6 +65,13 @@ $config["index_page"] = isset($_GET["kohana_uri"]) ? "" : "index.php";
 $config["url_suffix"] = "";
 
 /**
+ * For non Apache servers (.e.g nginx), we don't have .htaccess files to block access.
+ * All requests to the var directory are proxied through the /file_proxy/ for access checks.
+ * We still create the files in the event you want to change web servers.
+ */
+$config["no_htaccess"] = isset($_SERVER["SERVER_SOFTWARE"]) && preg_match('/nginx/', $_SERVER["SERVER_SOFTWARE"]) ? "1" : "";
+
+/**
  * Length of time of the internal cache in seconds. 0 or FALSE means no caching.
  * The internal cache stores file paths and config entries across requests and
  * can give significant speed improvements at the expense of delayed updating.
