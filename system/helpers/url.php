@@ -54,7 +54,12 @@ class url_Core {
 			else
 			{
 				// Guess the protocol to provide full http://domain/path URL
-				$base_url = ((empty($_SERVER['HTTPS']) OR $_SERVER['HTTPS'] === 'off') ? 'http' : 'https').'://'.$site_domain;
+				// can be configured with a full
+				if (preg_match('#^http(s)?://#i', $site_domain)) {
+					$base_url = $site_domain;
+				} else {
+					$base_url = ((empty($_SERVER['HTTPS']) OR $_SERVER['HTTPS'] === 'off') ? 'http' : 'https').'://'.$site_domain;
+				}
 			}
 		}
 		else
