@@ -229,11 +229,8 @@ modules/gallery/views/menu_link.html.php                     3   DIRTY    $menu-
 modules/gallery/views/menu_link.html.php                     4   DIRTY_ATTR $menu->css_class
 modules/gallery/views/menu_link.html.php                     5   DIRTY_JS $menu->url
 modules/gallery/views/movieplayer.html.php                   2   DIRTY    html::attributes($div_attrs)
+modules/gallery/views/movieplayer.html.php                   3   DIRTY    html::attributes($source_attrs)
 modules/gallery/views/movieplayer.html.php                   3   DIRTY    html::attributes($video_attrs)
-modules/gallery/views/movieplayer.html.php                   4   DIRTY    html::attributes($source_attrs)
-modules/gallery/views/movieplayer.html.php                   8   DIRTY_JS $div_attrs["id"]
-modules/gallery/views/movieplayer.html.php                   10  DIRTY_JS $width
-modules/gallery/views/movieplayer.html.php                   11  DIRTY_JS $height
 modules/gallery/views/permissions_browse.html.php            3   DIRTY_JS url::site("permissions/form/__ITEM__")
 modules/gallery/views/permissions_browse.html.php            16  DIRTY_JS url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=$csrf")
 modules/gallery/views/permissions_browse.html.php            43  DIRTY_ATTR $parent->id

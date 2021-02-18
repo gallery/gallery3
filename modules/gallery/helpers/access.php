@@ -719,8 +719,8 @@ class access_Core {
    * working and our permission system works.
    */
   static function htaccess_works() {
-	$no_htaccess = Kohana::config('core.no_htaccess');
-	if ($no_htaccess) return true;
+    $no_htaccess = Kohana::config('core.no_htaccess');
+    if ($no_htaccess) return true;
 
     $success_url = url::file("var/security_test/success");
 
