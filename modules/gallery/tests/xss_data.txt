@@ -234,7 +234,6 @@ modules/gallery/views/movieplayer.html.php                   4   DIRTY    html::
 modules/gallery/views/movieplayer.html.php                   8   DIRTY_JS $div_attrs["id"]
 modules/gallery/views/movieplayer.html.php                   10  DIRTY_JS $width
 modules/gallery/views/movieplayer.html.php                   11  DIRTY_JS $height
-modules/gallery/views/movieplayer.html.php                   14  DIRTY_JS url::abs_file("lib/mediaelementjs/")
 modules/gallery/views/permissions_browse.html.php            3   DIRTY_JS url::site("permissions/form/__ITEM__")
 modules/gallery/views/permissions_browse.html.php            16  DIRTY_JS url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=$csrf")
 modules/gallery/views/permissions_browse.html.php            43  DIRTY_ATTR $parent->id
