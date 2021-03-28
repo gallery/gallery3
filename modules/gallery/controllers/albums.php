@@ -48,9 +48,6 @@ class Albums_Controller extends Items_Controller {
       }
     }
 
-    // Sort albums first (http://galleryproject.org/node/88378)
-    $album->sort_column = "type` ASC, `".$album->sort_column;
-
     $page = $input->get("page", "1");
     $children_count = $album->viewable()->children_count();
     $offset = ($page - 1) * $page_size;
