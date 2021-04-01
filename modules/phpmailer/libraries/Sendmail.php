@@ -41,64 +41,12 @@ class Sendmail_Core {
   }
 
   public function __construct() {
-    $this->phpmail = new PHPMailer(true);
-
-    $this->loadConfig();
-
     $this->headers = array();
     $this->from(module::get_var("gallery", "email_from", ""));
     $this->reply_to(module::get_var("gallery", "email_reply_to", ""));
     $this->line_length(module::get_var("gallery", "email_line_length", 70));
     $separator = module::get_var("gallery", "email_header_separator", null);
     $this->header_separator(empty($separator) ? "\n" : unserialize($separator));
-  }
-
-  protected function loadConfig() {
-    $this->config = Kohana::config('phpmailer');
-
-    if (isset($this->config['options'])) {
-      return true;
-    }
-
-    $opts = $this->config['options'];
-
-    if (isset($opts['use_smtp']) && $opts['use_smtp']) {
-      $this->phpmail->isSMTP();
-    }
-
-    if (isset($opts['use_smtp_auth']) && $opts['use_smtp_auth']) {
-      $this->phpmail->SMTPAuth = true;
-    }
-
-    if (isset($opts['hostname'])) {
-      $this->phpmail->Host = $opts['hostname'];
-    }
-
-    if (isset($opts['username'])) {
-      $this->phpmail->Username = $opts['username'];
-    }
-
-    if (isset($opts['password'])) {
-      $this->phpmail->Password = $opts['password'];
-    }
-
-    if (isset($opts['port'])) {
-      $this->phpmail->Port = $opts['port'];
-    }
-
-    if (isset($opts['password'])) {
-      $this->phpmail->Host = $opts['password'];
-    }
-
-    if (isset($opts['secure'])) {
-      $secure = strtolower($opts['secure']);
-
-      if ($secure == 'smtps') {
-        $this->phpmail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-      } elseif ($secure == 'tls') {
-        $this->phpmail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-      }
-    }
   }
 
   public function __get($key) {
@@ -109,11 +57,6 @@ class Sendmail_Core {
     switch ($key) {
     case "to":
       $this->to = is_array($value[0]) ? $value[0] : array($value[0]);
-
-      foreach ($this->to as $to) {
-        $this->phpmail->addAddress($to);
-      }
-
       break;
     case  "header":
       if (count($value) != 2) {
@@ -123,10 +66,10 @@ class Sendmail_Core {
       $this->headers[$value[0]] = $value[1];
       break;
     case "from":
-      $this->phpmail->setFrom($value[0]);
+      $this->headers["From"] = $value[0];
       break;
     case "reply_to":
-      $this->phpmail->addReplyTo($value[0]);
+      $this->headers["Reply-To"] = $value[0];
       break;
     default:
       $this->$key = $value[0];
@@ -139,18 +82,73 @@ class Sendmail_Core {
       Kohana_Log::add("error", wordwrap("Sending mail failed:\nNo to address specified"));
       throw new Exception("@todo TO_IS_REQUIRED_FOR_MAIL");
     }
+    $to = implode(", ", $this->to);
+    $headers = array();
+    foreach ($this->headers as $key => $value) {
+      $key = ucfirst($key);
+      $headers[] = "$key: $value";
+    }
 
-    // all modules appear to use HTML, defaulting to true
-    // could possibly check for a content-type header being passed in
-    $this->phpmail->isHTML(true);
-
+    // The docs say headers should be separated by \r\n, but occasionaly that doesn't work and you
+    // need to use a single \n.  This can be set in config/sendmail.php
+    $headers = implode($this->header_separator, $headers);
     $message = wordwrap($this->message, $this->line_length, "\n");
-
-    $this->phpmail->Subject = $this->subject;
-    $this->phpmail->Body = $message;
-
-    $this->phpmail->send();
-
+    if (!$this->mail($to, $this->subject, $message, $headers)) {
+      throw new Exception("@todo SEND_MAIL_FAILED");
+    }
     return $this;
+  }
+
+  public function mail($to, $subject, $message, $headers) {
+    // This function is completely different from the original 
+    //   Gallery Sendmail script.  Outside of this function,
+    //   no other changes were made.
+
+    $mail = new PHPMailer();
+
+    $mail->IsSMTP();
+    $mail->Host = module::get_var("phpmailer", "smtp_server");
+    $mail->Port = module::get_var("phpmailer", "smtp_port");
+    $mail->SMTPDebug = 0;
+
+    if (module::get_var("phpmailer", "smtp_login") != "") {
+      $mail->SMTPAuth = true;
+
+      if (module::get_var("phpmailer", "smtps") == 'ssl') {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+      } elseif (module::get_var("phpmailer", "smtps") == 'tls') {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+      }
+      $mail->Username = module::get_var("phpmailer", "smtp_login");
+      $mail->Password = module::get_var("phpmailer", "smtp_password");
+    } else {
+      $mail->SMTPAuth = false;
+    }
+
+    $mail->From = module::get_var("phpmailer", "phpmailer_from_address");
+    $mail->FromName = module::get_var("phpmailer", "phpmailer_from_name");
+    $mail->AddAddress($to); 
+    $mail->IsHTML(true);
+
+    // demdel's fix for the ecard module.
+    $boundaryLine = explode("\n", $message, -1);
+    $newboundary = substr($boundaryLine[0],2);
+    if (preg_match("/--/", $boundaryLine[0])) {
+      if (preg_match("/--".$newboundary."--/", end($boundaryLine))) {
+        $mail->CharSet = "UTF-8";
+        $mail->ContentType = "multipart/related; boundary=\"".$newboundary."\"";
+      }
+    }
+
+    $mail->Subject = $subject;
+    $mail->Body = $message;
+
+    // Log any errors.
+    if (!$mail->Send()) {
+      Kohana_Log::add("error", wordwrap($mail->ErrorInfo));
+      return false;
+    } else {
+      return true;
+    }
   }
 }

@@ -17,22 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class phpmailer_installer {
+  static function install() {
+    // Set the default value for this module's behavior.
+    module::set_var("phpmailer", "phpmailer_from_address", "example@gallery.com");
+    module::set_var("phpmailer", "phpmailer_from_name", "Gallery Administrator");
+    module::set_var("phpmailer", "smtp_server", "smtp.example.com");
+    module::set_var("phpmailer", "smtps", "");
+    module::set_var("phpmailer", "smtp_login", "");
+    module::set_var("phpmailer", "smtp_password", "");
+    module::set_var("phpmailer", "smtp_port", "25");
 
-/**
- * to use this module:
- * 1) configure your below mail settings
- * 2) cd to your main gallery3 folder
- * 3) be sure 'composer' for PHP is installed
- * 4) run 'composer install'
- * 5) enable the phpmailer module in the gallery -> admin -> module area
- */
+    // Set the module's version number.
+    module::set_version("phpmailer", 2);
+  }
 
-$config['options'] = array(
-  #'use_smtp' => true,
-  #'use_smtp_auth' => true,
-  #'hostname' => 'yourhostname',
-  #'username' => 'yourusername',
-  #'password' => 'yourpassword',
-  #'port' => '25',
-  #'secure' => 'tls', // or 'smtps' to enable
-);
+  static function upgrade($version) {
+    if (module::get_var("phpmailer", "use_ssl")) {
+		module::set_var("phpmailer", "smtps", "ssl");
+	}
+
+    module::set_version("phpmailer", 3);
+  }
+}
