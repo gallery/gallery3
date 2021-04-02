@@ -107,7 +107,7 @@ class ORM_Core {
 		}
 
 		// Initialize database
-		$this->__initialize();
+		$this->_initialize();
 
 		// Clear the object
 		$this->clear();
@@ -133,7 +133,7 @@ class ORM_Core {
 	 *
 	 * @return  void
 	 */
-	public function __initialize()
+	public function _initialize()
 	{
 		if ( ! is_object($this->db))
 		{
@@ -186,7 +186,7 @@ class ORM_Core {
 	public function __wakeup()
 	{
 		// Initialize database
-		$this->__initialize();
+		$this->_initialize();
 
 		if ($this->reload_on_wakeup === TRUE)
 		{

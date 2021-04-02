@@ -138,7 +138,7 @@ class installer {
     $salt = "";
     for ($i = 0; $i < 4; $i++) {
       $char = mt_rand(48, 109);
-      $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
+      $char += ($char > 90) ? 13 : (($char > 57) ? 7 : 0);
       $salt .= chr($char);
     }
     $password = isset($config["g3_password"]) && strlen($config["g3_password"]) ? $config["g3_password"] : '';
@@ -229,8 +229,6 @@ class installer {
 
     if (!extension_loaded("mbstring")) {
       $errors[] = "PHP is missing the <a href=\"http://php.net/mbstring\">mbstring extension</a>";
-    } else if (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING) {
-      $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
     }
 
     if (!function_exists("json_encode")) {
