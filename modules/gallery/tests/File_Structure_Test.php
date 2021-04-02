@@ -57,7 +57,9 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
-      if (preg_match("/\.(php|css|html|js)$/", $file)) {
+      if (preg_match("/vendor/", $file)) {
+        continue;
+      } elseif (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line) {
           $this->assert_true(substr($line, -2) != "\r\n", "$file has windows style line endings");
         }
@@ -331,7 +333,9 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $errors = "";
     foreach ($dir as $file) {
-      if (preg_match("/\.(php|css|html|js)$/", $file)) {
+      if (preg_match("/vendor/", $file)) {
+        continue;
+      } elseif (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line_num => $line) {
           if ((substr($line, -2) == " \n") || (substr($line, -1) == " ")) {
             $errors .= "$file at line " . ($line_num + 1) . "\n";

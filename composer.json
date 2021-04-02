@@ -2,5 +2,10 @@
 	"require": {
 		"phpmailer/phpmailer": "~6.1",
 		"lsolesen/pel": "^0.9"
+	},
+	"require-dev": {
+		"php": "^7.4",
+		"squizlabs/php_codesniffer": "3.*",
+		"phpcompatibility/php-compatibility": "^9.0"
 	}
 }

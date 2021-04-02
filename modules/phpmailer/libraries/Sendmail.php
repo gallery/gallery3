@@ -100,7 +100,7 @@ class Sendmail_Core {
   }
 
   public function mail($to, $subject, $message, $headers) {
-    // This function is completely different from the original 
+    // This function is completely different from the original
     //   Gallery Sendmail script.  Outside of this function,
     //   no other changes were made.
 
@@ -127,7 +127,7 @@ class Sendmail_Core {
 
     $mail->From = module::get_var("phpmailer", "phpmailer_from_address");
     $mail->FromName = module::get_var("phpmailer", "phpmailer_from_name");
-    $mail->AddAddress($to); 
+    $mail->AddAddress($to);
     $mail->IsHTML(true);
 
     // demdel's fix for the ecard module.

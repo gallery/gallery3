@@ -31,9 +31,9 @@ class Admin_PHPMailer_Controller extends Admin_Controller {
     // Prevent Cross Site Request Forgery
     access::verify_csrf();
 
-    // Figure out the values of the text boxes    
+    // Figure out the values of the text boxes
     $str_phpmailer_from_addr = Input::instance()->post("phpmailer_from_address");
-    $str_phpmailer_from_name = Input::instance()->post("phpmailer_from_name");    
+    $str_phpmailer_from_name = Input::instance()->post("phpmailer_from_name");
     $str_smtp_server = Input::instance()->post("phpmailer_smtp_server");
     $str_smtps = Input::instance()->post("phpmailer_smtps");
     $str_smtp_login = Input::instance()->post("phpmailer_smtp_login");
@@ -61,8 +61,8 @@ class Admin_PHPMailer_Controller extends Admin_Controller {
     // Make a new Form.
     $form = new Forge("admin/phpmailer/saveprefs", "", "post",
                       array("id" => "g-php-mailer-admin-form"));
-                      
-    // Create the input boxes for the PHPMailer Settings                      
+
+    // Create the input boxes for the PHPMailer Settings
     $phpmailerGroup = $form->group("PHPMailerSettings");
     $phpmailerGroup->input("phpmailer_from_address")
                    ->label(t("From Email Address"))

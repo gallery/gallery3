@@ -34,8 +34,8 @@ class phpmailer_installer {
 
   static function upgrade($version) {
     if (module::get_var("phpmailer", "use_ssl")) {
-		module::set_var("phpmailer", "smtps", "ssl");
-	}
+      module::set_var("phpmailer", "smtps", "ssl");
+    }
 
     module::set_version("phpmailer", 3);
   }

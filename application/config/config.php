@@ -157,6 +157,10 @@ $config["modules"] = array(
 );
 
 if (TEST_MODE) {
+  $config["site_domain"] = '.';
+  $config["site_protocol"] = 'http';
+  $config["index_page"] = 'index.php';
+
   array_splice($config["modules"], 0, 0,
                array(MODPATH . "gallery_unit_test",
                      MODPATH . "unit_test"));

@@ -313,6 +313,7 @@ modules/organize/views/organize_frame.html.php               575 DIRTY_JS html::
 modules/organize/views/organize_frame.html.php               577 DIRTY_JS item::root()->id
 modules/organize/views/organize_frame.html.php               585 DIRTY_JS $album->id
 modules/organize/views/organize_frame.html.php               586 DIRTY_JS $album->id
+modules/phpmailer/views/admin_phpmailer.html.php             7   DIRTY    $phpmailer_form
 modules/recaptcha/views/admin_recaptcha.html.php             11  DIRTY    $form
 modules/recaptcha/views/admin_recaptcha.html.php             23  DIRTY_JS $public_key
 modules/recaptcha/views/form_recaptcha.html.php              3   DIRTY_ATTR request::protocol()
