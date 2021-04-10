@@ -14,7 +14,8 @@
 
 	<arg name="colors"/>
 	<arg name="tab-width" value="4"/>
-	<arg name="report" value="summary"/>
+	<arg name="report" value="full"/>
+	<arg name="parallel" value="2"/>
 
 	<ini name="memory_limit" value="512M"/>
 
