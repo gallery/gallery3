@@ -8,11 +8,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['5.6', '7.4', '8.0']
-#        php-versions: ['7.4']
+        php-versions: ['7.4', '8.0']
     services:
       mysql:
-        image: mysql:5.7
+        image: mariadb:10
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: false
           MYSQL_ROOT_PASSWORD: 123

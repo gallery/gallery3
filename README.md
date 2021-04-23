@@ -34,9 +34,8 @@ Supported Configuration
 
  - Platform: Linux / Unix.
  - Web server: Apache 2.2 and newer.
- - PHP 5.6 and newer (PHP's safe_mode must be disabled and simplexml,
-   filter, and json must be installed). While 5.6 is still supported we recommend you
-	 update to 7.x ASAP, we will be dropping 5.6 support in the future.
+ - PHP 7.0 and newer (PHP's safe_mode must be disabled and simplexml,
+   filter, and json must be installed).
  - short_open_tag isn't required but additional modules and themes may rely on it.
  - Database: MySQL 5 and newer.
 
