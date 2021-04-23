@@ -1,8 +1,6 @@
 Gallery 3.1+ (development version)
 ==================================
 
-[![Build Status](https://travis-ci.com/bwdutton/gallery3.png?branch=master)](https://travis-ci.com/bwdutton/gallery3)
-
 About
 -----
 
