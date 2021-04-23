@@ -25,6 +25,8 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $count = 0;
     foreach ($dir as $file) {
+      if (preg_match("/vendor/", $file)) continue;
+
       $count++;
       if (!preg_match("|\.html\.php$|", $file->getPathname())) {
         $this->assert_false(
