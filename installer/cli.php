@@ -78,8 +78,7 @@ function oops($message) {
   print "==> " . $message;
   print "\n";
   print "For help you can try:\n";
-  print "  * The Gallery 3 FAQ   - http://codex.galleryproject.org/Gallery3:FAQ\n";
-  print "  * The Gallery Forums - http://galleryproject.org/forum\n";
+  print "  * The Gallery Group - https://groups.google.com/forum/#!forum/gallery-3-users\n";
   print "\n\n** INSTALLATION FAILED **\n";
   exit(1);
 }

@@ -1,0 +1,73 @@
+name: test suite
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['5.6', '7.4', '8.0']
+#        php-versions: ['7.4']
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: 123
+          MYSQL_DATABASE: gallery3_test
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install OS packages
+        run: sudo apt-get install imagemagick graphicsmagick dcraw ffmpeg git
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, gd, mysql, xml
+          ini-values: post_max_size=256M, max_execution_time=180
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: create gallery3 db
+        run: mysql -h 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u root -p123 -e 'create database gallery3;'
+
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
+
+      - name: linter
+        run: bin/linter.sh
+
+      - name: phpcs
+        run: bin/phpcs.sh
+        continue-on-error: true
+
+      - name: install db
+        run: php ./installer/index.php
+        env:
+          MYSQL_HOST: 127.0.0.1:${{ job.services.mysql.ports['3306'] }}
+          MYSQL_USER: root
+          MYSQL_PASSWORD: 123
+
+      - name: tests
+        run: php index.php test

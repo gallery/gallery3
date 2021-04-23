@@ -77,7 +77,6 @@ class installer {
     // counterparts.
     if (!function_exists("mysql_query")) {
       function mysql_connect($host, $user, $pass) {
-        list ($host, $port) = explode(":", $host . ":");
         installer::$mysqli = new mysqli($host, $user, $pass, $port);
         // http://php.net/manual/en/mysqli.connect.php says to use mysqli_connect_error() instead of
         // $mysqli->connect_error because of bugs before PHP 5.2.9
