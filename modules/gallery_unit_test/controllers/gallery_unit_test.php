@@ -42,7 +42,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       print "Please copy kohana/config/database.php to $original_config.\n";
       return;
     } else {
-      copy($original_config, $test_config);
+      if (!file_exists($test_config)) copy($original_config, $test_config);
       $db_config = Kohana::config('database');
       if (empty($db_config['unit_test'])) {
         $default = $db_config['default'];
@@ -93,7 +93,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       // Clean out the filesystem.  Note that this cleans out test/var/database.php, but that's ok
       // because we technically don't need it anymore.  If this is confusing, we could always
       // arrange to preserve that one file.
-      @system("rm -rf test/var");
+      @system("rm -rf test/var/albums test/var/modules test/var/resizes test/var/thumbs test/var/tmp test/var/uploads");
       @mkdir('test/var/logs', 0777, true);
 
       $active_modules = module::$active;

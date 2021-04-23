@@ -50,6 +50,7 @@ class num extends num_Core {
     foreach (array("G" => 1e9, "M" => 1e6, "K" => 1e3) as $k => $v) {
       if ($num > $v) {
         $num = round($num / $v) . $k;
+        break;
       }
     }
     return $num;

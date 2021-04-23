@@ -52,7 +52,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
    * Elides sensitive data which shouldn't be echoed to the client,
    * such as passwords, and other secrets.
    */
-  /* Visible for testing*/ static function _sanitize_for_dump($value, $key=null, $max_level) {
+  /* Visible for testing*/ static function _sanitize_for_dump($value, $key, $max_level) {
     // Better elide too much than letting something through.
     // Note: unanchored match is intended.
     if (!$max_level) {

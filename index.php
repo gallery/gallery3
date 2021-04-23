@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 // Set this to true to disable demo/debugging controllers
-define("IN_PRODUCTION", true);
+define("IN_PRODUCTION", false);
 
-// Gallery requires PHP 5.2+
-version_compare(PHP_VERSION, "5.2.3", "<") and
-  exit("Gallery requires PHP 5.2.3 or newer (you're using " . PHP_VERSION  . ")");
+// Remove this if you want, things should probably work, but you've been warned.
+version_compare(PHP_VERSION, "7.0.0", "<") and
+  exit("Gallery requires PHP 7.0.0 or newer (you're using " . PHP_VERSION  . ")");
 
 // Gallery is not supported on Windows.
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -91,7 +91,9 @@ if (PHP_SAPI == "cli") {
       @mkdir("test/var", 0777, true);
       @mkdir("test/var/logs", 0777, true);
     }
-    @copy("var/database.php", "test/var/database.php");
+    if (!file_exists("test/var/database.php")) {
+      @copy("var/database.php", "test/var/database.php");
+    }
     define("VARPATH", realpath("test/var") . "/");
     break;
 
