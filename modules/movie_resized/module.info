@@ -1,0 +1,7 @@
+name = "Movie Resized"
+description = "Will display an alternate version of your video, useful if you want a smaller and more browser compatible video to be streamed on your web site in place of the original"
+version = 1
+author_name = "Brad Dutton"
+author_url = ""
+info_url = ""
+discuss_url = ""

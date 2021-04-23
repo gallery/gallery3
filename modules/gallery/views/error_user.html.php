@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? if (!function_exists("t")) { function t($msg) { return $msg; } } ?>
+<?php if (!function_exists("t")) { function t($msg) { return $msg; } } ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <style type="text/css">

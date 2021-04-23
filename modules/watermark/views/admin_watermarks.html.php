@@ -6,11 +6,11 @@
   </p>
 
   <div class="g-block-content">
-    <? if (empty($name)): ?>
+    <?php if (empty($name)): ?>
     <a href="<?= url::site("admin/watermarks/form_add") ?>"
        title="<?= t("Upload a watermark")->for_html_attr() ?>"
        class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-document-b"></span><?= t("Upload a watermark") ?></a>
-    <? else: ?>
+    <?php else: ?>
     <h2> <?= t("Active watermark") ?> </h2>
     <p>
       <?= t("Note that changing this watermark will require you to rebuild all of your thumbnails and resized images.") ?>
@@ -34,6 +34,6 @@
            class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
       </div>
     </div>
-    <? endif ?>
+    <?php endif ?>
   </div>
 </div>

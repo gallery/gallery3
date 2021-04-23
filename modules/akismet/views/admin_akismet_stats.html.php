@@ -6,6 +6,6 @@
 </script>
 <div id="g-akismet-stats">
   <iframe id="g-akismet-external-stats" width="100%" height="500" frameborder="0"
-          src="http://<?= $api_key ?>.web.akismet.com/1.0/user-stats.php?blog=<?= urlencode($blog_url) ?>">
+          src="//akismet.com/1.0/user-stats.php?api_key=<?= $api_key ?>&blog=<?= urlencode($blog_url) ?>">
   </iframe>
 </div>

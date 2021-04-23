@@ -4,7 +4,17 @@
 # mirrored in php.ini
 #
 <IfModule mod_php5.c>
-  php_flag short_open_tag            On
+  php_flag magic_quotes_gpc          Off
+  php_flag magic_quotes_sybase       Off
+  php_flag magic_quotes_runtime      Off
+  php_flag register_globals          Off
+  php_flag session.auto_start        Off
+  php_flag suhosin.session.encrypt   Off
+  php_value upload_max_filesize      20M
+  php_value post_max_size 	     100M
+</IfModule>
+
+<IfModule mod_php7.c>
   php_flag magic_quotes_gpc          Off
   php_flag magic_quotes_sybase       Off
   php_flag magic_quotes_runtime      Off

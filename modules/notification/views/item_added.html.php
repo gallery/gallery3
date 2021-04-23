@@ -18,12 +18,12 @@
           </a>
         </td>
       </tr>
-      <? if ($item->description): ?>
+      <?php if ($item->description): ?>
       <tr>
         <td><?= t("Description:") ?></td>
          <td><?= nl2br(html::purify($item->description)) ?></td>
       </tr>
-      <? endif ?>
+      <?php endif ?>
     </table>
   </body>
 </html>

@@ -164,35 +164,6 @@ abstract class Kohana_Core {
 		// Set and validate the timezone
 		date_default_timezone_set(Kohana::config('locale.timezone'));
 
-		// register_globals is enabled
-		if (ini_get('register_globals'))
-		{
-			if (isset($_REQUEST['GLOBALS']))
-			{
-				// Prevent GLOBALS override attacks
-				exit('Global variable overload attack.');
-			}
-
-			// Destroy the REQUEST global
-			$_REQUEST = array();
-
-			// These globals are standard and should not be removed
-			$preserve = array('GLOBALS', '_REQUEST', '_GET', '_POST', '_FILES', '_COOKIE', '_SERVER', '_ENV', '_SESSION');
-
-			// This loop has the same effect as disabling register_globals
-			foreach (array_diff(array_keys($GLOBALS), $preserve) as $key)
-			{
-				global $$key;
-				$$key = NULL;
-
-				// Unset the global variable
-				unset($GLOBALS[$key], $$key);
-			}
-
-			// Warn the developer about register globals
-			Kohana_Log::add('debug', 'Disable register_globals! It is evil and deprecated: http://php.net/register_globals');
-		}
-
 		// Enable Kohana routing
 		Event::add('system.routing', array('Router', 'find_uri'));
 		Event::add('system.routing', array('Router', 'setup'));

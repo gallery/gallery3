@@ -2,45 +2,45 @@
 <ul class="g-buttonset">
   <li>
     <a target="_blank"
-       <? if (isset($info['author_url'])): ?>
+       <?php if (isset($info['author_url'])): ?>
        class="ui-state-default ui-icon ui-icon-person ui-corner-left"
        href="<?= $info['author_url'] ?>"
-       <? else: ?>
+       <?php else: ?>
        class="ui-state-disabled ui-icon ui-icon-person ui-corner-left"
        href="#"
-       <? endif ?>
+       <?php endif ?>
 
-       <? if (isset($info['author_name'])): ?>
+       <?php if (isset($info['author_name'])): ?>
        title="<?= $info['author_name'] ?>"
-       <? endif ?>
+       <?php endif ?>
        >
-       <? if (isset($info['author_name'])): ?>
+       <?php if (isset($info['author_name'])): ?>
        <?= $info['author_name'] ?>
-       <? endif ?>
+       <?php endif ?>
     </a>
   </li>
   <li>
     <a target="_blank"
-       <? if (isset($info['info_url'])): ?>
+       <?php if (isset($info['info_url'])): ?>
        class="ui-state-default ui-icon ui-icon-info"
        href="<?= $info['info_url'] ?>"
-       <? else: ?>
+       <?php else: ?>
        class="ui-state-disabled ui-icon ui-icon-info"
        href="#"
-       <? endif ?>
+       <?php endif ?>
        >
       <?= t("info") ?>
     </a>
   </li>
   <li>
     <a target="_blank"
-       <? if (isset($info['discuss_url'])): ?>
+       <?php if (isset($info['discuss_url'])): ?>
        class="ui-state-default ui-icon ui-icon-comment ui-corner-right"
        href="<?= $info['discuss_url'] ?>"
-       <? else: ?>
+       <?php else: ?>
        class="ui-state-disabled ui-icon ui-icon-comment ui-corner-right"
        href="#"
-       <? endif ?>
+       <?php endif ?>
        >
       <?= t("discuss") ?>
     </a>

@@ -14,11 +14,11 @@ $("document").ready(function() {
     <?= $form ?>
     <h2><?= t("Authorized paths") ?></h2>
     <ul id="g-server-add-paths">
-      <? if (empty($paths)): ?>
+      <?php if (empty($paths)): ?>
       <li class="g-module-status g-info"><?= t("No authorized image source paths defined yet") ?></li>
-      <? endif ?>
+      <?php endif ?>
 
-      <? foreach ($paths as $id => $path): ?>
+      <?php foreach ($paths as $id => $path): ?>
       <li>
         <?= html::clean($path) ?>
         <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=" . access::csrf_token()) ?>"
@@ -29,7 +29,7 @@ $("document").ready(function() {
           </span>
         </a>
       </li>
-      <? endforeach ?>
+      <?php endforeach ?>
     </ul>
   </div>
 </div>

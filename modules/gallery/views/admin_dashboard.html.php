@@ -32,11 +32,11 @@
   });
 </script>
 <div>
-  <? if ($obsolete_modules_message): ?>
+  <?php if ($obsolete_modules_message): ?>
   <p class="g-warning">
     <?= $obsolete_modules_message ?>
   </p>
-  <? endif ?>
+  <?php endif ?>
 </div>
 <div id="g-admin-dashboard">
   <?= $blocks ?>

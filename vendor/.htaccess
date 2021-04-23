@@ -1,0 +1,8 @@
+DirectoryIndex .htaccess
+SetHandler Gallery_Security_Do_Not_Remove
+Options None
+<IfModule mod_rewrite.c>
+RewriteEngine off
+</IfModule>
+Order allow,deny
+Deny from all

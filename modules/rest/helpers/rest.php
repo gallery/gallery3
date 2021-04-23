@@ -48,7 +48,7 @@ class rest_Core {
       header("Content-type: text/html; charset=UTF-8");
       if ($data) {
         $html = preg_replace(
-          "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
+          "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#is", "'<a href=\"\\1\" >\\1</a>'",
           var_export($data, 1));
       } else {
         $html = t("Empty response");

@@ -16,14 +16,14 @@ $("document").ready(function() {
   <script type="text/javascript">
     $(document).ready(function() {
       $("#g-admin-g2-import-tabs").tabs()
-      <? if (!isset($g2_version)): ?>
+      <?php if (!isset($g2_version)): ?>
       .tabs("disable", 1)
       .tabs("disable", 2)
-      <? elseif ($g3_resource_count > .9 * $g2_resource_count):  ?>
+      <?php elseif ($g3_resource_count > .9 * $g2_resource_count):  ?>
       .tabs({active: 2})
-      <? else: ?>
+      <?php else: ?>
       .tabs({active: 1})
-      <? endif ?>
+      <?php endif ?>
       ;
 
       // Show the tabs after the page has loaded to prevent Firefox from rendering the
@@ -47,31 +47,31 @@ $("document").ready(function() {
       <?= $form ?>
     </div>
     <div id="g-admin-g2-import-import">
-      <? if (isset($g2_version)): ?>
+      <?php if (isset($g2_version)): ?>
       <ul>
         <li>
           <?= t("Gallery version %version detected", array("version" => $g2_version)) ?>
         </li>
-        <? if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
+        <?php if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
         <li>
           <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
                 array("g2_pixels" => $g2_sizes["thumb"]["size"],
                       "g3_pixels" => $thumb_size,
                       "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
         </li>
-        <? endif ?>
+        <?php endif ?>
 
-        <? if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
+        <?php if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
         <li>
           <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 intermediate size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
                 array("g2_pixels" => $g2_sizes["resize"]["size"],
                       "g3_pixels" => $resize_size,
                       "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
         </li>
-        <? endif ?>
+        <?php endif ?>
 
         <li>
-          <?
+          <?php
           $t = array();
           $t[] = t2("1 user", "%count users", $g2_stats["users"]);
           $t[] = t2("1 group", "%count groups", $g2_stats["groups"]);
@@ -86,9 +86,9 @@ $("document").ready(function() {
                       "t3" => $t[3], "t4" => $t[4], "t5" => $t[5])) ?>
         </li>
 
-        <? if ($g3_resource_count): ?>
+        <?php if ($g3_resource_count): ?>
         <li>
-          <?
+          <?php
           $t = array();
           $t[] = t2("1 user", "%count users", $g3_stats["user"]);
           $t[] = t2("1 group", "%count groups", $g3_stats["group"]);
@@ -101,7 +101,7 @@ $("document").ready(function() {
                 array("t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
                       "t3" => $t[3], "t4" => $t[4], "t5" => $t[5])) ?>
         </li>
-        <? endif ?>
+        <?php endif ?>
       </ul>
       <p>
         <a class="g-button g-dialog-link ui-state-default ui-corner-all"
@@ -109,7 +109,7 @@ $("document").ready(function() {
           <?= t("Begin import!") ?>
         </a>
       </p>
-      <? endif ?>
+      <?php endif ?>
     </div>
     <div id="g-admin-g2-import-notes" class="g-text">
       <ul>

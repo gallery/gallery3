@@ -1,0 +1,20 @@
+@import "ui.core.css";
+@import "ui.theme.css";
+@import "ui.datepicker.css";
+@import "ui.dialog.css";
+@import "ui.progressbar.css";
+@import "ui.resizable.css";
+@import "ui.tabs.css";
+
+/*
+ * a bunch of stuff from wind them is now missing from this file?
+ */
+.ui-button-icon-only .ui-button-text,
+.ui-button-icons-only .ui-button-text {
+	padding: .4em;
+	text-indent: -9999999px;
+}
+
+#g-fullsize.ui-dialog {
+	position: absolute;
+}

@@ -6,7 +6,7 @@
       dataType: "json",
       success: function(data) {
         if (data.reload) {
-          window.location = "<? url::site("/admin/modules") ?>";
+          window.location = "<?php url::site("/admin/modules") ?>";
         } else {
           $("body").append('<div id="g-dialog">' + data.dialog + '</div>');
           $("#g-dialog").dialog({
@@ -46,11 +46,11 @@
     <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Modules")) ?>
   </p>
 
-  <? if ($obsolete_modules_message): ?>
+  <?php if ($obsolete_modules_message): ?>
   <p class="g-warning">
     <?= $obsolete_modules_message ?>
   </p>
-  <? endif ?>
+  <?php endif ?>
 
   <div class="g-block-content">
     <form id="g-module-update-form" method="post" action="<?= url::site("admin/modules/confirm") ?>">
@@ -63,10 +63,10 @@
           <th> <?= t("Description") ?> </th>
           <th style="width: 60px"> <?= t("Details") ?> </th>
         </tr>
-        <? foreach ($available as $module_name => $module_info):  ?>
+        <?php foreach ($available as $module_name => $module_info):  ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?>">
-          <? $data = array("name" => $module_name); ?>
-          <? if ($module_info->locked) $data["disabled"] = 1; ?>
+          <?php $data = array("name" => $module_name); ?>
+          <?php if ($module_info->locked) $data["disabled"] = 1; ?>
           <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>
           <td> <?= t($module_info->name) ?> </td>
           <td> <?= $module_info->version ?> </td>
@@ -75,45 +75,45 @@
             <ul class="g-buttonset">
               <li>
                 <a target="_blank"
-                   <? if (isset($module_info->author_url)): ?>
+                   <?php if (isset($module_info->author_url)): ?>
                    class="ui-state-default ui-icon ui-icon-person ui-corner-left"
                    href="<?= $module_info->author_url ?>"
-                   <? else: ?>
+                   <?php else: ?>
                    class="ui-state-disabled ui-icon ui-icon-person ui-corner-left"
                    href="#"
-                   <? endif ?>
+                   <?php endif ?>
 
-                   <? if (isset($module_info->author_name)): ?>
+                   <?php if (isset($module_info->author_name)): ?>
                    title="<?= $module_info->author_name ?>"
-                   <? endif ?>
+                   <?php endif ?>
                    >
-                   <? if (isset($module_info->author_name)): ?>
+                   <?php if (isset($module_info->author_name)): ?>
                    <?= $module_info->author_name ?>
-                   <? endif ?>
+                   <?php endif ?>
                 </a>
               </li>
               <li>
                 <a target="_blank"
-                   <? if (isset($module_info->info_url)): ?>
+                   <?php if (isset($module_info->info_url)): ?>
                    class="ui-state-default ui-icon ui-icon-info"
                    href="<?= $module_info->info_url ?>"
-                   <? else: ?>
+                   <?php else: ?>
                    class="ui-state-disabled ui-icon ui-icon-info"
                    href="#"
-                   <? endif ?>
+                   <?php endif ?>
                    >
                   <?= t("info") ?>
                 </a>
               </li>
               <li>
                 <a target="_blank"
-                   <? if (isset($module_info->discuss_url)): ?>
+                   <?php if (isset($module_info->discuss_url)): ?>
                    class="ui-state-default ui-icon ui-icon-comment ui-corner-right"
                    href="<?= $module_info->discuss_url ?>"
-                   <? else: ?>
+                   <?php else: ?>
                    class="ui-state-disabled ui-icon ui-icon-comment ui-corner-right"
                    href="#"
-                   <? endif ?>
+                   <?php endif ?>
                    >
                   <?= t("discuss") ?>
                 </a>
@@ -121,7 +121,7 @@
             </ul>
           </td>
         </tr>
-        <? endforeach ?>
+        <?php endforeach ?>
       </table>
       <input type="submit" value="<?= t("Update")->for_html_attr() ?>" />
     </form>

@@ -3,7 +3,7 @@
   <h1>
     <?= t("Dang...  Page not found!") ?>
   </h1>
-  <? if ($is_guest): ?>
+  <?php if ($is_guest): ?>
     <h2>
       <?= t("Hey wait, you're not signed in yet!") ?>
     </h2>
@@ -17,10 +17,10 @@
         $("#g-username").focus();
       });
     </script>
-  <? else: ?>
+  <?php else: ?>
     <p>
       <?= t("Maybe the page exists, but is only visible to authorized users.") ?>
       <?= t("If you think this is an error, talk to your Gallery administrator!") ?>
     </p>
- <? endif; ?>
+ <?php endif; ?>
 </div>

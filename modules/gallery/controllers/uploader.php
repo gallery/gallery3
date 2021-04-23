@@ -91,6 +91,22 @@ class Uploader_Controller extends Controller {
   }
 
   private function _get_add_form($album) {
+    $form = new Forge("uploader/finish", "", "post", array("id" => "gAddPhotosForm", 'class' => 'dropzone'));
+    $group = $form->group("add_photos")
+      ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
+    $group->dropzone("dropzone")->album($album);
+
+    $group_actions = $form->group("actions");
+    $group_actions->dropzone_buttons("");
+
+    $inputs_before_event = array_keys($form->add_photos->inputs);
+    module::event("add_photos_form", $album, $form);
+    $inputs_after_event = array_keys($form->add_photos->inputs);
+
+    return $form;
+  }
+
+  private function _get_add_form_uploadify($album) {
     $form = new Forge("uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
       ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));

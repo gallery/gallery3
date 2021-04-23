@@ -8,11 +8,11 @@
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
   </head>
-  <body<? if (locales::is_rtl()) { echo ' class="rtl"'; } ?>>
+  <body<?php if (locales::is_rtl()) { echo ' class="rtl"'; } ?>>
     <div id="outer">
       <img id="logo" src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
       <div id="inner">
-        <? if ($can_upgrade): ?>
+        <?php if ($can_upgrade): ?>
         <div id="dialog" style="visibility: hidden">
           <a id="dialog_close_link" style="display: none" onclick="$('#dialog').fadeOut(); return false;" href="#" class="close">[x]</a>
           <div id="busy" style="display: none">
@@ -44,13 +44,13 @@
             $("#dialog").css("top", Math.round(($(window).height() - $("#dialog").height()) / 2));
             $("#upgrade_link").click(function(event) { show_busy() });
 
-            <? if ($done): ?>
+            <?php if ($done): ?>
             show_done();
-            <? endif ?>
+            <?php endif ?>
 
-            <? if ($failed): ?>
+            <?php if ($failed): ?>
             show_failed();
-            <? endif ?>
+            <?php endif ?>
           });
 
           var show_busy = function() {
@@ -78,26 +78,26 @@
           </p>
         </div>
 
-        <? if ($done): ?>
+        <?php if ($done): ?>
         <div id="upgrade_button" class="button muted">
           <?= t("Upgrade all") ?>
         </div>
-        <? else: ?>
+        <?php else: ?>
         <div id="upgrade_button" class="button button-active">
           <a id="upgrade_link" href="<?= url::site("upgrader/upgrade?csrf=" . access::csrf_token()) ?>">
             <?= t("Upgrade all") ?>
           </a>
         </div>
-        <? endif ?>
+        <?php endif ?>
 
-        <? if ($obsolete_modules_message): ?>
+        <?php if ($obsolete_modules_message): ?>
         <div id="obsolete_modules_message">
           <p>
             <span class="failed"><?= t("Warning!") ?></span>
             <?= $obsolete_modules_message ?>
           </p>
         </div>
-        <? endif ?>
+        <?php endif ?>
 
         <table>
           <tr class="<?= $done ? "muted" : "" ?>">
@@ -106,8 +106,8 @@
             <th> <?= t("Available version") ?> </th>
           </tr>
 
-          <? foreach ($available as $id => $module): ?>
-          <? if ($module->active): ?>
+          <?php foreach ($available as $id => $module): ?>
+          <?php if ($module->active): ?>
           <tr class="<?= $module->version == $module->code_version ? "current" : "upgradeable" ?> <?= in_array($id, $failed) ? "failed" : "" ?>" >
             <td class="name <?= $id ?>">
               <?= t($module->name) ?>
@@ -119,27 +119,27 @@
               <?= $module->code_version ?>
             </td>
           </tr>
-          <? else: ?>
-          <? @$inactive++ ?>
-          <? endif ?>
-          <? endforeach ?>
+          <?php else: ?>
+          <?php @$inactive++ ?>
+          <?php endif ?>
+          <?php endforeach ?>
         </table>
 
-        <? if (@$inactive): ?>
+        <?php if (@$inactive): ?>
         <p class="<?= $done ? "muted" : "" ?>">
           <?= t("The following modules are inactive and don't require an upgrade.") ?>
         </p>
         <ul class="<?= $done ? "muted" : "" ?>">
-          <? foreach ($available as $module): ?>
-          <? if (!$module->active): ?>
+          <?php foreach ($available as $module): ?>
+          <?php if (!$module->active): ?>
           <li>
             <?= t($module->name) ?>
           </li>
-          <? endif ?>
-          <? endforeach ?>
+          <?php endif ?>
+          <?php endforeach ?>
         </ul>
-        <? endif ?>
-        <? else: // can_upgrade ?>
+        <?php endif ?>
+        <?php else: // can_upgrade ?>
         <h1> <?= t("Who are you?") ?> </h1>
         <p>
           <?= t("You're not logged in as an administrator, so we have to verify you to make sure it's ok for you to do an upgrade.  To prove you can run an upgrade, create a file called <b> %name </b> in your <b>%tmp_dir_path</b> directory.",
@@ -147,7 +147,7 @@
                       "tmp_dir_path" => "gallery3/var/tmp")) ?>
         </p>
         <a href="<?= url::site("upgrader?") ?>"><?= t("Ok, I've done that") ?></a>
-        <? endif // can_upgrade ?>
+        <?php endif // can_upgrade ?>
       </div>
       <div id="footer">
         <p>

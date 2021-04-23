@@ -207,7 +207,7 @@ class locales_Core {
 
       arsort($scored_locales);
 
-      list ($locale) = each($scored_locales);
+      $locale = key($scored_locales);
       return $locale;
     }
 

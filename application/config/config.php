@@ -40,7 +40,7 @@
  *
  * Rawurlencode each of the elements to avoid breaking the page layout.
  */
-$config["site_domain"] =
+$config["site_domain"] = getEnv('SITE_DOMAIN') ? getEnv('SITE_DOMAIN') :
   implode("/", array_map("rawurlencode", explode("/",
       substr($_SERVER["SCRIPT_NAME"], 0,
              strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"]))))));
@@ -50,7 +50,7 @@ $config["site_domain"] =
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.
  */
-$config["site_protocol"] = "";
+$config["site_protocol"] = getEnv('SITE_PROTOCOL') ? getEnv('SITE_PROTOCOL') : "";
 
 /**
  * Name of the front controller for this application. Default: index.php
@@ -63,6 +63,13 @@ $config["index_page"] = isset($_GET["kohana_uri"]) ? "" : "index.php";
  * Fake file extension that will be added to all generated URLs. Example: .html
  */
 $config["url_suffix"] = "";
+
+/**
+ * For non Apache servers (.e.g nginx), we don't have .htaccess files to block access.
+ * All requests to the var directory are proxied through the /file_proxy/ for access checks.
+ * We still create the files in the event you want to change web servers.
+ */
+$config["no_htaccess"] = isset($_SERVER["SERVER_SOFTWARE"]) && preg_match('/nginx/', $_SERVER["SERVER_SOFTWARE"]) ? "1" : "";
 
 /**
  * Length of time of the internal cache in seconds. 0 or FALSE means no caching.
@@ -150,6 +157,10 @@ $config["modules"] = array(
 );
 
 if (TEST_MODE) {
+  $config["site_domain"] = '.';
+  $config["site_protocol"] = 'http';
+  $config["index_page"] = 'index.php';
+
   array_splice($config["modules"], 0, 0,
                array(MODPATH . "gallery_unit_test",
                      MODPATH . "unit_test"));

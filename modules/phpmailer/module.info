@@ -1,0 +1,3 @@
+name = "PHPMailer"
+description = "Use PHPMailer when sending email messages. Use 'composer install' to install phpmailer"
+version = 3

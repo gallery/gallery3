@@ -766,10 +766,10 @@ class gallery_task_Core {
       ->select_distinct(
         array("parent_slug" => db::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
       ->select("id")
-      ->select(array("C" => "COUNT(\"*\")"))
+      ->select(array("C" => 'COUNT("*")'))
       ->from("items")
-      ->having("C", ">", 1)
-      ->group_by("parent_slug")
+      ->having('COUNT("*")', ">", 1)
+      ->group_by("parent_slug", "id")
       ->execute();
   }
 
@@ -779,10 +779,10 @@ class gallery_task_Core {
       ->select_distinct(
         array("parent_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
       ->select("id")
-      ->select(array("C" => "COUNT(\"*\")"))
+      ->select(array("C" => 'COUNT("*")'))
       ->from("items")
-      ->having("C", ">", 1)
-      ->group_by("parent_name")
+      ->having('COUNT("*")', ">", 1)
+      ->group_by("parent_name", "id")
       ->execute();
   }
 
@@ -792,11 +792,11 @@ class gallery_task_Core {
       ->select_distinct(
         array("parent_base_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
       ->select("id")
-      ->select(array("C" => "COUNT(\"*\")"))
+      ->select(array("C" => 'COUNT("*")'))
       ->from("items")
       ->where("type", "<>", "album")
-      ->having("C", ">", 1)
-      ->group_by("parent_base_name")
+      ->having('COUNT("*")', ">", 1)
+      ->group_by("parent_base_name", "id")
       ->execute();
   }
 

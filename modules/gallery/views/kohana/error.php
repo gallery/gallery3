@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?
+<?php
 // This is the template for all HTML errors.  If you're throwing an exception and you want your
 // error to appear differently, extend Kohana_Exception and specify a different template.
 

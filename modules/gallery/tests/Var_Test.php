@@ -41,7 +41,7 @@ class Var_Test extends Gallery_Unit_Test_Case {
   }
 
   public function incr_parameter_test() {
-    module::set_var("Var_Test", "Parameter", "original value");
+    module::set_var("Var_Test", "Parameter", "0");
     module::incr_var("Var_Test", "Parameter");
     $this->assert_equal("1", module::get_var("Var_Test", "Parameter"));
 

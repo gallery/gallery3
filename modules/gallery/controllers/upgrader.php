@@ -102,7 +102,7 @@ class Upgrader_Controller extends Controller {
       if ($failed) {
         print "Upgrade completed ** WITH FAILURES **\n";
         print "The following modules were not successfully upgraded:\n";
-        print "  " . implode($failed, "\n  ") . "\n";
+        print "  " . implode("\n   ", $failed) . "\n";
         print "Try getting newer versions or deactivating those modules\n";
       } else {
         print "Upgrade complete\n";

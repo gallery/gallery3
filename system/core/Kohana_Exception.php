@@ -99,7 +99,7 @@ class Kohana_Exception_Core extends Exception {
 	 * @param   object   exception object
 	 * @return  void
 	 */
-	public static function handle(Exception $e)
+	public static function handle($e)
 	{
 		try
 		{

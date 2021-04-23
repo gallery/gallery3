@@ -46,8 +46,10 @@ class File_Proxy_Controller extends Controller {
     // var_uri: gallery3/var/
     $var_uri = url::file("var/");
 
+    $compare_uri = url::file(ltrim($request_uri,'/'));
+
     // Make sure that the request is for a file inside var
-    $offset = strpos(rawurldecode($request_uri), $var_uri);
+    $offset = strpos(rawurldecode($compare_uri), $var_uri);
     if ($offset !== 0) {
       $e = new Kohana_404_Exception();
       $e->test_fail_code = 1;
@@ -55,7 +57,7 @@ class File_Proxy_Controller extends Controller {
     }
 
     // file_uri: albums/foo/bar.jpg
-    $file_uri = substr($request_uri, strlen($var_uri));
+    $file_uri = substr($compare_uri, strlen($var_uri));
 
     // type: albums
     // path: foo/bar.jpg

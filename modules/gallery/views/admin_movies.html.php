@@ -21,21 +21,21 @@
   <div class="g-available">
     <h2> <?= t("Current configuration") ?> </h2>
     <div id="g-ffmpeg" class="g-block">
-      <img class="logo" width="284" height="70" src="<?= url::file("modules/gallery/images/ffmpeg.png") ?>" alt="<? t("Visit the FFmpeg project site") ?>" />
+      <img class="logo" width="284" height="70" src="<?= url::file("modules/gallery/images/ffmpeg.png") ?>" alt="<?php t("Visit the FFmpeg project site") ?>" />
       <p>
         <?= t("FFmpeg is a cross-platform standalone audio/video program.") ?><br/>
         <?= t("Please refer to the <a href=\"%url\">FFmpeg website</a> for more information.", array("url" => "http://ffmpeg.org")) ?>
       </p>
       <div class="g-module-status g-info">
-        <? if ($ffmpeg_dir): ?>
-          <? if ($ffmpeg_version): ?>
+        <?php if ($ffmpeg_dir): ?>
+          <?php if ($ffmpeg_version): ?>
             <p><?= t("FFmpeg version %version was found in %dir", array("version" => $ffmpeg_version, "dir" => $ffmpeg_dir)) ?></p>
-          <? else: ?>
+          <?php else: ?>
             <p><?= t("FFmpeg (of unknown version) was found in %dir", array("dir" => $ffmpeg_dir)) ?></p>
-          <? endif ?>
-        <? else: ?>
+          <?php endif ?>
+        <?php else: ?>
           <p><?= t("We could not locate FFmpeg on your system.") ?></p>
-        <? endif ?>
+        <?php endif ?>
       </div>
     </div>
   </div>

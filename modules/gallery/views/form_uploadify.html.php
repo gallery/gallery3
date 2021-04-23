@@ -2,7 +2,7 @@
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("lib/uploadify/jquery.uploadify.min.js") ?>"></script>
 <script type="text/javascript">
-  <? $flash_minimum_version = "9.0.24" ?>
+  <?php $flash_minimum_version = "9.0.24" ?>
   var success_count = 0;
   var error_count = 0;
   var updating = 0;
@@ -119,29 +119,29 @@
 </script>
 
 <div class="requires-flash">
-  <? if ($suhosin_session_encrypt || (identity::active_user()->admin && !$movies_allowed)): ?>
+  <?php if ($suhosin_session_encrypt || (identity::active_user()->admin && !$movies_allowed)): ?>
   <div class="g-message-block">
-    <? if ($suhosin_session_encrypt): ?>
+    <?php if ($suhosin_session_encrypt): ?>
     <p class="g-error">
       <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
           array("encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
       "suhosin_url" => "http://www.hardened-php.net/suhosin/")) ?>
     </p>
-    <? endif ?>
+    <?php endif ?>
 
-    <? if (identity::active_user()->admin && !$movies_allowed): ?>
+    <?php if (identity::active_user()->admin && !$movies_allowed): ?>
     <p class="g-warning">
       <?= t("Movie uploading is disabled on your system. <a href=\"%help_url\">Help!</a>", array("help_url" => url::site("admin/movies"))) ?>
     </p>
-    <? endif ?>
+    <?php endif ?>
   </div>
-  <? endif ?>
+  <?php endif ?>
 
   <div>
     <ul class="g-breadcrumbs">
-      <? foreach ($album->parents() as $i => $parent): ?>
-      <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
-      <? endforeach ?>
+      <?php foreach ($album->parents() as $i => $parent): ?>
+      <li<?php if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
+      <?php endforeach ?>
       <li class="g-active"> <?= html::purify($album->title) ?> </li>
     </ul>
   </div>

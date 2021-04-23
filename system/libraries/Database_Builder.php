@@ -1183,7 +1183,8 @@ class Database_Builder_Core {
 
 		foreach ($this->order_by as $column => $order_by)
 		{
-			list($column, $direction) = each($order_by);
+			$column = key($order_by);
+			$direction = current($order_by);
 
 			$column = $this->db->quote_column($column);
 

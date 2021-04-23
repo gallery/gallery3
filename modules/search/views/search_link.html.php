@@ -1,17 +1,17 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <form action="<?= url::site("search") ?>" id="g-quick-search-form" class="g-short-form">
-  <? if (isset($item)): ?>
-    <? $album_id = $item->is_album() ? $item->id : $item->parent_id; ?>
-  <? else: ?>
-    <? $album_id = item::root()->id; ?>
-  <? endif; ?>
+  <?php if (isset($item)): ?>
+    <?php $album_id = $item->is_album() ? $item->id : $item->parent_id; ?>
+  <?php else: ?>
+    <?php $album_id = item::root()->id; ?>
+  <?php endif; ?>
   <ul>
     <li>
-      <? if ($album_id == item::root()->id): ?>
+      <?php if ($album_id == item::root()->id): ?>
         <label for="g-search"><?= t("Search the gallery") ?></label>
-      <? else: ?>
+      <?php else: ?>
         <label for="g-search"><?= t("Search this album") ?></label>
-      <? endif; ?>
+      <?php endif; ?>
       <input type="hidden" name="album" value="<?= $album_id ?>" />
       <input type="text" name="q" id="g-search" class="text" />
     </li>

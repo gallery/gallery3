@@ -9,11 +9,11 @@
 
   <p id="g-description"><?= t("Photos will be added to album:") ?></p>
   <ul class="g-breadcrumbs">
-    <? $i = 0 ?>
-    <? foreach ($item->parents() as $parent): ?>
-    <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::purify($parent->title) ?> </li>
-    <? $i++ ?>
-    <? endforeach ?>
+    <?php $i = 0 ?>
+    <?php foreach ($item->parents() as $parent): ?>
+    <li<?php if ($i == 0) print " class=\"g-first\"" ?>> <?= html::purify($parent->title) ?> </li>
+    <?php $i++ ?>
+    <?php endforeach ?>
     <li class="g-active"> <?= html::purify($item->title) ?> </li>
   </ul>
 

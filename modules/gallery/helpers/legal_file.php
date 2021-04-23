@@ -182,10 +182,11 @@ class legal_file_Core {
    * Create a merged list of all photo and movie filename filters,
    * (e.g. "*.gif"), based on allowed extensions.
    */
-  static function get_filters() {
+  static function get_filters($without_asterisk=false) {
     $filters = array();
+    $prefix = $without_asterisk ? '.' : '*.';
     foreach (legal_file::get_extensions() as $extension) {
-      array_push($filters, "*." . $extension, "*." . strtoupper($extension));
+      array_push($filters, $prefix . $extension, $prefix . strtoupper($extension));
     }
     return $filters;
   }

@@ -6,17 +6,17 @@
 
   <div id="g-admin-modules-messages" class="g-block-content">
    <ul>
-     <? foreach (array("error" => "g-error", "warn" => "g-warning") as $type => $css_class): ?>
-     <? foreach ($messages[$type] as $message): ?>
+     <?php foreach (array("error" => "g-error", "warn" => "g-warning") as $type => $css_class): ?>
+     <?php foreach ($messages[$type] as $message): ?>
      <li class="<?= $css_class ?>" style="padding-bottom: 0"><?= $message ?></li>
-     <? endforeach ?>
-     <? endforeach ?>
+     <?php endforeach ?>
+     <?php endforeach ?>
    </ul>
     <form method="post" action="<?= url::site("admin/modules/save") ?>">
       <?= access::csrf_form_field() ?>
-      <? foreach ($modules as $module): ?>
+      <?php foreach ($modules as $module): ?>
         <?= form::hidden($module, 1) ?>
-      <? endforeach ?>
+      <?php endforeach ?>
     </form>
   </div>
 </div>

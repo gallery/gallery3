@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? echo "<?xml version=\"1.0\" ?>" ?>
+<?php echo "<?xml version=\"1.0\" ?>" ?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"
    xmlns:atom="http://www.w3.org/2005/Atom"
    xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -12,15 +12,15 @@
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
-    <? if (!empty($feed->previous_page_uri)): ?>
+    <?php if (!empty($feed->previous_page_uri)): ?>
     <atom:link rel="previous" href="<?= $feed->previous_page_uri ?>" type="application/rss+xml" />
-    <? endif ?>
-    <? if (!empty($feed->next_page_uri)): ?>
+    <?php endif ?>
+    <?php if (!empty($feed->next_page_uri)): ?>
     <atom:link rel="next" href="<?= $feed->next_page_uri ?>" type="application/rss+xml" />
-    <? endif ?>
+    <?php endif ?>
     <pubDate><?= $pub_date ?></pubDate>
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
-    <? foreach ($feed->comments as $comment): ?>
+    <?php foreach ($feed->comments as $comment): ?>
     <item>
       <title><?= html::purify($comment->title) ?></title>
       <link><?= html::clean($comment->item_uri) ?></link>
@@ -38,6 +38,6 @@
         ]]>
       </content:encoded>
     </item>
-    <? endforeach ?>
+    <?php endforeach ?>
   </channel>
 </rss>

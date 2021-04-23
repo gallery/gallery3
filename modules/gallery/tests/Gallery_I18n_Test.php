@@ -62,6 +62,7 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
     $this->i18n->locale("de_DE");
     $locale = $this->i18n->locale();
     $this->assert_equal("de_DE", $locale);
+    $this->i18n->locale("en_US");
   }
 
   public function translate_simple_test() {

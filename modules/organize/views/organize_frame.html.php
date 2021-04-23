@@ -310,9 +310,9 @@
      */
 
     sort_order_data = [];
-    <? foreach (album::get_sort_order_options() as $key => $value): ?>
+    <?php foreach (album::get_sort_order_options() as $key => $value): ?>
     sort_order_data.push(["<?= $key ?>", <?= $value->for_js() ?>]);
-    <? endforeach ?>
+    <?php endforeach ?>
     var sort_column_combobox = new Ext.form.ComboBox({
       mode: "local",
       editable: false,
@@ -428,7 +428,7 @@
             sort_order_combobox
           ]
         },
-<? if (module::is_active("tag")): ?>
+<?php if (module::is_active("tag")): ?>
         {
           xtype: "spacer",
           flex: 3
@@ -439,12 +439,12 @@
           xtype: "spacer",
           flex: 1
         },
-<? else: ?>
+<?php else: ?>
         {
           xtype: "spacer",
           flex: 10
         },
-<? endif ?>
+<?php endif ?>
         delete_button,
         {
           xtype: "button",

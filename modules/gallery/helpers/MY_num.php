@@ -24,8 +24,11 @@ class num extends num_Core {
    * ref: http://us2.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
    */
   static function convert_to_bytes($val) {
-    $val = trim($val);
-    $last = strtolower($val[strlen($val)-1]);
+    $val = strtolower(trim($val));
+    $len = strlen($val);
+    $last = substr($val, $len-1);
+    $val = substr($val, 0, -1);
+
     switch($last) {
     case 'g':
       $val *= 1024;
@@ -47,6 +50,7 @@ class num extends num_Core {
     foreach (array("G" => 1e9, "M" => 1e6, "K" => 1e3) as $k => $v) {
       if ($num > $v) {
         $num = round($num / $v) . $k;
+        break;
       }
     }
     return $num;

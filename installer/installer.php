@@ -77,7 +77,6 @@ class installer {
     // counterparts.
     if (!function_exists("mysql_query")) {
       function mysql_connect($host, $user, $pass) {
-        list ($host, $port) = explode(":", $host . ":");
         installer::$mysqli = new mysqli($host, $user, $pass, $port);
         // http://php.net/manual/en/mysqli.connect.php says to use mysqli_connect_error() instead of
         // $mysqli->connect_error because of bugs before PHP 5.2.9
@@ -95,6 +94,9 @@ class installer {
       }
       function mysql_select_db($db) {
         return installer::$mysqli->select_db($db);
+      }
+      function mysql_fetch_object($result) {
+        return $result->fetch_object();
       }
     }
 
@@ -135,10 +137,11 @@ class installer {
     $salt = "";
     for ($i = 0; $i < 4; $i++) {
       $char = mt_rand(48, 109);
-      $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
+      $char += ($char > 90) ? 13 : (($char > 57) ? 7 : 0);
       $salt .= chr($char);
     }
-    if (!$password = $config["g3_password"]) {
+    $password = isset($config["g3_password"]) && strlen($config["g3_password"]) ? $config["g3_password"] : '';
+    if (!$password) {
       $password = substr(md5(time() . mt_rand()), 0, 6);
     }
     // Escape backslash in preparation for our UPDATE statement.
@@ -225,16 +228,10 @@ class installer {
 
     if (!extension_loaded("mbstring")) {
       $errors[] = "PHP is missing the <a href=\"http://php.net/mbstring\">mbstring extension</a>";
-    } else if (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING) {
-      $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
     }
 
     if (!function_exists("json_encode")) {
       $errors[] = "PHP is missing the <a href=\"http://php.net/manual/en/book.json.php\">JavaScript Object Notation (JSON) extension</a>.  Please install it.";
-    }
-
-    if (!ini_get("short_open_tag")) {
-      $errors[] = "Gallery requires <a href=\"http://php.net/manual/en/ini.core.php\">short_open_tag</a> to be on.  Please enable it in your php.ini.";
     }
 
     if (!function_exists("ctype_alpha")) {

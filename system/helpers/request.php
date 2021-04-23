@@ -59,9 +59,15 @@ class request_Core {
 	 */
 	public static function protocol()
 	{
+		$config = Kohana::config('config');
+
 		if (Kohana::$server_api === 'cli')
 		{
 			return NULL;
+		}
+		elseif ($config['site_protocol'])
+		{
+			return $config['site_protocol'];
 		}
 		elseif ( ! empty($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] === 'on')
 		{

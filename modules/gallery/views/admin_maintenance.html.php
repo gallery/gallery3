@@ -7,15 +7,15 @@
       <?= t("When you're performing maintenance on your Gallery, you can enable <b>maintenance mode</b> which prevents any non-admin from accessing your Gallery.  Some of the tasks below will automatically put your Gallery in maintenance mode for you.") ?>
       </p>
       <ul id="g-action-status" class="g-message-block">
-        <? if (module::get_var("gallery", "maintenance_mode")): ?>
+        <?php if (module::get_var("gallery", "maintenance_mode")): ?>
         <li class="g-warning">
           <?= t("Maintenance mode is <b>on</b>.  Non admins cannot access your Gallery.  <a href=\"%enable_maintenance_mode_url\">Turn off maintenance mode</a>", array("enable_maintenance_mode_url" => url::site("admin/maintenance/maintenance_mode/0?csrf=$csrf"))) ?>
         </li>
-        <? else: ?>
+        <?php else: ?>
         <li class="g-info">
           <?= t("Maintenance mode is off.  User access is permitted.  <a href=\"%enable_maintenance_mode_url\">Turn on maintenance mode</a>", array("enable_maintenance_mode_url" => url::site("admin/maintenance/maintenance_mode/1?csrf=$csrf"))) ?>
         </li>
-        <? endif ?>
+        <?php endif ?>
       </ul>
     </div>
   </div>
@@ -38,7 +38,7 @@
             <?= t("Action") ?>
           </th>
         </tr>
-        <? foreach ($task_definitions as $task): ?>
+        <?php foreach ($task_definitions as $task): ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?> <?= log::severity_class($task->severity) ?>">
           <td class="<?= log::severity_class($task->severity) ?>">
             <?= $task->name ?>
@@ -53,11 +53,11 @@
             </a>
           </td>
         </tr>
-        <? endforeach ?>
+        <?php endforeach ?>
       </table>
     </div>
 
-    <? if ($running_tasks->count()): ?>
+    <?php if ($running_tasks->count()): ?>
     <div id="g-running-tasks">
       <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
          class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
@@ -84,7 +84,7 @@
             <?= t("Action") ?>
           </th>
         </tr>
-        <? foreach ($running_tasks as $task): ?>
+        <?php foreach ($running_tasks as $task): ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?> <?= $task->state == "stalled" ? "g-warning" : "" ?>">
           <td class="<?= $task->state == "stalled" ? "g-warning" : "" ?>">
             <?= gallery::date_time($task->updated) ?>
@@ -93,16 +93,16 @@
             <?= $task->name ?>
           </td>
           <td>
-            <? if ($task->done): ?>
-            <? if ($task->state == "cancelled"): ?>
+            <?php if ($task->done): ?>
+            <?php if ($task->state == "cancelled"): ?>
             <?= t("Cancelled") ?>
-            <? endif ?>
+            <?php endif ?>
             <?= t("Close") ?>
-            <? elseif ($task->state == "stalled"): ?>
+            <?php elseif ($task->state == "stalled"): ?>
             <?= t("Stalled") ?>
-            <? else: ?>
+            <?php else: ?>
             <?= t("%percent_complete% Complete", array("percent_complete" => $task->percent_complete)) ?>
-            <? endif ?>
+            <?php endif ?>
           </td>
           <td>
             <?= $task->status ?>
@@ -111,29 +111,29 @@
             <?= html::clean($task->owner()->name) ?>
           </td>
           <td>
-            <? if ($task->state == "stalled"): ?>
+            <?php if ($task->state == "stalled"): ?>
             <a class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"
                href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
               <?= t("resume") ?>
             </a>
-            <? endif ?>
-            <? if ($task->get_log()): ?>
+            <?php endif ?>
+            <?php if ($task->get_log()): ?>
             <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button ui-state-default ui-corner-all">
               <?= t("view log") ?>
             </a>
-            <? endif ?>
+            <?php endif ?>
             <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
                class="g-button ui-icon-left ui-state-default ui-corner-all">
               <?= t("cancel") ?>
             </a>
           </td>
         </tr>
-        <? endforeach ?>
+        <?php endforeach ?>
       </table>
     </div>
-    <? endif ?>
+    <?php endif ?>
 
-    <? if ($finished_tasks->count()): ?>
+    <?php if ($finished_tasks->count()): ?>
     <div id="g-finished-tasks">
       <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
            class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
@@ -160,7 +160,7 @@
             <?= t("Action") ?>
           </th>
         </tr>
-        <? foreach ($finished_tasks as $task): ?>
+        <?php foreach ($finished_tasks as $task): ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?> <?= $task->state == "success" ? "g-success" : "g-error" ?>">
           <td class="<?= $task->state == "success" ? "g-success" : "g-error" ?>">
             <?= gallery::date_time($task->updated) ?>
@@ -169,13 +169,13 @@
             <?= $task->name ?>
           </td>
           <td>
-            <? if ($task->state == "success"): ?>
+            <?php if ($task->state == "success"): ?>
             <?= t("Success") ?>
-            <? elseif ($task->state == "error"): ?>
+            <?php elseif ($task->state == "error"): ?>
             <?= t("Failed") ?>
-            <? elseif ($task->state == "cancelled"): ?>
+            <?php elseif ($task->state == "cancelled"): ?>
             <?= t("Cancelled") ?>
-            <? endif ?>
+            <?php endif ?>
           </td>
           <td>
             <?= $task->status ?>
@@ -184,29 +184,29 @@
             <?= html::clean($task->owner()->name) ?>
           </td>
           <td>
-            <? if ($task->done): ?>
+            <?php if ($task->done): ?>
             <a href="<?= url::site("admin/maintenance/remove/$task->id?csrf=$csrf") ?>" class="g-button ui-state-default ui-corner-all">
               <?= t("remove") ?>
             </a>
-            <? if ($task->get_log()): ?>
+            <?php if ($task->get_log()): ?>
             <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button ui-state-default ui-corner-all">
               <?= t("view log") ?>
             </a>
-            <? endif ?>
-            <? else: ?>
+            <?php endif ?>
+            <?php else: ?>
             <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button" ui-state-default ui-corner-all>
               <?= t("resume") ?>
             </a>
             <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>" class="g-button ui-state-default ui-corner-all">
               <?= t("cancel") ?>
             </a>
-            <? endif ?>
+            <?php endif ?>
             </ul>
           </td>
         </tr>
-        <? endforeach ?>
+        <?php endforeach ?>
       </table>
     </div>
-    <? endif ?>
+    <?php endif ?>
   </div>
 </div>

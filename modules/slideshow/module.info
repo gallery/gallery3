@@ -1,7 +1,0 @@
-name = "Slideshow"
-description = "Allows users to view a slideshow of photos"
-version = 2
-author_name = "Gallery Team"
-author_url = "http://codex.galleryproject.org/Gallery:Team"
-info_url = "http://codex.galleryproject.org/Gallery3:Modules:slideshow"
-discuss_url = "http://galleryproject.org/forum_module_slideshow"

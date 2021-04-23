@@ -442,7 +442,8 @@ abstract class Database_Core {
 		if (is_array($table))
 		{
 			// Using array('u' => 'user')
-			list($alias, $table) = each($table);
+			$alias = key($table);
+			$table = current($table);
 		}
 		elseif (strpos(' ', $table) !== FALSE)
 		{
@@ -505,7 +506,8 @@ abstract class Database_Core {
 
 		if (is_array($column))
 		{
-			list($alias, $column) = each($column);
+			$alias = key($column);
+			$column = current($column);
 		}
 
 		if ($column instanceof Database_Expression)

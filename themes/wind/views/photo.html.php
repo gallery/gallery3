@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 
-<? if (access::can("view_full", $theme->item())): ?>
+<?php if (access::can("view_full", $theme->item())): ?>
 <!-- Use javascript to show the full size as an overlay on the current page -->
 <script type="text/javascript">
   $(document).ready(function() {
@@ -23,7 +23,7 @@
     });
   });
 </script>
-<? endif ?>
+<?php endif ?>
 
 <div id="g-item">
   <?= $theme->photo_top() ?>
@@ -32,13 +32,13 @@
 
   <div id="g-photo">
     <?= $theme->resize_top($item) ?>
-    <? if (access::can("view_full", $item)): ?>
+    <?php if (access::can("view_full", $item)): ?>
     <a href="<?= $item->file_url() ?>" class="g-fullsize-link" title="<?= t("View full size")->for_html_attr() ?>">
-      <? endif ?>
+      <?php endif ?>
       <?= $item->resize_img(array("id" => "g-item-id-{$item->id}", "class" => "g-resize")) ?>
-      <? if (access::can("view_full", $item)): ?>
+      <?php if (access::can("view_full", $item)): ?>
     </a>
-    <? endif ?>
+    <?php endif ?>
     <?= $theme->resize_bottom($item) ?>
   </div>
 

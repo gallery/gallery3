@@ -39,6 +39,21 @@
       show: fix_links,
     });
   });
+
+  $('body').on('click', '.g-button', function() {
+    var a = $(this);
+    if (a.find('span.ui-icon-seek-next, span.ui-icon-seek-end, span.ui-icon-seek-prev, span.ui-icon-seek-first').length > 0) {
+        event.stopPropagation();
+        $.scrollTo(0, 800, { easing: "swing" });
+        a.parents(".ui-tabs-panel").load(
+    a.attr("href"),
+    function() {
+      fix_links();
+    });
+
+        return false;
+    }
+  });
 </script>
 
 <div id="g-admin-comments" class="g-block">
