@@ -6,11 +6,7 @@ Gallery 3.1+ (development version)
 About
 -----
 
-Gallery 3 is a web based software product that lets you manage your
-photos on your own website.  You must have your own website with PHP
-and database support in order to install and use it.  With Gallery you
-can easily create and share albums of photos via an intuitive
-interface.
+Gallery 3 is a web-based software product that lets you manage your photos on your own website. You must have your own website with PHP and database support in order to install and use it. With Gallery, you can easily create and share albums of photos via an intuitive interface.
 
 Intended Audience
 -----------------
