@@ -4,6 +4,7 @@
 		"lsolesen/pel": "^0.9"
 	},
 	"require-dev": {
+		"phpstan/phpstan": "^0.12",
 		"php-parallel-lint/php-parallel-lint": "^1.0",
 		"php-parallel-lint/php-console-highlighter": "^0.5",
 		"squizlabs/php_codesniffer": "3.*",
