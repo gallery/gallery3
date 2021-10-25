@@ -748,8 +748,8 @@ class access_Core {
         }
       }
       list ($status, $headers, $body) =
-        remote::do_request(url::abs_file("var/security_test/verify"), "GET", $headers);
-      $works = ($status == "HTTP/1.1 200 OK") && ($body == "success");
+        remote::do_request(url::abs_file("var/security_test/success"), "GET", $headers);
+      $works = preg_match('#HTTP/\d.\d 200 OK#', $status) && ($body == "success");
     } catch (Exception $e) {
       @dir::unlink(VARPATH . "security_test");
       throw $e;
