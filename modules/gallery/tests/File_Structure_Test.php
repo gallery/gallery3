@@ -214,6 +214,8 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
           new RecursiveDirectoryIterator(DOCROOT))));
     $errors = array();
     foreach ($dir as $file) {
+      if (preg_match("#/vendor/#", $file)) continue;
+
       $file_as_string = file_get_contents($file);
       if (preg_match('/\t/', $file_as_string)) {
         foreach (explode("\n", $file_as_string) as $l => $line) {
