@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 // Set this to true to disable demo/debugging controllers
-define("IN_PRODUCTION", false);
+define("IN_PRODUCTION", true);
 
 // Remove this if you want, things should probably work, but you've been warned.
 version_compare(PHP_VERSION, "7.0.0", "<") and
