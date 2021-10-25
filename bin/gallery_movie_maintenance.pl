@@ -12,8 +12,9 @@ $| = 1;
 my $DEBUG = 2;
 my $ALWAYS_CREATE_THUMB = 0;
 
+# path to your var directory with the photos
 # e.g. /home/bdutton/public_html/gallery3/var
-my $VAR_DIR = '/put_the_path_to_your_var_directory_here/var';
+my $VAR_DIR = '/var/www/html/var';
 
 my $VIDEO_BITRATE = '3000k'; # ffmpeg video bit rate argument
 # audio codec to use for ffmpeg, I use libfdk_aac on freebsd. My CentoOS test site
@@ -22,7 +23,7 @@ my $ACODEC = 'aac -strict -2';
 
 my $CHOWN_USER = ''; # set this if you want chown to change the ownership of the generated files
 
-my $CLI_SUDO = 'sudo'; # set this if you want to run the conversion as root to write out the files
+my $CLI_SUDO = ''; # set this to the sudo executable if you want to run the conversion as a different user
 my $CLI_FIND = 'find'; # path to find, maybe I should use a perl module for this?
 my $CLI_CHOWN = 'chown'; # path to chown
 my $CLI_FFMPEG = 'ffmpeg'; # path to ffmpeg
