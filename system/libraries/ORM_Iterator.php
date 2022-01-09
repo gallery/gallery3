@@ -258,6 +258,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
+    #[\ReturnTypeWillChange]
 	public function offsetUnset($offset)
 	{
 		throw new Kohana_Database_Exception('database.result_read_only');

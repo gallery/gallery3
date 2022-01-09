@@ -229,7 +229,7 @@ class legal_file_Core {
    * extension, add the new one to the end.
    */
   static function change_extension($filename, $new_ext) {
-    $filename_no_ext = preg_replace("/\.[^\.\/]*?$/", "", $filename);
+    $filename_no_ext = !empty($filename) ? preg_replace("/\.[^\.\/]*?$/", "", $filename) : '';
     return "{$filename_no_ext}.{$new_ext}";
   }
 
@@ -271,7 +271,7 @@ class legal_file_Core {
   static function sanitize_filename($filename, $extension, $type) {
     // Check if the type is valid - if so, get the mime types of the
     // original and target extensions; if not, throw an exception.
-    $original_extension = pathinfo($filename, PATHINFO_EXTENSION);
+    $original_extension = !empty($filename) ? pathinfo($filename, PATHINFO_EXTENSION) : '';
     switch ($type) {
       case "photo":
         $mime_type = legal_file::get_photo_types_by_extension($extension);
@@ -318,6 +318,8 @@ class legal_file_Core {
    * @return string sanitized dirname
    */
   static function sanitize_dirname($dirname) {
+    if (is_null($dirname)) return 'album';
+
     // It should be a dirname without a parent directory - remove all slashes (and backslashes).
     $dirname = str_replace("/", "_", $dirname);
     $dirname = str_replace("\\", "_", $dirname);

@@ -78,7 +78,7 @@ modules/gallery/views/admin_languages.html.php               61  DIRTY_ATTR ($de
 modules/gallery/views/admin_languages.html.php               62  DIRTY    form::checkbox("installed_locales[]",$code,isset($installed_locales[$code]))
 modules/gallery/views/admin_languages.html.php               63  DIRTY    $display_name
 modules/gallery/views/admin_languages.html.php               65  DIRTY    form::radio("default_locale",$code,($default_locale==$code),((isset($installed_locales[$code]))?'':'disabled="disabled"'))
-modules/gallery/views/admin_languages.html.php               113 DIRTY    $share_translations_form
+modules/gallery/views/admin_languages.html.php               114 DIRTY    $share_translations_form
 modules/gallery/views/admin_maintenance.html.php             42  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_maintenance.html.php             42  DIRTY_ATTR log::severity_class($task->severity)
 modules/gallery/views/admin_maintenance.html.php             43  DIRTY_ATTR log::severity_class($task->severity)

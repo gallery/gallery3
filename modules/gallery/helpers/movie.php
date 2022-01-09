@@ -268,8 +268,8 @@ class movie_Core {
    * features (the last argument of mkdate above, which disables DST, is deprecated as of PHP 5.3).
    */
   static function seconds_to_hhmmssdd($seconds) {
-    return sprintf("%02d:%02d:%05.2F", floor($seconds / 3600), floor(($seconds % 3600) / 60),
-                   floor(100 * $seconds % 6000) / 100);
+    return sprintf("%02d:%02d:%05.2F", floor($seconds / 3600), floor((floor($seconds) % 3600) / 60),
+                   floor(floor(100 * $seconds) % 6000) / 100);
   }
 
   /**

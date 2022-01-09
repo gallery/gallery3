@@ -119,6 +119,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
+    #[\ReturnTypeWillChange]
 	final public function offsetUnset($offset)
 	{
 		throw new Kohana_Exception('Database results are read-only');

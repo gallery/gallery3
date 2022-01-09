@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class PhpCodeFilterIterator extends FilterIterator {
-  public function accept() {
+  public function accept(): bool {
     $path_name = $this->getInnerIterator()->getPathName();
     return substr($path_name, -4) == ".php";
   }
 }
 
 class GalleryCodeFilterIterator extends FilterIterator {
-  public function accept() {
+  public function accept(): bool {
     // Skip anything that we didn't write
     $path_name = $this->getInnerIterator()->getPathName();
     $file_name = $this->getInnerIterator()->getFileName();

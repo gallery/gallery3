@@ -62,7 +62,8 @@ class message_Core {
    */
   private static function _add($msg, $severity) {
     $session = Session::instance();
-    $status = $session->get("messages");
+    $status = array();
+    $status[] = $session->get("messages");
     $status[] = array($msg, $severity);
     $session->set("messages", $status);
   }
