@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="KPQuote Standards">
 	<config name="installed_paths" value="vendor/phpcompatibility/php-compatibility" />
-	<config name="testVersion" value="8.0" />
+	<config name="testVersion" value="8.1" />
 
 	<exclude-pattern>*\.(inc|css|js)$</exclude-pattern>
 
