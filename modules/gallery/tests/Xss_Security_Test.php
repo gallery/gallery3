@@ -349,7 +349,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
     $canonical = MODPATH . "gallery/tests/xss_data.txt";
     exec("diff $canonical $new", $output, $return_value);
     $this->assert_false(
-      $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
+      boolval($return_value), "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
   private static function _create_frame($token, $in_script_block,
