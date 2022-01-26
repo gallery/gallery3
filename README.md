@@ -86,7 +86,7 @@ php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
 
 ### Optional dependencies
 
-Install composer dependencies to make all of the modules work (currently autorotate, phpmailer).
+Install composer dependencies to make all of the modules work (currently autorotate, phpmailer). In the top level gallery directory where the composer.json file exists run the following:
 
 ```sh
 composer install
