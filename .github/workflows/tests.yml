@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: composer install
 
+      - name: Start mysql service
+        run: sudo systemctl start mysql
+
       - name: create gallery3 db
         run: mysql -h 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u root -p123 -e 'create database gallery3;'
 
