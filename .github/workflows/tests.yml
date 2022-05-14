@@ -9,22 +9,24 @@ jobs:
       fail-fast: false
       matrix:
         php-versions: ['7.4', '8.0', '8.1']
-    services:
-      mysql:
-        image: mariadb:10
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: 123
-          MYSQL_DATABASE: gallery3_test
-        ports:
-          - 3306/tcp
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      DB_DATABASE: gallery3
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_PORT: 3306
+      DB_HOST: 127.0.0.1
     steps:
+      - name: Install OS packages
+        run: sudo apt-get install imagemagick graphicsmagick dcraw ffmpeg git
+
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install OS packages
-        run: sudo apt-get update && sudo apt-get upgrade && sudo apt-get install imagemagick graphicsmagick dcraw ffmpeg git
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }}_test;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -52,12 +54,6 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      - name: Start mysql service
-        run: sudo systemctl start mysql
-
-      - name: create gallery3 db
-        run: mysql -h 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u root -p123 -e 'create database gallery3;'
-
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
 
@@ -70,9 +66,9 @@ jobs:
       - name: install db
         run: php ./installer/index.php
         env:
-          MYSQL_HOST: 127.0.0.1:${{ job.services.mysql.ports['3306'] }}
-          MYSQL_USER: root
-          MYSQL_PASSWORD: 123
+          MYSQL_HOST: ${{ env.DB_HOST }}:${{ env.DB_PORT }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
 
       - name: tests
         run: php index.php test
