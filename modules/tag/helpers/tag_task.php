@@ -71,7 +71,7 @@ class tag_task_Core {
           $completed++;
           $tags->next();
         }
-        $task->percent_complete = $completed / $total * 100;
+        $task->percent_complete = $total ? $completed / $total * 100 : 100;
         $task->set("completed", $completed);
         $task->set("last_tag_id", $last_tag_id);
       }

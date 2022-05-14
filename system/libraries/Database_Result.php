@@ -80,7 +80,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Countable: count
 	 */
-	public function count()
+	public function count(): int
 	{
 		return $this->total_rows;
 	}
@@ -88,7 +88,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * ArrayAccess: offsetExists
 	 */
-	public function offsetExists($offset)
+	public function offsetExists($offset): bool
 	{
 		return ($offset >= 0 AND $offset < $this->total_rows);
 	}
@@ -96,7 +96,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * ArrayAccess: offsetGet
 	 */
-	public function offsetGet($offset)
+	public function offsetGet($offset): mixed
 	{
 		if ( ! $this->seek($offset))
 			return NULL;
@@ -109,7 +109,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
-	final public function offsetSet($offset, $value)
+	final public function offsetSet($offset, $value): void
 	{
 		throw new Kohana_Exception('Database results are read-only');
 	}
@@ -128,7 +128,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Iterator: key
 	 */
-	public function key()
+	public function key(): mixed
 	{
 		return $this->current_row;
 	}
@@ -136,10 +136,9 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Iterator: next
 	 */
-	public function next()
+	public function next(): void
 	{
 		++$this->current_row;
-		return $this;
 	}
 
 	/**
@@ -154,16 +153,15 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Iterator: rewind
 	 */
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->current_row = 0;
-		return $this;
 	}
 
 	/**
 	 * Iterator: valid
 	 */
-	public function valid()
+	public function valid(): bool
 	{
 		return $this->offsetExists($this->current_row);
 	}

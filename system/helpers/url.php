@@ -97,22 +97,29 @@ class url_Core {
 	 */
 	public static function site($uri = '', $protocol = FALSE)
 	{
-		if ($path = trim(parse_url($uri, PHP_URL_PATH), '/'))
-		{
-			// Add path suffix
-			$path .= Kohana::config('core.url_suffix');
-		}
+		$path = '';
+		$query = '';
+		$fragment = '';
 
-		if ($query = parse_url($uri, PHP_URL_QUERY))
+		if ($uri)
 		{
-			// ?query=string
-			$query = '?'.$query;
-		}
+			if ($path = trim(parse_url($uri, PHP_URL_PATH), '/'))
+			{
+				// Add path suffix
+				$path .= Kohana::config('core.url_suffix');
+			}
 
-		if ($fragment = parse_url($uri, PHP_URL_FRAGMENT))
-		{
-			// #fragment
-			$fragment =  '#'.$fragment;
+			if ($query = parse_url($uri, PHP_URL_QUERY))
+			{
+				// ?query=string
+				$query = '?'.$query;
+			}
+
+			if ($fragment = parse_url($uri, PHP_URL_FRAGMENT))
+			{
+				// #fragment
+				$fragment =  '#'.$fragment;
+			}
 		}
 
 		// Concat the URL

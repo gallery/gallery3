@@ -42,7 +42,8 @@ class ORM_Iterator extends ORM_Iterator_Core {
   /**
    * Cache the result row
    */
-  public function current() {
+  public function current(): mixed
+  {
     $row = parent::current();
     if (is_object($row)) {
       model_cache::set($row);

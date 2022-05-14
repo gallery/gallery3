@@ -282,7 +282,7 @@ class Router_Core {
 
 				// Trim slashes
 				$key = trim($key, '/');
-				$val = trim($val, '/');
+				$val = !empty($val) ? trim($val, '/') : '';
 
 				if (preg_match('#^'.$key.'$#u', $uri))
 				{
