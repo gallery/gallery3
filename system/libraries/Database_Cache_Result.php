@@ -64,6 +64,7 @@ class Database_Cache_Result_Core extends Database_Result {
 		return TRUE;
 	}
 
+    #[\ReturnTypeWillChange]
 	public function current()
 	{
 		if ($this->return_objects)

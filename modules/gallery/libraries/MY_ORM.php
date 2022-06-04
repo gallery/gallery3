@@ -42,7 +42,8 @@ class ORM_Iterator extends ORM_Iterator_Core {
   /**
    * Cache the result row
    */
-  public function current(): mixed
+  #[\ReturnTypeWillChange]
+  public function current()
   {
     $row = parent::current();
     if (is_object($row)) {

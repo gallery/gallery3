@@ -141,7 +141,8 @@ class Database_Mysqli_Result_Core extends Database_Result {
 	/**
 	 * Iterator: current
 	 */
-	public function current(): mixed
+    #[\ReturnTypeWillChange]
+	public function current()
 	{
 		if ($this->current_row !== $this->internal_row AND ! $this->seek($this->current_row))
 			return NULL;

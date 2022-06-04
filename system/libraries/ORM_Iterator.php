@@ -176,7 +176,8 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Iterator: current
 	 */
-	public function current(): mixed
+    #[\ReturnTypeWillChange]
+	public function current()
 	{
 		if ($row = $this->result->current())
 		{
