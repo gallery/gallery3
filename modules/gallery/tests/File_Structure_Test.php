@@ -25,7 +25,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $count = 0;
     foreach ($dir as $file) {
-      if (preg_match("#(vendor|test)/#", $file)) continue;
+      if (preg_match("#(vendor|test|\.cache)/#", $file)) continue;
 
       $count++;
       if (!preg_match("|\.html\.php$|", $file->getPathname())) {
@@ -59,7 +59,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
-      if (preg_match("#(vendor|test)/#", $file)) {
+      if (preg_match("#(vendor|test|\.cache)/#", $file)) {
         continue;
       } elseif (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line) {
@@ -190,7 +190,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
         break;
 
       default:
-        if (preg_match("#(vendor|test)/#", $path)) {
+        if (preg_match("#(vendor|test|\.cache)/#", $path)) {
           # including unmodified 3rd party code
         } elseif (preg_match("/modules\/(autorotate|movie_resized)/", $path)) {
           # including unmodified 3rd party code
@@ -214,7 +214,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
           new RecursiveDirectoryIterator(DOCROOT))));
     $errors = array();
     foreach ($dir as $file) {
-      if (preg_match("#/vendor/#", $file)) continue;
+      if (preg_match("#/(vendor|\.cache)/#", $file)) continue;
 
       $file_as_string = file_get_contents($file);
       if (preg_match('/\t/', $file_as_string)) {
@@ -337,7 +337,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $errors = "";
     foreach ($dir as $file) {
-      if (preg_match("#(vendor|test)/#", $file)) {
+      if (preg_match("#(vendor|test|\.cache)/#", $file)) {
         continue;
       } elseif (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line_num => $line) {
