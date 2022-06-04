@@ -306,7 +306,7 @@ class Kohana_Config_Core implements ArrayAccess {
 	 * @return  bool
 	 * @access  public
 	 */
-    #[\ReturnTypeWillChange]
+	#[\ReturnTypeWillChange]
 	public function offsetUnset($offset)
 	{
 		foreach ($this->drivers as $driver)
