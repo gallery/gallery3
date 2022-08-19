@@ -93,13 +93,13 @@ class gallery_installer {
                  `owner_id` int(9) default NULL,
                  `parent_id` int(9) NOT NULL,
                  `rand_key` decimal(11,10) default NULL,
-                 `relative_path_cache` varchar(255) default NULL,
-                 `relative_url_cache` varchar(255) default NULL,
+                 `relative_path_cache` varchar(768) default NULL,
+                 `relative_url_cache` varchar(768) default NULL,
                  `resize_dirty` boolean default 1,
                  `resize_height` int(9) default NULL,
                  `resize_width` int(9) default NULL,
                  `right_ptr` int(9) NOT NULL,
-                 `slug` varchar(255) default NULL,
+                 `slug` varchar(768) default NULL,
                  `sort_column` varchar(64) default NULL,
                  `sort_order` char(4) default 'ASC',
                  `thumb_dirty` boolean default 1,
@@ -125,7 +125,7 @@ class gallery_installer {
                  `category` varchar(64) default NULL,
                  `html` varchar(255) default NULL,
                  `message` text default NULL,
-                 `referer` varchar(255) default NULL,
+                 `referer` varchar(5000) default NULL,
                  `severity` int(9) default 0,
                  `timestamp` int(9) default 0,
                  `url` varchar(255) default NULL,
@@ -828,6 +828,14 @@ class gallery_installer {
         $item->save();
       }
       module::set_version("gallery", $version = 58);
+    }
+
+    if ($version == 58) {
+      $db->query("ALTER TABLE {items} MODIFY COLUMN `relative_path_cache` varchar(768)");
+      $db->query("ALTER TABLE {items} MODIFY COLUMN `relative_url_cache` varchar(768)");
+      $db->query("ALTER TABLE {items} MODIFY COLUMN `slug` varchar(768)");
+      $db->query("ALTER TABLE {logs} MODIFY COLUMN `referer` varchar(5000)");
+      module::set_version("gallery", $version = 59);
     }
   }
 
