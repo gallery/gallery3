@@ -47,9 +47,9 @@
               <th> <?= t("Language") ?> </th>
               <th> <?= t("Default language") ?> </th>
             </tr>
-            <? $i = 0 ?>
-            <? foreach ($available_locales as $code => $display_name):  ?>
-            <? if ($i == (int) (count($available_locales)/2)): ?>
+            <?php $i = 0 ?>
+            <?php foreach ($available_locales as $code => $display_name):  ?>
+            <?php if ($i == (int) (count($available_locales)/2)): ?>
           </table>
           <table class="g-left">
             <tr>
@@ -57,7 +57,7 @@
               <th> <?= t("Language") ?> </th>
               <th> <?= t("Default language") ?> </th>
             </tr>
-            <? endif ?>
+            <?php endif ?>
             <tr class="<?= (isset($installed_locales[$code])) ? "g-available" : "" ?><?= ($default_locale == $code) ? " g-selected" : "" ?>">
               <td> <?= form::checkbox("installed_locales[]", $code, isset($installed_locales[$code])) ?> </td>
               <td> <?= $display_name ?> </td>
@@ -65,14 +65,15 @@
               <?= form::radio("default_locale", $code, ($default_locale == $code), ((isset($installed_locales[$code]))?'':'disabled="disabled"') ) ?>
               </td>
             </tr>
-            <? $i++ ?>
-            <? endforeach ?>
+            <?php $i++ ?>
+            <?php endforeach ?>
           </table>
           <input type="submit" value="<?= t("Update languages")->for_html_attr() ?>" />
         </form>
       </div>
     </div>
 
+<!-- disabled as galleryproject.org is no longer available and we don't have the code for this
     <div id="g-translations" class="g-block">
       <h2> <?= t("Translations") ?> </h2>
       <p>
@@ -99,11 +100,11 @@
         <a href="<?= url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token()) ?>"
            class="g-button ui-state-default ui-corner-all ui-icon-left">
           <span class="ui-icon ui-icon-power"></span>
-          <? if (Session::instance()->get("l10n_mode", false)): ?>
+          <?php if (Session::instance()->get("l10n_mode", false)): ?>
           <?= t("Stop translation mode") ?>
-          <? else: ?>
+          <?php else: ?>
           <?= t("Start translation mode") ?>
-          <? endif ?>
+          <?php endif ?>
         </a>
 
         <h3><?= t("Sharing your translations") ?></h3>
@@ -113,6 +114,7 @@
         <?= $share_translations_form ?>
       </div>
     </div>
+-->
 
   </div>
 </div>

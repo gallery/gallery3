@@ -95,6 +95,7 @@ abstract class Database extends Database_Core {
    * and \ (the escape character itself).
    */
   static function escape_for_like($value) {
+    if (is_null($value)) return '';
     // backslash must go first to avoid double-escaping
     return addcslashes($value, '\_%');
   }

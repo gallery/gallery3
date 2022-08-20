@@ -7,29 +7,29 @@
     <h2> <?= html::clean($subject) ?> </h2>
     <table>
       <tr>
-        <? if ($original->title != $item->title): ?>
+        <?php if ($original->title != $item->title): ?>
         <td><?= t("New title:") ?></td>
         <td><?= html::clean($item->title) ?></td>
-        <? else: ?>
+        <?php else: ?>
         <td><?= t("Title:") ?></td>
         <td><?= html::clean($item->title) ?></td>
-        <? endif ?>
+        <?php endif ?>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
         <td><a href="<?= $item->abs_url() ?>"><?= $item->abs_url() ?></a></td>
       </tr>
-      <? if ($original->description != $item->description): ?>
+      <?php if ($original->description != $item->description): ?>
       <tr>
         <td><?= t("New description:") ?></td>
         <td><?= html::clean($item->description) ?></td>
       </tr>
-      <? elseif (!empty($item->description)): ?>
+      <?php elseif (!empty($item->description)): ?>
       <tr>
         <td><?= t("Description:") ?></td>
         <td><?= html::clean($item->description) ?></td>
       </tr>
-      <? endif ?>
+      <?php endif ?>
     </table>
   </body>
 </html>

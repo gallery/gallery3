@@ -168,7 +168,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Countable: count
 	 */
-	public function count()
+	public function count(): int
 	{
 		return $this->result->count();
 	}
@@ -176,6 +176,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Iterator: current
 	 */
+    #[\ReturnTypeWillChange]
 	public function current()
 	{
 		if ($row = $this->result->current())
@@ -192,7 +193,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Iterator: key
 	 */
-	public function key()
+	public function key(): mixed
 	{
 		return $this->result->key();
 	}
@@ -200,15 +201,15 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Iterator: next
 	 */
-	public function next()
+	public function next(): void
 	{
-		return $this->result->next();
+		$this->result->next();
 	}
 
 	/**
 	 * Iterator: rewind
 	 */
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->result->rewind();
 	}
@@ -216,7 +217,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Iterator: valid
 	 */
-	public function valid()
+	public function valid(): bool
 	{
 		return $this->result->valid();
 	}
@@ -224,7 +225,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * ArrayAccess: offsetExists
 	 */
-	public function offsetExists($offset)
+	public function offsetExists($offset): bool
 	{
 		return $this->result->offsetExists($offset);
 	}
@@ -232,6 +233,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	/**
 	 * ArrayAccess: offsetGet
 	 */
+    #[\ReturnTypeWillChange]
 	public function offsetGet($offset)
 	{
 		if ($this->result->offsetExists($offset))
@@ -248,7 +250,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
-	public function offsetSet($offset, $value)
+	public function offsetSet($offset, $value): void
 	{
 		throw new Kohana_Database_Exception('database.result_read_only');
 	}
@@ -258,6 +260,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
+    #[\ReturnTypeWillChange]
 	public function offsetUnset($offset)
 	{
 		throw new Kohana_Database_Exception('database.result_read_only');

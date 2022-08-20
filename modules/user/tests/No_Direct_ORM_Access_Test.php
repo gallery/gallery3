@@ -70,7 +70,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
 }
 
 class UserModuleFilterIterator extends FilterIterator {
-  public function accept() {
+  public function accept(): bool {
     $path_name = $this->getInnerIterator()->getPathName();
     return strpos($path_name, "/modules/user") === false;
   }

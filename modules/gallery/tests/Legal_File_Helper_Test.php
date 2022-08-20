@@ -26,7 +26,7 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(null, legal_file::get_photo_types_by_extension("php.jpg"));  // invalid w/ .
 
     // No extension returns full array
-    $this->assert_equal(4, count(legal_file::get_photo_types_by_extension()));
+    $this->assert_equal(5, count(legal_file::get_photo_types_by_extension()));
   }
 
   public function get_movie_types_by_extension_test() {
@@ -47,7 +47,7 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(null, legal_file::get_types_by_extension("php.flv"));      // invalid w/ .
 
     // No extension returns full array
-    $this->assert_equal(9, count(legal_file::get_types_by_extension()));
+    $this->assert_equal(10, count(legal_file::get_types_by_extension()));
   }
 
   public function get_photo_extensions_test() {
@@ -58,7 +58,7 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(false, legal_file::get_photo_extensions("php.jpg")); // invalid w/ .
 
     // No extension returns full array
-    $this->assert_equal(4, count(legal_file::get_photo_extensions()));
+    $this->assert_equal(5, count(legal_file::get_photo_extensions()));
   }
 
   public function get_movie_extensions_test() {
@@ -79,17 +79,17 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(false, legal_file::get_extensions("php.jpg")); // invalid w/ .
 
     // No extension returns full array
-    $this->assert_equal(9, count(legal_file::get_extensions()));
+    $this->assert_equal(10, count(legal_file::get_extensions()));
   }
 
   public function get_filters_test() {
     // All 9 extensions both uppercase and lowercase
-    $this->assert_equal(18, count(legal_file::get_filters()));
+    $this->assert_equal(20, count(legal_file::get_filters()));
   }
 
   public function get_photo_types_test() {
     // Note that this is one *less* than photo extensions since jpeg and jpg have the same mime.
-    $this->assert_equal(3, count(legal_file::get_photo_types()));
+    $this->assert_equal(4, count(legal_file::get_photo_types()));
   }
 
   public function get_movie_types_test() {
@@ -184,8 +184,17 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sanitize_filename_with_invalid_arguments_test() {
-    foreach (array("flv" => "photo", "jpg" => "movie", "php" => "photo",
-                   null => "movie", "jpg" => "album", "jpg" => null) as $extension => $type) {
+    $types = array(
+      array("flv", "photo"),
+      array("jpg", "movie"),
+      array("php", "photo"),
+      array(null, "movie"),
+      array("jpg", "album"),
+      array("jpg", null),
+    );
+
+    foreach ($types as $ary) {
+      list($extension, $type) = $ary;
       try {
         legal_file::sanitize_filename("foo.jpg", $extension, $type);
         $this->assert_true(false, "Shouldn't get here");

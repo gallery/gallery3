@@ -63,6 +63,7 @@ class message_Core {
   private static function _add($msg, $severity) {
     $session = Session::instance();
     $status = $session->get("messages");
+    if (!is_array($status)) $status = [];
     $status[] = array($msg, $severity);
     $session->set("messages", $status);
   }
@@ -77,10 +78,14 @@ class message_Core {
     $buf = array();
 
     $messages = Session::instance()->get_once("messages", array());
+
     foreach ($messages as $msg) {
+      if (!$msg) continue;
+
       $msg[0] = str_replace("__CSRF__", access::csrf_token(), $msg[0]);
       $buf[] = "<li class=\"" . message::severity_class($msg[1]) . "\">$msg[0]</li>";
     }
+
     if ($buf) {
       return "<ul id=\"g-action-status\" class=\"g-message-block\">" . implode("", $buf) . "</ul>";
     }

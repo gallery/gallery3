@@ -285,8 +285,8 @@ class Item_Model_Core extends ORM_MPTT {
       $names[] = rawurlencode($row->name);
       $slugs[] = rawurlencode($row->slug);
     }
-    $this->relative_path_cache = implode($names, "/");
-    $this->relative_url_cache = implode($slugs, "/");
+    $this->relative_path_cache = implode("/", $names);
+    $this->relative_url_cache = implode("/", $slugs);
     return $this;
   }
 
@@ -381,7 +381,8 @@ class Item_Model_Core extends ORM_MPTT {
 
         // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
-          $this->slug = item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME));
+          $path_info = $this->name ? pathinfo($this->name, PATHINFO_FILENAME) : '';
+          $this->slug = $path_info ? item::convert_filename_to_slug(pathinfo($this->name, PATHINFO_FILENAME)) : '';
 
           // If the filename is all invalid characters, then the slug may be empty here.  We set a
           // generic name ("photo", "movie", or "album") based on its type, then rely on
@@ -577,7 +578,7 @@ class Item_Model_Core extends ORM_MPTT {
     } else {
       // Split the filename into its base and extension.  This uses a regexp similar to
       // legal_file::change_extension (which isn't always the same as pathinfo).
-      if (preg_match("/^(.*)(\.[^\.\/]*?)$/", $this->name, $matches)) {
+      if ($this->name && preg_match("/^(.*)(\.[^\.\/]*?)$/", $this->name, $matches)) {
         $base_name = $matches[1];
         $extension = $matches[2]; // includes a leading dot
       } else {

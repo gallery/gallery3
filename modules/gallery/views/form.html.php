@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?
+<?php
 print($open);
 
 // Not sure what to do with these, but at least show that we received them.

@@ -1,0 +1,1072 @@
+/**
+ * Gallery 3 Wind Theme Screen Styles
+ *
+ * @requires YUI reset, font, grids CSS
+ *
+ * Sheet organization:
+ *   1)  Font sizes, base HTML elements
+ *   2)  Reusable content blocks
+ *   3)  Page layout containers
+ *   4)  Content blocks in specific layout containers
+ *   5)  States and interactions
+ *   6)  Positioning and order
+ *   7)  Navigation and menus
+ *   8)  jQuery and jQuery UI
+ */
+
+/** *******************************************************************
+ *  1) Font sizes, base HTML elements
+ **********************************************************************/
+
+body, html {
+  background-color: #ccc;
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+em {
+  font-style: oblique;
+}
+
+h1, h2, h3, h4, h5, strong, th {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
+#g-dialog h1 {
+  font-size: 1.1em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+#g-sidebar .g-block h2 {
+  font-size: 1.2em;
+}
+
+#g-sidebar .g-block li {
+  margin-bottom: .6em;
+}
+
+#g-content,
+#g-site-menu,
+h3 {
+  font-size: 1.2em;
+}
+
+#g-sidebar,
+.g-breadcrumbs {
+  font-size: .9em;
+}
+
+#g-banner,
+#g-footer,
+.g-message {
+  font-size: .8em;
+}
+
+#g-album-grid .g-item,
+#g-item #g-photo,
+#g-item #g-movie {
+  font-size: .7em;
+}
+
+/* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+a,
+.g-menu a,
+#g-dialog a,
+.g-button,
+.g-button:hover,
+.g-button:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
+  color: #5382bf !important;
+  cursor: pointer !important;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a:hover,
+#g-dialog a:hover {
+  text-decoration: underline;
+}
+
+.g-menu a:hover {
+  text-decoration: none;
+}
+
+#g-dialog #g-action-status li {
+  width: 434px;
+  white-space: normal;
+  padding-left: 32px;
+}
+
+/* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+ul.g-text li,
+.g-text ul li {
+  list-style-type: disc;
+}
+
+ol.g-text li,
+.g-text ol li {
+  list-style-type: decimal;
+}
+
+.g-text li,
+.g-text li {
+  margin-left: 1em;
+}
+
+/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+form {
+  margin: 0;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  padding: 0 1em .8em 1em;
+}
+
+#g-banner fieldset,
+#g-sidebar fieldset {
+  border: none;
+  padding: 0;
+}
+
+legend {
+  font-weight: bold;
+  margin: 0;
+  padding: 0 .2em;
+}
+
+#g-banner legend,
+#g-sidebar legend,
+input[type="hidden"] {
+  display: none;
+}
+
+input.textbox,
+input[type="text"],
+input[type="password"],
+textarea {
+  border: 1px solid #e8e8e8;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
+  clear: both;
+  color: #333;
+  width: 50%;
+}
+
+textarea {
+  height: 12em;
+  width: 97%;
+}
+
+input:focus,
+input.textbox:focus,
+input[type=text]:focus,
+textarea:focus,
+option:focus {
+  background-color: #ffc;
+  color: #000;
+}
+
+input.checkbox,
+input[type=checkbox],
+input.radio,
+input[type=radio] {
+  float: left;
+  margin-right: .4em;
+}
+
+/* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+form li {
+  margin: 0;
+  padding: 0 0 .2em 0;
+}
+
+form ul {
+  margin-top: 0;
+}
+
+form ul ul {
+  clear: both;
+}
+
+form ul ul li {
+  float: left;
+}
+
+input,
+select,
+textarea {
+  display: block;
+  clear: both;
+  padding: .2em;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  display: inline;
+  clear: none;
+  float: left;
+}
+
+/* Forms in dialogs and panels ~~~~~~~~~ */
+
+#g-dialog ul li {
+  padding-bottom: .8em;
+}
+
+#g-dialog fieldset,
+#g-panel fieldset {
+  border: none;
+  padding: 0;
+}
+
+#g-panel legend {
+  display: none;
+}
+
+input[readonly] {
+  background-color: #F4F4FC;
+}
+
+#g-dialog input.textbox,
+#g-dialog input[type=text],
+#g-dialog input[type=password],
+#g-dialog textarea {
+  width: 97%;
+}
+
+/* Short forms ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-short-form legend,
+.g-short-form label {
+  display: none;
+}
+
+.g-short-form fieldset {
+  border: none;
+  padding: 0;
+}
+
+.g-short-form li {
+  float: left;
+  margin: 0 !important;
+  padding: .4em 0;
+}
+
+.g-short-form .textbox,
+.g-short-form input[type=text] {
+  color: #666;
+  padding: .3em .6em;
+  width: 100%;
+}
+
+.g-short-form .textbox.g-error {
+  border: 1px solid #f00;
+  color: #f00;
+  padding-left: 24px;
+}
+
+.g-short-form .g-cancel {
+  display: block;
+  margin: .3em .8em;
+}
+
+#g-sidebar .g-short-form li {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+table {
+  width: 100%;
+}
+
+#g-content table {
+  margin: 1em 0;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+th,
+td {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: .5em;
+}
+
+td {
+  vertical-align: top;
+}
+
+/* Text ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-text-small {
+  font-size: .8em;
+}
+
+.g-text-big {
+  font-size: 1.2em;
+}
+
+.g-text-right {
+  text-align: right;
+}
+
+/** *******************************************************************
+ *  2) Reusable content blocks
+ *********************************************************************/
+
+.g-block h2 {
+  background-color: #e8e8e8;
+  padding: .3em .8em;
+}
+
+.g-block-content {
+  margin-top: 1em;
+}
+
+/** *******************************************************************
+ *  3) Page layout containers
+ *********************************************************************/
+
+/* Dimension and scale ~~~~~~~~~~~~~~~~~~~ */
+
+.g-one-quarter {
+  width: 25%;
+}
+
+.g-one-third {
+  width: 33%;
+}
+
+.g-one-half {
+  width: 50%;
+}
+
+.g-two-thirds {
+  width: 66%;
+}
+
+.g-three-quarters {
+  width: 75%;
+}
+
+.g-whole {
+  width: 100%;
+}
+
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-view {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-header {
+  margin-bottom: 1em;
+}
+
+#g-banner {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  min-height: 5em;
+  padding: 1em 20px;
+  position: relative;
+}
+
+#g-content {
+  padding-left: 20px;
+  position: relative;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width:100%;
+  margin-right: 260px;
+  padding: 0 20px;
+}
+
+#g-sidebar {
+  padding: 0 20px;
+  width: 220px;
+}
+
+#g-footer {
+  background-color: #e8e8e8;
+  border-top: 1px solid #ccc;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+/** *******************************************************************
+ *  4) Content blocks in specific layout containers
+ *********************************************************************/
+
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-banner #g-quick-search-form {
+  clear: right;
+  float: right;
+  margin-top: 1em;
+}
+
+#g-banner #g-quick-search-form input[type='text'] {
+  width: 17em;
+}
+
+#g-content .g-block h2 {
+  background-color: transparent;
+  padding-left: 0;
+}
+
+/* Sidebar  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-sidebar .g-block-content {
+  padding-left: 1em;
+}
+
+#g-sidebar #g-image-block {
+  overflow: hidden;
+}
+
+/* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-content #g-album-grid {
+  margin: 1em 0;
+  position: relative;
+  z-index: 1;
+}
+
+#g-content #g-album-grid .g-item {
+  background-color: #fff;
+  border: 1px solid #fff;
+  float: left;
+  padding: .6em 8px;
+  position: relative;
+  text-align: center;
+  width: 213px;
+  z-index: 1;
+}
+
+#g-content #g-album-grid .g-item h2 {
+  margin: 5px 0;
+}
+
+#g-content .g-photo h2,
+#g-content .g-item .g-metadata {
+  display: none;
+  margin-bottom: .6em;
+}
+
+#g-content #g-album-grid .g-album {
+  background-color: #e8e8e8;
+}
+
+#g-content #g-album-grid .g-album h2 span.g-album {
+  background: transparent url('../images/ico-album.png') no-repeat top left;
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  width: 16px;
+}
+
+#g-content #g-album-grid .g-hover-item {
+  border: 1px solid #000;
+  position: absolute !important;
+  z-index: 1000 !important;
+}
+
+#g-content .g-hover-item h2,
+#g-content .g-hover-item .g-metadata {
+  display: block;
+}
+
+#g-content #g-album-grid #g-place-holder {
+  position: relative;
+  visibility: hidden;
+  z-index: 1;
+}
+
+/* Search results ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-content #g-search-results {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+/* Individual photo content ~~~~~~~~~~~~~~ */
+
+#g-item {
+  position: relative;
+  width: 100%;
+}
+
+#g-item #g-photo,
+#g-item #g-movie {
+  padding: 2.2em 0;
+  position: relative;
+}
+
+#g-item img.g-resize,
+#g-item a.g-movie {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-footer #g-credits li {
+  padding-right: 1.2em;
+}
+
+/* In-line editing  ~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-in-place-edit-message {
+  background-color: #fff;
+}
+
+/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-edit-permissions-form td {
+  background-image: none;
+}
+
+#g-edit-permissions-form fieldset {
+  border: 1px solid #ccc;
+}
+
+#g-permissions .g-denied {
+  background-color: #fcc;
+}
+
+#g-permissions .g-allowed {
+  background-color: #cfc;
+}
+
+#g-permissions .g-breadcrumbs a {
+  border: 1px solid #fff;
+}
+
+#g-permissions .g-active a {
+  border: 1px solid #ddd;
+  background: #eee;
+}
+
+/** *******************************************************************
+ *  5) States and interactions
+ **********************************************************************/
+
+.g-active,
+.g-enabled,
+.g-available,
+.g-selected,
+.g-highlight {
+  font-weight: bold;
+}
+
+.g-inactive,
+.g-disabled,
+.g-unavailable,
+.g-uneditable,
+.g-locked,
+.g-deselected,
+.g-understate {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.g-editable {
+  padding: .2em .3em;
+}
+
+.g-editable:hover {
+  background-color: #ffc;
+  cursor: text;
+}
+
+.g-error,
+.g-info,
+.g-success,
+.g-warning {
+  padding-left: 30px;
+}
+
+form li.g-error,
+form li.g-info,
+form li.g-success,
+form li.g-warning {
+  background-image: none;
+  padding: .3em .8em .3em 0;
+}
+
+.g-short-form li.g-error {
+  padding: .3em 0;
+}
+
+form.g-error input[type="text"],
+li.g-error input[type="text"],
+form.g-error input[type="password"],
+li.g-error input[type="password"],
+form.g-error input[type="checkbox"],
+li.g-error input[type="checkbox"],
+form.g-error input[type="radio"],
+li.g-error input[type="radio"],
+form.g-error textarea,
+li.g-error textarea,
+form.g-error select,
+li.g-error select {
+  border: 2px solid #f00;
+  margin-bottom: .2em;
+}
+
+.g-error,
+.g-denied,
+tr.g-error td.g-error,
+#g-add-photos-status .g-error {
+  background: #f6cbca url('../images/ico-error.png') no-repeat .4em 50%;
+  color: #f00;
+}
+
+.g-info {
+  background: #e8e8e8 url('../images/ico-info.png') no-repeat .4em 50%;
+}
+
+.g-success,
+.g-allowed,
+#g-add-photos-status .g-success {
+  background: #d9efc2 url('../images/ico-success.png') no-repeat .4em 50%;
+}
+
+tr.g-success {
+  background-image: none;
+}
+
+tr.g-success td.g-success {
+  background-image: url('../images/ico-success.png');
+}
+
+.g-warning,
+tr.g-warning td.g-warning {
+  background: #fcf9ce url('../images/ico-warning.png') no-repeat .4em 50%;
+}
+
+form .g-error {
+  background-color: #fff;
+  padding-left: 20px;
+}
+
+.g-open {
+}
+
+.g-closed {
+}
+
+.g-installed {
+  background-color: #eeeeee;
+}
+
+.g-default {
+  background-color: #c5dbec;
+  font-weight: bold;
+}
+
+.g-draggable {
+  cursor: move;
+}
+
+.g-draggable:hover {
+  border: 1px dashed #000;
+}
+
+.ui-sortable .g-target,
+.ui-state-highlight {
+  background-color: #fcf9ce;
+  border: 2px dotted #999;
+  height: 2em;
+  margin: 1em 0;
+}
+
+/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
+
+.g-loading-large,
+.g-dialog-loading-large {
+  background: #e8e8e8 url('../images/loading-large.gif') no-repeat center center !important;
+}
+
+.g-loading-small {
+  background: #e8e8e8 url('../images/loading-small.gif') no-repeat center center !important;
+}
+
+/** *******************************************************************
+ *  6) Positioning and order
+ **********************************************************************/
+
+.g-left {
+  clear: none;
+  float: left;
+}
+
+.g-right {
+  clear: none;
+  float: right;
+}
+
+.g-first {
+}
+
+.g-last {
+}
+
+.g-even {
+  background-color: #fff;
+}
+
+.g-odd {
+  background-color: #eee;
+}
+
+/** *******************************************************************
+ *  7) Navigation and menus
+ *********************************************************************/
+
+/* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-banner #g-login-menu {
+  color: #999;
+  float: right;
+}
+
+#g-banner #g-login-menu li {
+  padding-left: 1.2em;
+}
+
+/* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-site-menu {
+  bottom: 0;
+  left: 140px;
+  position: absolute;
+}
+
+#g-site-menu ul {
+  margin-bottom: 0 !important;
+}
+
+/* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-context-menu {
+  background-color: #fff;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
+
+.g-item .g-context-menu {
+  display: none;
+  margin-top: 2em;
+  width: 100%;
+}
+
+#g-item .g-context-menu ul {
+  display: none;
+}
+
+.g-context-menu li {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.g-context-menu li a {
+  display: block;
+  line-height: 1.6em;
+}
+
+.g-hover-item .g-context-menu {
+  display: block;
+}
+
+.g-hover-item .g-context-menu li {
+  text-align: left;
+}
+
+.g-hover-item .g-context-menu a:hover {
+  text-decoration: none;
+}
+
+/* View Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-view-menu {
+  margin-bottom: 1em;
+}
+
+#g-view-menu a {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 28px !important;
+  width: 43px !important;
+}
+
+#g-view-menu #g-slideshow-link {
+  background-image: url('../images/ico-view-slideshow.png');
+}
+
+#g-view-menu .g-fullsize-link {
+  background-image: url('../images/ico-view-fullsize.png');
+}
+
+#g-view-menu #g-comments-link {
+  background-image: url('../images/ico-view-comments.png');
+}
+
+#g-view-menu #g-print-digibug-link {
+  background-image: url('../images/ico-print.png');
+}
+
+/** *******************************************************************
+ *  8) jQuery and jQuery UI
+ *********************************************************************/
+
+/* Generic block container ~~~~~~~~~~~~~~~ */
+
+.g-block {
+  clear: both;
+  margin-bottom: 2.5em;
+}
+
+.g-block-content {
+}
+
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu ul {
+  width: 12em;
+}
+
+ul.sf-menu li li:hover ul,
+ul.sf-menu li li.sfHover ul {
+  left: 12em;
+}
+
+ul.sf-menu li li li:hover ul,
+ul.sf-menu li li li.sfHover ul {
+  left: 12em;
+}
+
+.sf-menu li li,
+.sf-menu li li ul li {
+  background-color: #bdd2ff;
+}
+
+.sf-menu li:hover {
+  background-color: #dfe9ff;
+}
+
+/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
+
+.ui-widget-overlay {
+  background: #000;
+  opacity: .7;
+}
+
+/* Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-button {
+  display: inline-block;
+  margin: 0 4px 0 0;
+  padding: .2em .4em;
+}
+
+.g-button,
+.g-button:hover,
+.g-button:active {
+  cursor: pointer !important;
+  outline: 0;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+button {
+  padding: 2px 4px 2px 4px;
+}
+
+/* jQuery UI ThemeRoller buttons ~~~~~~~~~ */
+
+.g-buttonset {
+  padding-left: 1px;
+}
+
+.g-buttonset li {
+  float: left;
+}
+
+.g-buttonset .g-button {
+  margin: 0;
+}
+
+.ui-icon-left .ui-icon {
+  float: left;
+  margin-right: .2em;
+}
+
+.ui-icon-right .ui-icon {
+  float: right;
+  margin-left: .2em;
+}
+
+/* Rotate icon, ThemeRoller only provides one of these */
+
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
+}
+
+.g-progress-bar {
+  height: 1em;
+  width: 100%;
+  margin: .5em 0;
+  display: inline-block;
+}
+
+/* Status and validation messages ~~~~ */
+
+.g-message-block {
+  background-position: .4em .3em;
+  border: 1px solid #ccc;
+  padding: 0;
+}
+
+#g-action-status {
+  margin-bottom: 1em;
+}
+
+#g-action-status li,
+p#g-action-status,
+div#g-action-status {
+  padding: .3em .3em .3em 30px;
+}
+
+#g-site-status li {
+  border-bottom: 1px solid #ccc;
+  padding: .3em .3em .3em 30px;
+}
+
+.g-module-status {
+  clear: both;
+  margin-bottom: 1em;
+}
+
+.g-message {
+  background-position: 0 50%;
+}
+
+/* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-breadcrumbs {
+  clear: both;
+  padding: 0 20px;
+}
+
+.g-breadcrumbs li {
+  background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
+  float: left;
+  padding: 1em 8px 1em 18px;
+}
+
+.g-breadcrumbs .g-first {
+  background: none;
+  padding-left: 0;
+}
+
+.g-breadcrumbs li a,
+.g-breadcrumbs li span {
+  display: block;
+}
+
+#g-dialog ul.g-breadcrumbs {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-paginator {
+  padding: .2em 0;
+  width: 100%;
+}
+
+.g-paginator li {
+  float: left;
+  width: 30%;
+}
+
+.g-paginator .g-info {
+  background: none;
+  padding: .2em 0;
+  text-align: center;
+  width: 40%;
+}
+
+/* Dialogs and panels ~~~~~~~~~~~~~~~~~~ */
+
+#g-dialog {
+  text-align: left;
+}
+
+#g-dialog legend {
+  display: none;
+}
+
+#g-dialog .g-cancel {
+  margin: 0 .3em;
+  padding: .2em;
+  float: left;
+}
+
+#g-panel {
+  display: none;
+  padding: 1em;
+}
+
+/* Inline layout  ~~~~~~~~~~ */
+
+.g-inline li {
+  float: left;
+  margin-left: 1.8em;
+  padding-left: 0 !important;
+}
+
+.g-inline li.g-first {
+  margin-left: 0;
+}
+
+/* Autocomplete  ~~~~~~~~~~ */
+
+.ac_loading {
+  background: white url('../images/loading-small.gif') right center no-repeat !important;
+}

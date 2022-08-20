@@ -1,0 +1,10 @@
+name = "Wide Wind"
+description = "A copy of the Wind theme but not with a fixed width."
+version = 2
+author = "floridave"
+site = 1
+admin = 0
+author_name = "floridave -Gallery Team"
+author_url = "http://codex.gallery2.org/Gallery:Team"
+info_url = "http://codex.gallery2.org/Gallery3:Themes:widewind"
+discuss_url = "http://gallery.menalto.com/forum_theme_widewind"

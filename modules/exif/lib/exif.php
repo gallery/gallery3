@@ -625,7 +625,7 @@ function formatData($type,$tag,$intel,$data) {
 				case '9000':	// ExifVersion
 				case 'a000':	// FlashPixVersion
 				case '0002':	// InteroperabilityVersion
-					$data=(string) t('version').' '.$data/100;
+					$data=(string) t('version').' '.($data && is_numeric($data) ? $data/100 : $data);
 					break;
 				case 'a300':	// FileSource
 					$data = bin2hex($data);
@@ -1098,6 +1098,8 @@ function ConvertToFraction($v, &$n, &$d)
 function get35mmEquivFocalLength(&$result) {
 	if (isset($result['SubIFD']['ExifImageWidth'])) {
 		$width = $result['SubIFD']['ExifImageWidth'];
+		// some cameras have "XXXX pixels"
+		$width = str_replace(' pixels', '', $width);
 	} else {
 		$width = 0;
 	}
@@ -1120,6 +1122,8 @@ function get35mmEquivFocalLength(&$result) {
 	}
 	if (isset($result['SubIFD']['FocalLength'])) {
 		$fl = $result['SubIFD']['FocalLength'];
+		// some values have " mm" appended
+		$fl = str_replace(' mm', '', $fl);
 	} else {
 		$fl = 0;
 	}

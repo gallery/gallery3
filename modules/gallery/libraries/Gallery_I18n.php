@@ -253,7 +253,8 @@ class Gallery_I18n_Core {
       return $entry[$plural_key];
     } else {
       // Fallback to just any plural form.
-      list ($plural_key, $string) = each($entry);
+      $plural_key = key($entry);
+      $string = current($entry);
       return $string;
     }
   }

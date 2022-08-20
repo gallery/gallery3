@@ -54,7 +54,12 @@ class url_Core {
 			else
 			{
 				// Guess the protocol to provide full http://domain/path URL
-				$base_url = ((empty($_SERVER['HTTPS']) OR $_SERVER['HTTPS'] === 'off') ? 'http' : 'https').'://'.$site_domain;
+				// can be configured with a full
+				if (preg_match('#^http(s)?://#i', $site_domain)) {
+					$base_url = $site_domain;
+				} else {
+					$base_url = ((empty($_SERVER['HTTPS']) OR $_SERVER['HTTPS'] === 'off') ? 'http' : 'https').'://'.$site_domain;
+				}
 			}
 		}
 		else
@@ -92,22 +97,29 @@ class url_Core {
 	 */
 	public static function site($uri = '', $protocol = FALSE)
 	{
-		if ($path = trim(parse_url($uri, PHP_URL_PATH), '/'))
-		{
-			// Add path suffix
-			$path .= Kohana::config('core.url_suffix');
-		}
+		$path = '';
+		$query = '';
+		$fragment = '';
 
-		if ($query = parse_url($uri, PHP_URL_QUERY))
+		if ($uri)
 		{
-			// ?query=string
-			$query = '?'.$query;
-		}
+			if ($path = trim(parse_url($uri, PHP_URL_PATH), '/'))
+			{
+				// Add path suffix
+				$path .= Kohana::config('core.url_suffix');
+			}
 
-		if ($fragment = parse_url($uri, PHP_URL_FRAGMENT))
-		{
-			// #fragment
-			$fragment =  '#'.$fragment;
+			if ($query = parse_url($uri, PHP_URL_QUERY))
+			{
+				// ?query=string
+				$query = '?'.$query;
+			}
+
+			if ($fragment = parse_url($uri, PHP_URL_FRAGMENT))
+			{
+				// #fragment
+				$fragment =  '#'.$fragment;
+			}
 		}
 
 		// Concat the URL

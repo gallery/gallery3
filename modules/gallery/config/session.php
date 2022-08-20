@@ -64,3 +64,12 @@ $config['regenerate'] = 0;
  * Percentage probability that the gc (garbage collection) routine is started.
  */
 $config['gc_probability'] = 2;
+
+/**
+ * Session server parameter, used by Redis driver.
+ */
+$config['server'] = [
+  'host' => 'redis',
+  'port' => 6379,
+  'persistent' => false,
+];

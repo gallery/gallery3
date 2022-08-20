@@ -325,7 +325,7 @@ class ORM_MPTT_Core extends ORM {
    * Lock the tree to prevent concurrent modification.
    */
   protected function lock() {
-    $timeout = module::get_var("gallery", "lock_timeout", 1);
+    $timeout = module::get_var("gallery", "lock_timeout", 3);
     $result = $this->db->query("SELECT GET_LOCK('{$this->table_name}', $timeout) AS l")->current();
     if (empty($result->l)) {
       throw new Exception("@todo UNABLE_TO_LOCK_EXCEPTION");

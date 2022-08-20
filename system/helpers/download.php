@@ -60,7 +60,7 @@ class download_Core {
 		Kohana::close_buffers(FALSE);
 
 		// Clear any output
-		Event::add('system.display', create_function('', 'Kohana::$output = "";'));
+		Event::add('system.display', function() { Kohana::$output = ""; });
 
 		// Send headers
 		header("Content-Type: $mime");

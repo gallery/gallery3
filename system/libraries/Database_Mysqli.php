@@ -29,7 +29,7 @@ class Database_Mysqli_Core extends Database_Mysql {
 
 		$mysqli = mysqli_init();
 
-		if ( ! $mysqli->real_connect($host, $user, $pass, $database, $port, $socket, $params))
+		if ( ! $mysqli->real_connect($host, $user, $pass, $database, $port, $socket))
 			throw new Database_Exception('#:errno: :error',
 				array(':error' => $mysqli->connect_error, ':errno' => $mysqli->connect_errno));
 

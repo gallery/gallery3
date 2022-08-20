@@ -119,7 +119,7 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 		case "ASCII":
 			break;	// do nothing!
 		case "URATIONAL":
-		case"SRATIONAL":
+		case "SRATIONAL":
 			switch ($tag) {
 				case '0084':	// LensInfo
 					$minFL = unRational(substr($data,0,8),$type,$intel);
@@ -229,7 +229,7 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 		case "UNDEFINED":
 			switch ($tag) {
 				case "0001":
-					if ($model==1) $data=$data/100;	break;	//Unknown (Version?)
+					if ($model==1) $data=(int)$data/100;	break;	//Unknown (Version?)
 					break;
 				case "0088":
 					if ($model==1) { //AF Focus Position

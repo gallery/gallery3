@@ -23,15 +23,15 @@
         <p>
           <?= $themes[$site]->description ?>
         </p>
-        <? $v = new View("admin_themes_buttonset.html"); $v->info = $themes[$site]; print $v; ?>
+        <?php $v = new View("admin_themes_buttonset.html"); $v->info = $themes[$site]; print $v; ?>
       </div>
 
       <h2> <?= t("Available Gallery themes") ?> </h2>
       <div class="g-available">
-        <? $count = 0 ?>
-        <? foreach ($themes as $id => $info): ?>
-        <? if (!$info->site) continue ?>
-        <? if ($id == $site) continue ?>
+        <?php $count = 0 ?>
+        <?php foreach ($themes as $id => $info): ?>
+        <?php if (!$info->site) continue ?>
+        <?php if ($id == $site) continue ?>
         <div class="g-block ui-helper-clearfix">
           <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
             <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
@@ -41,16 +41,16 @@
               <?= $info->description ?>
             </p>
           </a>
-          <? $v = new View("admin_themes_buttonset.html"); $v->info = $info; print $v; ?>
+          <?php $v = new View("admin_themes_buttonset.html"); $v->info = $info; print $v; ?>
         </div>
-        <? $count++ ?>
-        <? endforeach ?>
+        <?php $count++ ?>
+        <?php endforeach ?>
 
-        <? if (!$count): ?>
+        <?php if (!$count): ?>
         <p>
           <?= t("There are no other site themes available. <a href=\"%url\">Download one now!</a>", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
         </p>
-        <? endif ?>
+        <?php endif ?>
       </div>
     </div>
 
@@ -63,15 +63,15 @@
         <p>
           <?= $themes[$admin]->description ?>
         </p>
-        <? $v = new View("admin_themes_buttonset.html"); $v->info = $themes[$admin]; print $v; ?>
+        <?php $v = new View("admin_themes_buttonset.html"); $v->info = $themes[$admin]; print $v; ?>
       </div>
 
       <h2> <?= t("Available admin themes") ?> </h2>
       <div class="g-available">
-        <? $count = 0 ?>
-        <? foreach ($themes as $id => $info): ?>
-        <? if (!$info->admin) continue ?>
-        <? if ($id == $admin) continue ?>
+        <?php $count = 0 ?>
+        <?php foreach ($themes as $id => $info): ?>
+        <?php if (!$info->admin) continue ?>
+        <?php if ($id == $admin) continue ?>
         <div class="g-block ui-helper-clearfix">
           <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
             <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
@@ -81,16 +81,16 @@
               <?= $info->description ?>
             </p>
           </a>
-          <? $v = new View("admin_themes_buttonset.html"); $v->info = $info; print $v; ?>
+          <?php $v = new View("admin_themes_buttonset.html"); $v->info = $info; print $v; ?>
         </div>
-        <? $count++ ?>
-        <? endforeach ?>
+        <?php $count++ ?>
+        <?php endforeach ?>
 
-        <? if (!$count): ?>
+        <?php if (!$count): ?>
         <p>
           <?= t("There are no other admin themes available. <a href=\"%url\">Download one now!</a>", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
         </p>
-        <? endif ?>
+        <?php endif ?>
       </div>
     </div>
 

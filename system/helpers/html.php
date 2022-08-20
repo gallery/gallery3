@@ -21,6 +21,8 @@ class html_Core {
 	 */
 	public static function chars($str, $double_encode = TRUE)
 	{
+		if (is_null($str)) return '';
+
 		// Return HTML entities using the Kohana charset
 		return htmlspecialchars($str, ENT_QUOTES, Kohana::CHARSET, $double_encode);
 	}
@@ -355,6 +357,7 @@ class html_Core {
 		$compiled = '';
 		foreach ($attrs as $key => $val)
 		{
+			if (is_null($val)) $val = '';
 			$compiled .= ' '.$key.'="'.htmlspecialchars($val, ENT_QUOTES, Kohana::CHARSET).'"';
 		}
 

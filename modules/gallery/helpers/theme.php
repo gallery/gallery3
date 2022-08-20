@@ -48,6 +48,9 @@ class theme_Core {
       $path = preg_replace("#" . preg_quote($suffix) . "$#u", "", $path);
     }
 
+    // when using invisible index.php
+    if (substr($path,0,1) != '/') $path = '/'.$path;
+
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
     self::$site_theme_name = module::get_var("gallery", "active_site_theme");
 

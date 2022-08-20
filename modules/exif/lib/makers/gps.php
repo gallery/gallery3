@@ -79,7 +79,7 @@ function formatGPSData($type,$tag,$intel,$data) {
 
 	if($type=="ASCII") {
 		if($tag=="0001" || $tag=="0003"){ // Latitude Reference, Longitude Reference
-			$data = ($data{1} == $data{2} && $data{1} == $data{3}) ? $data{0} : $data;
+			$data = ($data[1] == $data[2] && $data[1] == $data[3]) ? $data[0] : $data;
 		}
 
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {

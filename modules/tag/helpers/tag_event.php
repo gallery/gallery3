@@ -81,9 +81,11 @@ class tag_event_Core {
 
   static function item_edit_form_completed($item, $form) {
     tag::clear_all($item);
-    foreach (explode(",", $form->edit_item->tags->value) as $tag_name) {
-      if ($tag_name) {
-        tag::add($item, trim($tag_name));
+    if (!is_null($form->edit_item->tags->value)) {
+      foreach (explode(",", $form->edit_item->tags->value) as $tag_name) {
+        if ($tag_name) {
+          tag::add($item, trim($tag_name));
+        }
       }
     }
     module::event("item_related_update", $item);

@@ -52,7 +52,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
    * Elides sensitive data which shouldn't be echoed to the client,
    * such as passwords, and other secrets.
    */
-  /* Visible for testing*/ static function _sanitize_for_dump($value, $key=null, $max_level) {
+  /* Visible for testing*/ static function _sanitize_for_dump($value, $key, $max_level) {
     // Better elide too much than letting something through.
     // Note: unanchored match is intended.
     if (!$max_level) {
@@ -62,7 +62,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
 
     $sensitive_info_pattern =
       '/(password|pass|email|hash|private_key|session_id|session|g3sid|csrf|secret)/i';
-    if (preg_match($sensitive_info_pattern, $key) ||
+    if ((!empty($key) && preg_match($sensitive_info_pattern, $key)) ||
         (is_string($value) && preg_match('/[a-f0-9]{20,}/i', $value))) {
       return 'removed for display';
     } else if (is_object($value)) {

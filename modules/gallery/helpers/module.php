@@ -457,6 +457,8 @@ class module_Core {
     if (empty(self::$var_cache)) {
       self::$var_cache = Cache::instance()->get("var_cache");
       if (empty(self::$var_cache)) {
+        self::$var_cache = new stdClass();
+
         // Cache doesn't exist, create it now.
         foreach (db::build()
                  ->select("module_name", "name", "value")
@@ -464,8 +466,11 @@ class module_Core {
                  ->order_by("module_name")
                  ->order_by("name")
                  ->execute() as $row) {
+          if (!isset(self::$var_cache->{$row->module_name})) {
+            self::$var_cache->{$row->module_name} = new stdClass();
+          }
           // Mute the "Creating default object from empty value" warning below
-          @self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
+          self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
         }
         Cache::instance()->set("var_cache", self::$var_cache, array("vars"));
       }

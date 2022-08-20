@@ -20,9 +20,9 @@
 // Set this to true to disable demo/debugging controllers
 define("IN_PRODUCTION", true);
 
-// Gallery requires PHP 5.2+
-version_compare(PHP_VERSION, "5.2.3", "<") and
-  exit("Gallery requires PHP 5.2.3 or newer (you're using " . PHP_VERSION  . ")");
+// Remove this if you want, things should probably work, but you've been warned.
+version_compare(PHP_VERSION, "7.0.0", "<") and
+  exit("Gallery requires PHP 7.0.0 or newer (you're using " . PHP_VERSION  . ")");
 
 // Gallery is not supported on Windows.
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
@@ -34,9 +34,6 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 if (!ini_get("date.timezone")) {
   ini_set("date.timezone", "UTC");
 }
-
-// Gallery requires short_tags to be on
-!ini_get("short_open_tag") and exit("Gallery requires short_open_tag to be on.");
 
 // Suppress errors.  For information on how to debug Gallery 3, see:
 // http://codex.galleryproject.org/Gallery3:FAQ#How_do_I_see_debug_information.3F
@@ -73,6 +70,13 @@ if (PHP_SAPI == "cli") {
   case "install":
     include("installer/index.php");
     exit(0);
+  case "passwordreset":
+    $username = empty($_SERVER['argv'][2]) ? 'admin' : $_SERVER['argv'][2];
+    # need to quote/escape this?
+    $_SERVER["argv"] = array("index.php", "{$arg_1}/index/$username");
+    define("TEST_MODE", 0);
+    define("VARPATH", realpath("var") . "/");
+    break;
   case "upgrade":
   case "package":
     $_SERVER["argv"] = array("index.php", "{$arg_1}r/$arg_1");
@@ -87,7 +91,9 @@ if (PHP_SAPI == "cli") {
       @mkdir("test/var", 0777, true);
       @mkdir("test/var/logs", 0777, true);
     }
-    @copy("var/database.php", "test/var/database.php");
+    if (!file_exists("test/var/database.php")) {
+      @copy("var/database.php", "test/var/database.php");
+    }
     define("VARPATH", realpath("test/var") . "/");
     break;
 
@@ -96,6 +102,8 @@ if (PHP_SAPI == "cli") {
     print "  php index.php install -d database -h host -u user -p password -x table_prefix -g3p gallery3_admin_password \n\n";
     print "To upgrade:\n";
     print "  php index.php upgrade\n\n";
+    print "To reset a password\n";
+    print "  php index.php passwordreset <username>\n\n";
     print "Developer-only features:\n";
     print "  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
     print "  php index.php package  # create new installer files\n";

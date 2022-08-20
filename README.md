@@ -1,8 +1,6 @@
 Gallery 3.1+ (development version)
 ==================================
 
-[![Build Status](https://travis-ci.org/gallery/gallery3.png?branch=master)](https://travis-ci.org/gallery/gallery3)
-
 About
 -----
 
@@ -21,24 +19,22 @@ welcome theme and module developers to play with this release and
 start turning out slick new designs for our happy users.  If you have
 questions or problems, you can get help in the Gallery forums:
 
-  http://galleryproject.org/forum/96
+  https://groups.google.com/forum/#!forum/gallery-3-users
 
 Security
 --------
 
-We've contracted a professional security audit, received their results
-and resolved all the issues they found.
-
-Did you find a security flaw?  Please email security@galleryproject.org
-with the details and we'll fix it ASAP!
+Did you find a security flaw?  Please submit an issue in github:
+https://github.com/bwdutton/gallery3/issues
 
 Supported Configuration
 -----------------------
 
  - Platform: Linux / Unix.
  - Web server: Apache 2.2 and newer.
- - PHP 5.2.3 and newer (PHP's safe_mode must be disabled and simplexml,
-   filter, and json must be installed).
+ - PHP 7.4 and newer (PHP's safe_mode must be disabled and simplexml,
+   filter, and json must be installed). All PHP 7.x versions should work but only 7.4 is tested
+ - short_open_tag isn't required but additional modules and themes may rely on it.
  - Database: MySQL 5 and newer.
 
 For complete system requirements, please refer to:
@@ -47,6 +43,18 @@ For complete system requirements, please refer to:
 
 Installing and Upgrading Instructions
 -------------------------------------
+**NOTE:** When upgrading from PHP 5 to PHP 7 you will need to change the database type from mysql to mysqli in var/database.php:
+```php
+$config['default'] = array(
+  'benchmark'     => false,
+  'persistent'    => false,
+  'connection'    => array(
+    'type'     => 'mysqli',
+```
+
+For docker installations:
+
+  https://hub.docker.com/r/bwdutton/gallery3
 
 For comprehensive instructions, The online User Guide is your best resource:
 
@@ -76,16 +84,22 @@ php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
  -x     Table prefix           (default: )
 ```
 
-Bugs?
------
+### Optional dependencies
 
-Go to http://apps.sourceforge.net/trac/gallery/ click the "login" link
-and log in with your SourceForge username and password, then click the
-"new ticket" button.
+Install composer dependencies to make all of the modules work (currently autorotate, phpmailer). In the top level gallery directory where the composer.json file exists run the following:
 
-Questions, Problems
--------------------
+```sh
+composer install
+```
+
+Bugs, Questions, Problems?
+--------------------------
 
  - Check out the Gallery 3 FAQ: http://codex.galleryproject.org/Gallery3:FAQ
- - Post to the Gallery 3 forums: http://galleryproject.org/forum/96
- - Email gallery-devel@lists.sourceforge.net
+ - Try the support group: https://groups.google.com/forum/#!forum/gallery-3-users
+
+### Forgot your password? Use the command line:
+
+```sh
+php index.php passwordreset <username>
+```

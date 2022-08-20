@@ -175,7 +175,6 @@ class tag_Core {
       ->where("items_tags.tag_id", "=", $tag->id)
       ->where("items.id", "<=", $item->id)
       ->merge_where($where)
-      ->order_by("items.id")
       ->count_all();
   }
 }

@@ -38,7 +38,8 @@ class legal_file_Core {
     if (empty(self::$photo_types_by_extension)) {
       $types_by_extension_wrapper = new stdClass();
       $types_by_extension_wrapper->types_by_extension = array(
-        "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+        "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png",
+        "webp" => "image/webp");
       module::event("photo_types_by_extension", $types_by_extension_wrapper);
       foreach (self::$blacklist as $key) {
         unset($types_by_extension_wrapper->types_by_extension[$key]);
@@ -182,10 +183,11 @@ class legal_file_Core {
    * Create a merged list of all photo and movie filename filters,
    * (e.g. "*.gif"), based on allowed extensions.
    */
-  static function get_filters() {
+  static function get_filters($without_asterisk=false) {
     $filters = array();
+    $prefix = $without_asterisk ? '.' : '*.';
     foreach (legal_file::get_extensions() as $extension) {
-      array_push($filters, "*." . $extension, "*." . strtoupper($extension));
+      array_push($filters, $prefix . $extension, $prefix . strtoupper($extension));
     }
     return $filters;
   }
@@ -228,7 +230,7 @@ class legal_file_Core {
    * extension, add the new one to the end.
    */
   static function change_extension($filename, $new_ext) {
-    $filename_no_ext = preg_replace("/\.[^\.\/]*?$/", "", $filename);
+    $filename_no_ext = !empty($filename) ? preg_replace("/\.[^\.\/]*?$/", "", $filename) : '';
     return "{$filename_no_ext}.{$new_ext}";
   }
 
@@ -270,7 +272,7 @@ class legal_file_Core {
   static function sanitize_filename($filename, $extension, $type) {
     // Check if the type is valid - if so, get the mime types of the
     // original and target extensions; if not, throw an exception.
-    $original_extension = pathinfo($filename, PATHINFO_EXTENSION);
+    $original_extension = !empty($filename) ? pathinfo($filename, PATHINFO_EXTENSION) : '';
     switch ($type) {
       case "photo":
         $mime_type = legal_file::get_photo_types_by_extension($extension);
@@ -317,6 +319,8 @@ class legal_file_Core {
    * @return string sanitized dirname
    */
   static function sanitize_dirname($dirname) {
+    if (is_null($dirname)) return 'album';
+
     // It should be a dirname without a parent directory - remove all slashes (and backslashes).
     $dirname = str_replace("/", "_", $dirname);
     $dirname = str_replace("\\", "_", $dirname);

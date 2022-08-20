@@ -230,13 +230,13 @@ class Kohana_Config_Core implements ArrayAccess {
 	 * @return  mixed
 	 * @access  public
 	 */
-	public function offsetGet($key)
+	public function offsetGet($offset): mixed
 	{
 		foreach ($this->drivers as $driver)
 		{
 			try
 			{
-				return $driver->get($key);
+				return $driver->get($offset);
 			}
 			catch (Kohana_Config_Exception $e)
 			{
@@ -256,13 +256,13 @@ class Kohana_Config_Core implements ArrayAccess {
 	 * @return  bool
 	 * @access  public
 	 */
-	public function offsetSet($key, $value)
+	public function offsetSet($offset, $value): void
 	{
 		foreach ($this->drivers as $driver)
 		{
 			try
 			{
-				$driver->set($key, $value);
+				$driver->set($offset, $value);
 			}
 			catch (Kohana_Config_Exception $e)
 			{
@@ -271,7 +271,6 @@ class Kohana_Config_Core implements ArrayAccess {
 					throw $e;
 			}
 		}
-		return TRUE;
 	}
 
 	/**
@@ -282,7 +281,7 @@ class Kohana_Config_Core implements ArrayAccess {
 	 * @return  bool
 	 * @access  public
 	 */
-	public function offsetExists($key)
+	public function offsetExists($key): bool
 	{
 		foreach ($this->drivers as $driver)
 		{
@@ -307,13 +306,14 @@ class Kohana_Config_Core implements ArrayAccess {
 	 * @return  bool
 	 * @access  public
 	 */
-	public function offsetUnset($key)
+	#[\ReturnTypeWillChange]
+	public function offsetUnset($offset)
 	{
 		foreach ($this->drivers as $driver)
 		{
 			try
 			{
-				return $driver->set($key, NULL);
+				$driver->set($offset, NULL);
 			}
 			catch (Kohana_Config_Exception $e)
 			{
@@ -322,7 +322,6 @@ class Kohana_Config_Core implements ArrayAccess {
 					throw $e;
 			}
 		}
-		return TRUE;
 	}
 } // End KohanaConfig
 

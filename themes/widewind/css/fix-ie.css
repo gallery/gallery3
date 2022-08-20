@@ -1,0 +1,59 @@
+/**
+ * Fix display in IE 6, 7, and 8
+ */
+
+#g-banner {
+  z-index: 2;
+  zoom: 1;
+}
+
+#g-sidebar {
+  overflow: hidden;
+}
+
+#g-photo,
+#g-movie {
+	zoom: 1;
+}
+
+#g-photo .g-context-menu,
+#g-movie .g-context-menu {
+	width: 240px;
+}
+
+input.submit {
+  clear: none !important;
+  display: inline !important;
+}
+
+.g-short-form input.text,
+.g-short-form input.submit {
+  font-size: 1em;
+  line-height: 1em;
+  padding: .38em .3em;
+}
+
+#g-search-form input#q {
+  width: 300px;
+}
+
+#g-add-tag-form input.textbox {
+  width: 110px !important;
+}
+
+#g-add-tag-form input[type='submit'] {
+  padding: .3em 0 !important;
+}
+
+#g-dialog .g-cancel {
+  display: inline-block !important;
+  float: none !important;
+}
+
+.g-paginator .g-text-right {
+  width: 29%;
+}
+
+.g-paginator .ui-icon-right {
+  width: 60px;
+}

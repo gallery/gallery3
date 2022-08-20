@@ -1,17 +1,17 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="g-block-content">
-  <? if ($state == "spam"): ?>
+  <?php if ($state == "spam"): ?>
   <div>
-    <? $spam_caught = module::get_var("comment", "spam_caught") ?>
-    <? if ($spam_caught > 0): ?>
+    <?php $spam_caught = module::get_var("comment", "spam_caught") ?>
+    <?php if ($spam_caught > 0): ?>
     <p>
       <?= t2("Gallery has caught %count spam for you since you installed spam filtering.",
              "Gallery has caught %count spam for you since you installed spam filtering.",
              $spam_caught) ?>
     </p>
-    <? endif ?>
+    <?php endif ?>
     <p>
-      <? if ($counts->spam): ?>
+      <?php if ($counts->spam): ?>
       <?= t2("There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
              "There are currently %count comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically.",
              $counts->spam) ?>
@@ -21,20 +21,20 @@
          href="<?= url::site("admin/manage_comments/delete_all_spam?csrf=$csrf") ?>">
         <?= t("Delete all spam") ?>
       </a>
-      <? else: ?>
+      <?php else: ?>
       <?= t("Your spam queue is empty!") ?>
-      <? endif ?>
+      <?php endif ?>
     </p>
   </div>
-  <? endif ?>
+  <?php endif ?>
 
-  <? if ($state == "deleted"): ?>
+  <?php if ($state == "deleted"): ?>
   <div>
     <p>
       <?= t("These are messages that have been recently deleted.  They will be permanently erased automatically after 7 days.") ?>
     </p>
   </div>
-  <? endif ?>
+  <?php endif ?>
 
   <div class="g-paginator">
     <?= $theme->paginator() ?>
@@ -51,7 +51,7 @@
         <?= t("Actions") ?>
       </th>
     </tr>
-    <? foreach ($comments as $comment): ?>
+    <?php foreach ($comments as $comment): ?>
     <tr id="g-comment-<?= $comment->id ?>" class="<?= text::alternate("g-odd", "g-even") ?>">
       <td>
         <a href="#">
@@ -70,17 +70,17 @@
       </td>
       <td>
         <div class="g-right">
-          <? $item = $comment->item() ?>
+          <?php $item = $comment->item() ?>
           <div class="g-item g-photo">
             <a href="<?= $item->url() ?>">
-              <? if ($item->has_thumb()): ?>
+              <?php if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
                  alt="<?= html::purify($item->title)->for_html_attr() ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
-              <? else: ?>
+              <?php else: ?>
               <?= t("No thumbnail") ?>
-              <? endif ?>
+              <?php endif ?>
             </a>
           </div>
         </div>
@@ -89,7 +89,7 @@
       </td>
       <td>
         <ul class="g-buttonset-vertical">
-        <? if ($comment->state != "unpublished" && $comment->state != "deleted"): ?>
+        <?php if ($comment->state != "unpublished" && $comment->state != "deleted"): ?>
           <li>
             <a href="javascript:set_state('unpublished',<?=$comment->id?>)"
                 class="g-button ui-state-default ui-icon-left">
@@ -97,21 +97,21 @@
               <?= t("Unapprove") ?>
             </a>
           </li>
-        <? endif ?>
-        <? if ($comment->state != "published"): ?>
+        <?php endif ?>
+        <?php if ($comment->state != "published"): ?>
           <li>
             <a href="javascript:set_state('published',<?=$comment->id?>)"
                 class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-check"></span>
-              <? if ($state == "deleted"): ?>
+              <?php if ($state == "deleted"): ?>
               <?= t("Undelete") ?>
-              <? else: ?>
+              <?php else: ?>
               <?= t("Approve") ?>
-              <? endif ?>
+              <?php endif ?>
             </a>
           </li>
-        <? endif ?>
-        <? if ($comment->state != "spam"): ?>
+        <?php endif ?>
+        <?php if ($comment->state != "spam"): ?>
           <li>
             <a href="javascript:set_state('spam',<?=$comment->id?>)"
                 class="g-button ui-state-default ui-icon-left">
@@ -119,7 +119,7 @@
               <?= t("Spam") ?>
             </a>
           </li>
-        <? endif ?>
+        <?php endif ?>
           <!--
           <li>
             <a href="javascript:reply(<?=$comment->id?>)"
@@ -136,7 +136,7 @@
             </a>
           </li>
           -->
-        <? if ($comment->state != "deleted"): ?>
+        <?php if ($comment->state != "deleted"): ?>
           <li>
             <a href="javascript:set_state('deleted',<?=$comment->id?>)"
                 class="g-button ui-state-default ui-icon-left">
@@ -144,11 +144,11 @@
               <?= t("Delete") ?>
             </a>
           </li>
-        <? endif ?>
+        <?php endif ?>
         </ul>
       </td>
     </tr>
-    <? endforeach ?>
+    <?php endforeach ?>
   </table>
 
   <div class="g-paginator">
